@@ -43,7 +43,7 @@ using namespace std;
 
 // Util structs
 struct InputKey {
-	char m_key_char;
+	unsigned char m_key_char;
 	bool m_pressed;
 	uint16_t texture_u, texture_v;
 	uint16_t w, h;
@@ -108,7 +108,7 @@ struct InputSource {
 	}
 
 	// Read key order from a string e.g. "A,B,C,0x10"
-	char read_chain(std::string& l)
+	unsigned char read_chain(std::string& l)
 	{
 		std::string temp = l.substr(0, l.find(','));
 		l = l.substr(l.find(',') + 1, l.size());
@@ -118,8 +118,8 @@ struct InputSource {
 		}
 		else if (temp.find("0x") != std::string::npos)
 		{
-			std::string t = std::string(temp.c_str());
-			return std::stoul(t, nullptr, 16);
+			//std::string t = std::string(temp.c_str());
+			return std::stoul(temp, nullptr, 16);
 		}
 		return 'A';
 	}
