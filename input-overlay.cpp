@@ -48,6 +48,7 @@ struct InputKey {
 	uint16_t texture_u, texture_v;
 	uint16_t w, h;
 	
+	uint16_t x_offset; // used to center buttons that span over multiple columns
 	uint16_t row; // On screen location
 	uint16_t column;
 };
@@ -198,7 +199,7 @@ inline void InputSource::Render(gs_effect_t *effect)
 			for (int i = 0; i < m_layout.m_key_count; i++)
 			{
 				k = m_layout.m_keys[i];
-				x = m_layout.m_btn_w * k.column + (m_layout.m_key_space_h * k.column);
+				x = m_layout.m_btn_w * k.column + (m_layout.m_key_space_h * k.column) + k.x_offset;
 				y = m_layout.m_btn_h * k.row + (m_layout.m_key_space_v * k.row);
 				DrawKey(effect, &k, x, y);
 			}
@@ -457,9 +458,20 @@ void InputSource::LoadOverlayLayout()
 	{
 		uint16_t u_cord = 1, v_cord = 1;
 		uint16_t tempw, temph;
-		int row_index = 0;
+		int index = 0;
 		for (int i = 0; i < m_layout.m_key_count; i++)
 		{
+			if (index != 0 && index % m_layout.texture_w == 0)
+			{
+				u_cord = 1;
+				v_cord += m_layout.texture_v_space + 6;
+			}
+
+			if (i == 69)
+			{
+			
+				printf("heyo");
+			}
 			InputKey k;
 			k.texture_u = u_cord - 1;
 			k.texture_v = v_cord - 1;
@@ -471,16 +483,21 @@ void InputSource::LoadOverlayLayout()
 			k.m_pressed = false;
 			k.row = read_chain_int(key_row);
 			k.column = read_chain_int(key_col);
-			m_layout.m_keys.emplace_back(k);
 
-			u_cord += k.w + 3;
-
-			if (i == m_layout.texture_w - 1)
+			if (tempw > 1)
 			{
-				row_index++;
-				u_cord = 1;
-				v_cord += m_layout.texture_v_space + (6 * row_index);
+				k.x_offset = (m_layout.m_btn_w * tempw + m_layout.m_key_space_h * (tempw - 1)) / 2 - k.w / 2;
+				index += tempw;
 			}
+			else
+			{
+				index++;
+				k.x_offset = 0;
+			}
+
+			m_layout.m_keys.emplace_back(k);
+			u_cord += k.w + 3;
+		
 		}
 
 		m_layout.m_h = m_layout.m_rows * m_layout.m_btn_h + m_layout.m_key_space_v * m_layout.m_rows;
