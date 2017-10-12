@@ -88,8 +88,6 @@ struct InputSource {
 		UnloadOverlayLayout();
 	}
 
-	static void UpdateScroll();
-
 	void LoadOverlayTexture(void);
 	void LoadOverlayLayout(void);
 	void UnloadOverlayLayout(void);
@@ -461,17 +459,19 @@ void InputSource::LoadOverlayLayout()
 		int index = 0;
 		for (int i = 0; i < m_layout.m_key_count; i++)
 		{
-			if (index != 0 && index % m_layout.texture_w == 0)
+			/*if (index != 0 && index % m_layout.texture_w == 0)
 			{
+				u_cord = 1;
+				v_cord += m_layout.texture_v_space + 6;
+			}*/
+
+			if (index >= m_layout.texture_w)
+			{
+				index = 0;
 				u_cord = 1;
 				v_cord += m_layout.texture_v_space + 6;
 			}
 
-			if (i == 69)
-			{
-			
-				printf("heyo");
-			}
 			InputKey k;
 			k.texture_u = u_cord - 1;
 			k.texture_v = v_cord - 1;
@@ -583,8 +583,6 @@ static obs_properties_t *get_properties(void *data)
 
 OBS_DECLARE_MODULE()
 OBS_MODULE_USE_DEFAULT_LOCALE("input-overlay", "en-US")
-
-std::thread monitor_thread;
 
 bool obs_module_load(void)
 {
