@@ -14,3 +14,5 @@ More Information:
 - [Install guide](https://vimeo.com/229296849)
 - [*.psd and fonts used](https://goo.gl/kyyoXx)
 - [Making your own presets](https://vimeo.com/238275966)
+
+### Made a preset? Let me know and I'll add it to the repository!
