@@ -595,13 +595,13 @@ static obs_properties_t *get_properties(void *data)
 
 #define T_(v)                           obs_module_text(v)
 #define T_OVERLAY_FONT                  T_("OverlayFont")
-#define T_OVERLAY_FONT_COLOR			T_("OverlayFontColor")
-#define T_OVERLAY_DIRETION_LABEL		T_("OverlayDirection.Label")
+#define T_OVERLAY_FONT_COLOR            T_("OverlayFontColor")
+#define T_OVERLAY_DIRETION_LABEL        T_("OverlayDirection.Label")
 #define T_OVERLAY_DIRETION_UP           T_("OverlayDirection.Up")
-#define T_OVERLAY_DIRETION_DOWN			T_("OverlayDirection.Down")
-#define T_OVERLAY_HISTORY_SIZE			T_("OverlayHistory.Size")
-#define T_OVERLAY_FIX_CUTTING			T_("Overlay.FixCutting")
-#define T_OVERLAY_INCLUDE_MOUSE			T_("Overlay.IncludeMouse")
+#define T_OVERLAY_DIRETION_DOWN         T_("OverlayDirection.Down")
+#define T_OVERLAY_HISTORY_SIZE          T_("OverlayHistory.Size")
+#define T_OVERLAY_FIX_CUTTING           T_("Overlay.FixCutting")
+#define T_OVERLAY_INCLUDE_MOUSE         T_("Overlay.IncludeMouse")
 
 #define ALPHABET_START  0x41
 #define ALPHABET_END    0x5A
