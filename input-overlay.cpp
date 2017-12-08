@@ -14,12 +14,12 @@ extern "C" {
 using namespace std;
 #define SHIFTED 0x8000 
 
-#define KEY_LMB		VK_LBUTTON
-#define KEY_RMB		VK_RBUTTON
-#define KEY_MMB		VK_MBUTTON
-#define KEY_SMB1	VK_XBUTTON1
-#define KEY_SMB2	VK_XBUTTON2
-#define KEY_NONE	0x07
+#define KEY_LMB     VK_LBUTTON
+#define KEY_RMB     VK_RBUTTON
+#define KEY_MMB     VK_MBUTTON
+#define KEY_SMB1    VK_XBUTTON1
+#define KEY_SMB2    VK_XBUTTON2
+#define KEY_NONE    0x07
 
 #define MIN_SIZE_CX 2
 #define MIN_SIZE_CY 2
@@ -31,15 +31,15 @@ using namespace std;
 #define warning(format, ...) blog(LOG_WARNING, "[%s] " format, \
 		obs_source_get_name(m_source), ##__VA_ARGS__)
 // Lang
-#define S_OVERLAY_FILE					"overlay_image"
-#define S_LAYOUT_FILE					"layout_file"
+#define S_OVERLAY_FILE              "overlay_image"
+#define S_LAYOUT_FILE               "layout_file"
 
-#define T_(v)							obs_module_text(v)
-#define T_OVERLAY_FILE					T_("OverlayFile")
-#define T_LAYOUT_FILE					T_("LayoutFile")
-#define T_FILTER_IMAGE_FILES            T_("Filter.ImageFiles")
-#define T_FILTER_TEXT_FILES				T_("Filter.TextFiles")
-#define T_FILTER_ALL_FILES              T_("Filter.AllFiles")
+#define T_(v)                       obs_module_text(v)
+#define T_OVERLAY_FILE              T_("OverlayFile")
+#define T_LAYOUT_FILE               T_("LayoutFile")
+#define T_FILTER_IMAGE_FILES        T_("Filter.ImageFiles")
+#define T_FILTER_TEXT_FILES         T_("Filter.TextFiles")
+#define T_FILTER_ALL_FILES          T_("Filter.AllFiles")
 
 // Util structs
 struct InputKey {
@@ -582,16 +582,16 @@ static obs_properties_t *get_properties(void *data)
 
 // ---------------- Input History ----------------
 // Lang & Value names
-#define S_OVERLAY_FONT					"font"
-#define S_OVERLAY_FONT_COLOR			"color"
-#define S_OVERLAY_DIRECTION_UP			"up"
-#define S_OVERLAY_DIRECTION				"direction"
-#define S_OVERLAY_DIRECTION_DOWN		"down"
-#define S_OVERLAY_DIRECTION_LEFT		"left"
-#define S_OVERLAY_DIRECTION_RIGHT		"right"
-#define S_OVERLAY_HISTORY_SIZE			"history_size"
-#define S_OVERLAY_FIX_CUTTING			"fix_cutting"
-#define S_OVERLAY_INCLUDE_MOUSE			"include_mouse"
+#define S_OVERLAY_FONT                  "font"
+#define S_OVERLAY_FONT_COLOR            "color"
+#define S_OVERLAY_DIRECTION_UP          "up"
+#define S_OVERLAY_DIRECTION             "direction"
+#define S_OVERLAY_DIRECTION_DOWN        "down"
+#define S_OVERLAY_DIRECTION_LEFT        "left"
+#define S_OVERLAY_DIRECTION_RIGHT       "right"
+#define S_OVERLAY_HISTORY_SIZE          "history_size"
+#define S_OVERLAY_FIX_CUTTING           "fix_cutting"
+#define S_OVERLAY_INCLUDE_MOUSE	        "include_mouse"
 
 #define T_(v)                           obs_module_text(v)
 #define T_OVERLAY_FONT                  T_("OverlayFont")
@@ -603,14 +603,14 @@ static obs_properties_t *get_properties(void *data)
 #define T_OVERLAY_FIX_CUTTING			T_("Overlay.FixCutting")
 #define T_OVERLAY_INCLUDE_MOUSE			T_("Overlay.IncludeMouse")
 
-#define ALPHABET_START	0x41
-#define ALPHABET_END	0x5A
-#define NUMBER_START	0x30
-#define NUMBER_END		0x39
-#define NUMPAD_START	0x60
-#define NUMPAD_END		0x69
-#define FUNCTION_START	0x70
-#define FUNCTION_END	0x87
+#define ALPHABET_START  0x41
+#define ALPHABET_END    0x5A
+#define NUMBER_START    0x30
+#define NUMBER_END      0x39
+#define NUMPAD_START    0x60
+#define NUMPAD_END      0x69
+#define FUNCTION_START  0x70
+#define FUNCTION_END    0x87
 
 struct KeyBundle {
     bool m_empty = true;
@@ -879,10 +879,10 @@ bool obs_module_load(void)
     si.get_properties = get_properties;
 
     si.get_name = [](void*) { return obs_module_text("InputOverlay"); };
-    si.create = [](obs_data_t *settings, obs_source_t *source) { return (void*) new InputSource(source, settings);  };
-    si.destroy = [](void *data) { delete reinterpret_cast<InputSource*>(data);  };
-    si.get_width = [](void *data) { return reinterpret_cast<InputSource*>(data)->cx;  };
-    si.get_height = [](void *data) { return reinterpret_cast<InputSource*>(data)->cy;  };
+    si.create = [](obs_data_t *settings, obs_source_t *source) { return (void*) new InputSource(source, settings);    };
+    si.destroy = [](void *data) { delete reinterpret_cast<InputSource*>(data);    };
+    si.get_width = [](void *data) { return reinterpret_cast<InputSource*>(data)->cx;    };
+    si.get_height = [](void *data) { return reinterpret_cast<InputSource*>(data)->cy;    };
 
     si.get_defaults = [](obs_data_t *settings)
     {
