@@ -584,33 +584,49 @@ static obs_properties_t *get_properties(void *data)
 // Lang & Value names
 #define S_OVERLAY_FONT                  "font"
 #define S_OVERLAY_FONT_COLOR            "color"
-#define S_OVERLAY_DIRECTION_UP          "up"
-#define S_OVERLAY_DIRECTION             "direction"
-#define S_OVERLAY_DIRECTION_DOWN        "down"
+#define S_OVERLAY_DIRECTION             "direction_up"
 #define S_OVERLAY_DIRECTION_LEFT        "left"
 #define S_OVERLAY_DIRECTION_RIGHT       "right"
 #define S_OVERLAY_HISTORY_SIZE          "history_size"
 #define S_OVERLAY_FIX_CUTTING           "fix_cutting"
 #define S_OVERLAY_INCLUDE_MOUSE	        "include_mouse"
+#define S_OVERLAY_INTERVAL              "interval"
+#define S_OVERLAY_CLEAR_HISTORY         "clear_history"
+
+#define S_OVERLAY_OUTLINE               "outline"
+#define S_OVERLAY_OUTLINE_SIZE          "outline_size"
+#define S_OVERLAY_OUTLINE_COLOR         "outline_color"
+#define S_OVERLAY_OUTLINE_OPACITY       "outline_opacity"
 
 #define T_(v)                           obs_module_text(v)
 #define T_OVERLAY_FONT                  T_("OverlayFont")
 #define T_OVERLAY_FONT_COLOR            T_("OverlayFontColor")
-#define T_OVERLAY_DIRETION_LABEL        T_("OverlayDirection.Label")
-#define T_OVERLAY_DIRETION_UP           T_("OverlayDirection.Up")
-#define T_OVERLAY_DIRETION_DOWN         T_("OverlayDirection.Down")
+#define T_OVERLAY_DIRECTION_LABEL       T_("OverlayDirection.Label")
 #define T_OVERLAY_HISTORY_SIZE          T_("OverlayHistory.Size")
 #define T_OVERLAY_FIX_CUTTING           T_("Overlay.FixCutting")
 #define T_OVERLAY_INCLUDE_MOUSE         T_("Overlay.IncludeMouse")
+#define T_OVERLAY_CLEAR_HISTORY         T_("Overlay.ClearHistory")
+
+#define T_OVERLAY_OUTLINE               T_("Overlay.Outline")
+#define T_OVERLAY_OUTLINE_SIZE          T_("Overlay.Outline.Size")
+#define T_OVERLAY_OUTLINE_COLOR         T_("Overlay.Outline.Color")
+#define T_OVERLAY_OUTLINE_OPACITY       T_("Overlay.Outline.Opacity")
+#define T_OVERLAY_INTERVAL              T_("Overlay.Update.Interval")
 
 #define ALPHABET_START  0x41
 #define ALPHABET_END    0x5A
 #define NUMBER_START    0x30
 #define NUMBER_END      0x39
 #define NUMPAD_START    0x60
-#define NUMPAD_END      0x69
+#define NUMPAD_END      0x6F
 #define FUNCTION_START  0x70
 #define FUNCTION_END    0x87
+#define UTIL_START      0x20
+#define UTIL_END        0x2F
+#define SPECIAL_SIZE 8
+
+static int SPECIAL_KEYS[] = { VK_RETURN, VK_BACK, VK_TAB, VK_CAPITAL, VK_ESCAPE, VK_SCROLL, VK_PAUSE,
+                              VK_NUMLOCK};
 
 struct KeyBundle {
     bool m_empty = true;
@@ -618,10 +634,10 @@ struct KeyBundle {
     bool m_mod_shift = false, m_mod_alt = false, m_mod_ctrl = false, m_mod_win = false;
     bool m_rmb = false, m_lmb = false, m_mmb = false, m_pmb = false, m_nmb = false;
 
-    bool compare(KeyBundle* other);
+    KeyBundle merge(KeyBundle other);
 
     const char* to_string(bool fix, bool include_mouse);
-
+    bool compare(KeyBundle* other);
 private:
     char* add_key(char* text, char* key, bool* flag);
 
@@ -636,10 +652,15 @@ struct InputHistorySource
 
     uint32_t cx = 0;
     uint32_t cy = 0;
+    uint32_t m_update_interval = 1, m_counter = 0;
 
     bool m_fix_cutting = false;
     bool m_include_mouse = false;
-
+    bool m_update_keys = false;
+    bool m_collect_keys = false;
+    bool m_dir_up = false;
+    
+    KeyBundle m_current_keys;
     KeyBundle m_prev_keys;
     KeyBundle m_history[5];
 
@@ -663,7 +684,7 @@ struct InputHistorySource
     bool check_range(int start, int end);
     bool is_pressed(int k);
     void add_to_history(KeyBundle b);
-
+    void clear_history(void);
     KeyBundle check_keys(void);
 
     inline void Update(obs_data_t *settings);
@@ -684,10 +705,21 @@ void InputHistorySource::UnloadTextSource(void)
 bool InputHistorySource::any_key_down(void)
 {
     bool mods = is_pressed(VK_CONTROL) || is_pressed(VK_MENU) || is_pressed(VK_SHIFT) || is_pressed(VK_LWIN)
-        || is_pressed(VK_RWIN);
+        || is_pressed(VK_RWIN) || is_pressed(VK_LBUTTON) || is_pressed(VK_RBUTTON) || is_pressed(VK_MBUTTON);
 
-    return mods || check_range(ALPHABET_START, ALPHABET_END) || check_range(NUMBER_START, NUMBER_END)
-        || check_range(NUMPAD_START, NUMPAD_END) || check_range(FUNCTION_START, FUNCTION_END);
+    bool special = false;
+    for (int i = 0; i < SPECIAL_SIZE; i++)
+    {
+        if (is_pressed(SPECIAL_KEYS[i]))
+        {
+            special = true;
+            break;
+        }
+    }
+
+    return special || mods || check_range(ALPHABET_START, ALPHABET_END) || check_range(NUMBER_START, NUMBER_END)
+        || check_range(NUMPAD_START, NUMPAD_END) || check_range(FUNCTION_START, FUNCTION_END)
+        || check_range(UTIL_START, UTIL_END);
 }
 
 bool InputHistorySource::check_range(int start, int end)
@@ -710,6 +742,17 @@ void InputHistorySource::add_to_history(KeyBundle b)
     m_history[2] = m_history[1];
     m_history[1] = m_history[0];
     m_history[0] = b;
+}
+
+void InputHistorySource::clear_history(void)
+{
+    for (int i = 0; i < 4; i++)
+    {
+        m_history[i] = {};
+    }
+    obs_data_t* data = obs_source_get_settings(m_text_source);
+    obs_data_set_string(data, "text", "");
+    obs_source_update(m_text_source, data);
 }
 
 KeyBundle InputHistorySource::check_keys(void)
@@ -783,6 +826,34 @@ KeyBundle InputHistorySource::check_keys(void)
             return temp;
         }
     }
+
+    for (int i = 0; i < SPECIAL_SIZE; i++)
+    {
+        if (is_pressed(SPECIAL_KEYS[i]))
+        {
+            temp.m_keys[keys] = SPECIAL_KEYS[i];
+            keys++;
+        }
+
+        if (keys == 4)
+        {
+            return temp;
+        }
+    }
+
+    for (int i = UTIL_START; i <= UTIL_END; i++)
+    {
+        if (is_pressed(i))
+        {
+            temp.m_keys[keys] = i;
+            keys++;
+        }
+
+        if (keys == 4)
+        {
+            return temp;
+        }
+    }
     return temp;
 }
 
@@ -793,53 +864,76 @@ inline void InputHistorySource::Update(obs_data_t * settings)
 
     m_fix_cutting = obs_data_get_bool(settings, S_OVERLAY_FIX_CUTTING);
     m_include_mouse = obs_data_get_bool(settings, S_OVERLAY_INCLUDE_MOUSE);
+    m_dir_up = obs_data_get_bool(settings, S_OVERLAY_DIRECTION);
+    m_update_interval = obs_data_get_int(settings, S_OVERLAY_INTERVAL);
 }
 
 inline void InputHistorySource::Tick(float seconds)
 {
     if (!obs_source_showing(m_source))
-    {
         return;
-    }
 
     cx = max(obs_source_get_width(m_text_source), 50);
     cy = max(obs_source_get_height(m_text_source), 50);
-
-    obs_data_t* data = obs_source_get_settings(m_text_source);
-
-    if (any_key_down())
+    
+    if (m_update_keys)
     {
-        KeyBundle temp = check_keys();
-        if (m_prev_keys.m_empty)
+        obs_data_t* data = obs_source_get_settings(m_text_source);
+        m_update_keys = false;
+        if (!m_current_keys.m_empty && !m_current_keys.compare(&m_prev_keys))
+            add_to_history(m_current_keys);
+        m_prev_keys = m_current_keys;
+        char* text = "";
+        int i = m_dir_up ? m_history_size - 1: 0;
+        for (;;)
         {
-            add_to_history(temp);
-            m_prev_keys = temp;
+            if (m_history[i].m_empty || !m_dir_up && i >= m_history_size || m_dir_up && i < 0)
+                break;
+
+            if (!m_dir_up && i > 0 || m_dir_up && i < m_history_size - 1)
+                text = append(text, "\n");
+            text = append(text, (char*)m_history[i].to_string(m_fix_cutting, m_include_mouse));
+            i += m_dir_up ? -1 : 1;
         }
+
+        obs_data_set_string(data, "text", text);
+        obs_source_update(m_text_source, data);
+        m_current_keys = {};
     }
     else
     {
-        m_prev_keys.m_empty = true;
+        if (any_key_down())
+        {
+            m_collect_keys = true;
+        }
+            
+        if (m_collect_keys)
+        {
+            KeyBundle temp = check_keys();
+            m_current_keys = m_current_keys.merge(temp);
+            m_counter++;
+            if (m_counter >= m_update_interval)
+            {
+                m_collect_keys = false;
+                m_update_keys = true;
+                m_counter = 0;
+            }
+        }
     }
-    KeyBundle temp = check_keys();
-
-    char* text = "";
-
-    for (int i = 0; i < m_history_size; i++)
-    {
-        if (m_history[i].m_empty)
-            break;
-        if (i > 0)
-            text = append(text, "\n");
-        text = append(text, (char*)m_history[i].to_string(m_fix_cutting, m_include_mouse));
-    }
-
-    obs_data_set_string(data, "text", text);
-    obs_source_update(m_text_source, data);
 }
 
 inline void InputHistorySource::Render(gs_effect_t * effect)
 {
     obs_source_video_render(m_text_source);
+}
+
+
+
+static bool clear_history(obs_properties_t *props, obs_property_t *property, void *data)
+{
+    InputHistorySource *source = reinterpret_cast<InputHistorySource*>(data);
+    source->clear_history();
+    return true;
 }
 
 // Properties
@@ -849,21 +943,27 @@ static obs_properties_t *get_properties_for_history(void *data)
 
     obs_properties_t *props = obs_properties_create();
 
+    // font settings
     obs_properties_add_font(props, S_OVERLAY_FONT, T_OVERLAY_FONT);
     obs_properties_add_color(props, S_OVERLAY_FONT_COLOR, T_OVERLAY_FONT_COLOR);
-    obs_property_t *p;
+    
+    obs_properties_add_bool(props, S_OVERLAY_OUTLINE, T_OVERLAY_OUTLINE);
+    
+    obs_properties_add_int(props, S_OVERLAY_OUTLINE_SIZE, T_OVERLAY_OUTLINE_SIZE, 1, 20, 1);
+    obs_properties_add_color(props, S_OVERLAY_OUTLINE_COLOR, T_OVERLAY_OUTLINE_COLOR);
+    obs_properties_add_int_slider(props, S_OVERLAY_OUTLINE_OPACITY,
+        T_OVERLAY_OUTLINE_OPACITY, 0, 100, 1);
 
-    p = obs_properties_add_list(props, S_OVERLAY_DIRECTION, T_OVERLAY_DIRETION_LABEL,
-        OBS_COMBO_TYPE_LIST, OBS_COMBO_FORMAT_STRING);
-    obs_property_list_add_string(p, T_OVERLAY_DIRETION_UP, S_OVERLAY_DIRECTION_UP);
-    obs_property_list_add_string(p, T_OVERLAY_DIRETION_DOWN, S_OVERLAY_DIRECTION_DOWN);
-
+    obs_properties_add_bool(props, S_OVERLAY_DIRECTION, T_OVERLAY_DIRECTION_LABEL);
     obs_properties_add_int(props, S_OVERLAY_HISTORY_SIZE, T_OVERLAY_HISTORY_SIZE, 1, 5, 1);
     obs_properties_add_bool(props, S_OVERLAY_FIX_CUTTING, T_OVERLAY_FIX_CUTTING);
     obs_properties_add_bool(props, S_OVERLAY_INCLUDE_MOUSE, T_OVERLAY_INCLUDE_MOUSE);
+    obs_properties_add_int(props, S_OVERLAY_INTERVAL, T_OVERLAY_INTERVAL, 1, 1000, 1);
 
+    obs_properties_add_button(props, S_OVERLAY_CLEAR_HISTORY, T_OVERLAY_CLEAR_HISTORY, clear_history);
     return props;
 }
+
 // --------------------- End ---------------------
 
 OBS_DECLARE_MODULE()
@@ -922,25 +1022,28 @@ bool obs_module_load(void)
     return true;
 }
 
-bool KeyBundle::compare(KeyBundle * other)
+KeyBundle KeyBundle::merge(KeyBundle other)
 {
-    if (m_empty != other->m_empty)
-        return false;
-
-    if (m_lmb != other->m_lmb || m_rmb != other->m_rmb || m_mmb != other->m_mmb
-        || m_pmb != other->m_pmb || m_nmb != other->m_nmb)
-        return false;
-
-    if (m_mod_alt != other->m_mod_alt || m_mod_ctrl != other->m_mod_ctrl
-        || m_mod_win != other->m_mod_win || m_mod_shift != other->m_mod_shift)
-        return false;
+    KeyBundle c;
+    if (other.m_empty)
+        return c;
+    c.m_empty       = false;
+    c.m_mmb         = other.m_mmb || m_mmb;
+    c.m_lmb         = other.m_lmb || m_lmb;
+    c.m_rmb         = other.m_rmb || m_rmb;
+    c.m_mod_alt     = other.m_mod_alt || m_mod_alt;
+    c.m_mod_ctrl    = other.m_mod_ctrl || m_mod_ctrl;
+    c.m_mod_shift   = other.m_mod_shift || m_mod_shift;
+    c.m_mod_win     = other.m_mod_win || m_mod_win;
 
     for (int i = 0; i < 4; i++)
     {
-        if (m_keys[i] != other->m_keys[i])
-            return false;
+        if (other.m_keys[i] > 0)
+            c.m_keys[i] = other.m_keys[i];
+        else
+            c.m_keys[i] = m_keys[i];
     }
-    return true;
+    return c;
 }
 
 const char * KeyBundle::to_string(bool fix, bool include_mouse)
@@ -991,4 +1094,25 @@ char * KeyBundle::add_key(char * text, char * key, bool * flag)
     *flag = true;
     text = append(text, key);
     return text;
+}
+
+bool KeyBundle::compare(KeyBundle * other)
+{
+    if (m_empty != other->m_empty)
+        return false;
+
+    if (m_lmb != other->m_lmb || m_rmb != other->m_rmb || m_mmb != other->m_mmb
+        || m_pmb != other->m_pmb || m_nmb != other->m_nmb)
+        return false;
+
+    if (m_mod_alt != other->m_mod_alt || m_mod_ctrl != other->m_mod_ctrl
+        || m_mod_win != other->m_mod_win || m_mod_shift != other->m_mod_shift)
+        return false;
+
+    for (int i = 0; i < 4; i++)
+    {
+        if (m_keys[i] != other->m_keys[i])
+            return false;
+    }
+    return true;
 }

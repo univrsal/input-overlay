@@ -28,9 +28,19 @@ const char * key_to_text(int key_code)
     case VK_NUMPAD8:
         return "NUMPAD 8";
     case VK_NUMPAD9:
-        return "NUMPAD 9";
+        return "NUMPAD 9";  
     case VK_NUMLOCK:
         return "NUM LOCK";
+    case VK_MULTIPLY:
+        return "MULTIPLY";
+    case VK_ADD:
+        return "ADD";
+    case VK_SUBTRACT:
+        return "SUBTRACT";
+    case VK_DECIMAL:
+        return "DECIMAL";
+    case VK_DIVIDE:
+        return "DEVIDE";
     case VK_F1:
         return "F1";
     case VK_F2:
@@ -151,6 +161,9 @@ const char * key_to_text(int key_code)
         return "8";
     case '9':
         return "9";
+    case VK_RETURN:
+    case VK_SEPARATOR:
+        return "ENTER";
     case VK_SPACE:
         return "SPACE";
     case VK_TAB:
@@ -163,6 +176,10 @@ const char * key_to_text(int key_code)
         return "INSERT";
     case VK_HOME:
         return "HOME";
+    case VK_PRIOR:
+        return "PAGE UP";
+    case VK_NEXT:
+        return "PAGE DOWN";
     case VK_END:
         return "END";
     case VK_DELETE:
