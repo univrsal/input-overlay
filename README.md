@@ -8,7 +8,7 @@ Head over to [releases](https://github.com/univrsal/input-overlay/releases) for 
 
 ### How to use
 ![tut](http://hnng.moe/f/WHe)
-
+![tut2](http://hnng.moe/f/Xcp)
 More Information:
 - [OBS resource page](https://obsproject.com/forum/resources/input-overlay.552/)
 - [Install guide](https://vimeo.com/229296849)
