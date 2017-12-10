@@ -597,6 +597,7 @@ static obs_properties_t *get_properties(void *data)
 #define S_OVERLAY_OUTLINE_SIZE          "outline_size"
 #define S_OVERLAY_OUTLINE_COLOR         "outline_color"
 #define S_OVERLAY_OUTLINE_OPACITY       "outline_opacity"
+#define S_OVERLAY_OPACITY                       "opacity"
 
 #define T_(v)                           obs_module_text(v)
 #define T_OVERLAY_FONT                  T_("OverlayFont")
@@ -606,6 +607,7 @@ static obs_properties_t *get_properties(void *data)
 #define T_OVERLAY_FIX_CUTTING           T_("Overlay.FixCutting")
 #define T_OVERLAY_INCLUDE_MOUSE         T_("Overlay.IncludeMouse")
 #define T_OVERLAY_CLEAR_HISTORY         T_("Overlay.ClearHistory")
+#define T_OVERLAY_OPACITY                       T_("Overlay.Opacity")
 
 #define T_OVERLAY_OUTLINE               T_("Overlay.Outline")
 #define T_OVERLAY_OUTLINE_SIZE          T_("Overlay.Outline.Size")
@@ -675,6 +677,7 @@ struct InputHistorySource
 
     inline ~InputHistorySource()
     {
+        clear_history();
         UnloadTextSource();
     }
 
@@ -705,7 +708,7 @@ void InputHistorySource::UnloadTextSource(void)
 bool InputHistorySource::any_key_down(void)
 {
     bool mods = is_pressed(VK_CONTROL) || is_pressed(VK_MENU) || is_pressed(VK_SHIFT) || is_pressed(VK_LWIN)
-        || is_pressed(VK_RWIN) || is_pressed(VK_LBUTTON) || is_pressed(VK_RBUTTON) || is_pressed(VK_MBUTTON);
+        || is_pressed(VK_RWIN) || (m_include_mouse && (is_pressed(VK_LBUTTON) || is_pressed(VK_RBUTTON) || is_pressed(VK_MBUTTON)));
 
     bool special = false;
     for (int i = 0; i < SPECIAL_SIZE; i++)
@@ -861,7 +864,7 @@ inline void InputHistorySource::Update(obs_data_t * settings)
 {
     m_history_size = obs_data_get_int(settings, S_OVERLAY_HISTORY_SIZE);
     obs_source_update(m_text_source, settings);
-
+    
     m_fix_cutting = obs_data_get_bool(settings, S_OVERLAY_FIX_CUTTING);
     m_include_mouse = obs_data_get_bool(settings, S_OVERLAY_INCLUDE_MOUSE);
     m_dir_up = obs_data_get_bool(settings, S_OVERLAY_DIRECTION);
@@ -884,15 +887,22 @@ inline void InputHistorySource::Tick(float seconds)
             add_to_history(m_current_keys);
         m_prev_keys = m_current_keys;
         char* text = "";
+        char* line_text = "";
         int i = m_dir_up ? m_history_size - 1: 0;
         for (;;)
         {
             if (m_history[i].m_empty || !m_dir_up && i >= m_history_size || m_dir_up && i < 0)
                 break;
 
-            if (!m_dir_up && i > 0 || m_dir_up && i < m_history_size - 1)
-                text = append(text, "\n");
-            text = append(text, (char*)m_history[i].to_string(m_fix_cutting, m_include_mouse));
+            line_text = (char*)m_history[i].to_string(m_fix_cutting, m_include_mouse);
+
+            if (strlen(line_text) > 0)
+            {
+                if (!m_dir_up && i > 0 || m_dir_up && i < m_history_size - 1)
+                    text = append(text, "\n");
+                text = append(text, line_text);
+            }
+
             i += m_dir_up ? -1 : 1;
         }
 
@@ -924,7 +934,7 @@ inline void InputHistorySource::Tick(float seconds)
 
 inline void InputHistorySource::Render(gs_effect_t * effect)
 {
-    obs_source_video_render(m_text_source);
+   obs_source_video_render(m_text_source);
 }
 
 
@@ -946,7 +956,7 @@ static obs_properties_t *get_properties_for_history(void *data)
     // font settings
     obs_properties_add_font(props, S_OVERLAY_FONT, T_OVERLAY_FONT);
     obs_properties_add_color(props, S_OVERLAY_FONT_COLOR, T_OVERLAY_FONT_COLOR);
-    
+    obs_properties_add_int_slider(props, S_OVERLAY_OPACITY, T_OVERLAY_OPACITY, 0, 100, 1);
     obs_properties_add_bool(props, S_OVERLAY_OUTLINE, T_OVERLAY_OUTLINE);
     
     obs_properties_add_int(props, S_OVERLAY_OUTLINE_SIZE, T_OVERLAY_OUTLINE_SIZE, 1, 20, 1);
