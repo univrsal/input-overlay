@@ -827,7 +827,7 @@ KeyBundle InputHistorySource::check_keys(void)
         if (keys == 4)
         {
             return temp;
-        }
+        }   
     }
 
     for (int i = 0; i < SPECIAL_SIZE; i++)
@@ -936,8 +936,6 @@ inline void InputHistorySource::Render(gs_effect_t * effect)
 {
    obs_source_video_render(m_text_source);
 }
-
-
 
 static bool clear_history(obs_properties_t *props, obs_property_t *property, void *data)
 {

@@ -198,11 +198,15 @@ const char * key_to_text(int key_code)
         return "SCROLL LOCK";
     case VK_PAUSE:
         return "PAUSE";
+    case VK_CAPITAL:
+        return "CAPSLOCK";
     default:
-        return NULL;
+        return "";
         break;
     }
 }
+
+
 
 char * append(char * a, char * b)
 {
