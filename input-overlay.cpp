@@ -582,22 +582,24 @@ static obs_properties_t *get_properties(void *data)
 
 // ---------------- Input History ----------------
 // Lang & Value names
-#define S_OVERLAY_FONT                  "font"
-#define S_OVERLAY_FONT_COLOR            "color"
+
 #define S_OVERLAY_DIRECTION             "direction_up"
-#define S_OVERLAY_DIRECTION_LEFT        "left"
-#define S_OVERLAY_DIRECTION_RIGHT       "right"
 #define S_OVERLAY_HISTORY_SIZE          "history_size"
 #define S_OVERLAY_FIX_CUTTING           "fix_cutting"
 #define S_OVERLAY_INCLUDE_MOUSE	        "include_mouse"
 #define S_OVERLAY_INTERVAL              "interval"
 #define S_OVERLAY_CLEAR_HISTORY         "clear_history"
+#define S_OVERLAY_ENABLE_REPEAT_KEYS    "repeat_keys"
+#define S_OVERLAY_ENABLE_AUTO_CLEAR     "auto_clear"
+#define S_OVERLAY_AUTO_CLEAR_INTERVAL   "auto_clear_interval"
 
+#define S_OVERLAY_FONT                  "font"
+#define S_OVERLAY_FONT_COLOR            "color"
 #define S_OVERLAY_OUTLINE               "outline"
 #define S_OVERLAY_OUTLINE_SIZE          "outline_size"
 #define S_OVERLAY_OUTLINE_COLOR         "outline_color"
 #define S_OVERLAY_OUTLINE_OPACITY       "outline_opacity"
-#define S_OVERLAY_OPACITY                       "opacity"
+#define S_OVERLAY_OPACITY               "opacity"
 
 #define T_(v)                           obs_module_text(v)
 #define T_OVERLAY_FONT                  T_("OverlayFont")
@@ -607,13 +609,16 @@ static obs_properties_t *get_properties(void *data)
 #define T_OVERLAY_FIX_CUTTING           T_("Overlay.FixCutting")
 #define T_OVERLAY_INCLUDE_MOUSE         T_("Overlay.IncludeMouse")
 #define T_OVERLAY_CLEAR_HISTORY         T_("Overlay.ClearHistory")
-#define T_OVERLAY_OPACITY                       T_("Overlay.Opacity")
+#define T_OVERLAY_OPACITY               T_("Overlay.Opacity")
 
 #define T_OVERLAY_OUTLINE               T_("Overlay.Outline")
 #define T_OVERLAY_OUTLINE_SIZE          T_("Overlay.Outline.Size")
 #define T_OVERLAY_OUTLINE_COLOR         T_("Overlay.Outline.Color")
 #define T_OVERLAY_OUTLINE_OPACITY       T_("Overlay.Outline.Opacity")
 #define T_OVERLAY_INTERVAL              T_("Overlay.Update.Interval")
+#define T_OVERLAY_ENABLE_REPEAT_KEYS    T_("Overlay.Enable.RepeatKeys")
+#define T_OVERLAY_ENABLE_AUTO_CLEAR     T_("Overlay.Enable.AutoClear")
+#define T_OVERLAY_AUTO_CLEAR_INTERVAL   T_("Overlay.AutoClear.Interval")
 
 #define ALPHABET_START  0x41
 #define ALPHABET_END    0x5A
@@ -661,10 +666,15 @@ struct InputHistorySource
     bool m_update_keys = false;
     bool m_collect_keys = false;
     bool m_dir_up = false;
-    
+    bool m_auto_clear = false;
+    bool m_repeat_keys = false;
+
     KeyBundle m_current_keys;
     KeyBundle m_prev_keys;
     KeyBundle m_history[5];
+
+    float m_clear_timer = 0.f;
+    int m_clear_interval = 0;
 
     inline InputHistorySource(obs_source_t *source_, obs_data_t *settings) :
         m_source(source_)
@@ -869,6 +879,9 @@ inline void InputHistorySource::Update(obs_data_t * settings)
     m_include_mouse = obs_data_get_bool(settings, S_OVERLAY_INCLUDE_MOUSE);
     m_dir_up = obs_data_get_bool(settings, S_OVERLAY_DIRECTION);
     m_update_interval = obs_data_get_int(settings, S_OVERLAY_INTERVAL);
+    m_repeat_keys = obs_data_get_bool(settings, S_OVERLAY_ENABLE_REPEAT_KEYS);
+    m_auto_clear = obs_data_get_bool(settings, S_OVERLAY_ENABLE_AUTO_CLEAR);
+    m_clear_interval = obs_data_get_int(settings, S_OVERLAY_AUTO_CLEAR_INTERVAL);
 }
 
 inline void InputHistorySource::Tick(float seconds)
@@ -879,21 +892,42 @@ inline void InputHistorySource::Tick(float seconds)
     cx = max(obs_source_get_width(m_text_source), 50);
     cy = max(obs_source_get_height(m_text_source), 50);
     
+    if (m_auto_clear)
+    {
+        m_clear_timer += seconds;
+        if (m_clear_timer >= m_clear_interval)
+        {
+            m_clear_timer = 0.f;
+            clear_history();
+        }
+    }
+
     if (m_update_keys)
     {
         obs_data_t* data = obs_source_get_settings(m_text_source);
         m_update_keys = false;
-        if (!m_current_keys.m_empty && !m_current_keys.compare(&m_prev_keys))
+        if (!m_current_keys.m_empty && (m_repeat_keys 
+            || !m_current_keys.compare(&m_prev_keys))) {
+
             add_to_history(m_current_keys);
+            m_clear_timer = 0.f;
+        }
+            
         m_prev_keys = m_current_keys;
         char* text = "";
         char* line_text = "";
         int i = m_dir_up ? m_history_size - 1: 0;
         for (;;)
         {
-            if (m_history[i].m_empty || !m_dir_up && i >= m_history_size || m_dir_up && i < 0)
+            if (!m_dir_up && i >= m_history_size || m_dir_up && i < 0)
                 break;
-
+            if (m_history[i].m_empty)
+            {
+                text = append(text, "\n");
+                i += m_dir_up ? -1 : 1;
+                continue;
+            }
+                
             line_text = (char*)m_history[i].to_string(m_fix_cutting, m_include_mouse);
 
             if (strlen(line_text) > 0)
@@ -967,6 +1001,10 @@ static obs_properties_t *get_properties_for_history(void *data)
     obs_properties_add_bool(props, S_OVERLAY_FIX_CUTTING, T_OVERLAY_FIX_CUTTING);
     obs_properties_add_bool(props, S_OVERLAY_INCLUDE_MOUSE, T_OVERLAY_INCLUDE_MOUSE);
     obs_properties_add_int(props, S_OVERLAY_INTERVAL, T_OVERLAY_INTERVAL, 1, 1000, 1);
+
+    obs_properties_add_bool(props, S_OVERLAY_ENABLE_REPEAT_KEYS, T_OVERLAY_ENABLE_REPEAT_KEYS);
+    obs_properties_add_bool(props, S_OVERLAY_ENABLE_AUTO_CLEAR, T_OVERLAY_ENABLE_AUTO_CLEAR);
+    obs_properties_add_int(props, S_OVERLAY_AUTO_CLEAR_INTERVAL, T_OVERLAY_AUTO_CLEAR_INTERVAL, 1, 120, 1);
 
     obs_properties_add_button(props, S_OVERLAY_CLEAR_HISTORY, T_OVERLAY_CLEAR_HISTORY, clear_history);
     return props;
