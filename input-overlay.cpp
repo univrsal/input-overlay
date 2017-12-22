@@ -1,4 +1,4 @@
-#include <obs-module.h>
+﻿#include <obs-module.h>
 extern "C" {
 #include <graphics\image-file.h>
 #include "util.h"
@@ -10,6 +10,8 @@ extern "C" {
 #include <Windows.h>
 #include <iostream>
 #include <fstream>
+#include <clocale>
+#include <locale>
 
 using namespace std;
 #define SHIFTED 0x8000 
@@ -66,6 +68,14 @@ struct OverlayLayout {
     vector<InputKey> m_keys;
 };
 
+wstring stringToWString(const string& t_str)
+{
+    int size_needed = MultiByteToWideChar(CP_UTF8, 0, &t_str[0], (int)t_str.size(), NULL, 0);
+    std::wstring wstrTo(size_needed, 0);
+    MultiByteToWideChar(CP_UTF8, 0, &t_str[0], (int)t_str.size(), &wstrTo[0], size_needed);
+    return wstrTo;
+}
+
 // Source
 struct InputSource
 {
@@ -73,7 +83,7 @@ struct InputSource
     uint32_t cx = 0;
     uint32_t cy = 0;
     string m_image_file;
-    string m_layout_file;
+    wstring m_layout_file;
     gs_image_file_t *m_image = nullptr;
     OverlayLayout m_layout;
 
@@ -165,7 +175,8 @@ void InputSource::UnloadOverlayTexure()
 inline void InputSource::Update(obs_data_t *settings)
 {
     m_image_file = obs_data_get_string(settings, S_OVERLAY_FILE);
-    m_layout_file = obs_data_get_string(settings, S_LAYOUT_FILE);
+    string s = obs_data_get_string(settings, S_LAYOUT_FILE);
+    m_layout_file = stringToWString(s);
 
     LoadOverlayTexture();
     LoadOverlayLayout();
@@ -258,12 +269,14 @@ void InputSource::LoadOverlayLayout()
     if (!layout_file.is_open())
         return;
 
+    
     string line;
     string key_order, key_width, key_height, key_col, key_row;
 
     InputKey m[6]; // temporary storage for mouse keys
     short insert_mode = -1;
     short insert_index = -1;
+   
 
     while (getline(layout_file, line)) {
         if (line[0] == '#')
@@ -563,12 +576,29 @@ static obs_properties_t *get_properties(void *data)
 
     if (s && !s->m_layout_file.empty()) {
         const char *slash;
+        
+        // Wtf.
+        wstring ws = s->m_layout_file;
+        setlocale(LC_ALL, "");
+        const std::locale locale("");
+        typedef std::codecvt<wchar_t, char, std::mbstate_t> converter_type;
+        const converter_type& converter = std::use_facet<converter_type>(locale);
+        std::vector<char> to(ws.length() * converter.max_length());
+        std::mbstate_t state;
+        const wchar_t* from_next;
+        char* to_next;
+        const converter_type::result result = converter.out(state, ws.data(), ws.data() + ws.length(), from_next, &to[0], &to[0] + to.size(), to_next);
+        
+        if (result == converter_type::ok || result == converter_type::noconv)
+        {
+            layout_path = string(&to[0], to_next);
+            replace(layout_path.begin(), layout_path.end(), '\\', '/');
+            slash = strrchr(layout_path.c_str(), '/');
+            if (slash)
+                layout_path.resize(slash - layout_path.c_str() + 1);
+        }
 
-        layout_path = s->m_layout_file;
-        replace(layout_path.begin(), layout_path.end(), '\\', '/');
-        slash = strrchr(layout_path.c_str(), '/');
-        if (slash)
-            layout_path.resize(slash - layout_path.c_str() + 1);
+
     }
 
     obs_properties_add_path(props, S_OVERLAY_FILE, T_OVERLAY_FILE, OBS_PATH_FILE,
