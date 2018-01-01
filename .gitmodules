@@ -1,0 +1,3 @@
+[submodule "ccl"]
+	path = ccl
+	url = http://github.com/univrsal/ccl
