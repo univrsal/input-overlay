@@ -6,7 +6,9 @@ if(MSVC)
 endif()
 
 set(input-overlay_SOURCES
-	input-overlay.cpp)
+	input-overlay.cpp
+    util.c
+    util.h)
 
 add_library(input-overlay MODULE
 	${input-overlay_SOURCES})
