@@ -6,7 +6,6 @@
 #include <algorithm>
 #include <clocale>
 #include <locale>
-#include "overlaylayout.hpp"
 #include "ccl/ccl.hpp"
 #include "layouttype.hpp"
 extern "C" {

@@ -3,8 +3,8 @@ extern "C" {
 #include "util.h"
 }
 #include <string>
-#include "inputsource.hpp"
-#include "inputhistory.hpp"
+#include "input-source.hpp"
+#include "input-history.hpp"
 
 OBS_DECLARE_MODULE()
 OBS_MODULE_USE_DEFAULT_LOCALE("input-overlay", "en-US")

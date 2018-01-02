@@ -1,4 +1,4 @@
-#include "inputhistory.hpp"
+#include "input-history.hpp"
 
 static int SPECIAL_KEYS[] = { VK_RETURN, VK_BACK, VK_TAB, VK_CAPITAL, VK_ESCAPE, VK_SCROLL, VK_PAUSE,
 VK_NUMLOCK };

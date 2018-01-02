@@ -1,4 +1,4 @@
-#include "inputsource.hpp"
+#include "input-source.hpp"
 
 void InputSource::DrawKey(gs_effect_t *effect, InputKey* key, uint16_t x, uint16_t y)
 {
