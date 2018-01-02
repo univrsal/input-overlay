@@ -10,6 +10,11 @@ set(input-overlay_SOURCES
 	input-overlay.cpp
 	util.c
 	util.h
+	input-source.cpp
+	input-source.hpp
+	input-history.cpp
+	input-history.hpp
+	layouttype.hpp
 	ccl/ccl.cpp
 	ccl/ccl.hpp)
 
