@@ -2,13 +2,16 @@ project(input-overlay)
 
 if(MSVC)
 	set(input-overlay_PLATFORM_DEPS
-		w32-pthreads)
+		w32-pthreads
+		XInput)
 endif()
 
 set(input-overlay_SOURCES
 	input-overlay.cpp
-    util.c
-    util.h)
+	util.c
+	util.h
+	ccl/ccl.cpp
+	ccl/ccl.hpp)
 
 add_library(input-overlay MODULE
 	${input-overlay_SOURCES})
