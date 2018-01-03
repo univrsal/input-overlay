@@ -17,6 +17,10 @@ void InputSource::DrawKey(gs_effect_t *effect, InputKey* key, uint16_t x, uint16
 
     gs_matrix_pop();
 }
+void InputSource::DrawKey(gs_effect_t * effect, InputKey * key)
+{
+    DrawKey(effect, key, key->column, key->row);
+}
 
 void InputSource::UnloadOverlayTexure()
 {
@@ -35,6 +39,10 @@ std::wstring stringToWString(const std::string& t_str)
 
 inline void InputSource::Update(obs_data_t *settings)
 {
+    m_pad_settings.m_controller_id = obs_data_get_int(settings, S_CONTROLLER_ID);
+    m_pad_settings.m_left_dead_zone = obs_data_get_int(settings, S_CONTROLLER_L_DEAD_ZONE);
+    m_pad_settings.m_right_dead_zone = obs_data_get_int(settings, S_CONTROLLER_R_DEAD_ZONE);
+    
     m_image_file = obs_data_get_string(settings, S_OVERLAY_FILE);
     std::string s = obs_data_get_string(settings, S_LAYOUT_FILE);
     m_layout_file = stringToWString(s);
@@ -52,30 +60,6 @@ inline void InputSource::Update(obs_data_t *settings)
 inline void InputSource::Tick(float seconds)
 {
     CheckKeys();
-    /*
-    int controllerId = -1;
-
-    for (DWORD i = 0; i < XUSER_MAX_COUNT && controllerId == -1; i++)
-    {
-    XINPUT_STATE state;
-    ZeroMemory(&state, sizeof(XINPUT_STATE));
-
-    if (XInputGetState(i, &state) == ERROR_SUCCESS)
-    controllerId = i;
-    }
-
-    if (controllerId >= 0) {
-    XINPUT_STATE state;
-    ZeroMemory(&state, sizeof(XINPUT_STATE));
-
-    if (XInputGetState(controllerId, &state) == ERROR_SUCCESS)
-    warning("Controller on port %i\n", controllerId);
-    bool A_button = ((state.Gamepad.wButtons & XINPUT_GAMEPAD_A) != 0);
-    float left_trigger = (float)state.Gamepad.bLeftTrigger / 255;
-    warning("Left trigger: %.4f, A button: %s\n", left_trigger, A_button ? "yes" : "no");
-    }
-    else
-    warning("No controller found!\n");*/
 }
 
 inline void InputSource::Render(gs_effect_t *effect)
@@ -111,7 +95,37 @@ inline void InputSource::Render(gs_effect_t *effect)
                 DrawKey(effect, &k, x, y);
             }
         }
+        else if (m_layout.m_type == TYPE_CONTROLLER)
+        {
+            DrawKey(effect, &m_layout.m_keys[PAD_LT]);
+            DrawKey(effect, &m_layout.m_keys[PAD_RT]);
+            DrawKey(effect, &m_layout.m_keys[PAD_RB]);
+            DrawKey(effect, &m_layout.m_keys[PAD_LB]);
 
+            DrawKey(effect, &m_layout.m_keys[PAD_BODY], 0, 0);
+            
+            InputKey k = m_layout.m_keys[PAD_L_ANALOG];
+            x = k.column - k.w / 2 + m_pad_settings.m_analog_radius * m_pad_settings.m_left_analog_x;
+            y = k.row - k.h / 2 - m_pad_settings.m_analog_radius * m_pad_settings.m_left_analog_y;
+            DrawKey(effect, &k, x, y);
+
+            k = m_layout.m_keys[PAD_R_ANALOG];
+            x = k.column - k.w / 2 + m_pad_settings.m_analog_radius * m_pad_settings.m_right_analog_x;
+            y = k.row - k.h / 2 - m_pad_settings.m_analog_radius * m_pad_settings.m_right_analog_y;
+            DrawKey(effect, &k, x, y);
+
+            DrawKey(effect, &m_layout.m_keys[PAD_BACK]);
+            DrawKey(effect, &m_layout.m_keys[PAD_START]);
+            DrawKey(effect, &m_layout.m_keys[PAD_PLAYER_1 + m_pad_settings.m_controller_id]);
+            DrawKey(effect, &m_layout.m_keys[PAD_X]);
+            DrawKey(effect, &m_layout.m_keys[PAD_Y]);
+            DrawKey(effect, &m_layout.m_keys[PAD_A]);
+            DrawKey(effect, &m_layout.m_keys[PAD_B]);
+            DrawKey(effect, &m_layout.m_keys[PAD_DPAD_UP]);
+            DrawKey(effect, &m_layout.m_keys[PAD_DPAD_DOWN]);
+            DrawKey(effect, &m_layout.m_keys[PAD_DPAD_LEFT]);
+            DrawKey(effect, &m_layout.m_keys[PAD_DPAD_RIGHT]);
+        }
     }
 }
 
@@ -219,15 +233,13 @@ void InputSource::LoadOverlayLayout()
 
                 m_layout.m_keys.emplace_back(k);
                 u_cord += k.w + 3;
-
             }
 
             m_layout.m_h = m_layout.m_rows * m_layout.m_btn_h + m_layout.m_key_space_v * m_layout.m_rows;
             m_layout.m_w = m_layout.m_cols * m_layout.m_btn_w + m_layout.m_key_space_h * (m_layout.m_cols - 1);
         }
-        else if (m_layout.m_type = TYPE_MOUSE)
+        else if (m_layout.m_type == TYPE_MOUSE)
         {
-
             line = cfg->get_string("mouse_layout_w_h");
             m_layout.m_w = read_chain_int(line);
             m_layout.m_h = read_chain_int(line);
@@ -235,11 +247,11 @@ void InputSource::LoadOverlayLayout()
             // Stitching together config value identifiers (what a mess)
 
             std::string vals[] = { "lmb", "rmb", "mmb", "smb1", "smb2", "body" };
-            unsigned char keys[]{ KEY_LMB, KEY_RMB, KEY_MMB, KEY_SMB1, KEY_SMB2, 0 };
+            unsigned char keys[] { KEY_LMB, KEY_RMB, KEY_MMB, KEY_SMB1, KEY_SMB2, 0 };
 
             std::stringstream stream;
             std::string begin;
-
+            
             for (int i = 0; i < 6; i++)
             {
                 InputKey m;
@@ -255,7 +267,7 @@ void InputSource::LoadOverlayLayout()
 
                 stream.str("");
                 stream << begin << "_w_h";
-
+                
                 line = cfg->get_string(stream.str().c_str());
                 m.w = read_chain_int(line);
                 m.h = read_chain_int(line);
@@ -269,10 +281,138 @@ void InputSource::LoadOverlayLayout()
 
                 m_layout.m_keys.emplace_back(m);
             }
+            
         }
         else if (m_layout.m_type == TYPE_CONTROLLER)
         {
+            m_layout.m_w = cfg->get_int("pad_w");
+            m_layout.m_h = cfg->get_int("pad_h");
+            m_pad_settings.m_analog_radius = cfg->get_int("pad_analog_radius");
 
+            InputKey keys[PAD_KEY_COUNT];
+            keys[PAD_BODY].w = m_layout.m_w;
+            keys[PAD_BODY].h = m_layout.m_h;
+            keys[PAD_BODY].texture_u = 1;
+            keys[PAD_BODY].texture_v = 1;
+
+            //Sticks
+            keys[PAD_L_ANALOG].texture_u = keys[PAD_R_ANALOG].texture_u = cfg->get_int("pad_analog_u");
+            keys[PAD_L_ANALOG].texture_v = keys[PAD_R_ANALOG].texture_v = cfg->get_int("pad_analog_v");
+
+            keys[PAD_L_ANALOG].column = cfg->get_int("pad_l_analog_x");
+            keys[PAD_L_ANALOG].row = cfg->get_int("pad_l_analog_y");
+            
+            keys[PAD_R_ANALOG].column = cfg->get_int("pad_r_analog_x");
+            keys[PAD_R_ANALOG].row = cfg->get_int("pad_r_analog_y");
+            
+            keys[PAD_L_ANALOG].h = keys[PAD_L_ANALOG].w = keys[PAD_R_ANALOG].h = keys[PAD_R_ANALOG].w = cfg->get_int("pad_analog_dim");
+
+            // Start/Back
+            keys[PAD_BACK].w = keys[PAD_START].w = cfg->get_int("pad_back_w");
+            keys[PAD_BACK].h = keys[PAD_START].h = cfg->get_int("pad_back_h");
+
+            keys[PAD_BACK].texture_u  = cfg->get_int("pad_back_u");
+            keys[PAD_START].texture_v = keys[PAD_BACK].texture_v = cfg->get_int("pad_back_v");
+            keys[PAD_START].texture_u = keys[PAD_BACK].texture_u + keys[PAD_BACK].w + 3;
+
+            keys[PAD_BACK].column = cfg->get_int("pad_back_x");
+            keys[PAD_BACK].row = cfg->get_int("pad_back_y");
+
+            keys[PAD_START].column = cfg->get_int("pad_start_x");
+            keys[PAD_START].row = cfg->get_int("pad_start_y");
+
+            // Controller center button
+            keys[PAD_PLAYER_1].column = keys[PAD_PLAYER_2].column =
+                keys[PAD_PLAYER_3].column = keys[PAD_PLAYER_4].column = cfg->get_int("pad_port_x");
+            keys[PAD_PLAYER_1].row = keys[PAD_PLAYER_2].row =
+                keys[PAD_PLAYER_3].row = keys[PAD_PLAYER_4].row = cfg->get_int("pad_port_y");
+
+            keys[PAD_PLAYER_1].w = keys[PAD_PLAYER_2].w = keys[PAD_PLAYER_3].w =
+                keys[PAD_PLAYER_4].w = keys[PAD_PLAYER_1].h = keys[PAD_PLAYER_2].h =
+                keys[PAD_PLAYER_3].h = keys[PAD_PLAYER_4].h = cfg->get_int("pad_port_dim");
+
+            keys[PAD_PLAYER_1].texture_u = cfg->get_int("pad_port_u");
+            keys[PAD_PLAYER_1].texture_v = keys[PAD_PLAYER_2].texture_v =
+                keys[PAD_PLAYER_3].texture_v = keys[PAD_PLAYER_4].texture_v = cfg->get_int("pad_port_v");
+
+            keys[PAD_PLAYER_2].texture_u = keys[PAD_PLAYER_1].texture_u + 3 + keys[PAD_PLAYER_1].w;
+            keys[PAD_PLAYER_3].texture_u = keys[PAD_PLAYER_1].texture_u + (3 + keys[PAD_PLAYER_1].w) * 2;
+            keys[PAD_PLAYER_4].texture_u = keys[PAD_PLAYER_1].texture_u + (3 + keys[PAD_PLAYER_1].w) * 3;
+
+            // X, Y, A, B
+            keys[PAD_A].texture_v = keys[PAD_B].texture_v = keys[PAD_Y].texture_v 
+                = keys[PAD_X].texture_v = cfg->get_int("pad_x_v");
+            keys[PAD_X].texture_u = cfg->get_int("pad_x_u");
+
+            keys[PAD_X].w = keys[PAD_Y].w = keys[PAD_A].w = keys[PAD_B].w =
+                keys[PAD_X].h = keys[PAD_Y].h = keys[PAD_A].h = keys[PAD_B].h = cfg->get_int("pad_x_dim");
+
+            keys[PAD_Y].texture_u = keys[PAD_X].texture_u + 3 + keys[PAD_X].w;
+            keys[PAD_B].texture_u = keys[PAD_X].texture_u + (3 + keys[PAD_X].w) * 2;
+            keys[PAD_A].texture_u = keys[PAD_X].texture_u + (3 + keys[PAD_X].w) * 3;
+
+            keys[PAD_X].column = cfg->get_int("pad_x_x");
+            keys[PAD_X].row = cfg->get_int("pad_x_y");
+
+            keys[PAD_Y].column = cfg->get_int("pad_y_x");
+            keys[PAD_Y].row = cfg->get_int("pad_y_y");
+
+            keys[PAD_A].column = cfg->get_int("pad_a_x");
+            keys[PAD_A].row = cfg->get_int("pad_a_y");
+
+            keys[PAD_B].column = cfg->get_int("pad_b_x");
+            keys[PAD_B].row = cfg->get_int("pad_b_y");
+
+            // Shoulder keys
+            keys[PAD_LB].w = keys[PAD_RB].w = cfg->get_int("pad_b_w");
+            keys[PAD_LB].h = keys[PAD_RB].h = cfg->get_int("pad_b_h");
+
+            keys[PAD_LT].w = keys[PAD_RT].w = cfg->get_int("pad_t_w");
+            keys[PAD_LT].h = keys[PAD_RT].h = cfg->get_int("pad_t_h");
+
+            keys[PAD_LB].texture_u = cfg->get_int("pad_b_u");
+            keys[PAD_RB].texture_u = keys[PAD_LB].texture_u + 3 + keys[PAD_LB].w;
+            keys[PAD_LB].texture_v = keys[PAD_RB].texture_v = cfg->get_int("pad_b_v");
+
+            keys[PAD_LT].texture_u = cfg->get_int("pad_t_u");
+            keys[PAD_RT].texture_u = keys[PAD_LT].texture_u + 3 + keys[PAD_LT].w;
+            keys[PAD_LT].texture_v = keys[PAD_RT].texture_v= cfg->get_int("pad_t_v");
+
+            keys[PAD_LB].column = cfg->get_int("pad_lb_x");
+            keys[PAD_LB].row = cfg->get_int("pad_lb_y");
+
+            keys[PAD_LT].column = cfg->get_int("pad_lt_x");
+            keys[PAD_LT].row = cfg->get_int("pad_lt_y");
+
+            keys[PAD_RB].column = cfg->get_int("pad_rb_x");
+            keys[PAD_RB].row = cfg->get_int("pad_rb_y");
+
+            keys[PAD_RT].column = cfg->get_int("pad_rt_x");
+            keys[PAD_RT].row = cfg->get_int("pad_rt_y");
+
+            // Dpad
+            keys[PAD_DPAD_UP].texture_u = keys[PAD_DPAD_DOWN].texture_u = keys[PAD_DPAD_LEFT].texture_u =
+                keys[PAD_DPAD_RIGHT].texture_u = cfg->get_int("pad_dpad_pressed_u");
+            keys[PAD_DPAD_UP].texture_v = keys[PAD_DPAD_DOWN].texture_v = keys[PAD_DPAD_LEFT].texture_v =
+                keys[PAD_DPAD_RIGHT].texture_v = cfg->get_int("pad_dpad_pressed_v");
+
+            keys[PAD_DPAD_UP].w = keys[PAD_DPAD_DOWN].w = keys[PAD_DPAD_LEFT].w = keys[PAD_DPAD_RIGHT].w =
+                keys[PAD_DPAD_UP].h = keys[PAD_DPAD_DOWN].h = keys[PAD_DPAD_LEFT].h = keys[PAD_DPAD_RIGHT].h =
+                cfg->get_int("pad_dpad_dim");
+
+            keys[PAD_DPAD_UP].column = cfg->get_int("pad_dpad_up_x");
+            keys[PAD_DPAD_UP].row = cfg->get_int("pad_dpad_up_y");
+            keys[PAD_DPAD_DOWN].column = cfg->get_int("pad_dpad_down_x");
+            keys[PAD_DPAD_DOWN].row = cfg->get_int("pad_dpad_down_y");
+            keys[PAD_DPAD_LEFT].column = cfg->get_int("pad_dpad_left_x");
+            keys[PAD_DPAD_LEFT].row = cfg->get_int("pad_dpad_left_y");
+            keys[PAD_DPAD_RIGHT].column = cfg->get_int("pad_dpad_right_x");
+            keys[PAD_DPAD_RIGHT].row = cfg->get_int("pad_dpad_right_y");
+
+            for (int i = 0; i < PAD_KEY_COUNT; i++)
+            {
+                m_layout.m_keys.emplace_back(keys[i]);
+            }
         }
 
         m_layout.m_key_count = min(m_layout.m_key_count, m_layout.m_keys.size());
@@ -281,22 +421,122 @@ void InputSource::LoadOverlayLayout()
         cx = m_layout.m_w;
         cy = m_layout.m_h;
     }
+  
+    delete cfg;
 }
 
 void InputSource::UnloadOverlayLayout()
 {
     if (!m_layout.m_keys.empty())
+    {
         m_layout.m_keys.clear();
+    }
+
+    ZeroMemory(&m_xinput, sizeof(XINPUT_STATE));
 }
 
 void InputSource::CheckKeys()
 {
-    if (m_layout.m_is_loaded) {
-        for (int i = 0; i < m_layout.m_key_count; i++)
+    if (m_layout.m_is_loaded)
+    {
+        if (m_layout.m_type == TYPE_KEYBOARD || m_layout.m_type == TYPE_MOUSE)
         {
-            m_layout.m_keys[i].m_pressed = GetAsyncKeyState(m_layout.m_keys[i].m_key_char) & SHIFTED;
+            for (int i = 0; i < m_layout.m_key_count; i++)
+            {
+                m_layout.m_keys[i].m_pressed = GetAsyncKeyState(m_layout.m_keys[i].m_key_char) & SHIFTED;
+            }
+        }
+        else if (m_layout.m_type == TYPE_CONTROLLER)
+        {
+            ZeroMemory(&m_xinput, sizeof(XINPUT_STATE));
+            m_valid_controller = false;
+            if (XInputGetState(m_pad_settings.m_controller_id, &m_xinput) == ERROR_SUCCESS)
+            {
+                m_valid_controller = true;
+            }
+
+            if (m_valid_controller)
+            {
+                CheckGamePadKeys();
+            }
         }
     }
+}
+
+void InputSource::CheckGamePadKeys(void)
+{
+    m_layout.m_keys[PAD_L_ANALOG].m_pressed = X_PRESSED(XINPUT_GAMEPAD_LEFT_THUMB);
+    m_layout.m_keys[PAD_R_ANALOG].m_pressed = X_PRESSED(XINPUT_GAMEPAD_RIGHT_THUMB);
+
+    m_layout.m_keys[PAD_BACK].m_pressed = X_PRESSED(XINPUT_GAMEPAD_BACK);
+    m_layout.m_keys[PAD_START].m_pressed = X_PRESSED(XINPUT_GAMEPAD_START);
+
+    m_layout.m_keys[PAD_X].m_pressed = X_PRESSED(XINPUT_GAMEPAD_X);
+    m_layout.m_keys[PAD_Y].m_pressed = X_PRESSED(XINPUT_GAMEPAD_Y);
+    m_layout.m_keys[PAD_A].m_pressed = X_PRESSED(XINPUT_GAMEPAD_A);
+    m_layout.m_keys[PAD_B].m_pressed = X_PRESSED(XINPUT_GAMEPAD_B);
+
+    m_layout.m_keys[PAD_LB].m_pressed = X_PRESSED(XINPUT_GAMEPAD_LEFT_SHOULDER);
+    m_layout.m_keys[PAD_LT].m_pressed = m_xinput.Gamepad.bLeftTrigger > 20;
+
+    m_layout.m_keys[PAD_RB].m_pressed = X_PRESSED(XINPUT_GAMEPAD_RIGHT_SHOULDER);
+    m_layout.m_keys[PAD_RT].m_pressed = m_xinput.Gamepad.bRightTrigger > 20;
+
+    m_layout.m_keys[PAD_DPAD_UP].m_pressed = X_PRESSED(XINPUT_GAMEPAD_DPAD_UP);
+    m_layout.m_keys[PAD_DPAD_DOWN].m_pressed = X_PRESSED(XINPUT_GAMEPAD_DPAD_DOWN);
+    m_layout.m_keys[PAD_DPAD_LEFT].m_pressed = X_PRESSED(XINPUT_GAMEPAD_DPAD_LEFT);
+    m_layout.m_keys[PAD_DPAD_RIGHT].m_pressed = X_PRESSED(XINPUT_GAMEPAD_DPAD_RIGHT);
+
+    if (!DEAD_ZONE(m_xinput.Gamepad.sThumbLX, m_pad_settings.m_left_dead_zone))
+    {
+        m_pad_settings.m_left_analog_x = fmaxf(-1, (float)m_xinput.Gamepad.sThumbLX / PAD_STICK_MAX_VAL);
+    }
+    else
+    {
+        m_pad_settings.m_left_analog_x = 0.f;
+    }
+
+    if (!DEAD_ZONE(m_xinput.Gamepad.sThumbLY, m_pad_settings.m_left_dead_zone))
+    {
+        m_pad_settings.m_left_analog_y = fmaxf(-1, (float)m_xinput.Gamepad.sThumbLY / PAD_STICK_MAX_VAL);
+    }
+    else
+    {
+        m_pad_settings.m_left_analog_y = 0.f;
+    }
+
+    if (!DEAD_ZONE(m_xinput.Gamepad.sThumbRX, m_pad_settings.m_right_dead_zone))
+    {
+        m_pad_settings.m_right_analog_x = fmaxf(-1, (float)m_xinput.Gamepad.sThumbRX / PAD_STICK_MAX_VAL);
+    }
+    else
+    {
+        m_pad_settings.m_right_analog_x = 0.f;
+    }
+
+    if (!DEAD_ZONE(m_xinput.Gamepad.sThumbRY, m_pad_settings.m_right_dead_zone))
+    {
+        m_pad_settings.m_right_analog_y = fmaxf(-1, (float)m_xinput.Gamepad.sThumbRY / PAD_STICK_MAX_VAL);
+    }
+    else
+    {
+        m_pad_settings.m_right_analog_y = 0.f;
+    }
+}
+
+bool is_controller_changed(obs_properties_t * props, obs_property_t * p, obs_data_t * s)
+{
+    bool is_gamepad = obs_data_get_bool(s, S_IS_CONTROLLER);
+    
+    obs_property_t *id = obs_properties_get(props, S_CONTROLLER_ID);
+    obs_property_t *l_deadzone = obs_properties_get(props, S_CONTROLLER_L_DEAD_ZONE);
+    obs_property_t *r_deadzone = obs_properties_get(props, S_CONTROLLER_R_DEAD_ZONE);
+
+    obs_property_set_visible(id, is_gamepad);
+    obs_property_set_visible(l_deadzone, is_gamepad);
+    obs_property_set_visible(r_deadzone, is_gamepad);
+
+    return true;
 }
 
 obs_properties_t * get_properties_for_overlay(void * data)
@@ -353,8 +593,6 @@ obs_properties_t * get_properties_for_overlay(void * data)
             if (slash)
                 layout_path.resize(slash - layout_path.c_str() + 1);
         }
-
-
     }
 
     obs_properties_add_path(props, S_OVERLAY_FILE, T_OVERLAY_FILE, OBS_PATH_FILE,
@@ -362,6 +600,19 @@ obs_properties_t * get_properties_for_overlay(void * data)
 
     obs_properties_add_path(props, S_LAYOUT_FILE, T_LAYOUT_FILE, OBS_PATH_FILE,
         filter_text.c_str(), layout_path.c_str());
+
+    // Gamepad stuff
+
+    obs_property_t *p = obs_properties_add_bool(props, S_IS_CONTROLLER, T_IS_CONTROLLER);
+    obs_property_set_modified_callback(p, is_controller_changed);
+
+    obs_properties_add_int(props, S_CONTROLLER_ID, T_CONTROLLER_ID, 0, 3, 1);
+
+    obs_properties_add_int_slider(props, S_CONTROLLER_L_DEAD_ZONE, 
+        T_CONROLLER_L_DEADZONE, 1, PAD_STICK_MAX_VAL - 1, 1);
+    obs_properties_add_int_slider(props, S_CONTROLLER_R_DEAD_ZONE, 
+        T_CONROLLER_R_DEADZONE, 1, PAD_STICK_MAX_VAL - 1, 1);
+
     return props;
 }
 

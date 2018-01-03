@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <clocale>
 #include <locale>
+#include <Xinput.h>
 #include "ccl/ccl.hpp"
 #include "layouttype.hpp"
 extern "C" {
@@ -15,12 +16,23 @@ extern "C" {
 
 struct InputKey {
     unsigned char m_key_char;
-    bool m_pressed;
+    bool m_pressed = false;
     uint16_t texture_u, texture_v;
     uint16_t w, h;
 
     uint16_t x_offset; // used to center buttons that span over multiple columns
     uint16_t row, column; // On screen location (in pixels for mouse/controller layouts)
+};
+
+struct GamepadSettings {
+    uint16_t m_analog_radius = 0;
+    short m_controller_id = 0;
+    
+    float m_left_analog_x = 0.f, m_left_analog_y = 0.f;
+    float m_right_analog_x = 0.f, m_right_analog_y = 0.f;
+    
+    uint16_t m_left_dead_zone = 0;
+    uint16_t m_right_dead_zone = 0;
 };
 
 struct OverlayLayout {
@@ -34,6 +46,8 @@ struct OverlayLayout {
     uint16_t texture_v_space;
     bool m_is_loaded = false;
     std::vector<InputKey> m_keys;
+
+    uint16_t m_analog_stick_radius;
 };
 
 struct InputSource
@@ -41,10 +55,14 @@ struct InputSource
     obs_source_t *m_source = nullptr;
     uint32_t cx = 0;
     uint32_t cy = 0;
+
+    bool m_valid_controller = false;
+    XINPUT_STATE m_xinput;
     std::string m_image_file;
     std::wstring m_layout_file;
     gs_image_file_t *m_image = nullptr;
     OverlayLayout m_layout;
+    GamepadSettings m_pad_settings;
 
     inline InputSource(obs_source_t *source_, obs_data_t *settings) :
         m_source(source_)
@@ -64,7 +82,10 @@ struct InputSource
     void UnloadOverlayTexure(void);
 
     void DrawKey(gs_effect_t *effect, InputKey* key, uint16_t x, uint16_t y);
+    void DrawKey(gs_effect_t *effect, InputKey* key);
+
     void CheckKeys(void);
+    void CheckGamePadKeys(void);
 
     inline bool io_begins(const std::string line, const std::string prefix)
     {
@@ -104,6 +125,8 @@ struct InputSource
     inline void Tick(float seconds);
     inline void Render(gs_effect_t *effect);
 };
+
+static bool is_controller_changed(obs_properties_t *props, obs_property_t *p, obs_data_t *s);
 
 // For registering
 static obs_properties_t *get_properties_for_overlay(void *data);

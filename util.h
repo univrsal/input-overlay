@@ -5,6 +5,9 @@
 #define NULL 0
 #endif // !NULL
 
+#define DEAD_ZONE(x, dz) ((x < dz) && (x > -dz))
+#define X_PRESSED(b) ((m_xinput.Gamepad.wButtons & b) != 0)
+
 #define warning(format, ...) blog(LOG_WARNING, "[%s] " format, \
 		obs_source_get_name(m_source), ##__VA_ARGS__)
 
@@ -20,6 +23,10 @@
 // Lang Input Overlay
 #define S_OVERLAY_FILE              "overlay_image"
 #define S_LAYOUT_FILE               "layout_file"
+#define S_IS_CONTROLLER             "is_controller"
+#define S_CONTROLLER_ID             "controller_id"
+#define S_CONTROLLER_L_DEAD_ZONE    "controller_l_deadzone"
+#define S_CONTROLLER_R_DEAD_ZONE    "controller_r_deadzone"
 
 #define T_(v)                       obs_module_text(v)
 #define T_OVERLAY_FILE              T_("OverlayFile")
@@ -27,6 +34,10 @@
 #define T_FILTER_IMAGE_FILES        T_("Filter.ImageFiles")
 #define T_FILTER_TEXT_FILES         T_("Filter.TextFiles")
 #define T_FILTER_ALL_FILES          T_("Filter.AllFiles")
+#define T_IS_CONTROLLER             T_("Gamepad.IsGamepad")
+#define T_CONTROLLER_ID             T_("GamepadId")
+#define T_CONROLLER_L_DEADZONE      T_("Gamepad.LeftDeadZone")
+#define T_CONROLLER_R_DEADZONE      T_("Gamepad.RightDeadZone")
 
 // Lang Input History
 #define S_OVERLAY_DIRECTION             "direction_up"
@@ -77,6 +88,31 @@
 #define UTIL_START      0x20
 #define UTIL_END        0x2F
 #define SPECIAL_SIZE 8
+
+// Gamepad constants
+#define PAD_STICK_MAX_VAL 32767
+#define PAD_KEY_COUNT 21
+#define PAD_BODY 0
+#define PAD_L_ANALOG 1
+#define PAD_R_ANALOG 2
+#define PAD_BACK 3
+#define PAD_START 4
+#define PAD_PLAYER_1 5
+#define PAD_PLAYER_2 6
+#define PAD_PLAYER_3 7
+#define PAD_PLAYER_4 8
+#define PAD_X 9
+#define PAD_Y 10
+#define PAD_B 11
+#define PAD_A 12
+#define PAD_LB 13
+#define PAD_LT 14
+#define PAD_RB 15
+#define PAD_RT 16
+#define PAD_DPAD_UP 17
+#define PAD_DPAD_DOWN 18
+#define PAD_DPAD_LEFT 19
+#define PAD_DPAD_RIGHT 20
 
 const char* key_to_text(int key_code);
 char* append(char* a, char* b);
