@@ -1,17 +1,26 @@
-#pragma once
+#ifndef INPUT_SOURCE_HPP
+#define INPUT_SOURCE_HPP
+
+#ifdef WINDOWS
+#include <Windows.h>
+#include <Xinput.h>
+#endif // WINDOWS
+#include "util.h"
 #include <obs-module.h>
 #include <string>
 #include <fstream>
-#include <Windows.h>
 #include <algorithm>
 #include <clocale>
 #include <locale>
-#include <Xinput.h>
 #include "ccl/ccl.hpp"
 #include "layouttype.hpp"
 extern "C" {
+#ifdef WINDOWS
 #include <graphics\image-file.h>
-#include "util.h"
+#endif
+#ifdef LINUX 
+#include <graphics/image-file.h>
+#endif
 }
 
 struct InputKey {
@@ -132,3 +141,5 @@ static bool is_controller_changed(obs_properties_t *props, obs_property_t *p, ob
 static obs_properties_t *get_properties_for_overlay(void *data);
 
 void register_overlay_source();
+#endif // INPUT-SOURCE_HPP
+

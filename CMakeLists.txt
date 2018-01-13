@@ -4,6 +4,13 @@ if(MSVC)
 	set(input-overlay_PLATFORM_DEPS
 		w32-pthreads
 		XInput)
+elseif(UNIX)
+	find_package(X11 REQUIRED)
+	if(X11_FOUND)
+		include_directories(${X11_INCLUDE_DIR})
+		set(input-overlay_PLATFORM_DEPS
+			${X11_LIBRARIES})
+	endif(X11_FOUND)
 endif()
 
 set(input-overlay_SOURCES
