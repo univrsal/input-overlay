@@ -1,21 +1,35 @@
-#pragma once
+#ifndef INPUT_SOURCE_HPP
+#define INPUT_SOURCE_HPP
+
 #include <obs-module.h>
 #include <string>
-#include <fstream>
 #include <Windows.h>
 #include <algorithm>
 #include <clocale>
 #include <locale>
-#include <Xinput.h>
+#include <uiohook.h>
+#include <list>
+#include <stdarg.h>
 #include "ccl/ccl.hpp"
 #include "layouttype.hpp"
 extern "C" {
 #include <graphics\image-file.h>
 #include "util.h"
 }
+#if HAVE_XINPUT
+#include <Xinput.h>
+#endif
+
+#ifdef WINDOWS
+#include <Windows.h>
+#else
+#if defined UNIX
+
+#endif
+#endif
 
 struct InputKey {
-    unsigned char m_key_char;
+    uint16_t m_key_code;
     bool m_pressed = false;
     uint16_t texture_u, texture_v;
     uint16_t w, h;
@@ -56,8 +70,10 @@ struct InputSource
     uint32_t cx = 0;
     uint32_t cy = 0;
 
-    bool m_valid_controller = false;
+#if HAVE_XINPUT
     XINPUT_STATE m_xinput;
+#endif
+    bool m_valid_controller = false;
     std::string m_image_file;
     std::wstring m_layout_file;
     gs_image_file_t *m_image = nullptr;
@@ -99,19 +115,19 @@ struct InputSource
     }
 
     // Read key order from a string e.g. "A,B,C,0x10"
-    unsigned char read_chain(std::string& l)
+    uint16_t read_chain(std::string& l)
     {
         std::string temp = l.substr(0, l.find(','));
         l = l.substr(l.find(',') + 1, l.size());
 
-        if (temp.length() < 2) {
-            return temp[0];
-        }
-        else if (temp.find("0x") != std::string::npos)
+        if (temp.find("0x") != std::string::npos)
         {
             return std::stoul(temp, nullptr, 16);
         }
-        return 'A';
+        else
+        {
+            return (uint16_t) 0x0;
+        }
     }
 
     uint16_t read_chain_int(std::string& l)
@@ -132,3 +148,25 @@ static bool is_controller_changed(obs_properties_t *props, obs_property_t *p, ob
 static obs_properties_t *get_properties_for_overlay(void *data);
 
 void register_overlay_source();
+
+// libuiohook
+
+#ifdef WINDOWS
+DWORD WINAPI hook_thread_proc(LPVOID arg);
+#else
+void *hook_thread_proc(void *arg);
+#endif
+
+void dispatch_proc(uiohook_event * const event);
+
+bool logger_proc(unsigned int level, const char *format, ...);
+
+void start_hook(void);
+
+void end_hook(void);
+
+int hook_enable(void);
+
+void proccess_event(uiohook_event * const event);
+
+#endif

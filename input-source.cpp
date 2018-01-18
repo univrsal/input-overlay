@@ -1,5 +1,19 @@
 #include "input-source.hpp"
 
+
+#ifdef WINDOWS
+static HANDLE hook_thread;
+static HANDLE hook_running_mutex;
+static HANDLE hook_control_mutex;
+static HANDLE hook_control_cond;
+#else
+#if defined UNIX
+
+#endif
+#endif
+
+std::list<uint16_t> pressed_vc_keys = std::list<uint16_t>();
+
 void InputSource::DrawKey(gs_effect_t *effect, InputKey* key, uint16_t x, uint16_t y)
 {
     gs_effect_set_texture(gs_effect_get_param_by_name(effect, "image"), m_image->texture);
@@ -67,11 +81,13 @@ inline void InputSource::Render(gs_effect_t *effect)
     if (!m_image || !m_image->texture)
         return;
 
-    if (m_layout_file.empty() || !m_layout.m_is_loaded) {
+    if (m_layout_file.empty() || !m_layout.m_is_loaded)
+    {
         gs_effect_set_texture(gs_effect_get_param_by_name(effect, "image"), m_image->texture);
         gs_draw_sprite(m_image->texture, 0, cx, cy);
     }
-    else {
+    else
+    {
         int x = 0, y = 0;
         InputKey k;
 
@@ -215,7 +231,7 @@ void InputSource::LoadOverlayLayout()
                 temph = read_chain_int(key_height);
                 k.w = tempw * m_layout.m_btn_w;
                 k.h = temph * m_layout.m_btn_h;
-                k.m_key_char = read_chain(key_order);
+                k.m_key_code = read_chain(key_order);
                 k.m_pressed = false;
                 k.row = read_chain_int(key_row);
                 k.column = read_chain_int(key_col);
@@ -255,7 +271,7 @@ void InputSource::LoadOverlayLayout()
             for (int i = 0; i < 6; i++)
             {
                 InputKey m;
-                m.m_key_char = keys[i];
+                m.m_key_code = keys[i];
 
                 stream.str("");
                 begin = "mouse_" + vals[i];
@@ -417,7 +433,7 @@ void InputSource::LoadOverlayLayout()
 
         m_layout.m_key_count = min(m_layout.m_key_count, m_layout.m_keys.size());
         m_layout.m_is_loaded = true;
-
+        
         cx = m_layout.m_w;
         cy = m_layout.m_h;
     }
@@ -432,7 +448,9 @@ void InputSource::UnloadOverlayLayout()
         m_layout.m_keys.clear();
     }
 
+#if HAVE_XINPUT
     ZeroMemory(&m_xinput, sizeof(XINPUT_STATE));
+#endif
 }
 
 void InputSource::CheckKeys()
@@ -443,11 +461,24 @@ void InputSource::CheckKeys()
         {
             for (int i = 0; i < m_layout.m_key_count; i++)
             {
-                m_layout.m_keys[i].m_pressed = GetAsyncKeyState(m_layout.m_keys[i].m_key_char) & SHIFTED;
+                m_layout.m_keys[i].m_pressed = false;
+            }
+            
+            if (!pressed_vc_keys.empty())
+            {
+                for (int i = 0; i < m_layout.m_key_count; i++)
+                {
+                    if (std::find(pressed_vc_keys.begin(), pressed_vc_keys.end(),
+                        m_layout.m_keys[i].m_key_code) != pressed_vc_keys.end())
+                    {
+                        m_layout.m_keys[i].m_pressed = true;
+                    }
+                }
             }
         }
         else if (m_layout.m_type == TYPE_CONTROLLER)
         {
+#if HAVE_XINPUT
             ZeroMemory(&m_xinput, sizeof(XINPUT_STATE));
             m_valid_controller = false;
             if (XInputGetState(m_pad_settings.m_controller_id, &m_xinput) == ERROR_SUCCESS)
@@ -459,12 +490,14 @@ void InputSource::CheckKeys()
             {
                 CheckGamePadKeys();
             }
+#endif
         }
     }
 }
 
 void InputSource::CheckGamePadKeys(void)
 {
+#if HAVE_XINPUT
     m_layout.m_keys[PAD_L_ANALOG].m_pressed = X_PRESSED(XINPUT_GAMEPAD_LEFT_THUMB);
     m_layout.m_keys[PAD_R_ANALOG].m_pressed = X_PRESSED(XINPUT_GAMEPAD_RIGHT_THUMB);
 
@@ -522,6 +555,7 @@ void InputSource::CheckGamePadKeys(void)
     {
         m_pad_settings.m_right_analog_y = 0.f;
     }
+#endif
 }
 
 bool is_controller_changed(obs_properties_t * props, obs_property_t * p, obs_data_t * s)
@@ -560,7 +594,8 @@ obs_properties_t * get_properties_for_overlay(void * data)
     filter_img += T_FILTER_ALL_FILES;
     filter_img += " (*.*)";
 
-    if (s && !s->m_image_file.empty()) {
+    if (s && !s->m_image_file.empty())
+    {
         const char *slash;
 
         img_path = s->m_image_file;
@@ -570,7 +605,8 @@ obs_properties_t * get_properties_for_overlay(void * data)
             img_path.resize(slash - img_path.c_str() + 1);
     }
 
-    if (s && !s->m_layout_file.empty()) {
+    if (s && !s->m_layout_file.empty())
+    {
         const char *slash;
 
         // Wtf.
@@ -641,4 +677,297 @@ void register_overlay_source()
     si.video_tick = [](void *data, float seconds) { reinterpret_cast<InputSource*>(data)->Tick(seconds); };
     si.video_render = [](void *data, gs_effect_t *effect) { reinterpret_cast<InputSource*>(data)->Render(effect); };
     obs_register_source(&si);
+}
+
+void dispatch_proc(uiohook_event * const event)
+{
+    switch (event->type)
+    {
+    case EVENT_HOOK_ENABLED:
+#ifdef WINDOWS
+        WaitForSingleObject(hook_running_mutex, INFINITE);
+#else
+        pthread_mutex_lock(&hook_running_mutex);
+#endif
+
+#ifdef WINDOWS
+        SetEvent(hook_control_cond);
+#else
+        pthread_cond_signal(&hook_control_cond);
+        pthread_mutex_unlock(&hook_control_mutex);
+#endif
+        break;
+    case EVENT_HOOK_DISABLED:
+#ifdef WINDOWS
+        WaitForSingleObject(hook_control_mutex, INFINITE);
+#else
+        pthread_mutex_lock(&hook_control_mutex);
+#endif
+
+#ifdef WINDOWS
+        ReleaseMutex(hook_running_mutex);
+        ResetEvent(hook_control_cond);
+#else
+#if defined(__APPLE__) && defined(__MACH__)
+        CFRunLoopStop(CFRunLoopGetMain());
+#endif
+        pthread_mutex_unlock(&hook_running_mutex);
+#endif
+    }
+
+    proccess_event(event);
+}
+
+#ifdef WINDOWS
+DWORD WINAPI hook_thread_proc(LPVOID arg)
+{
+    // Set the hook status.
+    int status = hook_run();
+    if (status != UIOHOOK_SUCCESS) {
+        *(DWORD *)arg = status;
+        *(int *)arg = status;
+    }
+
+    SetEvent(hook_control_cond);
+    return status;
+}
+#else
+void *hook_thread_proc(void *arg)
+{
+    int status = hook_run();
+    if (status != UIOHOOK_SUCCESS) {
+        *(int *)arg = status;
+    }
+    pthread_cond_signal(&hook_control_cond);
+    pthread_mutex_unlock(&hook_control_mutex);
+
+    return arg;
+}
+#endif
+
+bool logger_proc(unsigned int level, const char * format, ...)
+{
+    va_list args;
+    switch (level)
+    {
+    case LOG_LEVEL_WARN:
+    case LOG_LEVEL_ERROR:
+        va_start(args, format);
+        blog(LOG_WARNING, format, args);
+        va_end(args);
+    }
+    return true;
+}
+
+void start_hook(void)
+{
+#ifdef _WIN32
+    hook_running_mutex = CreateMutex(NULL, FALSE, TEXT("hook_running_mutex"));
+    hook_control_mutex = CreateMutex(NULL, FALSE, TEXT("hook_control_mutex"));
+    hook_control_cond = CreateEvent(NULL, TRUE, FALSE, TEXT("hook_control_cond"));
+#else
+    pthread_mutex_init(&hook_running_mutex, NULL);
+    pthread_mutex_init(&hook_control_mutex, NULL);
+    pthread_cond_init(&hook_control_cond, NULL);
+#endif
+
+    // Set the logger callback for library output.
+    hook_set_logger_proc(&logger_proc);
+
+    // Set the event callback for uiohook events.
+    hook_set_dispatch_proc(&dispatch_proc);
+
+    int status = hook_enable();
+    switch (status) {
+    case UIOHOOK_SUCCESS:
+        // We no longer block, so we need to explicitly wait for the thread to die.
+    
+        break;
+    case UIOHOOK_ERROR_OUT_OF_MEMORY:
+        logger_proc(LOG_LEVEL_ERROR, "Failed to allocate memory. (%#X)\n", status);
+        break;
+    case UIOHOOK_ERROR_X_OPEN_DISPLAY:
+        logger_proc(LOG_LEVEL_ERROR, "Failed to open X11 display. (%#X)\n", status);
+        break;
+    case UIOHOOK_ERROR_X_RECORD_NOT_FOUND:
+        logger_proc(LOG_LEVEL_ERROR, "Unable to locate XRecord extension. (%#X)\n", status);
+        break;
+    case UIOHOOK_ERROR_X_RECORD_ALLOC_RANGE:
+        logger_proc(LOG_LEVEL_ERROR, "Unable to allocate XRecord range. (%#X)\n", status);
+        break;
+    case UIOHOOK_ERROR_X_RECORD_CREATE_CONTEXT:
+        logger_proc(LOG_LEVEL_ERROR, "Unable to allocate XRecord context. (%#X)\n", status);
+        break;
+    case UIOHOOK_ERROR_X_RECORD_ENABLE_CONTEXT:
+        logger_proc(LOG_LEVEL_ERROR, "Failed to enable XRecord context. (%#X)\n", status);
+        break;
+    case UIOHOOK_ERROR_SET_WINDOWS_HOOK_EX:
+        logger_proc(LOG_LEVEL_ERROR, "Failed to register low level windows hook. (%#X)\n", status);
+        break;
+    case UIOHOOK_ERROR_CREATE_EVENT_PORT:
+        logger_proc(LOG_LEVEL_ERROR, "Failed to create apple event port. (%#X)\n", status);
+        break;
+    case UIOHOOK_ERROR_CREATE_RUN_LOOP_SOURCE:
+        logger_proc(LOG_LEVEL_ERROR, "Failed to create apple run loop source. (%#X)\n", status);
+        break;
+    case UIOHOOK_ERROR_GET_RUNLOOP:
+        logger_proc(LOG_LEVEL_ERROR, "Failed to acquire apple run loop. (%#X)\n", status);
+        break;
+    case UIOHOOK_ERROR_CREATE_OBSERVER:
+        logger_proc(LOG_LEVEL_ERROR, "Failed to create apple run loop observer. (%#X)\n", status);
+        break;
+    case UIOHOOK_FAILURE:
+    default:
+        logger_proc(LOG_LEVEL_ERROR, "An unknown hook error occurred. (%#X)\n", status);
+        break;
+    }
+}
+
+void end_hook(void)
+{
+#ifdef _WIN32
+    // Create event handles for the thread hook.
+    CloseHandle(hook_thread);
+    CloseHandle(hook_running_mutex);
+    CloseHandle(hook_control_mutex);
+    CloseHandle(hook_control_cond);
+#else
+    pthread_mutex_destroy(&hook_running_mutex);
+    pthread_mutex_destroy(&hook_control_mutex);
+    pthread_cond_destroy(&hook_control_cond);
+#endif
+    hook_stop();
+}
+
+void proccess_event(uiohook_event * const event)
+{
+    if (event->type == EVENT_KEY_PRESSED)
+    {
+        bool flag = (std::find(pressed_vc_keys.begin(), pressed_vc_keys.end(), 
+            event->data.keyboard.keycode) != pressed_vc_keys.end());
+        
+        if (!flag)
+        {
+            blog(LOG_INFO, "ADDED %i to list!\n", event->data.keyboard.keycode);
+            pressed_vc_keys.emplace_back(event->data.keyboard.keycode);
+        }
+    }
+    else if (event->type == EVENT_KEY_RELEASED)
+    {
+        if (!pressed_vc_keys.empty())
+        {
+            pressed_vc_keys.remove(event->data.keyboard.keycode);
+        }
+    }
+}
+
+int hook_enable(void)
+{
+    // Lock the thread control mutex.  This will be unlocked when the
+    // thread has finished starting, or when it has fully stopped.
+#ifdef WINDOWS
+    WaitForSingleObject(hook_control_mutex, INFINITE);
+#else
+    pthread_mutex_lock(&hook_control_mutex);
+#endif
+
+    // Set the initial status.
+    int status = UIOHOOK_FAILURE;
+
+#ifndef WINDOWS
+    // Create the thread attribute.
+    pthread_attr_t hook_thread_attr;
+    pthread_attr_init(&hook_thread_attr);
+
+    // Get the policy and priority for the thread attr.
+    int policy;
+    pthread_attr_getschedpolicy(&hook_thread_attr, &policy);
+    int priority = sched_get_priority_max(policy);
+#endif
+
+#if defined(WINDOWS)
+    DWORD hook_thread_id;
+    DWORD *hook_thread_status = (DWORD*) malloc(sizeof(DWORD));
+    hook_thread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)hook_thread_proc, hook_thread_status, 0, &hook_thread_id);
+    if (hook_thread != INVALID_HANDLE_VALUE) {
+#else
+    int *hook_thread_status = malloc(sizeof(int));
+    if (pthread_create(&hook_thread, &hook_thread_attr, hook_thread_proc, hook_thread_status) == 0) {
+#endif
+#if defined(WINDOWS)
+        // Attempt to set the thread priority to time critical.
+        if (SetThreadPriority(hook_thread, THREAD_PRIORITY_TIME_CRITICAL) == 0) {
+            /*logger_proc(LOG_LEVEL_WARN, "%s [%u]: Could not set thread priority %li for thread %#p! (%#lX)\n",
+                __FUNCTION__, __LINE__, (long)THREAD_PRIORITY_TIME_CRITICAL,
+                hook_thread, (unsigned long)GetLastError());*/
+        }
+#elif (defined(__APPLE__) && defined(__MACH__)) || _POSIX_C_SOURCE >= 200112L
+        // Some POSIX revisions do not support pthread_setschedprio so we will 
+        // use pthread_setschedparam instead.
+        struct sched_param param = { .sched_priority = priority };
+        if (pthread_setschedparam(hook_thread, SCHED_OTHER, &param) != 0) {
+            logger_proc(LOG_LEVEL_WARN, "%s [%u]: Could not set thread priority %i for thread 0x%lX!\n",
+                __FUNCTION__, __LINE__, priority, (unsigned long)hook_thread);
+    }
+#else
+        // Raise the thread priority using glibc pthread_setschedprio.
+        if (pthread_setschedprio(hook_thread, priority) != 0) {
+            logger_proc(LOG_LEVEL_WARN, "%s [%u]: Could not set thread priority %i for thread 0x%lX!\n",
+                __FUNCTION__, __LINE__, priority, (unsigned long)hook_thread);
+        }
+#endif
+
+
+        // Wait for the thread to indicate that it has passed the 
+        // initialization portion by blocking until either a EVENT_HOOK_ENABLED 
+        // event is received or the thread terminates.
+        // NOTE This unlocks the hook_control_mutex while we wait.
+#ifdef WINDOWS
+        WaitForSingleObject(hook_control_cond, INFINITE);
+#else
+        pthread_cond_wait(&hook_control_cond, &hook_control_mutex);
+#endif
+
+#ifdef WINDOWS
+        if (WaitForSingleObject(hook_running_mutex, 0) != WAIT_TIMEOUT) {
+#else
+        if (pthread_mutex_trylock(&hook_running_mutex) == 0) {
+#endif
+            // Lock Successful; The hook is not running but the hook_control_cond 
+            // was signaled!  This indicates that there was a startup problem!
+
+            // Get the status back from the thread.
+#ifdef WINDOWS
+            WaitForSingleObject(hook_thread, INFINITE);
+            GetExitCodeThread(hook_thread, hook_thread_status);
+#else
+            pthread_join(hook_thread, (void **)&hook_thread_status);
+            status = *hook_thread_status;
+#endif
+        }
+        else {
+            // Lock Failure; The hook is currently running and wait was signaled
+            // indicating that we have passed all possible start checks.  We can 
+            // always assume a successful startup at this point.
+            status = UIOHOOK_SUCCESS;
+        }
+
+        free(hook_thread_status);
+
+        //logger_proc(LOG_LEVEL_DEBUG, "%s [%u]: Thread Result: (%#X).\n",
+        //    __FUNCTION__, __LINE__, status);
+    }
+    else
+    {
+        status = -1;
+    }
+
+    // Make sure the control mutex is unlocked.
+#ifdef WINDOWS
+    ReleaseMutex(hook_control_mutex);
+#else
+    pthread_mutex_unlock(&hook_control_mutex);
+#endif
+
+    return status;
 }

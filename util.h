@@ -1,9 +1,19 @@
 #ifndef UTIL_H
 #define UTIL_H
-#include <Windows.h>
+
 #ifndef NULL
 #define NULL 0
 #endif // !NULL
+
+#ifndef WINDOWS
+#ifdef _WIN32
+#define WINDOWS
+#endif
+#endif
+
+#ifdef WINDOWS
+#include <Windows.h>
+#endif
 
 #define DEAD_ZONE(x, dz) ((x < dz) && (x > -dz))
 #define X_PRESSED(b) ((m_xinput.Gamepad.wButtons & b) != 0)

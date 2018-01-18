@@ -1,4 +1,5 @@
 #include <obs-module.h>
+#include <uiohook.h>
 extern "C" {
 #include "util.h"
 }
@@ -13,5 +14,11 @@ bool obs_module_load(void)
 {
     register_history();
     register_overlay_source();
+    start_hook();
     return true;
+}
+
+void obs_modul_unload(void)
+{
+    end_hook();
 }

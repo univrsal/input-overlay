@@ -14,6 +14,9 @@ Head over to [releases](https://github.com/univrsal/input-overlay/releases) for 
 ![tut](http://hnng.moe/f/WHe)
 ![tut2](http://hnng.moe/f/Xcp)
 
+## Credits
+input-overlay depends on [libuiohook](https://github.com/kwhat/libuiohook) by [kwhat](https://github.com/kwhat) licenced under the [GNU General Public Licence v3.0](https://www.gnu.org/licenses/gpl-3.0.txt)
+
 More Information:
 - [OBS resource page](https://obsproject.com/forum/resources/input-overlay.552/)
 - [*.psd and fonts used](https://goo.gl/kyyoXx)
