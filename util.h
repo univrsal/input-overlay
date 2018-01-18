@@ -1,75 +1,24 @@
 #ifndef UTIL_H
 #define UTIL_H
-
-#ifdef WIN32
-#define WINDOWS
-#else
-#define LINUX
-#endif
-
-#ifdef WINDOWS
 #include <Windows.h>
-
-#define SHIFTED 0x8000 
-
-#define KEY_MMB     VK_MBUTTON
-#define KEY_SMB0    VK_XBUTTON1
-#define KEY_SMB1    VK_XBUTTON2
-#define KEY_NONE    0x06
-
-#define DEAD_ZONE(x, dz) ((x < dz) && (x > -dz))
-#define X_PRESSED(b) ((m_xinput.Gamepad.wButtons & b) != 0)
-
-#define ALPHABET_START  0x41
-#define ALPHABET_END    0x5A
-#define NUMBER_START    0x30
-#define NUMBER_END      0x39
-#define NUMPAD_START    0x60
-#define NUMPAD_END      0x6F
-#define FUNCTION_START  0x70
-#define FUNCTION_END    0x87
-#define UTIL_START      0x20
-#define UTIL_END        0x2F
-#define SPECIAL_SIZE 8
-
-// Gamepad constants
-#define PAD_STICK_MAX_VAL 32767
-#define PAD_KEY_COUNT 21
-#define PAD_BODY 0
-#define PAD_L_ANALOG 1
-#define PAD_R_ANALOG 2
-#define PAD_BACK 3
-#define PAD_START 4
-#define PAD_PLAYER_1 5
-#define PAD_PLAYER_2 6
-#define PAD_PLAYER_3 7
-#define PAD_PLAYER_4 8
-#define PAD_X 9
-#define PAD_Y 10
-#define PAD_B 11
-#define PAD_A 12
-#define PAD_LB 13
-#define PAD_LT 14
-#define PAD_RB 15
-#define PAD_RT 16
-#define PAD_DPAD_UP 17
-#define PAD_DPAD_DOWN 18
-#define PAD_DPAD_LEFT 19
-#define PAD_DPAD_RIGHT 20
-
-#endif // WINDOWS
-
-#ifdef LINUX
-
-
-#endif // LINUX
-
 #ifndef NULL
 #define NULL 0
 #endif // !NULL
 
+#define DEAD_ZONE(x, dz) ((x < dz) && (x > -dz))
+#define X_PRESSED(b) ((m_xinput.Gamepad.wButtons & b) != 0)
+
 #define warning(format, ...) blog(LOG_WARNING, "[%s] " format, \
 		obs_source_get_name(m_source), ##__VA_ARGS__)
+
+#define SHIFTED 0x8000 
+
+#define KEY_LMB     VK_LBUTTON
+#define KEY_RMB     VK_RBUTTON
+#define KEY_MMB     VK_MBUTTON
+#define KEY_SMB1    VK_XBUTTON1
+#define KEY_SMB2    VK_XBUTTON2
+#define KEY_NONE    0x07
 
 // Lang Input Overlay
 #define S_OVERLAY_FILE              "overlay_image"
@@ -127,6 +76,43 @@
 #define T_OVERLAY_ENABLE_REPEAT_KEYS    T_("Overlay.Enable.RepeatKeys")
 #define T_OVERLAY_ENABLE_AUTO_CLEAR     T_("Overlay.Enable.AutoClear")
 #define T_OVERLAY_AUTO_CLEAR_INTERVAL   T_("Overlay.AutoClear.Interval")
+
+#define ALPHABET_START  0x41
+#define ALPHABET_END    0x5A
+#define NUMBER_START    0x30
+#define NUMBER_END      0x39
+#define NUMPAD_START    0x60
+#define NUMPAD_END      0x6F
+#define FUNCTION_START  0x70
+#define FUNCTION_END    0x87
+#define UTIL_START      0x20
+#define UTIL_END        0x2F
+#define SPECIAL_SIZE 8
+
+// Gamepad constants
+#define PAD_STICK_MAX_VAL 32767
+#define PAD_KEY_COUNT 21
+#define PAD_BODY 0
+#define PAD_L_ANALOG 1
+#define PAD_R_ANALOG 2
+#define PAD_BACK 3
+#define PAD_START 4
+#define PAD_PLAYER_1 5
+#define PAD_PLAYER_2 6
+#define PAD_PLAYER_3 7
+#define PAD_PLAYER_4 8
+#define PAD_X 9
+#define PAD_Y 10
+#define PAD_B 11
+#define PAD_A 12
+#define PAD_LB 13
+#define PAD_LT 14
+#define PAD_RB 15
+#define PAD_RT 16
+#define PAD_DPAD_UP 17
+#define PAD_DPAD_DOWN 18
+#define PAD_DPAD_LEFT 19
+#define PAD_DPAD_RIGHT 20
 
 const char* key_to_text(int key_code);
 char* append(char* a, char* b);

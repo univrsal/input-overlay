@@ -1,6 +1,4 @@
-#ifndef INPUT_HISTORY_HPP
-#define INPUT_HISTORY_HPP
-
+#pragma once
 #include <obs-module.h>
 extern "C" {
 #include "util.h"
@@ -82,5 +80,3 @@ static bool clear_history(obs_properties_t *props, obs_property_t *property, voi
 static obs_properties_t *get_properties_for_history(void *data);
 
 void register_history();
-
-#endif // INPUT-HISTORY_HPP
