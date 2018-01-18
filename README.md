@@ -19,4 +19,14 @@ More Information:
 - [*.psd and fonts used](https://goo.gl/kyyoXx)
 - [Making your own presets](https://vimeo.com/238275966)
 
+Compiling:
+I compile the plugin with Visual Studio 2015 and static linking. If you need help with
+setting up a development environment you might want to take a look at a tutorial I wrote
+over at my [blog](https://universallp.wordpress.com/2017/08/17/obs-studio/).
+To enable static linking in VS do the following:
+```
+Right-click the project "input-overlay" in VS > Properties > Configuration Properties
+> C/C++ > Code Generation
+Choose /MT for runtime library in the Release Configuration 
+```
 ### Made a preset? Let me know and I'll add it to the repository!
