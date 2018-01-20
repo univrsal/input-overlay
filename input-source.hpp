@@ -10,6 +10,8 @@
 #include <uiohook.h>
 #include <list>
 #include <stdarg.h>
+#include <list>
+#include <util/platform.h>
 #include "ccl/ccl.hpp"
 #include "layouttype.hpp"
 extern "C" {
@@ -27,6 +29,15 @@ extern "C" {
 
 #endif
 #endif
+
+#define MAX_SIMULTANEOUS_KEYS 14
+extern uint16_t pressed_keys[MAX_SIMULTANEOUS_KEYS];
+extern bool hook_initialized;
+
+bool util_pressed_empty(void);
+bool util_key_exists(uint16_t vc);
+void util_add_pressed(uint16_t vc);
+void util_remove_pressed(uint16_t vc);
 
 struct InputKey {
     uint16_t m_key_code;
@@ -75,7 +86,7 @@ struct InputSource
 #endif
     bool m_valid_controller = false;
     std::string m_image_file;
-    std::wstring m_layout_file;
+    std::string m_layout_file;
     gs_image_file_t *m_image = nullptr;
     OverlayLayout m_layout;
     GamepadSettings m_pad_settings;
@@ -149,6 +160,7 @@ static obs_properties_t *get_properties_for_overlay(void *data);
 
 void register_overlay_source();
 
+uint16_t mouse_to_vc(int m);
 // libuiohook
 
 #ifdef WINDOWS

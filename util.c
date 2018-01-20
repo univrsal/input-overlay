@@ -9,217 +9,211 @@ const char * key_to_text(int key_code)
 {
     switch (key_code)
     {
-    case VK_NUMPAD0:
+    case VC_KP_0:
         return "NUMPAD 0";
-    case VK_NUMPAD1:
+    case VC_KP_1:
         return "NUMPAD 1";
-    case VK_NUMPAD2:
+    case VC_KP_2:
         return "NUMPAD 2";
-    case VK_NUMPAD3:
+    case VC_KP_3:
         return "NUMPAD 3";
-    case VK_NUMPAD4:
+    case VC_KP_4:
         return "NUMPAD 4";
-    case VK_NUMPAD5:
+    case VC_KP_5:
         return "NUMPAD 5";
-    case VK_NUMPAD6:
+    case VC_KP_6:
         return "NUMPAD 6";
-    case VK_NUMPAD7:
+    case VC_KP_7:
         return "NUMPAD 7";
-    case VK_NUMPAD8:
+    case VC_KP_8:
         return "NUMPAD 8";
-    case VK_NUMPAD9:
+    case VC_KP_9:
         return "NUMPAD 9";  
-    case VK_NUMLOCK:
+    case VC_NUM_LOCK:
         return "NUM LOCK";
-    case VK_MULTIPLY:
+    case VC_KP_MULTIPLY:
         return "MULTIPLY";
-    case VK_ADD:
+    case VC_KP_ADD:
         return "ADD";
-    case VK_SUBTRACT:
+    case VC_KP_SUBTRACT:
         return "SUBTRACT";
-    case VK_DECIMAL:
+    case VC_KP_COMMA:
         return "DECIMAL";
-    case VK_DIVIDE:
-        return "DEVIDE";
-    case VK_F1:
+    case VC_KP_DIVIDE:
+        return "DIVIDE";
+    case VC_F1:
         return "F1";
-    case VK_F2:
+    case VC_F2:
         return "F2";
-    case VK_F3:
+    case VC_F3:
         return "F3";
-    case VK_F4:
+    case VC_F4:
         return "F4";
-    case VK_F5:
+    case VC_F5:
         return "F5";
-    case VK_F6:
+    case VC_F6:
         return "F6";
-    case VK_F7:
+    case VC_F7:
         return "F7";
-    case VK_F8:
+    case VC_F8:
         return "F8";
-    case VK_F9:
+    case VC_F9:
         return "F9";
-    case VK_F10:
+    case VC_F10:
         return "F10";
-    case VK_F11:
+    case VC_F11:
         return "F11";
-    case VK_F12:
+    case VC_F12:
         return "F12";
-    case VK_F13:
+    case VC_F13:
         return "F13";
-    case VK_F14:
+    case VC_F14:
         return "F14";
-    case VK_F15:
+    case VC_F15:
         return "F15";
-    case VK_F16:
+    case VC_F16:
         return "F16";
-    case VK_F17:
+    case VC_F17:
         return "F17";
-    case VK_F18:
+    case VC_F18:
         return "F18";
-    case VK_F19:
+    case VC_F19:
         return "F19";
-    case VK_F20:
+    case VC_F20:
         return "F20";
-    case VK_F21:
+    case VC_F21:
         return "F21";
-    case VK_F22:
+    case VC_F22:
         return "F22";
-    case VK_F23:
+    case VC_F23:
         return "F23";
-    case VK_F24:
+    case VC_F24:
         return "F24";
-    case 'A':
+    case VC_A:
         return "A";
-    case 'B':
+    case VC_B:
         return "B";
-    case 'C':
+    case VC_C:
         return "C";
-    case 'D':
+    case VC_D:
         return "D";
-    case 'E':
+    case VC_E:
         return "E";
-    case 'F':
+    case VC_F:
         return "F";
-    case 'G':
+    case VC_G:
         return "G";
-    case 'H':
+    case VC_H:
         return "H";
-    case 'I':
+    case VC_I:
         return "I";
-    case 'J':
+    case VC_J:
         return "J";
-    case 'K':
+    case VC_K:
         return "K";
-    case 'L':
+    case VC_L:
         return "L";
-    case 'M':
+    case VC_M:
         return "M";
-    case 'N':
+    case VC_N:
         return "N";
-    case 'O':
+    case VC_O:
         return "O";
-    case 'P':
+    case VC_P:
         return "P";
-    case 'Q':
+    case VC_Q:
         return "Q";
-    case 'R':
+    case VC_R:
         return "R";
-    case 'S':
+    case VC_S:
         return "S";
-    case 'T':
+    case VC_T:
         return "T";
-    case 'U':
+    case VC_U:
         return "U";
-    case 'V':
+    case VC_V:
         return "V";
-    case 'W':
+    case VC_W:
         return "W";
-    case 'X':
+    case VC_X:
         return "X";
-    case 'Y':
+    case VC_Y:
         return "Y";
-    case 'Z':
+    case VC_Z:
         return "Z";
-    case '0':
+    case VC_0:
         return "0";
-    case '1':
+    case VC_1:
         return "1";
-    case '2':
+    case VC_2:
         return "2";
-    case '3':
+    case VC_3:
         return "3";
-    case '4':
+    case VC_4:
         return "4";
-    case '5':
+    case VC_5:
         return "5";
-    case '6':
+    case VC_6:
         return "6";
-    case '7':
+    case VC_7:
         return "7";
-    case '8':
+    case VC_8:
         return "8";
-    case '9':
+    case VC_9:
         return "9";
-    case VK_RETURN:
-    case VK_SEPARATOR:
+    case VC_CONTROL_L:
+        return "L-CONTROL";
+    case VC_CONTROL_R:
+        return "R-CONTROL";
+    case VC_ALT_L:
+        return "L-ALT";
+    case VC_ALT_R:
+        return "R-ALT";
+    case VC_META_L:
+        return "L-WIN";
+    case VC_META_R:
+        return "R-WIN";
+    case VC_ENTER:
+    case VC_KP_ENTER:
         return "ENTER";
-    case VK_SPACE:
+    case VC_SPACE:
         return "SPACE";
-    case VK_TAB:
+    case VC_TAB:
         return "TAB";
-    case VK_BACK:
+    case VC_BACKSPACE:
         return "BACKSPACE";
-    case VK_ESCAPE:
+    case VC_ESCAPE:
         return "ESC";
-    case VK_INSERT:
+    case VC_INSERT:
         return "INSERT";
-    case VK_HOME:
+    case VC_HOME:
         return "HOME";
-    case VK_PRIOR:
+    case VC_PAGE_UP:
         return "PAGE UP";
-    case VK_NEXT:
+    case VC_PAGE_DOWN:
         return "PAGE DOWN";
-    case VK_END:
+    case VC_END:
         return "END";
-    case VK_DELETE:
+    case VC_DELETE:
         return "DELETE";
-    case VK_UP:
+    case VC_UP:
         return "UP";
-    case VK_DOWN:
+    case VC_DOWN:
         return "DOWN";
-    case VK_LEFT:
+    case VC_LEFT:
         return "LEFT";
-    case VK_RIGHT:
+    case VC_RIGHT:
         return "RIGHT";
-    case VK_PRINT:
+    case VC_PRINTSCREEN:
         return "PRINT";
-    case VK_SCROLL:
+    case VC_SCROLL_LOCK:
         return "SCROLL LOCK";
-    case VK_PAUSE:
+    case VC_PAUSE:
         return "PAUSE";
-    case VK_CAPITAL:
+    case VC_CAPS_LOCK:
         return "CAPSLOCK";
     default:
         return "";
         break;
     }
-}
-
-
-
-char * append(char * a, char * b)
-{
-    char* out;
-    if (a == NULL || b == NULL)
-        return NULL;
-    if ((out = (char *)malloc(strlen(a) + strlen(b) + 1)) != NULL)
-    {
-        strcpy(out, a);
-        strcat(out, b);
-    }
-
-    a = NULL;
-    b = NULL;
-    return out;
 }

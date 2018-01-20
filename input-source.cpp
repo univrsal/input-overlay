@@ -1,5 +1,7 @@
 #include "input-source.hpp"
 
+uint16_t pressed_keys[MAX_SIMULTANEOUS_KEYS];
+bool hook_initialized = false;
 
 #ifdef WINDOWS
 static HANDLE hook_thread;
@@ -11,8 +13,6 @@ static HANDLE hook_control_cond;
 
 #endif
 #endif
-
-std::list<uint16_t> pressed_vc_keys = std::list<uint16_t>();
 
 void InputSource::DrawKey(gs_effect_t *effect, InputKey* key, uint16_t x, uint16_t y)
 {
@@ -43,14 +43,6 @@ void InputSource::UnloadOverlayTexure()
     obs_leave_graphics();
 }
 
-std::wstring stringToWString(const std::string& t_str)
-{
-    int size_needed = MultiByteToWideChar(CP_UTF8, 0, &t_str[0], (int)t_str.size(), NULL, 0);
-    std::wstring wstrTo(size_needed, 0);
-    MultiByteToWideChar(CP_UTF8, 0, &t_str[0], (int)t_str.size(), &wstrTo[0], size_needed);
-    return wstrTo;
-}
-
 inline void InputSource::Update(obs_data_t *settings)
 {
     m_pad_settings.m_controller_id = obs_data_get_int(settings, S_CONTROLLER_ID);
@@ -58,8 +50,7 @@ inline void InputSource::Update(obs_data_t *settings)
     m_pad_settings.m_right_dead_zone = obs_data_get_int(settings, S_CONTROLLER_R_DEAD_ZONE);
     
     m_image_file = obs_data_get_string(settings, S_OVERLAY_FILE);
-    std::string s = obs_data_get_string(settings, S_LAYOUT_FILE);
-    m_layout_file = stringToWString(s);
+    m_layout_file = obs_data_get_string(settings, S_LAYOUT_FILE);
 
     LoadOverlayTexture();
     LoadOverlayLayout();
@@ -106,9 +97,7 @@ inline void InputSource::Render(gs_effect_t *effect)
             for (int i = 0; i < m_layout.m_key_count; i++)
             {
                 k = m_layout.m_keys[i];
-                x = k.column;
-                y = k.row;
-                DrawKey(effect, &k, x, y);
+                DrawKey(effect, &k);
             }
         }
         else if (m_layout.m_type == TYPE_CONTROLLER)
@@ -154,7 +143,6 @@ void InputSource::LoadOverlayTexture()
         if (m_image == nullptr)
         {
             m_image = new gs_image_file_t();
-            warning("Error: Image struct was null!");
         }
 
         warning("Loading texture %s as overlay base image!", m_image_file.c_str());
@@ -179,17 +167,11 @@ void InputSource::LoadOverlayLayout()
         return;
 
     UnloadOverlayLayout();
-    std::ifstream layout_file(m_layout_file.c_str());
-
-    if (!layout_file.is_open())
-        return;
 
     std::string line;
     std::string key_order, key_width, key_height, key_col, key_row;
 
-    obs_data *settings = obs_source_get_settings(m_source);
-    std::string path = obs_data_get_string(settings, S_LAYOUT_FILE);
-    ccl_config *cfg = new ccl_config(path.c_str(), "");
+    ccl_config *cfg = new ccl_config(m_layout_file, "");
 
     if (!cfg->is_empty())
     {
@@ -262,13 +244,14 @@ void InputSource::LoadOverlayLayout()
 
             // Stitching together config value identifiers (what a mess)
 
-            std::string vals[] = { "lmb", "rmb", "mmb", "smb1", "smb2", "body" };
-            unsigned char keys[] { KEY_LMB, KEY_RMB, KEY_MMB, KEY_SMB1, KEY_SMB2, 0 };
+            std::string vals[] = { "lmb", "rmb", "mmb", "smb1", "smb2", "mwu", "mwd", "body" };
+            uint16_t keys[] { VC_MOUSE_BUTTON1, VC_MOUSE_BUTTON2, VC_MOUSE_BUTTON3, VC_MOUSE_BUTTON5,
+                VC_MOUSE_BUTTON4, VC_MOUSE_WHEEL_UP, VC_MOUSE_WHEEL_DOWN, -1};
 
             std::stringstream stream;
             std::string begin;
             
-            for (int i = 0; i < 6; i++)
+            for (int i = 0; i < 8; i++)
             {
                 InputKey m;
                 m.m_key_code = keys[i];
@@ -350,7 +333,7 @@ void InputSource::LoadOverlayLayout()
             keys[PAD_PLAYER_1].texture_u = cfg->get_int("pad_port_u");
             keys[PAD_PLAYER_1].texture_v = keys[PAD_PLAYER_2].texture_v =
                 keys[PAD_PLAYER_3].texture_v = keys[PAD_PLAYER_4].texture_v = cfg->get_int("pad_port_v");
-
+            
             keys[PAD_PLAYER_2].texture_u = keys[PAD_PLAYER_1].texture_u + 3 + keys[PAD_PLAYER_1].w;
             keys[PAD_PLAYER_3].texture_u = keys[PAD_PLAYER_1].texture_u + (3 + keys[PAD_PLAYER_1].w) * 2;
             keys[PAD_PLAYER_4].texture_u = keys[PAD_PLAYER_1].texture_u + (3 + keys[PAD_PLAYER_1].w) * 3;
@@ -464,12 +447,11 @@ void InputSource::CheckKeys()
                 m_layout.m_keys[i].m_pressed = false;
             }
             
-            if (!pressed_vc_keys.empty())
+            if (!util_pressed_empty())
             {
                 for (int i = 0; i < m_layout.m_key_count; i++)
                 {
-                    if (std::find(pressed_vc_keys.begin(), pressed_vc_keys.end(),
-                        m_layout.m_keys[i].m_key_code) != pressed_vc_keys.end())
+                    if (util_key_exists(m_layout.m_keys[i].m_key_code))
                     {
                         m_layout.m_keys[i].m_pressed = true;
                     }
@@ -558,6 +540,64 @@ void InputSource::CheckGamePadKeys(void)
 #endif
 }
 
+bool util_pressed_empty(void)
+{
+    for (int i = 0; i < MAX_SIMULTANEOUS_KEYS; i++)
+    {
+        if (pressed_keys[i] > 0)
+            return false;
+    }
+    return true;
+}
+
+bool util_key_exists(uint16_t vc)
+{
+    if (util_pressed_empty())
+        return false;
+    for (int i = 0; i < MAX_SIMULTANEOUS_KEYS; i++)
+    {
+        if (pressed_keys[i] == vc)
+            return true;
+    }
+    return false;
+}
+
+void util_add_pressed(uint16_t vc)
+{
+    if (!util_key_exists(vc))
+    {
+        int next_free = -1;
+        for (int i = 0; i < MAX_SIMULTANEOUS_KEYS; i++)
+        {
+            if (pressed_keys[i] == 0)
+            {
+                next_free = i;
+                break;
+            }
+        }
+
+        if (next_free > -1)
+        {
+            pressed_keys[next_free] = vc;
+        }
+    }
+}
+
+void util_remove_pressed(uint16_t vc)
+{
+    if (util_key_exists(vc))
+    {
+        for (int i = 0; i < MAX_SIMULTANEOUS_KEYS; i++)
+        {
+            if (pressed_keys[i] == vc)
+            {
+                pressed_keys[i] = VC_UNDEFINED;
+                break;
+            }
+        }
+    }
+}
+
 bool is_controller_changed(obs_properties_t * props, obs_property_t * p, obs_data_t * s)
 {
     bool is_gamepad = obs_data_get_bool(s, S_IS_CONTROLLER);
@@ -569,7 +609,7 @@ bool is_controller_changed(obs_properties_t * props, obs_property_t * p, obs_dat
     obs_property_set_visible(id, is_gamepad);
     obs_property_set_visible(l_deadzone, is_gamepad);
     obs_property_set_visible(r_deadzone, is_gamepad);
-
+    
     return true;
 }
 
@@ -608,27 +648,11 @@ obs_properties_t * get_properties_for_overlay(void * data)
     if (s && !s->m_layout_file.empty())
     {
         const char *slash;
-
-        // Wtf.
-        std::wstring ws = s->m_layout_file;
-        setlocale(LC_ALL, "");
-        const std::locale locale("");
-        typedef std::codecvt<wchar_t, char, std::mbstate_t> converter_type;
-        const converter_type& converter = std::use_facet<converter_type>(locale);
-        std::vector<char> to(ws.length() * converter.max_length());
-        std::mbstate_t state;
-        const wchar_t* from_next;
-        char* to_next;
-        const converter_type::result result = converter.out(state, ws.data(), ws.data() + ws.length(), from_next, &to[0], &to[0] + to.size(), to_next);
-
-        if (result == converter_type::ok || result == converter_type::noconv)
-        {
-            layout_path = std::string(&to[0], to_next);
-            replace(layout_path.begin(), layout_path.end(), '\\', '/');
-            slash = strrchr(layout_path.c_str(), '/');
-            if (slash)
-                layout_path.resize(slash - layout_path.c_str() + 1);
-        }
+        layout_path = s->m_layout_file;
+        replace(layout_path.begin(), layout_path.end(), '\\', '/');
+        slash = strrchr(layout_path.c_str(), '/');
+        if (slash)
+            layout_path.resize(slash - layout_path.c_str() + 1);
     }
 
     obs_properties_add_path(props, S_OVERLAY_FILE, T_OVERLAY_FILE, OBS_PATH_FILE,
@@ -638,7 +662,7 @@ obs_properties_t * get_properties_for_overlay(void * data)
         filter_text.c_str(), layout_path.c_str());
 
     // Gamepad stuff
-
+#ifdef HAVE_XINPUT
     obs_property_t *p = obs_properties_add_bool(props, S_IS_CONTROLLER, T_IS_CONTROLLER);
     obs_property_set_modified_callback(p, is_controller_changed);
 
@@ -648,7 +672,7 @@ obs_properties_t * get_properties_for_overlay(void * data)
         T_CONROLLER_L_DEADZONE, 1, PAD_STICK_MAX_VAL - 1, 1);
     obs_properties_add_int_slider(props, S_CONTROLLER_R_DEAD_ZONE, 
         T_CONROLLER_R_DEADZONE, 1, PAD_STICK_MAX_VAL - 1, 1);
-
+#endif
     return props;
 }
 
@@ -678,6 +702,13 @@ void register_overlay_source()
     si.video_render = [](void *data, gs_effect_t *effect) { reinterpret_cast<InputSource*>(data)->Render(effect); };
     obs_register_source(&si);
 }
+
+uint16_t mouse_to_vc(int m)
+{
+    return (uint16_t) (VC_MOUSE_MASK | m);
+}
+
+/* ------ LIBUIOHOOK ------*/
 
 void dispatch_proc(uiohook_event * const event)
 {
@@ -753,7 +784,9 @@ bool logger_proc(unsigned int level, const char * format, ...)
     case LOG_LEVEL_WARN:
     case LOG_LEVEL_ERROR:
         va_start(args, format);
-        blog(LOG_WARNING, format, args);
+        std::string f(format);
+        f.insert(0, "[input-overlay] ");
+        blog(LOG_WARNING, f.c_str(), args);
         va_end(args);
     }
     return true;
@@ -781,51 +814,51 @@ void start_hook(void)
     switch (status) {
     case UIOHOOK_SUCCESS:
         // We no longer block, so we need to explicitly wait for the thread to die.
-    
+        hook_initialized = true;
         break;
     case UIOHOOK_ERROR_OUT_OF_MEMORY:
-        logger_proc(LOG_LEVEL_ERROR, "Failed to allocate memory. (%#X)\n", status);
+        blog(LOG_ERROR, "[input-overlay] Failed to allocate memory. (%#X)\n", status);
         break;
     case UIOHOOK_ERROR_X_OPEN_DISPLAY:
-        logger_proc(LOG_LEVEL_ERROR, "Failed to open X11 display. (%#X)\n", status);
+        blog(LOG_ERROR, "[input-overlay] Failed to open X11 display. (%#X)\n", status);
         break;
     case UIOHOOK_ERROR_X_RECORD_NOT_FOUND:
-        logger_proc(LOG_LEVEL_ERROR, "Unable to locate XRecord extension. (%#X)\n", status);
+        blog(LOG_ERROR, "[input-overlay] Unable to locate XRecord extension. (%#X)\n", status);
         break;
     case UIOHOOK_ERROR_X_RECORD_ALLOC_RANGE:
-        logger_proc(LOG_LEVEL_ERROR, "Unable to allocate XRecord range. (%#X)\n", status);
+        blog(LOG_ERROR, "[input-overlay] Unable to allocate XRecord range. (%#X)\n", status);
         break;
     case UIOHOOK_ERROR_X_RECORD_CREATE_CONTEXT:
-        logger_proc(LOG_LEVEL_ERROR, "Unable to allocate XRecord context. (%#X)\n", status);
+        blog(LOG_ERROR, "[input-overlay] Unable to allocate XRecord context. (%#X)\n", status);
         break;
     case UIOHOOK_ERROR_X_RECORD_ENABLE_CONTEXT:
-        logger_proc(LOG_LEVEL_ERROR, "Failed to enable XRecord context. (%#X)\n", status);
+        blog(LOG_ERROR, "[input-overlay] Failed to enable XRecord context. (%#X)\n", status);
         break;
     case UIOHOOK_ERROR_SET_WINDOWS_HOOK_EX:
-        logger_proc(LOG_LEVEL_ERROR, "Failed to register low level windows hook. (%#X)\n", status);
+        blog(LOG_ERROR, "[input-overlay] Failed to register low level windows hook. (%#X)\n", status);
         break;
     case UIOHOOK_ERROR_CREATE_EVENT_PORT:
-        logger_proc(LOG_LEVEL_ERROR, "Failed to create apple event port. (%#X)\n", status);
+        blog(LOG_ERROR, "[input-overlay] Failed to create apple event port. (%#X)\n", status);
         break;
     case UIOHOOK_ERROR_CREATE_RUN_LOOP_SOURCE:
-        logger_proc(LOG_LEVEL_ERROR, "Failed to create apple run loop source. (%#X)\n", status);
+        blog(LOG_ERROR, "[input-overlay] Failed to create apple run loop source. (%#X)\n", status);
         break;
     case UIOHOOK_ERROR_GET_RUNLOOP:
-        logger_proc(LOG_LEVEL_ERROR, "Failed to acquire apple run loop. (%#X)\n", status);
+        blog(LOG_ERROR, "[input-overlay] Failed to acquire apple run loop. (%#X)\n", status);
         break;
     case UIOHOOK_ERROR_CREATE_OBSERVER:
-        logger_proc(LOG_LEVEL_ERROR, "Failed to create apple run loop observer. (%#X)\n", status);
+        blog(LOG_ERROR, "[input-overlay] Failed to create apple run loop observer. (%#X)\n", status);
         break;
     case UIOHOOK_FAILURE:
     default:
-        logger_proc(LOG_LEVEL_ERROR, "An unknown hook error occurred. (%#X)\n", status);
+        blog(LOG_ERROR, "[input-overlay] An unknown hook error occurred. (%#X)\n", status);
         break;
     }
 }
 
 void end_hook(void)
 {
-#ifdef _WIN32
+#ifdef WINDOWS
     // Create event handles for the thread hook.
     CloseHandle(hook_thread);
     CloseHandle(hook_running_mutex);
@@ -841,23 +874,43 @@ void end_hook(void)
 
 void proccess_event(uiohook_event * const event)
 {
-    if (event->type == EVENT_KEY_PRESSED)
+    util_remove_pressed(VC_MOUSE_WHEEL_UP);
+    util_remove_pressed(VC_MOUSE_WHEEL_DOWN);
+    
+    switch (event->type)
     {
-        bool flag = (std::find(pressed_vc_keys.begin(), pressed_vc_keys.end(), 
-            event->data.keyboard.keycode) != pressed_vc_keys.end());
-        
-        if (!flag)
-        {
-            blog(LOG_INFO, "ADDED %i to list!\n", event->data.keyboard.keycode);
-            pressed_vc_keys.emplace_back(event->data.keyboard.keycode);
-        }
-    }
-    else if (event->type == EVENT_KEY_RELEASED)
-    {
-        if (!pressed_vc_keys.empty())
-        {
-            pressed_vc_keys.remove(event->data.keyboard.keycode);
-        }
+        case EVENT_KEY_PRESSED:
+            if (!util_key_exists(event->data.keyboard.keycode))
+                util_add_pressed(event->data.keyboard.keycode);
+            break;
+        case EVENT_KEY_RELEASED:
+            if (util_key_exists(event->data.keyboard.keycode))
+                util_remove_pressed(event->data.keyboard.keycode);
+                break;
+        case EVENT_MOUSE_PRESSED:
+            if (!util_key_exists(mouse_to_vc(event->data.keyboard.keycode)))
+                util_add_pressed(mouse_to_vc(event->data.keyboard.keycode));
+            break;
+        case EVENT_MOUSE_RELEASED:
+            if (util_key_exists(mouse_to_vc(event->data.mouse.button)))
+                util_remove_pressed(mouse_to_vc(event->data.mouse.button));
+            break;
+        case EVENT_MOUSE_WHEEL:
+            if (event->data.wheel.rotation == WHEEL_UP)
+            {
+                if (!util_key_exists(VC_MOUSE_WHEEL_UP))
+                {
+                    util_add_pressed(VC_MOUSE_WHEEL_UP);
+                }
+            }
+            else if (event->data.wheel.rotation == WHEEL_DOWN)
+            {
+                if (!util_key_exists(VC_MOUSE_WHEEL_DOWN))
+                {
+                    util_add_pressed(VC_MOUSE_WHEEL_DOWN);
+                }
+            }
+            break;
     }
 }
 
@@ -897,27 +950,24 @@ int hook_enable(void)
 #if defined(WINDOWS)
         // Attempt to set the thread priority to time critical.
         if (SetThreadPriority(hook_thread, THREAD_PRIORITY_TIME_CRITICAL) == 0) {
-            /*logger_proc(LOG_LEVEL_WARN, "%s [%u]: Could not set thread priority %li for thread %#p! (%#lX)\n",
-                __FUNCTION__, __LINE__, (long)THREAD_PRIORITY_TIME_CRITICAL,
-                hook_thread, (unsigned long)GetLastError());*/
+            blog(LOG_WARNING, "[input-overlay] %s [%u]: Could not set thread priority %li for hook thread %#p! (%#lX)\n",
+                __FUNCTION__, __LINE__, (long) THREAD_PRIORITY_TIME_CRITICAL, hook_thread, (unsigned long) GetLastError());
         }
 #elif (defined(__APPLE__) && defined(__MACH__)) || _POSIX_C_SOURCE >= 200112L
         // Some POSIX revisions do not support pthread_setschedprio so we will 
         // use pthread_setschedparam instead.
         struct sched_param param = { .sched_priority = priority };
         if (pthread_setschedparam(hook_thread, SCHED_OTHER, &param) != 0) {
-            logger_proc(LOG_LEVEL_WARN, "%s [%u]: Could not set thread priority %i for thread 0x%lX!\n",
+            blog(LOG_WARNING, "[input-overlay] %s [%u]: Could not set thread priority %i for thread 0x%lX!\n",
                 __FUNCTION__, __LINE__, priority, (unsigned long)hook_thread);
     }
 #else
         // Raise the thread priority using glibc pthread_setschedprio.
         if (pthread_setschedprio(hook_thread, priority) != 0) {
-            logger_proc(LOG_LEVEL_WARN, "%s [%u]: Could not set thread priority %i for thread 0x%lX!\n",
+            blog(LOG_WARNING, "[input-overlay] %s [%u]: Could not set thread priority %i for thread 0x%lX!\n",
                 __FUNCTION__, __LINE__, priority, (unsigned long)hook_thread);
         }
 #endif
-
-
         // Wait for the thread to indicate that it has passed the 
         // initialization portion by blocking until either a EVENT_HOOK_ENABLED 
         // event is received or the thread terminates.
@@ -954,8 +1004,8 @@ int hook_enable(void)
 
         free(hook_thread_status);
 
-        //logger_proc(LOG_LEVEL_DEBUG, "%s [%u]: Thread Result: (%#X).\n",
-        //    __FUNCTION__, __LINE__, status);
+        blog(LOG_DEBUG, "[input-overlay] %s [%u]: Thread Result: (%#X).\n",
+            __FUNCTION__, __LINE__, status);
     }
     else
     {

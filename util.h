@@ -15,6 +15,8 @@
 #include <Windows.h>
 #endif
 
+#include <uiohook.h>
+
 #define DEAD_ZONE(x, dz) ((x < dz) && (x > -dz))
 #define X_PRESSED(b) ((m_xinput.Gamepad.wButtons & b) != 0)
 
@@ -87,43 +89,44 @@
 #define T_OVERLAY_ENABLE_AUTO_CLEAR     T_("Overlay.Enable.AutoClear")
 #define T_OVERLAY_AUTO_CLEAR_INTERVAL   T_("Overlay.AutoClear.Interval")
 
-#define ALPHABET_START  0x41
-#define ALPHABET_END    0x5A
-#define NUMBER_START    0x30
-#define NUMBER_END      0x39
-#define NUMPAD_START    0x60
-#define NUMPAD_END      0x6F
-#define FUNCTION_START  0x70
-#define FUNCTION_END    0x87
-#define UTIL_START      0x20
-#define UTIL_END        0x2F
-#define SPECIAL_SIZE 8
+#define WHEEL_UP        -1
+#define WHEEL_DOWN      1
+
+/* These were free in uiohook.h */
+#define VC_MOUSE_WHEEL_UP     0xED10
+#define VC_MOUSE_WHEEL_DOWN   0xED11
+#define VC_MOUSE_MASK         0xED00
+
+#define VC_MOUSE_BUTTON1      (MOUSE_BUTTON1 | VC_MOUSE_MASK)
+#define VC_MOUSE_BUTTON2      (MOUSE_BUTTON2 | VC_MOUSE_MASK)
+#define VC_MOUSE_BUTTON3      (MOUSE_BUTTON3 | VC_MOUSE_MASK)
+#define VC_MOUSE_BUTTON4      (MOUSE_BUTTON4 | VC_MOUSE_MASK)
+#define VC_MOUSE_BUTTON5      (MOUSE_BUTTON5 | VC_MOUSE_MASK)
 
 // Gamepad constants
-#define PAD_STICK_MAX_VAL 32767
-#define PAD_KEY_COUNT 21
-#define PAD_BODY 0
-#define PAD_L_ANALOG 1
-#define PAD_R_ANALOG 2
-#define PAD_BACK 3
-#define PAD_START 4
-#define PAD_PLAYER_1 5
-#define PAD_PLAYER_2 6
-#define PAD_PLAYER_3 7
-#define PAD_PLAYER_4 8
-#define PAD_X 9
-#define PAD_Y 10
-#define PAD_B 11
-#define PAD_A 12
-#define PAD_LB 13
-#define PAD_LT 14
-#define PAD_RB 15
-#define PAD_RT 16
-#define PAD_DPAD_UP 17
-#define PAD_DPAD_DOWN 18
-#define PAD_DPAD_LEFT 19
-#define PAD_DPAD_RIGHT 20
+#define PAD_STICK_MAX_VAL   32767
+#define PAD_KEY_COUNT       21
+#define PAD_BODY            0
+#define PAD_L_ANALOG        1
+#define PAD_R_ANALOG        2
+#define PAD_BACK            3
+#define PAD_START           4
+#define PAD_PLAYER_1        5
+#define PAD_PLAYER_2        6
+#define PAD_PLAYER_3        7
+#define PAD_PLAYER_4        8
+#define PAD_X               9
+#define PAD_Y               10
+#define PAD_B               11
+#define PAD_A               12
+#define PAD_LB              13
+#define PAD_LT              14
+#define PAD_RB              15
+#define PAD_RT              16
+#define PAD_DPAD_UP         17
+#define PAD_DPAD_DOWN       18
+#define PAD_DPAD_LEFT       19
+#define PAD_DPAD_RIGHT      20
 
 const char* key_to_text(int key_code);
-char* append(char* a, char* b);
 #endif
