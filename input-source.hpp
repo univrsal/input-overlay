@@ -114,17 +114,6 @@ struct InputSource
     void CheckKeys(void);
     void CheckGamePadKeys(void);
 
-    inline bool io_begins(const std::string line, const std::string prefix)
-    {
-        if (prefix.size() > line.size()) return false;
-        return equal(prefix.begin(), prefix.end(), line.begin());
-    }
-
-    inline void io_cut(std::string& line)
-    {
-        line = line.substr(line.rfind('=') + 1, line.size());
-    }
-
     // Read key order from a string e.g. "A,B,C,0x10"
     uint16_t read_chain(std::string& l)
     {
