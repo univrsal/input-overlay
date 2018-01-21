@@ -2,23 +2,25 @@
 #define INPUT_HISTORY_HPP
 
 #include <obs-module.h>
+#include <vector>
+#include <sstream>
+#include <iomanip>
+#include "input-source.hpp"
 extern "C" {
 #include "util.h"
 }
 
+#define MAX_HISTORY_SIZE 5
+
 struct KeyBundle {
     bool m_empty = true;
-    int m_keys[4] = { 0, 0, 0, 0 };
-    bool m_mod_shift = false, m_mod_alt = false, m_mod_ctrl = false, m_mod_win = false;
-    bool m_rmb = false, m_lmb = false, m_mmb = false, m_pmb = false, m_nmb = false;
+    uint16_t m_keys[MAX_SIMULTANEOUS_KEYS] = { 0 };
 
-    KeyBundle merge(KeyBundle other);
+    void merge(KeyBundle other);
 
-    const char* to_string(bool fix, bool include_mouse);
+    std::string to_string(bool fix, bool include_mouse);
     bool compare(KeyBundle* other);
-private:
-    char* add_key(char* text, char* key, bool* flag);
-
+    bool is_only_mouse();
 };
 
 struct InputHistorySource
@@ -35,14 +37,13 @@ struct InputHistorySource
     bool m_fix_cutting = false;
     bool m_include_mouse = false;
     bool m_update_keys = false;
-    bool m_collect_keys = false;
     bool m_dir_up = false;
     bool m_auto_clear = false;
     bool m_repeat_keys = false;
 
     KeyBundle m_current_keys;
     KeyBundle m_prev_keys;
-    KeyBundle m_history[5];
+    KeyBundle m_history[MAX_HISTORY_SIZE];
 
     float m_clear_timer = 0.f;
     int m_clear_interval = 0;
@@ -52,20 +53,17 @@ struct InputHistorySource
     {
         m_text_source = obs_source_create("text_gdiplus\0", "history-text-source", settings, NULL);
         obs_source_add_active_child(m_source, m_text_source);
-        obs_source_update(m_source, settings);
         obs_source_update(m_text_source, settings);
+        obs_source_update(m_source, settings);
     }
 
     inline ~InputHistorySource()
     {
-        clear_history();
         UnloadTextSource();
     }
 
     void UnloadTextSource(void);
 
-    bool any_key_down(void);
-    bool check_range(int start, int end);
     bool is_pressed(int k);
     void add_to_history(KeyBundle b);
     void clear_history(void);

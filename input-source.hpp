@@ -14,6 +14,7 @@
 #include <util/platform.h>
 #include "ccl/ccl.hpp"
 #include "layouttype.hpp"
+
 extern "C" {
 #include <graphics\image-file.h>
 #include "util.h"

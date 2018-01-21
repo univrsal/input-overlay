@@ -420,6 +420,10 @@ void InputSource::LoadOverlayLayout()
         cx = m_layout.m_w;
         cy = m_layout.m_h;
     }
+    else
+    {
+        warning("Failed to load config! Not a valid config file\n");
+    }
   
     delete cfg;
 }
@@ -693,8 +697,7 @@ void register_overlay_source()
 
     si.get_defaults = [](obs_data_t *settings)
     {
-        obs_data_t *input_obj = obs_data_create();
-        obs_data_release(input_obj);
+        // NO-OP
     };
 
     si.update = [](void *data, obs_data_t *settings) { reinterpret_cast<InputSource*>(data)->Update(settings); };

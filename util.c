@@ -161,6 +161,10 @@ const char * key_to_text(int key_code)
         return "8";
     case VC_9:
         return "9";
+    case VC_SHIFT_L:
+        return "L-SHIFT";
+    case VC_SHIFT_R:
+        return "R-SHIFT";
     case VC_CONTROL_L:
         return "L-CONTROL";
     case VC_CONTROL_R:
@@ -212,8 +216,22 @@ const char * key_to_text(int key_code)
         return "PAUSE";
     case VC_CAPS_LOCK:
         return "CAPSLOCK";
+    case VC_MOUSE_BUTTON1:
+        return "LEFT MOUSE";
+    case VC_MOUSE_BUTTON2:
+        return "RIGHT MOUSE";
+    case VC_MOUSE_BUTTON3:
+        return "MIDDLE MOUSE";
+    case VC_MOUSE_BUTTON4: // If you have a better name for them
+        return "MOUSE4";   // lemme know
+    case VC_MOUSE_BUTTON5:
+        return "MOUSE5";
+    case VC_MOUSE_WHEEL_UP:
+        return "SCROLL UP";
+    case VC_MOUSE_WHEEL_DOWN:
+        return "SCROLL DOWN";
     default:
-        return "";
+        return NULL;
         break;
     }
 }

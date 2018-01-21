@@ -23,15 +23,6 @@
 #define warning(format, ...) blog(LOG_WARNING, "[%s] " format, \
 		obs_source_get_name(m_source), ##__VA_ARGS__)
 
-#define SHIFTED 0x8000 
-
-#define KEY_LMB     VK_LBUTTON
-#define KEY_RMB     VK_RBUTTON
-#define KEY_MMB     VK_MBUTTON
-#define KEY_SMB1    VK_XBUTTON1
-#define KEY_SMB2    VK_XBUTTON2
-#define KEY_NONE    0x07
-
 // Lang Input Overlay
 #define S_OVERLAY_FILE              "overlay_image"
 #define S_LAYOUT_FILE               "layout_file"
