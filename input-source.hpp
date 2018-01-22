@@ -3,7 +3,6 @@
 
 #include <obs-module.h>
 #include <string>
-#include <Windows.h>
 #include <algorithm>
 #include <clocale>
 #include <locale>
@@ -21,14 +20,6 @@ extern "C" {
 }
 #if HAVE_XINPUT
 #include <Xinput.h>
-#endif
-
-#ifdef WINDOWS
-#include <Windows.h>
-#else
-#if defined UNIX
-
-#endif
 #endif
 
 #define MAX_SIMULTANEOUS_KEYS 14
