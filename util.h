@@ -11,11 +11,10 @@
 #endif
 #endif
 
-#ifdef WINDOWS
-#include <Windows.h>
-#endif
-
 #include <uiohook.h>
+
+#define UTIL_MAX(a,b)            (((a) > (b)) ? (a) : (b))
+#define UTIL_MIN(a,b)            (((a) < (b)) ? (a) : (b))
 
 #define DEAD_ZONE(x, dz) ((x < dz) && (x > -dz))
 #define X_PRESSED(b) ((m_xinput.Gamepad.wButtons & b) != 0)
