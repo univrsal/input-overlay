@@ -948,7 +948,7 @@ int hook_enable(void)
     hook_thread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)hook_thread_proc, hook_thread_status, 0, &hook_thread_id);
     if (hook_thread != INVALID_HANDLE_VALUE) {
 #else
-    int *hook_thread_status = malloc(sizeof(int));
+    int *hook_thread_status = (int*) malloc(sizeof(int));
     if (pthread_create(&hook_thread, &hook_thread_attr, hook_thread_proc, hook_thread_status) == 0) {
 #endif
 #if defined(WINDOWS)
