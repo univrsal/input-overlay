@@ -15,7 +15,7 @@
 #include "layouttype.hpp"
 
 extern "C" {
-#include <graphics\image-file.h>
+#include <graphics/image-file.h>
 #include "util.h"
 }
 #if HAVE_XINPUT
