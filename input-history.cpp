@@ -146,9 +146,9 @@ inline void InputHistorySource::Tick(float seconds)
         m_current_keys.merge(check_keys());
         m_counter++;
     }
-
-    cx = max(obs_source_get_width(m_text_source), 50);
-    cy = max(obs_source_get_height(m_text_source), 50);
+    
+    cx = UTIL_MAX(obs_source_get_width(m_text_source), 50);
+    cy = UTIL_MAX(obs_source_get_height(m_text_source), 50);
 }
 
 inline void InputHistorySource::Render(gs_effect_t * effect)

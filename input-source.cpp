@@ -9,9 +9,10 @@ static HANDLE hook_running_mutex;
 static HANDLE hook_control_mutex;
 static HANDLE hook_control_cond;
 #else
-#if defined UNIX
-
-#endif
+static pthread_t hook_thread;
+static pthread_mutex_t hook_running_mutex;
+static pthread_mutex_t hook_control_mutex;
+static pthread_cond_t hook_control_cond;
 #endif
 
 void InputSource::draw_key(gs_effect_t *effect, InputKey* key, uint16_t x, uint16_t y)
@@ -246,7 +247,7 @@ void InputSource::load_layout()
 
             std::string vals[] = { "lmb", "rmb", "mmb", "smb1", "smb2", "mwu", "mwd", "body" };
             uint16_t keys[] { VC_MOUSE_BUTTON1, VC_MOUSE_BUTTON2, VC_MOUSE_BUTTON3, VC_MOUSE_BUTTON5,
-                VC_MOUSE_BUTTON4, VC_MOUSE_WHEEL_UP, VC_MOUSE_WHEEL_DOWN, -1};
+                VC_MOUSE_BUTTON4, VC_MOUSE_WHEEL_UP, VC_MOUSE_WHEEL_DOWN, 0xffff};
 
             std::stringstream stream;
             std::string begin;
@@ -414,7 +415,7 @@ void InputSource::load_layout()
             }
         }
 
-        m_layout.m_key_count = min(m_layout.m_key_count, m_layout.m_keys.size());
+        m_layout.m_key_count = UTIL_MIN(m_layout.m_key_count, m_layout.m_keys.size());
         m_layout.m_is_loaded = true;
         
         cx = m_layout.m_w;
