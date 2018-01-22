@@ -59,10 +59,10 @@ struct InputHistorySource
 
     inline ~InputHistorySource()
     {
-        UnloadTextSource();
+        unload_textsource();
     }
 
-    void UnloadTextSource(void);
+    void unload_textsource(void);
 
     bool is_pressed(int k);
     void add_to_history(KeyBundle b);

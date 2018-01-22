@@ -1,7 +1,7 @@
 #include "input-history.hpp"
 
 
-void InputHistorySource::UnloadTextSource(void)
+void InputHistorySource::unload_textsource(void)
 {
     if (m_text_source)
     {

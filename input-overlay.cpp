@@ -21,7 +21,7 @@ bool obs_module_load(void)
     return true;
 }
 
-void obs_modul_unload(void)
+void obs_module_unload(void)
 {
     if (hook_initialized)
         end_hook();

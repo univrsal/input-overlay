@@ -100,20 +100,20 @@ struct InputSource
 
     inline ~InputSource()
     {
-        UnloadOverlayTexure();
-        UnloadOverlayLayout();
+        unload_texture();
+        unload_layout();
     }
 
-    void LoadOverlayTexture(void);
-    void LoadOverlayLayout(void);
-    void UnloadOverlayLayout(void);
-    void UnloadOverlayTexure(void);
+    void load_texture(void);
+    void load_layout(void);
+    void unload_layout(void);
+    void unload_texture(void);
 
-    void DrawKey(gs_effect_t *effect, InputKey* key, uint16_t x, uint16_t y);
-    void DrawKey(gs_effect_t *effect, InputKey* key);
+    void draw_key(gs_effect_t *effect, InputKey* key, uint16_t x, uint16_t y);
+    void draw_key(gs_effect_t *effect, InputKey* key);
 
-    void CheckKeys(void);
-    void CheckGamePadKeys(void);
+    void check_keys(void);
+    void check_gamepad(void);
 
     // Read key order from a string e.g. "A,B,C,0x10"
     uint16_t read_chain(std::string& l)

@@ -14,7 +14,7 @@ static HANDLE hook_control_cond;
 #endif
 #endif
 
-void InputSource::DrawKey(gs_effect_t *effect, InputKey* key, uint16_t x, uint16_t y)
+void InputSource::draw_key(gs_effect_t *effect, InputKey* key, uint16_t x, uint16_t y)
 {
     gs_effect_set_texture(gs_effect_get_param_by_name(effect, "image"), m_image->texture);
 
@@ -31,12 +31,12 @@ void InputSource::DrawKey(gs_effect_t *effect, InputKey* key, uint16_t x, uint16
 
     gs_matrix_pop();
 }
-void InputSource::DrawKey(gs_effect_t * effect, InputKey * key)
+void InputSource::draw_key(gs_effect_t * effect, InputKey * key)
 {
-    DrawKey(effect, key, key->column, key->row);
+    draw_key(effect, key, key->column, key->row);
 }
 
-void InputSource::UnloadOverlayTexure()
+void InputSource::unload_texture()
 {
     obs_enter_graphics();
     gs_image_file_free(m_image);
@@ -52,8 +52,8 @@ inline void InputSource::Update(obs_data_t *settings)
     m_image_file = obs_data_get_string(settings, S_OVERLAY_FILE);
     m_layout_file = obs_data_get_string(settings, S_LAYOUT_FILE);
 
-    LoadOverlayTexture();
-    LoadOverlayLayout();
+    load_texture();
+    load_layout();
 
     if (!m_layout.m_is_loaded && m_image && m_image->texture)
     {
@@ -64,7 +64,7 @@ inline void InputSource::Update(obs_data_t *settings)
 
 inline void InputSource::Tick(float seconds)
 {
-    CheckKeys();
+    check_keys();
 }
 
 inline void InputSource::Render(gs_effect_t *effect)
@@ -89,7 +89,7 @@ inline void InputSource::Render(gs_effect_t *effect)
                 k = m_layout.m_keys[i];
                 x = m_layout.m_btn_w * k.column + (m_layout.m_key_space_h * k.column) + k.x_offset;
                 y = m_layout.m_btn_h * k.row + (m_layout.m_key_space_v * k.row);
-                DrawKey(effect, &k, x, y);
+                draw_key(effect, &k, x, y);
             }
         }
         else if (m_layout.m_type == TYPE_MOUSE)
@@ -97,46 +97,46 @@ inline void InputSource::Render(gs_effect_t *effect)
             for (int i = 0; i < m_layout.m_key_count; i++)
             {
                 k = m_layout.m_keys[i];
-                DrawKey(effect, &k);
+                draw_key(effect, &k);
             }
         }
         else if (m_layout.m_type == TYPE_CONTROLLER)
         {
-            DrawKey(effect, &m_layout.m_keys[PAD_LT]);
-            DrawKey(effect, &m_layout.m_keys[PAD_RT]);
-            DrawKey(effect, &m_layout.m_keys[PAD_RB]);
-            DrawKey(effect, &m_layout.m_keys[PAD_LB]);
+            draw_key(effect, &m_layout.m_keys[PAD_LT]);
+            draw_key(effect, &m_layout.m_keys[PAD_RT]);
+            draw_key(effect, &m_layout.m_keys[PAD_RB]);
+            draw_key(effect, &m_layout.m_keys[PAD_LB]);
 
-            DrawKey(effect, &m_layout.m_keys[PAD_BODY], 0, 0);
+            draw_key(effect, &m_layout.m_keys[PAD_BODY], 0, 0);
             
             InputKey k = m_layout.m_keys[PAD_L_ANALOG];
             x = k.column - k.w / 2 + m_pad_settings.m_analog_radius * m_pad_settings.m_left_analog_x;
             y = k.row - k.h / 2 - m_pad_settings.m_analog_radius * m_pad_settings.m_left_analog_y;
-            DrawKey(effect, &k, x, y);
+            draw_key(effect, &k, x, y);
 
             k = m_layout.m_keys[PAD_R_ANALOG];
             x = k.column - k.w / 2 + m_pad_settings.m_analog_radius * m_pad_settings.m_right_analog_x;
             y = k.row - k.h / 2 - m_pad_settings.m_analog_radius * m_pad_settings.m_right_analog_y;
-            DrawKey(effect, &k, x, y);
+            draw_key(effect, &k, x, y);
 
-            DrawKey(effect, &m_layout.m_keys[PAD_BACK]);
-            DrawKey(effect, &m_layout.m_keys[PAD_START]);
-            DrawKey(effect, &m_layout.m_keys[PAD_PLAYER_1 + m_pad_settings.m_controller_id]);
-            DrawKey(effect, &m_layout.m_keys[PAD_X]);
-            DrawKey(effect, &m_layout.m_keys[PAD_Y]);
-            DrawKey(effect, &m_layout.m_keys[PAD_A]);
-            DrawKey(effect, &m_layout.m_keys[PAD_B]);
-            DrawKey(effect, &m_layout.m_keys[PAD_DPAD_UP]);
-            DrawKey(effect, &m_layout.m_keys[PAD_DPAD_DOWN]);
-            DrawKey(effect, &m_layout.m_keys[PAD_DPAD_LEFT]);
-            DrawKey(effect, &m_layout.m_keys[PAD_DPAD_RIGHT]);
+            draw_key(effect, &m_layout.m_keys[PAD_BACK]);
+            draw_key(effect, &m_layout.m_keys[PAD_START]);
+            draw_key(effect, &m_layout.m_keys[PAD_PLAYER_1 + m_pad_settings.m_controller_id]);
+            draw_key(effect, &m_layout.m_keys[PAD_X]);
+            draw_key(effect, &m_layout.m_keys[PAD_Y]);
+            draw_key(effect, &m_layout.m_keys[PAD_A]);
+            draw_key(effect, &m_layout.m_keys[PAD_B]);
+            draw_key(effect, &m_layout.m_keys[PAD_DPAD_UP]);
+            draw_key(effect, &m_layout.m_keys[PAD_DPAD_DOWN]);
+            draw_key(effect, &m_layout.m_keys[PAD_DPAD_LEFT]);
+            draw_key(effect, &m_layout.m_keys[PAD_DPAD_RIGHT]);
         }
     }
 }
 
-void InputSource::LoadOverlayTexture()
+void InputSource::load_texture()
 {
-    UnloadOverlayTexure();
+    unload_texture();
 
     if (!m_image_file.empty())
     {
@@ -159,14 +159,14 @@ void InputSource::LoadOverlayTexture()
     }
 }
 
-void InputSource::LoadOverlayLayout()
+void InputSource::load_layout()
 {
     m_layout.m_is_loaded = false;
 
     if (m_layout_file.empty())
         return;
 
-    UnloadOverlayLayout();
+    unload_layout();
 
     std::string line;
     std::string key_order, key_width, key_height, key_col, key_row;
@@ -428,7 +428,7 @@ void InputSource::LoadOverlayLayout()
     delete cfg;
 }
 
-void InputSource::UnloadOverlayLayout()
+void InputSource::unload_layout()
 {
     if (!m_layout.m_keys.empty())
     {
@@ -440,7 +440,7 @@ void InputSource::UnloadOverlayLayout()
 #endif
 }
 
-void InputSource::CheckKeys()
+void InputSource::check_keys()
 {
     if (m_layout.m_is_loaded)
     {
@@ -474,14 +474,14 @@ void InputSource::CheckKeys()
 
             if (m_valid_controller)
             {
-                CheckGamePadKeys();
+                check_gamepad();
             }
 #endif
         }
     }
 }
 
-void InputSource::CheckGamePadKeys(void)
+void InputSource::check_gamepad(void)
 {
 #if HAVE_XINPUT
     m_layout.m_keys[PAD_L_ANALOG].m_pressed = X_PRESSED(XINPUT_GAMEPAD_LEFT_THUMB);
