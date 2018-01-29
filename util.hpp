@@ -12,9 +12,15 @@
 #endif
 
 #include <uiohook.h>
+#include <math.h>
 
-#define UTIL_MAX(a,b)            (((a) > (b)) ? (a) : (b))
-#define UTIL_MIN(a,b)            (((a) < (b)) ? (a) : (b))
+#ifndef PI
+#define PI 3.14159265358979323846
+#endif
+
+#define UTIL_MAX(a,b)               (((a) > (b)) ? (a) : (b))
+#define UTIL_MIN(a,b)               (((a) < (b)) ? (a) : (b))
+#define UTIL_CLAMP(lower, x, upper) (UTIL_MIN(upper, UTIL_MAX(x, lower)))
 
 #define DEAD_ZONE(x, dz) ((x < dz) && (x > -dz))
 #define X_PRESSED(b) ((m_xinput.Gamepad.wButtons & b) != 0)
@@ -29,6 +35,7 @@
 #define S_CONTROLLER_ID             "controller_id"
 #define S_CONTROLLER_L_DEAD_ZONE    "controller_l_deadzone"
 #define S_CONTROLLER_R_DEAD_ZONE    "controller_r_deadzone"
+#define S_MOUSE_SENS                "mouse_sens"
 
 #define T_(v)                       obs_module_text(v)
 #define T_OVERLAY_FILE              T_("OverlayFile")
@@ -40,6 +47,7 @@
 #define T_CONTROLLER_ID             T_("GamepadId")
 #define T_CONROLLER_L_DEADZONE      T_("Gamepad.LeftDeadZone")
 #define T_CONROLLER_R_DEADZONE      T_("Gamepad.RightDeadZone")
+#define T_MOUSE_SENS                T_("Mouse.Sensitivity")
 
 // Lang Input History
 #define S_OVERLAY_DIRECTION             "direction_up"
@@ -52,6 +60,13 @@
 #define S_OVERLAY_ENABLE_AUTO_CLEAR     "auto_clear"
 #define S_OVERLAY_AUTO_CLEAR_INTERVAL   "auto_clear_interval"
 
+#define S_OVERLAY_MODE                  "mode"
+#define S_OVERLAY_KEY_NAME_PATH         "key_name_path"
+#define S_OVERLAY_USE_FALLBACK_NAME     "use_fallback_names"
+
+#define S_OVERLAY_KEY_ICON_PATH         "key_icon_path"
+#define S_OVERLAY_KEY_ICON_CONFIG_PATH  "key_icon_config"
+
 #define S_OVERLAY_FONT                  "font"
 #define S_OVERLAY_FONT_COLOR            "color"
 #define S_OVERLAY_OUTLINE               "outline"
@@ -61,6 +76,14 @@
 #define S_OVERLAY_OPACITY               "opacity"
 
 #define T_(v)                           obs_module_text(v)
+#define T_OVERLAY_KEY_NAME_PATH         T_("Overlay.KeyTranslationPath")
+#define T_OVERLAY_USE_FALLBACK_NAMES    T_("Overlay.UseFallback.Translation")
+#define T_OVERLAY_KEY_ICON_PATH         T_("Overlay.KeyIconPath")
+#define T_OVERLAY_KEY_ICON_CONFIG_PATH  T_("OVerlay.KeyIconConfigPath")
+#define T_OVERLAY_MODE                  T_("Overlay.Mode")
+#define T_OVERLAY_MODE_TEXT             T_("Overlay.Mode.Text")
+#define T_OVERLAY_MODE_ICON             T_("Overlay.Mode.Icons")
+
 #define T_OVERLAY_FONT                  T_("OverlayFont")
 #define T_OVERLAY_FONT_COLOR            T_("OverlayFontColor")
 #define T_OVERLAY_DIRECTION_LABEL       T_("OverlayDirection.Label")
@@ -83,6 +106,7 @@
 #define WHEEL_DOWN      1
 
 /* These were free in uiohook.h */
+#define VC_NONE               0xffff
 #define VC_MOUSE_WHEEL_UP     0xED10
 #define VC_MOUSE_WHEEL_DOWN   0xED11
 #define VC_MOUSE_MASK         0xED00
@@ -118,5 +142,8 @@
 #define PAD_DPAD_LEFT       19
 #define PAD_DPAD_RIGHT      20
 
+// Get default keynames from a libuiohook keycode
 const char* key_to_text(int key_code);
+
+float get_angle(int16_t x, int16_t y);
 #endif

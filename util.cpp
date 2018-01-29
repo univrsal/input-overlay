@@ -201,12 +201,16 @@ const char * key_to_text(int key_code)
     case VC_DELETE:
         return "DELETE";
     case VC_UP:
+    case VC_KP_UP:
         return "UP";
     case VC_DOWN:
+    case VC_KP_DOWN:
         return "DOWN";
     case VC_LEFT:
+    case VC_KP_LEFT:
         return "LEFT";
     case VC_RIGHT:
+    case VC_KP_RIGHT:
         return "RIGHT";
     case VC_PRINTSCREEN:
         return "PRINT";
@@ -234,4 +238,25 @@ const char * key_to_text(int key_code)
         return NULL;
         break;
     }
+}
+
+float get_angle(int16_t x, int16_t y)
+{
+    int quad = 0;
+    if (x > 0)
+    {
+        if (y > 0)
+            quad = 0;
+        else
+            quad = 3;
+    }
+    else
+    {
+        if (y < 0)
+            quad = 2;
+        else
+            quad = 1;
+    }
+
+    return atanf(((float) abs(x)) / abs(y)) * 180 / PI + (quad * 90.f);
 }
