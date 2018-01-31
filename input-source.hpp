@@ -1,6 +1,13 @@
 #ifndef INPUT_SOURCE_HPP
 #define INPUT_SOURCE_HPP
 
+/**
+ * This file is part of input-overlay
+ * which is licenced under the MIT licence.
+ * See LICENCE or https://mit-license.org
+ * github.com/univrsal/input-overlay
+ */
+
 #include <obs-module.h>
 #include <string>
 #include <algorithm>
@@ -13,17 +20,18 @@
 #include <util/platform.h>
 #include "ccl/ccl.hpp"
 #include "layouttype.hpp"
-
+#include "util.hpp"
 extern "C" {
 #include <graphics/image-file.h>
-#include "util.h"
 }
+
 #if HAVE_XINPUT
 #include <Xinput.h>
 #endif
 
 #define MAX_SIMULTANEOUS_KEYS 14
 extern uint16_t pressed_keys[MAX_SIMULTANEOUS_KEYS];
+extern int16_t mouse_delta_x, mouse_delta_y, mouse_last_x, mouse_last_y;
 extern bool hook_initialized;
 
 bool util_pressed_empty(void);
@@ -59,12 +67,15 @@ struct OverlayLayout {
     uint8_t m_btn_w, m_btn_h;
     uint16_t m_w, m_h;
     uint8_t m_rows, m_cols;
-    uint8_t texture_w;
     uint16_t texture_v_space;
     bool m_is_loaded = false;
+    bool m_mouse_movement = false;
+    bool m_use_arrow = false;
     std::vector<InputKey> m_keys;
 
-    uint16_t m_analog_stick_radius;
+    uint16_t m_track_radius;
+    uint16_t m_max_mouse_movement;
+    float m_arrow_rot = 0.f;
 };
 
 struct InputSource
@@ -100,34 +111,12 @@ struct InputSource
     void unload_layout(void);
     void unload_texture(void);
 
-    void draw_key(gs_effect_t *effect, InputKey* key, uint16_t x, uint16_t y);
+    void draw_key(gs_effect_t *effect, InputKey* key, uint16_t x, uint16_t y, float angle = 0.f);
+    void draw_key(gs_effect_t *effect, InputKey* key, float angle);
     void draw_key(gs_effect_t *effect, InputKey* key);
 
     void check_keys(void);
     void check_gamepad(void);
-
-    // Read key order from a string e.g. "A,B,C,0x10"
-    uint16_t read_chain(std::string& l)
-    {
-        std::string temp = l.substr(0, l.find(','));
-        l = l.substr(l.find(',') + 1, l.size());
-
-        if (temp.find("0x") != std::string::npos)
-        {
-            return std::stoul(temp, nullptr, 16);
-        }
-        else
-        {
-            return (uint16_t) 0x0;
-        }
-    }
-
-    uint16_t read_chain_int(std::string& l)
-    {
-        std::string temp = l.substr(0, l.find(','));
-        l = l.substr(l.find(',') + 1, l.size());
-        return std::atoi(temp.c_str());
-    }
 
     inline void Update(obs_data_t *settings);
     inline void Tick(float seconds);

@@ -1,4 +1,11 @@
-#include "util.h"
+#include "util.hpp"
+
+/**
+ * This file is part of input-overlay
+ * which is licenced under the MIT licence.
+ * See LICENCE or https://mit-license.org
+ * github.com/univrsal/input-overlay
+ */
 
 /**
  * Not the smartest way but I didn't
@@ -258,5 +265,47 @@ float get_angle(int16_t x, int16_t y)
             quad = 1;
     }
 
-    return atanf(((float) abs(x)) / abs(y)) * 180 / PI + (quad * 90.f);
+    return atan2f(((float) abs(x)), (float) abs(y)) * 180 / PI + (quad * 90.f);
+}
+
+uint16_t util_read_int(std::string & l)
+{
+    std::string temp = l.substr(0, l.find(','));
+    l = l.substr(l.find(',') + 1, l.size());
+    return std::atoi(temp.c_str());
+}
+
+uint16_t util_read_hex(std::string & l)
+{
+    std::string temp = l.substr(0, l.find(','));
+    l = l.substr(l.find(',') + 1, l.size());
+
+    if (temp.find("0x") != std::string::npos)
+    {
+        return std::stoul(temp, nullptr, 16);
+    }
+    else
+    {
+        return (uint16_t)0x0;
+    }
+}
+
+std::string util_file_filter(const char* display, const char * formats)
+{
+    std::string filter = display;
+    filter += " (";
+    filter += formats;
+    filter += ");;";
+    filter += T_FILTER_ALL_FILES;
+    filter += " (*.*)";
+
+    return filter;
+}
+
+void util_format_path(std::string & path)
+{
+    std::replace(path.begin(), path.end(), '\\', '/');
+    const char * slash = strrchr(path.c_str(), '/');
+    if (slash)
+        path.resize(slash - path.c_str() + 1);
 }

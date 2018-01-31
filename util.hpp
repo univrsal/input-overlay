@@ -1,6 +1,13 @@
 #ifndef UTIL_H
 #define UTIL_H
 
+/**
+ * This file is part of input-overlay
+ * which is licenced under the MIT licence.
+ * See LICENCE or https://mit-license.org
+ * github.com/univrsal/input-overlay
+ */
+
 #ifndef NULL
 #define NULL 0
 #endif // !NULL
@@ -13,6 +20,9 @@
 
 #include <uiohook.h>
 #include <math.h>
+#include <string>
+#include <obs-module.h>
+#include <algorithm>
 
 #ifndef PI
 #define PI 3.14159265358979323846
@@ -143,7 +153,19 @@
 #define PAD_DPAD_RIGHT      20
 
 // Get default keynames from a libuiohook keycode
-const char* key_to_text(int key_code);
+const char * key_to_text(int key_code);
 
 float get_angle(int16_t x, int16_t y);
+
+// Reads first integer off of csv string
+uint16_t util_read_int(std::string & l);
+
+// Reads first hex code off of csv string and converts it to int
+uint16_t util_read_hex(std::string & l);
+
+// Creates string for obs to use as accepted files for a file dialog
+std::string util_file_filter(const char * display, const char * formats);
+
+// Changes slashes in path to fit unix formatting
+void util_format_path(std::string & path);
 #endif

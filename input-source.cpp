@@ -1,6 +1,14 @@
 #include "input-source.hpp"
 
+/**
+ * This file is part of input-overlay
+ * which is licenced under the MIT licence.
+ * See LICENCE or https://mit-license.org
+ * github.com/univrsal/input-overlay
+ */
+
 uint16_t pressed_keys[MAX_SIMULTANEOUS_KEYS];
+int16_t mouse_delta_x, mouse_delta_y, mouse_last_x, mouse_last_y;
 bool hook_initialized = false;
 
 #ifdef WINDOWS
@@ -15,23 +23,46 @@ static pthread_mutex_t hook_control_mutex;
 static pthread_cond_t hook_control_cond;
 #endif
 
-void InputSource::draw_key(gs_effect_t *effect, InputKey* key, uint16_t x, uint16_t y)
+void InputSource::draw_key(gs_effect_t *effect, InputKey* key, uint16_t x, uint16_t y, float angle)
 {
     gs_effect_set_texture(gs_effect_get_param_by_name(effect, "image"), m_image->texture);
-
+    
     gs_matrix_push();
-    gs_matrix_translate3f((float)x, (float)y, 1.f);
-    if (key->m_pressed)
+    
+    if (angle != 0.f)
     {
-        gs_draw_sprite_subregion(m_image->texture, 0, key->texture_u, key->texture_v + key->h + 3, key->w + 1, key->h + 1);
+        //gs_matrix_translate3f((float)(y / 2), (float)(x), 1.f);
+        //gs_matrix_push();
+        gs_matrix_rotaa4f(0.f, 0.f, 1.f, angle);
+        gs_matrix_translate3f((float)x, (float)y, 1.f);
+
+        //gs_matrix_translate3f((float)-key->texture_u - (key->w / 2), (float)key->texture_v - (key->h / 2), 1.f);
+        // gs_matrix_pop();
+        gs_draw_sprite_subregion(m_image->texture, 0, key->texture_u, key->texture_v, key->w + 1, key->h + 1);
+
     }
     else
     {
-        gs_draw_sprite_subregion(m_image->texture, 0, key->texture_u, key->texture_v, key->w + 1, key->h + 1);
+        gs_matrix_translate3f((float)x, (float)y, 1.f);
+
+        if (key->m_pressed)
+        {
+            gs_draw_sprite_subregion(m_image->texture, 0, key->texture_u, key->texture_v + key->h + 3, key->w + 1, key->h + 1);
+        }
+        else
+        {
+            gs_draw_sprite_subregion(m_image->texture, 0, key->texture_u, key->texture_v, key->w + 1, key->h + 1);
+        }
     }
 
     gs_matrix_pop();
 }
+
+void InputSource::draw_key(gs_effect_t * effect, InputKey * key, float angle)
+{
+    draw_key(effect, key, key->column, key->row, angle);
+}
+
 void InputSource::draw_key(gs_effect_t * effect, InputKey * key)
 {
     draw_key(effect, key, key->column, key->row);
@@ -50,6 +81,8 @@ inline void InputSource::Update(obs_data_t *settings)
     m_pad_settings.m_left_dead_zone = obs_data_get_int(settings, S_CONTROLLER_L_DEAD_ZONE);
     m_pad_settings.m_right_dead_zone = obs_data_get_int(settings, S_CONTROLLER_R_DEAD_ZONE);
     
+    m_layout.m_max_mouse_movement = obs_data_get_int(settings, S_MOUSE_SENS);
+
     m_image_file = obs_data_get_string(settings, S_OVERLAY_FILE);
     m_layout_file = obs_data_get_string(settings, S_LAYOUT_FILE);
 
@@ -81,24 +114,48 @@ inline void InputSource::Render(gs_effect_t *effect)
     else
     {
         int x = 0, y = 0;
-        InputKey k;
+        InputKey* k;
 
         if (m_layout.m_type == TYPE_KEYBOARD)
         {
             for (int i = 0; i < m_layout.m_key_count; i++)
             {
-                k = m_layout.m_keys[i];
-                x = m_layout.m_btn_w * k.column + (m_layout.m_key_space_h * k.column) + k.x_offset;
-                y = m_layout.m_btn_h * k.row + (m_layout.m_key_space_v * k.row);
-                draw_key(effect, &k, x, y);
+                k = &m_layout.m_keys[i];
+                x = m_layout.m_btn_w * k->column + (m_layout.m_key_space_h * k->column) + k->x_offset;
+                y = m_layout.m_btn_h * k->row + (m_layout.m_key_space_v * k->row);
+                draw_key(effect, k, x, y);
             }
         }
         else if (m_layout.m_type == TYPE_MOUSE)
         {
-            for (int i = 0; i < m_layout.m_key_count; i++)
+            int max = m_layout.m_mouse_movement ? m_layout.m_key_count - 1 : m_layout.m_key_count;
+
+            for (int i = 0; i < max; i++)
             {
-                k = m_layout.m_keys[i];
-                draw_key(effect, &k);
+                k = &m_layout.m_keys[i];
+                draw_key(effect, k);
+            }
+
+            if (m_layout.m_mouse_movement)
+            {
+                if (m_layout.m_use_arrow)
+                {
+                    k = &m_layout.m_keys[max];
+                    blog(LOG_INFO, "D_X: %i, D_Y: %i\n", mouse_delta_x, mouse_delta_y);
+                    blog(LOG_INFO, "Angle: %f\n", get_angle(mouse_delta_x, mouse_delta_y));
+                    draw_key(effect, k, k->column, k->row, get_angle(mouse_delta_x, mouse_delta_y));
+                }
+                else
+                {
+                    double factor_x = UTIL_CLAMP(-1, ((double)mouse_delta_x / m_layout.m_max_mouse_movement), 1); 
+                    double factor_y = UTIL_CLAMP(-1, ((double)mouse_delta_y / m_layout.m_max_mouse_movement), 1);
+
+                    int16_t dot_offset_x = m_layout.m_track_radius * factor_x;
+                    int16_t dot_offset_y = m_layout.m_track_radius * factor_y;
+
+                    k = &m_layout.m_keys[max];
+                    draw_key(effect, k, k->column + dot_offset_x, k->row + dot_offset_y);
+                }
             }
         }
         else if (m_layout.m_type == TYPE_CONTROLLER)
@@ -171,7 +228,7 @@ void InputSource::load_layout()
 
     std::string line;
     std::string key_order, key_width, key_height, key_col, key_row;
-
+    int texture_w = 0;
     ccl_config *cfg = new ccl_config(m_layout_file, "");
 
     if (!cfg->is_empty())
@@ -191,7 +248,7 @@ void InputSource::load_layout()
             key_height = cfg->get_string("key_height");
             key_col = cfg->get_string("key_col");
             key_row = cfg->get_string("key_row");
-            m_layout.texture_w = cfg->get_int("texture_w");
+            texture_w = cfg->get_int("texture_w");
             m_layout.texture_v_space = cfg->get_int("texture_v_space");
 
             uint16_t u_cord = 1, v_cord = 1;
@@ -200,7 +257,7 @@ void InputSource::load_layout()
 
             for (int i = 0; i < m_layout.m_key_count; i++)
             {
-                if (index >= m_layout.texture_w)
+                if (index >= texture_w)
                 {
                     index = 0;
                     u_cord = 1;
@@ -210,14 +267,14 @@ void InputSource::load_layout()
                 InputKey k;
                 k.texture_u = u_cord - 1;
                 k.texture_v = v_cord - 1;
-                tempw = read_chain_int(key_width);
-                temph = read_chain_int(key_height);
+                tempw = util_read_int(key_width);
+                temph = util_read_int(key_height);
                 k.w = tempw * m_layout.m_btn_w;
                 k.h = temph * m_layout.m_btn_h;
-                k.m_key_code = read_chain(key_order);
+                k.m_key_code = util_read_hex(key_order);
                 k.m_pressed = false;
-                k.row = read_chain_int(key_row);
-                k.column = read_chain_int(key_col);
+                k.row = util_read_int(key_row);
+                k.column = util_read_int(key_col);
 
                 if (tempw > 1)
                 {
@@ -239,21 +296,39 @@ void InputSource::load_layout()
         }
         else if (m_layout.m_type == TYPE_MOUSE)
         {
+            m_layout.m_mouse_movement = cfg->get_bool("show_mouse_movement");
+            m_layout.m_use_arrow = cfg->get_bool("use_arrow");
+            m_layout.m_track_radius = cfg->get_int("mouse_field_radius");
+
             line = cfg->get_string("mouse_layout_w_h");
-            m_layout.m_w = read_chain_int(line);
-            m_layout.m_h = read_chain_int(line);
+            m_layout.m_w = util_read_int(line);
+            m_layout.m_h = util_read_int(line);
 
             // Stitching together config value identifiers (what a mess)
 
-            std::string vals[] = { "lmb", "rmb", "mmb", "smb1", "smb2", "mwu", "mwd", "body" };
+            std::string vals[] = { "lmb", "rmb", "mmb", "smb1", "smb2", "mwu", "mwd",
+                "body", "arrow", "field", "dot" };
             uint16_t keys[] { VC_MOUSE_BUTTON1, VC_MOUSE_BUTTON2, VC_MOUSE_BUTTON3, VC_MOUSE_BUTTON5,
-                VC_MOUSE_BUTTON4, VC_MOUSE_WHEEL_UP, VC_MOUSE_WHEEL_DOWN, 0xffff};
+                VC_MOUSE_BUTTON4, VC_MOUSE_WHEEL_UP, VC_MOUSE_WHEEL_DOWN, VC_NONE, VC_NONE, VC_NONE, VC_NONE};
 
             std::stringstream stream;
             std::string begin;
-            
-            for (int i = 0; i < 8; i++)
+
+            int max = (m_layout.m_mouse_movement && !m_layout.m_use_arrow) ? m_layout.m_key_count + 1 : m_layout.m_key_count; 
+
+            for (int i = 0; i < max; i++)
             {
+                if (!m_layout.m_mouse_movement && i > 7)
+                    break;
+                
+                if (m_layout.m_mouse_movement)
+                {
+                    if (m_layout.m_use_arrow && i > 8)
+                        break;
+                    if (!m_layout.m_use_arrow && i == 8)
+                        continue;
+                }
+
                 InputKey m;
                 m.m_key_code = keys[i];
 
@@ -262,22 +337,22 @@ void InputSource::load_layout()
                 stream << begin << "_u_v";
 
                 line = cfg->get_string(stream.str().c_str());
-                m.texture_u = read_chain_int(line);
-                m.texture_v = read_chain_int(line);
+                m.texture_u = util_read_int(line);
+                m.texture_v = util_read_int(line);
 
                 stream.str("");
                 stream << begin << "_w_h";
                 
                 line = cfg->get_string(stream.str().c_str());
-                m.w = read_chain_int(line);
-                m.h = read_chain_int(line);
+                m.w = util_read_int(line);
+                m.h = util_read_int(line);
 
                 stream.str("");
                 stream << begin << "_x_y";
 
                 line = cfg->get_string(stream.str().c_str());
-                m.column = read_chain_int(line);
-                m.row = read_chain_int(line);
+                m.column = util_read_int(line);
+                m.row = util_read_int(line);
 
                 m_layout.m_keys.emplace_back(m);
             }
@@ -620,44 +695,27 @@ bool is_controller_changed(obs_properties_t * props, obs_property_t * p, obs_dat
 
 obs_properties_t * get_properties_for_overlay(void * data)
 {
-    InputSource *s = reinterpret_cast<InputSource*>(data);
+    InputSource * s = reinterpret_cast<InputSource*>(data);
 
     obs_properties_t *props = obs_properties_create();
 
     std::string img_path;
     std::string layout_path;
-    std::string filter_img;
-    std::string filter_text;
+    std::string filter_img = util_file_filter(T_FILTER_IMAGE_FILES, "*.jpg *.png *.bmp");
+    std::string filter_text = util_file_filter(T_FILTER_TEXT_FILES, "*.ini");
 
-    filter_text += T_FILTER_TEXT_FILES;
-    filter_text += " (*.ini);;";
-    filter_text += T_FILTER_ALL_FILES;
-    filter_text += " (*.*)";
-
-    filter_img += T_FILTER_IMAGE_FILES;
-    filter_img += " (*.jpg *.png *.bmp);;";
-    filter_img += T_FILTER_ALL_FILES;
-    filter_img += " (*.*)";
-
-    if (s && !s->m_image_file.empty())
+    if (s)
     {
-        const char *slash;
-
-        img_path = s->m_image_file;
-        replace(img_path.begin(), img_path.end(), '\\', '/');
-        slash = strrchr(img_path.c_str(), '/');
-        if (slash)
-            img_path.resize(slash - img_path.c_str() + 1);
-    }
-
-    if (s && !s->m_layout_file.empty())
-    {
-        const char *slash;
-        layout_path = s->m_layout_file;
-        replace(layout_path.begin(), layout_path.end(), '\\', '/');
-        slash = strrchr(layout_path.c_str(), '/');
-        if (slash)
-            layout_path.resize(slash - layout_path.c_str() + 1);
+        if (!s->m_image_file.empty())
+        {
+            img_path = s->m_image_file;
+            util_format_path(img_path);
+        }
+        if (!s->m_layout_file.empty())
+        {
+            layout_path = s->m_layout_file;
+            util_format_path(layout_path);
+        }
     }
 
     obs_properties_add_path(props, S_OVERLAY_FILE, T_OVERLAY_FILE, OBS_PATH_FILE,
@@ -665,6 +723,8 @@ obs_properties_t * get_properties_for_overlay(void * data)
 
     obs_properties_add_path(props, S_LAYOUT_FILE, T_LAYOUT_FILE, OBS_PATH_FILE,
         filter_text.c_str(), layout_path.c_str());
+    
+    obs_properties_add_int_slider(props, S_MOUSE_SENS, T_MOUSE_SENS, 1, 500, 1);
 
     // Gamepad stuff
 #ifdef HAVE_XINPUT
@@ -699,6 +759,7 @@ void register_overlay_source()
     si.get_defaults = [](obs_data_t *settings)
     {
         // NO-OP
+        
     };
 
     si.update = [](void *data, obs_data_t *settings) { reinterpret_cast<InputSource*>(data)->Update(settings); };
@@ -914,6 +975,15 @@ void proccess_event(uiohook_event * const event)
                     util_add_pressed(VC_MOUSE_WHEEL_DOWN);
                 }
             }
+            break;
+        case EVENT_MOUSE_DRAGGED:
+        case EVENT_MOUSE_MOVED:
+
+            mouse_delta_x = (mouse_last_x * 7 + event->data.mouse.x + 7) / 8;
+            mouse_delta_y = (mouse_last_y * 7 + event->data.mouse.y + 7) / 8;
+
+            mouse_last_x = event->data.mouse.x;
+            mouse_last_y = event->data.mouse.y;
             break;
     }
 }

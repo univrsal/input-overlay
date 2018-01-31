@@ -1,10 +1,16 @@
 #include <obs-module.h>
-extern "C" {
-#include "util.h"
-}
+#include "util.hpp"
+
 #include <string>
 #include "input-source.hpp"
 #include "input-history.hpp"
+
+/**
+ * This file is part of input-overlay
+ * which is licenced under the MIT licence.
+ * See LICENCE or https://mit-license.org
+ * github.com/univrsal/input-overlay
+ */
 
 OBS_DECLARE_MODULE()
 OBS_MODULE_USE_DEFAULT_LOCALE("input-overlay", "en-US")
@@ -16,8 +22,9 @@ bool obs_module_load(void)
 
     register_history();
     register_overlay_source();
-    start_hook();
+    //start_hook();
 
+    util_add_pressed(VC_KP_UP);
     return true;
 }
 
