@@ -24,6 +24,10 @@
 #include <obs-module.h>
 #include <algorithm>
 
+#ifdef DEBUG
+#include <random>
+#endif
+
 #ifndef PI
 #define PI 3.14159265358979323846
 #endif
@@ -69,10 +73,17 @@
 #define S_OVERLAY_ENABLE_REPEAT_KEYS    "repeat_keys"
 #define S_OVERLAY_ENABLE_AUTO_CLEAR     "auto_clear"
 #define S_OVERLAY_AUTO_CLEAR_INTERVAL   "auto_clear_interval"
+#define S_OVERLAY_ICON_V_SPACE          "icon_v_space"
+#define S_OVERLAY_ICON_H_SPACE          "icon_h_space"
 
 #define S_OVERLAY_MODE                  "mode"
 #define S_OVERLAY_KEY_NAME_PATH         "key_name_path"
 #define S_OVERLAY_USE_FALLBACK_NAME     "use_fallback_names"
+#define S_OVERLAY_DIRECTION             "direction"
+#define S_OVERLAY_DIRECTION_UP          "up"
+#define S_OVERLAY_DIRECTION_DOWN        "down"
+#define S_OVERLAY_DIRECTION_LEFT        "left"
+#define S_OVERLAY_DIRECTION_RIGHT       "right"
 
 #define S_OVERLAY_KEY_ICON_PATH         "key_icon_path"
 #define S_OVERLAY_KEY_ICON_CONFIG_PATH  "key_icon_config"
@@ -89,10 +100,18 @@
 #define T_OVERLAY_KEY_NAME_PATH         T_("Overlay.KeyTranslationPath")
 #define T_OVERLAY_USE_FALLBACK_NAMES    T_("Overlay.UseFallback.Translation")
 #define T_OVERLAY_KEY_ICON_PATH         T_("Overlay.KeyIconPath")
-#define T_OVERLAY_KEY_ICON_CONFIG_PATH  T_("OVerlay.KeyIconConfigPath")
+#define T_OVERLAY_KEY_ICON_CONFIG_PATH  T_("Overlay.KeyIconConfigPath")
+#define T_OVERLAY_ICON_V_SPACE          T_("Overlay.KeyIconVSpace")
+#define T_OVERLAY_ICON_H_SPACE          T_("Overlay.KeyIconHSpace")
+
 #define T_OVERLAY_MODE                  T_("Overlay.Mode")
 #define T_OVERLAY_MODE_TEXT             T_("Overlay.Mode.Text")
 #define T_OVERLAY_MODE_ICON             T_("Overlay.Mode.Icons")
+#define T_OVERLAY_DIRECTION             T_("Overlay.Direction")
+#define T_OVERLAY_DIRECTION_UP          T_("Overlay.Direction.Up")
+#define T_OVERLAY_DIRECTION_DOWN        T_("Overlay.Direction.Down")
+#define T_OVERLAY_DIRECTION_LEFT        T_("Overlay.Direction.Left")
+#define T_OVERLAY_DIRECTION_RIGHT       T_("Overlay.Direction.Right")
 
 #define T_OVERLAY_FONT                  T_("OverlayFont")
 #define T_OVERLAY_FONT_COLOR            T_("OverlayFontColor")
@@ -168,4 +187,8 @@ std::string util_file_filter(const char * display, const char * formats);
 
 // Changes slashes in path to fit unix formatting
 void util_format_path(std::string & path);
+
+#ifdef DEBUG
+uint16_t random_vc(void);
+#endif
 #endif

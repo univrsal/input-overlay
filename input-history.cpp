@@ -9,12 +9,14 @@
 
 void InputHistorySource::load_text_source(void)
 {
-    if (m_text_source == nullptr) // No reason to load it again
-    {
-        obs_data_t * data = obs_source_get_settings(m_source);
-        m_text_source = obs_source_create("text_gdiplus\0", "history-text-source\0", data, NULL);
-        obs_source_add_active_child(m_source, m_text_source);
-    }
+    unload_text_source();
+    obs_data_t* text_data = obs_source_get_settings(m_text_source);
+    obs_data_t* main_data = obs_source_get_settings(m_source);
+    m_text_source = obs_source_create("text_gdiplus\0", "history-text-source\0", main_data, NULL);
+    obs_source_add_active_child(m_source, m_text_source);
+
+    obs_source_update(m_text_source, main_data);
+    obs_source_update(m_source, main_data);
 }
 
 void InputHistorySource::load_icons(void)
@@ -59,11 +61,6 @@ void InputHistorySource::unload_translation(void)
     }
 }
 
-bool InputHistorySource::is_pressed(int k)
-{
-    return util_key_exists(k);
-}
-
 void InputHistorySource::add_to_history(KeyBundle b)
 {
     m_history[4] = m_history[3];
@@ -75,6 +72,7 @@ void InputHistorySource::add_to_history(KeyBundle b)
 
 void InputHistorySource::clear_history(void)
 {
+    util_clear_pressed();
     for (int i = 0; i < MAX_HISTORY_SIZE; i++)
     {
         m_history[i] = {};
@@ -113,9 +111,9 @@ void InputHistorySource::handle_text_history(void)
     std::string text = "";
     std::string line = "";
 
-#define START (m_dir_up ? m_history_size - 1 : 0)
-#define CONDITION (m_dir_up ? (i >= 0) : (i < m_history_size))
-#define INCREMENT (i += (m_dir_up ? -1 : 1))
+#define START ((m_history_direction == DIR_UP || m_history_direction == DIR_LEFT) ? m_history_size - 1 : 0)
+#define CONDITION ((m_history_direction == DIR_UP || m_history_direction == DIR_LEFT) ? (i >= 0) : (i < m_history_size))
+#define INCREMENT (i += ((m_history_direction == DIR_UP || m_history_direction == DIR_LEFT) ? -1 : 1))
 
     for (int i = START; CONDITION; INCREMENT)
     {
@@ -130,7 +128,7 @@ void InputHistorySource::handle_text_history(void)
 
         if (!line.empty())
         {
-            if (!m_dir_up && i > 0 || m_dir_up && i < m_history_size - 1)
+            if (m_history_direction != DIR_UP && i > 0 || m_history_direction == DIR_UP && i < m_history_size - 1)
                 text.append("\n");
             text.append(line);
         }
@@ -146,22 +144,59 @@ void InputHistorySource::handle_text_history(void)
 
 void InputHistorySource::handle_icon_history(gs_effect_t * effect)
 {
-    gs_effect_set_texture(gs_effect_get_param_by_name(effect, "image"), m_key_icons->get_texture()->texture);
-
-    KeyIcon * icon = nullptr;
-    for (int i = START; CONDITION; INCREMENT)
+    if (m_key_icons && m_key_icons->is_loaded())
     {
-        for (int k = 0; k < MAX_SIMULTANEOUS_KEYS; k++)
+        gs_effect_set_texture(gs_effect_get_param_by_name(effect, "image"), m_key_icons->get_texture()->texture);
+
+        int index = 0, index2 = 0;
+        KeyIcon * icon = nullptr;
+        switch (m_history_direction)
         {
-            icon = m_key_icons->get_icon_for_key(m_history[i].m_keys[k]);
-            if (icon)
-            {
-                gs_matrix_push();
-                gs_matrix_translate3f((float) m_key_icons->get_w() * k, (float) m_key_icons->get_h() * i, 1.f);
-                gs_draw_sprite_subregion(m_key_icons->get_texture()->texture, 0, icon->u, icon->v,
-                    m_key_icons->get_w() + 1, m_key_icons->get_h() + 1);
-                gs_matrix_pop();
-            }
+            case DIR_UP:
+            case DIR_DOWN:
+                for (int i = START; CONDITION; INCREMENT)
+                {
+                    index2 = 0;
+                    for (int k = 0; k < MAX_SIMULTANEOUS_KEYS; k++)
+                    {
+                        icon = m_key_icons->get_icon_for_key(m_history[i].m_keys[k]);
+                        if (icon)
+                        {
+                            gs_matrix_push();
+                            gs_matrix_translate3f((float)(m_key_icons->get_w() + m_icon_h_space) * index2,
+                                (float)(m_key_icons->get_h() + m_icon_v_space) * index, 1.f);
+                            gs_draw_sprite_subregion(m_key_icons->get_texture()->texture, 0, icon->u, icon->v,
+                                m_key_icons->get_w() + 1, m_key_icons->get_h() + 1);
+                            gs_matrix_pop();
+                            index2++;
+                        }
+                    }
+                    index++;
+                }
+                break;
+            case DIR_LEFT:
+            case DIR_RIGHT:
+
+                for (int i = START; CONDITION; INCREMENT)
+                {
+                    index2 = 0;
+                    for (int k = 0; k < MAX_SIMULTANEOUS_KEYS; k++)
+                    {
+                        icon = m_key_icons->get_icon_for_key(m_history[i].m_keys[k]);
+                        if (icon)
+                        {
+                            gs_matrix_push();
+                            gs_matrix_translate3f((float)(m_key_icons->get_w() + m_icon_h_space) * index,
+                                (float)(m_key_icons->get_h() + m_icon_v_space) * index2, 1.f);
+
+                            gs_draw_sprite_subregion(m_key_icons->get_texture()->texture, 0, icon->u, icon->v,
+                                m_key_icons->get_w() + 1, m_key_icons->get_h() + 1);
+                            gs_matrix_pop();
+                            index2++;
+                        }
+                    }
+                    index++;
+                }
         }
     }
 }
@@ -176,26 +211,30 @@ inline void InputHistorySource::Update(obs_data_t * settings)
     m_include_mouse = obs_data_get_bool(settings, S_OVERLAY_INCLUDE_MOUSE);
     m_update_interval = obs_data_get_int(settings, S_OVERLAY_INTERVAL);
     m_repeat_keys = obs_data_get_bool(settings, S_OVERLAY_ENABLE_REPEAT_KEYS);
-    m_dir_up = obs_data_get_bool(settings, S_OVERLAY_DIRECTION);
     m_auto_clear = obs_data_get_bool(settings, S_OVERLAY_ENABLE_AUTO_CLEAR);
     m_clear_interval = obs_data_get_int(settings, S_OVERLAY_AUTO_CLEAR_INTERVAL);
+
+    m_use_fallback = obs_data_get_bool(settings, S_OVERLAY_USE_FALLBACK_NAME);
+    m_key_name_path = obs_data_get_string(settings, S_OVERLAY_KEY_NAME_PATH);
+    m_fix_cutting = obs_data_get_bool(settings, S_OVERLAY_FIX_CUTTING);
+
+    m_key_icon_config_path = obs_data_get_string(settings, S_OVERLAY_KEY_ICON_CONFIG_PATH);
+    m_key_icon_path = obs_data_get_string(settings, S_OVERLAY_KEY_ICON_PATH);
+    
+    m_icon_h_space = obs_data_get_int(settings, S_OVERLAY_ICON_H_SPACE);
+    m_icon_v_space = obs_data_get_int(settings, S_OVERLAY_ICON_V_SPACE);
+
+    m_history_direction = (IconDirection) obs_data_get_int(settings, S_OVERLAY_DIRECTION);
 
     if (m_text_mode)
     {
         unload_icons();
-        m_use_fallback = obs_data_get_bool(settings, S_OVERLAY_USE_FALLBACK_NAME);
-        m_key_name_path = obs_data_get_string(settings, S_OVERLAY_KEY_NAME_PATH);
-        m_fix_cutting = obs_data_get_bool(settings, S_OVERLAY_FIX_CUTTING);
-        load_text_source();
     }
     else
     {
-        unload_text_source();
-        m_key_icon_config_path = obs_data_get_string(settings, S_OVERLAY_KEY_ICON_CONFIG_PATH);
-        m_key_icon_path = obs_data_get_string(settings, S_OVERLAY_KEY_ICON_PATH);
         load_icons();
     }
-   
+
     if (!m_key_name_path.empty())
     {
         m_use_translation = true;
@@ -213,6 +252,8 @@ inline void InputHistorySource::Tick(float seconds)
     if (!m_source || !obs_source_showing(m_source))
         return;
 
+    //util_add_pressed(random_vc());
+
     if (m_auto_clear)
     {
         m_clear_timer += seconds;
@@ -228,22 +269,25 @@ inline void InputHistorySource::Tick(float seconds)
         m_counter = 0;
         if (!m_current_keys.m_empty)
         {
-          if (m_repeat_keys || !m_current_keys.compare(&m_prev_keys))
+            if (m_text_mode || m_key_icons && m_key_icons->has_texture_for_bundle(&m_current_keys))
             {
-                if (!m_current_keys.is_only_mouse() || m_include_mouse)
+                if (m_repeat_keys || !m_current_keys.compare(&m_prev_keys))
                 {
-                    add_to_history(m_current_keys);
-                    m_clear_timer = 0.f;
-                }
+                    if (!m_current_keys.is_only_mouse() || m_include_mouse)
+                    {
+                        add_to_history(m_current_keys);
+                        m_clear_timer = 0.f;
+                    }
 
-                m_prev_keys = m_current_keys;
-                
-                if (m_text_mode)
-                {
-                    handle_text_history();
-                }
+                    m_prev_keys = m_current_keys;
 
-                m_current_keys = {};
+                    if (m_text_mode)
+                    {
+                        handle_text_history();
+                    }
+
+                    m_current_keys = {};
+                }
             }
         }
     }
@@ -262,8 +306,22 @@ inline void InputHistorySource::Tick(float seconds)
     {
         if (m_key_icons)
         {
-            cx = m_key_icons->get_w() * 5; // Arbitary but w/e
-            cy = m_key_icons->get_h() * MAX_HISTORY_SIZE;
+            if (m_history_direction == DIR_UP || m_history_direction == DIR_DOWN)
+            {
+                cx = (m_key_icons->get_w() + m_icon_h_space) * MAX_HISTORY_SIZE;
+                cy = (m_key_icons->get_h() + m_icon_v_space) * m_history_size;
+            }
+            else
+            {
+                cx = (m_key_icons->get_w() + m_icon_h_space) * m_history_size;
+                cy = (m_key_icons->get_h() + m_icon_v_space) * MAX_HISTORY_SIZE;
+            }
+
+        }
+        else
+        {
+            cx = 50;
+            cy = 50;
         }
     }
 }
@@ -426,19 +484,15 @@ bool mode_changed(obs_properties_t * props, obs_property_t * p, obs_data_t * s)
     TEXT_VIS(GET_PROPS(S_OVERLAY_OUTLINE_SIZE));
     TEXT_VIS(GET_PROPS(S_OVERLAY_OUTLINE_COLOR));
     TEXT_VIS(GET_PROPS(S_OVERLAY_OUTLINE_OPACITY));
-    TEXT_VIS(GET_PROPS(S_OVERLAY_DIRECTION));
     TEXT_VIS(GET_PROPS(S_OVERLAY_FIX_CUTTING));
-    TEXT_VIS(GET_PROPS(S_OVERLAY_INTERVAL));
-    TEXT_VIS(GET_PROPS(S_OVERLAY_ENABLE_REPEAT_KEYS));
-    TEXT_VIS(GET_PROPS(S_OVERLAY_ENABLE_AUTO_CLEAR));
-    TEXT_VIS(GET_PROPS(S_OVERLAY_AUTO_CLEAR_INTERVAL));
-    TEXT_VIS(GET_PROPS(S_OVERLAY_CLEAR_HISTORY));
     TEXT_VIS(GET_PROPS(S_OVERLAY_OPACITY));
     TEXT_VIS(GET_PROPS(S_OVERLAY_KEY_NAME_PATH));
     TEXT_VIS(GET_PROPS(S_OVERLAY_USE_FALLBACK_NAME));
 
     ICON_VIS(GET_PROPS(S_OVERLAY_KEY_ICON_CONFIG_PATH));
     ICON_VIS(GET_PROPS(S_OVERLAY_KEY_ICON_PATH));
+    ICON_VIS(GET_PROPS(S_OVERLAY_ICON_V_SPACE));
+    ICON_VIS(GET_PROPS(S_OVERLAY_ICON_H_SPACE));
 
     return true;
 }
@@ -447,12 +501,13 @@ obs_properties_t * get_properties_for_history(void * data)
 {
     InputHistorySource *s = reinterpret_cast<InputHistorySource*>(data);
 
-    obs_properties_t *props = obs_properties_create();
+    obs_properties_t * props = obs_properties_create();
 
-    obs_property_t *list = obs_properties_add_list(props, S_OVERLAY_MODE, T_OVERLAY_MODE, OBS_COMBO_TYPE_LIST, OBS_COMBO_FORMAT_INT);
-    obs_property_list_add_int(list, T_OVERLAY_MODE_TEXT, 0);
-    obs_property_list_add_int(list, T_OVERLAY_MODE_ICON, 1);
-    obs_property_set_modified_callback(list, mode_changed);
+    obs_property_t * mode_list = obs_properties_add_list(props, S_OVERLAY_MODE,
+        T_OVERLAY_MODE, OBS_COMBO_TYPE_LIST, OBS_COMBO_FORMAT_INT);
+    obs_property_list_add_int(mode_list, T_OVERLAY_MODE_TEXT, 0);
+    obs_property_list_add_int(mode_list, T_OVERLAY_MODE_ICON, 1);
+    obs_property_set_modified_callback(mode_list, mode_changed);
 
     // Key name file
     std::string filter_img = util_file_filter(T_FILTER_IMAGE_FILES, "*.jpg *.png *.bmp");
@@ -479,11 +534,14 @@ obs_properties_t * get_properties_for_history(void * data)
     }
 
     /* Icon mode propterties */
-    obs_properties_add_path(props, S_OVERLAY_KEY_ICON_PATH, S_OVERLAY_KEY_ICON_PATH, OBS_PATH_FILE,
+    obs_properties_add_path(props, S_OVERLAY_KEY_ICON_PATH, T_OVERLAY_KEY_ICON_PATH, OBS_PATH_FILE,
         filter_img.c_str(), key_icon_path.c_str());
 
-    obs_properties_add_path(props, S_OVERLAY_KEY_ICON_CONFIG_PATH, S_OVERLAY_KEY_ICON_CONFIG_PATH, OBS_PATH_FILE,
+    obs_properties_add_path(props, S_OVERLAY_KEY_ICON_CONFIG_PATH, T_OVERLAY_KEY_ICON_CONFIG_PATH, OBS_PATH_FILE,
         filter_text.c_str(), key_icon_config_path.c_str());
+
+    obs_properties_add_int(props, S_OVERLAY_ICON_H_SPACE, T_OVERLAY_ICON_H_SPACE, -999, 999, 1);
+    obs_properties_add_int(props, S_OVERLAY_ICON_V_SPACE, T_OVERLAY_ICON_V_SPACE, -999, 999, 1);
 
     /* Text mode properties*/
 
@@ -503,7 +561,13 @@ obs_properties_t * get_properties_for_history(void * data)
         T_OVERLAY_OUTLINE_OPACITY, 0, 100, 1);
 
     // Other
-    obs_properties_add_bool(props, S_OVERLAY_DIRECTION, T_OVERLAY_DIRECTION_LABEL);
+    obs_property_t * icon_dir_list = obs_properties_add_list(props, S_OVERLAY_DIRECTION,
+        T_OVERLAY_DIRECTION, OBS_COMBO_TYPE_LIST, OBS_COMBO_FORMAT_INT);
+    obs_property_list_add_int(icon_dir_list, T_OVERLAY_DIRECTION_DOWN, 0);
+    obs_property_list_add_int(icon_dir_list, T_OVERLAY_DIRECTION_UP, 1);
+    obs_property_list_add_int(icon_dir_list, T_OVERLAY_DIRECTION_LEFT, 2);
+    obs_property_list_add_int(icon_dir_list, T_OVERLAY_DIRECTION_RIGHT, 3);
+
     obs_properties_add_int(props, S_OVERLAY_HISTORY_SIZE, T_OVERLAY_HISTORY_SIZE, 1, MAX_HISTORY_SIZE, 1);
     obs_properties_add_bool(props, S_OVERLAY_FIX_CUTTING, T_OVERLAY_FIX_CUTTING);
     obs_properties_add_bool(props, S_OVERLAY_INCLUDE_MOUSE, T_OVERLAY_INCLUDE_MOUSE);
@@ -598,6 +662,9 @@ KeyIcons::~KeyIcons()
 
 void KeyIcons::load_from_file(std::string img_path, std::string cfg_path)
 {
+    m_loaded = false;
+    if (img_path.empty() || cfg_path.empty())
+        return;
     m_icon_texture = new gs_image_file_t();
 
     gs_image_file_init(m_icon_texture, img_path.c_str());
@@ -655,16 +722,31 @@ void KeyIcons::load_from_file(std::string img_path, std::string cfg_path)
     {
         blog(LOG_ERROR, "Error: Failed to load key icon config from %s", cfg_path.c_str());
     }
+
+    m_loaded = cfg_loaded && m_icon_texture->loaded;
 }
 
 KeyIcon * KeyIcons::get_icon_for_key(uint16_t vc)
 {
+    if (!m_loaded)
+        return nullptr;
+
     if (m_icons.find(vc) != m_icons.end())
     {
         return &m_icons[vc];
     }
 
     return nullptr;
+}
+
+bool KeyIcons::has_texture_for_bundle(KeyBundle * bundle)
+{
+    for (int i = 0; i < MAX_SIMULTANEOUS_KEYS; i++)
+    {
+        if (get_icon_for_key(bundle->m_keys[i])) // Any key inside a bundle has icon --> draw the entire bundle
+            return true;
+    }
+    return false;
 }
 
 void KeyIcons::unload_texture()

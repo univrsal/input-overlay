@@ -34,6 +34,7 @@ extern uint16_t pressed_keys[MAX_SIMULTANEOUS_KEYS];
 extern int16_t mouse_delta_x, mouse_delta_y, mouse_last_x, mouse_last_y;
 extern bool hook_initialized;
 
+void util_clear_pressed(void);
 bool util_pressed_empty(void);
 bool util_key_exists(uint16_t vc);
 void util_add_pressed(uint16_t vc);

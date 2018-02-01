@@ -309,3 +309,8 @@ void util_format_path(std::string & path)
     if (slash)
         path.resize(slash - path.c_str() + 1);
 }
+
+uint16_t random_vc(void)
+{
+    return (uint16_t) VC_1 + (rand() % static_cast<int>(VC_0 - VC_1 + 1));
+}

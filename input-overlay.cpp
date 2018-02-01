@@ -17,14 +17,11 @@ OBS_MODULE_USE_DEFAULT_LOCALE("input-overlay", "en-US")
 
 bool obs_module_load(void)
 {
-    for (int i = 0; i < MAX_SIMULTANEOUS_KEYS; i++)
-        pressed_keys[i] = 0;
-
+    util_clear_pressed();
     register_history();
     register_overlay_source();
-    //start_hook();
-
-    util_add_pressed(VC_KP_UP);
+    start_hook();
+ 
     return true;
 }
 

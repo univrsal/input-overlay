@@ -620,6 +620,12 @@ void InputSource::check_gamepad(void)
 #endif
 }
 
+void util_clear_pressed(void)
+{
+    for (int i = 0; i < MAX_SIMULTANEOUS_KEYS; i++)
+        pressed_keys[i] = 0;
+}
+
 bool util_pressed_empty(void)
 {
     for (int i = 0; i < MAX_SIMULTANEOUS_KEYS; i++)
