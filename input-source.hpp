@@ -31,7 +31,7 @@ extern "C" {
 
 #define MAX_SIMULTANEOUS_KEYS 14
 extern uint16_t pressed_keys[MAX_SIMULTANEOUS_KEYS];
-extern int16_t mouse_delta_x, mouse_delta_y, mouse_last_x, mouse_last_y;
+extern int16_t mouse_x, mouse_y, mouse_x_smooth, mouse_y_smooth, mouse_last_x, mouse_last_y;
 extern bool hook_initialized;
 
 void util_clear_pressed(void);
@@ -82,6 +82,7 @@ struct OverlayLayout {
 struct InputSource
 {
     obs_source_t *m_source = nullptr;
+    gs_image_file_t *m_image = nullptr;
     uint32_t cx = 0;
     uint32_t cy = 0;
 
@@ -89,9 +90,11 @@ struct InputSource
     XINPUT_STATE m_xinput;
 #endif
     bool m_valid_controller = false;
+    int16_t m_last_d_x = 0, m_last_d_y = 0;
+
     std::string m_image_file;
     std::string m_layout_file;
-    gs_image_file_t *m_image = nullptr;
+
     OverlayLayout m_layout;
     GamepadSettings m_pad_settings;
 
@@ -112,9 +115,9 @@ struct InputSource
     void unload_layout(void);
     void unload_texture(void);
 
-    void draw_key(gs_effect_t *effect, InputKey* key, uint16_t x, uint16_t y, float angle = 0.f);
-    void draw_key(gs_effect_t *effect, InputKey* key, float angle);
-    void draw_key(gs_effect_t *effect, InputKey* key);
+    void draw_key(gs_effect_t * effect, InputKey * key, uint16_t x, uint16_t y, bool rot, float angle);
+    void draw_key(gs_effect_t * effect, InputKey * key, uint16_t x, uint16_t y);
+    void draw_key(gs_effect_t * effect, InputKey * key);
 
     void check_keys(void);
     void check_gamepad(void);

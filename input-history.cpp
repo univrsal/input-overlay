@@ -468,12 +468,11 @@ bool clear_history(obs_properties_t * props, obs_property_t * property, void * d
 
 #define GET_PROPS(S)    (obs_properties_get(props, S))
 #define TEXT_VIS(S)     (obs_property_set_visible(S, state_text))
-#define ICON_VIS(S)     (obs_property_set_visible(S, state_icon))
+#define ICON_VIS(S)     (obs_property_set_visible(S, !state_text))
 
 bool mode_changed(obs_properties_t * props, obs_property_t * p, obs_data_t * s)
 {
     bool state_text = obs_data_get_int(s, S_OVERLAY_MODE) == 0;
-    bool state_icon = !state_text;
 
     TEXT_VIS(GET_PROPS(S_OVERLAY_FONT));
     TEXT_VIS(GET_PROPS(S_OVERLAY_FONT_COLOR));
@@ -580,7 +579,6 @@ obs_properties_t * get_properties_for_history(void * data)
 
 void register_history()
 {
-    // Input History
     obs_source_info si = {};
     si.id = "input-history";
     si.type = OBS_SOURCE_TYPE_INPUT;

@@ -138,9 +138,9 @@ struct InputHistorySource
     void unload_icons(void);
     void unload_translation(void);
 
+    KeyBundle check_keys(void);
     void add_to_history(KeyBundle b);
     void clear_history(void);
-    KeyBundle check_keys(void);
     void handle_text_history(void);
     void handle_icon_history(gs_effect_t * effect);
 

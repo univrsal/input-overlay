@@ -174,8 +174,6 @@
 // Get default keynames from a libuiohook keycode
 const char * key_to_text(int key_code);
 
-float get_angle(int16_t x, int16_t y);
-
 // Reads first integer off of csv string
 uint16_t util_read_int(std::string & l);
 

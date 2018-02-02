@@ -247,27 +247,6 @@ const char * key_to_text(int key_code)
     }
 }
 
-float get_angle(int16_t x, int16_t y)
-{
-    int quad = 0;
-    if (x > 0)
-    {
-        if (y > 0)
-            quad = 0;
-        else
-            quad = 3;
-    }
-    else
-    {
-        if (y < 0)
-            quad = 2;
-        else
-            quad = 1;
-    }
-
-    return atan2f(((float) abs(x)), (float) abs(y)) * 180 / PI + (quad * 90.f);
-}
-
 uint16_t util_read_int(std::string & l)
 {
     std::string temp = l.substr(0, l.find(','));

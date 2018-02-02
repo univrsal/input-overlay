@@ -8,7 +8,7 @@
  */
 
 uint16_t pressed_keys[MAX_SIMULTANEOUS_KEYS];
-int16_t mouse_delta_x, mouse_delta_y, mouse_last_x, mouse_last_y;
+int16_t mouse_x, mouse_y, mouse_x_smooth, mouse_y_smooth, mouse_last_x, mouse_last_y;
 bool hook_initialized = false;
 
 #ifdef WINDOWS
@@ -23,23 +23,19 @@ static pthread_mutex_t hook_control_mutex;
 static pthread_cond_t hook_control_cond;
 #endif
 
-void InputSource::draw_key(gs_effect_t *effect, InputKey* key, uint16_t x, uint16_t y, float angle)
+void InputSource::draw_key(gs_effect_t *effect, InputKey* key, uint16_t x, uint16_t y, bool rot, float angle)
 {
     gs_effect_set_texture(gs_effect_get_param_by_name(effect, "image"), m_image->texture);
     
     gs_matrix_push();
     
-    if (angle != 0.f)
+    if (rot)
     {
-        //gs_matrix_translate3f((float)(y / 2), (float)(x), 1.f);
-        //gs_matrix_push();
+        gs_matrix_translate3f(x + (key->w / 2.f),  y + (key->h / 2.f), 1.f); // Put it in position
+        gs_matrix_translate3f((float)-(key->w / 2), (float)-(key->h / 2), 1.f); // Needed for rotation
         gs_matrix_rotaa4f(0.f, 0.f, 1.f, angle);
-        gs_matrix_translate3f((float)x, (float)y, 1.f);
-
-        //gs_matrix_translate3f((float)-key->texture_u - (key->w / 2), (float)key->texture_v - (key->h / 2), 1.f);
-        // gs_matrix_pop();
+        gs_matrix_translate3f((float)-(key->w / 2), (float)-(key->h / 2), 1.f); // Needed for rotation
         gs_draw_sprite_subregion(m_image->texture, 0, key->texture_u, key->texture_v, key->w + 1, key->h + 1);
-
     }
     else
     {
@@ -58,14 +54,14 @@ void InputSource::draw_key(gs_effect_t *effect, InputKey* key, uint16_t x, uint1
     gs_matrix_pop();
 }
 
-void InputSource::draw_key(gs_effect_t * effect, InputKey * key, float angle)
+void InputSource::draw_key(gs_effect_t * effect, InputKey * key, uint16_t x, uint16_t y)
 {
-    draw_key(effect, key, key->column, key->row, angle);
+    draw_key(effect, key, x, y, false, 0.f);
 }
 
 void InputSource::draw_key(gs_effect_t * effect, InputKey * key)
 {
-    draw_key(effect, key, key->column, key->row);
+    draw_key(effect, key, key->column, key->row, false, 0.f);
 }
 
 void InputSource::unload_texture()
@@ -138,17 +134,35 @@ inline void InputSource::Render(gs_effect_t *effect)
 
             if (m_layout.m_mouse_movement)
             {
-                if (m_layout.m_use_arrow)
+                int d_x = mouse_x - mouse_last_x;
+                int d_y = mouse_y - mouse_last_y;
+                if (abs(d_x - m_last_d_x) > 40)
                 {
-                    k = &m_layout.m_keys[max];
-                    blog(LOG_INFO, "D_X: %i, D_Y: %i\n", mouse_delta_x, mouse_delta_y);
-                    blog(LOG_INFO, "Angle: %f\n", get_angle(mouse_delta_x, mouse_delta_y));
-                    draw_key(effect, k, k->column, k->row, get_angle(mouse_delta_x, mouse_delta_y));
+                    d_x = m_last_d_x;
                 }
                 else
                 {
-                    double factor_x = UTIL_CLAMP(-1, ((double)mouse_delta_x / m_layout.m_max_mouse_movement), 1); 
-                    double factor_y = UTIL_CLAMP(-1, ((double)mouse_delta_y / m_layout.m_max_mouse_movement), 1);
+                    m_last_d_x = d_x;
+                }
+
+                if (abs(d_y - m_last_d_y) > 40)
+                {
+                    d_y = m_last_d_y;
+                }
+                else
+                {
+                    m_last_d_y = d_y;
+                }
+                if (m_layout.m_use_arrow)
+                {
+                    k = &m_layout.m_keys[max];
+                    double new_angle = (0.5 * M_PI) + (atan2f(d_y, d_x));
+                    draw_key(effect, k, k->column, k->row, true, new_angle);
+                }
+                else
+                {
+                    double factor_x = UTIL_CLAMP(-1, ((double) d_x / m_layout.m_max_mouse_movement), 1); 
+                    double factor_y = UTIL_CLAMP(-1, ((double) d_y / m_layout.m_max_mouse_movement), 1);
 
                     int16_t dot_offset_x = m_layout.m_track_radius * factor_x;
                     int16_t dot_offset_y = m_layout.m_track_radius * factor_y;
@@ -168,18 +182,26 @@ inline void InputSource::Render(gs_effect_t *effect)
             draw_key(effect, &m_layout.m_keys[PAD_BODY], 0, 0);
             
             InputKey k = m_layout.m_keys[PAD_L_ANALOG];
-            x = k.column - k.w / 2 + m_pad_settings.m_analog_radius * m_pad_settings.m_left_analog_x;
-            y = k.row - k.h / 2 - m_pad_settings.m_analog_radius * m_pad_settings.m_left_analog_y;
+            x = k.column - k.w / 2 + m_pad_settings.m_analog_radius *
+                m_pad_settings.m_left_analog_x;
+            y = k.row - k.h / 2 - m_pad_settings.m_analog_radius *
+                m_pad_settings.m_left_analog_y;
+
             draw_key(effect, &k, x, y);
 
             k = m_layout.m_keys[PAD_R_ANALOG];
-            x = k.column - k.w / 2 + m_pad_settings.m_analog_radius * m_pad_settings.m_right_analog_x;
-            y = k.row - k.h / 2 - m_pad_settings.m_analog_radius * m_pad_settings.m_right_analog_y;
+            
+            x = k.column - k.w / 2 + m_pad_settings.m_analog_radius *
+                m_pad_settings.m_right_analog_x;
+            y = k.row - k.h / 2 - m_pad_settings.m_analog_radius *
+                m_pad_settings.m_right_analog_y;
+
             draw_key(effect, &k, x, y);
 
             draw_key(effect, &m_layout.m_keys[PAD_BACK]);
             draw_key(effect, &m_layout.m_keys[PAD_START]);
-            draw_key(effect, &m_layout.m_keys[PAD_PLAYER_1 + m_pad_settings.m_controller_id]);
+            draw_key(effect, &m_layout.m_keys[PAD_PLAYER_1 +
+                m_pad_settings.m_controller_id]);
             draw_key(effect, &m_layout.m_keys[PAD_X]);
             draw_key(effect, &m_layout.m_keys[PAD_Y]);
             draw_key(effect, &m_layout.m_keys[PAD_A]);
@@ -757,7 +779,8 @@ void register_overlay_source()
     si.get_properties = get_properties_for_overlay;
 
     si.get_name = [](void*) { return obs_module_text("InputOverlay"); };
-    si.create = [](obs_data_t *settings, obs_source_t *source) { return (void*) new InputSource(source, settings);    };
+    si.create = [](obs_data_t *settings, obs_source_t *source) 
+        { return (void*) new InputSource(source, settings);    };
     si.destroy = [](void *data) { delete reinterpret_cast<InputSource*>(data);    };
     si.get_width = [](void *data) { return reinterpret_cast<InputSource*>(data)->cx;    };
     si.get_height = [](void *data) { return reinterpret_cast<InputSource*>(data)->cy;    };
@@ -768,9 +791,12 @@ void register_overlay_source()
         
     };
 
-    si.update = [](void *data, obs_data_t *settings) { reinterpret_cast<InputSource*>(data)->Update(settings); };
-    si.video_tick = [](void *data, float seconds) { reinterpret_cast<InputSource*>(data)->Tick(seconds); };
-    si.video_render = [](void *data, gs_effect_t *effect) { reinterpret_cast<InputSource*>(data)->Render(effect); };
+    si.update = [](void *data, obs_data_t *settings)
+        { reinterpret_cast<InputSource*>(data)->Update(settings); };
+    si.video_tick = [](void *data, float seconds)
+        { reinterpret_cast<InputSource*>(data)->Tick(seconds); };
+    si.video_render = [](void *data, gs_effect_t *effect)
+        { reinterpret_cast<InputSource*>(data)->Render(effect); };
     obs_register_source(&si);
 }
 
@@ -943,6 +969,8 @@ void end_hook(void)
     hook_stop();
 }
 
+int counter = 0;
+
 void proccess_event(uiohook_event * const event)
 {
     util_remove_pressed(VC_MOUSE_WHEEL_UP);
@@ -984,12 +1012,19 @@ void proccess_event(uiohook_event * const event)
             break;
         case EVENT_MOUSE_DRAGGED:
         case EVENT_MOUSE_MOVED:
+            if (counter >= 5)
+            {
+                
+                mouse_last_x = mouse_x;
+                mouse_last_y = mouse_y;
+                mouse_x = event->data.mouse.x;
+                mouse_y = event->data.mouse.y;
+                mouse_x_smooth = (mouse_last_x * 4 + mouse_x + 4) / 5;
+                mouse_y_smooth = (mouse_last_y * 4 + mouse_y + 4) / 5;
 
-            mouse_delta_x = (mouse_last_x * 7 + event->data.mouse.x + 7) / 8;
-            mouse_delta_y = (mouse_last_y * 7 + event->data.mouse.y + 7) / 8;
-
-            mouse_last_x = event->data.mouse.x;
-            mouse_last_y = event->data.mouse.y;
+                counter = 0;
+            }
+            counter++;
             break;
     }
 }
