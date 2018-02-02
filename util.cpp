@@ -310,7 +310,31 @@ void util_format_path(std::string & path)
         path.resize(slash - path.c_str() + 1);
 }
 
+void util_enable_mask(uint8_t & masks, uint8_t mask)
+{
+    masks |= mask;
+}
+
+void util_disable_mask(uint8_t & masks, uint8_t mask)
+{
+    masks &= ~mask;
+}
+
+void util_set_mask(uint8_t & masks, uint8_t mask, bool state)
+{
+    if (state)
+    {
+        util_enable_mask(masks, mask);
+    }
+    else
+    {
+        util_disable_mask(masks, mask);
+    }
+}
+
+#ifdef DEBUG
 uint16_t random_vc(void)
 {
     return (uint16_t) VC_1 + (rand() % static_cast<int>(VC_0 - VC_1 + 1));
 }
+#endif

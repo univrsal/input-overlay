@@ -123,8 +123,7 @@ void InputHistorySource::handle_text_history(void)
             continue;
         }
 
-        line = m_history[i].to_string(m_fix_cutting, m_include_mouse,
-            m_use_translation, m_use_fallback, m_key_names);
+        line = m_history[i].to_string(m_bool_values, m_key_names);
 
         if (!line.empty())
         {
@@ -205,28 +204,27 @@ inline void InputHistorySource::Update(obs_data_t * settings)
 {
     obs_source_update(m_text_source, settings);
 
-    m_text_mode = obs_data_get_int(settings, S_OVERLAY_MODE) == 0;
+    SET_MASK(MASK_TEXT_MODE, obs_data_get_int(settings, S_OVERLAY_MODE) == 0);
+    SET_MASK(MASK_INCLUDE_MOUSE, obs_data_get_bool(settings, S_OVERLAY_INCLUDE_MOUSE));
+    SET_MASK(MASK_REPEAT_KEYS, obs_data_get_bool(settings, S_OVERLAY_ENABLE_REPEAT_KEYS));
+    SET_MASK(MASK_AUTO_CLEAR, obs_data_get_bool(settings, S_OVERLAY_ENABLE_AUTO_CLEAR));
+    SET_MASK(MASK_FIX_CUTTING, obs_data_get_bool(settings, S_OVERLAY_FIX_CUTTING));
+    SET_MASK(MASK_USE_FALLBACK, obs_data_get_bool(settings, S_OVERLAY_USE_FALLBACK_NAME));
 
-    m_history_size = obs_data_get_int(settings, S_OVERLAY_HISTORY_SIZE);   
-    m_include_mouse = obs_data_get_bool(settings, S_OVERLAY_INCLUDE_MOUSE);
     m_update_interval = obs_data_get_int(settings, S_OVERLAY_INTERVAL);
-    m_repeat_keys = obs_data_get_bool(settings, S_OVERLAY_ENABLE_REPEAT_KEYS);
-    m_auto_clear = obs_data_get_bool(settings, S_OVERLAY_ENABLE_AUTO_CLEAR);
     m_clear_interval = obs_data_get_int(settings, S_OVERLAY_AUTO_CLEAR_INTERVAL);
-
-    m_use_fallback = obs_data_get_bool(settings, S_OVERLAY_USE_FALLBACK_NAME);
+    
     m_key_name_path = obs_data_get_string(settings, S_OVERLAY_KEY_NAME_PATH);
-    m_fix_cutting = obs_data_get_bool(settings, S_OVERLAY_FIX_CUTTING);
-
     m_key_icon_config_path = obs_data_get_string(settings, S_OVERLAY_KEY_ICON_CONFIG_PATH);
     m_key_icon_path = obs_data_get_string(settings, S_OVERLAY_KEY_ICON_PATH);
     
     m_icon_h_space = obs_data_get_int(settings, S_OVERLAY_ICON_H_SPACE);
     m_icon_v_space = obs_data_get_int(settings, S_OVERLAY_ICON_V_SPACE);
 
+    m_history_size = obs_data_get_int(settings, S_OVERLAY_HISTORY_SIZE);
     m_history_direction = (IconDirection) obs_data_get_int(settings, S_OVERLAY_DIRECTION);
 
-    if (m_text_mode)
+    if (GET_MASK(MASK_TEXT_MODE))
     {
         unload_icons();
     }
@@ -237,12 +235,12 @@ inline void InputHistorySource::Update(obs_data_t * settings)
 
     if (!m_key_name_path.empty())
     {
-        m_use_translation = true;
+        SET_MASK(MASK_TRANSLATION, true);
         load_translation();
     }
     else
     {
-        m_use_translation = false;
+        SET_MASK(MASK_TRANSLATION, false);
         unload_translation();
     }
 }
@@ -254,7 +252,7 @@ inline void InputHistorySource::Tick(float seconds)
 
     //util_add_pressed(random_vc());
 
-    if (m_auto_clear)
+    if (GET_MASK(MASK_AUTO_CLEAR))
     {
         m_clear_timer += seconds;
         if (m_clear_timer >= m_clear_interval)
@@ -269,11 +267,11 @@ inline void InputHistorySource::Tick(float seconds)
         m_counter = 0;
         if (!m_current_keys.m_empty)
         {
-            if (m_text_mode || m_key_icons && m_key_icons->has_texture_for_bundle(&m_current_keys))
+            if (GET_MASK(MASK_TEXT_MODE) || m_key_icons && m_key_icons->has_texture_for_bundle(&m_current_keys))
             {
-                if (m_repeat_keys || !m_current_keys.compare(&m_prev_keys))
+                if (GET_MASK(MASK_REPEAT_KEYS) || !m_current_keys.compare(&m_prev_keys))
                 {
-                    if (!m_current_keys.is_only_mouse() || m_include_mouse)
+                    if (!m_current_keys.is_only_mouse() || GET_MASK(MASK_INCLUDE_MOUSE))
                     {
                         add_to_history(m_current_keys);
                         m_clear_timer = 0.f;
@@ -281,7 +279,7 @@ inline void InputHistorySource::Tick(float seconds)
 
                     m_prev_keys = m_current_keys;
 
-                    if (m_text_mode)
+                    if (GET_MASK(MASK_TEXT_MODE))
                     {
                         handle_text_history();
                     }
@@ -297,7 +295,7 @@ inline void InputHistorySource::Tick(float seconds)
         m_counter++;
     }
     
-    if (m_text_mode)
+    if (GET_MASK(MASK_TEXT_MODE))
     {
         cx = UTIL_MAX(obs_source_get_width(m_text_source), 50);
         cy = UTIL_MAX(obs_source_get_height(m_text_source), 50);
@@ -328,7 +326,7 @@ inline void InputHistorySource::Tick(float seconds)
 
 inline void InputHistorySource::Render(gs_effect_t * effect)
 {
-    if (m_text_mode)
+    if (GET_MASK(MASK_TEXT_MODE))
     {
         obs_source_video_render(m_text_source);
     }
@@ -352,8 +350,7 @@ void KeyBundle::merge(KeyBundle other)
     }
 }
 
-std::string KeyBundle::to_string(bool fix, bool include_mouse,
-    bool use_translation, bool use_fallback, KeyNames* names)
+std::string KeyBundle::to_string(uint8_t masks, KeyNames* names)
 {
     if (m_empty)
         return "";
@@ -367,7 +364,7 @@ std::string KeyBundle::to_string(bool fix, bool include_mouse,
             break; // Array is filled from beginning to end
                    // -> First entry with zero means there are none after it
         
-        if (!include_mouse)
+        if (!(masks & MASK_INCLUDE_MOUSE))
         {
             switch (m_keys[i])
             {
@@ -386,11 +383,11 @@ std::string KeyBundle::to_string(bool fix, bool include_mouse,
         {
             const char* temp = NULL;
 
-            if (use_translation)
+            if (masks & MASK_TRANSLATION)
             {
                 temp = names->get_name(m_keys[i]);
                 
-                if (!temp && use_fallback)
+                if (!temp && (masks & MASK_USE_FALLBACK))
                     temp = key_to_text(m_keys[i]);
             }
             else
@@ -422,7 +419,7 @@ std::string KeyBundle::to_string(bool fix, bool include_mouse,
         }
     }
 
-    if (fix && !text.empty())
+    if ((masks & MASK_FIX_CUTTING) && !text.empty())
         text.append(" ");
     return text;
 }

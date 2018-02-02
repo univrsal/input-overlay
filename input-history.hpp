@@ -16,6 +16,18 @@ extern "C" {
 
 #define MAX_HISTORY_SIZE 5
 
+#define SET_MASK(a, b)      (util_set_mask(m_bool_values, a, b))
+#define GET_MASK(a)         (m_bool_values & a)
+
+#define MASK_TEXT_MODE      1 << 0
+#define MASK_FIX_CUTTING    1 << 1
+#define MASK_INCLUDE_MOUSE  1 << 2
+#define MASK_UPDATE_KEYS    1 << 3
+#define MASK_AUTO_CLEAR     1 << 4
+#define MASK_REPEAT_KEYS    1 << 5
+#define MASK_TRANSLATION    1 << 6
+#define MASK_USE_FALLBACK   1 << 7
+
 /**
  * This file is part of input-overlay
  * which is licenced under the MIT licence.
@@ -39,7 +51,7 @@ struct KeyBundle {
 
     void merge(KeyBundle other);
 
-    std::string to_string(bool fix, bool include_mouse, bool use_translation, bool use_fallback, KeyNames* names);
+    std::string to_string(uint8_t masks, KeyNames* names);
     bool compare(KeyBundle* other);
     bool is_only_mouse();
 };
@@ -89,15 +101,7 @@ struct InputHistorySource
     uint32_t m_update_interval = 1, m_counter = 0;
     int16_t m_icon_v_space = 0, m_icon_h_space = 0;
 
-    bool m_text_mode = true;
-    bool m_fix_cutting = false;
-    bool m_include_mouse = false;
-    bool m_update_keys = false;
-    bool m_auto_clear = false;
-    bool m_repeat_keys = false;
-    bool m_use_translation = false;
-    bool m_use_fallback = false;
-    
+    uint8_t m_bool_values = 0x0000;
     IconDirection m_history_direction = DIR_DOWN;
 
     KeyBundle m_current_keys;

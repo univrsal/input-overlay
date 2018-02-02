@@ -188,6 +188,9 @@ std::string util_file_filter(const char * display, const char * formats);
 // Changes slashes in path to fit unix formatting
 void util_format_path(std::string & path);
 
+void util_enable_mask(uint8_t& masks, uint8_t mask);
+void util_disable_mask(uint8_t& masks, uint8_t mask);
+void util_set_mask(uint8_t& masks, uint8_t mask, bool state);
 #ifdef DEBUG
 uint16_t random_vc(void);
 #endif
