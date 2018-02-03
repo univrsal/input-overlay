@@ -90,7 +90,9 @@ struct InputSource
     XINPUT_STATE m_xinput;
 #endif
     bool m_valid_controller = false;
-    int16_t m_last_d_x = 0, m_last_d_y = 0;
+    bool m_monitor_use_center = false;
+    int32_t m_monitor_h = 0, m_monitor_v = 0;
+    uint8_t m_mouse_dead_zone = 0;
 
     std::string m_image_file;
     std::string m_layout_file;
@@ -129,12 +131,15 @@ struct InputSource
 
 static bool is_controller_changed(obs_properties_t *props, obs_property_t *p, obs_data_t *s);
 
+static bool use_monitor_center_changed(obs_properties_t *props, obs_property_t *p, obs_data_t *s);
+
 // For registering
 static obs_properties_t *get_properties_for_overlay(void *data);
 
 void register_overlay_source();
 
 uint16_t mouse_to_vc(int m);
+
 // libuiohook
 
 #ifdef WINDOWS

@@ -28,9 +28,11 @@
 #include <random>
 #endif
 
-#ifndef PI
-#define PI 3.14159265358979323846
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
 #endif
+
+#define GET_PROPS(S)    (obs_properties_get(props, S))
 
 #define UTIL_MAX(a,b)               (((a) > (b)) ? (a) : (b))
 #define UTIL_MIN(a,b)               (((a) < (b)) ? (a) : (b))
@@ -50,6 +52,10 @@
 #define S_CONTROLLER_L_DEAD_ZONE    "controller_l_deadzone"
 #define S_CONTROLLER_R_DEAD_ZONE    "controller_r_deadzone"
 #define S_MOUSE_SENS                "mouse_sens"
+#define S_MOUSE_DEAD_ZONE           "mouse_deadzone"
+#define S_MONITOR_USE_CENTER        "monitor_use_center"
+#define S_MONITOR_H_CENTER          "monitor_h_center"
+#define S_MONITOR_V_CENTER          "monitor_v_center"
 
 #define T_(v)                       obs_module_text(v)
 #define T_OVERLAY_FILE              T_("OverlayFile")
@@ -62,6 +68,10 @@
 #define T_CONROLLER_L_DEADZONE      T_("Gamepad.LeftDeadZone")
 #define T_CONROLLER_R_DEADZONE      T_("Gamepad.RightDeadZone")
 #define T_MOUSE_SENS                T_("Mouse.Sensitivity")
+#define T_MOUSE_DEAD_ZONE           T_("Mouse.Deadzone")
+#define T_MONITOR_USE_CENTER          T_("Mouse.UseCenter")
+#define T_MONITOR_H_CENTER          T_("Monitor.CenterX")
+#define T_MONITOR_V_CENTER          T_("Monitor.CenterY")
 
 // Lang Input History
 #define S_OVERLAY_DIRECTION             "direction_up"

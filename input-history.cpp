@@ -466,7 +466,6 @@ bool clear_history(obs_properties_t * props, obs_property_t * property, void * d
     return true;
 }
 
-#define GET_PROPS(S)    (obs_properties_get(props, S))
 #define TEXT_VIS(S)     (obs_property_set_visible(S, state_text))
 #define ICON_VIS(S)     (obs_property_set_visible(S, !state_text))
 

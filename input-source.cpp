@@ -82,6 +82,15 @@ inline void InputSource::Update(obs_data_t *settings)
     m_image_file = obs_data_get_string(settings, S_OVERLAY_FILE);
     m_layout_file = obs_data_get_string(settings, S_LAYOUT_FILE);
 
+    m_monitor_use_center = obs_data_get_bool(settings, S_MONITOR_USE_CENTER);
+    m_mouse_dead_zone = obs_data_get_int(settings, S_MOUSE_DEAD_ZONE);
+
+    if (m_monitor_use_center)
+    {
+        m_monitor_h = obs_data_get_int(settings, S_MONITOR_H_CENTER);
+        m_monitor_v = obs_data_get_int(settings, S_MONITOR_V_CENTER);
+    }
+
     load_texture();
     load_layout();
 
@@ -96,6 +105,8 @@ inline void InputSource::Tick(float seconds)
 {
     check_keys();
 }
+
+double old_angle = 0.f;
 
 inline void InputSource::Render(gs_effect_t *effect)
 {
@@ -134,30 +145,24 @@ inline void InputSource::Render(gs_effect_t *effect)
 
             if (m_layout.m_mouse_movement)
             {
-                int d_x = mouse_x - mouse_last_x;
-                int d_y = mouse_y - mouse_last_y;
-                if (abs(d_x - m_last_d_x) > 40)
-                {
-                    d_x = m_last_d_x;
-                }
-                else
-                {
-                    m_last_d_x = d_x;
-                }
+                int d_x = mouse_x - (m_monitor_use_center ? m_monitor_h : mouse_last_x);
+                int d_y = mouse_y - (m_monitor_use_center ? m_monitor_v : mouse_last_y);
 
-                if (abs(d_y - m_last_d_y) > 40)
-                {
-                    d_y = m_last_d_y;
-                }
-                else
-                {
-                    m_last_d_y = d_y;
-                }
                 if (m_layout.m_use_arrow)
                 {
                     k = &m_layout.m_keys[max];
                     double new_angle = (0.5 * M_PI) + (atan2f(d_y, d_x));
-                    draw_key(effect, k, k->column, k->row, true, new_angle);
+                    
+                    if (abs(d_x) < m_mouse_dead_zone || abs(d_y) < m_mouse_dead_zone)
+                    {
+                        draw_key(effect, k, k->column, k->row, true, old_angle);
+                    }
+                    else
+                    {
+                       
+                        draw_key(effect, k, k->column, k->row, true, new_angle);
+                        old_angle = new_angle;
+                    }
                 }
                 else
                 {
@@ -721,6 +726,15 @@ bool is_controller_changed(obs_properties_t * props, obs_property_t * p, obs_dat
     return true;
 }
 
+bool use_monitor_center_changed(obs_properties_t * props, obs_property_t * p, obs_data_t * s)
+{
+    bool use_center = obs_data_get_bool(s, S_MONITOR_USE_CENTER);
+    obs_property_set_visible(GET_PROPS(S_MONITOR_H_CENTER), use_center);
+    obs_property_set_visible(GET_PROPS(S_MONITOR_V_CENTER), use_center);
+
+    return true;
+}
+
 obs_properties_t * get_properties_for_overlay(void * data)
 {
     InputSource * s = reinterpret_cast<InputSource*>(data);
@@ -754,10 +768,17 @@ obs_properties_t * get_properties_for_overlay(void * data)
     
     obs_properties_add_int_slider(props, S_MOUSE_SENS, T_MOUSE_SENS, 1, 500, 1);
 
+    obs_property_t *use_center = obs_properties_add_bool(props, S_MONITOR_USE_CENTER, T_MONITOR_USE_CENTER);
+    obs_property_set_modified_callback(use_center, use_monitor_center_changed);
+
+    obs_properties_add_int(props, S_MONITOR_H_CENTER, T_MONITOR_H_CENTER, -9999, 9999, 1);
+    obs_properties_add_int(props, S_MONITOR_V_CENTER, T_MONITOR_V_CENTER, -9999, 9999, 1);
+    obs_properties_add_int_slider(props, S_MOUSE_DEAD_ZONE, T_MOUSE_DEAD_ZONE, 0, 50, 1);
+
     // Gamepad stuff
 #ifdef HAVE_XINPUT
-    obs_property_t *p = obs_properties_add_bool(props, S_IS_CONTROLLER, T_IS_CONTROLLER);
-    obs_property_set_modified_callback(p, is_controller_changed);
+    obs_property_t *is_controller = obs_properties_add_bool(props, S_IS_CONTROLLER, T_IS_CONTROLLER);
+    obs_property_set_modified_callback(is_controller, is_controller_changed);
 
     obs_properties_add_int(props, S_CONTROLLER_ID, T_CONTROLLER_ID, 0, 3, 1);
 
@@ -971,11 +992,13 @@ void end_hook(void)
 
 int counter = 0;
 
+
 void proccess_event(uiohook_event * const event)
 {
+
     util_remove_pressed(VC_MOUSE_WHEEL_UP);
     util_remove_pressed(VC_MOUSE_WHEEL_DOWN);
-    
+
     switch (event->type)
     {
         case EVENT_KEY_PRESSED:
@@ -1012,19 +1035,12 @@ void proccess_event(uiohook_event * const event)
             break;
         case EVENT_MOUSE_DRAGGED:
         case EVENT_MOUSE_MOVED:
-            if (counter >= 5)
-            {
-                
-                mouse_last_x = mouse_x;
-                mouse_last_y = mouse_y;
-                mouse_x = event->data.mouse.x;
-                mouse_y = event->data.mouse.y;
-                mouse_x_smooth = (mouse_last_x * 4 + mouse_x + 4) / 5;
-                mouse_y_smooth = (mouse_last_y * 4 + mouse_y + 4) / 5;
-
-                counter = 0;
-            }
-            counter++;
+            mouse_last_x = mouse_x;
+            mouse_last_y = mouse_y;
+            mouse_x = event->data.mouse.x;
+            mouse_y = event->data.mouse.y;
+            mouse_x_smooth = (mouse_last_x * 4 + mouse_x + 4) / 5;
+            mouse_y_smooth = (mouse_last_y * 4 + mouse_y + 4) / 5;
             break;
     }
 }
