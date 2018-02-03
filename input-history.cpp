@@ -9,14 +9,8 @@
 
 void InputHistorySource::load_text_source(void)
 {
-    unload_text_source();
-    obs_data_t* text_data = obs_source_get_settings(m_text_source);
-    obs_data_t* main_data = obs_source_get_settings(m_source);
-    m_text_source = obs_source_create("text_gdiplus\0", "history-text-source\0", main_data, NULL);
+    m_text_source = obs_source_create("text_gdiplus\0", "history-text-source", m_settings, NULL);
     obs_source_add_active_child(m_source, m_text_source);
-
-    obs_source_update(m_text_source, main_data);
-    obs_source_update(m_source, main_data);
 }
 
 void InputHistorySource::load_icons(void)
@@ -35,12 +29,9 @@ void InputHistorySource::load_translation(void)
 
 void InputHistorySource::unload_text_source(void)
 {
-    if (m_text_source)
-    {
-        obs_source_remove(m_text_source);
-        obs_source_release(m_text_source);
-        m_text_source = nullptr;
-    }
+    obs_source_remove(m_text_source);
+    obs_source_release(m_text_source);
+    m_text_source = nullptr;
 }
 
 void InputHistorySource::unload_icons(void)
@@ -81,12 +72,9 @@ void InputHistorySource::clear_history(void)
     m_prev_keys = {};
     m_current_keys = {};
 
-    obs_data_t* text_data = obs_source_get_settings(m_text_source);
-    obs_data_t* main_data = obs_source_get_settings(m_source);
-    
-    obs_data_set_string(text_data, "text", "");
-    obs_source_update(m_text_source, text_data);
-    obs_source_update(m_source, main_data);
+    obs_data_set_string(m_settings, "text", "");
+    obs_source_update(m_text_source, m_settings);
+    obs_source_update(m_source, m_settings);
 }
 
 KeyBundle InputHistorySource::check_keys(void)
@@ -133,12 +121,9 @@ void InputHistorySource::handle_text_history(void)
         }
     }
 
-    obs_data_t* text_data = obs_source_get_settings(m_text_source);
-    obs_data_t* main_data = obs_source_get_settings(m_source);
-
-    obs_data_set_string(text_data, "text", text.c_str());
-    obs_source_update(m_text_source, text_data);
-    obs_source_update(m_source, main_data);
+    obs_data_set_string(m_settings, "text", text.c_str());
+    obs_source_update(m_text_source, m_settings);
+    obs_source_update(m_source, m_settings);
 }
 
 void InputHistorySource::handle_icon_history(gs_effect_t * effect)
@@ -223,7 +208,7 @@ inline void InputHistorySource::Update(obs_data_t * settings)
 
     m_history_size = obs_data_get_int(settings, S_OVERLAY_HISTORY_SIZE);
     m_history_direction = (IconDirection) obs_data_get_int(settings, S_OVERLAY_DIRECTION);
-
+    
     if (GET_MASK(MASK_TEXT_MODE))
     {
         unload_icons();
@@ -249,8 +234,6 @@ inline void InputHistorySource::Tick(float seconds)
 {
     if (!m_source || !obs_source_showing(m_source))
         return;
-
-    //util_add_pressed(random_vc());
 
     if (GET_MASK(MASK_AUTO_CLEAR))
     {
@@ -630,7 +613,10 @@ void KeyNames::load_from_file(std::string path)
     }
 
     if (cfg)
+    {
         delete cfg;
+        cfg = nullptr;
+    }
 }
 
 const char * KeyNames::get_name(uint16_t vc)
@@ -705,11 +691,18 @@ void KeyIcons::load_from_file(std::string img_path, std::string cfg_path)
         }
     }
 
-    delete cfg;
+    if (cfg)
+    {
+        delete cfg;
+        cfg = nullptr;
+    }
+        
+    m_loaded = cfg_loaded && m_icon_texture->loaded;
 
     if (!m_icon_texture->loaded)
     {
         blog(LOG_ERROR, "Error: Failed to load key icons from %s", img_path.c_str());
+        unload_texture();
     }
 
     if (!cfg_loaded)
@@ -717,7 +710,6 @@ void KeyIcons::load_from_file(std::string img_path, std::string cfg_path)
         blog(LOG_ERROR, "Error: Failed to load key icon config from %s", cfg_path.c_str());
     }
 
-    m_loaded = cfg_loaded && m_icon_texture->loaded;
 }
 
 KeyIcon * KeyIcons::get_icon_for_key(uint16_t vc)
@@ -745,7 +737,11 @@ bool KeyIcons::has_texture_for_bundle(KeyBundle * bundle)
 
 void KeyIcons::unload_texture()
 {
-    obs_enter_graphics();
-    gs_image_file_free(m_icon_texture);
-    obs_leave_graphics();
+    if (m_icon_texture)
+    {
+        obs_enter_graphics();
+        gs_image_file_free(m_icon_texture);
+        m_icon_texture = nullptr;
+        obs_leave_graphics();
+    }
 }

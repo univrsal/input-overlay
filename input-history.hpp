@@ -91,8 +91,9 @@ private:
 
 struct InputHistorySource
 {
-    obs_source_t *m_source = nullptr;
-    obs_source_t *m_text_source = nullptr;
+    obs_source_t * m_source = nullptr;
+    obs_data_t * m_settings = nullptr;
+    obs_source_t * m_text_source = nullptr;
 
     uint8_t m_history_size = 1;
 
@@ -117,26 +118,28 @@ struct InputHistorySource
     float m_clear_timer = 0.f;
     int m_clear_interval = 0;
 
-    inline InputHistorySource(obs_source_t *source_, obs_data_t *settings) :
-        m_source(source_)
+    inline InputHistorySource(obs_source_t * source_, obs_data_t * settings) :
+        m_source(source_),
+        m_settings(settings)
     {
+        obs_source_update(m_source, settings);
         load_text_source();
     }
 
     inline ~InputHistorySource()
     {
+        unload_text_source();
         unload_icons();
         unload_translation();
-        unload_text_source();
     }
 
     void load_text_source(void);
     void load_icons(void);
     void load_translation(void);
     
-    void unload_text_source(void);
-    void unload_icons(void);
-    void unload_translation(void);
+    inline void unload_text_source(void);
+    inline void unload_icons(void);
+    inline void unload_translation(void);
 
     KeyBundle check_keys(void);
     void add_to_history(KeyBundle b);
