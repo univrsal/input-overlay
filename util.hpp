@@ -74,7 +74,6 @@
 #define T_MONITOR_V_CENTER          T_("Monitor.CenterY")
 
 // Lang Input History
-#define S_OVERLAY_DIRECTION             "direction_up"
 #define S_OVERLAY_HISTORY_SIZE          "history_size"
 #define S_OVERLAY_FIX_CUTTING           "fix_cutting"
 #define S_OVERLAY_INCLUDE_MOUSE	        "include_mouse"
@@ -199,7 +198,18 @@ void util_format_path(std::string & path);
 void util_enable_mask(uint8_t& masks, uint8_t mask);
 void util_disable_mask(uint8_t& masks, uint8_t mask);
 void util_set_mask(uint8_t& masks, uint8_t mask, bool state);
+
 #ifdef DEBUG
 uint16_t random_vc(void);
+#endif
+
+#ifndef WINDOWS
+// uiohook doesn't define these on linux
+// and I don't want to header guard them
+// in the switch case...
+#define VC_KP_UP 	0xEE48
+#define VC_KP_DOWN 	0xEE4B
+#define VC_KP_LEFT	0xEE4D
+#define VC_KP_RIGHT	0xEE50
 #endif
 #endif

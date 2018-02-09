@@ -9,7 +9,11 @@
 
 void InputHistorySource::load_text_source(void)
 {
+    #ifdef WINDOWS
     m_text_source = obs_source_create("text_gdiplus\0", "history-text-source", m_settings, NULL);
+    #else
+    m_text_source = obs_source_create("text_ft2_source\0", "history-text-source", m_settings, NULL);
+    #endif
     obs_source_add_active_child(m_source, m_text_source);
 }
 

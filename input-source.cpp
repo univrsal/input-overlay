@@ -776,7 +776,7 @@ obs_properties_t * get_properties_for_overlay(void * data)
     obs_properties_add_int_slider(props, S_MOUSE_DEAD_ZONE, T_MOUSE_DEAD_ZONE, 0, 50, 1);
 
     // Gamepad stuff
-#ifdef HAVE_XINPUT
+#if HAVE_XINPUT
     obs_property_t *is_controller = obs_properties_add_bool(props, S_IS_CONTROLLER, T_IS_CONTROLLER);
     obs_property_set_modified_callback(is_controller, is_controller_changed);
 
@@ -823,6 +823,12 @@ void register_overlay_source()
 
 uint16_t mouse_to_vc(int m)
 {
+#ifndef WINDOWS // Linux mixes right mouse and middle mouse or is windows getting it wrong?
+    if (m == 3)
+        m = 2;
+    else if (m == 2)
+        m = 3;
+#endif
     return (uint16_t) (VC_MOUSE_MASK | m);
 }
 
