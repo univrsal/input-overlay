@@ -527,6 +527,15 @@ void InputSource::load_layout()
     {
         warning("Failed to load config! Not a valid config file\n");
     }
+
+    if (cfg->has_errors())
+    {
+        blog(LOG_WARNING, "[ccl] %s", cfg->get_error_message().c_str());
+        if (cfg->has_fatal_errors())
+        {
+            m_layout.m_is_loaded = false;
+        }
+    }
   
     delete cfg;
 }

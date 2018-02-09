@@ -616,6 +616,11 @@ void KeyNames::load_from_file(std::string path)
         } while ((node = node->get_next()) != NULL);
     }
 
+    if (cfg->has_errors())
+    {
+        blog(LOG_WARNING, "[ccl] %s", cfg->get_error_message().c_str());
+    }
+
     if (cfg)
     {
         delete cfg;
@@ -714,6 +719,10 @@ void KeyIcons::load_from_file(std::string img_path, std::string cfg_path)
         blog(LOG_ERROR, "Error: Failed to load key icon config from %s", cfg_path.c_str());
     }
 
+    if (cfg->has_errors())
+    {
+        blog(LOG_WARNING, "[ccl] %s", cfg->get_error_message().c_str());
+    }
 }
 
 KeyIcon * KeyIcons::get_icon_for_key(uint16_t vc)
