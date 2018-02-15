@@ -18,9 +18,9 @@
 #include <stdarg.h>
 #include <list>
 #include <util/platform.h>
-#include "ccl/ccl.hpp"
-#include "layouttype.hpp"
-#include "util.hpp"
+#include "../ccl/ccl.hpp"
+#include "../util/layouttype.hpp"
+#include "../util/util.hpp"
 
 extern "C" {
 #include <graphics/image-file.h>

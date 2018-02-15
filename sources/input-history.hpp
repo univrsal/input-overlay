@@ -7,8 +7,8 @@
 #include <iomanip>
 #include <map>
 #include "input-source.hpp"
-#include "ccl/ccl.hpp"
-#include "util.hpp"
+#include "../ccl/ccl.hpp"
+#include "../util/util.hpp"
 
 extern "C" {
 #include <graphics/image-file.h>

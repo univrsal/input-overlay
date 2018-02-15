@@ -1,9 +1,9 @@
 #include <obs-module.h>
-#include "util.hpp"
+#include "util/util.hpp"
 
 #include <string>
-#include "input-source.hpp"
-#include "input-history.hpp"
+#include "sources/input-source.hpp"
+#include "sources/input-history.hpp"
 
 /**
  * This file is part of input-overlay

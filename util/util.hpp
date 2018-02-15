@@ -49,6 +49,7 @@
 #define S_LAYOUT_FILE               "layout_file"
 #define S_IS_CONTROLLER             "is_controller"
 #define S_CONTROLLER_ID             "controller_id"
+#define S_CONTROLLER_PATH			"controller_path"
 #define S_CONTROLLER_L_DEAD_ZONE    "controller_l_deadzone"
 #define S_CONTROLLER_R_DEAD_ZONE    "controller_r_deadzone"
 #define S_MOUSE_SENS                "mouse_sens"
@@ -65,11 +66,12 @@
 #define T_FILTER_ALL_FILES          T_("Filter.AllFiles")
 #define T_IS_CONTROLLER             T_("Gamepad.IsGamepad")
 #define T_CONTROLLER_ID             T_("GamepadId")
+#define T_CONTROLLER_PATH			T_("Gamepad.Path")
 #define T_CONROLLER_L_DEADZONE      T_("Gamepad.LeftDeadZone")
 #define T_CONROLLER_R_DEADZONE      T_("Gamepad.RightDeadZone")
 #define T_MOUSE_SENS                T_("Mouse.Sensitivity")
 #define T_MOUSE_DEAD_ZONE           T_("Mouse.Deadzone")
-#define T_MONITOR_USE_CENTER          T_("Mouse.UseCenter")
+#define T_MONITOR_USE_CENTER        T_("Mouse.UseCenter")
 #define T_MONITOR_H_CENTER          T_("Monitor.CenterX")
 #define T_MONITOR_V_CENTER          T_("Monitor.CenterY")
 
@@ -157,28 +159,32 @@
 
 // Gamepad constants
 #define PAD_STICK_MAX_VAL   32767
-#define PAD_KEY_COUNT       21
-#define PAD_BODY            0
-#define PAD_L_ANALOG        1
-#define PAD_R_ANALOG        2
-#define PAD_BACK            3
-#define PAD_START           4
-#define PAD_PLAYER_1        5
-#define PAD_PLAYER_2        6
-#define PAD_PLAYER_3        7
-#define PAD_PLAYER_4        8
-#define PAD_X               9
-#define PAD_Y               10
-#define PAD_B               11
-#define PAD_A               12
-#define PAD_LB              13
-#define PAD_LT              14
-#define PAD_RB              15
+#define PAD_ICON_COUNT      22
+#define PAD_BUTTON_COUNT	17
+
+#define PAD_BODY            17
+#define PAD_PLAYER_1        18
+#define PAD_PLAYER_2        19
+#define PAD_PLAYER_3        20
+#define PAD_PLAYER_4        21
+
+#define PAD_A               0
+#define PAD_B               1
+#define PAD_X               2
+#define PAD_Y               3
+#define PAD_LB              4
+#define PAD_RB              5
+#define PAD_BACK            6
+#define PAD_START           7
+#define PAD_X_BOX_KEY		8
+#define PAD_L_ANALOG        9
+#define PAD_R_ANALOG        10
+#define PAD_DPAD_LEFT       11
+#define PAD_DPAD_RIGHT      12
+#define PAD_DPAD_UP         13
+#define PAD_DPAD_DOWN       14
+#define PAD_LT              15
 #define PAD_RT              16
-#define PAD_DPAD_UP         17
-#define PAD_DPAD_DOWN       18
-#define PAD_DPAD_LEFT       19
-#define PAD_DPAD_RIGHT      20
 
 // Get default keynames from a libuiohook keycode
 const char * key_to_text(int key_code);
