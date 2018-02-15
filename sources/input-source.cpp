@@ -73,9 +73,39 @@ void InputSource::unload_texture()
 
 inline void InputSource::Update(obs_data_t *settings)
 {
-    m_pad_settings.m_controller_id = obs_data_get_int(settings, S_CONTROLLER_ID);
-    m_pad_settings.m_left_dead_zone = obs_data_get_int(settings, S_CONTROLLER_L_DEAD_ZONE);
-    m_pad_settings.m_right_dead_zone = obs_data_get_int(settings, S_CONTROLLER_R_DEAD_ZONE);
+    m_is_controller = obs_data_get_bool(settings, S_IS_CONTROLLER);
+
+    if (m_is_controller)
+    {
+        uint8_t id = obs_data_get_int(settings, S_CONTROLLER_ID);
+        uint16_t l_dz = obs_data_get_int(settings, S_CONTROLLER_L_DEAD_ZONE);
+        uint16_t r_dz = obs_data_get_int(settings, S_CONTROLLER_R_DEAD_ZONE);
+
+/* Header guard galore */
+#ifdef LINUX_INPUT
+        std::string path;
+#endif
+
+        if (!m_gamepad)
+        {
+#ifdef HAVE_XINPUT
+            m_gamepad = new WindowsGamepad(id, &m_layout.m_keys);
+#endif
+
+#ifdef LINUX_INPUT
+            path = obs_data_get_string(settings, S_CONTROLLER_PATH);
+            m_gamepad = new LinuxGamepad(path, &m_layout.m_keys);
+#endif
+        }
+
+#ifdef HAVE_XINPUT
+        m_gamepad->update(id, r_dz, l_dz);
+#endif
+
+#ifdef LINUX_INPUT
+        m_gamepad->update(path, r_dz, l_dz);
+#endif
+    }
     
     m_layout.m_max_mouse_movement = obs_data_get_int(settings, S_MOUSE_SENS);
 
@@ -105,8 +135,6 @@ inline void InputSource::Tick(float seconds)
 {
     check_keys();
 }
-
-double old_angle = 0.f;
 
 inline void InputSource::Render(gs_effect_t *effect)
 {
@@ -179,42 +207,34 @@ inline void InputSource::Render(gs_effect_t *effect)
         }
         else if (m_layout.m_type == TYPE_CONTROLLER)
         {
-            draw_key(effect, &m_layout.m_keys[PAD_LT]);
-            draw_key(effect, &m_layout.m_keys[PAD_RT]);
-            draw_key(effect, &m_layout.m_keys[PAD_RB]);
-            draw_key(effect, &m_layout.m_keys[PAD_LB]);
-
+            /* Body is background */
             draw_key(effect, &m_layout.m_keys[PAD_BODY], 0, 0);
             
+            /* Calculates position of analog sticks */
             InputKey k = m_layout.m_keys[PAD_L_ANALOG];
-            x = k.column - k.w / 2 + m_pad_settings.m_analog_radius *
-                m_pad_settings.m_left_analog_x;
-            y = k.row - k.h / 2 - m_pad_settings.m_analog_radius *
-                m_pad_settings.m_left_analog_y;
+            x = k.column - k.w / 2 + m_layout.m_track_radius *
+                m_gamepad->left_stick_x();
+            y = k.row - k.h / 2 - m_layout.m_track_radius *
+                m_gamepad->left_stick_y();
 
             draw_key(effect, &k, x, y);
 
             k = m_layout.m_keys[PAD_R_ANALOG];
-            
-            x = k.column - k.w / 2 + m_pad_settings.m_analog_radius *
-                m_pad_settings.m_right_analog_x;
-            y = k.row - k.h / 2 - m_pad_settings.m_analog_radius *
-                m_pad_settings.m_right_analog_y;
+            x = k.column - k.w / 2 +  m_layout.m_track_radius *
+                m_gamepad->right_stick_x();
+            y = k.row - k.h / 2 - m_layout.m_track_radius *
+                m_gamepad->right_stick_y();
 
             draw_key(effect, &k, x, y);
 
-            draw_key(effect, &m_layout.m_keys[PAD_BACK]);
-            draw_key(effect, &m_layout.m_keys[PAD_START]);
+            /* Draws rest of keys*/
+            for (int i = 0; i < PAD_BUTTON_COUNT; i++)
+            {
+                draw_key(effect, &m_layout.m_keys[i]);
+            }
+
             draw_key(effect, &m_layout.m_keys[PAD_PLAYER_1 +
                 m_pad_settings.m_controller_id]);
-            draw_key(effect, &m_layout.m_keys[PAD_X]);
-            draw_key(effect, &m_layout.m_keys[PAD_Y]);
-            draw_key(effect, &m_layout.m_keys[PAD_A]);
-            draw_key(effect, &m_layout.m_keys[PAD_B]);
-            draw_key(effect, &m_layout.m_keys[PAD_DPAD_UP]);
-            draw_key(effect, &m_layout.m_keys[PAD_DPAD_DOWN]);
-            draw_key(effect, &m_layout.m_keys[PAD_DPAD_LEFT]);
-            draw_key(effect, &m_layout.m_keys[PAD_DPAD_RIGHT]);
         }
     }
 }
@@ -389,9 +409,9 @@ void InputSource::load_layout()
         {
             m_layout.m_w = cfg->get_int("pad_w");
             m_layout.m_h = cfg->get_int("pad_h");
-            m_pad_settings.m_analog_radius = cfg->get_int("pad_analog_radius");
+            m_layout.m_track_radius = cfg->get_int("pad_analog_radius");
 
-            InputKey keys[PAD_KEY_COUNT];
+            InputKey keys[PAD_ICON_COUNT];
             keys[PAD_BODY].w = m_layout.m_w;
             keys[PAD_BODY].h = m_layout.m_h;
             keys[PAD_BODY].texture_u = 1;
@@ -511,7 +531,7 @@ void InputSource::load_layout()
             keys[PAD_DPAD_RIGHT].column = cfg->get_int("pad_dpad_right_x");
             keys[PAD_DPAD_RIGHT].row = cfg->get_int("pad_dpad_right_y");
 
-            for (int i = 0; i < PAD_KEY_COUNT; i++)
+            for (int i = 0; i < PAD_ICON_COUNT; i++)
             {
                 m_layout.m_keys.emplace_back(keys[i]);
             }
@@ -547,9 +567,7 @@ void InputSource::unload_layout()
         m_layout.m_keys.clear();
     }
 
-#if HAVE_XINPUT
-    ZeroMemory(&m_xinput, sizeof(XINPUT_STATE));
-#endif
+    m_gamepad->unload();
 }
 
 void InputSource::check_keys()
@@ -576,84 +594,9 @@ void InputSource::check_keys()
         }
         else if (m_layout.m_type == TYPE_CONTROLLER)
         {
-#if HAVE_XINPUT
-            ZeroMemory(&m_xinput, sizeof(XINPUT_STATE));
-            m_valid_controller = false;
-            if (XInputGetState(m_pad_settings.m_controller_id, &m_xinput) == ERROR_SUCCESS)
-            {
-                m_valid_controller = true;
-            }
-
-            if (m_valid_controller)
-            {
-                check_gamepad();
-            }
-#endif
+            m_gamepad->check_keys();
         }
     }
-}
-
-void InputSource::check_gamepad(void)
-{
-#if HAVE_XINPUT
-    m_layout.m_keys[PAD_L_ANALOG].m_pressed = X_PRESSED(XINPUT_GAMEPAD_LEFT_THUMB);
-    m_layout.m_keys[PAD_R_ANALOG].m_pressed = X_PRESSED(XINPUT_GAMEPAD_RIGHT_THUMB);
-
-    m_layout.m_keys[PAD_BACK].m_pressed = X_PRESSED(XINPUT_GAMEPAD_BACK);
-    m_layout.m_keys[PAD_START].m_pressed = X_PRESSED(XINPUT_GAMEPAD_START);
-
-    m_layout.m_keys[PAD_X].m_pressed = X_PRESSED(XINPUT_GAMEPAD_X);
-    m_layout.m_keys[PAD_Y].m_pressed = X_PRESSED(XINPUT_GAMEPAD_Y);
-    m_layout.m_keys[PAD_A].m_pressed = X_PRESSED(XINPUT_GAMEPAD_A);
-    m_layout.m_keys[PAD_B].m_pressed = X_PRESSED(XINPUT_GAMEPAD_B);
-
-    m_layout.m_keys[PAD_LB].m_pressed = X_PRESSED(XINPUT_GAMEPAD_LEFT_SHOULDER);
-    m_layout.m_keys[PAD_LT].m_pressed = m_xinput.Gamepad.bLeftTrigger > 20;
-
-    m_layout.m_keys[PAD_RB].m_pressed = X_PRESSED(XINPUT_GAMEPAD_RIGHT_SHOULDER);
-    m_layout.m_keys[PAD_RT].m_pressed = m_xinput.Gamepad.bRightTrigger > 20;
-
-    m_layout.m_keys[PAD_DPAD_UP].m_pressed = X_PRESSED(XINPUT_GAMEPAD_DPAD_UP);
-    m_layout.m_keys[PAD_DPAD_DOWN].m_pressed = X_PRESSED(XINPUT_GAMEPAD_DPAD_DOWN);
-    m_layout.m_keys[PAD_DPAD_LEFT].m_pressed = X_PRESSED(XINPUT_GAMEPAD_DPAD_LEFT);
-    m_layout.m_keys[PAD_DPAD_RIGHT].m_pressed = X_PRESSED(XINPUT_GAMEPAD_DPAD_RIGHT);
-
-    if (!DEAD_ZONE(m_xinput.Gamepad.sThumbLX, m_pad_settings.m_left_dead_zone))
-    {
-        m_pad_settings.m_left_analog_x = fmaxf(-1, (float)m_xinput.Gamepad.sThumbLX / PAD_STICK_MAX_VAL);
-    }
-    else
-    {
-        m_pad_settings.m_left_analog_x = 0.f;
-    }
-
-    if (!DEAD_ZONE(m_xinput.Gamepad.sThumbLY, m_pad_settings.m_left_dead_zone))
-    {
-        m_pad_settings.m_left_analog_y = fmaxf(-1, (float)m_xinput.Gamepad.sThumbLY / PAD_STICK_MAX_VAL);
-    }
-    else
-    {
-        m_pad_settings.m_left_analog_y = 0.f;
-    }
-
-    if (!DEAD_ZONE(m_xinput.Gamepad.sThumbRX, m_pad_settings.m_right_dead_zone))
-    {
-        m_pad_settings.m_right_analog_x = fmaxf(-1, (float)m_xinput.Gamepad.sThumbRX / PAD_STICK_MAX_VAL);
-    }
-    else
-    {
-        m_pad_settings.m_right_analog_x = 0.f;
-    }
-
-    if (!DEAD_ZONE(m_xinput.Gamepad.sThumbRY, m_pad_settings.m_right_dead_zone))
-    {
-        m_pad_settings.m_right_analog_y = fmaxf(-1, (float)m_xinput.Gamepad.sThumbRY / PAD_STICK_MAX_VAL);
-    }
-    else
-    {
-        m_pad_settings.m_right_analog_y = 0.f;
-    }
-#endif
 }
 
 void util_clear_pressed(void)
@@ -688,19 +631,13 @@ void util_add_pressed(uint16_t vc)
 {
     if (!util_key_exists(vc))
     {
-        int next_free = -1;
         for (int i = 0; i < MAX_SIMULTANEOUS_KEYS; i++)
         {
             if (pressed_keys[i] == 0)
             {
-                next_free = i;
+                pressed_keys[i] = vc;
                 break;
             }
-        }
-
-        if (next_free > -1)
-        {
-            pressed_keys[next_free] = vc;
         }
     }
 }
@@ -785,17 +722,22 @@ obs_properties_t * get_properties_for_overlay(void * data)
     obs_properties_add_int_slider(props, S_MOUSE_DEAD_ZONE, T_MOUSE_DEAD_ZONE, 0, 50, 1);
 
     // Gamepad stuff
-#if HAVE_XINPUT
+
     obs_property_t *is_controller = obs_properties_add_bool(props, S_IS_CONTROLLER, T_IS_CONTROLLER);
     obs_property_set_modified_callback(is_controller, is_controller_changed);
+#if HAVE_XINPUT
+   obs_properties_add_int(props, S_CONTROLLER_ID, T_CONTROLLER_ID, 0, 3, 1);
+#endif
 
-    obs_properties_add_int(props, S_CONTROLLER_ID, T_CONTROLLER_ID, 0, 3, 1);
-
+#if LINUX_INPUT
+    obs_properties_add_text(props, S_CONTROLLER_PATH, T_CONTROLLER_PATH, OBS_TEXT_DEFAULT);
+#endif
+ 
     obs_properties_add_int_slider(props, S_CONTROLLER_L_DEAD_ZONE, 
         T_CONROLLER_L_DEADZONE, 1, PAD_STICK_MAX_VAL - 1, 1);
     obs_properties_add_int_slider(props, S_CONTROLLER_R_DEAD_ZONE, 
         T_CONROLLER_R_DEADZONE, 1, PAD_STICK_MAX_VAL - 1, 1);
-#endif
+
     return props;
 }
 
@@ -818,7 +760,6 @@ void register_overlay_source()
     si.get_defaults = [](obs_data_t *settings)
     {
         // NO-OP
-        
     };
 
     si.update = [](void *data, obs_data_t *settings)
