@@ -1,8 +1,10 @@
 #ifndef LAYOUT_HPP
 #define LAYOUT_HPP
 
-#include <unistd.h>
+#include <stdint.h>
 #include <vector>
+
+#include "layouttype.hpp"
 
 struct InputKey {
     uint16_t m_key_code;

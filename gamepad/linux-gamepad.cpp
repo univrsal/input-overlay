@@ -5,18 +5,15 @@ void LinuxGamepad::load()
 	unload();
 
 	m_file = fopen(m_device_path.c_str(), "wb+");
+	
+	blog(LOG_WARNING, "FILE IS der 0x%A", m_file);
 
 	if (m_file)
 	{
 		// Skip unnecessary info
 		void *tmp = malloc(8 * 12 * sizeof(char));
-		fread(tmp, sizeof(char) * 8 * 12, 1, f);
+		fread(tmp, sizeof(char) * 8 * 12, 1, m_file);
 		free(tmp);
-		m_valid = true;
-	}
-	else
-	{
-		m_valid = false;
 	}
 }
 
@@ -26,7 +23,6 @@ void LinuxGamepad::unload()
 	{
 		fclose(m_file);
 		m_file = nullptr;
-		m_valid = false;
 	}
 }
 
@@ -35,17 +31,19 @@ void LinuxGamepad::update(std::string path, uint16_t r_dz, uint16_t l_dz)
 	m_device_path = path;
 	m_r_dead_zone = r_dz;
 	m_l_dead_zone = l_dz;
-	load();
+	
+	if (!path.empty())
+		load();
 }
 
 void LinuxGamepad::add_key(uint8_t code)
 {
-	m_pressed_keys[code]->m_pressed = true;
+	(*m_keys)[code].m_pressed = true;
 }
 
 void LinuxGamepad::remove_key(uint8_t code)
 {
-	m_pressed_keys[code]->m_pressed = false;
+	(*m_keys)[code].m_pressed = false;
 }
 
 #define ID_TYPE 		6
@@ -66,12 +64,18 @@ void LinuxGamepad::remove_key(uint8_t code)
 
 void LinuxGamepad::check_keys()
 {
-	if (!m_valid)
+	if (!m_file)
+	{
 		return;
-
+	}
+	blog(LOG_WARNING, "VALID...");
+	
 	fread(&m_packet, sizeof(char) * 8, 1, m_file);
 
-	if (m_packet[PACKET_TYPE] == ID_BUTTON)
+	blog(LOG_WARNING, "STATE: %i, STATE 2: %i, TYPE: %i, KEY: %i", m_packet[4],
+		m_packet[5], m_packet[6], m_packet[7]);
+
+	if (m_packet[ID_TYPE] == ID_BUTTON)
 	{
 		if (m_packet[ID_STATE_1] == ID_PRESSED)
 		{
@@ -110,7 +114,7 @@ void LinuxGamepad::check_keys()
 				m_l_stick_x = fmaxf(-1, (float)
 					m_packet[ID_STATE_1] / STICK_MAX_VAL);
 				break;
-			case ID_l_ANALOG_Y:
+			case ID_L_ANALOG_Y:
 				m_l_stick_y = fmaxf(-1, (float)
 					m_packet[ID_STATE_1] / STICK_MAX_VAL);
 				break;

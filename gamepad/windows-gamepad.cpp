@@ -1,4 +1,5 @@
 #include "windows-gamepad.hpp"
+#if HAVE_XINPUT
 
 void WindowsGamepad::load()
 {
@@ -74,3 +75,5 @@ void WindowsGamepad::check_keys()
             m_r_stick_y = 0.f;
     }
 }
+
+#endif // HAVE_XINPUT

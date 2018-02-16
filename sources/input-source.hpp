@@ -28,11 +28,11 @@ extern "C" {
 
 /* Platform dependend gamepad implementation */
 #if HAVE_XINPUT
-#include "gamepad/windows-gamepad.hpp"
+#include "../gamepad/windows-gamepad.hpp"
 #endif
 
 #if LINUX_INPUT
-#include "gamepad/linux-gamepad.hpp"
+#include "../gamepad/linux-gamepad.hpp"
 #endif
 
 #define MAX_SIMULTANEOUS_KEYS 14
@@ -59,6 +59,8 @@ struct InputSource
     int32_t m_monitor_h = 0, m_monitor_v = 0;
     uint8_t m_mouse_dead_zone = 0;
 
+    double m_old_angle = 0.f;
+
     std::string m_image_file;
     std::string m_layout_file;
 
@@ -84,7 +86,10 @@ struct InputSource
         unload_layout();
         
         if (m_gamepad)
-            delete m_gamepad();
+        {
+            delete m_gamepad;
+            m_gamepad = nullptr;
+        }
     }
 
     void load_texture(void);

@@ -1,20 +1,20 @@
 #ifndef WINDOWS_GAMEPAD_HPP
 #define WINDOWS_GAMEPAD_HPP
+#if HAVE_XINPUT
 
 #define DEAD_ZONE(x, dz) ((x < dz) && (x > -dz))
 #define X_PRESSED(b) ((m_xinput.Gamepad.wButtons & b) != 0)
 
-#include <unistd.h>
-#include "layout.hpp"
+#include <stdint.h>
+#include "../util/layout.hpp"
 
-#if HAVE_XINPUT
 #include <Xinput.h>
-#endif
+
 
 struct WindowsGamepad
 {
 public:
-    WindowsGamepad(uint8_t id, std::vector<InputKey> * keys);
+    WindowsGamepad(uint8_t id, std::vector<InputKey> * keys)
     {
         m_pad_id = id;
         m_keys = keys;
@@ -34,6 +34,8 @@ public:
 
     bool is_valid() { return m_valid; }
     
+    uint8_t get_id() { return m_pad_id; }
+
     float left_stick_x() { return m_l_stick_x; }
     float left_stick_y() { return m_l_stick_y; }
 
@@ -51,5 +53,5 @@ private:
 
     bool m_valid = false;
 };
-
+#endif // HAVE_XINPUT
 #endif // WINDOWS_GAMEPAD_HPP

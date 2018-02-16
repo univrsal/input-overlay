@@ -1,6 +1,11 @@
+#ifndef LAYOUTTYPE_HPP
+#define LAYOUTTYPE_HPP
+
 enum LayoutType {
     TYPE_INVALID,
     TYPE_MOUSE,
     TYPE_KEYBOARD,
     TYPE_CONTROLLER
 };
+
+#endif // LAYOUTTYPE_HPP

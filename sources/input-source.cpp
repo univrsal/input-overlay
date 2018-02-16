@@ -183,13 +183,13 @@ inline void InputSource::Render(gs_effect_t *effect)
                     
                     if (abs(d_x) < m_mouse_dead_zone || abs(d_y) < m_mouse_dead_zone)
                     {
-                        draw_key(effect, k, k->column, k->row, true, old_angle);
+                        draw_key(effect, k, k->column, k->row, true, m_old_angle);
                     }
                     else
                     {
                        
                         draw_key(effect, k, k->column, k->row, true, new_angle);
-                        old_angle = new_angle;
+                        m_old_angle = new_angle;
                     }
                 }
                 else
@@ -207,6 +207,7 @@ inline void InputSource::Render(gs_effect_t *effect)
         }
         else if (m_layout.m_type == TYPE_CONTROLLER)
         {
+            #if 1
             /* Body is background */
             draw_key(effect, &m_layout.m_keys[PAD_BODY], 0, 0);
             
@@ -230,11 +231,15 @@ inline void InputSource::Render(gs_effect_t *effect)
             /* Draws rest of keys*/
             for (int i = 0; i < PAD_BUTTON_COUNT; i++)
             {
+                if (i == PAD_R_ANALOG || i == PAD_L_ANALOG)
+                    continue;
                 draw_key(effect, &m_layout.m_keys[i]);
             }
-
+            #endif
+#ifdef HAVE_XINPUT
             draw_key(effect, &m_layout.m_keys[PAD_PLAYER_1 +
-                m_pad_settings.m_controller_id]);
+                m_gamepad->get_id()]);
+#endif
         }
     }
 }
@@ -250,7 +255,6 @@ void InputSource::load_texture()
             m_image = new gs_image_file_t();
         }
 
-        warning("Loading texture %s as overlay base image!", m_image_file.c_str());
         gs_image_file_init(m_image, m_image_file.c_str());
 
         obs_enter_graphics();
@@ -567,7 +571,8 @@ void InputSource::unload_layout()
         m_layout.m_keys.clear();
     }
 
-    m_gamepad->unload();
+    if (m_gamepad)
+        m_gamepad->unload();
 }
 
 void InputSource::check_keys()
@@ -594,7 +599,8 @@ void InputSource::check_keys()
         }
         else if (m_layout.m_type == TYPE_CONTROLLER)
         {
-            m_gamepad->check_keys();
+            if (m_gamepad)
+                m_gamepad->check_keys();
         }
     }
 }
