@@ -40,11 +40,11 @@ void end_pad_hook(void)
 #define ID_KEY_CODE		7
 #define ID_PRESSED		1
 
-#define ID_R_ANALOG_X	0
-#define ID_R_ANALOG_Y	1
+#define ID_L_ANALOG_X	0
+#define ID_L_ANALOG_Y	1
 #define ID_L_TRIGGER	2
-#define ID_L_ANALOG_X	3
-#define ID_L_ANALOG_Y	4
+#define ID_R_ANALOG_X	3
+#define ID_R_ANALOG_Y	4
 #define ID_R_TRIGGER	5
 
 #define STICK_MAX_VAL   127
@@ -84,9 +84,9 @@ void * hook_method(void *)
                         }
 
                         if (m_packet[ID_STATE_2] < 128)
-                            pad_states[i].r_x = UTIL_CLAMP(0.f, (float) m_packet[ID_STATE_2] / STICK_MAX_VAL, 1.f);
+                            pad_states[i].r_x = UTIL_CLAMP(-1.f, ((float) m_packet[ID_STATE_2]) / STICK_MAX_VAL, 1.f);
                         else
-                            pad_states[i].r_x = UTIL_CLAMP(0.f, -1.f * (m_packet[ID_STATE_2] - 255) / STICK_MAX_VAL, 1.f);
+                            pad_states[i].r_x = UTIL_CLAMP(-1.f, ((float) m_packet[ID_STATE_2] - 255) / STICK_MAX_VAL, 1.f);
                         break;
                     case ID_R_ANALOG_Y:
                         if (m_packet[ID_STATE_1] == 0 || m_packet[ID_STATE_2] == 0)
@@ -96,9 +96,9 @@ void * hook_method(void *)
                         }
 
                         if (m_packet[ID_STATE_2] < 128)
-                            pad_states[i].r_y = UTIL_CLAMP(0.f, (float) m_packet[ID_STATE_2] / STICK_MAX_VAL, 1.f);
+                            pad_states[i].r_y = -1.f * UTIL_CLAMP(-1.f, ((float) m_packet[ID_STATE_2]) / STICK_MAX_VAL, 1.f);
                         else
-                            pad_states[i].r_y = UTIL_CLAMP(0.f, -1.f * (m_packet[ID_STATE_2] - 255) / STICK_MAX_VAL, 1.f);
+                            pad_states[i].r_y = -1.f * UTIL_CLAMP(-1.f, ((float) m_packet[ID_STATE_2] - 255) / STICK_MAX_VAL, 1.f);
                         break;
                     case ID_L_ANALOG_X:
                         if (m_packet[ID_STATE_1] == 0 || m_packet[ID_STATE_2] == 0)
@@ -108,9 +108,9 @@ void * hook_method(void *)
                         }
 
                         if (m_packet[ID_STATE_2] < 128)
-                            pad_states[i].l_x = UTIL_CLAMP(0.f, (float) m_packet[ID_STATE_2] / STICK_MAX_VAL, 1.f);
+                            pad_states[i].l_x = UTIL_CLAMP(-1.f, ((float) m_packet[ID_STATE_2]) / STICK_MAX_VAL, 1.f);
                         else
-                            pad_states[i].l_x = UTIL_CLAMP(0.f, -1.f * (m_packet[ID_STATE_2] - 255) / STICK_MAX_VAL, 1.f);
+                            pad_states[i].l_x = UTIL_CLAMP(-1.f, ((float) m_packet[ID_STATE_2] - 255) / STICK_MAX_VAL, 1.f);
                         break;
                     case ID_L_ANALOG_Y:
                         if (m_packet[ID_STATE_1] == 0 || m_packet[ID_STATE_2] == 0)
@@ -120,9 +120,9 @@ void * hook_method(void *)
                         }
 
                         if (m_packet[ID_STATE_2] < 128)
-                            pad_states[i].l_y = UTIL_CLAMP(0.f, (float) m_packet[ID_STATE_2] / STICK_MAX_VAL, 1.f);
+                            pad_states[i].l_y = -1.f * UTIL_CLAMP(-1.f, ((float) m_packet[ID_STATE_2]) / STICK_MAX_VAL, 1.f);
                         else
-                            pad_states[i].l_y = UTIL_CLAMP(0.f, -1.f * (m_packet[ID_STATE_2] - 255) / STICK_MAX_VAL, 1.f);
+                            pad_states[i].l_y = -1.f * UTIL_CLAMP(-1.f, ((float) m_packet[ID_STATE_2] - 255) / STICK_MAX_VAL, 1.f);
                         break;
                 }
             }

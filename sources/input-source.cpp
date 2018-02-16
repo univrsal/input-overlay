@@ -180,25 +180,31 @@ inline void InputSource::Render(gs_effect_t *effect)
         }
         else if (m_layout.m_type == TYPE_CONTROLLER)
         {
+
+
+
             /* Body is background */
             draw_key(effect, &m_layout.m_keys[PAD_BODY], 0, 0);
-            
-            /* Calculates position of analog sticks */
-            InputKey k = m_layout.m_keys[PAD_L_ANALOG];
-            x = (uint16_t) (k.column - k.w / 2 + m_layout.m_track_radius *
-                m_gamepad->left_stick_x());
-            y = (uint16_t) (k.row - k.h / 2 - m_layout.m_track_radius *
-                m_gamepad->left_stick_y());
 
-            draw_key(effect, &k, x, y);
+            if (m_gamepad)
+            {
+                /* Calculates position of analog sticks */
+                InputKey k = m_layout.m_keys[PAD_L_ANALOG];
+                x = (uint16_t) (k.column - k.w / 2 + m_layout.m_track_radius *
+                    m_gamepad->left_stick_x());
+                y = (uint16_t) (k.row - k.h / 2 - m_layout.m_track_radius *
+                    m_gamepad->left_stick_y());
 
-            k = m_layout.m_keys[PAD_R_ANALOG];
-            x = (uint16_t) (k.column - k.w / 2 +  m_layout.m_track_radius *
-                m_gamepad->right_stick_x());
-            y = (uint16_t) (k.row - k.h / 2 - m_layout.m_track_radius *
-                m_gamepad->right_stick_y());
+                draw_key(effect, &k, x, y);
 
-            draw_key(effect, &k, x, y);
+                k = m_layout.m_keys[PAD_R_ANALOG];
+                x = (uint16_t) (k.column - k.w / 2 +  m_layout.m_track_radius *
+                    m_gamepad->right_stick_x());
+                y = (uint16_t) (k.row - k.h / 2 - m_layout.m_track_radius *
+                    m_gamepad->right_stick_y());
+                draw_key(effect, &k, x, y);
+                draw_key(effect, &m_layout.m_keys[PAD_PLAYER_1 + m_gamepad->get_id()]);
+            }
 
             /* Draws rest of keys*/
             for (int i = 0; i < PAD_BUTTON_COUNT; i++)
@@ -208,8 +214,7 @@ inline void InputSource::Render(gs_effect_t *effect)
                 draw_key(effect, &m_layout.m_keys[i]);
             }
 
-            draw_key(effect, &m_layout.m_keys[PAD_PLAYER_1 +
-                m_gamepad->get_id()]);
+
         }
     }
 }
