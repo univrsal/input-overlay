@@ -35,16 +35,7 @@ extern "C" {
 #include "../gamepad/linux-gamepad.hpp"
 #endif
 
-#define MAX_SIMULTANEOUS_KEYS 14
-extern uint16_t pressed_keys[MAX_SIMULTANEOUS_KEYS];
-extern int16_t mouse_x, mouse_y, mouse_x_smooth, mouse_y_smooth, mouse_last_x, mouse_last_y;
-extern bool hook_initialized;
-
-void util_clear_pressed(void);
-bool util_pressed_empty(void);
-bool util_key_exists(uint16_t vc);
-void util_add_pressed(uint16_t vc);
-void util_remove_pressed(uint16_t vc);
+#include "../hook/hook-helper.hpp"
 
 struct InputSource
 {
@@ -53,13 +44,12 @@ struct InputSource
     uint32_t cx = 0;
     uint32_t cy = 0;
 
-    bool m_valid_controller = false;
     bool m_is_controller = false;
     bool m_monitor_use_center = false;
     int32_t m_monitor_h = 0, m_monitor_v = 0;
     uint8_t m_mouse_dead_zone = 0;
 
-    double m_old_angle = 0.f;
+    float m_old_angle = 0.f;
 
     std::string m_image_file;
     std::string m_layout_file;
@@ -108,35 +98,15 @@ struct InputSource
     inline void Render(gs_effect_t *effect);
 };
 
-static bool is_controller_changed(obs_properties_t *props, obs_property_t *p, obs_data_t *s);
+static bool is_controller_changed(obs_properties_t * props, obs_property_t *p, obs_data_t * s);
 
-static bool use_monitor_center_changed(obs_properties_t *props, obs_property_t *p, obs_data_t *s);
+static bool is_mouse_changed(obs_properties_t * props, obs_property_t * p, obs_data_t * s);
+
+static bool use_monitor_center_changed(obs_properties_t * props, obs_property_t *p, obs_data_t * s);
 
 // For registering
 static obs_properties_t *get_properties_for_overlay(void *data);
 
 void register_overlay_source();
-
-uint16_t mouse_to_vc(int m);
-
-// libuiohook
-
-#ifdef WINDOWS
-DWORD WINAPI hook_thread_proc(LPVOID arg);
-#else
-void *hook_thread_proc(void *arg);
-#endif
-
-void dispatch_proc(uiohook_event * const event);
-
-bool logger_proc(unsigned int level, const char *format, ...);
-
-void start_hook(void);
-
-void end_hook(void);
-
-int hook_enable(void);
-
-void proccess_event(uiohook_event * const event);
 
 #endif

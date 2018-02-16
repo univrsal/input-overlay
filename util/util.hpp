@@ -15,6 +15,10 @@
 #ifndef WINDOWS
 #ifdef _WIN32
 #define WINDOWS
+#else
+#ifndef LINUX
+#define LINUX
+#endif
 #endif
 #endif
 
@@ -49,9 +53,9 @@
 #define S_LAYOUT_FILE               "layout_file"
 #define S_IS_CONTROLLER             "is_controller"
 #define S_CONTROLLER_ID             "controller_id"
-#define S_CONTROLLER_PATH			"controller_path"
 #define S_CONTROLLER_L_DEAD_ZONE    "controller_l_deadzone"
 #define S_CONTROLLER_R_DEAD_ZONE    "controller_r_deadzone"
+#define S_IS_MOUSE                  "is_mouse"
 #define S_MOUSE_SENS                "mouse_sens"
 #define S_MOUSE_DEAD_ZONE           "mouse_deadzone"
 #define S_MONITOR_USE_CENTER        "monitor_use_center"
@@ -66,9 +70,9 @@
 #define T_FILTER_ALL_FILES          T_("Filter.AllFiles")
 #define T_IS_CONTROLLER             T_("Gamepad.IsGamepad")
 #define T_CONTROLLER_ID             T_("GamepadId")
-#define T_CONTROLLER_PATH			T_("Gamepad.Path")
 #define T_CONROLLER_L_DEADZONE      T_("Gamepad.LeftDeadZone")
 #define T_CONROLLER_R_DEADZONE      T_("Gamepad.RightDeadZone")
+#define T_IS_MOUSE                  T_("Mouse.IsMouse")
 #define T_MOUSE_SENS                T_("Mouse.Sensitivity")
 #define T_MOUSE_DEAD_ZONE           T_("Mouse.Deadzone")
 #define T_MONITOR_USE_CENTER        T_("Mouse.UseCenter")
@@ -107,7 +111,6 @@
 #define S_OVERLAY_OUTLINE_OPACITY       "outline_opacity"
 #define S_OVERLAY_OPACITY               "opacity"
 
-#define T_(v)                           obs_module_text(v)
 #define T_OVERLAY_KEY_NAME_PATH         T_("Overlay.KeyTranslationPath")
 #define T_OVERLAY_USE_FALLBACK_NAMES    T_("Overlay.UseFallback.Translation")
 #define T_OVERLAY_KEY_ICON_PATH         T_("Overlay.KeyIconPath")
@@ -204,6 +207,8 @@ void util_format_path(std::string & path);
 void util_enable_mask(uint8_t& masks, uint8_t mask);
 void util_disable_mask(uint8_t& masks, uint8_t mask);
 void util_set_mask(uint8_t& masks, uint8_t mask, bool state);
+
+uint16_t util_mouse_to_vc(int m);
 
 #ifdef DEBUG
 uint16_t random_vc(void);

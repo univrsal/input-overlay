@@ -311,6 +311,17 @@ void util_set_mask(uint8_t & masks, uint8_t mask, bool state)
     }
 }
 
+uint16_t util_mouse_to_vc(int m)
+{
+#ifndef WINDOWS // Linux mixes right mouse and middle mouse or is windows getting it wrong?
+    if (m == 3)
+        m = 2;
+    else if (m == 2)
+        m = 3;
+#endif
+    return (uint16_t) (VC_MOUSE_MASK | m);
+}
+
 #ifdef DEBUG
 uint16_t random_vc(void)
 {
