@@ -16,13 +16,22 @@ endif()
 
 set(input-overlay_SOURCES
 	input-overlay.cpp
-	util.cpp
-	util.hpp
-	input-source.cpp
-	input-source.hpp
-	input-history.cpp
-	input-history.hpp
-	layouttype.hpp
+	sources/input-source.cpp
+	sources/input-source.hpp
+	sources/input-history.cpp
+	sources/input-history.hpp
+	gamepad/linux-gamepad.cpp
+	gamepad/linux-gamepad.hpp
+	gamepad/windows-gamepad.cpp
+	gamepad/windows-gamepad.hpp
+	hook/hook-helper.cpp
+	hook/hook-helper.hpp
+	hook/gamepad-hook.cpp
+	hook/gamepad-hook.hpp
+	util/util.cpp
+	util/util.hpp
+	util/layouttype.hpp
+	util/layout.hpp
 	ccl/ccl.cpp
 	ccl/ccl.hpp)
 
