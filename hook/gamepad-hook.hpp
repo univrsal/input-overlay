@@ -1,9 +1,8 @@
 #ifndef GAMEPAD_HOOK_HPP
 #define GAMEPAD_HOOK_HPP
 
-#include "../util/util.hpp"
 #ifdef LINUX
-
+#include "../util/util.hpp"
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>

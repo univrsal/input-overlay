@@ -277,7 +277,7 @@ std::string util_file_filter(const char* display, const char * formats)
     filter += ");;";
     filter += T_FILTER_ALL_FILES;
     filter += " (*.*)";
-
+    
     return filter;
 }
 

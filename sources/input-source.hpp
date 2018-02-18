@@ -15,9 +15,7 @@
 #include <locale>
 #include <uiohook.h>
 #include <list>
-#include <stdarg.h>
-#include <list>
-#include <util/platform.h>
+
 #include "../ccl/ccl.hpp"
 #include "../util/layouttype.hpp"
 #include "../util/util.hpp"

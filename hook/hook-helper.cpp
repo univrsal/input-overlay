@@ -239,7 +239,6 @@ void start_hook(void)
 
 void proccess_event(uiohook_event * const event)
 {
-
     util_remove_pressed(VC_MOUSE_WHEEL_UP);
     util_remove_pressed(VC_MOUSE_WHEEL_DOWN);
 

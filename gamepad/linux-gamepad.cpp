@@ -1,5 +1,5 @@
 #include "linux-gamepad.hpp"
-
+#ifdef LINUX
 void LinuxGamepad::update(uint8_t id, uint16_t r_dz, uint16_t l_dz)
 {
     m_state = &pad_states[id];
@@ -18,3 +18,4 @@ void LinuxGamepad::check_keys()
     for (int i = 0; i < PAD_BUTTON_COUNT; i++)
         SYNC_STATE(i);
 }
+#endif

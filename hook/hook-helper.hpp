@@ -3,12 +3,15 @@
 
 #define MAX_SIMULTANEOUS_KEYS 14
 
+#ifdef LINUX
 #include <stdint.h>
+#endif
 #include <uiohook.h>
+#include <stdarg.h>
 #include "../util/util.hpp"
 
 #ifdef WINDOWS
-#include <Windows.h>
+#include <windows.h>
 #endif
 
 extern uint16_t pressed_keys[MAX_SIMULTANEOUS_KEYS];

@@ -5,11 +5,11 @@
 #define DEAD_ZONE(x, dz) ((x < dz) && (x > -dz))
 #define X_PRESSED(b) ((m_xinput.Gamepad.wButtons & b) != 0)
 
-#include <stdint.h>
 #include "../util/layout.hpp"
+#include "../util/util.hpp"
 
 #include <Xinput.h>
-
+#include <windows.h>
 
 struct WindowsGamepad
 {

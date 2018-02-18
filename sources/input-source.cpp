@@ -613,6 +613,8 @@ bool is_mouse_changed(obs_properties_t * props, obs_property_t * p, obs_data_t *
     obs_property_set_visible(mon_w, is_mouse);
     obs_property_set_visible(mon_h, is_mouse);
     obs_property_set_visible(dead_zone, is_mouse);
+    
+    return true;
 }
 
 bool use_monitor_center_changed(obs_properties_t * props, obs_property_t * p, obs_data_t * s)

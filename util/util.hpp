@@ -15,6 +15,7 @@
 #ifndef WINDOWS
 #ifdef _WIN32
 #define WINDOWS
+#include <windows.h>
 #else
 #ifndef LINUX
 #define LINUX
@@ -23,7 +24,9 @@
 #endif
 
 #include <uiohook.h>
+#ifdef LINUX
 #include <math.h>
+#endif
 #include <string>
 #include <obs-module.h>
 #include <algorithm>

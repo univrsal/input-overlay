@@ -1,7 +1,9 @@
 #include <obs-module.h>
-#include "util/util.hpp"
 
-#include <string>
+#ifdef LINUX
+#include "hook/gamepad-hook.hpp"
+#endif
+#include "util/util.hpp"
 #include "sources/input-source.hpp"
 #include "sources/input-history.hpp"
 
@@ -22,6 +24,9 @@ bool obs_module_load(void)
     register_overlay_source();
     start_hook();
  
+#ifdef LINUX
+    start_pad_hook();
+#endif
     return true;
 }
 
@@ -29,4 +34,9 @@ void obs_module_unload(void)
 {
     if (hook_initialized)
         end_hook();
+
+#ifdef LINUX
+    if (gamepad_hook_state)
+        end_pad_hook();
+#endif
 }

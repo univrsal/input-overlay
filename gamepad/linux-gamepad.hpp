@@ -1,6 +1,7 @@
 #ifndef LINUX_GAMEPAD_HPP
 #define LINUX_GAMEPAD_HPP
 
+#ifdef LINUX
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -55,5 +56,5 @@ private:
 
     GamepadState * m_state;
 };
-
+#endif
 #endif

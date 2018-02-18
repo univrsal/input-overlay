@@ -1,7 +1,9 @@
 #ifndef LAYOUT_HPP
 #define LAYOUT_HPP
 
+#ifdef LINUX
 #include <stdint.h>
+#endif
 #include <vector>
 
 #include "layouttype.hpp"
