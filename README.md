@@ -5,7 +5,8 @@ Always download the latest release and NOT the sourcecode!
 
 ![logo](http://hnng.moe/f/WHZ)
 Show keyboard, mouse and gamepad input on stream.
-Available for OBS Studio 19.0.3+ on windows (32bit/64bit).
+Available for OBS Studio 19.0.3+ on windows (32bit/64bit) and linux (64bit).
+Does NOT work with OBS Streamlabs!
 Head over to [releases](https://github.com/univrsal/input-overlay/releases) for binaries.
 
 [Layout presets](https://github.com/univrsal/input-overlay/tree/master/presets)
