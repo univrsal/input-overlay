@@ -2,6 +2,13 @@
 
 #ifdef LINUX
 
+/**
+ * This file is part of input-overlay
+ * which is licenced under the MIT licence.
+ * See LICENCE or https://mit-license.org
+ * github.com/univrsal/input-overlay
+ */
+
 GamepadState pad_states[PAD_COUNT];
 bool gamepad_hook_state = false;
 

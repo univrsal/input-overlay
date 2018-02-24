@@ -7,11 +7,6 @@
  * github.com/univrsal/input-overlay
  */
 
-/**
- * Not the smartest way but I didn't
- * want to bother with the windows
- * API anymore
- */
 const char * key_to_text(int key_code)
 {
     switch (key_code)

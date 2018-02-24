@@ -11,6 +11,13 @@
 
 #define PAD_COUNT 4
 
+/**
+ * This file is part of input-overlay
+ * which is licenced under the MIT licence.
+ * See LICENCE or https://mit-license.org
+ * github.com/univrsal/input-overlay
+ */
+
 struct GamepadState
 {
    ~GamepadState()

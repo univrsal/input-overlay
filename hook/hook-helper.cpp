@@ -1,5 +1,12 @@
 #include "hook-helper.hpp"
 
+/**
+ * This file is part of input-overlay
+ * which is licenced under the MIT licence.
+ * See LICENCE or https://mit-license.org
+ * github.com/univrsal/input-overlay
+ */
+
 void util_clear_pressed(void)
 {
     for (int i = 0; i < MAX_SIMULTANEOUS_KEYS; i++)

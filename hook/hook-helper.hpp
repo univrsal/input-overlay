@@ -14,6 +14,13 @@
 #include <windows.h>
 #endif
 
+/**
+ * This file is part of input-overlay
+ * which is licenced under the MIT licence.
+ * See LICENCE or https://mit-license.org
+ * github.com/univrsal/input-overlay
+ */
+
 extern uint16_t pressed_keys[MAX_SIMULTANEOUS_KEYS];
 extern int16_t mouse_x, mouse_y, mouse_x_smooth, mouse_y_smooth, mouse_last_x, mouse_last_y;
 extern bool hook_initialized;
