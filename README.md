@@ -2,6 +2,7 @@
 Please follow the install guide closely before asking questions about the installation.
 Always download the latest release and NOT the sourcecode!
 ### [Install guide](https://vimeo.com/229296849)
+#### On windows there's a chance that you'll need to install [Visual C++ 2015 Redistributable](https://www.microsoft.com/en-us/download/details.aspx?id=52685) because the plugin won't load otherwise
 
 ![logo](http://hnng.moe/f/WHZ)
 Show keyboard, mouse and gamepad input on stream.
