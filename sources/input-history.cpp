@@ -700,12 +700,6 @@ void KeyIcons::load_from_file(std::string img_path, std::string cfg_path)
         }
     }
 
-    if (cfg)
-    {
-        delete cfg;
-        cfg = nullptr;
-    }
-        
     m_loaded = cfg_loaded && m_icon_texture->loaded;
 
     if (!m_icon_texture->loaded)
@@ -722,6 +716,12 @@ void KeyIcons::load_from_file(std::string img_path, std::string cfg_path)
     if (cfg->has_errors())
     {
         blog(LOG_WARNING, "[ccl] %s", cfg->get_error_message().c_str());
+    }
+
+    if (cfg)
+    {
+        delete cfg;
+        cfg = nullptr;
     }
 }
 

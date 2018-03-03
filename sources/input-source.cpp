@@ -62,9 +62,8 @@ inline void InputSource::Update(obs_data_t *settings)
     if (m_is_controller)
     {
         uint8_t id = (uint8_t) obs_data_get_int(settings, S_CONTROLLER_ID);
-        uint16_t l_dz = (uint8_t) obs_data_get_int(settings, S_CONTROLLER_L_DEAD_ZONE);
-        uint16_t r_dz = (uint8_t) obs_data_get_int(settings, S_CONTROLLER_R_DEAD_ZONE);
-
+        uint16_t l_dz = (uint16_t) obs_data_get_int(settings, S_CONTROLLER_L_DEAD_ZONE);
+        uint16_t r_dz = (uint16_t) obs_data_get_int(settings, S_CONTROLLER_R_DEAD_ZONE);
 
         if (!m_gamepad)
         {
@@ -180,29 +179,26 @@ inline void InputSource::Render(gs_effect_t *effect)
         }
         else if (m_layout.m_type == TYPE_CONTROLLER)
         {
-
-
-
             /* Body is background */
             draw_key(effect, &m_layout.m_keys[PAD_BODY], 0, 0);
 
             if (m_gamepad)
             {
                 /* Calculates position of analog sticks */
-                InputKey k = m_layout.m_keys[PAD_L_ANALOG];
-                x = (uint16_t) (k.column - k.w / 2 + m_layout.m_track_radius *
+                k = &m_layout.m_keys[PAD_L_ANALOG];
+                x = (uint16_t) (k->column - k->w / 2 + m_layout.m_track_radius *
                     m_gamepad->left_stick_x());
-                y = (uint16_t) (k.row - k.h / 2 - m_layout.m_track_radius *
+                y = (uint16_t) (k->row - k->h / 2 - m_layout.m_track_radius *
                     m_gamepad->left_stick_y());
 
-                draw_key(effect, &k, x, y);
+                draw_key(effect, k, x, y);
 
-                k = m_layout.m_keys[PAD_R_ANALOG];
-                x = (uint16_t) (k.column - k.w / 2 +  m_layout.m_track_radius *
+                k = &m_layout.m_keys[PAD_R_ANALOG];
+                x = (uint16_t) (k->column - k->w / 2 +  m_layout.m_track_radius *
                     m_gamepad->right_stick_x());
-                y = (uint16_t) (k.row - k.h / 2 - m_layout.m_track_radius *
+                y = (uint16_t) (k->row - k->h / 2 - m_layout.m_track_radius *
                     m_gamepad->right_stick_y());
-                draw_key(effect, &k, x, y);
+                draw_key(effect, k, x, y);
                 draw_key(effect, &m_layout.m_keys[PAD_PLAYER_1 + m_gamepad->get_id()]);
             }
 
@@ -245,12 +241,11 @@ void InputSource::load_texture()
 
 void InputSource::load_layout()
 {
-    m_layout.m_is_loaded = false;
-
-    if (m_layout_file.empty())
+   if (m_layout_file.empty())
         return;
 
     unload_layout();
+    m_layout.m_is_loaded = false;
 
     std::string line;
     std::string key_order, key_width, key_height, key_col, key_row;
@@ -269,14 +264,15 @@ void InputSource::load_layout()
             m_layout.m_btn_h = (uint8_t) cfg->get_int("key_abs_h");
             m_layout.m_key_space_v = (uint8_t) cfg->get_int("key_space_v");
             m_layout.m_key_space_h = (uint8_t) cfg->get_int("key_space_h");
+            m_layout.texture_v_space = (uint16_t)cfg->get_int("texture_v_space");
+            
             key_order = cfg->get_string("key_order");
             key_width = cfg->get_string("key_width");
             key_height = cfg->get_string("key_height");
             key_col = cfg->get_string("key_col");
             key_row = cfg->get_string("key_row");
             texture_w = cfg->get_int("texture_w");
-            m_layout.texture_v_space = (uint8_t) cfg->get_int("texture_v_space");
-
+          
             uint16_t u_cord = 1, v_cord = 1;
             uint16_t tempw, temph;
             int index = 0;
@@ -319,7 +315,7 @@ void InputSource::load_layout()
             }
 
             m_layout.m_h = m_layout.m_rows * m_layout.m_btn_h + m_layout.m_key_space_v * m_layout.m_rows;
-            m_layout.m_w = (uint16_t) (m_layout.m_cols * m_layout.m_btn_w + m_layout.m_key_space_h *
+            m_layout.m_w = (m_layout.m_cols * m_layout.m_btn_w + m_layout.m_key_space_h *
                                                                                     (m_layout.m_cols - 1));
         }
         else if (m_layout.m_type == TYPE_MOUSE)
@@ -414,8 +410,9 @@ void InputSource::load_layout()
             // Start/Back
             keys[PAD_BACK].w = keys[PAD_START].w = (uint16_t) cfg->get_int("pad_back_w");
             keys[PAD_BACK].h = keys[PAD_START].h = (uint16_t) cfg->get_int("pad_back_h");
-
+           
             keys[PAD_BACK].texture_u  = (uint16_t) cfg->get_int("pad_back_u");
+
             keys[PAD_START].texture_v = keys[PAD_BACK].texture_v = (uint16_t) cfg->get_int("pad_back_v");
             keys[PAD_START].texture_u = (uint16_t) (keys[PAD_BACK].texture_u + keys[PAD_BACK].w + 3);
 
@@ -538,6 +535,18 @@ void InputSource::load_layout()
             m_layout.m_is_loaded = false;
         }
     }
+
+    blog(LOG_INFO, "------ input-overlay DEBUG");
+    for (int i = 0; i < m_layout.m_key_count; i++)
+    {
+        blog(LOG_INFO, "KEY ID: %02d, CODE: %#04X, X: %05d, Y: %05d, U: %05d, V: %05d, W: %05d, H: %05d, X_OFF: %05d",
+            i, m_layout.m_keys[i].m_key_code,
+            m_layout.m_keys[i].column, m_layout.m_keys[i].row,
+            m_layout.m_keys[i].texture_u, m_layout.m_keys[i].texture_v,
+            m_layout.m_keys[i].w, m_layout.m_keys[i].h,
+            m_layout.m_keys[i].x_offset);
+    }
+    blog(LOG_INFO, "------");
   
     delete cfg;
 }

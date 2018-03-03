@@ -18,6 +18,7 @@
 
 #include "../ccl/ccl.hpp"
 #include "../util/layouttype.hpp"
+#include "../util/layout.hpp"
 #include "../util/util.hpp"
 
 extern "C" {

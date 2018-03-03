@@ -25,8 +25,6 @@ bool util_pressed_empty(void)
 
 bool util_key_exists(uint16_t vc)
 {
-    if (util_pressed_empty())
-        return false;
     for (int i = 0; i < MAX_SIMULTANEOUS_KEYS; i++)
     {
         if (pressed_keys[i] == vc)
@@ -52,20 +50,21 @@ void util_add_pressed(uint16_t vc)
 
 void util_remove_pressed(uint16_t vc)
 {
-    if (util_key_exists(vc))
+    for (int i = 0; i < MAX_SIMULTANEOUS_KEYS; i++)
     {
-        for (int i = 0; i < MAX_SIMULTANEOUS_KEYS; i++)
+        if (pressed_keys[i] == vc)
         {
-            if (pressed_keys[i] == vc)
-            {
-                pressed_keys[i] = VC_UNDEFINED;
-                break;
-            }
+            pressed_keys[i] = VC_UNDEFINED;
+            break;
         }
     }
 }
 
-/* Hook process stuff */
+/*
+    Hook process stuff 
+    Source:    
+    https://github.com/kwhat/libuiohook/blob/master/src/demo_hook_async.c
+*/
 
 uint16_t pressed_keys[MAX_SIMULTANEOUS_KEYS];
 int16_t mouse_x, mouse_y, mouse_x_smooth, mouse_y_smooth, mouse_last_x, mouse_last_y;
@@ -109,8 +108,8 @@ void dispatch_proc(uiohook_event * const event)
 #endif
 
 #ifdef WINDOWS
-        ReleaseMutex(hook_running_mutex);
-        ResetEvent(hook_control_cond);
+            ReleaseMutex(hook_running_mutex);
+            ResetEvent(hook_control_cond);
 #else
 #if defined(__APPLE__) && defined(__MACH__)
             CFRunLoopStop(CFRunLoopGetMain());
@@ -323,14 +322,17 @@ int hook_enable(void)
     DWORD hook_thread_id;
     DWORD *hook_thread_status = (DWORD*) malloc(sizeof(DWORD));
     hook_thread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)hook_thread_proc, hook_thread_status, 0, &hook_thread_id);
-    if (hook_thread != INVALID_HANDLE_VALUE) {
+    if (hook_thread != INVALID_HANDLE_VALUE)
+    {
 #else
     int *hook_thread_status = (int*) malloc(sizeof(int));
-    if (pthread_create(&hook_thread, &hook_thread_attr, hook_thread_proc, hook_thread_status) == 0) {
+    if (pthread_create(&hook_thread, &hook_thread_attr, hook_thread_proc, hook_thread_status) == 0)
+    {
 #endif
 #if defined(WINDOWS)
         // Attempt to set the thread priority to time critical.
-        if (SetThreadPriority(hook_thread, THREAD_PRIORITY_TIME_CRITICAL) == 0) {
+        if (SetThreadPriority(hook_thread, THREAD_PRIORITY_TIME_CRITICAL) == 0)
+        {
             blog(LOG_WARNING, "[input-overlay] %s [%u]: Could not set thread priority %li for hook thread %#p! (%#lX)\n",
                 __FUNCTION__, __LINE__, (long) THREAD_PRIORITY_TIME_CRITICAL, hook_thread, (unsigned long) GetLastError());
         }
@@ -338,13 +340,15 @@ int hook_enable(void)
         // Some POSIX revisions do not support pthread_setschedprio so we will
         // use pthread_setschedparam instead.
         struct sched_param param = { .sched_priority = priority };
-        if (pthread_setschedparam(hook_thread, SCHED_OTHER, &param) != 0) {
+        if (pthread_setschedparam(hook_thread, SCHED_OTHER, &param) != 0)
+        {
             blog(LOG_WARNING, "[input-overlay] %s [%u]: Could not set thread priority %i for thread 0x%lX!\n",
                  __FUNCTION__, __LINE__, priority, (unsigned long)hook_thread);
         }
 #else
         // Raise the thread priority using glibc pthread_setschedprio.
-        if (pthread_setschedprio(hook_thread, priority) != 0) {
+        if (pthread_setschedprio(hook_thread, priority) != 0)
+        {
             blog(LOG_WARNING, "[input-overlay] %s [%u]: Could not set thread priority %i for thread 0x%lX!\n",
                 __FUNCTION__, __LINE__, priority, (unsigned long)hook_thread);
         }
@@ -360,9 +364,11 @@ int hook_enable(void)
 #endif
 
 #ifdef WINDOWS
-        if (WaitForSingleObject(hook_running_mutex, 0) != WAIT_TIMEOUT) {
+        if (WaitForSingleObject(hook_running_mutex, 0) != WAIT_TIMEOUT)
+        {
 #else
-        if (pthread_mutex_trylock(&hook_running_mutex) == 0) {
+        if (pthread_mutex_trylock(&hook_running_mutex) == 0)
+        {
 #endif
             // Lock Successful; The hook is not running but the hook_control_cond
             // was signaled!  This indicates that there was a startup problem!
@@ -376,7 +382,8 @@ int hook_enable(void)
             status = *hook_thread_status;
 #endif
         }
-        else {
+        else
+        {
             // Lock Failure; The hook is currently running and wait was signaled
             // indicating that we have passed all possible start checks.  We can
             // always assume a successful startup at this point.
