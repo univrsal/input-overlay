@@ -11,7 +11,7 @@ if(MSVC)
 endif()
 
 if(UNIX)
-	add_definitions(-DHAVE_XINPUT=0)
+	add_definitions(-DLINUX_INPUT=1)
 endif()
 
 set(input-overlay_SOURCES
