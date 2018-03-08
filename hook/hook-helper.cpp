@@ -67,6 +67,7 @@ void util_remove_pressed(uint16_t vc)
 */
 
 uint16_t pressed_keys[MAX_SIMULTANEOUS_KEYS];
+wint_t last_character;
 int16_t mouse_x, mouse_y, mouse_x_smooth, mouse_y_smooth, mouse_last_x, mouse_last_y;
 bool hook_initialized = false;
 
@@ -257,6 +258,7 @@ void proccess_event(uiohook_event * const event)
         case EVENT_KEY_RELEASED:
             if (util_key_exists(event->data.keyboard.keycode))
                 util_remove_pressed(event->data.keyboard.keycode);
+            
             break;
         case EVENT_MOUSE_PRESSED:
             if (!util_key_exists(util_mouse_to_vc(event->data.keyboard.keycode)))
@@ -281,6 +283,9 @@ void proccess_event(uiohook_event * const event)
                     util_add_pressed(VC_MOUSE_WHEEL_DOWN);
                 }
             }
+            break;
+        case EVENT_KEY_TYPED:
+            last_character = event->data.keyboard.keychar;
             break;
         case EVENT_MOUSE_DRAGGED:
         case EVENT_MOUSE_MOVED:

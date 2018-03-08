@@ -31,6 +31,12 @@ void InputHistorySource::load_translation(void)
     m_key_names->load_from_file(m_key_name_path);
 }
 
+void InputHistorySource::load_command_handler()
+{
+    if (!m_command_handler)
+        m_command_handler = new CommandHandler();
+}
+
 void InputHistorySource::unload_text_source(void)
 {
     obs_source_remove(m_text_source);
@@ -56,12 +62,21 @@ void InputHistorySource::unload_translation(void)
     }
 }
 
+inline void InputHistorySource::unload_command_handler(void)
+{
+    if (m_command_handler)
+    {
+        delete m_command_handler;
+        m_command_handler = nullptr;
+    }
+}
+
 void InputHistorySource::add_to_history(KeyBundle b)
 {
-    m_history[4] = m_history[3];
-    m_history[3] = m_history[2];
-    m_history[2] = m_history[1];
-    m_history[1] = m_history[0];
+    for (int i = MAX_HISTORY_SIZE - 1; i > 0; i--)
+    {
+        m_history[i] = m_history[i - 1];
+    }
     m_history[0] = b;
 }
 
@@ -73,6 +88,9 @@ void InputHistorySource::clear_history(void)
         m_history[i] = {};
     }
     
+    if (GET_MASK(MASK_COMMAND_MODE) && m_command_handler)
+        m_command_handler->clear();
+
     m_prev_keys = {};
     m_current_keys = {};
 
@@ -103,25 +121,33 @@ void InputHistorySource::handle_text_history(void)
     std::string text = "";
     std::string line = "";
 
+
+    if (GET_MASK(MASK_COMMAND_MODE) && m_command_handler)
+    {
+        text = m_command_handler->get_history(m_history_direction == DIR_DOWN);
+    }
+    else
+    {
 #define START ((m_history_direction == DIR_UP || m_history_direction == DIR_LEFT) ? m_history_size - 1 : 0)
 #define CONDITION ((m_history_direction == DIR_UP || m_history_direction == DIR_LEFT) ? (i >= 0) : (i < m_history_size))
 #define INCREMENT (i += ((m_history_direction == DIR_UP || m_history_direction == DIR_LEFT) ? -1 : 1))
 
-    for (int i = START; CONDITION; INCREMENT)
-    {
-        if (m_history[i].m_empty)
+        for (int i = START; CONDITION; INCREMENT)
         {
-            text.append("\n");
-            continue;
-        }
-
-        line = m_history[i].to_string(m_bool_values, m_key_names);
-
-        if (!line.empty())
-        {
-            if (m_history_direction != DIR_UP && i > 0 || m_history_direction == DIR_UP && i < m_history_size - 1)
+            if (m_history[i].m_empty)
+            {
                 text.append("\n");
-            text.append(line);
+                continue;
+            }
+
+            line = m_history[i].to_string(m_bool_values, m_key_names);
+
+            if (!line.empty())
+            {
+                if (m_history_direction != DIR_UP && i > 0 || m_history_direction == DIR_UP && i < m_history_size - 1)
+                    text.append("\n");
+                text.append(line);
+            }
         }
     }
 
@@ -151,6 +177,7 @@ void InputHistorySource::handle_icon_history(gs_effect_t * effect)
                         if (icon)
                         {
                             gs_matrix_push();
+                            
                             gs_matrix_translate3f((float)(m_key_icons->get_w() + m_icon_h_space) * index2,
                                 (float)(m_key_icons->get_h() + m_icon_v_space) * index, 1.f);
                             gs_draw_sprite_subregion(m_key_icons->get_texture()->texture, 0, icon->u, icon->v,
@@ -199,6 +226,7 @@ inline void InputHistorySource::Update(obs_data_t * settings)
     SET_MASK(MASK_AUTO_CLEAR, obs_data_get_bool(settings, S_OVERLAY_ENABLE_AUTO_CLEAR));
     SET_MASK(MASK_FIX_CUTTING, obs_data_get_bool(settings, S_OVERLAY_FIX_CUTTING));
     SET_MASK(MASK_USE_FALLBACK, obs_data_get_bool(settings, S_OVERLAY_USE_FALLBACK_NAME));
+    SET_MASK(MASK_COMMAND_MODE, obs_data_get_bool(settings, S_OVERLAY_COMMAND_MODE));
 
     m_update_interval = obs_data_get_int(settings, S_OVERLAY_INTERVAL);
     m_clear_interval = obs_data_get_int(settings, S_OVERLAY_AUTO_CLEAR_INTERVAL);
@@ -213,6 +241,15 @@ inline void InputHistorySource::Update(obs_data_t * settings)
     m_history_size = obs_data_get_int(settings, S_OVERLAY_HISTORY_SIZE);
     m_history_direction = (IconDirection) obs_data_get_int(settings, S_OVERLAY_DIRECTION);
     
+    if (GET_MASK(MASK_COMMAND_MODE))
+    {
+        load_command_handler();
+    }
+    else
+    {
+        unload_command_handler();
+    }
+
     if (GET_MASK(MASK_TEXT_MODE))
     {
         unload_icons();
@@ -222,15 +259,15 @@ inline void InputHistorySource::Update(obs_data_t * settings)
         load_icons();
     }
 
-    if (!m_key_name_path.empty())
-    {
-        SET_MASK(MASK_TRANSLATION, true);
-        load_translation();
-    }
-    else
+    if (m_key_name_path.empty())
     {
         SET_MASK(MASK_TRANSLATION, false);
         unload_translation();
+    }
+    else
+    {
+        SET_MASK(MASK_TRANSLATION, true);
+        load_translation();
     }
 }
 
@@ -246,40 +283,53 @@ inline void InputHistorySource::Tick(float seconds)
         {
             m_clear_timer = 0.f;
             clear_history();
+            
         }
     }
 
-    if (m_counter >= m_update_interval)
+    if (GET_MASK(MASK_COMMAND_MODE) && m_command_handler)
     {
-        m_counter = 0;
-        if (!m_current_keys.m_empty)
+        if (last_character != 0)
         {
-            if (GET_MASK(MASK_TEXT_MODE) || m_key_icons && m_key_icons->has_texture_for_bundle(&m_current_keys))
-            {
-                if (GET_MASK(MASK_REPEAT_KEYS) || !m_current_keys.compare(&m_prev_keys))
-                {
-                    if (!m_current_keys.is_only_mouse() || GET_MASK(MASK_INCLUDE_MOUSE))
-                    {
-                        add_to_history(m_current_keys);
-                        m_clear_timer = 0.f;
-                    }
-
-                    m_prev_keys = m_current_keys;
-
-                    if (GET_MASK(MASK_TEXT_MODE))
-                    {
-                        handle_text_history();
-                    }
-
-                    m_current_keys = {};
-                }
-            }
+            m_command_handler->handle_char(last_character);
+            last_character = 0;
+            handle_text_history();
         }
     }
     else
     {
-        m_current_keys.merge(check_keys());
-        m_counter++;
+        if (m_counter >= m_update_interval)
+        {
+            m_counter = 0;
+            if (!m_current_keys.m_empty)
+            {
+                if (GET_MASK(MASK_TEXT_MODE) || m_key_icons && m_key_icons->has_texture_for_bundle(&m_current_keys))
+                {
+                    if (GET_MASK(MASK_REPEAT_KEYS) || !m_current_keys.compare(&m_prev_keys))
+                    {
+                        if (!m_current_keys.is_only_mouse() || GET_MASK(MASK_INCLUDE_MOUSE))
+                        {
+                            add_to_history(m_current_keys);
+                            m_clear_timer = 0.f;
+                        }
+
+                        m_prev_keys = m_current_keys;
+
+                        if (GET_MASK(MASK_TEXT_MODE))
+                        {
+                            handle_text_history();
+                        }
+
+                        m_current_keys = {};
+                    }
+                }
+            }
+        }
+        else
+        {
+            m_current_keys.merge(check_keys());
+            m_counter++;
+        }
     }
     
     if (GET_MASK(MASK_TEXT_MODE))
@@ -470,12 +520,13 @@ bool mode_changed(obs_properties_t * props, obs_property_t * p, obs_data_t * s)
     TEXT_VIS(GET_PROPS(S_OVERLAY_OPACITY));
     TEXT_VIS(GET_PROPS(S_OVERLAY_KEY_NAME_PATH));
     TEXT_VIS(GET_PROPS(S_OVERLAY_USE_FALLBACK_NAME));
+    TEXT_VIS(GET_PROPS(S_OVERLAY_COMMAND_MODE));
 
     ICON_VIS(GET_PROPS(S_OVERLAY_KEY_ICON_CONFIG_PATH));
     ICON_VIS(GET_PROPS(S_OVERLAY_KEY_ICON_PATH));
     ICON_VIS(GET_PROPS(S_OVERLAY_ICON_V_SPACE));
     ICON_VIS(GET_PROPS(S_OVERLAY_ICON_H_SPACE));
-
+    
     return true;
 }
 
@@ -558,6 +609,9 @@ obs_properties_t * get_properties_for_history(void * data)
     obs_properties_add_bool(props, S_OVERLAY_ENABLE_REPEAT_KEYS, T_OVERLAY_ENABLE_REPEAT_KEYS);
     obs_properties_add_bool(props, S_OVERLAY_ENABLE_AUTO_CLEAR, T_OVERLAY_ENABLE_AUTO_CLEAR);
     obs_properties_add_int(props, S_OVERLAY_AUTO_CLEAR_INTERVAL, T_OVERLAY_AUTO_CLEAR_INTERVAL, 1, 30, 1);
+
+    /* Command mode */
+    obs_properties_add_bool(props, S_OVERLAY_COMMAND_MODE, T_OVERLAY_COMMAND_MODE);
 
     obs_properties_add_button(props, S_OVERLAY_CLEAR_HISTORY, T_OVERLAY_CLEAR_HISTORY, clear_history);
     return props;

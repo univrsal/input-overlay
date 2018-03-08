@@ -27,6 +27,7 @@ extern "C" {
 #define MASK_REPEAT_KEYS    1 << 5
 #define MASK_TRANSLATION    1 << 6
 #define MASK_USE_FALLBACK   1 << 7
+#define MASK_COMMAND_MODE   1 << 8
 
 /**
  * This file is part of input-overlay
@@ -54,6 +55,75 @@ struct KeyBundle {
     std::string to_string(uint8_t masks, KeyNames* names);
     bool compare(KeyBundle* other);
     bool is_only_mouse();
+};
+
+struct CommandHandler
+{
+    bool m_empty = true;
+    std::string commands[MAX_HISTORY_SIZE];
+
+    void finish_command()
+    {
+        for (int i = MAX_HISTORY_SIZE - 1; i > 0; i--)
+        {
+            commands[i] = commands[i - 1];
+        }
+        commands[0] = "";
+    }
+
+    bool special_handling(wint_t character)
+    {
+        if (character == CHAR_BACK)
+        {
+            if (commands[0].length() > 0)
+                commands[0].pop_back();
+        }
+        else if (character == CHAR_ENTER)
+        {
+            finish_command();
+        }
+        return character == CHAR_BACK || character == CHAR_ENTER;
+    }
+
+    void clear()
+    {
+        for (int i = 0; i < MAX_HISTORY_SIZE; i++)
+            commands[i] = "";
+    }
+
+    void handle_char(wint_t character)
+    {
+        if (special_handling(character))
+            return;
+
+        char buffer[2];
+        snprintf(buffer, sizeof(buffer), "%lc", character);
+        commands[0].append(buffer);
+    }
+
+    std::string get_history(bool down)
+    {
+        std::string result = "";
+        if (down)
+        {
+            for (int i = MAX_HISTORY_SIZE - 1; i >= 0; i--)
+            {
+                result.append(commands[i]);
+                if (i >= 1)
+                    result.append("\n");
+            }
+        }
+        else
+        {
+            for (int i = 0; i < MAX_HISTORY_SIZE; i++)
+            {
+                result.append(commands[i]);
+                if (i < MAX_HISTORY_SIZE - 1)
+                    result.append("\n");
+            }
+        }
+        return result;
+    }
 };
 
 struct KeyIcon {
@@ -102,7 +172,7 @@ struct InputHistorySource
     uint32_t m_update_interval = 1, m_counter = 0;
     int16_t m_icon_v_space = 0, m_icon_h_space = 0;
 
-    uint8_t m_bool_values = 0x0000;
+    uint16_t m_bool_values = 0x00000000;
     IconDirection m_history_direction = DIR_DOWN;
 
     KeyBundle m_current_keys;
@@ -112,8 +182,10 @@ struct InputHistorySource
     std::string m_key_name_path;
     std::string m_key_icon_path;
     std::string m_key_icon_config_path;
+
     KeyNames * m_key_names = nullptr;
     KeyIcons * m_key_icons = nullptr;
+    CommandHandler * m_command_handler = nullptr;
 
     float m_clear_timer = 0.f;
     int m_clear_interval = 0;
@@ -131,15 +203,18 @@ struct InputHistorySource
         unload_text_source();
         unload_icons();
         unload_translation();
+        unload_command_handler();
     }
 
     void load_text_source(void);
     void load_icons(void);
     void load_translation(void);
-    
+    void load_command_handler();
+
     inline void unload_text_source(void);
     inline void unload_icons(void);
     inline void unload_translation(void);
+    inline void unload_command_handler(void);
 
     KeyBundle check_keys(void);
     void add_to_history(KeyBundle b);

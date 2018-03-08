@@ -23,7 +23,6 @@ bool obs_module_load(void)
     register_history();
     register_overlay_source();
     start_hook();
- 
 #ifdef LINUX
     start_pad_hook();
 #endif

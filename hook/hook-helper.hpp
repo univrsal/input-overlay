@@ -22,6 +22,7 @@
  */
 
 extern uint16_t pressed_keys[MAX_SIMULTANEOUS_KEYS];
+extern wint_t last_character;
 extern int16_t mouse_x, mouse_y, mouse_x_smooth, mouse_y_smooth, mouse_last_x, mouse_last_y;
 extern bool hook_initialized;
 

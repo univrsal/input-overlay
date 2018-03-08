@@ -284,17 +284,17 @@ void util_format_path(std::string & path)
         path.resize(slash - path.c_str() + 1);
 }
 
-void util_enable_mask(uint8_t & masks, uint8_t mask)
+void util_enable_mask(uint16_t & masks, uint16_t mask)
 {
     masks |= mask;
 }
 
-void util_disable_mask(uint8_t & masks, uint8_t mask)
+void util_disable_mask(uint16_t & masks, uint16_t mask)
 {
     masks &= ~mask;
 }
 
-void util_set_mask(uint8_t & masks, uint8_t mask, bool state)
+void util_set_mask(uint16_t & masks, uint16_t mask, bool state)
 {
     if (state)
     {

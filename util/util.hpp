@@ -113,6 +113,7 @@
 #define S_OVERLAY_OUTLINE_COLOR         "outline_color"
 #define S_OVERLAY_OUTLINE_OPACITY       "outline_opacity"
 #define S_OVERLAY_OPACITY               "opacity"
+#define S_OVERLAY_COMMAND_MODE          "command_mode"
 
 #define T_OVERLAY_KEY_NAME_PATH         T_("Overlay.KeyTranslationPath")
 #define T_OVERLAY_USE_FALLBACK_NAMES    T_("Overlay.UseFallback.Translation")
@@ -148,6 +149,8 @@
 #define T_OVERLAY_ENABLE_AUTO_CLEAR     T_("Overlay.Enable.AutoClear")
 #define T_OVERLAY_AUTO_CLEAR_INTERVAL   T_("Overlay.AutoClear.Interval")
 
+#define T_OVERLAY_COMMAND_MODE          T_("Overlay.Commandmode")
+
 #define WHEEL_UP        -1
 #define WHEEL_DOWN      1
 
@@ -162,6 +165,10 @@
 #define VC_MOUSE_BUTTON3      (MOUSE_BUTTON3 | VC_MOUSE_MASK)
 #define VC_MOUSE_BUTTON4      (MOUSE_BUTTON4 | VC_MOUSE_MASK)
 #define VC_MOUSE_BUTTON5      (MOUSE_BUTTON5 | VC_MOUSE_MASK)
+
+/* These are used for Command mode */
+#define CHAR_BACK           0x8
+#define CHAR_ENTER          0xD
 
 // Gamepad constants
 #define PAD_STICK_MAX_VAL   32767
@@ -207,9 +214,9 @@ std::string util_file_filter(const char * display, const char * formats);
 // Changes slashes in path to fit unix formatting
 void util_format_path(std::string & path);
 
-void util_enable_mask(uint8_t& masks, uint8_t mask);
-void util_disable_mask(uint8_t& masks, uint8_t mask);
-void util_set_mask(uint8_t& masks, uint8_t mask, bool state);
+void util_enable_mask(uint16_t& masks, uint16_t mask);
+void util_disable_mask(uint16_t& masks, uint16_t mask);
+void util_set_mask(uint16_t& masks, uint16_t mask, bool state);
 
 uint16_t util_mouse_to_vc(int m);
 
