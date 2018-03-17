@@ -54,6 +54,28 @@ void update_gamepads(void)
 }
 #endif
 
+float get_stick_value_x(uint8_t pad_id, bool left)
+{
+    if (pad_id < 0 || pad_id >= PAD_COUNT)
+        return 0.f;
+
+    if (left)
+        return pad_states[pad_id].l_x;
+    else
+        return pad_states[pad_id].r_x;
+}
+
+float get_stick_value_y(uint8_t pad_id, bool left)
+{
+    if (pad_id < 0 || pad_id >= PAD_COUNT)
+        return 0.f;
+    
+    if (left)
+        return pad_states[pad_id].l_y;
+    else
+        return pad_states[pad_id].r_y;
+}
+
 /* Linux background process for gamepads*/
 #ifdef LINUX
 

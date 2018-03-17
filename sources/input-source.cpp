@@ -93,6 +93,9 @@ inline void InputSource::Update(obs_data_t *settings)
 inline void InputSource::Tick(float seconds)
 {
     check_keys();
+#ifdef HAVE_XINPUT
+    update_gamepads(); /* Part of gamepad-hook */
+#endif
 }
 
 inline void InputSource::Render(gs_effect_t *effect)
@@ -169,25 +172,28 @@ inline void InputSource::Render(gs_effect_t *effect)
             /* Body is background */
             draw_key(effect, &m_layout.m_keys[PAD_BODY], 0, 0);
 
-            if (m_gamepad)
-            {
-                /* Calculates position of analog sticks */
-                k = &m_layout.m_keys[PAD_L_ANALOG];
-                x = (uint16_t) (k->column - k->w / 2 + m_layout.m_track_radius *
-                    m_gamepad->left_stick_x());
-                y = (uint16_t) (k->row - k->h / 2 - m_layout.m_track_radius *
-                    m_gamepad->left_stick_y());
+     
+            /* Calculates position of analog sticks */
+            k = &m_layout.m_keys[PAD_L_ANALOG];
+            
+            x = (uint16_t) (k->column - k->w / 2 + m_layout.m_track_radius *
+                get_stick_value_x(m_pad_id, true));
+            y = (uint16_t) (k->row - k->h / 2 - m_layout.m_track_radius *
+                get_stick_value_y(m_pad_id, true));
 
-                draw_key(effect, k, x, y);
+            draw_key(effect, k, x, y);
 
-                k = &m_layout.m_keys[PAD_R_ANALOG];
-                x = (uint16_t) (k->column - k->w / 2 +  m_layout.m_track_radius *
-                    m_gamepad->right_stick_x());
-                y = (uint16_t) (k->row - k->h / 2 - m_layout.m_track_radius *
-                    m_gamepad->right_stick_y());
-                draw_key(effect, k, x, y);
-                draw_key(effect, &m_layout.m_keys[PAD_PLAYER_1 + m_gamepad->get_id()]);
-            }
+            k = &m_layout.m_keys[PAD_R_ANALOG];
+            
+            x = (uint16_t) (k->column - k->w / 2 +  m_layout.m_track_radius *
+                get_stick_value_x(m_pad_id, false));
+            y = (uint16_t) (k->row - k->h / 2 - m_layout.m_track_radius *
+                get_stick_value_y(m_pad_id, false));
+            
+            draw_key(effect, k, x, y);
+
+            draw_key(effect, &m_layout.m_keys[PAD_PLAYER_1 + m_pad_id]);
+            
 
             /* Draws rest of keys*/
             for (int i = 0; i < PAD_BUTTON_COUNT; i++)
@@ -542,9 +548,6 @@ void InputSource::unload_layout()
     {
         m_layout.m_keys.clear();
     }
-
-    if (m_gamepad)
-        m_gamepad->unload();
 }
 
 void InputSource::check_keys()
@@ -571,8 +574,7 @@ void InputSource::check_keys()
         }
         else if (m_layout.m_type == TYPE_CONTROLLER)
         {
-            if (m_gamepad)
-                m_gamepad->check_keys();
+
         }
     }
 }
@@ -670,11 +672,13 @@ obs_properties_t * get_properties_for_overlay(void * data)
     obs_property_set_modified_callback(is_controller, is_controller_changed);
     obs_properties_add_int(props, S_CONTROLLER_ID, T_CONTROLLER_ID, 0, 3, 1);
  
+#if HAVE_XINPUT // Linux only allows values 0 - 127
+                // which removes jittery input
     obs_properties_add_int_slider(props, S_CONTROLLER_L_DEAD_ZONE, 
         T_CONROLLER_L_DEADZONE, 1, PAD_STICK_MAX_VAL - 1, 1);
     obs_properties_add_int_slider(props, S_CONTROLLER_R_DEAD_ZONE, 
         T_CONROLLER_R_DEADZONE, 1, PAD_STICK_MAX_VAL - 1, 1);
-
+#endif
     return props;
 }
 

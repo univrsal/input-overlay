@@ -45,9 +45,6 @@
 #define UTIL_MIN(a,b)               (((a) < (b)) ? (a) : (b))
 #define UTIL_CLAMP(lower, x, upper) (UTIL_MIN(upper, UTIL_MAX(x, lower)))
 
-#define DEAD_ZONE(x, dz) ((x < dz) && (x > -dz))
-#define X_PRESSED(b) ((m_xinput.Gamepad.wButtons & b) != 0)
-
 #define warning(format, ...) blog(LOG_WARNING, "[%s] " format, \
 		obs_source_get_name(m_source), ##__VA_ARGS__)
 
@@ -177,7 +174,6 @@
 #define CHAR_ENTER          0xD
 
 // Gamepad constants
-#define PAD_STICK_MAX_VAL   32767
 #define PAD_ICON_COUNT      22
 #define PAD_BUTTON_COUNT	17
 

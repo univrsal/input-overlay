@@ -79,6 +79,7 @@ private:
 
 #define DEAD_ZONE(x, dz) ((x < dz) && (x > -dz))
 #define X_PRESSED(b) ((m_xinput.Gamepad.wButtons & b) != 0)
+#define STICK_MAX_VAL   32767
 
 struct GamepadState
 {
@@ -119,7 +120,7 @@ struct GamepadState
 
     // Writes all pressed buttons into the global
     // array
-    void put_in_vc(void)
+    void put_in_vc(uint16_t l_dz, uint16_t r_dz)
     {
         util_set_pad_state(PAD_L_ANALOG, m_pad_id, X_PRESSED(XINPUT_GAMEPAD_LEFT_THUMB));
         util_set_pad_state(PAD_R_ANALOG, m_pad_id, X_PRESSED(XINPUT_GAMEPAD_RIGHT_THUMB));
@@ -142,6 +143,26 @@ struct GamepadState
         util_set_pad_state(PAD_DPAD_DOWN, m_pad_id, X_PRESSED(XINPUT_GAMEPAD_DPAD_DOWN));
         util_set_pad_state(PAD_DPAD_LEFT, m_pad_id, X_PRESSED(XINPUT_GAMEPAD_DPAD_LEFT));
         util_set_pad_state(PAD_DPAD_RIGHT, m_pad_id, X_PRESSED(XINPUT_GAMEPAD_DPAD_RIGHT));
+
+        if (!DEAD_ZONE(m_xinput.Gamepad.sThumbLX, l_dz))
+            l_x = fmaxf(-1, (float)m_xinput.Gamepad.sThumbLX / STICK_MAX_VAL);
+        else
+            l_x = 0.f;
+
+        if (!DEAD_ZONE(m_xinput.Gamepad.sThumbLY, l_dz))
+            l_y = fmaxf(-1, (float)m_xinput.Gamepad.sThumbLY / STICK_MAX_VAL);
+        else
+            l_y = 0.f;
+
+        if (!DEAD_ZONE(m_xinput.Gamepad.sThumbRX, r_dz))
+            r_x = fmaxf(-1, (float)m_xinput.Gamepad.sThumbRX / STICK_MAX_VAL);
+        else
+            r_x = 0.f;
+
+        if (!DEAD_ZONE(m_xinput.Gamepad.sThumbRY, r_dz))
+            r_y = fmaxf(-1, (float)m_xinput.Gamepad.sThumbRY / STICK_MAX_VAL);
+        else
+            r_y = 0.f;
     }
 private:
     XINPUT_STATE m_xinput;
@@ -152,10 +173,16 @@ private:
 void update_gamepads(void);
 #endif // HAVE_XINPUT
 
+float get_stick_value_x(uint8_t pad_id, bool left);
+
+float get_stick_value_y(uint8_t pad_id, bool left);
+
 void start_pad_hook(void);
+
 #ifdef LINUX
 void * hook_method(void *);
 #endif
+
 void end_pad_hook(void);
 
 void init_pad_devices(void);

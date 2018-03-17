@@ -27,9 +27,7 @@ extern "C" {
 
 #include "../hook/hook-helper.hpp"
 
-#ifdef HAVE_XINPUT
 #include "../hook/gamepad-hook.hpp"
-#endif
 
 struct InputSource
 {
@@ -62,12 +60,6 @@ struct InputSource
     {
         unload_texture();
         unload_layout();
-        
-        if (m_gamepad)
-        {
-            delete m_gamepad;
-            m_gamepad = nullptr;
-        }
     }
 
     void load_texture(void);
