@@ -121,7 +121,7 @@ void * hook_method(void *)
                         util_set_pad_state(PAD_LT, i, m_packet[ID_STATE_1] > 127);
                        break;
                     case ID_R_TRIGGER:
-                        util_set_pad_state(PAD_RT), i, m_packet[ID_STATE_1] > 127;
+                        util_set_pad_state(PAD_RT, i, m_packet[ID_STATE_1] > 127);
                         break;
                     case ID_R_ANALOG_X:
                         if (m_packet[ID_STATE_1] == 0 || m_packet[ID_STATE_2] == 0)

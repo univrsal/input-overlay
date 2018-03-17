@@ -3,6 +3,7 @@
 
 
 #include "../util/util.hpp"
+#include "hook-helper.hpp"
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -16,15 +17,11 @@
  * github.com/univrsal/input-overlay
  */
 
-extern GamepadState pad_states[PAD_COUNT]; // Only monitor four gamepads, I mean who even has more than four friends
-
 /* Linux implementation */
 
 #ifdef LINUX
 
 extern bool gamepad_hook_state;
-
-const char* device_path = "/dev/input/js";
 
 struct GamepadState
 {
@@ -57,7 +54,7 @@ struct GamepadState
     void init(uint8_t pad_id)
     { 
         m_path.clear();
-        m_path.append(device_path);
+        m_path.append("/dev/input/js");
         m_path.append(std::to_string(pad_id));
         load();
     }
@@ -172,6 +169,8 @@ private:
 
 void update_gamepads(void);
 #endif // HAVE_XINPUT
+
+extern GamepadState pad_states[PAD_COUNT]; // Only monitor four gamepads, I mean who even has more than four friends
 
 float get_stick_value_x(uint8_t pad_id, bool left);
 

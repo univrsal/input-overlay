@@ -1,3 +1,4 @@
+#if 0
 #ifndef LINUX_GAMEPAD_HPP
 #define LINUX_GAMEPAD_HPP
 
@@ -63,5 +64,6 @@ private:
 
     GamepadState * m_state;
 };
+#endif
 #endif
 #endif

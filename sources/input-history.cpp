@@ -280,18 +280,7 @@ inline void InputHistorySource::Update(obs_data_t * settings)
 
     if (GET_MASK(MASK_INCLUDE_PAD))
     {
-        uint8_t id = (uint8_t) obs_data_get_int(settings, S_CONTROLLER_ID);
-        if (!m_gamepad)
-        {
-#ifdef HAVE_XINPUT
-            m_gamepad = new WindowsGamepad(id, &m_pad_keys);
-#endif
-
-#ifdef LINUX_INPUT
-            m_gamepad = new LinuxGamepad(id, &m_pad_keys);
-#endif
-        }
-        m_gamepad->update(id, 0, 0);
+        m_pad_id = (uint8_t) obs_data_get_int(settings, S_CONTROLLER_ID);
     }
 }
 
@@ -312,8 +301,10 @@ inline void InputHistorySource::Tick(float seconds)
 
     if (GET_MASK(MASK_INCLUDE_PAD))
     {
-        if (m_gamepad)
-            m_gamepad->check_keys();
+#ifdef HAVE_XINPUT
+        update_gamepads();
+#endif
+        // other stuff
     }
 
     if (GET_MASK(MASK_COMMAND_MODE) && m_command_handler)

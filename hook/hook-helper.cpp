@@ -75,7 +75,7 @@ void util_set_pad_state(uint16_t btn_id, uint8_t id, bool state)
     https://github.com/kwhat/libuiohook/blob/master/src/demo_hook_async.c
 */
 
-uint16_t pressed_keys[MAX_SIMULTANEOUS_KEYS];
+uint16_t pressed_keys[MAX_KEYBOARD_KEYS];
 bool pressed_pad_keys[PAD_COUNT][PAD_BUTTON_COUNT];
 wint_t last_character;
 int16_t mouse_x, mouse_y, mouse_x_smooth, mouse_y_smooth, mouse_last_x, mouse_last_y;

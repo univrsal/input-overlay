@@ -10,19 +10,11 @@
 #include "../ccl/ccl.hpp"
 #include "../util/util.hpp"
 #include "../util/layout.hpp"
+#include "../hook/gamepad-hook.hpp"
 
 extern "C" {
 #include <graphics/image-file.h>
 }
-
-/* Platform dependend gamepad implementation */
-#if HAVE_XINPUT
-#include "../gamepad/windows-gamepad.hpp"
-#endif
-
-#if LINUX_INPUT
-#include "../gamepad/linux-gamepad.hpp"
-#endif
 
 #define MAX_HISTORY_SIZE 5
 
@@ -177,7 +169,8 @@ struct InputHistorySource
     obs_source_t * m_text_source = nullptr;
 
     uint8_t m_history_size = 1;
-
+    uint8_t m_pad_id = 0;
+    
     uint32_t cx = 0;
     uint32_t cy = 0;
     uint32_t m_update_interval = 1, m_counter = 0;
@@ -198,15 +191,6 @@ struct InputHistorySource
     KeyIcons * m_key_icons = nullptr;
     CommandHandler * m_command_handler = nullptr;
 
-#ifdef HAVE_XINPUT
-    WindowsGamepad * m_gamepad = nullptr;
-#endif
-
-#ifdef LINUX_INPUT
-    LinuxGamepad * m_gamepad = nullptr;
-#endif
-    std::vector<InputKey> m_pad_keys;
-
     float m_clear_timer = 0.f;
     int m_clear_interval = 0;
 
@@ -224,12 +208,6 @@ struct InputHistorySource
         unload_icons();
         unload_translation();
         unload_command_handler();
-
-        if (m_gamepad)
-        {
-            delete m_gamepad;
-            m_gamepad = nullptr;
-        }
     }
 
     void load_text_source(void);

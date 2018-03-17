@@ -1,4 +1,6 @@
+#if 0
 #include "linux-gamepad.hpp"
+
 #ifdef LINUX
 
 /**
@@ -27,3 +29,4 @@ void LinuxGamepad::check_keys()
         SYNC_STATE(i);
 }
 #endif
+#endif 

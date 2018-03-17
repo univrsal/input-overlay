@@ -111,7 +111,7 @@ inline void InputSource::Render(gs_effect_t *effect)
     else
     {
         uint16_t x = 0, y = 0;
-        InputKey* k;
+        InputKey * k;
 
         if (m_layout.m_type == TYPE_KEYBOARD)
         {
@@ -574,7 +574,10 @@ void InputSource::check_keys()
         }
         else if (m_layout.m_type == TYPE_CONTROLLER)
         {
-
+            for (int i = 0; i < PAD_BUTTON_COUNT; i++)
+            {
+                m_layout.m_keys[i].m_pressed = pressed_pad_keys[m_pad_id][i];
+            }
         }
     }
 }

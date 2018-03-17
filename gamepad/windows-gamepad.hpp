@@ -1,3 +1,4 @@
+#if 0
 #ifndef WINDOWS_GAMEPAD_HPP
 #define WINDOWS_GAMEPAD_HPP
 #if HAVE_XINPUT
@@ -62,3 +63,4 @@ private:
 };
 #endif // HAVE_XINPUT
 #endif // WINDOWS_GAMEPAD_HPP
+#endif
