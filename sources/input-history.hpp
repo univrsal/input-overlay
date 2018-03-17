@@ -9,10 +9,20 @@
 #include "input-source.hpp"
 #include "../ccl/ccl.hpp"
 #include "../util/util.hpp"
+#include "../util/layout.hpp"
 
 extern "C" {
 #include <graphics/image-file.h>
 }
+
+/* Platform dependend gamepad implementation */
+#if HAVE_XINPUT
+#include "../gamepad/windows-gamepad.hpp"
+#endif
+
+#if LINUX_INPUT
+#include "../gamepad/linux-gamepad.hpp"
+#endif
 
 #define MAX_HISTORY_SIZE 5
 
@@ -28,6 +38,7 @@ extern "C" {
 #define MASK_TRANSLATION    1 << 6
 #define MASK_USE_FALLBACK   1 << 7
 #define MASK_COMMAND_MODE   1 << 8
+#define MASK_INCLUDE_PAD    1 << 9
 
 /**
  * This file is part of input-overlay
@@ -100,7 +111,7 @@ struct CommandHandler
         snprintf(buffer, sizeof(buffer), "%lc", character);
         commands[0].append(buffer);
     }
-
+    
     std::string get_history(bool down)
     {
         std::string result = "";
@@ -149,14 +160,14 @@ struct KeyIcons {
     bool is_loaded() { return m_loaded; }
     bool has_texture_for_bundle(KeyBundle * bundle);
     
-    gs_image_file_t* get_texture(void) { return m_icon_texture; }
+    gs_image_file_t * get_texture(void) { return m_icon_texture; }
 
 private:
     bool m_loaded = false;
     uint16_t m_icon_count, m_icon_w, m_icon_h;
     std::map<uint16_t, KeyIcon> m_icons;
     void unload_texture();
-    gs_image_file_t *m_icon_texture = nullptr;
+    gs_image_file_t * m_icon_texture = nullptr;
 };
 
 struct InputHistorySource
@@ -187,6 +198,15 @@ struct InputHistorySource
     KeyIcons * m_key_icons = nullptr;
     CommandHandler * m_command_handler = nullptr;
 
+#ifdef HAVE_XINPUT
+    WindowsGamepad * m_gamepad = nullptr;
+#endif
+
+#ifdef LINUX_INPUT
+    LinuxGamepad * m_gamepad = nullptr;
+#endif
+    std::vector<InputKey> m_pad_keys;
+
     float m_clear_timer = 0.f;
     int m_clear_interval = 0;
 
@@ -204,6 +224,12 @@ struct InputHistorySource
         unload_icons();
         unload_translation();
         unload_command_handler();
+
+        if (m_gamepad)
+        {
+            delete m_gamepad;
+            m_gamepad = nullptr;
+        }
     }
 
     void load_text_source(void);
@@ -231,6 +257,8 @@ struct InputHistorySource
 static bool clear_history(obs_properties_t *props, obs_property_t *property, void *data);
 
 static bool mode_changed(obs_properties_t *props, obs_property_t *p, obs_data_t *s);
+
+static bool include_pad_changed(obs_properties *props, obs_property_t *p, obs_data_t *s);
 
 static obs_properties_t *get_properties_for_history(void *data);
 

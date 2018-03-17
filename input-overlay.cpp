@@ -1,11 +1,13 @@
 #include <obs-module.h>
 
-#ifdef LINUX
-#include "hook/gamepad-hook.hpp"
-#endif
 #include "util/util.hpp"
 #include "sources/input-source.hpp"
 #include "sources/input-history.hpp"
+
+#ifdef LINUX
+#include "hook/gamepad-hook.hpp"
+#endif
+
 
 /**
  * This file is part of input-overlay
@@ -23,9 +25,9 @@ bool obs_module_load(void)
     register_history();
     register_overlay_source();
     start_hook();
-#ifdef LINUX
+
     start_pad_hook();
-#endif
+
     return true;
 }
 

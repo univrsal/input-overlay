@@ -60,6 +60,15 @@ void util_remove_pressed(uint16_t vc)
     }
 }
 
+void util_set_pad_state(uint16_t btn_id, uint8_t id, bool state)
+{
+    if (id < 0 || id > PAD_COUNT)
+        return;
+    
+    if (btn_id >= 0 && btn_id < PAD_BUTTON_COUNT)
+        pressed_pad_keys[id][btn_id] = state;
+}
+
 /*
     Hook process stuff 
     Source:    
@@ -67,6 +76,7 @@ void util_remove_pressed(uint16_t vc)
 */
 
 uint16_t pressed_keys[MAX_SIMULTANEOUS_KEYS];
+bool pressed_pad_keys[PAD_COUNT][PAD_BUTTON_COUNT];
 wint_t last_character;
 int16_t mouse_x, mouse_y, mouse_x_smooth, mouse_y_smooth, mouse_last_x, mouse_last_y;
 bool hook_initialized = false;

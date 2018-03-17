@@ -9,11 +9,11 @@
 
 void InputHistorySource::load_text_source(void)
 {
-    #ifdef WINDOWS
-    m_text_source = obs_source_create("text_gdiplus\0", "history-text-source", m_settings, NULL);
-    #else
+#ifdef WINDOWS
+   m_text_source = obs_source_create("text_gdiplus\0", "history-text-source", m_settings, NULL);
+#else
     m_text_source = obs_source_create("text_ft2_source\0", "history-text-source", m_settings, NULL);
-    #endif
+#endif
     obs_source_add_active_child(m_source, m_text_source);
 }
 
@@ -102,14 +102,22 @@ void InputHistorySource::clear_history(void)
 KeyBundle InputHistorySource::check_keys(void)
 {
     KeyBundle temp = KeyBundle();
-    if (!util_pressed_empty())
+    if (!util_pressed_empty() || GET_MASK(MASK_INCLUDE_PAD))
     {
-        
-        for (int i = 0; i < MAX_SIMULTANEOUS_KEYS; i++)
+        for (int i = 0; i < MAX_KEYBOARD_KEYS; i++)
         {
             temp.m_keys[i] = pressed_keys[i];
             if (pressed_keys[i] > 0)
                 temp.m_empty = false;
+        }
+
+        if (GET_MASK(MASK_INCLUDE_PAD))
+        {
+            /*for (int i = 0; i < PAD_BUTTON_COUNT; i++)
+            {
+                if (m_pad_keys[i].m_pressed)
+                    temp.m_keys[i + MAX_KEYBOARD_KEYS] = PAD_TO_VC(i);         
+            }    */
         }
     }
 
@@ -191,7 +199,6 @@ void InputHistorySource::handle_icon_history(gs_effect_t * effect)
                 break;
             case DIR_LEFT:
             case DIR_RIGHT:
-
                 for (int i = START; CONDITION; INCREMENT)
                 {
                     index2 = 0;
@@ -227,6 +234,7 @@ inline void InputHistorySource::Update(obs_data_t * settings)
     SET_MASK(MASK_FIX_CUTTING, obs_data_get_bool(settings, S_OVERLAY_FIX_CUTTING));
     SET_MASK(MASK_USE_FALLBACK, obs_data_get_bool(settings, S_OVERLAY_USE_FALLBACK_NAME));
     SET_MASK(MASK_COMMAND_MODE, obs_data_get_bool(settings, S_OVERLAY_COMMAND_MODE));
+    SET_MASK(MASK_INCLUDE_PAD, obs_data_get_bool(settings, S_OVERLAY_INCLUDE_PAD));
 
     m_update_interval = obs_data_get_int(settings, S_OVERLAY_INTERVAL);
     m_clear_interval = obs_data_get_int(settings, S_OVERLAY_AUTO_CLEAR_INTERVAL);
@@ -269,6 +277,22 @@ inline void InputHistorySource::Update(obs_data_t * settings)
         SET_MASK(MASK_TRANSLATION, true);
         load_translation();
     }
+
+    if (GET_MASK(MASK_INCLUDE_PAD))
+    {
+        uint8_t id = (uint8_t) obs_data_get_int(settings, S_CONTROLLER_ID);
+        if (!m_gamepad)
+        {
+#ifdef HAVE_XINPUT
+            m_gamepad = new WindowsGamepad(id, &m_pad_keys);
+#endif
+
+#ifdef LINUX_INPUT
+            m_gamepad = new LinuxGamepad(id, &m_pad_keys);
+#endif
+        }
+        m_gamepad->update(id, 0, 0);
+    }
 }
 
 inline void InputHistorySource::Tick(float seconds)
@@ -283,8 +307,13 @@ inline void InputHistorySource::Tick(float seconds)
         {
             m_clear_timer = 0.f;
             clear_history();
-            
         }
+    }
+
+    if (GET_MASK(MASK_INCLUDE_PAD))
+    {
+        if (m_gamepad)
+            m_gamepad->check_keys();
     }
 
     if (GET_MASK(MASK_COMMAND_MODE) && m_command_handler)
@@ -530,6 +559,13 @@ bool mode_changed(obs_properties_t * props, obs_property_t * p, obs_data_t * s)
     return true;
 }
 
+bool include_pad_changed(obs_properties *props, obs_property_t *p, obs_data_t *s)
+{
+    obs_property_t * id = obs_properties_get(props, S_CONTROLLER_ID);
+    obs_property_set_visible(id, obs_data_get_bool(s, S_OVERLAY_INCLUDE_PAD));
+    return true;
+}
+
 obs_properties_t * get_properties_for_history(void * data)
 {
     InputHistorySource *s = reinterpret_cast<InputHistorySource*>(data);
@@ -554,11 +590,13 @@ obs_properties_t * get_properties_for_history(void * data)
             key_names_path = s->m_key_name_path;
             util_format_path(key_names_path);
         }
+        
         if (!s->m_key_icon_path.empty())
         {
             key_icon_path = s->m_key_icon_path;
             util_format_path(key_icon_path);
         }
+
         if (!s->m_key_icon_config_path.empty())
         {
             key_icon_config_path = s->m_key_icon_config_path;
@@ -604,6 +642,9 @@ obs_properties_t * get_properties_for_history(void * data)
     obs_properties_add_int(props, S_OVERLAY_HISTORY_SIZE, T_OVERLAY_HISTORY_SIZE, 1, MAX_HISTORY_SIZE, 1);
     obs_properties_add_bool(props, S_OVERLAY_FIX_CUTTING, T_OVERLAY_FIX_CUTTING);
     obs_properties_add_bool(props, S_OVERLAY_INCLUDE_MOUSE, T_OVERLAY_INCLUDE_MOUSE);
+    obs_property_t * include_pad = obs_properties_add_bool(props, S_OVERLAY_INCLUDE_PAD, T_OVERLAY_INCLUDE_PAD);
+    obs_property_set_modified_callback(include_pad, include_pad_changed);
+    obs_properties_add_int(props, S_CONTROLLER_ID, T_CONTROLLER_ID, 0, 3, 1);
     obs_properties_add_int(props, S_OVERLAY_INTERVAL, T_OVERLAY_INTERVAL, 1, 1000, 1);
 
     obs_properties_add_bool(props, S_OVERLAY_ENABLE_REPEAT_KEYS, T_OVERLAY_ENABLE_REPEAT_KEYS);

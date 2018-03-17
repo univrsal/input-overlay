@@ -25,16 +25,11 @@ extern "C" {
 #include <graphics/image-file.h>
 }
 
-/* Platform dependend gamepad implementation */
-#if HAVE_XINPUT
-#include "../gamepad/windows-gamepad.hpp"
-#endif
-
-#if LINUX_INPUT
-#include "../gamepad/linux-gamepad.hpp"
-#endif
-
 #include "../hook/hook-helper.hpp"
+
+#ifdef HAVE_XINPUT
+#include "../hook/gamepad-hook.hpp"
+#endif
 
 struct InputSource
 {
@@ -44,24 +39,18 @@ struct InputSource
     uint32_t cy = 0;
 
     bool m_is_controller = false;
+    uint16_t m_l_dz = 0, m_r_dz = 0; /* Analog stick deadzones */
+    uint8_t m_pad_id = 0;
     bool m_monitor_use_center = false;
     int32_t m_monitor_h = 0, m_monitor_v = 0;
     uint8_t m_mouse_dead_zone = 0;
 
-    float m_old_angle = 0.f;
+    float m_old_angle = 0.f; /* For drawing the mouse arrow*/
 
     std::string m_image_file;
     std::string m_layout_file;
 
     OverlayLayout m_layout;
-
-#ifdef HAVE_XINPUT
-    WindowsGamepad * m_gamepad = nullptr;
-#endif
-
-#ifdef LINUX_INPUT
-    LinuxGamepad * m_gamepad = nullptr;
-#endif
 
     inline InputSource(obs_source_t *source_, obs_data_t *settings) :
         m_source(source_)

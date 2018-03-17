@@ -61,22 +61,9 @@ inline void InputSource::Update(obs_data_t *settings)
 
     if (m_is_controller)
     {
-        uint8_t id = (uint8_t) obs_data_get_int(settings, S_CONTROLLER_ID);
-        uint16_t l_dz = (uint16_t) obs_data_get_int(settings, S_CONTROLLER_L_DEAD_ZONE);
-        uint16_t r_dz = (uint16_t) obs_data_get_int(settings, S_CONTROLLER_R_DEAD_ZONE);
-
-        if (!m_gamepad)
-        {
-#ifdef HAVE_XINPUT
-            m_gamepad = new WindowsGamepad(id, &m_layout.m_keys);
-#endif
-
-#ifdef LINUX_INPUT
-            m_gamepad = new LinuxGamepad(id, &m_layout.m_keys);
-#endif
-        }
-
-        m_gamepad->update(id, r_dz, l_dz);
+        m_pad_id = (uint8_t) obs_data_get_int(settings, S_CONTROLLER_ID);
+        m_l_dz = (uint16_t) obs_data_get_int(settings, S_CONTROLLER_L_DEAD_ZONE);
+        m_r_dz = (uint16_t) obs_data_get_int(settings, S_CONTROLLER_R_DEAD_ZONE);
     }
     
     m_layout.m_max_mouse_movement = (uint16_t) obs_data_get_int(settings, S_MOUSE_SENS);
@@ -209,8 +196,6 @@ inline void InputSource::Render(gs_effect_t *effect)
                     continue;
                 draw_key(effect, &m_layout.m_keys[i]);
             }
-
-
         }
     }
 }

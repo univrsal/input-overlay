@@ -1,7 +1,8 @@
 #ifndef HOOK_HELPER_HPP
 #define HOOK_HELPER_HPP
 
-#define MAX_SIMULTANEOUS_KEYS 14
+#define MAX_KEYBOARD_KEYS 14
+#define MAX_SIMULTANEOUS_KEYS (MAX_KEYBOARD_KEYS + PAD_BUTTON_COUNT)
 
 #ifdef LINUX
 #include <stdint.h>
@@ -21,7 +22,8 @@
  * github.com/univrsal/input-overlay
  */
 
-extern uint16_t pressed_keys[MAX_SIMULTANEOUS_KEYS];
+extern uint16_t pressed_keys[MAX_KEYBOARD_KEYS];
+extern bool pressed_pad_keys[PAD_COUNT][PAD_BUTTON_COUNT];
 extern wint_t last_character;
 extern int16_t mouse_x, mouse_y, mouse_x_smooth, mouse_y_smooth, mouse_last_x, mouse_last_y;
 extern bool hook_initialized;
@@ -31,6 +33,7 @@ bool util_key_exists(uint16_t vc);
 void util_clear_pressed(void);
 void util_add_pressed(uint16_t vc);
 void util_remove_pressed(uint16_t vc);
+void util_set_pad_state(uint16_t btn_id, uint8_t id, bool state);
 
 #ifdef WINDOWS
 DWORD WINAPI hook_thread_proc(LPVOID arg);

@@ -86,6 +86,7 @@
 #define S_OVERLAY_HISTORY_SIZE          "history_size"
 #define S_OVERLAY_FIX_CUTTING           "fix_cutting"
 #define S_OVERLAY_INCLUDE_MOUSE	        "include_mouse"
+#define S_OVERLAY_INCLUDE_PAD           "include_pad"
 #define S_OVERLAY_INTERVAL              "interval"
 #define S_OVERLAY_CLEAR_HISTORY         "clear_history"
 #define S_OVERLAY_ENABLE_REPEAT_KEYS    "repeat_keys"
@@ -137,6 +138,7 @@
 #define T_OVERLAY_HISTORY_SIZE          T_("OverlayHistory.Size")
 #define T_OVERLAY_FIX_CUTTING           T_("Overlay.FixCutting")
 #define T_OVERLAY_INCLUDE_MOUSE         T_("Overlay.IncludeMouse")
+#define T_OVERLAY_INCLUDE_PAD           T_("Overlay.IncludePad")
 #define T_OVERLAY_CLEAR_HISTORY         T_("Overlay.ClearHistory")
 #define T_OVERLAY_OPACITY               T_("Overlay.Opacity")
 
@@ -155,10 +157,14 @@
 #define WHEEL_DOWN      1
 
 /* These were free in uiohook.h */
-#define VC_NONE               0xffff
+#define VC_NONE               0xFFFF
 #define VC_MOUSE_WHEEL_UP     0xED10
 #define VC_MOUSE_WHEEL_DOWN   0xED11
 #define VC_MOUSE_MASK         0xED00
+#define VC_PAD_MASK           0xEC00
+#define PAD_TO_VC(a)          (a | VC_PAD_MASK)
+
+#define PAD_COUNT 4
 
 #define VC_MOUSE_BUTTON1      (MOUSE_BUTTON1 | VC_MOUSE_MASK)
 #define VC_MOUSE_BUTTON2      (MOUSE_BUTTON2 | VC_MOUSE_MASK)

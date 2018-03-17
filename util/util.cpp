@@ -236,6 +236,40 @@ const char * key_to_text(int key_code)
         return "SCROLL UP";
     case VC_MOUSE_WHEEL_DOWN:
         return "SCROLL DOWN";
+    case PAD_A | VC_PAD_MASK:
+        return "A";
+    case PAD_B | VC_PAD_MASK:
+        return "B";
+    case PAD_X | VC_PAD_MASK:
+        return "X";
+    case PAD_Y | VC_PAD_MASK:
+        return "Y";
+    case PAD_LB | VC_PAD_MASK:
+        return "LB";
+    case PAD_RB | VC_PAD_MASK:
+        return "RB";
+    case PAD_BACK | VC_PAD_MASK:
+        return "BACK";
+    case PAD_START | VC_PAD_MASK:
+        return "START";
+    case PAD_X_BOX_KEY | VC_PAD_MASK:
+        return "X-Box Button";
+    case PAD_L_ANALOG | VC_PAD_MASK:
+        return "Left Stick";
+    case PAD_R_ANALOG | VC_PAD_MASK:
+        return "Right Stick";
+    case PAD_DPAD_LEFT | VC_PAD_MASK:
+        return "DPad Left";
+    case PAD_DPAD_RIGHT | VC_PAD_MASK:
+        return "DPad Right";
+    case PAD_DPAD_UP | VC_PAD_MASK:
+        return "DPad Up";
+    case PAD_DPAD_DOWN | VC_PAD_MASK:
+        return "DPad Down";
+    case PAD_LT | VC_PAD_MASK:
+        return "LT";
+    case PAD_RT | VC_PAD_MASK:
+        return "RT";
     default:
         return NULL;
         break;
