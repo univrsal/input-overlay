@@ -17,7 +17,6 @@
 #include <list>
 
 #include "../ccl/ccl.hpp"
-#include "../util/layouttype.hpp"
 #include "../util/layout.hpp"
 #include "../util/util.hpp"
 
@@ -58,14 +57,12 @@ struct InputSource
 
     inline ~InputSource()
     {
-        unload_texture();
-        unload_layout();
+        
     }
 
-    void load_texture(void);
+
     void load_layout(void);
     void unload_layout(void);
-    void unload_texture(void);
 
     void draw_key(gs_effect_t * effect, InputKey * key, uint16_t x, uint16_t y, bool rot, float angle);
     void draw_key(gs_effect_t * effect, InputKey * key, uint16_t x, uint16_t y);

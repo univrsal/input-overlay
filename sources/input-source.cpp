@@ -48,13 +48,6 @@ void InputSource::draw_key(gs_effect_t * effect, InputKey * key)
     draw_key(effect, key, key->column, key->row, false, 0.f);
 }
 
-void InputSource::unload_texture()
-{
-    obs_enter_graphics();
-    gs_image_file_free(m_image);
-    obs_leave_graphics();
-}
-
 inline void InputSource::Update(obs_data_t *settings)
 {
     m_is_controller = obs_data_get_bool(settings, S_IS_CONTROLLER);
@@ -202,30 +195,6 @@ inline void InputSource::Render(gs_effect_t *effect)
                     continue;
                 draw_key(effect, &m_layout.m_keys[i]);
             }
-        }
-    }
-}
-
-void InputSource::load_texture()
-{
-    unload_texture();
-
-    if (!m_image_file.empty())
-    {
-        if (m_image == nullptr)
-        {
-            m_image = new gs_image_file_t();
-        }
-
-        gs_image_file_init(m_image, m_image_file.c_str());
-
-        obs_enter_graphics();
-        gs_image_file_init_texture(m_image);
-        obs_leave_graphics();
-
-        if (!m_image->loaded)
-        {
-            warning("Error: failed to load texture %s", m_image_file.c_str());
         }
     }
 }
