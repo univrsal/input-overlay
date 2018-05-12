@@ -276,28 +276,6 @@ const char * key_to_text(int key_code)
     }
 }
 
-uint16_t util_read_int(std::string & l)
-{
-    std::string temp = l.substr(0, l.find(','));
-    l = l.substr(l.find(',') + 1, l.size());
-    return std::atoi(temp.c_str());
-}
-
-uint16_t util_read_hex(std::string & l)
-{
-    std::string temp = l.substr(0, l.find(','));
-    l = l.substr(l.find(',') + 1, l.size());
-
-    if (temp.find("0x") != std::string::npos)
-    {
-        return std::stoul(temp, nullptr, 16);
-    }
-    else
-    {
-        return (uint16_t)0x0;
-    }
-}
-
 std::string util_file_filter(const char* display, const char * formats)
 {
     std::string filter = display;

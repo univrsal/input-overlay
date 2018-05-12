@@ -155,13 +155,9 @@
 
 /* These were free in uiohook.h */
 #define VC_NONE               0xFFFF
-#define VC_MOUSE_WHEEL_UP     0xED10
-#define VC_MOUSE_WHEEL_DOWN   0xED11
-#define VC_MOUSE_MASK         0xED00
-#define VC_PAD_MASK           0xEC00
-#define PAD_TO_VC(a)          (a | VC_PAD_MASK)
 
-#define PAD_COUNT 4
+#define VC_MOUSE_MASK         0xED00
+#define VC_MOUSE_WHEEL	      0xED10
 
 #define VC_MOUSE_BUTTON1      (MOUSE_BUTTON1 | VC_MOUSE_MASK)
 #define VC_MOUSE_BUTTON2      (MOUSE_BUTTON2 | VC_MOUSE_MASK)
@@ -174,8 +170,12 @@
 #define CHAR_ENTER          0xD
 
 // Gamepad constants
+#define VC_PAD_MASK           0xEC00
+#define PAD_TO_VC(a)          (a | VC_PAD_MASK)
+#define PAD_COUNT 4
+
 #define PAD_ICON_COUNT      22
-#define PAD_BUTTON_COUNT	17
+#define PAD_BUTTON_COUNT    17
 
 #define PAD_BODY            17
 #define PAD_PLAYER_1        18
@@ -191,7 +191,7 @@
 #define PAD_RB              5
 #define PAD_BACK            6
 #define PAD_START           7
-#define PAD_X_BOX_KEY		8
+#define PAD_X_BOX_KEY	    8
 #define PAD_L_ANALOG        9
 #define PAD_R_ANALOG        10
 #define PAD_DPAD_LEFT       11
@@ -203,12 +203,6 @@
 
 // Get default keynames from a libuiohook keycode
 const char * key_to_text(int key_code);
-
-// Reads first integer off of csv string
-uint16_t util_read_int(std::string & l);
-
-// Reads first hex code off of csv string and converts it to int
-uint16_t util_read_hex(std::string & l);
 
 // Creates string for obs to use as accepted files for a file dialog
 std::string util_file_filter(const char * display, const char * formats);

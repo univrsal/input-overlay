@@ -52,7 +52,12 @@ void Overlay::draw(gs_effect_t * effect)
 {
 	for (auto element : m_elements)
 	{
-		element.draw(effect, m_image);
+		ElementData * data = nullptr;
+		if (element.get_type() != ELEMENT_TEXTURE)
+		{
+			data = Hook::input_data->get_by_code(element.get_keycode());
+		}
+		element.draw(effect, m_image, data);
 	}
 }
 
@@ -64,11 +69,10 @@ void ElementTexture::load(ccl_config * cfg, std::string id)
 	m_u = cfg->get_int(id.append("_u"));
 	m_v = cfg->get_int(id.append("_v"));
 
-	m_width = cfg->get_int(id.append("_width"));
-	m_height = cfg->get_int(id.append("_height"));
+	read_size(cfg, id);
 }
 
-void ElementTexture::draw(gs_effect_t * effect, gs_image_file_t * image)
+void ElementTexture::draw(gs_effect_t * effect, gs_image_file_t * image, ElementData * data)
 {
 	gs_effect_set_texture(gs_effect_get_param_by_name(effect, "image"), image->texture);
 	gs_matrix_translate3f((float)m_xpos, (float)m_ypos, 1.f);
@@ -85,14 +89,38 @@ void ElementButton::load(ccl_config * cfg, std::string id)
 	m_u = cfg->get_int(id.append("_u"));
 	m_v = cfg->get_int(id.append("_v"));
 
-	m_width = cfg->get_int(id.append("_width"));
-	m_height = cfg->get_int(id.append("_height"));
+	read_size(cfg, id);
 
+	m_keycode = cfg->get_hex(id.append("_code"));
+}
+
+void ElementButton::draw(gs_effect_t * effect, gs_image_file_t * image, ElementData * data)
+{
 	
 }
 
-void ElementButton::draw(gs_effect_t * effect, gs_image_file_t * image)
+void ElementDataHolder::add_data(uint16_t keycode, ElementData * data)
 {
+	remove_data(keycode);
+	m_data[keycode] = std::unique_ptr<ElementData>(data);
+}
+
+bool ElementDataHolder::data_exists(uint16_t keycode)
+{
+	return m_data[keycode] != nullptr;
+}
+
+void ElementDataHolder::remove_data(uint16_t keycode)
+{
+	if (data_exists(keycode))
+		m_data[keycode].reset(nullptr);
+}
+
+ElementData * ElementDataHolder::get_by_code(uint16_t keycode)
+{
+	if (data_exists(keycode))
+		return m_data[keycode].get();
+	return nullptr;
 }
 
 };
