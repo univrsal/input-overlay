@@ -48,7 +48,7 @@
 #define warning(format, ...) blog(LOG_WARNING, "[%s] " format, \
 		obs_source_get_name(m_source), ##__VA_ARGS__)
 
-// Lang Input Overlay
+ // Lang Input Overlay
 #define S_OVERLAY_FILE              "overlay_image"
 #define S_LAYOUT_FILE               "layout_file"
 #define S_IS_CONTROLLER             "is_controller"

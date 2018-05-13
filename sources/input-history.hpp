@@ -40,195 +40,195 @@ extern "C" {
  */
 
 struct KeyNames {
-    void load_from_file(std::string path);
-    const char * get_name(uint16_t vc);
+	void load_from_file(std::string path);
+	const char * get_name(uint16_t vc);
 
-    ~KeyNames();
+	~KeyNames();
 
-private:    
-    std::map<uint16_t, std::string> m_names;
+private:
+	std::map<uint16_t, std::string> m_names;
 };
 
 struct KeyBundle {
-    bool m_empty = true;
-    uint16_t m_keys[MAX_SIMULTANEOUS_KEYS] = { 0 };
+	bool m_empty = true;
+	uint16_t m_keys[MAX_SIMULTANEOUS_KEYS] = { 0 };
 
-    void merge(KeyBundle other);
+	void merge(KeyBundle other);
 
-    std::string to_string(uint8_t masks, KeyNames* names);
-    bool compare(KeyBundle* other);
-    bool is_only_mouse();
+	std::string to_string(uint8_t masks, KeyNames* names);
+	bool compare(KeyBundle* other);
+	bool is_only_mouse();
 };
 
 struct CommandHandler
 {
-    bool m_empty = true;
-    std::string commands[MAX_HISTORY_SIZE];
+	bool m_empty = true;
+	std::string commands[MAX_HISTORY_SIZE];
 
-    void finish_command()
-    {
-        for (int i = MAX_HISTORY_SIZE - 1; i > 0; i--)
-        {
-            commands[i] = commands[i - 1];
-        }
-        commands[0] = "";
-    }
+	void finish_command()
+	{
+		for (int i = MAX_HISTORY_SIZE - 1; i > 0; i--)
+		{
+			commands[i] = commands[i - 1];
+		}
+		commands[0] = "";
+	}
 
-    bool special_handling(wint_t character)
-    {
-        if (character == CHAR_BACK)
-        {
-            if (commands[0].length() > 0)
-                commands[0].pop_back();
-        }
-        else if (character == CHAR_ENTER)
-        {
-            finish_command();
-        }
-        return character == CHAR_BACK || character == CHAR_ENTER;
-    }
+	bool special_handling(wint_t character)
+	{
+		if (character == CHAR_BACK)
+		{
+			if (commands[0].length() > 0)
+				commands[0].pop_back();
+		}
+		else if (character == CHAR_ENTER)
+		{
+			finish_command();
+		}
+		return character == CHAR_BACK || character == CHAR_ENTER;
+	}
 
-    void clear()
-    {
-        for (int i = 0; i < MAX_HISTORY_SIZE; i++)
-            commands[i] = "";
-    }
+	void clear()
+	{
+		for (int i = 0; i < MAX_HISTORY_SIZE; i++)
+			commands[i] = "";
+	}
 
-    void handle_char(wint_t character)
-    {
-        if (special_handling(character))
-            return;
+	void handle_char(wint_t character)
+	{
+		if (special_handling(character))
+			return;
 
-        char buffer[2];
-        snprintf(buffer, sizeof(buffer), "%lc", character);
-        commands[0].append(buffer);
-    }
-    
-    std::string get_history(bool down)
-    {
-        std::string result = "";
-        if (down)
-        {
-            for (int i = MAX_HISTORY_SIZE - 1; i >= 0; i--)
-            {
-                result.append(commands[i]);
-                if (i >= 1)
-                    result.append("\n");
-            }
-        }
-        else
-        {
-            for (int i = 0; i < MAX_HISTORY_SIZE; i++)
-            {
-                result.append(commands[i]);
-                if (i < MAX_HISTORY_SIZE - 1)
-                    result.append("\n");
-            }
-        }
-        return result;
-    }
+		char buffer[2];
+		snprintf(buffer, sizeof(buffer), "%lc", character);
+		commands[0].append(buffer);
+	}
+
+	std::string get_history(bool down)
+	{
+		std::string result = "";
+		if (down)
+		{
+			for (int i = MAX_HISTORY_SIZE - 1; i >= 0; i--)
+			{
+				result.append(commands[i]);
+				if (i >= 1)
+					result.append("\n");
+			}
+		}
+		else
+		{
+			for (int i = 0; i < MAX_HISTORY_SIZE; i++)
+			{
+				result.append(commands[i]);
+				if (i < MAX_HISTORY_SIZE - 1)
+					result.append("\n");
+			}
+		}
+		return result;
+	}
 };
 
 struct KeyIcon {
-    uint16_t u, v;
+	uint16_t u, v;
 };
 
 enum IconDirection {
-    DIR_DOWN,
-    DIR_UP,
-    DIR_LEFT,
-    DIR_RIGHT
+	DIR_DOWN,
+	DIR_UP,
+	DIR_LEFT,
+	DIR_RIGHT
 };
 
 struct KeyIcons {
-    ~KeyIcons();
+	~KeyIcons();
 
-    void load_from_file(std::string img_path, std::string cfg_path);
-    KeyIcon * get_icon_for_key(uint16_t vc);
+	void load_from_file(std::string img_path, std::string cfg_path);
+	KeyIcon * get_icon_for_key(uint16_t vc);
 
-    uint16_t get_w(void) { return m_icon_w; }
-    
-    uint16_t get_h(void) { return m_icon_h; }
-    bool is_loaded() { return m_loaded; }
-    bool has_texture_for_bundle(KeyBundle * bundle);
-    
-    gs_image_file_t * get_texture(void) { return m_icon_texture; }
+	uint16_t get_w(void) { return m_icon_w; }
+
+	uint16_t get_h(void) { return m_icon_h; }
+	bool is_loaded() { return m_loaded; }
+	bool has_texture_for_bundle(KeyBundle * bundle);
+
+	gs_image_file_t * get_texture(void) { return m_icon_texture; }
 
 private:
-    bool m_loaded = false;
-    uint16_t m_icon_count, m_icon_w, m_icon_h;
-    std::map<uint16_t, KeyIcon> m_icons;
-    void unload_texture();
-    gs_image_file_t * m_icon_texture = nullptr;
+	bool m_loaded = false;
+	uint16_t m_icon_count, m_icon_w, m_icon_h;
+	std::map<uint16_t, KeyIcon> m_icons;
+	void unload_texture();
+	gs_image_file_t * m_icon_texture = nullptr;
 };
 
 struct InputHistorySource
 {
-    obs_source_t * m_source = nullptr;
-    obs_data_t * m_settings = nullptr;
-    obs_source_t * m_text_source = nullptr;
+	obs_source_t * m_source = nullptr;
+	obs_data_t * m_settings = nullptr;
+	obs_source_t * m_text_source = nullptr;
 
-    uint8_t m_history_size = 1;
-    uint8_t m_pad_id = 0;
-    
-    uint32_t cx = 0;
-    uint32_t cy = 0;
-    uint32_t m_update_interval = 1, m_counter = 0;
-    int16_t m_icon_v_space = 0, m_icon_h_space = 0;
+	uint8_t m_history_size = 1;
+	uint8_t m_pad_id = 0;
 
-    uint16_t m_bool_values = 0x00000000;
-    IconDirection m_history_direction = DIR_DOWN;
+	uint32_t cx = 0;
+	uint32_t cy = 0;
+	uint32_t m_update_interval = 1, m_counter = 0;
+	int16_t m_icon_v_space = 0, m_icon_h_space = 0;
 
-    KeyBundle m_current_keys;
-    KeyBundle m_prev_keys;
-    KeyBundle m_history[MAX_HISTORY_SIZE];
+	uint16_t m_bool_values = 0x00000000;
+	IconDirection m_history_direction = DIR_DOWN;
 
-    std::string m_key_name_path;
-    std::string m_key_icon_path;
-    std::string m_key_icon_config_path;
+	KeyBundle m_current_keys;
+	KeyBundle m_prev_keys;
+	KeyBundle m_history[MAX_HISTORY_SIZE];
 
-    KeyNames * m_key_names = nullptr;
-    KeyIcons * m_key_icons = nullptr;
-    CommandHandler * m_command_handler = nullptr;
+	std::string m_key_name_path;
+	std::string m_key_icon_path;
+	std::string m_key_icon_config_path;
 
-    float m_clear_timer = 0.f;
-    int m_clear_interval = 0;
+	KeyNames * m_key_names = nullptr;
+	KeyIcons * m_key_icons = nullptr;
+	CommandHandler * m_command_handler = nullptr;
 
-    inline InputHistorySource(obs_source_t * source_, obs_data_t * settings) :
-        m_source(source_),
-        m_settings(settings)
-    {
-        obs_source_update(m_source, settings);
-        load_text_source();
-    }
+	float m_clear_timer = 0.f;
+	int m_clear_interval = 0;
 
-    inline ~InputHistorySource()
-    {
-        unload_text_source();
-        unload_icons();
-        unload_translation();
-        unload_command_handler();
-    }
+	inline InputHistorySource(obs_source_t * source_, obs_data_t * settings) :
+		m_source(source_),
+		m_settings(settings)
+	{
+		obs_source_update(m_source, settings);
+		load_text_source();
+	}
 
-    void load_text_source(void);
-    void load_icons(void);
-    void load_translation(void);
-    void load_command_handler();
+	inline ~InputHistorySource()
+	{
+		unload_text_source();
+		unload_icons();
+		unload_translation();
+		unload_command_handler();
+	}
 
-    inline void unload_text_source(void);
-    inline void unload_icons(void);
-    inline void unload_translation(void);
-    inline void unload_command_handler(void);
+	void load_text_source(void);
+	void load_icons(void);
+	void load_translation(void);
+	void load_command_handler();
 
-    KeyBundle check_keys(void);
-    void add_to_history(KeyBundle b);
-    void clear_history(void);
-    void handle_text_history(void);
-    void handle_icon_history(gs_effect_t * effect);
+	inline void unload_text_source(void);
+	inline void unload_icons(void);
+	inline void unload_translation(void);
+	inline void unload_command_handler(void);
 
-    inline void Update(obs_data_t *settings);
-    inline void Tick(float seconds);
-    inline void Render(gs_effect_t *effect);
+	KeyBundle check_keys(void);
+	void add_to_history(KeyBundle b);
+	void clear_history(void);
+	void handle_text_history(void);
+	void handle_icon_history(gs_effect_t * effect);
+
+	inline void Update(obs_data_t *settings);
+	inline void Tick(float seconds);
+	inline void Render(gs_effect_t *effect);
 };
 
 // Util for registering the source

@@ -33,163 +33,163 @@ extern "C" {
 
 namespace Layout {
 
-enum ButtonState
-{
-	STATE_PRESSED,
-	STATE_RELEASED
-};
-
-enum WheelDirection
-{
-	WHEEL_DIR_UP = -1,
-	WHEEL_DIR_NONE = 0,
-	WHEEL_DIR_DOWN = 1
-};
-
-enum ElementType
-{
-	ELEMENT_TEXTURE,
-	ELEMENT_BUTTON,
-	ELEMENT_WHEEL,
-	ELEMENT_MOUSE_MOVEMENT,
-	ELEMENT_ANALOG_STICK,
-	ELEMENT_TRIGGER,
-	ELEMENT_TEXT
-};
-
-class ElementData
-{
-public:
-	ElementData(ElementType type)
+	enum ButtonState
 	{
-		m_type = type;
-	}
+		STATE_PRESSED,
+		STATE_RELEASED
+	};
 
-	ElementType get_type()
+	enum WheelDirection
 	{
-		return m_type;
-	}
-protected:
-	ElementType m_type;
-};
+		WHEEL_DIR_UP = -1,
+		WHEEL_DIR_NONE = 0,
+		WHEEL_DIR_DOWN = 1
+	};
 
-class ElementDataButton : public ElementData
-{
-public:
-	ElementDataButton(ButtonState state)
-	: ElementData(ElementType::ELEMENT_BUTTON)
+	enum ElementType
 	{
-		m_state = state;
-	}
+		ELEMENT_TEXTURE,
+		ELEMENT_BUTTON,
+		ELEMENT_WHEEL,
+		ELEMENT_MOUSE_MOVEMENT,
+		ELEMENT_ANALOG_STICK,
+		ELEMENT_TRIGGER,
+		ELEMENT_TEXT
+	};
 
-	ButtonState get_state() { return m_state; }
-private:
-	ButtonState m_state;
-};
-
-class ElementDataWheel : public ElementData
-{
-public:
-	ElementDataWheel(WheelDirection dir, int amount)
-	: ElementData(ElementType::ELEMENT_WHEEL)
+	class ElementData
 	{
-		m_dir = dir;
-		m_amount = amount;
-	}
-
-	int get_amount() { return m_amount; }
-	WheelDirection get_dir() { return m_dir; }
-
-private:
-	WheelDirection m_dir;
-	int m_amount = 0;
-};
-
-class ElementDataHolder
-{
-public:
-	void add_data(uint16_t keycode, ElementData * data);
-	bool data_exists(uint16_t keycode);
-	void remove_data(uint16_t keycode);
-	ElementData * get_by_code(uint16_t keycode);
-
-private:
-	std::map<uint16_t, std::unique_ptr<ElementData>> m_data;
-};
-
-class Element
-{
-public:
-	Element(ElementType type)
-	{
-		m_type = type;
-	}
-
-	virtual void load(ccl_config * cfg, std::string id) = 0;
-	virtual void draw(gs_effect_t *effect, gs_image_file_t * m_image, ElementData * data) = 0;
-
-	ElementType get_type() { return m_type; }
-	uint16_t get_keycode() { return m_keycode; }
-
-protected:
-	void read_size(ccl_config * cfg, std::string id)
-	{
-		if (cfg->node_exists(id.append("_width")))
+	public:
+		ElementData(ElementType type)
 		{
-			m_width = cfg->get_int(id.append("_width"));
-			m_height = cfg->get_int(id.append("_height"));
+			m_type = type;
 		}
-		else
+
+		ElementType get_type()
 		{
-			m_width = cfg->get_int(DEFAULT_WIDTH);
-			m_width = cfg->get_int(DEFAULT_HEIGHT);
+			return m_type;
 		}
-	}
+	protected:
+		ElementType m_type;
+	};
 
-	int m_xpos, m_ypos;
-	int m_u, m_v;
-	int m_width, m_height;
-	ElementType m_type;
-	uint16_t m_keycode;
-};
+	class ElementDataButton : public ElementData
+	{
+	public:
+		ElementDataButton(ButtonState state)
+			: ElementData(ElementType::ELEMENT_BUTTON)
+		{
+			m_state = state;
+		}
 
-class ElementTexture : public Element
-{
-	void load(ccl_config * cfg, std::string id);
-	void draw(gs_effect_t * effect, gs_image_file_t * image, ElementData * data);
-};
+		ButtonState get_state() { return m_state; }
+	private:
+		ButtonState m_state;
+	};
 
-class ElementButton : public Element
-{
-	void load(ccl_config * cfg, std::string id);
-	void draw(gs_effect_t * effect, gs_image_file_t * image, ElementData * data);
-};
+	class ElementDataWheel : public ElementData
+	{
+	public:
+		ElementDataWheel(WheelDirection dir, int amount)
+			: ElementData(ElementType::ELEMENT_WHEEL)
+		{
+			m_dir = dir;
+			m_amount = amount;
+		}
 
-class Overlay
-{
-public:
-	Overlay(std::string ini, std::string texture);
+		int get_amount() { return m_amount; }
+		WheelDirection get_dir() { return m_dir; }
 
-	void load_cfg(std::string path);
-	void load_texture(std::string texture_path);
+	private:
+		WheelDirection m_dir;
+		int m_amount = 0;
+	};
 
-	void unload_texture();
+	class ElementDataHolder
+	{
+	public:
+		void add_data(uint16_t keycode, ElementData * data);
+		bool data_exists(uint16_t keycode);
+		void remove_data(uint16_t keycode);
+		ElementData * get_by_code(uint16_t keycode);
 
-	void draw(gs_effect_t * effect);
+	private:
+		std::map<uint16_t, std::unique_ptr<ElementData>> m_data;
+	};
 
-private:
-	gs_image_file_t * m_image = nullptr;
+	class Element
+	{
+	public:
+		Element(ElementType type)
+		{
+			m_type = type;
+		}
 
-	uint16_t m_w, m_h;
-	uint16_t texture_v_space;
+		virtual void load(ccl_config * cfg, std::string id) = 0;
+		virtual void draw(gs_effect_t *effect, gs_image_file_t * m_image, ElementData * data) = 0;
 
-	bool m_is_loaded = false;
-	std::vector<Element> m_elements;
+		ElementType get_type() { return m_type; }
+		uint16_t get_keycode() { return m_keycode; }
 
-	uint16_t m_track_radius;
-	uint16_t m_max_mouse_movement;
-	float m_arrow_rot = 0.f;
-};
+	protected:
+		void read_size(ccl_config * cfg, std::string id)
+		{
+			if (cfg->node_exists(id.append("_width")))
+			{
+				m_width = cfg->get_int(id.append("_width"));
+				m_height = cfg->get_int(id.append("_height"));
+			}
+			else
+			{
+				m_width = cfg->get_int(DEFAULT_WIDTH);
+				m_width = cfg->get_int(DEFAULT_HEIGHT);
+			}
+		}
+
+		int m_xpos, m_ypos;
+		int m_u, m_v;
+		int m_width, m_height;
+		ElementType m_type;
+		uint16_t m_keycode;
+	};
+
+	class ElementTexture : public Element
+	{
+		void load(ccl_config * cfg, std::string id);
+		void draw(gs_effect_t * effect, gs_image_file_t * image, ElementData * data);
+	};
+
+	class ElementButton : public Element
+	{
+		void load(ccl_config * cfg, std::string id);
+		void draw(gs_effect_t * effect, gs_image_file_t * image, ElementData * data);
+	};
+
+	class Overlay
+	{
+	public:
+		Overlay(std::string ini, std::string texture);
+
+		void load_cfg(std::string path);
+		void load_texture(std::string texture_path);
+
+		void unload_texture();
+
+		void draw(gs_effect_t * effect);
+
+	private:
+		gs_image_file_t * m_image = nullptr;
+
+		uint16_t m_w, m_h;
+		uint16_t texture_v_space;
+
+		bool m_is_loaded = false;
+		std::vector<Element> m_elements;
+
+		uint16_t m_track_radius;
+		uint16_t m_max_mouse_movement;
+		float m_arrow_rot = 0.f;
+	};
 
 };
 #endif // LAYOUT_HPP

@@ -16,64 +16,64 @@ static pthread_t game_pad_hook_thread;
 
 void start_pad_hook(void)
 {
-    init_pad_devices();
+	init_pad_devices();
 
 #ifdef LINUX
-    pthread_create(&game_pad_hook_thread, NULL, hook_method, NULL);
-    gamepad_hook_state = true;
+	pthread_create(&game_pad_hook_thread, NULL, hook_method, NULL);
+	gamepad_hook_state = true;
 #endif
 }
 
 void init_pad_devices(void)
 {
-    pad_states[0].init(0);
-    pad_states[1].init(1);
-    pad_states[2].init(2);
-    pad_states[3].init(3);
+	pad_states[0].init(0);
+	pad_states[1].init(1);
+	pad_states[2].init(2);
+	pad_states[3].init(3);
 }
 
 void end_pad_hook(void)
 {
 #ifdef LINUX
-    pthread_cancel(game_pad_hook_thread);
+	pthread_cancel(game_pad_hook_thread);
 #endif
 
-    pad_states[0].unload();
-    pad_states[1].unload();
-    pad_states[2].unload();
-    pad_states[3].unload();
+	pad_states[0].unload();
+	pad_states[1].unload();
+	pad_states[2].unload();
+	pad_states[3].unload();
 }
 
 #ifdef HAVE_XINPUT
 void update_gamepads(void)
 {
-    for (int i = 0; i < PAD_COUNT; i++)
-    {
-        pad_states[i].put_in_vc();
-    }
+	for (int i = 0; i < PAD_COUNT; i++)
+	{
+		pad_states[i].put_in_vc();
+	}
 }
 #endif
 
 float get_stick_value_x(uint8_t pad_id, bool left)
 {
-    if (pad_id < 0 || pad_id >= PAD_COUNT)
-        return 0.f;
+	if (pad_id < 0 || pad_id >= PAD_COUNT)
+		return 0.f;
 
-    if (left)
-        return pad_states[pad_id].l_x;
-    else
-        return pad_states[pad_id].r_x;
+	if (left)
+		return pad_states[pad_id].l_x;
+	else
+		return pad_states[pad_id].r_x;
 }
 
 float get_stick_value_y(uint8_t pad_id, bool left)
 {
-    if (pad_id < 0 || pad_id >= PAD_COUNT)
-        return 0.f;
-    
-    if (left)
-        return pad_states[pad_id].l_y;
-    else
-        return pad_states[pad_id].r_y;
+	if (pad_id < 0 || pad_id >= PAD_COUNT)
+		return 0.f;
+
+	if (left)
+		return pad_states[pad_id].l_y;
+	else
+		return pad_states[pad_id].r_y;
 }
 
 /* Linux background process for gamepads*/
@@ -99,83 +99,83 @@ float get_stick_value_y(uint8_t pad_id, bool left)
 #pragma clang diagnostic ignored "-Wmissing-noreturn"
 void * hook_method(void *)
 {
-    while(true)
-    {
-        for (int i = 0; i < PAD_COUNT; i++)
-        {
-            if (!pad_states[i].valid())
-                continue;
+	while (true)
+	{
+		for (int i = 0; i < PAD_COUNT; i++)
+		{
+			if (!pad_states[i].valid())
+				continue;
 
-            unsigned char m_packet[8];
-            fread(m_packet, sizeof(char) * 8, 1, pad_states[i].dev());
+			unsigned char m_packet[8];
+			fread(m_packet, sizeof(char) * 8, 1, pad_states[i].dev());
 
-            if (m_packet[ID_TYPE] == ID_BUTTON)
-            {   
-                util_set_pad_state(m_packet[ID_STATE_1], i, m_packet[ID_STATE_1] == ID_PRESSED);
-            }
-            else
-            {
-                switch(m_packet[ID_KEY_CODE])
-                {
-                    case ID_L_TRIGGER:
-                        util_set_pad_state(PAD_LT, i, m_packet[ID_STATE_1] > 127);
-                       break;
-                    case ID_R_TRIGGER:
-                        util_set_pad_state(PAD_RT, i, m_packet[ID_STATE_1] > 127);
-                        break;
-                    case ID_R_ANALOG_X:
-                        if (m_packet[ID_STATE_1] == 0 || m_packet[ID_STATE_2] == 0)
-                        {
-                            pad_states[i].r_x = 0.f;
-                            break;
-                        }
+			if (m_packet[ID_TYPE] == ID_BUTTON)
+			{
+				util_set_pad_state(m_packet[ID_STATE_1], i, m_packet[ID_STATE_1] == ID_PRESSED);
+			}
+			else
+			{
+				switch (m_packet[ID_KEY_CODE])
+				{
+				case ID_L_TRIGGER:
+					util_set_pad_state(PAD_LT, i, m_packet[ID_STATE_1] > 127);
+					break;
+				case ID_R_TRIGGER:
+					util_set_pad_state(PAD_RT, i, m_packet[ID_STATE_1] > 127);
+					break;
+				case ID_R_ANALOG_X:
+					if (m_packet[ID_STATE_1] == 0 || m_packet[ID_STATE_2] == 0)
+					{
+						pad_states[i].r_x = 0.f;
+						break;
+					}
 
-                        if (m_packet[ID_STATE_2] < 128)
-                            pad_states[i].r_x = UTIL_CLAMP(-1.f, ((float) m_packet[ID_STATE_2]) / STICK_MAX_VAL, 1.f);
-                        else
-                            pad_states[i].r_x = UTIL_CLAMP(-1.f, ((float) m_packet[ID_STATE_2] - 255) / STICK_MAX_VAL, 1.f);
-                        break;
-                    case ID_R_ANALOG_Y:
-                        if (m_packet[ID_STATE_1] == 0 || m_packet[ID_STATE_2] == 0)
-                        {
-                            pad_states[i].r_y = 0.f;
-                            break;
-                        }
+					if (m_packet[ID_STATE_2] < 128)
+						pad_states[i].r_x = UTIL_CLAMP(-1.f, ((float)m_packet[ID_STATE_2]) / STICK_MAX_VAL, 1.f);
+					else
+						pad_states[i].r_x = UTIL_CLAMP(-1.f, ((float)m_packet[ID_STATE_2] - 255) / STICK_MAX_VAL, 1.f);
+					break;
+				case ID_R_ANALOG_Y:
+					if (m_packet[ID_STATE_1] == 0 || m_packet[ID_STATE_2] == 0)
+					{
+						pad_states[i].r_y = 0.f;
+						break;
+					}
 
-                        if (m_packet[ID_STATE_2] < 128)
-                            pad_states[i].r_y = -1.f * UTIL_CLAMP(-1.f, ((float) m_packet[ID_STATE_2]) / STICK_MAX_VAL, 1.f);
-                        else
-                            pad_states[i].r_y = -1.f * UTIL_CLAMP(-1.f, ((float) m_packet[ID_STATE_2] - 255) / STICK_MAX_VAL, 1.f);
-                        break;
-                    case ID_L_ANALOG_X:
-                        if (m_packet[ID_STATE_1] == 0 || m_packet[ID_STATE_2] == 0)
-                        {
-                            pad_states[i].l_x = 0.f;
-                            break;
-                        }
+					if (m_packet[ID_STATE_2] < 128)
+						pad_states[i].r_y = -1.f * UTIL_CLAMP(-1.f, ((float)m_packet[ID_STATE_2]) / STICK_MAX_VAL, 1.f);
+					else
+						pad_states[i].r_y = -1.f * UTIL_CLAMP(-1.f, ((float)m_packet[ID_STATE_2] - 255) / STICK_MAX_VAL, 1.f);
+					break;
+				case ID_L_ANALOG_X:
+					if (m_packet[ID_STATE_1] == 0 || m_packet[ID_STATE_2] == 0)
+					{
+						pad_states[i].l_x = 0.f;
+						break;
+					}
 
-                        if (m_packet[ID_STATE_2] < 128)
-                            pad_states[i].l_x = UTIL_CLAMP(-1.f, ((float) m_packet[ID_STATE_2]) / STICK_MAX_VAL, 1.f);
-                        else
-                            pad_states[i].l_x = UTIL_CLAMP(-1.f, ((float) m_packet[ID_STATE_2] - 255) / STICK_MAX_VAL, 1.f);
-                        break;
-                    case ID_L_ANALOG_Y:
-                        if (m_packet[ID_STATE_1] == 0 || m_packet[ID_STATE_2] == 0)
-                        {
-                            pad_states[i].l_y = 0.f;
-                            break;
-                        }
+					if (m_packet[ID_STATE_2] < 128)
+						pad_states[i].l_x = UTIL_CLAMP(-1.f, ((float)m_packet[ID_STATE_2]) / STICK_MAX_VAL, 1.f);
+					else
+						pad_states[i].l_x = UTIL_CLAMP(-1.f, ((float)m_packet[ID_STATE_2] - 255) / STICK_MAX_VAL, 1.f);
+					break;
+				case ID_L_ANALOG_Y:
+					if (m_packet[ID_STATE_1] == 0 || m_packet[ID_STATE_2] == 0)
+					{
+						pad_states[i].l_y = 0.f;
+						break;
+					}
 
-                        if (m_packet[ID_STATE_2] < 128)
-                            pad_states[i].l_y = -1.f * UTIL_CLAMP(-1.f, ((float) m_packet[ID_STATE_2]) / STICK_MAX_VAL, 1.f);
-                        else
-                            pad_states[i].l_y = -1.f * UTIL_CLAMP(-1.f, ((float) m_packet[ID_STATE_2] - 255) / STICK_MAX_VAL, 1.f);
-                        break;
-                }
-            }
-        }
-    }
-    return NULL;
+					if (m_packet[ID_STATE_2] < 128)
+						pad_states[i].l_y = -1.f * UTIL_CLAMP(-1.f, ((float)m_packet[ID_STATE_2]) / STICK_MAX_VAL, 1.f);
+					else
+						pad_states[i].l_y = -1.f * UTIL_CLAMP(-1.f, ((float)m_packet[ID_STATE_2] - 255) / STICK_MAX_VAL, 1.f);
+					break;
+				}
+			}
+		}
+	}
+	return NULL;
 }
 #pragma clang diagnostic pop
 #endif // LINUX

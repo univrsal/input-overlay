@@ -21,23 +21,23 @@ OBS_MODULE_USE_DEFAULT_LOCALE("input-overlay", "en-US")
 
 bool obs_module_load(void)
 {
-    util_clear_pressed();
-    register_history();
-    register_overlay_source();
-    start_hook();
+	register_history();
+	register_overlay_source();
 
-    start_pad_hook();
+	Hook::start_hook();
 
-    return true;
+	start_pad_hook();
+
+	return true;
 }
 
 void obs_module_unload(void)
 {
-    if (hook_initialized)
-        end_hook();
+	if (Hook::hook_initialized)
+		Hook::end_hook();
 
 #ifdef LINUX
-    if (gamepad_hook_state)
-        end_pad_hook();
+	if (gamepad_hook_state)
+		end_pad_hook();
 #endif
 }

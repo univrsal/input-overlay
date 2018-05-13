@@ -23,30 +23,30 @@
 
 namespace Hook {
 
-extern Layout::ElementDataHolder * input_data;
+	extern Layout::ElementDataHolder * input_data;
 
-extern wint_t last_character;
-extern int16_t mouse_x, mouse_y, mouse_x_smooth, mouse_y_smooth, mouse_last_x, mouse_last_y;
-extern bool hook_initialized;
+	extern wint_t last_character;
+	extern int16_t mouse_x, mouse_y, mouse_x_smooth, mouse_y_smooth, mouse_last_x, mouse_last_y;
+	extern bool hook_initialized;
 
 
 #ifdef WINDOWS
-DWORD WINAPI hook_thread_proc(LPVOID arg);
+	DWORD WINAPI hook_thread_proc(LPVOID arg);
 #else
-void *hook_thread_proc(void *arg);
+	void *hook_thread_proc(void *arg);
 #endif
 
-void dispatch_proc(uiohook_event * const event);
+	void dispatch_proc(uiohook_event * const event);
 
-bool logger_proc(unsigned int level, const char *format, ...);
+	bool logger_proc(unsigned int level, const char *format, ...);
 
-void start_hook(void);
+	void start_hook(void);
 
-void end_hook(void);
+	void end_hook(void);
 
-int hook_enable(void);
+	int hook_enable(void);
 
-void proccess_event(uiohook_event * const event);
+	void proccess_event(uiohook_event * const event);
 
 };
 

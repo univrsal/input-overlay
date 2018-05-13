@@ -17,7 +17,7 @@
  * github.com/univrsal/input-overlay
  */
 
-/* Linux implementation */
+ /* Linux implementation */
 
 #ifdef LINUX
 
@@ -25,46 +25,46 @@ extern bool gamepad_hook_state;
 
 struct GamepadState
 {
-   ~GamepadState()
-    {
-        unload();
-    }
+	~GamepadState()
+	{
+		unload();
+	}
 
-    void unload()
-    {
-        if (m_device_file)
-            fclose(m_device_file);
-    }
+	void unload()
+	{
+		if (m_device_file)
+			fclose(m_device_file);
+	}
 
-    void load()
-    {
-        m_device_file = fopen(m_path.c_str(), "wb+");
-        if (m_device_file)
-        {
-            void * tmp = malloc(8 * 12 * sizeof(char));
-            fread(tmp, sizeof(char) * 8 * 12, 1, m_device_file);
-            free(tmp);
-        }
-    }
+	void load()
+	{
+		m_device_file = fopen(m_path.c_str(), "wb+");
+		if (m_device_file)
+		{
+			void * tmp = malloc(8 * 12 * sizeof(char));
+			fread(tmp, sizeof(char) * 8 * 12, 1, m_device_file);
+			free(tmp);
+		}
+	}
 
-    bool valid() { return m_device_file != NULL; }
+	bool valid() { return m_device_file != NULL; }
 
-    float l_x, l_y, r_x, r_y;
-    
-    void init(uint8_t pad_id)
-    { 
-        m_path.clear();
-        m_path.append("/dev/input/js");
-        m_path.append(std::to_string(pad_id));
-        load();
-    }
+	float l_x, l_y, r_x, r_y;
 
-    /* Linux specific */
-    FILE * dev() { return m_device_file; }
+	void init(uint8_t pad_id)
+	{
+		m_path.clear();
+		m_path.append("/dev/input/js");
+		m_path.append(std::to_string(pad_id));
+		load();
+	}
+
+	/* Linux specific */
+	FILE * dev() { return m_device_file; }
 
 private:
-    FILE * m_device_file = nullptr;
-    std::string m_path;
+	FILE * m_device_file = nullptr;
+	std::string m_path;
 };
 #endif
 
@@ -80,91 +80,91 @@ private:
 
 struct GamepadState
 {
-    ~GamepadState()
-    {
-        unload();
-    }
+	~GamepadState()
+	{
+		unload();
+	}
 
-    void unload()
-    {
-        ZeroMemory(&m_xinput, sizeof(XINPUT_STATE));
-    }
+	void unload()
+	{
+		ZeroMemory(&m_xinput, sizeof(XINPUT_STATE));
+	}
 
-    void load()
-    {
-        unload();
-        if (XInputGetState(m_pad_id, &m_xinput) == ERROR_SUCCESS)
-        {
-            m_valid = true;
-        }
-        else
-        {
-            m_valid = false;
-        }
-    }
+	void load()
+	{
+		unload();
+		if (XInputGetState(m_pad_id, &m_xinput) == ERROR_SUCCESS)
+		{
+			m_valid = true;
+		}
+		else
+		{
+			m_valid = false;
+		}
+	}
 
-    bool valid() { return m_valid; }
+	bool valid() { return m_valid; }
 
-    float l_x, l_y, r_x, r_y;
+	float l_x, l_y, r_x, r_y;
 
-    void init(uint8_t pad_id)
-    { 
-        m_pad_id = pad_id;
-        load();
-    }
+	void init(uint8_t pad_id)
+	{
+		m_pad_id = pad_id;
+		load();
+	}
 
-    /* Windows specific stuff */
+	/* Windows specific stuff */
 
-    // Writes all pressed buttons into the global
-    // array
-    void put_in_vc(uint16_t l_dz, uint16_t r_dz)
-    {
-        util_set_pad_state(PAD_L_ANALOG, m_pad_id, X_PRESSED(XINPUT_GAMEPAD_LEFT_THUMB));
-        util_set_pad_state(PAD_R_ANALOG, m_pad_id, X_PRESSED(XINPUT_GAMEPAD_RIGHT_THUMB));
-        
-        util_set_pad_state(PAD_BACK, m_pad_id, X_PRESSED(XINPUT_GAMEPAD_BACK));
-        util_set_pad_state(PAD_START, m_pad_id, X_PRESSED(XINPUT_GAMEPAD_START));
-        
-        util_set_pad_state(PAD_X, m_pad_id, X_PRESSED(XINPUT_GAMEPAD_X));
-        util_set_pad_state(PAD_Y, m_pad_id, X_PRESSED(XINPUT_GAMEPAD_Y));
-        util_set_pad_state(PAD_A, m_pad_id, X_PRESSED(XINPUT_GAMEPAD_A));
-        util_set_pad_state(PAD_B, m_pad_id, X_PRESSED(XINPUT_GAMEPAD_B));
-    
-        util_set_pad_state(PAD_LB, m_pad_id, X_PRESSED(XINPUT_GAMEPAD_LEFT_SHOULDER));
-        util_set_pad_state(PAD_LT, m_pad_id, m_xinput.Gamepad.bLeftTrigger > 20);
+	// Writes all pressed buttons into the global
+	// array
+	void put_in_vc(uint16_t l_dz, uint16_t r_dz)
+	{
+		util_set_pad_state(PAD_L_ANALOG, m_pad_id, X_PRESSED(XINPUT_GAMEPAD_LEFT_THUMB));
+		util_set_pad_state(PAD_R_ANALOG, m_pad_id, X_PRESSED(XINPUT_GAMEPAD_RIGHT_THUMB));
 
-        util_set_pad_state(PAD_RB, m_pad_id, X_PRESSED(XINPUT_GAMEPAD_RIGHT_SHOULDER));
-        util_set_pad_state(PAD_RT, m_pad_id, m_xinput.Gamepad.bRightTrigger > 20);
-    
-        util_set_pad_state(PAD_DPAD_UP, m_pad_id, X_PRESSED(XINPUT_GAMEPAD_DPAD_UP));
-        util_set_pad_state(PAD_DPAD_DOWN, m_pad_id, X_PRESSED(XINPUT_GAMEPAD_DPAD_DOWN));
-        util_set_pad_state(PAD_DPAD_LEFT, m_pad_id, X_PRESSED(XINPUT_GAMEPAD_DPAD_LEFT));
-        util_set_pad_state(PAD_DPAD_RIGHT, m_pad_id, X_PRESSED(XINPUT_GAMEPAD_DPAD_RIGHT));
+		util_set_pad_state(PAD_BACK, m_pad_id, X_PRESSED(XINPUT_GAMEPAD_BACK));
+		util_set_pad_state(PAD_START, m_pad_id, X_PRESSED(XINPUT_GAMEPAD_START));
 
-        if (!DEAD_ZONE(m_xinput.Gamepad.sThumbLX, l_dz))
-            l_x = fmaxf(-1, (float)m_xinput.Gamepad.sThumbLX / STICK_MAX_VAL);
-        else
-            l_x = 0.f;
+		util_set_pad_state(PAD_X, m_pad_id, X_PRESSED(XINPUT_GAMEPAD_X));
+		util_set_pad_state(PAD_Y, m_pad_id, X_PRESSED(XINPUT_GAMEPAD_Y));
+		util_set_pad_state(PAD_A, m_pad_id, X_PRESSED(XINPUT_GAMEPAD_A));
+		util_set_pad_state(PAD_B, m_pad_id, X_PRESSED(XINPUT_GAMEPAD_B));
 
-        if (!DEAD_ZONE(m_xinput.Gamepad.sThumbLY, l_dz))
-            l_y = fmaxf(-1, (float)m_xinput.Gamepad.sThumbLY / STICK_MAX_VAL);
-        else
-            l_y = 0.f;
+		util_set_pad_state(PAD_LB, m_pad_id, X_PRESSED(XINPUT_GAMEPAD_LEFT_SHOULDER));
+		util_set_pad_state(PAD_LT, m_pad_id, m_xinput.Gamepad.bLeftTrigger > 20);
 
-        if (!DEAD_ZONE(m_xinput.Gamepad.sThumbRX, r_dz))
-            r_x = fmaxf(-1, (float)m_xinput.Gamepad.sThumbRX / STICK_MAX_VAL);
-        else
-            r_x = 0.f;
+		util_set_pad_state(PAD_RB, m_pad_id, X_PRESSED(XINPUT_GAMEPAD_RIGHT_SHOULDER));
+		util_set_pad_state(PAD_RT, m_pad_id, m_xinput.Gamepad.bRightTrigger > 20);
 
-        if (!DEAD_ZONE(m_xinput.Gamepad.sThumbRY, r_dz))
-            r_y = fmaxf(-1, (float)m_xinput.Gamepad.sThumbRY / STICK_MAX_VAL);
-        else
-            r_y = 0.f;
-    }
+		util_set_pad_state(PAD_DPAD_UP, m_pad_id, X_PRESSED(XINPUT_GAMEPAD_DPAD_UP));
+		util_set_pad_state(PAD_DPAD_DOWN, m_pad_id, X_PRESSED(XINPUT_GAMEPAD_DPAD_DOWN));
+		util_set_pad_state(PAD_DPAD_LEFT, m_pad_id, X_PRESSED(XINPUT_GAMEPAD_DPAD_LEFT));
+		util_set_pad_state(PAD_DPAD_RIGHT, m_pad_id, X_PRESSED(XINPUT_GAMEPAD_DPAD_RIGHT));
+
+		if (!DEAD_ZONE(m_xinput.Gamepad.sThumbLX, l_dz))
+			l_x = fmaxf(-1, (float)m_xinput.Gamepad.sThumbLX / STICK_MAX_VAL);
+		else
+			l_x = 0.f;
+
+		if (!DEAD_ZONE(m_xinput.Gamepad.sThumbLY, l_dz))
+			l_y = fmaxf(-1, (float)m_xinput.Gamepad.sThumbLY / STICK_MAX_VAL);
+		else
+			l_y = 0.f;
+
+		if (!DEAD_ZONE(m_xinput.Gamepad.sThumbRX, r_dz))
+			r_x = fmaxf(-1, (float)m_xinput.Gamepad.sThumbRX / STICK_MAX_VAL);
+		else
+			r_x = 0.f;
+
+		if (!DEAD_ZONE(m_xinput.Gamepad.sThumbRY, r_dz))
+			r_y = fmaxf(-1, (float)m_xinput.Gamepad.sThumbRY / STICK_MAX_VAL);
+		else
+			r_y = 0.f;
+	}
 private:
-    XINPUT_STATE m_xinput;
-    bool m_valid = false;
-    int8_t m_id = -1;
+	XINPUT_STATE m_xinput;
+	bool m_valid = false;
+	int8_t m_id = -1;
 };
 
 void update_gamepads(void);

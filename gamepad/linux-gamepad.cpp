@@ -12,8 +12,8 @@
 
 void LinuxGamepad::update(uint8_t id, uint16_t r_dz, uint16_t l_dz)
 {
-    m_state = &pad_states[id];
-    m_pad_id = id;
+	m_state = &pad_states[id];
+	m_pad_id = id;
 	m_r_dead_zone = r_dz;
 	m_l_dead_zone = l_dz;
 }
@@ -23,10 +23,10 @@ void LinuxGamepad::update(uint8_t id, uint16_t r_dz, uint16_t l_dz)
 void LinuxGamepad::check_keys()
 {
 	if (!m_state->valid())
-            return;
+		return;
 
-    for (int i = 0; i < PAD_BUTTON_COUNT; i++)
-        SYNC_STATE(i);
+	for (int i = 0; i < PAD_BUTTON_COUNT; i++)
+		SYNC_STATE(i);
 }
 #endif
 #endif 
