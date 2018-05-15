@@ -4,31 +4,56 @@ namespace Layout {
 
 	Overlay::Overlay(std::string ini, std::string texture)
 	{
-
+		load_texture(texture);
+		load_cfg(ini);
 	}
 
-	void Overlay::load_cfg(std::string path)
+	bool Overlay::load(std::string cfg_path, std::string texture_path)
+	{
+		unload();
+		m_is_loaded = load_texture(texture_path) && load_cfg(cfg_path);
+		return m_is_loaded;
+	}
+
+	void Overlay::unload()
+	{
+		unload_texture();
+		m_elements.clear();
+	}
+
+	bool Overlay::load_cfg(std::string path)
 	{
 		ccl_config * cfg = new ccl_config(path, "");
-
+		bool flag = true;
 		// TODO: Load general values and elements
+
+
+		if (cfg->has_errors())
+		{
+			blog(LOG_WARNING, "[ccl] %s", cfg->get_error_message().c_str());
+			if (cfg->has_fatal_errors())
+			{
+				flag = false;
+			}
+		}
 
 		delete cfg;
 		cfg = nullptr;
+		return flag;
 	}
 
-	void Overlay::load_texture(std::string texture_path)
+	bool Overlay::load_texture(std::string path)
 	{
 		unload_texture();
-
-		if (!texture_path.empty())
+		bool flag = true;
+		if (!path.empty())
 		{
 			if (m_image == nullptr)
 			{
 				m_image = new gs_image_file_t();
 			}
 
-			gs_image_file_init(m_image, texture_path.c_str());
+			gs_image_file_init(m_image, path.c_str());
 
 			obs_enter_graphics();
 			gs_image_file_init_texture(m_image);
@@ -36,9 +61,11 @@ namespace Layout {
 
 			if (!m_image->loaded)
 			{
-				blog(LOG_WARNING, "Error: failed to load texture %s", texture_path.c_str());
+				blog(LOG_WARNING, "Error: failed to load texture %s", path.c_str());
+				flag = false;
 			}
 		}
+		return flag;
 	}
 
 	void Overlay::unload_texture()
@@ -58,6 +85,25 @@ namespace Layout {
 				data = Hook::input_data->get_by_code(element.get_keycode());
 			}
 			element.draw(effect, m_image, data);
+		}
+	}
+
+	void Overlay::load_element(std::string id, ccl_config * cfg)
+	{
+		int type = cfg->get_int(id.append("_type"));
+		
+
+
+		switch (type)
+		{
+		case ELEMENT_TEXTURE:
+			
+			break;
+		case ELEMENT_BUTTON:
+
+			break;
+		default:
+			break;
 		}
 	}
 

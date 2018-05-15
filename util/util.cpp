@@ -228,13 +228,13 @@ const char * key_to_text(int key_code)
 		return "RIGHT MOUSE";
 	case VC_MOUSE_BUTTON3:
 		return "MIDDLE MOUSE";
-	case VC_MOUSE_BUTTON4: // If you have a better name for them
-		return "MOUSE4";   // lemme know
+	case VC_MOUSE_BUTTON4:		// If you have a better name for them
+		return "MOUSE4";	// lemme know
 	case VC_MOUSE_BUTTON5:
 		return "MOUSE5";
-	case VC_MOUSE_WHEEL_UP:
+	/*case VC_MOUSE_WHEEL_UP:
 		return "SCROLL UP";
-	case VC_MOUSE_WHEEL_DOWN:
+	case VC_MOUSE_WHEEL_DOWN:*/
 		return "SCROLL DOWN";
 	case PAD_A | VC_PAD_MASK:
 		return "A";

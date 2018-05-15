@@ -22,8 +22,7 @@ OBS_MODULE_USE_DEFAULT_LOCALE("input-overlay", "en-US")
 bool obs_module_load(void)
 {
 	register_history();
-	register_overlay_source();
-
+	Sources::register_overlay_source();
 	Hook::start_hook();
 
 	start_pad_hook();

@@ -170,14 +170,19 @@ namespace Layout {
 	public:
 		Overlay(std::string ini, std::string texture);
 
-		void load_cfg(std::string path);
-		void load_texture(std::string texture_path);
-
-		void unload_texture();
+		bool load(std::string cfg_path, std::string texture_path);
+		void unload();
 
 		void draw(gs_effect_t * effect);
+		bool is_loaded() { return m_is_loaded; }
+		gs_image_file_t * get_texture() { return m_image; }
 
 	private:
+		bool load_cfg(std::string path);
+		bool load_texture(std::string path);
+		void unload_texture();
+		void load_element(std::string id, ccl_config * cfg);
+
 		gs_image_file_t * m_image = nullptr;
 
 		uint16_t m_w, m_h;
