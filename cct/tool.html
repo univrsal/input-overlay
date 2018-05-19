@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Input Overlay CCT</title>
+	<link rel="stylesheet" href="jquery-ui/jquery-ui.min.css">
+	<link rel="stylesheet" href="jquery-ui/jquery-ui.structure.min.css">
+	<link rel="stylesheet" href="jquery-ui/jquery-ui.theme.min.css">
+
+
+	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+	<style type="text/css">
+	html, body {
+		background: #2b2626;
+		height: 100%;
+
+		overflow: hidden;
+	}
+
+	#config-tab {
+		overflow: scroll;
+	}
+
+	#preview-tab {
+		overflow: scroll;
+	}
+	.no-close .ui-dialog-titlebar-close {
+		display: none;
+	}
+</style>
+
+</head>
+<body>
+
+	<div id="new-element-dialog" title="Create new overlay element">
+		<p>placeholder</p>
+		<img id="texture-atlas">
+	</div>
+
+	<div id="tabs">
+		<ul>
+			<li><a href="#preview-tab">Overlay</a></li>	
+			<li><a href="#config-tab">Settings</a></li>
+		</ul>
+
+		<div id="preview-tab">
+
+			<div id="controls">
+				<button onclick="new_element()">Add Element</button>
+				<button>Remove Selected Element</button>
+			</div>
+
+			<p>placeholder</p>
+		</div>
+		<div id="config-tab">
+			<p>
+				<label for="texture-file">Texture file</label>
+				<input id="texture-file" type="file" name="">
+			</p>
+
+			<p style="">
+				<label for="width-spinner">Width</label>
+				<input id="width-spinner" name="value">
+			</p>
+			<p>
+				<label for="height-spinner">Height</label>
+				<input id="height-spinner" name="value">
+			</p>	
+		</div>
+
+	</div>
+
+</body>
+
+<script>
+	var texture_file = "";
+	var new_dialog = null;
+
+	$( function() {
+		$("#tabs").tabs({heightStyle: "fill"});
+		$("button").button();
+		$("#new-element-dialog").dialog({dialogClass: "no-close", hide: false });
+		new_dialog = $("#new-element-dialog");
+		new_dialog.dialog("close");
+
+		var width_spinner = $("#width-spinner").spinner({min: 0});
+		var height_spinner = $("#height-spinner").spinner({min: 0});
+	} );
+
+	document.getElementById("texture-file").onchange = function (evt) {
+		var tgt = evt.target || window.event.srcElement,
+		files = tgt.files;
+
+	    // FileReader support
+	    if (FileReader && files && files.length) {
+	    	var fr = new FileReader();
+	    	fr.onload = function () {
+	    		document.getElementById("texture-atlas").src = fr.result;
+	    	}
+	    	fr.readAsDataURL(files[0]);
+	    }
+	}
+
+
+	function new_element()
+	{
+		new_dialog.dialog("open");
+	}
+</script>
+</html>
