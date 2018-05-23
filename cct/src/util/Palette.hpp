@@ -32,6 +32,8 @@ public:
 
     SDL_Color *dark_gray(void);
 
+    SDL_Color *light_gray(void);
+
     SDL_Color *blue(void);
 
 private:
@@ -41,6 +43,7 @@ private:
 
     SDL_Color m_white;
     SDL_Color m_black;
+    SDL_Color m_light_gray;
     SDL_Color m_gray;
     SDL_Color m_dark_gray;
     SDL_Color m_blue;

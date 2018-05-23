@@ -8,8 +8,6 @@
 #pragma once
 
 #include <SDL.h>
-#include "../../util/SDL_helper.hpp"
-#include "../Dialog.hpp"
 
 #define DEBUG_DRAW_OUTLINE 0
 

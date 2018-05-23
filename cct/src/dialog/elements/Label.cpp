@@ -6,17 +6,18 @@
  */
 
 #include "Label.hpp"
+#include "../../util/SDL_helper.hpp"
 
 Label::Label(int8_t id, int x, int y, const char *text, Dialog *parent)
 {
+	SDL_Rect temp = parent->helper()->util_text_dim(&m_text);
+	init(parent, temp, id);
+
 	m_text = std::string(text);
-	SDL_Rect temp = parent->m_helper->util_text_dim(&m_text);
 	temp.x = x;
 	temp.y = y;
 
-	m_color = parent->m_helper->palette()->get_accent();
-
-	init(parent, temp, id);
+	m_color = get_helper()->palette()->get_accent();
 }
 
 Label::~Label()
@@ -33,7 +34,8 @@ void Label::draw_background(void)
 {
 	if (!m_text.empty())
 	{
-		get_helper()->util_text(&m_text, m_dimensions.x,
+		get_helper()->util_text(&m_text, m_parent_dialog->position().x +
+			m_dimensions.x, m_parent_dialog->position().y +
 			m_dimensions.y, m_color);
 	}
 }

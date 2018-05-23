@@ -1,3 +1,10 @@
+/**
+ * Created by universallp on 23.05.2018.
+ * This file is part of input-overlay which is licenced
+ * under the MOZILLA PUBLIC LICENSE 2.0 - mozilla.org/en-US/MPL/2.0/
+ * github.com/univrsal/input-overlay
+ */
+
 #include "SDL_helper.hpp"
 
 SDL_helper::SDL_helper()
@@ -75,7 +82,7 @@ void SDL_helper::close()
 
 void SDL_helper::clear()
 {
-	util_set_color(m_palette->black());
+	util_set_color(m_palette->dark_gray());
 	SDL_RenderClear(m_sdl_renderer);
 }
 
@@ -131,8 +138,7 @@ void SDL_helper::util_fill_rect(const SDL_Rect * rect, const SDL_Color * color)
 void SDL_helper::util_fill_rect_shadow(const SDL_Rect * rect, const SDL_Color * color)
 {
 	SDL_Rect temp_rect = { rect->x + 3, rect->y + 3, rect->w, rect->h };
-	SDL_Color temp_color = { 0, 0, 0, 255 };
-	util_fill_rect(&temp_rect, &temp_color);
+	util_fill_rect(&temp_rect, m_palette->gray());
 	util_fill_rect(rect, color);
 }
 
@@ -141,6 +147,11 @@ void SDL_helper::util_fill_rect(int x, int y, int w, int h, const SDL_Color * co
 	util_set_color(color);
 	SDL_Rect temp_rect = SDL_Rect{ x, y, w, h };
 	SDL_RenderFillRect(m_sdl_renderer, &temp_rect);
+}
+
+bool SDL_helper::util_is_in_rect(const SDL_Rect * rect, int x, int y)
+{
+    return x > rect->x && x < (rect->x + rect->x) && y > rect->y && y < (rect->y + rect->h);
 }
 
 void SDL_helper::util_text(std::string * text, int x, int y, const SDL_Color * color)
@@ -154,4 +165,11 @@ void SDL_helper::util_text(std::string * text, int x, int y, const SDL_Color * c
 SDL_Rect SDL_helper::util_text_dim(std::string * text)
 {
 	return m_font_helper->get_text_dimension(m_default_font, text);
+}
+
+SDL_Point SDL_helper::util_window_size(void)
+{
+	SDL_Point p = { 0, 0 };
+	SDL_GetWindowSize(m_sdl_window, &p.x, &p.y) ;
+	return p;
 }

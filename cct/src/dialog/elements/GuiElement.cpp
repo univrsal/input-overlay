@@ -6,6 +6,8 @@
 */
 
 #include "GuiElement.hpp"
+#include "../../util/SDL_helper.hpp"
+#include "../Dialog.hpp"
 
 GuiElement::~GuiElement()
 {
@@ -32,7 +34,7 @@ Dialog *GuiElement::get_parent()
 
 SDL_helper * GuiElement::get_helper()
 {
-    return get_parent()->m_helper;
+    return get_parent()->helper();
 }
 
 const SDL_Rect *GuiElement::get_dimensions()

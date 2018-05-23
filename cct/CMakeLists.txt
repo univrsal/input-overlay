@@ -20,12 +20,15 @@ set(io-cct_SOURCES
 	src/util/Texture.cpp
 	src/util/Texture.hpp
 	src/dialog/Dialog.hpp
+	src/dialog/Dialog.cpp
 	src/dialog/elements/GuiElement.cpp
 	src/dialog/elements/GuiElement.hpp
 	src/dialog/elements/Label.cpp
 	src/dialog/elements/Label.hpp
 	src/Tool.cpp
-	src/Tool.hpp)
+	src/Tool.hpp
+	src/dialog/DialogSetup.cpp
+	src/dialog/DialogSetup.hpp)
 
 include_directories(${SDL_INCLUDE_DIR}
 	${SDL_TTF_INCLUDE_DIR}

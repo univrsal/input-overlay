@@ -9,8 +9,8 @@
 
 #include "GuiElement.hpp"
 #include "../Dialog.hpp"
-#include "../../util/SDL_helper.hpp"
 #include <string>
+
 
 #define LABEL_TITLE 0
 #define LABEL_GOLD 1

@@ -15,13 +15,14 @@ Palette::Palette()
 
     m_foreground = {255, 255, 255, 255};
     m_background = {255, 255, 255, 255};
-    m_accent = {255, 191, 0, 255};
+    m_accent = {64, 64, 64, 255};
 
     m_tooltip_body = {248, 230, 177, 128};
 
     m_blue = {33, 118, 243};
-    m_gray = {236, 233, 216, 255};
-    m_dark_gray = {114, 112, 99, 255};
+    m_gray = {55, 55, 55, 255};
+    m_dark_gray = {45, 45, 45, 255};
+    m_light_gray = { 80, 80, 80, 255};
 }
 
 Palette::~Palette()
