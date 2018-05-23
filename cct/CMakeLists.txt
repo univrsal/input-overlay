@@ -1,0 +1,36 @@
+project(io-cct)
+
+find_path(SDL_INCLUDE_DIR SDL.h)
+find_library(SDL_LIB SDL2)
+
+find_path(SDL_TTF_INCLUDE_DIR SDL_ttf.h)
+find_library(SDL_TTF_LIB SDL2_ttf)
+
+find_path(SDL_IMG_INCLUDE_DIR SDL_image.h)
+find_library(SDL_IMG_LIB SDL2_image)
+
+set(io-cct_SOURCES
+	main.cpp
+	src/util/FontHelper.cpp
+	src/util/FontHelper.hpp
+	src/util/Palette.cpp
+	src/util/Palette.hpp
+	src/util/SDL_helper.cpp
+	src/util/SDL_helper.hpp
+	src/util/Texture.cpp
+	src/util/Texture.hpp
+	src/dialog/Dialog.hpp
+	src/dialog/elements/GuiElement.cpp
+	src/dialog/elements/GuiElement.hpp
+	src/dialog/elements/Label.cpp
+	src/dialog/elements/Label.hpp
+	src/Tool.cpp
+	src/Tool.hpp)
+
+include_directories(${SDL_INCLUDE_DIR}
+	${SDL_TTF_INCLUDE_DIR}
+	${SDL_IMG_INCLUDE_DIR})
+
+add_executable(io-cct ${io-cct_SOURCES})
+
+TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${SDL_LIB} ${SDL_IMG_LIB} ${SDL_TTF_LIB})
