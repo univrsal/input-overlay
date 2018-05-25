@@ -26,15 +26,15 @@ public:
 
 	virtual void close(void);
 
-	virtual void handle_events(SDL_Event *event) = 0;
+	virtual void handle_events(SDL_Event * event) = 0;
 
 	virtual void resize(void);
 
-	Dialog *get_parent(void);
+	Dialog * get_parent(void);
 
-	SDL_helper *get_helper();
+	SDL_helper * get_helper();
 
-	const SDL_Rect *get_dimensions(void);
+	SDL_Rect * get_dimensions(void);
 
 	void set_dim(SDL_Rect r);
 
@@ -55,8 +55,8 @@ public:
 	int get_bottom(void);
 
 protected:
-    Dialog *m_parent_dialog;
-    SDL_Rect m_dimensions;
-    SDL_Rect m_scaled_dimensions;
-    int8_t m_element_id;
+	Dialog * m_parent_dialog;
+	SDL_Rect m_dimensions;
+	SDL_Point m_position;
+	int8_t m_element_id;
 };

@@ -38,6 +38,7 @@ void Tool::handle_input()
 		{
 			m_run_flag = false;
 		}
+		m_helper->handle_events(&m_event);
 		m_setup_dialog->handle_events(&m_event);
 	}
 }

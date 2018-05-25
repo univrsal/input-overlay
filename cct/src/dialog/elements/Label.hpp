@@ -11,7 +11,6 @@
 #include "../Dialog.hpp"
 #include <string>
 
-
 #define LABEL_TITLE 0
 #define LABEL_GOLD 1
 #define LABEL_WHITE 2
@@ -23,26 +22,27 @@ class Dialog;
 class GuiElement;
 
 class Label :
-public GuiElement
+	public GuiElement
 {
 public:
-    Label(int8_t id, int x, int y, const char *text, Dialog *parent);
+	Label(int8_t id, int x, int y, const char * text, Dialog * parent);
+	Label(int8_t id, int x, int y, const char * text, Dialog * parent, SDL_Color * color);
 
-    ~Label();
+	~Label();
 
-    void close(void);
+	void close(void);
 
-    void draw_background(void);
+	void draw_background(void);
 
-    void draw_foreground(void);
+	void draw_foreground(void);
 
-    void handle_events(SDL_Event *event);
+	void handle_events(SDL_Event *event);
 
-    void set_text(std::string text);
+	void set_text(std::string text);
 
-    std::string m_text;
+	std::string m_text;
 
-    SDL_Color *m_color;
+	SDL_Color *m_color;
 private:
 	uint8_t m_type;
 };

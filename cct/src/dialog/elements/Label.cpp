@@ -10,14 +10,20 @@
 
 Label::Label(int8_t id, int x, int y, const char *text, Dialog *parent)
 {
-	SDL_Rect temp = parent->helper()->util_text_dim(&m_text);
-	init(parent, temp, id);
-
 	m_text = std::string(text);
+	SDL_Rect temp = parent->helper()->util_text_dim(&m_text);
 	temp.x = x;
 	temp.y = y;
 
-	m_color = get_helper()->palette()->get_accent();
+	init(parent, temp, id);
+
+	m_color = get_helper()->palette()->white();
+}
+
+Label::Label(int8_t id, int x, int y, const char * text, Dialog * parent, SDL_Color * color)
+{
+	Label(id, x, y, text, parent);
+	m_color = color;
 }
 
 Label::~Label()
@@ -34,9 +40,7 @@ void Label::draw_background(void)
 {
 	if (!m_text.empty())
 	{
-		get_helper()->util_text(&m_text, m_parent_dialog->position().x +
-			m_dimensions.x, m_parent_dialog->position().y +
-			m_dimensions.y, m_color);
+		get_helper()->util_text(&m_text, get_left(), get_top(), m_color);
 	}
 }
 
@@ -48,6 +52,7 @@ void Label::handle_events(SDL_Event *event)
 void Label::draw_foreground(void)
 {
 	GuiElement::draw_foreground();
+	
 }
 
 void Label::set_text(std::string text)

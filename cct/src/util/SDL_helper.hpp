@@ -51,7 +51,13 @@ class SDL_helper
 		void util_text(std::string * text, int x, int y, const SDL_Color * color);
 		SDL_Rect util_text_dim(std::string *text);
 
+		void util_text_utf8(std::string * text, int x, int y, const SDL_Color * color);
+		SDL_Rect util_text_utf8_dim(std::string *text);
+
+
 		SDL_Point util_window_size(void);
+
+		void util_cut_string(std::string &s, int max_width, bool front);
 
 		SDL_Renderer * renderer()
 		{
@@ -67,13 +73,21 @@ class SDL_helper
 		{
 			return m_palette;
 		}
+
+		bool is_ctrl_down(void);
+
+		void handle_events(SDL_Event * event);
 	private:
 		SDL_Renderer * m_sdl_renderer;
 		SDL_Window *m_sdl_window;
 		TTF_Font *m_default_font;
+		TTF_Font *m_utf8_font;
 
 		bool m_init_success;
-		
+
+		bool m_ctrl_down = false;
+		bool m_shift_down = false;
+
 		Palette *m_palette;
 		FontHelper *m_font_helper;
 };

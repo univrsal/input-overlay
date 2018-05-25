@@ -11,15 +11,14 @@
 
 GuiElement::~GuiElement()
 {
-    close();
-    m_parent_dialog = NULL;
+	close();
+	m_parent_dialog = NULL;
 }
 
 void GuiElement::close(void)
 {
-    m_element_id = 0;
-    m_dimensions = {0, 0, 0, 0};
-    m_scaled_dimensions = {0, 0, 0, 0};
+	m_element_id = 0;
+	m_dimensions = { 0, 0, 0, 0 };
 }
 
 void GuiElement::resize(void)
@@ -29,75 +28,78 @@ void GuiElement::resize(void)
 
 Dialog *GuiElement::get_parent()
 {
-    return m_parent_dialog;
+	return m_parent_dialog;
 }
 
 SDL_helper * GuiElement::get_helper()
 {
-    return get_parent()->helper();
+	return get_parent()->helper();
 }
 
-const SDL_Rect *GuiElement::get_dimensions()
+SDL_Rect * GuiElement::get_dimensions()
 {
-    return &m_dimensions;
+	m_dimensions.x = get_left();
+	m_dimensions.y = get_top();
+	return &m_dimensions;
 }
 
 int8_t GuiElement::get_id()
 {
-    return m_element_id;
+	return m_element_id;
 }
 
 void GuiElement::init(Dialog *parent, SDL_Rect dim, int8_t id)
 {
-    m_parent_dialog = parent;
-    m_dimensions = dim;
-    m_scaled_dimensions = dim;
-    m_element_id = id;
+	m_parent_dialog = parent;
+	m_dimensions = dim;
+	m_position.x = dim.x;
+	m_position.y = dim.y;
+	m_element_id = id;
 }
 
 bool GuiElement::is_mouse_over(const int & x, const int & y)
 {
-    return x > get_dimensions()->x && x < get_dimensions()->x + get_dimensions()->w
-           && y > get_dimensions()->y && y < get_dimensions()->y + get_dimensions()->h;
+	return get_helper()->util_is_in_rect(get_dimensions(), x, y);
 }
 
 void GuiElement::set_pos(const int& x, const int& y)
 {
-    m_dimensions.x = x;
-    m_dimensions.y = y;
+	m_dimensions.x = x;
+	m_dimensions.y = y;
 }
 
 int GuiElement::get_left()
 {
-    return m_dimensions.x;
+	return m_position.x + get_parent()->position().x;
 }
 
 int GuiElement::get_right()
 {
-    return m_dimensions.x + m_dimensions.w;
+	return get_left() + m_dimensions.w;
 }
 
 int GuiElement::get_top()
 {
-    return m_dimensions.y;
+	return m_position.y + get_parent()->position().y;
 }
 
 int GuiElement::get_bottom()
 {
-    return m_dimensions.y + m_dimensions.h;
+	return get_top() + m_dimensions.h;
 }
 
 void GuiElement::draw_foreground(void)
 {
-    if (DEBUG_DRAW_OUTLINE)
-    {
-        const SDL_Rect * r = get_dimensions();
-        get_helper()->util_draw_rect(r);
-    }
+	if (DEBUG_DRAW_OUTLINE)
+	{
+		const SDL_Rect * r = get_dimensions();
+		printf("X. %i, Y. %i, W. %i, H. %i \n", r->x, r->y, r->w, r->w);
+		get_helper()->util_draw_rect(get_dimensions(), get_helper()->palette()->black());
+	}
 }
 
 void GuiElement::set_dim(SDL_Rect r)
 {
-    m_dimensions = r;
-    resize();
+	m_dimensions = r;
+	resize();
 }

@@ -31,17 +31,23 @@ Dialog::~Dialog()
 
 void Dialog::init()
 {
-	m_screen_elements.emplace_back(new Label(0, m_dimensions.x + 8 , m_dimensions.y + 8, m_title.c_str(), this));
+	m_screen_elements.emplace_back(new Label(0, 8, 6, m_title.c_str(), this));
 }
 
 void Dialog::draw_background(void)
 {
 	// Dialog box
 	m_helper->util_fill_rect_shadow(&m_dimensions, m_helper->palette()->get_accent());
-	m_helper->util_draw_rect(&m_dimensions, m_helper->palette()->black());
+	m_helper->util_draw_rect(&m_dimensions, m_helper->palette()->dark_gray());
 
 	// Dialog titlebar
-	m_helper->util_fill_rect_shadow(&m_dimensions, m_helper->palette()->light_gray());
+	m_helper->util_fill_rect(&m_title_bar, m_helper->palette()->light_gray());
+
+	std::vector<std::unique_ptr<GuiElement>>::iterator iterator;
+
+	for (iterator = m_screen_elements.begin(); iterator != m_screen_elements.end(); iterator++) {
+		iterator->get()->draw_background();
+	}
 }
 
 void Dialog::draw_foreground(void)
@@ -85,6 +91,7 @@ void Dialog::handle_events(SDL_Event * event)
 		{
 			m_dimensions.x = event->button.x - m_offset_x;
 			m_dimensions.y = event->button.y - m_offset_y;
+			m_title_bar = { m_dimensions.x + 5, m_dimensions.y + 5, m_dimensions.w - 10, 20 };
 		}
 	}
 

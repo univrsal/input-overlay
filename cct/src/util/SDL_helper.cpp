@@ -61,8 +61,18 @@ bool SDL_helper::init()
 	}
 	else {
 
-		m_default_font = TTF_OpenFont("./roboto.ttf", FONT_DEFAULT);
-		m_font_helper = new FontHelper(this);
+		m_default_font = TTF_OpenFont("./roboto-regular.ttf", FONT_DEFAULT);
+		m_utf8_font = TTF_OpenFont("./antique-maru.ttf", FONT_DEFAULT);
+
+		if (!m_default_font || !m_utf8_font)
+		{
+			printf("Couldn't load fonts!\n");
+			m_init_success = false;
+		}
+		else
+		{
+			m_font_helper = new FontHelper(this);
+		}
 	}
 
 	m_palette = new Palette();
@@ -138,7 +148,7 @@ void SDL_helper::util_fill_rect(const SDL_Rect * rect, const SDL_Color * color)
 void SDL_helper::util_fill_rect_shadow(const SDL_Rect * rect, const SDL_Color * color)
 {
 	SDL_Rect temp_rect = { rect->x + 3, rect->y + 3, rect->w, rect->h };
-	util_fill_rect(&temp_rect, m_palette->gray());
+	util_fill_rect(&temp_rect, m_palette->black());
 	util_fill_rect(rect, color);
 }
 
@@ -151,7 +161,7 @@ void SDL_helper::util_fill_rect(int x, int y, int w, int h, const SDL_Color * co
 
 bool SDL_helper::util_is_in_rect(const SDL_Rect * rect, int x, int y)
 {
-    return x > rect->x && x < (rect->x + rect->x) && y > rect->y && y < (rect->y + rect->h);
+    return x >= rect->x && x <= (rect->x + rect->w) && y >= rect->y && y <= (rect->y + rect->h);
 }
 
 void SDL_helper::util_text(std::string * text, int x, int y, const SDL_Color * color)
@@ -167,9 +177,78 @@ SDL_Rect SDL_helper::util_text_dim(std::string * text)
 	return m_font_helper->get_text_dimension(m_default_font, text);
 }
 
+void SDL_helper::util_text_utf8(std::string * text, int x, int y, const SDL_Color * color)
+{
+	if (color == NULL)
+		m_font_helper->draw(text, x, y, m_utf8_font, m_palette->white());
+	else
+		m_font_helper->draw(text, x, y, m_utf8_font, color);
+}
+
+SDL_Rect SDL_helper::util_text_utf8_dim(std::string * text)
+{
+	return m_font_helper->get_text_dimension(m_utf8_font, text);
+}
+
 SDL_Point SDL_helper::util_window_size(void)
 {
 	SDL_Point p = { 0, 0 };
 	SDL_GetWindowSize(m_sdl_window, &p.x, &p.y) ;
 	return p;
+}
+
+void SDL_helper::util_cut_string(std::string & s, int max_width, bool front)
+{
+	int w = util_text_dim(&s).w;
+	bool was_cut = false;
+	while (w > max_width)
+	{
+		if (front)
+			s = s.substr(0, s.size() - 1);
+		else
+			s = s.substr(1, s.size());
+		w = util_text_dim(&s).w;
+		was_cut = true;
+	}
+
+	if (was_cut)
+	{
+		if (front)
+			s.append("...");
+		else
+			s = "..." + s;
+	}
+}
+
+bool SDL_helper::is_ctrl_down(void)
+{
+	return m_ctrl_down;
+}
+
+void SDL_helper::handle_events(SDL_Event * event)
+{
+	if (event->type == SDL_KEYDOWN)
+	{
+		if (event->key.keysym.sym == SDLK_LCTRL || event->key.keysym.sym == SDLK_RCTRL)
+		{
+			m_ctrl_down = true;
+		}
+
+		if (event->key.keysym.sym == SDLK_LSHIFT || event->key.keysym.sym == SDLK_RSHIFT)
+		{
+			m_shift_down = true;
+		}
+	}
+	else if (event->type == SDL_KEYUP)
+	{
+		if (event->key.keysym.sym == SDLK_LCTRL || event->key.keysym.sym == SDLK_RCTRL)
+		{
+			m_ctrl_down = false;
+		}
+
+		if (event->key.keysym.sym == SDLK_LSHIFT || event->key.keysym.sym == SDLK_RSHIFT)
+		{
+			m_shift_down = false;
+		}
+	}
 }

@@ -11,7 +11,7 @@
 Palette::Palette()
 {
     m_black = {0, 0, 0, 255};
-    m_white = {255, 255, 255, 255};
+    m_white = {213, 213, 213, 213};
 
     m_foreground = {255, 255, 255, 255};
     m_background = {255, 255, 255, 255};
@@ -19,7 +19,7 @@ Palette::Palette()
 
     m_tooltip_body = {248, 230, 177, 128};
 
-    m_blue = {33, 118, 243};
+    m_blue = {33, 118, 243, 255};
     m_gray = {55, 55, 55, 255};
     m_dark_gray = {45, 45, 45, 255};
     m_light_gray = { 80, 80, 80, 255};
@@ -63,6 +63,11 @@ SDL_Color * Palette::gray(void)
 SDL_Color * Palette::dark_gray(void)
 {
     return &m_dark_gray;
+}
+
+SDL_Color * Palette::light_gray(void)
+{
+    return &m_light_gray;
 }
 
 SDL_Color * Palette::blue(void)
