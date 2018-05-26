@@ -51,8 +51,11 @@ void Textbox::draw_foreground(void)
 		cursor_pos += temp.w;
 	}
 
-	SDL_Rect temp = { cursor_pos, get_top() + 2, 2, get_dimensions()->h - 4 };
-	get_helper()->util_fill_rect(& temp, get_helper()->palette()->white());
+	if (m_focused)
+	{
+		SDL_Rect temp = { cursor_pos, get_top() + 2, 2, get_dimensions()->h - 4 };
+		get_helper()->util_fill_rect(&temp, get_helper()->palette()->white());
+	}
 }
 
 void Textbox::draw_background(void)
@@ -72,58 +75,80 @@ void Textbox::handle_events(SDL_Event * event)
 {
 	if (event->type == SDL_MOUSEBUTTONDOWN)
 	{
+		/* Handle focus */
 		if (event->button.button == SDL_BUTTON_LEFT)
 		{
 			m_focused = is_mouse_over(event->button.x, event->button.y);
 			if (m_focused)
 			{
-				SDL_StartTextInput();
 				SDL_SetTextInputRect(get_dimensions());
 			}
-			else
+			else if (m_flags & TEXTBOX_NUMERIC)
 			{
-				SDL_StopTextInput();
-				SDL_SetTextInputRect(get_dimensions());
+				if (m_text.empty())
+					set_text("0");
 			}
 		}
 	}
-	else if (event->type == SDL_KEYDOWN)
+	else if (m_focused)
 	{
-		if (event->key.keysym.sym == SDLK_v && get_helper()->is_ctrl_down())
+		if (event->type == SDL_KEYDOWN)
 		{
-			if (SDL_HasClipboardText())
+			/* Clipboard handling */
+			if (event->key.keysym.sym == SDLK_v && get_helper()->is_ctrl_down())
 			{
-				
-				append_text(std::string(SDL_GetClipboardText()));
+				if (SDL_HasClipboardText())
+				{
+					std::string temp = std::string(SDL_GetClipboardText());
+
+					if (!(m_flags & TEXTBOX_NUMERIC) || is_numeric(temp))
+					{
+						append_text(temp);
+					}
+				}
+			}
+			/* Deleting */
+			else if (event->key.keysym.sym == SDLK_BACKSPACE)
+			{
+				if (!m_text.empty())
+				{
+					m_text.pop_back();
+					set_text(m_text);
+				}
+			}
+			/* IME input accepted -> clear composition */
+			else if (event->key.keysym.sym == SDLK_RETURN)
+			{
+				m_composition.clear();
 			}
 		}
-		else if (event->key.keysym.sym == SDLK_BACKSPACE)
+		/* Added IME input to text */
+		else if (event->type == SDL_TEXTINPUT)
 		{
-			if (!m_text.empty())
+			std::string temp = std::string(event->text.text);
+			if (!(m_flags & TEXTBOX_NUMERIC) || is_numeric(temp))
 			{
-				m_text.pop_back();
-				set_text(m_text);
+				append_text(temp);
 			}
 		}
-		else if (event->key.keysym.sym == SDLK_RETURN)
+		/* IME composition changed */
+		else if (event->type == SDL_TEXTEDITING)
 		{
-			m_composition.clear();
+			m_composition = event->edit.text;
 		}
 	}
-	else if (event->type == SDL_TEXTINPUT)
-	{
-		append_text(std::string(event->text.text));
-	}
-	else if (event->type == SDL_TEXTEDITING)
-	{
-		m_composition = event->edit.text;
-	}
+
 }
 
 void Textbox::set_text(std::string s)
 {
 	m_text = s;
+	if (m_flags & TEXTBOX_NUMERIC)
+	{
+		m_text.substr(0, 5); /* 5 digits is more than enough */
+	}
 	m_cut_text = m_text;
+
 	/*
 		We have to leave space for the composition
 		which is the currently written text through
@@ -135,4 +160,13 @@ void Textbox::set_text(std::string s)
 void Textbox::append_text(std::string s)
 {
 	set_text(m_text.append(s));
+}
+
+inline bool Textbox::is_numeric(const std::string & s)
+{
+	for (int i = 0; i < s.length(); i++)
+	{
+		if (!(s[i] >= '0' && s[i] <= '9')) return false;
+	}
+	return true;
 }

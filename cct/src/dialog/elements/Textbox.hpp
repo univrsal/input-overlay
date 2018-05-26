@@ -14,6 +14,8 @@
 #include "../Dialog.hpp"
 #include <string>
 
+#define TEXTBOX_NUMERIC 1 << 0
+
 class Dialog;
 
 class GuiElement;
@@ -37,6 +39,7 @@ public:
 
 	void append_text(std::string s);
 
+	inline bool is_numeric(const std::string& s);
 private:
 	std::string m_text;
 	std::string m_composition;

@@ -68,6 +68,11 @@ void GuiElement::set_pos(const int& x, const int& y)
 	m_dimensions.y = y;
 }
 
+void GuiElement::set_flags(uint8_t flags)
+{
+	m_flags = flags;
+}
+
 int GuiElement::get_left()
 {
 	return m_position.x + get_parent()->position().x;

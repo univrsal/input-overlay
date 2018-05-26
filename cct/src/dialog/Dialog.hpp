@@ -14,6 +14,13 @@
 #include <vector>
 #include <memory>
 
+#define DIALOG_DRAGGABEL 1 << 0
+#define DIALOG_CENTERED  1 << 1
+#define DIALOG_TEXTINPUT 1 << 2
+
+#define ACTION_FOCUSED -1
+#define ACTION_UNFOCUSED -2
+
 class SDL_helper;
 
 class GuiElement;
@@ -36,18 +43,28 @@ public:
 
 	virtual void handle_events(SDL_Event * event);
 
-	virtual void action_performed(int8_t action_id) = 0;
+	virtual void action_performed(int8_t action_id);
+
+	void set_flags(uint8_t flags);
 
 	const SDL_Point position(void);
 
 	SDL_helper * helper(void);
 
+	int get_left(void);
+
+	int get_top(void);
+
+	int get_right(void);
+
+	int get_bottom(void);
 protected:
 	std::vector<std::unique_ptr<GuiElement>> m_screen_elements;
 	std::string m_title;
 
 	int m_offset_x, m_offset_y;
 	bool m_is_dragging = false;
+	uint8_t m_flags = 0x0000;
 
 	SDL_helper * m_helper;
 	SDL_Rect m_dimensions;

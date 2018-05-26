@@ -32,7 +32,7 @@ SDL_helper::~SDL_helper()
 
 bool SDL_helper::init()
 {
-	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
+	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
 		printf("Initialization of SDL failed! Error: %s\n", SDL_GetError());
 		m_init_success = false;
 	}
@@ -218,6 +218,16 @@ void SDL_helper::util_cut_string(std::string & s, int max_width, bool front)
 		else
 			s = "..." + s;
 	}
+}
+
+void SDL_helper::util_enable_mask(uint16_t & masks, uint16_t mask)
+{
+	masks |= mask;
+}
+
+void SDL_helper::util_disable_mask(uint16_t & masks, uint16_t mask)
+{
+	masks &= ~mask;
 }
 
 bool SDL_helper::is_ctrl_down(void)

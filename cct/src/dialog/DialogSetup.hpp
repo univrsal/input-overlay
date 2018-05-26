@@ -10,6 +10,7 @@
 #include "Dialog.hpp"
 #include "../util/SDL_helper.hpp"
 #include "./elements/Textbox.hpp"
+#include "./elements/Button.hpp"
 
 class SDL_helper;
 
@@ -17,11 +18,14 @@ class DialogSetup : public Dialog
 {
 public:
 	DialogSetup(SDL_helper * sdl, SDL_Point size, std::string title)
-		: Dialog(sdl, size, title) { /* NO-OP */ };
+		: Dialog(sdl, size, title)
+	{
+		/* NO-OP */
+	};
 	void init();
 
 	void action_performed(int8_t action_id);
 
 private:
-	
+
 };

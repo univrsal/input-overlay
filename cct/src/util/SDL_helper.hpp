@@ -59,6 +59,9 @@ class SDL_helper
 
 		void util_cut_string(std::string &s, int max_width, bool front);
 
+		void util_enable_mask(uint16_t & masks, uint16_t mask);
+		void util_disable_mask(uint16_t & masks, uint16_t mask);
+
 		SDL_Renderer * renderer()
 		{
 			return m_sdl_renderer;

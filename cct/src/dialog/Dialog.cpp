@@ -66,31 +66,69 @@ void Dialog::close(void)
 
 void Dialog::handle_events(SDL_Event * event)
 {
-	if (event->type == SDL_MOUSEBUTTONDOWN)
+	if (m_flags & DIALOG_DRAGGABEL)
 	{
-		if (event->button.button == SDL_BUTTON_LEFT)
+		if (event->type == SDL_MOUSEBUTTONDOWN)
 		{
-			if (m_helper->util_is_in_rect(&m_title_bar, event->button.x, event->button.y))
+			if (event->button.button == SDL_BUTTON_LEFT)
 			{
-				m_is_dragging = true;
-				m_offset_x = event->button.x - m_title_bar.x;
-				m_offset_y = event->button.y - m_title_bar.y;
+				if (m_helper->util_is_in_rect(&m_title_bar, event->button.x, event->button.y))
+				{
+					m_is_dragging = true;
+					m_offset_x = event->button.x - m_title_bar.x;
+					m_offset_y = event->button.y - m_title_bar.y;
+				}
+
+				if (m_helper->util_is_in_rect(&m_dimensions, event->button.x, event->button.y))
+				{
+					action_performed(ACTION_FOCUSED);
+				}
+			}
+		}
+		else if (event->type == SDL_MOUSEBUTTONUP)
+		{
+			if (event->button.button == SDL_BUTTON_LEFT)
+			{
+				m_is_dragging = false;
+			}
+		}
+		else if (event->type == SDL_MOUSEMOTION)
+		{
+			if (m_is_dragging)
+			{
+				m_dimensions.x = event->button.x - m_offset_x;
+				m_dimensions.y = event->button.y - m_offset_y;
+				m_title_bar = { m_dimensions.x + 5, m_dimensions.y + 5, m_dimensions.w - 10, 20 };
 			}
 		}
 	}
-	else if (event->type == SDL_MOUSEBUTTONUP)
+
+	if (event->type == SDL_WINDOWEVENT)
 	{
-		if (event->button.button == SDL_BUTTON_LEFT)
+		if (event->window.event == SDL_WINDOWEVENT_SIZE_CHANGED)
 		{
-			m_is_dragging = false;
-		}
-	}
-	else if (event->type == SDL_MOUSEMOTION)
-	{
-		if (m_is_dragging)
-		{
-			m_dimensions.x = event->button.x - m_offset_x;
-			m_dimensions.y = event->button.y - m_offset_y;
+			/*
+				Assure that dialogs aren't outside of
+				the main window after resizing
+			*/
+
+			SDL_Point temp = m_helper->util_window_size();
+
+			if (temp.x < get_right())
+			{
+				m_dimensions.x = temp.x - m_dimensions.w;
+			}
+
+			if (temp.y < get_bottom())
+			{
+				m_dimensions.y = temp.y - m_dimensions.h;
+			}
+
+			if (m_flags & DIALOG_CENTERED)
+			{
+				m_dimensions.x = temp.x / 2 - m_dimensions.w / 2;
+				m_dimensions.y = temp.y / 2 - m_dimensions.h / 2;
+			}
 			m_title_bar = { m_dimensions.x + 5, m_dimensions.y + 5, m_dimensions.w - 10, 20 };
 		}
 	}
@@ -103,12 +141,56 @@ void Dialog::handle_events(SDL_Event * event)
 	}
 }
 
+void Dialog::action_performed(int8_t action_id)
+{
+	switch (action_id)
+	{
+	case ACTION_FOCUSED:
+		if (m_flags & DIALOG_TEXTINPUT)
+		{
+			SDL_StartTextInput();
+		}
+		break;
+	case ACTION_UNFOCUSED:
+		if (m_flags & DIALOG_TEXTINPUT)
+		{
+			SDL_StopTextInput();
+		}
+		break;
+	}
+}
+
+void Dialog::set_flags(uint8_t flags)
+{
+	m_flags = flags;
+}
+
 const SDL_Point Dialog::position(void)
 {
-	return SDL_Point { m_dimensions.x, m_dimensions.y };
+	return SDL_Point{ m_dimensions.x, m_dimensions.y };
 }
 
 SDL_helper * Dialog::helper(void)
 {
 	return m_helper;
+}
+
+int Dialog::get_left(void)
+{
+	return m_dimensions.x;
+}
+
+int Dialog::get_top(void)
+{
+	return m_dimensions.y;
+}
+
+int Dialog::get_right(void)
+{
+	return m_dimensions.x + m_dimensions.y;
+}
+
+int Dialog::get_bottom(void)
+{
+	return m_dimensions.y + m_dimensions.h;
 }

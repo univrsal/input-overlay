@@ -46,6 +46,8 @@ public:
 
 	virtual void set_pos(const int &x, const int &y);
 
+	void set_flags(uint8_t flags);
+
 	int get_left(void);
 
 	int get_top(void);
@@ -59,4 +61,5 @@ protected:
 	SDL_Rect m_dimensions;
 	SDL_Point m_position;
 	int8_t m_element_id;
+	uint8_t m_flags = 0x0000;
 };
