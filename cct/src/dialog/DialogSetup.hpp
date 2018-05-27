@@ -26,6 +26,9 @@ public:
 
 	void action_performed(int8_t action_id);
 
+	bool is_finished(void);
 private:
-
+	bool m_finished = false;
+	Textbox * m_texture_path = nullptr;
+	Textbox * m_config_path = nullptr;
 };

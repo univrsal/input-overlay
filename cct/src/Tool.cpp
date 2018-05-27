@@ -14,18 +14,29 @@ Tool::~Tool()
 
 void Tool::program_loop()
 {
-	m_setup_dialog = new DialogSetup(m_helper, SDL_Point { 500, 180 }, "Overlay setup");
+	m_setup_dialog = new DialogSetup(m_helper, SDL_Point { 500, 230 }, "Overlay setup");
 	m_setup_dialog->init();
 	m_setup_dialog->action_performed(ACTION_FOCUSED);
+	m_helper->set_runflag(&m_run_flag);
+
+	bool in_setup = true;
 
 	while (m_run_flag)
 	{
 		handle_input();
-
 		m_helper->clear();
 		// Drawing
-		m_setup_dialog->draw_background();
-		m_setup_dialog->draw_foreground();
+
+		if (in_setup)
+		{
+			m_setup_dialog->draw_background();
+			m_setup_dialog->draw_foreground();
+			in_setup = !m_setup_dialog->is_finished();
+		}
+		else
+		{
+			
+		}
 		m_helper->repaint();
 	}
 }

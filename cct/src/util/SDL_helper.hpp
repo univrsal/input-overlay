@@ -79,14 +79,18 @@ class SDL_helper
 
 		bool is_ctrl_down(void);
 
+		void exit_loop(void);
+		void set_runflag(bool * flag);
 		void handle_events(SDL_Event * event);
 	private:
 		SDL_Renderer * m_sdl_renderer;
-		SDL_Window *m_sdl_window;
+		SDL_Window * m_sdl_window;
 		TTF_Font *m_default_font;
 		TTF_Font *m_utf8_font;
 
 		bool m_init_success;
+
+		bool * m_runflag = nullptr;
 
 		bool m_ctrl_down = false;
 		bool m_shift_down = false;

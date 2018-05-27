@@ -67,7 +67,14 @@ void Textbox::draw_background(void)
 	}
 	else
 	{
-		get_helper()->util_draw_rect(get_dimensions(), get_helper()->palette()->dark_gray());
+		if (m_alert)
+		{
+			get_helper()->util_draw_rect(get_dimensions(), get_helper()->palette()->red());
+		}
+		else
+		{
+			get_helper()->util_draw_rect(get_dimensions(), get_helper()->palette()->dark_gray());
+		}
 	}
 }
 
@@ -81,6 +88,7 @@ void Textbox::handle_events(SDL_Event * event)
 			m_focused = is_mouse_over(event->button.x, event->button.y);
 			if (m_focused)
 			{
+				m_alert = false;
 				SDL_SetTextInputRect(get_dimensions());
 			}
 			else if (m_flags & TEXTBOX_NUMERIC)
@@ -162,6 +170,11 @@ void Textbox::append_text(std::string s)
 	set_text(m_text.append(s));
 }
 
+const std::string * Textbox::get_text()
+{
+	return &m_text;
+}
+
 inline bool Textbox::is_numeric(const std::string & s)
 {
 	for (int i = 0; i < s.length(); i++)
@@ -169,4 +182,9 @@ inline bool Textbox::is_numeric(const std::string & s)
 		if (!(s[i] >= '0' && s[i] <= '9')) return false;
 	}
 	return true;
+}
+
+void Textbox::set_alert(bool state)
+{
+	m_alert = state;
 }

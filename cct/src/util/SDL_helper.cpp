@@ -84,7 +84,14 @@ void SDL_helper::close()
 	SDL_DestroyRenderer(m_sdl_renderer);
 	SDL_DestroyWindow(m_sdl_window);
 
-	TTF_CloseFont(m_default_font);
+
+	if (m_default_font)
+		TTF_CloseFont(m_default_font);
+	if (m_utf8_font)
+		TTF_CloseFont(m_utf8_font);
+
+	m_default_font = nullptr;
+	m_utf8_font = nullptr;
 
 	TTF_Quit();
 	SDL_Quit();
@@ -233,6 +240,16 @@ void SDL_helper::util_disable_mask(uint16_t & masks, uint16_t mask)
 bool SDL_helper::is_ctrl_down(void)
 {
 	return m_ctrl_down;
+}
+
+void SDL_helper::exit_loop(void)
+{
+	*m_runflag = false;
+}
+
+void SDL_helper::set_runflag(bool * flag)
+{
+	m_runflag = flag;
 }
 
 void SDL_helper::handle_events(SDL_Event * event)

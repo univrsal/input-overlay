@@ -1,14 +1,12 @@
 /**
- * Created by universal on 8/1/17.
+ * Created by universal on 8.1.17
  * This file is part of reloded which is licenced
  * under the MOZILLA PUBLIC LICENSE 2.0 - mozilla.org/en-US/MPL/2.0/
- * github.com/univrsal/reloded
+ * github.com/univrsal/input-overlay
  */
 
 
-#ifndef RELODED_TEXTBOX_H
-#define RELODED_TEXTBOX_H
-
+#pragma once
 
 #include "./GuiElement.hpp"
 #include "../Dialog.hpp"
@@ -39,14 +37,17 @@ public:
 
 	void append_text(std::string s);
 
+	const std::string * get_text();
+
 	inline bool is_numeric(const std::string& s);
+
+	void set_alert(bool state);
+
 private:
 	std::string m_text;
 	std::string m_composition;
 	std::string m_cut_text;
 
+	bool m_alert = false;
 	bool m_focused;
 };
-
-
-#endif //RELODED_TEXTBOX_H

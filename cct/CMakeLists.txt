@@ -32,7 +32,11 @@ set(io-cct_SOURCES
 	src/dialog/elements/Textbox.cpp
 	src/dialog/elements/Textbox.hpp
 	src/dialog/elements/Button.cpp
-	src/dialog/elements/Button.hpp)
+	src/dialog/elements/Button.hpp
+	src/Config.cpp
+	src/Config.hpp
+	src/dialog/DialogElementSettings.cpp
+	src/dialog/DialogElementSettings.hpp)
 
 include_directories(${SDL_INCLUDE_DIR}
 	${SDL_TTF_INCLUDE_DIR}

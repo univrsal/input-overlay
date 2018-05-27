@@ -13,8 +13,8 @@ void DialogSetup::init()
 	int8_t id = 1;
 
 	m_screen_elements.emplace_back(new Label(id++, 8, 35, "Enter the path to the texture file:", this));
-	m_screen_elements.emplace_back(new Textbox(id++, 8, 55, m_dimensions.w - 16, 20, "", this));
-	
+	m_screen_elements.emplace_back(m_texture_path = new Textbox(id++, 8, 55, m_dimensions.w - 16, 20, "", this));
+
 	m_screen_elements.emplace_back(new Label(id++, 8, 85, "Default element width:", this));
 	m_screen_elements.emplace_back(new Label(id++, (m_dimensions.w / 2) + 4, 85, "Default element height:", this));
 
@@ -27,13 +27,40 @@ void DialogSetup::init()
 	m_screen_elements.emplace_back(def_w);
 	m_screen_elements.emplace_back(def_h);
 
-	m_screen_elements.emplace_back(new Button(id++, 8, m_dimensions.h - 32, "OK", this));
-	m_screen_elements.emplace_back(new Button(id++, 116, m_dimensions.h - 32, "Exit", this));
+	m_screen_elements.emplace_back(new Button(ACTION_OK, 8, m_dimensions.h - 32, "OK", this));
+	m_screen_elements.emplace_back(new Button(ACTION_CANCEL, 116, m_dimensions.h - 32, "Exit", this));
+
+	m_screen_elements.emplace_back(new Label(id++, 8, 135, "Enter path to config to edit or open it:", this));
+	m_screen_elements.emplace_back(m_config_path = new Textbox(id++, 8, 155, m_dimensions.w - 16, 20, "", this));
 
 	set_flags(DIALOG_CENTERED | DIALOG_TEXTINPUT);
 }
 
 void DialogSetup::action_performed(int8_t action_id)
 {
+	switch (action_id)
+	{
+	case ACTION_OK:
+		if (!m_texture_path->get_text()->empty() && !m_config_path->get_text()->empty())
+		{
+			m_finished = true;
+		}
+		else
+		{
+			if (m_texture_path->get_text()->empty())
+				m_texture_path->set_alert(true);
 
+			if (m_config_path->get_text()->empty())
+				m_config_path->set_alert(true);
+		}
+		break;
+	case ACTION_CANCEL:
+		m_helper->exit_loop();
+		break;
+	}
+}
+
+bool DialogSetup::is_finished(void)
+{
+	return m_finished;
 }
