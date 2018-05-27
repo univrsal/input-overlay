@@ -12,11 +12,11 @@ void DialogSetup::init()
 	Dialog::init();
 	int8_t id = 1;
 
-	m_screen_elements.emplace_back(new Label(id++, 8, 35, "Enter the path to the texture file:", this));
-	m_screen_elements.emplace_back(m_texture_path = new Textbox(id++, 8, 55, m_dimensions.w - 16, 20, "", this));
+	add(new Label(id++, 8, 35, "Enter the path to the texture file:", this));
+	add(m_texture_path = new Textbox(id++, 8, 55, m_dimensions.w - 16, 20, "", this));
 
-	m_screen_elements.emplace_back(new Label(id++, 8, 85, "Default element width:", this));
-	m_screen_elements.emplace_back(new Label(id++, (m_dimensions.w / 2) + 4, 85, "Default element height:", this));
+	add(new Label(id++, 8, 85, "Default element width:", this));
+	add(new Label(id++, (m_dimensions.w / 2) + 4, 85, "Default element height:", this));
 
 	Textbox * def_w = new Textbox(id++, 8, 105, (m_dimensions.w / 2) - 16, 20, "0", this);
 	Textbox * def_h = new Textbox(id++, (m_dimensions.w / 2) + 4, 105, (m_dimensions.w / 2) - 12, 20, "0", this);
@@ -24,14 +24,14 @@ void DialogSetup::init()
 	def_w->set_flags(TEXTBOX_NUMERIC);
 	def_h->set_flags(TEXTBOX_NUMERIC);
 
-	m_screen_elements.emplace_back(def_w);
-	m_screen_elements.emplace_back(def_h);
+	add(def_w);
+	add(def_h);
 
-	m_screen_elements.emplace_back(new Button(ACTION_OK, 8, m_dimensions.h - 32, "OK", this));
-	m_screen_elements.emplace_back(new Button(ACTION_CANCEL, 116, m_dimensions.h - 32, "Exit", this));
+	add(new Button(ACTION_OK, 8, m_dimensions.h - 32, "OK", this));
+	add(new Button(ACTION_CANCEL, 116, m_dimensions.h - 32, "Exit", this));
 
-	m_screen_elements.emplace_back(new Label(id++, 8, 135, "Enter path to config to edit or open it:", this));
-	m_screen_elements.emplace_back(m_config_path = new Textbox(id++, 8, 155, m_dimensions.w - 16, 20, "", this));
+	add(new Label(id++, 8, 135, "Enter path to config to edit or open it:", this));
+	add(m_config_path = new Textbox(id++, 8, 155, m_dimensions.w - 16, 20, "", this));
 
 	set_flags(DIALOG_CENTERED | DIALOG_TEXTINPUT);
 }

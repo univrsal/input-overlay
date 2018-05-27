@@ -61,6 +61,32 @@ void FontHelper::draw(std::string *text, int x, int y, TTF_Font *font)
 	draw(text, x, y, font, m_helper->palette()->black(), m_helper->palette()->white());
 }
 
+void FontHelper::draw_rot(std::string * text, int x, int y, TTF_Font * font, const SDL_Color * fg, double angle)
+{
+	SDL_Surface *surface = NULL;
+	SDL_Texture *texture = NULL;
+
+	surface = TTF_RenderUTF8_Blended(font, text->c_str(), *fg);
+
+	if (surface) {
+		texture = SDL_CreateTextureFromSurface(m_helper->renderer(), surface);
+
+		if (texture) {
+			SDL_Rect dest = { x, y, surface->w, surface->h };
+			SDL_Point rot = { 0, 0 };
+			SDL_RenderCopyEx(m_helper->renderer(), texture, NULL, &dest, angle, &rot, SDL_FLIP_NONE);
+			SDL_DestroyTexture(texture);
+			SDL_FreeSurface(surface);
+		}
+		else {
+			printf("Error while creating texture from surface in text rendering! ERROR: %s\n", TTF_GetError());
+		}
+	}
+	else {
+		printf("Error while creating surface from font in text rendering! ERROR: %s\n", TTF_GetError());
+	}
+}
+
 SDL_Rect FontHelper::get_text_dimension(TTF_Font *font, std::string *text)
 {
 	if (text->empty())

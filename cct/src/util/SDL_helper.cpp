@@ -179,6 +179,14 @@ void SDL_helper::util_text(std::string * text, int x, int y, const SDL_Color * c
 		m_font_helper->draw(text, x, y, m_default_font, color);
 }
 
+void SDL_helper::util_text(std::string * text, int x, int y, const SDL_Color * color, double angle)
+{
+	if (color == NULL)
+		m_font_helper->draw_rot(text, x, y, m_default_font, m_palette->white(), angle);
+	else
+		m_font_helper->draw_rot(text, x, y, m_default_font, color, angle);
+}
+
 SDL_Rect SDL_helper::util_text_dim(std::string * text)
 {
 	return m_font_helper->get_text_dimension(m_default_font, text);

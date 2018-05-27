@@ -49,6 +49,8 @@ class SDL_helper
 		bool util_is_in_rect(const SDL_Rect * rect, int x, int y);
 
 		void util_text(std::string * text, int x, int y, const SDL_Color * color);
+		void util_text(std::string * text, int x, int y, const SDL_Color * color, double angle);
+
 		SDL_Rect util_text_dim(std::string *text);
 
 		void util_text_utf8(std::string * text, int x, int y, const SDL_Color * color);

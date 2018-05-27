@@ -14,7 +14,7 @@
 #include <vector>
 #include <memory>
 
-#define DIALOG_DRAGGABEL 1 << 0
+#define DIALOG_DRAGGABLE 1 << 0
 #define DIALOG_CENTERED  1 << 1
 #define DIALOG_TEXTINPUT 1 << 2
 
@@ -46,6 +46,8 @@ public:
 	virtual bool handle_events(SDL_Event * event);
 
 	virtual void action_performed(int8_t action_id);
+
+	void add(GuiElement * e);
 
 	void set_flags(uint8_t flags);
 

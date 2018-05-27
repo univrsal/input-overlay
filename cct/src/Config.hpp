@@ -40,10 +40,21 @@ namespace Overlay
 			m_texture_mapping = map;
 			m_keycode = keycode;
 		}
+
+		SDL_Rect * get_dim()
+		{
+			return &m_dimensions;
+		}
+
+		void set_pos(int x, int y)
+		{
+			m_dimensions.x = x;
+			m_dimensions.y = y;
+		}
 	private:
 		ElementType m_type;
-		SDL_Rect m_dimensions;
-		SDL_Rect m_texture_mapping;
+		SDL_Rect m_dimensions; /* Position in final overlay */
+		SDL_Rect m_texture_mapping; /* Position in texture*/
 		uint16_t m_keycode;
 	};
 
@@ -55,7 +66,6 @@ namespace Overlay
 		void draw_elements(void);
 
 		void handle_events(SDL_Event * e);
-		Element * get_selected(void);
 
 		Element * m_selected = nullptr;
 		const std::string * m_texture_path;
@@ -67,7 +77,8 @@ namespace Overlay
 
 		int m_scale_f = 1;
 
-		bool m_dragging = false;
+		bool m_dragging_all = false;
+		bool m_dragging_element = false;
 		SDL_Point m_drag_offset;
 	};
 

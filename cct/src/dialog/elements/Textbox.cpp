@@ -161,14 +161,14 @@ void Textbox::set_text(std::string s)
 	m_text = s;
 	if (m_flags & TEXTBOX_NUMERIC)
 	{
-		m_text.substr(0, 5); /* 5 digits is more than enough */
+		m_text = m_text.substr(0, 5); /* 5 digits is more than enough */
 	}
 	m_cut_text = m_text;
 
 	/*
 		We have to leave space for the composition
 		which is the currently written text through
-		the IME (Only for Japanese, Chinese etc.
+		the IME (Only for Japanese, Chinese etc.)
 	*/
 	get_helper()->util_cut_string(m_cut_text.append(m_composition), get_dimensions()->w - 22, false);
 }

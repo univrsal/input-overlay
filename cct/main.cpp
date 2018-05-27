@@ -21,7 +21,7 @@ int main(int argc, char **argv)
 		tool = Tool(helper);
 		tool.program_loop();
 	}
-
+	helper->close();
 	delete helper;
 	return 0;
 }

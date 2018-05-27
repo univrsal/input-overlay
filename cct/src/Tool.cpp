@@ -20,7 +20,7 @@ Tool::~Tool()
 
 void Tool::program_loop()
 {
-	m_setup_dialog = new DialogSetup(m_helper, SDL_Point { 500, 230 }, "Overlay setup");
+	m_setup_dialog = new DialogSetup(m_helper, SDL_Point{ 500, 230 }, "Overlay setup");
 	m_setup_dialog->init();
 	m_setup_dialog->action_performed(ACTION_FOCUSED);
 	m_helper->set_runflag(&m_run_flag);
@@ -37,16 +37,29 @@ void Tool::program_loop()
 		{
 			m_setup_dialog->draw_background();
 			m_setup_dialog->draw_foreground();
+
 			if (m_setup_dialog->is_finished())
 			{
 				in_setup = false;
 				m_config = new Overlay::Config(m_setup_dialog->get_texture_path(),
 					m_setup_dialog->get_config_path(), m_helper);
+				/* Free it up */
+				delete m_setup_dialog;
+				m_setup_dialog = nullptr;
+
+				m_element_settings = new DialogElementSettings(m_helper, SDL_Point { 250, 500 }, "Selected element settings");
+				m_element_settings->init();
+
+				m_focused_dialog = m_element_settings;
+				m_state = IN_BUILD;
 			}
 		}
 		else
 		{
 			m_config->draw_elements();
+
+			m_focused_dialog->draw_background();
+			m_focused_dialog->draw_foreground();
 		}
 		m_helper->repaint();
 	}
@@ -60,11 +73,26 @@ void Tool::handle_input()
 		{
 			m_run_flag = false;
 		}
+
 		m_helper->handle_events(&m_event);
 
-		if (m_config)
-			m_config->handle_events(&m_event);
+		switch (m_state)
+		{
+		case IN_SETUP:
+			m_setup_dialog->handle_events(&m_event);
+			break;
+		case IN_BUILD:
+			if (m_focused_dialog && !m_focused_dialog->handle_events(&m_event))
+			{
+				/* Focused dialog didn't handle the event */
+				if (m_config)
+					m_config->handle_events(&m_event);
+			}
+			break;
+		case IN_NEW_ELEMENT:
 
-		m_setup_dialog->handle_events(&m_event);
+			break;
+		}
+
 	}
 }

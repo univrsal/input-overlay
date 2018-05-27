@@ -31,7 +31,7 @@ Dialog::~Dialog()
 
 void Dialog::init()
 {
-	m_screen_elements.emplace_back(new Label(0, 8, 6, m_title.c_str(), this));
+	add(new Label(0, 8, 6, m_title.c_str(), this));
 }
 
 void Dialog::draw_background(void)
@@ -68,7 +68,7 @@ bool Dialog::handle_events(SDL_Event * event)
 {
 	bool was_handled = false;
 
-	if (m_flags & DIALOG_DRAGGABEL)
+	if (m_flags & DIALOG_DRAGGABLE)
 	{
 		if (event->type == SDL_MOUSEBUTTONDOWN)
 		{
@@ -168,6 +168,11 @@ void Dialog::action_performed(int8_t action_id)
 		}
 		break;
 	}
+}
+
+void Dialog::add(GuiElement * e)
+{
+	m_screen_elements.emplace_back(e);
 }
 
 void Dialog::set_flags(uint8_t flags)
