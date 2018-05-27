@@ -43,7 +43,7 @@ public:
 
 	virtual void close(void);
 
-	virtual void handle_events(SDL_Event * event);
+	virtual bool handle_events(SDL_Event * event);
 
 	virtual void action_performed(int8_t action_id);
 

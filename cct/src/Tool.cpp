@@ -8,7 +8,13 @@ Tool::Tool(SDL_helper * helper)
 Tool::~Tool()
 {
 	m_helper = nullptr;
-	delete m_setup_dialog;
+	if (m_setup_dialog)
+		delete m_setup_dialog;
+
+	if (m_config)
+		delete m_config;
+
+	m_config = nullptr;
 	m_setup_dialog = nullptr;
 }
 
@@ -31,11 +37,16 @@ void Tool::program_loop()
 		{
 			m_setup_dialog->draw_background();
 			m_setup_dialog->draw_foreground();
-			in_setup = !m_setup_dialog->is_finished();
+			if (m_setup_dialog->is_finished())
+			{
+				in_setup = false;
+				m_config = new Overlay::Config(m_setup_dialog->get_texture_path(),
+					m_setup_dialog->get_config_path(), m_helper);
+			}
 		}
 		else
 		{
-			
+			m_config->draw_elements();
 		}
 		m_helper->repaint();
 	}
@@ -50,6 +61,10 @@ void Tool::handle_input()
 			m_run_flag = false;
 		}
 		m_helper->handle_events(&m_event);
+
+		if (m_config)
+			m_config->handle_events(&m_event);
+
 		m_setup_dialog->handle_events(&m_event);
 	}
 }

@@ -64,3 +64,13 @@ bool DialogSetup::is_finished(void)
 {
 	return m_finished;
 }
+
+const std::string * DialogSetup::get_config_path(void)
+{
+	return m_config_path->get_text();
+}
+
+const std::string * DialogSetup::get_texture_path(void)
+{
+	return m_texture_path->get_text();
+}

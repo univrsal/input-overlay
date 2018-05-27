@@ -9,6 +9,7 @@
 
 #include "util/SDL_helper.hpp"
 #include "dialog/DialogSetup.hpp"
+#include "Config.hpp"
 #include <SDL.h>
 
 class SDL_helper;
@@ -21,12 +22,13 @@ public:
 	~Tool();
 
 	void program_loop();
-
 private:
 	void handle_input();
 	bool m_run_flag = true;
 	SDL_Event m_event;
 	SDL_helper * m_helper;
+
+	Overlay::Config * m_config = nullptr;
 
 	DialogSetup * m_setup_dialog = nullptr;
 

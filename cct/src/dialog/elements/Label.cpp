@@ -44,9 +44,9 @@ void Label::draw_background(void)
 	}
 }
 
-void Label::handle_events(SDL_Event *event)
+bool Label::handle_events(SDL_Event *event)
 {
-
+	return false;
 }
 
 void Label::draw_foreground(void)

@@ -7,10 +7,13 @@
 
 #pragma once
 
+#include "util/SDL_helper.hpp"
 #include <string>
 #include <SDL.h>
 #include <memory>
 #include <vector>
+
+class SDL_helper;
 
 namespace Overlay
 {
@@ -47,9 +50,25 @@ namespace Overlay
 	class Config
 	{
 	public:
-		std::string m_texture_path;
-		std::string m_config_path;
+		Config(const std::string * texture, const std::string * config, SDL_helper * h);
+
+		void draw_elements(void);
+
+		void handle_events(SDL_Event * e);
+		Element * get_selected(void);
+
+		Element * m_selected = nullptr;
+		const std::string * m_texture_path;
+		const std::string * m_config_path;
 		std::vector<std::unique_ptr<Element>> m_elements;
+	private:
+		SDL_helper * m_helper;
+		SDL_Point m_origin;
+
+		int m_scale_f = 1;
+
+		bool m_dragging = false;
+		SDL_Point m_drag_offset;
 	};
 
 };

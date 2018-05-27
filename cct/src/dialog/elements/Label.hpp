@@ -36,7 +36,7 @@ public:
 
 	void draw_foreground(void);
 
-	void handle_events(SDL_Event *event);
+	bool handle_events(SDL_Event *event);
 
 	void set_text(std::string text);
 

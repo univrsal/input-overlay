@@ -64,8 +64,10 @@ void Dialog::close(void)
 	m_screen_elements.clear();
 }
 
-void Dialog::handle_events(SDL_Event * event)
+bool Dialog::handle_events(SDL_Event * event)
 {
+	bool was_handled = false;
+
 	if (m_flags & DIALOG_DRAGGABEL)
 	{
 		if (event->type == SDL_MOUSEBUTTONDOWN)
@@ -77,11 +79,13 @@ void Dialog::handle_events(SDL_Event * event)
 					m_is_dragging = true;
 					m_offset_x = event->button.x - m_title_bar.x;
 					m_offset_y = event->button.y - m_title_bar.y;
+					was_handled = true;
 				}
 
 				if (m_helper->util_is_in_rect(&m_dimensions, event->button.x, event->button.y))
 				{
 					action_performed(ACTION_FOCUSED);
+					was_handled = true;
 				}
 			}
 		}
@@ -99,6 +103,7 @@ void Dialog::handle_events(SDL_Event * event)
 				m_dimensions.x = event->button.x - m_offset_x;
 				m_dimensions.y = event->button.y - m_offset_y;
 				m_title_bar = { m_dimensions.x + 5, m_dimensions.y + 5, m_dimensions.w - 10, 20 };
+				was_handled = true;
 			}
 		}
 	}
@@ -137,8 +142,13 @@ void Dialog::handle_events(SDL_Event * event)
 
 	for (iterator = m_screen_elements.begin(); iterator != m_screen_elements.end(); iterator++)
 	{
-		iterator->get()->handle_events(event);
+		if (iterator->get()->handle_events(event))
+		{
+			was_handled = true;
+		}
 	}
+
+	return was_handled;
 }
 
 void Dialog::action_performed(int8_t action_id)

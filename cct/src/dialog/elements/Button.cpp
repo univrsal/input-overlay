@@ -37,8 +37,10 @@ void Button::draw_foreground(void)
 	GuiElement::draw_foreground();
 }
 
-void Button::handle_events(SDL_Event *event)
+bool Button::handle_events(SDL_Event *event)
 {
+	bool was_handled = false;
+
 	m_hovered = is_mouse_over(event->button.x, event->button.y);
 
 	if (event->type == SDL_MOUSEBUTTONDOWN)
@@ -48,6 +50,7 @@ void Button::handle_events(SDL_Event *event)
 			if (m_hovered)
 			{
 				m_pressed = true;
+				was_handled = true;
 			}
 		}
 	}
@@ -59,6 +62,7 @@ void Button::handle_events(SDL_Event *event)
 			if (m_hovered)
 			{
 				get_parent()->action_performed(m_element_id);
+				was_handled = true;
 			}
 			m_pressed = false;
 		}
@@ -77,6 +81,8 @@ void Button::handle_events(SDL_Event *event)
 			m_pressed = false;
 		}
 	}
+
+	return was_handled;
 }
 
 void Button::close(void)

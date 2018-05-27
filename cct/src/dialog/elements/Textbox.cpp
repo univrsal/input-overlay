@@ -78,8 +78,9 @@ void Textbox::draw_background(void)
 	}
 }
 
-void Textbox::handle_events(SDL_Event * event)
+bool Textbox::handle_events(SDL_Event * event)
 {
+	bool was_handled = false;
 	if (event->type == SDL_MOUSEBUTTONDOWN)
 	{
 		/* Handle focus */
@@ -90,6 +91,7 @@ void Textbox::handle_events(SDL_Event * event)
 			{
 				m_alert = false;
 				SDL_SetTextInputRect(get_dimensions());
+				was_handled = true;
 			}
 			else if (m_flags & TEXTBOX_NUMERIC)
 			{
@@ -113,6 +115,7 @@ void Textbox::handle_events(SDL_Event * event)
 					{
 						append_text(temp);
 					}
+					was_handled = true;
 				}
 			}
 			/* Deleting */
@@ -122,12 +125,14 @@ void Textbox::handle_events(SDL_Event * event)
 				{
 					m_text.pop_back();
 					set_text(m_text);
+					was_handled = true;
 				}
 			}
 			/* IME input accepted -> clear composition */
 			else if (event->key.keysym.sym == SDLK_RETURN)
 			{
 				m_composition.clear();
+				was_handled = true;
 			}
 		}
 		/* Added IME input to text */
@@ -137,15 +142,18 @@ void Textbox::handle_events(SDL_Event * event)
 			if (!(m_flags & TEXTBOX_NUMERIC) || is_numeric(temp))
 			{
 				append_text(temp);
+				was_handled = true;
 			}
 		}
 		/* IME composition changed */
 		else if (event->type == SDL_TEXTEDITING)
 		{
 			m_composition = event->edit.text;
+			was_handled = true;
 		}
 	}
 
+	return was_handled;
 }
 
 void Textbox::set_text(std::string s)

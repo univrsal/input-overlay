@@ -27,6 +27,10 @@ public:
 	void action_performed(int8_t action_id);
 
 	bool is_finished(void);
+
+	const std::string * get_config_path(void);
+
+	const std::string * get_texture_path(void);
 private:
 	bool m_finished = false;
 	Textbox * m_texture_path = nullptr;
