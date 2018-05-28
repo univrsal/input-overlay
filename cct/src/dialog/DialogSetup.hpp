@@ -9,8 +9,9 @@
 
 #include "Dialog.hpp"
 #include "../util/SDL_helper.hpp"
-#include "./elements/Textbox.hpp"
-#include "./elements/Button.hpp"
+#include "elements/Textbox.hpp"
+#include "elements/Button.hpp"
+#include "../../../ccl/ccl.hpp"
 
 class SDL_helper;
 

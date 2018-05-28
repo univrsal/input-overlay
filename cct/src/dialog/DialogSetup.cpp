@@ -13,7 +13,7 @@ void DialogSetup::init()
 	int8_t id = 1;
 
 	add(new Label(id++, 8, 35, "Enter the path to the texture file:", this));
-	add(m_texture_path = new Textbox(id++, 8, 55, m_dimensions.w - 16, 20, "", this));
+	add(m_texture_path = new Textbox(id++, 8, 55, m_dimensions.w - 16, 20, "D:\\Projects\\prog\\cpp\\input-overlay-releases\\build\\v4.6-pre\\presets\\\wasd-full\\wasd.png", this));
 
 	add(new Label(id++, 8, 85, "Default element width:", this));
 	add(new Label(id++, (m_dimensions.w / 2) + 4, 85, "Default element height:", this));
@@ -30,27 +30,36 @@ void DialogSetup::init()
 	add(new Button(ACTION_OK, 8, m_dimensions.h - 32, "OK", this));
 	add(new Button(ACTION_CANCEL, 116, m_dimensions.h - 32, "Exit", this));
 
-	add(new Label(id++, 8, 135, "Enter path to config to edit or open it:", this));
-	add(m_config_path = new Textbox(id++, 8, 155, m_dimensions.w - 16, 20, "", this));
+	add(new Label(id++, 8, 135, "Enter config path for saving or loading:", this));
+	add(m_config_path = new Textbox(id++, 8, 155, m_dimensions.w - 16, 20, "C:\\Users\\usr\\Desktop\\test.ini", this));
 
 	set_flags(DIALOG_CENTERED | DIALOG_TEXTINPUT);
 }
 
 void DialogSetup::action_performed(int8_t action_id)
 {
+	bool valid_texture;
+	bool valid_config;
+	ccl_config cfg;
+	
 	switch (action_id)
 	{
 	case ACTION_OK:
-		if (!m_texture_path->get_text()->empty() && !m_config_path->get_text()->empty())
+		valid_texture = m_helper->util_check_texture_path(m_texture_path->get_text()->c_str());
+		cfg = ccl_config(*m_config_path->get_text(), "");
+		valid_config = cfg.can_write();
+		cfg.free();
+
+		if (!m_texture_path->get_text()->empty() && !m_config_path->get_text()->empty() && valid_texture && valid_config)
 		{
 			m_finished = true;
 		}
 		else
 		{
-			if (m_texture_path->get_text()->empty())
+			if (m_texture_path->get_text()->empty() || !valid_texture)
 				m_texture_path->set_alert(true);
 
-			if (m_config_path->get_text()->empty())
+			if (m_config_path->get_text()->empty() || !valid_config)
 				m_config_path->set_alert(true);
 		}
 		break;

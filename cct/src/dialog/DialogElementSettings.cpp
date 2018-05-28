@@ -45,3 +45,42 @@ void DialogElementSettings::init()
 void DialogElementSettings::action_performed(int8_t action_id)
 {
 }
+
+void DialogElementSettings::set_dimensions(int w, int h)
+{
+	if (w > 0)
+	{
+		m_element_width->set_text(std::to_string(w));
+	}
+
+	if (h > 0)
+	{
+		m_element_height->set_text(std::to_string(h));
+	}
+}
+
+void DialogElementSettings::set_position(int x, int y)
+{
+	if (x > 0)
+	{
+		m_element_x->set_text(std::to_string(y));
+	}
+
+	if (y > 0)
+	{
+		m_element_y->set_text(std::to_string(x));
+	}
+}
+
+void DialogElementSettings::set_uv(int u, int v)
+{
+	if (u > 0)
+	{
+		m_element_u->set_text(std::to_string(u));
+	}
+
+	if (v > 0)
+	{
+		m_element_v->set_text(std::to_string(v));
+	}
+}

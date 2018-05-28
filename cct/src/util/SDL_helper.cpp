@@ -245,6 +245,14 @@ void SDL_helper::util_disable_mask(uint16_t & masks, uint16_t mask)
 	masks &= ~mask;
 }
 
+bool SDL_helper::util_check_texture_path(const char * path)
+{
+	Texture temp;
+	bool flag = temp.load(path, m_sdl_renderer);
+	temp.free();
+	return flag;
+}
+
 bool SDL_helper::is_ctrl_down(void)
 {
 	return m_ctrl_down;

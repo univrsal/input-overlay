@@ -11,8 +11,9 @@
 #include <SDL_ttf.h>
 #include <SDL_image.h>
 
-#include "../util/Palette.hpp"
-#include "../util/FontHelper.hpp"
+#include "Palette.hpp"
+#include "FontHelper.hpp"
+#include "Texture.hpp"
 
 #define WINDOW_TITLE "io-cct"
 #define WINDOW_WIDTH 1280
@@ -21,6 +22,8 @@
 class Palette;
 
 class FontHelper;
+
+class Texture;
 
 class SDL_helper
 {
@@ -56,13 +59,14 @@ class SDL_helper
 		void util_text_utf8(std::string * text, int x, int y, const SDL_Color * color);
 		SDL_Rect util_text_utf8_dim(std::string *text);
 
-
 		SDL_Point util_window_size(void);
 
 		void util_cut_string(std::string &s, int max_width, bool front);
 
 		void util_enable_mask(uint16_t & masks, uint16_t mask);
 		void util_disable_mask(uint16_t & masks, uint16_t mask);
+
+		bool util_check_texture_path(const char * path);
 
 		SDL_Renderer * renderer()
 		{

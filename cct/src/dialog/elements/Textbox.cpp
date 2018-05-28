@@ -170,7 +170,8 @@ void Textbox::set_text(std::string s)
 		which is the currently written text through
 		the IME (Only for Japanese, Chinese etc.)
 	*/
-	get_helper()->util_cut_string(m_cut_text.append(m_composition), get_dimensions()->w - 22, false);
+
+	get_helper()->util_cut_string(m_cut_text.append(m_composition), get_dimensions()->w - 38, false);
 }
 
 void Textbox::append_text(std::string s)

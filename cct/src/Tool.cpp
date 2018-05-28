@@ -41,15 +41,16 @@ void Tool::program_loop()
 			if (m_setup_dialog->is_finished())
 			{
 				in_setup = false;
+
+				m_element_settings = new DialogElementSettings(m_helper, SDL_Point{ 250, 500 }, "Selected element settings");
+				m_element_settings->init();
+
 				m_config = new Overlay::Config(m_setup_dialog->get_texture_path(),
-					m_setup_dialog->get_config_path(), m_helper);
+					m_setup_dialog->get_config_path(), m_helper, m_element_settings);
 				/* Free it up */
 				delete m_setup_dialog;
 				m_setup_dialog = nullptr;
-
-				m_element_settings = new DialogElementSettings(m_helper, SDL_Point { 250, 500 }, "Selected element settings");
-				m_element_settings->init();
-
+				
 				m_focused_dialog = m_element_settings;
 				m_state = IN_BUILD;
 			}

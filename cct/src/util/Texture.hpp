@@ -22,7 +22,7 @@ public:
 
 	~Texture();
 
-	void load(const char *path, SDL_Renderer *renderer);
+	bool load(const char *path, SDL_Renderer *renderer);
 
 	void free();
 

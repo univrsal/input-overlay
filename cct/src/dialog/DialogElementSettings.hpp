@@ -27,6 +27,9 @@ public:
 
 	void action_performed(int8_t action_id);
 
+	void set_dimensions(int w, int h);
+	void set_position(int x, int y);
+	void set_uv(int u, int v);
 private:
 	bool m_finished = false;
 
