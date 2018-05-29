@@ -30,6 +30,13 @@ void DialogElementSettings::init()
 	m_element_u->set_flags(TEXTBOX_NUMERIC);
 	m_element_v->set_flags(TEXTBOX_NUMERIC);
 
+	m_element_width->set_cutoff(20);
+	m_element_height->set_cutoff(20);
+	m_element_x->set_cutoff(20);
+	m_element_y->set_cutoff(20);
+	m_element_u->set_cutoff(20);
+	m_element_v->set_cutoff(20);
+
 	add(m_element_width);
 	add(m_element_height);
 	add(m_element_x);
@@ -44,6 +51,23 @@ void DialogElementSettings::init()
 
 void DialogElementSettings::action_performed(int8_t action_id)
 {
+	switch (action_id)
+	{
+	case ACTION_OK:
+		if (m_tool->get_selected())
+		{
+			m_tool->get_selected()->set_pos(std::stoi(
+				m_element_x->get_text()->c_str()), std::stoi(
+					m_element_y->get_text()->c_str()));
+			m_tool->get_selected()->set_uv(std::stoi(
+				m_element_u->get_text()->c_str()), std::stoi(
+					m_element_v->get_text()->c_str()));
+			m_tool->get_selected()->set_dim(std::stoi(
+				m_element_width->get_text()->c_str()), std::stoi(
+					m_element_height->get_text()->c_str()));
+		}
+		break;
+	}
 }
 
 void DialogElementSettings::set_dimensions(int w, int h)
@@ -61,14 +85,14 @@ void DialogElementSettings::set_dimensions(int w, int h)
 
 void DialogElementSettings::set_position(int x, int y)
 {
-	if (x > 0)
+	if (x >= 0)
 	{
-		m_element_x->set_text(std::to_string(y));
+		m_element_x->set_text(std::to_string(x));
 	}
 
-	if (y > 0)
+	if (y >= 0)
 	{
-		m_element_y->set_text(std::to_string(x));
+		m_element_y->set_text(std::to_string(y));
 	}
 }
 

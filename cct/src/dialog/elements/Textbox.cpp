@@ -171,7 +171,7 @@ void Textbox::set_text(std::string s)
 		the IME (Only for Japanese, Chinese etc.)
 	*/
 
-	get_helper()->util_cut_string(m_cut_text.append(m_composition), get_dimensions()->w - 38, false);
+	get_helper()->util_cut_string(m_cut_text.append(m_composition), get_dimensions()->w - m_cut_off, false);
 }
 
 void Textbox::append_text(std::string s)
@@ -181,6 +181,8 @@ void Textbox::append_text(std::string s)
 
 const std::string * Textbox::get_text()
 {
+	if (m_flags & TEXTBOX_NUMERIC && m_text.empty())
+		set_text("0");
 	return &m_text;
 }
 
@@ -196,4 +198,9 @@ inline bool Textbox::is_numeric(const std::string & s)
 void Textbox::set_alert(bool state)
 {
 	m_alert = state;
+}
+
+void Textbox::set_cutoff(uint8_t c)
+{
+	m_cut_off = c;
 }

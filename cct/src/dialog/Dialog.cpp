@@ -106,6 +106,14 @@ bool Dialog::handle_events(SDL_Event * event)
 				was_handled = true;
 			}
 		}
+		else if (event->type == SDL_KEYDOWN)
+		{
+			if (event->key.keysym.sym == SDLK_RETURN)
+			{
+				action_performed(ACTION_OK);
+				was_handled = true;
+			}
+		}
 	}
 
 	if (event->type == SDL_WINDOWEVENT)

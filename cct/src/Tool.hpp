@@ -14,7 +14,9 @@
 #include <SDL.h>
 
 class SDL_helper;
-
+class Element;
+class Config;
+class DialogElementSettings;
 enum ToolState
 {
 	IN_SETUP,
@@ -30,13 +32,15 @@ public:
 	~Tool();
 
 	void program_loop();
+
+	Element * get_selected(void);
 private:
 	void handle_input();
 	bool m_run_flag = true;
 	SDL_Event m_event;
 	SDL_helper * m_helper;
 
-	Overlay::Config * m_config = nullptr;
+	Config * m_config = nullptr;
 
 	DialogSetup * m_setup_dialog = nullptr;
 	DialogElementSettings * m_element_settings = nullptr;

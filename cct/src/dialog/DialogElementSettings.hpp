@@ -11,16 +11,19 @@
 #include "../util/SDL_helper.hpp"
 #include "./elements/Textbox.hpp"
 #include "./elements/Button.hpp"
+#include "../Tool.hpp"
 
 class SDL_helper;
+
+class Tool;
 
 class DialogElementSettings : public Dialog
 {
 public:
-	DialogElementSettings(SDL_helper * sdl, SDL_Point size, std::string title)
+	DialogElementSettings(SDL_helper * sdl, SDL_Point size, std::string title, Tool * tool)
 		: Dialog(sdl, size, title)
 	{
-		/* NO-OP */
+		m_tool = tool;
 	};
 
 	void init();
@@ -41,4 +44,5 @@ private:
 	Textbox * m_element_u = nullptr;
 	Textbox * m_element_v = nullptr;
 
+	Tool * m_tool = nullptr;
 };

@@ -43,11 +43,12 @@ public:
 
 	void set_alert(bool state);
 
+	void set_cutoff(uint8_t c);
 private:
 	std::string m_text;
 	std::string m_composition;
 	std::string m_cut_text;
-
+	uint8_t m_cut_off = 38;
 	bool m_alert = false;
 	bool m_focused;
 };
