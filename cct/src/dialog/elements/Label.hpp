@@ -10,16 +10,16 @@
 #include "GuiElement.hpp"
 #include "../Dialog.hpp"
 #include <string>
+#include <vector>
+#include <memory>
 
-#define LABEL_TITLE 0
-#define LABEL_GOLD 1
-#define LABEL_WHITE 2
-#define LABEL_WHITE_SHADOW 3
-#define LABEL_DEFAULT 4
+#define LABEL_LINE_SPACE 2
 
 class Dialog;
 
 class GuiElement;
+
+static const std::string NEW_LINE = "\n";
 
 class Label :
 	public GuiElement
@@ -39,10 +39,14 @@ public:
 	bool handle_events(SDL_Event *event);
 
 	void set_text(std::string text);
+	
+private:
+	void format_text(std::string& s);
 
-	std::string m_text;
+	std::vector<std::unique_ptr<std::string>> m_lines;
 
 	SDL_Color *m_color;
-private:
+
 	uint8_t m_type;
+	uint8_t m_line_height;
 };

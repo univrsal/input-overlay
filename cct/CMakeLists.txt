@@ -38,7 +38,9 @@ set(io-cct_SOURCES
 	src/dialog/DialogElementSettings.cpp
 	src/dialog/DialogElementSettings.hpp
 	../ccl/ccl.cpp
-	../ccl/ccl.hpp)
+	../ccl/ccl.hpp
+	src/dialog/DialogHelp.cpp
+	src/dialog/DialogHelp.hpp)
 
 include_directories(${SDL_INCLUDE_DIR}
 	${SDL_TTF_INCLUDE_DIR}

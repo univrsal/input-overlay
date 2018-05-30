@@ -45,7 +45,8 @@ bool SDL_helper::init()
 		printf("Creating SDL Window failed! Error: %s\n", SDL_GetError());
 		m_init_success = false;
 	}
-	else {
+	else
+	{
 		SDL_SetWindowMinimumSize(m_sdl_window, WINDOW_WIDTH, WINDOW_HEIGHT);
 		m_sdl_renderer = SDL_CreateRenderer(m_sdl_window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 	}
@@ -53,6 +54,11 @@ bool SDL_helper::init()
 	if (m_sdl_renderer == NULL) {
 		printf("Creating SDL Renderer failed! Error: %s\n", SDL_GetError());
 		m_init_success = false;
+	}
+	else
+	{
+		SDL_SetRenderDrawBlendMode(m_sdl_renderer, SDL_BLENDMODE_BLEND);
+		SDL_GetWindowSize(m_sdl_window, &m_window_size.x, &m_window_size.y);
 	}
 
 	if (TTF_Init() == -1) {
@@ -166,6 +172,16 @@ void SDL_helper::util_fill_rect(int x, int y, int w, int h, const SDL_Color * co
 	SDL_RenderFillRect(m_sdl_renderer, &temp_rect);
 }
 
+void SDL_helper::util_fill_rect(const SDL_Rect * rect, const SDL_Color * color, uint8_t alpha)
+{
+	SDL_Color temp;
+	temp.a = alpha;
+	temp.r = color->r;
+	temp.g = color->g;
+	temp.b = color->b;
+	util_fill_rect(rect, &temp);
+}
+
 bool SDL_helper::util_is_in_rect(const SDL_Rect * rect, int x, int y)
 {
     return x >= rect->x && x <= (rect->x + rect->w) && y >= rect->y && y <= (rect->y + rect->h);
@@ -205,11 +221,9 @@ SDL_Rect SDL_helper::util_text_utf8_dim(std::string * text)
 	return m_font_helper->get_text_dimension(m_utf8_font, text);
 }
 
-SDL_Point SDL_helper::util_window_size(void)
+SDL_Point * SDL_helper::util_window_size(void)
 {
-	SDL_Point p = { 0, 0 };
-	SDL_GetWindowSize(m_sdl_window, &p.x, &p.y) ;
-	return p;
+	return &m_window_size;
 }
 
 void SDL_helper::util_cut_string(std::string & s, int max_width, bool front)
@@ -292,6 +306,13 @@ void SDL_helper::handle_events(SDL_Event * event)
 		if (event->key.keysym.sym == SDLK_LSHIFT || event->key.keysym.sym == SDLK_RSHIFT)
 		{
 			m_shift_down = false;
+		}
+	}
+	else if (event->type == SDL_WINDOWEVENT)
+	{
+		if (event->window.event == SDL_WINDOWEVENT_SIZE_CHANGED)
+		{
+			SDL_GetWindowSize(m_sdl_window, &m_window_size.x, &m_window_size.y);
 		}
 	}
 }

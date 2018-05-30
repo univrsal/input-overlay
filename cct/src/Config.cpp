@@ -31,7 +31,7 @@ Config::~Config()
 
 void Config::draw_elements(void)
 {
-	SDL_Point window = m_helper->util_window_size();
+	SDL_Point * window = m_helper->util_window_size();
 
 	/* Draw elements */
 	std::vector<std::unique_ptr<Element>>::iterator iterator;
@@ -45,9 +45,9 @@ void Config::draw_elements(void)
 	}
 
 	/* Fill space on above and to the left of the axes */
-	SDL_Rect temp = { X_AXIS, 0, window.x - X_AXIS, Y_AXIS };
+	SDL_Rect temp = { X_AXIS, 0, window->x - X_AXIS, Y_AXIS };
 	m_helper->util_fill_rect(&temp, m_helper->palette()->dark_gray());
-	temp = { 0, 0, X_AXIS, window.y };
+	temp = { 0, 0, X_AXIS, window->y };
 	m_helper->util_fill_rect(&temp, m_helper->palette()->dark_gray());
 
 	/* Draw Scale*/
@@ -57,7 +57,7 @@ void Config::draw_elements(void)
 	/* I think this makes sense */
 	start = X_AXIS + ((m_origin.x - X_AXIS) % (10 * m_scale_f)) + step;
 
-	for (int x = start; x < window.x; x += step)
+	for (int x = start; x < window->x; x += step)
 	{
 		bool flag = (x - m_origin.x) % 100 == 0 && (x - m_origin.x) != 0;
 
@@ -69,7 +69,7 @@ void Config::draw_elements(void)
 
 			m_helper->util_text(&tag, x + dim.h / 2, Y_AXIS - dim.w - 6, m_helper->palette()->white(), 90);
 			m_helper->util_draw_line(x, Y_AXIS - 4, x, Y_AXIS + 4, m_helper->palette()->white());
-			m_helper->util_draw_line(x, Y_AXIS + 4, x, window.y, m_helper->palette()->gray());
+			m_helper->util_draw_line(x, Y_AXIS + 4, x, window->y, m_helper->palette()->gray());
 		}
 		else
 		{
@@ -79,7 +79,7 @@ void Config::draw_elements(void)
 
 	start = Y_AXIS + ((m_origin.y - Y_AXIS) % (10 * m_scale_f)) + step;
 
-	for (int y = start; y < window.y; y += step)
+	for (int y = start; y < window->y; y += step)
 	{
 		bool flag = (y - m_origin.y) % 100 == 0 && (y - m_origin.x) != 0;
 
@@ -90,7 +90,7 @@ void Config::draw_elements(void)
 
 			m_helper->util_text(&tag, X_AXIS - dim.w - 5, y - dim.h / 2, m_helper->palette()->white());
 			m_helper->util_draw_line(X_AXIS - 4, y, X_AXIS + 4, y, m_helper->palette()->white());
-			m_helper->util_draw_line(X_AXIS + 4, y, window.x, y, m_helper->palette()->gray());
+			m_helper->util_draw_line(X_AXIS + 4, y, window->x, y, m_helper->palette()->gray());
 		}
 		else
 		{
@@ -100,8 +100,8 @@ void Config::draw_elements(void)
 
 	/* Draw origin cross (0/0) */
 
-	m_helper->util_draw_line(0, Y_AXIS, window.x, Y_AXIS, m_helper->palette()->white());
-	m_helper->util_draw_line(X_AXIS, 0, X_AXIS, window.y, m_helper->palette()->white());
+	m_helper->util_draw_line(0, Y_AXIS, window->x, Y_AXIS, m_helper->palette()->white());
+	m_helper->util_draw_line(X_AXIS, 0, X_AXIS, window->y, m_helper->palette()->white());
 
 	/* Axe titles */
 	std::string t = "X in pixels";
@@ -114,7 +114,7 @@ void Config::draw_elements(void)
 
 	t = "Scale: " + std::to_string(m_scale_f);
 	dim = m_helper->util_text_dim(&t);
-	m_helper->util_text(&t, window.x - dim.w - 5, 5, m_helper->palette()->white());
+	m_helper->util_text(&t, window->x - dim.w - 5, 5, m_helper->palette()->white());
 
 	SDL_Point mouse;
 	SDL_GetMouseState(&mouse.x, &mouse.y);

@@ -20,6 +20,8 @@ class Button : public GuiElement
 public:
 	Button(int8_t id, int x, int y, const char *text, Dialog *parent);
 
+	Button(int8_t id, int x, int y, int w, const char *text, Dialog *parent);
+
 	~Button();
 
 	void draw_background(void);

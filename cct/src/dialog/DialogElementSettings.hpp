@@ -13,6 +13,11 @@
 #include "./elements/Button.hpp"
 #include "../Tool.hpp"
 
+#define ACTION_HELP_BUTTON -10
+#define ACTION_NEW_ELEMENT -11
+#define ACTION_SAVE_CONFIG -12
+#define ACTION_DEL_ELEMENT -13
+
 class SDL_helper;
 
 class Tool;
@@ -20,7 +25,7 @@ class Tool;
 class DialogElementSettings : public Dialog
 {
 public:
-	DialogElementSettings(SDL_helper * sdl, SDL_Point size, std::string title, Tool * tool)
+	DialogElementSettings(SDL_helper * sdl, SDL_Rect size, std::string title, Tool * tool)
 		: Dialog(sdl, size, title)
 	{
 		m_tool = tool;

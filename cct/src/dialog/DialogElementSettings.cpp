@@ -44,6 +44,10 @@ void DialogElementSettings::init()
 	add(m_element_u);
 	add(m_element_v);
 
+	add(new Button(ACTION_NEW_ELEMENT, 8, m_dimensions.h - 154, m_dimensions.w - 16, "Add new element", this));
+	add(new Button(ACTION_DEL_ELEMENT, 8, m_dimensions.h - 126, m_dimensions.w - 16, "Delete selected", this));
+	add(new Button(ACTION_SAVE_CONFIG, 8, m_dimensions.h - 98, m_dimensions.w - 16, "Save config", this));
+	add(new Button(ACTION_HELP_BUTTON, 8, m_dimensions.h - 70, m_dimensions.w - 16, "Help", this));
 	add(new Button(ACTION_OK, 8, m_dimensions.h - 32, "OK", this));
 
 	set_flags(DIALOG_DRAGGABLE | DIALOG_TEXTINPUT);
@@ -67,6 +71,9 @@ void DialogElementSettings::action_performed(int8_t action_id)
 					m_element_height->get_text()->c_str()));
 		}
 		break;
+	case ACTION_HELP_BUTTON:
+		m_tool->action_performed(TOOL_ACTION_HELP_OPEN);
+	break;
 	}
 }
 

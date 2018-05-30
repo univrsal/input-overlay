@@ -1,6 +1,12 @@
 #include "Button.hpp"
 
 Button::Button(int8_t id, int x, int y, const char* text, Dialog * parent)
+	: Button(id, x, y, 100, text, parent)
+{
+	/* NO-OP*/
+}
+
+Button::Button(int8_t id, int x, int y, int w, const char * text, Dialog * parent)
 {
 	SDL_Rect temp_rect;
 	m_pressed = false;
@@ -8,12 +14,15 @@ Button::Button(int8_t id, int x, int y, const char* text, Dialog * parent)
 	m_hovered = false;
 	m_hover_start = 0;
 	m_text = std::string(text);
+
 	SDL_Rect text_dim = parent->helper()->util_text_dim(&m_text);
+
 	temp_rect = { x, y, text_dim.w + 10, text_dim.h + 4 };
-	temp_rect.w = temp_rect.w < 100 ? 100 : temp_rect.w;
+	temp_rect.w = temp_rect.w < w ? w : temp_rect.w;
+	init(parent, temp_rect, id);
+
 	m_text_pos.x = temp_rect.w / 2 - text_dim.w / 2;
 	m_text_pos.y = temp_rect.h / 2 - text_dim.h / 2;
-	init(parent, temp_rect, id);
 }
 
 Button::~Button()

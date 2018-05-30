@@ -48,6 +48,7 @@ class SDL_helper
 		void util_fill_rect(const SDL_Rect *rect, const SDL_Color *color = NULL);
 		void util_fill_rect_shadow(const SDL_Rect *rect, const SDL_Color *color = NULL);
 		void util_fill_rect(int x, int y, int w, int h, const SDL_Color *color = NULL);
+		void util_fill_rect(const SDL_Rect *rect, const SDL_Color *color, uint8_t alpha);
 
 		bool util_is_in_rect(const SDL_Rect * rect, int x, int y);
 
@@ -59,7 +60,7 @@ class SDL_helper
 		void util_text_utf8(std::string * text, int x, int y, const SDL_Color * color);
 		SDL_Rect util_text_utf8_dim(std::string *text);
 
-		SDL_Point util_window_size(void);
+		SDL_Point * util_window_size(void);
 
 		void util_cut_string(std::string &s, int max_width, bool front);
 
@@ -89,6 +90,7 @@ class SDL_helper
 		void set_runflag(bool * flag);
 		void handle_events(SDL_Event * event);
 	private:
+		SDL_Point m_window_size;
 		SDL_Renderer * m_sdl_renderer;
 		SDL_Window * m_sdl_window;
 		TTF_Font *m_default_font;

@@ -14,9 +14,10 @@
 #include <vector>
 #include <memory>
 
-#define DIALOG_DRAGGABLE 1 << 0
-#define DIALOG_CENTERED  1 << 1
-#define DIALOG_TEXTINPUT 1 << 2
+#define DIALOG_DRAGGABLE 1 << 0 /* Allow moving by dragging the title bar*/
+#define DIALOG_CENTERED  1 << 1 /* Always center on window resize */
+#define DIALOG_TEXTINPUT 1 << 2 /* Hint SDL to read text input */
+#define DIALOG_TOP_MOST	 1 << 3 /* Draws background tint */
 
 #define ACTION_FOCUSED -1
 #define ACTION_UNFOCUSED -2

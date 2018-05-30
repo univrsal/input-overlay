@@ -16,8 +16,8 @@ Dialog::Dialog(SDL_helper * sdl, SDL_Rect size, std::string title)
 
 Dialog::Dialog(SDL_helper * sdl, SDL_Point size, std::string title)
 {
-	SDL_Point window_size = sdl->util_window_size();
-	SDL_Rect temp = { window_size.x / 2 - size.x / 2, window_size.y / 2 - size.y / 2, size.x, size.y };
+	SDL_Point * window_size = sdl->util_window_size();
+	SDL_Rect temp = { (*window_size).x / 2 - size.x / 2, (*window_size).y / 2 - size.y / 2, size.x, size.y };
 	m_helper = sdl;
 	m_dimensions = temp;
 	m_title = title;
@@ -36,6 +36,13 @@ void Dialog::init()
 
 void Dialog::draw_background(void)
 {
+	if (m_flags & DIALOG_TOP_MOST)
+	{
+		SDL_Point * s = m_helper->util_window_size();
+		SDL_Rect temp = { 0, 0, s->x, s->y };
+		m_helper->util_fill_rect(&temp, m_helper->palette()->dark_gray(), 200);
+	}
+
 	// Dialog box
 	m_helper->util_fill_rect_shadow(&m_dimensions, m_helper->palette()->get_accent());
 	m_helper->util_draw_rect(&m_dimensions, m_helper->palette()->dark_gray());
@@ -125,22 +132,22 @@ bool Dialog::handle_events(SDL_Event * event)
 				the main window after resizing
 			*/
 
-			SDL_Point temp = m_helper->util_window_size();
+			SDL_Point * temp = m_helper->util_window_size();
 
-			if (temp.x < get_right())
+			if (temp->x < get_right())
 			{
-				m_dimensions.x = temp.x - m_dimensions.w;
+				m_dimensions.x = temp->x - m_dimensions.w;
 			}
 
-			if (temp.y < get_bottom())
+			if (temp->y < get_bottom())
 			{
-				m_dimensions.y = temp.y - m_dimensions.h;
+				m_dimensions.y = temp->y - m_dimensions.h;
 			}
 
 			if (m_flags & DIALOG_CENTERED)
 			{
-				m_dimensions.x = temp.x / 2 - m_dimensions.w / 2;
-				m_dimensions.y = temp.y / 2 - m_dimensions.h / 2;
+				m_dimensions.x = temp->x / 2 - m_dimensions.w / 2;
+				m_dimensions.y = temp->y / 2 - m_dimensions.h / 2;
 			}
 			m_title_bar = { m_dimensions.x + 5, m_dimensions.y + 5, m_dimensions.w - 10, 20 };
 		}
