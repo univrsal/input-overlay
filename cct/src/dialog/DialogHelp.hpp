@@ -19,8 +19,8 @@ class Tool;
 class DialogHelp : public Dialog
 {
 public:
-	DialogHelp(SDL_helper * sdl, SDL_Point size, std::string title, Tool * tool)
-		: Dialog(sdl, size, title)
+	DialogHelp(SDL_helper * sdl, SDL_Point size, Tool * tool)
+		: Dialog(sdl, size, "Help and about")
 	{
 		m_tool = tool;
 	};

@@ -14,14 +14,14 @@ Tool::~Tool()
 
 	if (m_config)
 		delete m_config;
-
+	close_toplevel();
 	m_config = nullptr;
 	m_setup_dialog = nullptr;
 }
 
 void Tool::program_loop()
 {
-	m_setup_dialog = new DialogSetup(m_helper, SDL_Point{ 500, 230 }, "Overlay setup");
+	m_setup_dialog = new DialogSetup(m_helper, SDL_Point{ 500, 230 });
 	m_setup_dialog->init();
 	m_setup_dialog->action_performed(ACTION_FOCUSED);
 	m_helper->set_runflag(&m_run_flag);
@@ -40,8 +40,8 @@ void Tool::program_loop()
 
 				if (m_setup_dialog->is_finished())
 				{
-					m_element_settings = new DialogElementSettings(m_helper, SDL_Rect { 10, 200, 240, 310 },
-						"Selected element settings", this);
+					m_element_settings = new DialogElementSettings(m_helper,
+						SDL_Rect { 10, 200, 240, 310 }, this);
 					m_config = new Config(m_setup_dialog->get_texture_path(),
 						m_setup_dialog->get_config_path(), m_helper, m_element_settings);
 
@@ -58,6 +58,7 @@ void Tool::program_loop()
 				m_element_settings->draw_background();
 				m_element_settings->draw_foreground();
 			break;
+			case IN_NEW_ELEMENT:
 			case IN_HELP:
 				m_config->draw_elements();
 				m_element_settings->draw_background();
@@ -66,7 +67,7 @@ void Tool::program_loop()
 				{
 					m_toplevel->draw_background();
 					m_toplevel->draw_foreground();
-				}
+				}	
 			break;
 		}
 
@@ -88,12 +89,18 @@ void Tool::action_performed(uint8_t type)
 		case TOOL_ACTION_HELP_OPEN:
 			close_toplevel();
 			m_state = IN_HELP;
-			m_toplevel = new DialogHelp(m_helper, SDL_Point { 350, 370 }, "Help and about", this);
+			m_toplevel = new DialogHelp(m_helper, SDL_Point { 350, 370 }, this);
 			m_toplevel->init();
 		break;
 		case TOOL_ACTION_HELP_EXIT:
 			m_state = IN_BUILD;
 			m_queue_close = true;
+		break;
+		case TOOL_ACTION_NEW_ELEMENT_OPEN:
+			close_toplevel();
+			m_state = IN_NEW_ELEMENT;
+			m_toplevel = new DialogNewElement(m_helper, SDL_Point { 1200, 720 }, "New element", this);
+			m_toplevel->init();
 		break;
 	}
 }
@@ -136,7 +143,8 @@ void Tool::handle_input()
 				m_toplevel->handle_events(&m_event);
 			break;
 		case IN_NEW_ELEMENT:
-
+			if (m_toplevel)
+				m_toplevel->handle_events(&m_event);
 			break;
 		}
 	}

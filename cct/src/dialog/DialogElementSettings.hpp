@@ -25,8 +25,8 @@ class Tool;
 class DialogElementSettings : public Dialog
 {
 public:
-	DialogElementSettings(SDL_helper * sdl, SDL_Rect size, std::string title, Tool * tool)
-		: Dialog(sdl, size, title)
+	DialogElementSettings(SDL_helper * sdl, SDL_Rect size, Tool * tool)
+		: Dialog(sdl, size, "Selected element settings")
 	{
 		m_tool = tool;
 	};

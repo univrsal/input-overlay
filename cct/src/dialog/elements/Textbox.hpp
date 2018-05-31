@@ -23,7 +23,7 @@ class Textbox : public GuiElement
 public:
 	Textbox(int8_t id, int x, int y, int w, int h, std::string text, Dialog *parent);
 
-	virtual ~Textbox();
+	~Textbox();
 
 	void close(void);
 

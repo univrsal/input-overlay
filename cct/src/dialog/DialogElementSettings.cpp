@@ -73,7 +73,10 @@ void DialogElementSettings::action_performed(int8_t action_id)
 		break;
 	case ACTION_HELP_BUTTON:
 		m_tool->action_performed(TOOL_ACTION_HELP_OPEN);
-	break;
+		break;
+	case ACTION_NEW_ELEMENT:
+		m_tool->action_performed(TOOL_ACTION_NEW_ELEMENT_OPEN);
+		break;
 	}
 }
 

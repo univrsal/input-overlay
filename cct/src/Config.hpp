@@ -21,7 +21,6 @@ class SDL_helper;
 
 class Texture;
 
-
 enum ElementType
 {
 	TEXTURE,
@@ -51,13 +50,58 @@ public:
 		return temp;
 	}
 
-	void draw(SDL_helper * h, Texture * atlas, const SDL_Point * origin, int scale, bool selected)
+	void draw(SDL_helper * h, Texture * atlas, const SDL_Point * origin, const SDL_Rect * bounds, int scale, bool selected)
 	{
 		SDL_Rect temp = { m_pos.x * scale + origin->x,
 			m_pos.y * scale + origin->y,
-				m_texture_mapping.w * scale,
+			m_texture_mapping.w * scale,
 			m_texture_mapping.h * scale };
-		atlas->draw(h->renderer(), &temp, &m_texture_mapping);
+		SDL_Rect temp_mapping = m_texture_mapping;
+		
+		/*
+			Boundary cropping
+			If the element is partially or fully
+			out of the coordinate system
+			it'll be cropped to only show the part
+			that's inside the coordinate system.
+		*/
+
+		if (temp.x < bounds->x)
+		{
+			if (temp.x + temp.w < bounds->x) /* It's fully out of bounds */
+				return;
+			/* Crop it so it ends at the x axis */
+			temp_mapping.w -= (bounds->x -temp.x) / scale;
+			temp.w = temp_mapping.w * scale;
+			
+			temp_mapping.x += (bounds->x - temp.x) / scale;
+			temp.x += bounds->x - temp.x;
+		}
+
+		if (temp.x - temp.w > bounds->x + bounds->w)
+		{
+			if (temp.x > bounds->x + bounds->w)
+				return;
+		}
+
+		if (temp.y < bounds->y)
+		{
+			if (temp.y + temp.h < bounds->y)
+				return;
+			temp_mapping.h -= (bounds->y - temp.y) / scale;
+			temp.h = temp_mapping.h * scale;
+
+			temp_mapping.y += (bounds->y - temp.y) / scale;
+			temp.y += bounds->y - temp.y;
+		}
+
+		if (temp.y > bounds->y + bounds->w)
+		{
+
+		}
+
+		atlas->draw(h->renderer(), &temp, &temp_mapping);
+
 		if (selected)
 		{
 			h->util_draw_rect(&temp, h->palette()->red());

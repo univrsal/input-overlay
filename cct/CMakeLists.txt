@@ -40,7 +40,11 @@ set(io-cct_SOURCES
 	../ccl/ccl.cpp
 	../ccl/ccl.hpp
 	src/dialog/DialogHelp.cpp
-	src/dialog/DialogHelp.hpp)
+	src/dialog/DialogHelp.hpp
+	src/dialog/DialogNewElement.cpp
+	src/dialog/DialogNewElement.hpp
+	src/util/CoordinateSystem.cpp
+	src/util/CoordinateSystem.hpp)
 
 include_directories(${SDL_INCLUDE_DIR}
 	${SDL_TTF_INCLUDE_DIR}

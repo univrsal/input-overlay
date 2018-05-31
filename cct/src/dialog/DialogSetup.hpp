@@ -18,8 +18,8 @@ class SDL_helper;
 class DialogSetup : public Dialog
 {
 public:
-	DialogSetup(SDL_helper * sdl, SDL_Point size, std::string title)
-		: Dialog(sdl, size, title)
+	DialogSetup(SDL_helper * sdl, SDL_Point size)
+		: Dialog(sdl, size, "Overlay setup")
 	{
 		/* NO-OP */
 	};

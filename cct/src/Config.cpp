@@ -35,20 +35,21 @@ void Config::draw_elements(void)
 
 	/* Draw elements */
 	std::vector<std::unique_ptr<Element>>::iterator iterator;
+	SDL_Rect bounds = { X_AXIS, Y_AXIS, window->x - X_AXIS, window->y - Y_AXIS };
 
 	for (iterator = m_elements.begin(); iterator != m_elements.end(); iterator++)
 	{
 		if (iterator->get() == m_selected)
-			iterator->get()->draw(m_helper, m_atlas, &m_origin, m_scale_f, true);
+			iterator->get()->draw(m_helper, m_atlas, &m_origin, &bounds, m_scale_f, true);
 		else
-			iterator->get()->draw(m_helper, m_atlas, &m_origin, m_scale_f, false);
+			iterator->get()->draw(m_helper, m_atlas, &m_origin, &bounds, m_scale_f, false);
 	}
 
 	/* Fill space on above and to the left of the axes */
-	SDL_Rect temp = { X_AXIS, 0, window->x - X_AXIS, Y_AXIS };
+	/*SDL_Rect temp = { X_AXIS, 0, window->x - X_AXIS, Y_AXIS };
 	m_helper->util_fill_rect(&temp, m_helper->palette()->dark_gray());
 	temp = { 0, 0, X_AXIS, window->y };
-	m_helper->util_fill_rect(&temp, m_helper->palette()->dark_gray());
+	m_helper->util_fill_rect(&temp, m_helper->palette()->dark_gray());*/
 
 	/* Draw Scale*/
 	int step = 10 * m_scale_f;

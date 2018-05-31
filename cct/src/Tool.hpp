@@ -11,6 +11,7 @@
 #include "dialog/DialogSetup.hpp"
 #include "dialog/DialogElementSettings.hpp"
 #include "dialog/DialogHelp.hpp"
+#include "dialog/DialogNewElement.hpp"
 #include "Config.hpp"
 #include <SDL.h>
 
@@ -19,6 +20,7 @@ class Element;
 class Config;
 class DialogElementSettings;
 class DialogHelp;
+class DialogNewElement;
 
 enum ToolState
 {
