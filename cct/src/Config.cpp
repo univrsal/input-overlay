@@ -10,8 +10,9 @@ Config::Config(const std::string * texture, const std::string * config, SDL_help
 	m_settings = s;
 	m_atlas = new Texture(texture->c_str(), h->renderer());
 	m_helper = h;
-	m_origin.x = X_AXIS;
-	m_origin.y = Y_AXIS;
+
+	SDL_Point * w = h->util_window_size();
+	m_cs = CoordinateSystem(SDL_Point { X_AXIS, Y_AXIS }, SDL_Rect { 0, 0, w->x, w->y }, h);
 
 	SDL_Point pos = { 0, 0 };
 	SDL_Rect map = { 1, 1, 157, 128 };
@@ -35,28 +36,26 @@ void Config::draw_elements(void)
 
 	/* Draw elements */
 	std::vector<std::unique_ptr<Element>>::iterator iterator;
-	SDL_Rect bounds = { X_AXIS, Y_AXIS, window->x - X_AXIS, window->y - Y_AXIS };
+	SDL_Rect bounds = { X_AXIS, Y_AXIS, window->x - X_AXIS - 20, window->y - Y_AXIS - 40 };
 
 	for (iterator = m_elements.begin(); iterator != m_elements.end(); iterator++)
 	{
 		if (iterator->get() == m_selected)
-			iterator->get()->draw(m_helper, m_atlas, &m_origin, &bounds, m_scale_f, true);
+			iterator->get()->draw(m_atlas, &m_cs, true);
 		else
-			iterator->get()->draw(m_helper, m_atlas, &m_origin, &bounds, m_scale_f, false);
+			iterator->get()->draw(m_atlas, &m_cs, false);
 	}
 
-	/* Fill space on above and to the left of the axes */
-	/*SDL_Rect temp = { X_AXIS, 0, window->x - X_AXIS, Y_AXIS };
-	m_helper->util_fill_rect(&temp, m_helper->palette()->dark_gray());
-	temp = { 0, 0, X_AXIS, window->y };
-	m_helper->util_fill_rect(&temp, m_helper->palette()->dark_gray());*/
-
 	/* Draw Scale*/
-	int step = 10 * m_scale_f;
+	int step = 10 * m_cs.get_scale();;
 	int start;
 
+	m_cs.draw_background();
+	m_cs.draw_foreground();
+
 	/* I think this makes sense */
-	start = X_AXIS + ((m_origin.x - X_AXIS) % (10 * m_scale_f)) + step;
+	/*
+	start = X_AXIS + ((m_origin.x - X_AXIS) % (10 * m_cs.get_scale())) + step;
 
 	for (int x = start; x < window->x; x += step)
 	{
@@ -65,7 +64,7 @@ void Config::draw_elements(void)
 		if (flag)
 		{
 
-			std::string tag = std::to_string((x - m_origin.x) / m_scale_f);
+			std::string tag = std::to_string((x - m_origin.x) / m_cs.get_scale());
 			SDL_Rect dim = m_helper->util_text_dim(&tag);
 
 			m_helper->util_text(&tag, x + dim.h / 2, Y_AXIS - dim.w - 6, m_helper->palette()->white(), 90);
@@ -99,12 +98,9 @@ void Config::draw_elements(void)
 		}
 	}
 
-	/* Draw origin cross (0/0) */
-
 	m_helper->util_draw_line(0, Y_AXIS, window->x, Y_AXIS, m_helper->palette()->white());
 	m_helper->util_draw_line(X_AXIS, 0, X_AXIS, window->y, m_helper->palette()->white());
 
-	/* Axe titles */
 	std::string t = "X in pixels";
 	SDL_Rect dim = m_helper->util_text_dim(&t);
 
@@ -122,20 +118,16 @@ void Config::draw_elements(void)
 	mouse.x = SDL_max(0, mouse.x - X_AXIS);
 	mouse.y = SDL_max(0, mouse.y - Y_AXIS);
 	t = "x: " + std::to_string(mouse.x) + " y:" + std::to_string(mouse.y);
-	m_helper->util_text(&t, 5, 5, m_helper->palette()->white());
+	m_helper->util_text(&t, 5, 5, m_helper->palette()->white()); */
 }
 
 void Config::handle_events(SDL_Event * e)
 {
+	m_cs.handle_events(e);
+
 	if (e->type == SDL_MOUSEBUTTONDOWN)
 	{
-		if (e->button.button == SDL_BUTTON_RIGHT)
-		{
-			m_dragging_all = true;
-			m_drag_offset = { (e->button.x - m_origin.x) / m_scale_f * m_scale_f,
-					(e->button.y - m_origin.y) / m_scale_f * m_scale_f };
-		}
-		else if (e->button.button == SDL_BUTTON_LEFT)
+		if (e->button.button == SDL_BUTTON_LEFT)
 		{
 			/* Handle selection of elements */
 			std::vector<std::unique_ptr<Element>>::iterator iterator;
@@ -143,13 +135,14 @@ void Config::handle_events(SDL_Event * e)
 			for (iterator = m_elements.begin(); iterator != m_elements.end(); iterator++)
 			{
 				if (m_helper->util_is_in_rect(
-					&iterator->get()->get_abs_dim(m_scale_f, &m_origin),
+					&iterator->get()->get_abs_dim(&m_cs),
 					e->button.x, e->button.y))
 				{
 					m_selected = iterator->get();
 					m_dragging_element = true;
-					m_drag_element_offset = { e->button.x - (m_selected->get_x() * m_scale_f) - m_origin.x,
-						e->button.y - (m_selected->get_y() * m_scale_f) - m_origin.y };
+					m_drag_element_offset = { e->button.x - (m_selected->get_x() * m_cs.get_scale())
+					- m_cs.get_origin()->x, e->button.y - (m_selected->get_y() * m_cs.get_scale())
+					- m_cs.get_origin()->y };
 
 					m_settings->set_dimensions(m_selected->get_w(), m_selected->get_h());
 					m_settings->set_position(m_selected->get_x(), m_selected->get_y());
@@ -162,42 +155,23 @@ void Config::handle_events(SDL_Event * e)
 	}
 	else if (e->type == SDL_MOUSEBUTTONUP)
 	{
-		if (e->button.button == SDL_BUTTON_RIGHT)
-		{
-			m_dragging_all = false;
-		}
-		else if (e->button.button == SDL_BUTTON_LEFT)
+		if (e->button.button == SDL_BUTTON_LEFT)
 		{
 			m_dragging_element = false;
 		}
 	}
 	else if (e->type == SDL_MOUSEMOTION)
 	{
-		if (m_dragging_all)
-		{
-			/* Align movement to grid*/
-			m_origin.x = (SDL_min(e->button.x - m_drag_offset.x, 90)) / m_scale_f * m_scale_f;
-			m_origin.y = (SDL_min(e->button.y - m_drag_offset.y, 70)) / m_scale_f * m_scale_f;
-		}
-
 		if (m_dragging_element && m_selected)
 		{
 			int x, y;
-			x = SDL_max((e->button.x - m_drag_element_offset.x - m_origin.x) / m_scale_f, 0);
-			y = SDL_max((e->button.y - m_drag_element_offset.y - m_origin.y) / m_scale_f, 0);
+			x = SDL_max((e->button.x - m_drag_element_offset.x -
+				m_cs.get_origin()->x) / m_cs.get_scale(), 0);
+			y = SDL_max((e->button.y - m_drag_element_offset.y -
+				m_cs.get_origin()->x) / m_cs.get_scale(), 0);
+
 			m_selected->set_pos(x, y);
 			m_settings->set_position(x, y);
-		}
-	}
-	else if (e->type == SDL_MOUSEWHEEL)
-	{
-		if (e->wheel.y > 0) /* UP */
-		{
-			m_scale_f = SDL_min(m_scale_f++, 7);
-		}
-		else
-		{
-			m_scale_f = SDL_max(m_scale_f--, 1);
 		}
 	}
 	else if (e->type == SDL_KEYDOWN && m_selected)
