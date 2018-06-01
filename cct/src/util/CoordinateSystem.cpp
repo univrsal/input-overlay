@@ -4,8 +4,7 @@
 	This crops any rectangle to fit
 	inside the coordinate boundaries
 	it'll also crop the textuer coutout
-	accordingly. Lotsa math that I already
-	forgot.
+	accordingly.
 	returns true, if the cropping succeeded
 	returns false, if the rectangle is out of
 	bounds or has no size
@@ -15,52 +14,21 @@ bool CoordinateSystem::crop_rect(SDL_Rect & mapping, SDL_Rect& destination)
 	destination.x = destination.x * m_scale_f + m_origin.x;
 	destination.y = destination.y * m_scale_f + m_origin.y;
 
-	/* The rectangle is to the left of the boundaries */
-	if (destination.x < m_dimensions.x)
+	SDL_Rect intersect;
+	
+	if (SDL_IntersectRect(&destination, &m_system_area, &intersect))
 	{
-		if (destination.x + destination.w < m_dimensions.x)
-			return false;
-
-		mapping.w -= (m_dimensions.x - destination.x) / m_scale_f;
-		destination.w = mapping.w * m_scale_f;
-
-		mapping.x += (m_dimensions.x - destination.x) / m_scale_f;
-		destination.x += m_dimensions.x - destination.x;
+		mapping.x += (intersect.x - destination.x) / m_scale_f;
+		mapping.y += (intersect.y - destination.y) / m_scale_f;
+		mapping.w = intersect.w / m_scale_f;
+		mapping.h = intersect.h / m_scale_f;
+		destination = intersect;
+		return true;
 	}
-
-	/* The rectangle is to the right of the boundaries */
-	if (destination.x + destination.w > m_dimensions.x + m_dimensions.w)
+	else
 	{
-		if (destination.x > m_dimensions.x + m_dimensions.w)
-			return false;
-		mapping.w -= (destination.x + destination.w -
-			(m_dimensions.x + m_dimensions.w)) / m_scale_f;
-		destination.w = mapping.w * m_scale_f;
+		return false;
 	}
-
-	/* The rectangle is above the boundaries */
-	if (destination.y < m_dimensions.y)
-	{
-		if (destination.y + destination.h < m_dimensions.y)
-			return false;
-		mapping.h -= (m_dimensions.y - destination.y) / m_scale_f;
-		destination.h = mapping.h * m_scale_f;
-
-		mapping.y += (m_dimensions.y - destination.y) / m_scale_f;
-		destination.y += m_dimensions.y - destination.y;
-	}
-
-	/* The rectangle is below */
-	if (destination.y + destination.h > m_dimensions.y + m_dimensions.h)
-	{
-		if (destination.y > m_dimensions.y + m_dimensions.h)
-			return false;
-		mapping.h -= (destination.y + destination.h -
-			(m_dimensions.y + m_dimensions.h)) / m_scale_f;
-		destination.h = mapping.h * m_scale_f;
-	}
-
-	return !SDL_RectEmpty(&mapping);
 }
 
 bool CoordinateSystem::handle_events(SDL_Event * e)
