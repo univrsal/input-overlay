@@ -11,13 +11,13 @@
 */
 bool CoordinateSystem::crop_rect(SDL_Rect & mapping, SDL_Rect& destination)
 {
-	destination.x = destination.x * m_scale_f + m_origin.x;
-	destination.y = destination.y * m_scale_f + m_origin.y;
-
 	SDL_Rect intersect;
 	
 	if (SDL_IntersectRect(&destination, &m_system_area, &intersect))
 	{
+		if (intersect.w == destination.w && intersect.h == destination.h)
+			return true; /* No cropping needed */
+
 		mapping.x += (intersect.x - destination.x) / m_scale_f;
 		mapping.y += (intersect.y - destination.y) / m_scale_f;
 		mapping.w = intersect.w / m_scale_f;
@@ -141,4 +141,11 @@ void CoordinateSystem::draw_foreground(void)
 void CoordinateSystem::draw_background(void)
 {
 	
+}
+
+void CoordinateSystem::set_dimensions(SDL_Rect r)
+{
+	m_dimensions = r;
+	m_system_area = { m_origin_anchor.x, m_origin_anchor.y,
+		m_dimensions.w - m_origin_anchor.y, m_dimensions.h - m_origin_anchor.y };
 }

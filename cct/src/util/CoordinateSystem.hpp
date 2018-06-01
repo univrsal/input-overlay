@@ -45,10 +45,12 @@ public:
 
 	void draw_background(void);
 
-	/* X position of Origin */
+	void set_dimensions(SDL_Rect r);
+
+	/* X position of Origin anchor */
 	int get_origin_left(void) { return m_dimensions.x + m_origin_anchor.x; }
 
-	/* Y position of Origin */
+	/* Y position of Origin anchor */
 	int get_origin_top(void) { return m_dimensions.y + m_origin_anchor.y; }
 
 	SDL_Point * get_origin(void) { return &m_origin; }

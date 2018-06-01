@@ -67,13 +67,12 @@ void Config::handle_events(SDL_Event * e)
 					m_selected = iterator->get();
 					m_dragging_element = true;
 					m_drag_element_offset = { e->button.x - (m_selected->get_x() * m_cs.get_scale())
-					- m_cs.get_origin_left(), e->button.y - (m_selected->get_y() * m_cs.get_scale())
-					- m_cs.get_origin_top() };
+					+ m_cs.get_origin()->x, e->button.y - (m_selected->get_y() * m_cs.get_scale())
+					+ m_cs.get_origin()->y };
 
 					m_settings->set_dimensions(m_selected->get_w(), m_selected->get_h());
 					m_settings->set_position(m_selected->get_x(), m_selected->get_y());
 					m_settings->set_uv(m_selected->get_u(), m_selected->get_v());
-
 					break;
 				}
 			}
@@ -91,10 +90,10 @@ void Config::handle_events(SDL_Event * e)
 		if (m_dragging_element && m_selected)
 		{
 			int x, y;
-			x = SDL_max(e->button.x - m_drag_element_offset.x -
-				(m_cs.get_origin()->x / m_cs.get_scale()), 0);
-			y = SDL_max(e->button.y - m_drag_element_offset.y -
-				(m_cs.get_origin()->y / m_cs.get_scale()), 0);
+			x = SDL_max((e->button.x - m_drag_element_offset.x +
+				m_cs.get_origin()->x) / m_cs.get_scale(), 0);
+			y = SDL_max((e->button.y - m_drag_element_offset.y +
+				m_cs.get_origin()->y) / m_cs.get_scale(), 0);
 
 			m_selected->set_pos(x, y);
 			m_settings->set_position(x, y);
@@ -123,5 +122,13 @@ void Config::handle_events(SDL_Event * e)
 
 		m_selected->set_pos(x, y);
 		m_settings->set_position(x, y);
+	}
+	else if (e->type == SDL_WINDOWEVENT)
+	{
+		if (e->window.event == SDL_WINDOWEVENT_SIZE_CHANGED)
+		{
+			SDL_Point * w = m_helper->util_window_size();
+			m_cs.set_dimensions(SDL_Rect{ 0, 0, w->x, w->y });
+		}
 	}
 }

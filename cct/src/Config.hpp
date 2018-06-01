@@ -57,8 +57,8 @@ public:
 
 	void draw(Texture * atlas, CoordinateSystem * cs, bool selected)
 	{
-		SDL_Rect temp = { (m_pos.x + cs->get_origin_x()) * cs->get_scale(),
-			(m_pos.y + cs->get_origin_y()) * cs->get_scale(),
+		SDL_Rect temp = { m_pos.x * cs->get_scale() + cs->get_origin()->x,
+			m_pos.y * cs->get_scale() + +cs->get_origin()->y,
 			m_texture_mapping.w * cs->get_scale(),
 			m_texture_mapping.h * cs->get_scale()};
 		SDL_Rect temp_mapping = m_texture_mapping;
