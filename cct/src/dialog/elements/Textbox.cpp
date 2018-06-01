@@ -125,8 +125,8 @@ bool Textbox::handle_events(SDL_Event * event)
 				{
 					m_text.pop_back();
 					set_text(m_text);
-					was_handled = true;
 				}
+				was_handled = true;
 			}
 			/* IME input accepted -> clear composition */
 			else if (event->key.keysym.sym == SDLK_RETURN)
@@ -138,12 +138,12 @@ bool Textbox::handle_events(SDL_Event * event)
 		/* Added IME input to text */
 		else if (event->type == SDL_TEXTINPUT)
 		{
-			std::string temp = std::string(event->text.text);
+			std::string temp = m_text + std::string(event->text.text);
 			if (!(m_flags & TEXTBOX_NUMERIC) || is_numeric(temp))
 			{
-				append_text(temp);
-				was_handled = true;
+				set_text(temp);
 			}
+			was_handled = true;
 		}
 		/* IME composition changed */
 		else if (event->type == SDL_TEXTEDITING)
@@ -176,7 +176,7 @@ void Textbox::set_text(std::string s)
 
 void Textbox::append_text(std::string s)
 {
-	set_text(m_text.append(s));
+	set_text(m_text + s);
 }
 
 const std::string * Textbox::get_text()
