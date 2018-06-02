@@ -57,6 +57,9 @@ bool Texture::load(const char *path, SDL_Renderer *renderer)
 
 	m_dimensions.w = surface->w;
 	m_dimensions.h = surface->h;
+	m_dimensions.x = 0;
+	m_dimensions.y = 0;
+
 	SDL_FreeSurface(surface);
 	return true;
 }
@@ -66,6 +69,11 @@ void Texture::free()
 	if (m_sdl_texture != NULL)
 		SDL_DestroyTexture(m_sdl_texture);
 	m_sdl_texture = NULL;
+}
+
+SDL_Rect Texture::get_dim(void)
+{
+	return m_dimensions;
 }
 
 void Texture::draw(SDL_Renderer *renderer)

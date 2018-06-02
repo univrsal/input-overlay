@@ -29,6 +29,8 @@ enum ElementType
 	TEXTURE,
 	BUTTON_KEYBOARD,
 	BUTTON_GAMEPAD,
+	BUTTON_MOUSE,
+	TRIGGER_GAMEPAD,
 	MOUSE_MOVEMENT,
 	ANALOG_STICK,
 	TEXT,
@@ -119,6 +121,8 @@ public:
 	const std::string * m_texture_path;
 	const std::string * m_config_path;
 	std::vector<std::unique_ptr<Element>> m_elements;
+
+	Texture * get_texture(void);
 private:
 	CoordinateSystem m_cs;
 

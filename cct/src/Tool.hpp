@@ -12,6 +12,7 @@
 #include "dialog/DialogElementSettings.hpp"
 #include "dialog/DialogHelp.hpp"
 #include "dialog/DialogNewElement.hpp"
+#include "util/Texture.hpp"
 #include "Config.hpp"
 #include <SDL.h>
 
@@ -21,6 +22,7 @@ class Config;
 class DialogElementSettings;
 class DialogHelp;
 class DialogNewElement;
+class Texture;
 
 enum ToolState
 {
@@ -48,6 +50,8 @@ public:
 	Element * get_selected(void);
 
 	void action_performed(uint8_t type);
+
+	Texture * get_atlas(void);
 private:
 	void close_toplevel(void);
 	void handle_input();

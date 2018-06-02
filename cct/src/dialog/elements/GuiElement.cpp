@@ -93,6 +93,16 @@ int GuiElement::get_bottom()
 	return get_top() + m_dimensions.h;
 }
 
+int GuiElement::get_width(void)
+{
+    return m_dimensions.w;
+}
+
+int GuiElement::get_height(void)
+{
+	return m_dimensions.h;
+}
+
 void GuiElement::draw_foreground(void)
 {
 	if (DEBUG_DRAW_OUTLINE)

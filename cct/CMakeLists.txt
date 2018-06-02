@@ -25,6 +25,8 @@ set(io-cct_SOURCES
 	src/dialog/elements/GuiElement.hpp
 	src/dialog/elements/Label.cpp
 	src/dialog/elements/Label.hpp
+	src/dialog/elements/AtlasSelector.cpp
+	src/dialog/elements/AtlasSelector.hpp
 	src/Tool.cpp
 	src/Tool.hpp
 	src/dialog/DialogSetup.cpp

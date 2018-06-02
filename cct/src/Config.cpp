@@ -142,3 +142,8 @@ void Config::handle_events(SDL_Event * e)
 		}
 	}
 }
+
+Texture * Config::get_texture(void)
+{
+    return m_atlas;
+}

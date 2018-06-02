@@ -99,10 +99,15 @@ void Tool::action_performed(uint8_t type)
 		case TOOL_ACTION_NEW_ELEMENT_OPEN:
 			close_toplevel();
 			m_state = IN_NEW_ELEMENT;
-			m_toplevel = new DialogNewElement(m_helper, SDL_Point { 1200, 700 }, "New element", this);
+			m_toplevel = new DialogNewElement(m_helper, SDL_Point { 1200, 700 }, "New element", this, TEXTURE);
 			m_toplevel->init();
 		break;
 	}
+}
+
+Texture * Tool::get_atlas(void)
+{
+    return m_config->get_texture();
 }
 
 void Tool::close_toplevel(void)

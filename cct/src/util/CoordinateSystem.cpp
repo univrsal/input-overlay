@@ -3,7 +3,7 @@
 /*
 	This crops any rectangle to fit
 	inside the coordinate boundaries
-	it'll also crop the textuer coutout
+	it'll also crop the texture coutout
 	accordingly.
 	returns true, if the cropping succeeded
 	returns false, if the rectangle is out of
@@ -18,10 +18,14 @@ bool CoordinateSystem::crop_rect(SDL_Rect & mapping, SDL_Rect& destination)
 		if (intersect.w == destination.w && intersect.h == destination.h)
 			return true; /* No cropping needed */
 
-		mapping.x += (intersect.x - destination.x) / m_scale_f;
-		mapping.y += (intersect.y - destination.y) / m_scale_f;
-		mapping.w = intersect.w / m_scale_f;
-		mapping.h = intersect.h / m_scale_f;
+		if (!SDL_RectEmpty(&mapping))
+		{
+			mapping.x += (intersect.x - destination.x) / m_scale_f;
+			mapping.y += (intersect.y - destination.y) / m_scale_f;
+			mapping.w = intersect.w / m_scale_f;
+			mapping.h = intersect.h / m_scale_f;
+		}
+		
 		destination = intersect;
 		return true;
 	}
@@ -178,4 +182,9 @@ void CoordinateSystem::set_pos(int x, int y)
 	m_system_area = { get_origin_left(), get_origin_top(),
 		m_dimensions.w - m_origin_anchor.x, m_dimensions.h - m_origin_anchor.y };
 
+}
+
+int CoordinateSystem::adjust(int i)
+{
+	return i / m_scale_f * m_scale_f;
 }

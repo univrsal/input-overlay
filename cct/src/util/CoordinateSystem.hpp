@@ -51,6 +51,9 @@ public:
 
 	void set_pos(int x, int y);
 
+	/* Adjusts to pixel raster */
+	int adjust(int i);
+
 	/* X position of Origin anchor */
 	int get_origin_left(void) { return m_dimensions.x + m_origin_anchor.x; }
 
@@ -66,6 +69,9 @@ public:
 
 	int get_bottom(void) { return m_dimensions.y + m_dimensions.h; }
 	int get_right(void) { return m_dimensions.x + m_dimensions.w; }
+
+	int get_width(void) { return m_dimensions.w; }
+	int get_height(void) { return m_dimensions.h; }
 
 	int get_scale(void) { return m_scale_f; }
 	SDL_Rect get_dimensions(void) { return m_dimensions; }

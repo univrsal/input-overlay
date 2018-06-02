@@ -56,6 +56,9 @@ public:
 
 	int get_bottom(void);
 
+	int get_width(void);
+
+	int get_height(void);
 protected:
 	Dialog * m_parent_dialog;
 	SDL_Rect m_dimensions; /* Width/Height and absolute position */

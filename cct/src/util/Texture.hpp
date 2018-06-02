@@ -26,6 +26,8 @@ public:
 
 	void free();
 
+	SDL_Rect get_dim(void);
+
 	void draw(SDL_Renderer *renderer);
 
 	void draw_tiling(SDL_Renderer *renderer, const SDL_Rect *target, int scale_f);
