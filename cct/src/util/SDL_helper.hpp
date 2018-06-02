@@ -19,6 +19,10 @@
 #define WINDOW_WIDTH 1280
 #define WINDOW_HEIGHT 720
 
+#define UTIL_MAX(a,b)               (((a) > (b)) ? (a) : (b))
+#define UTIL_MIN(a,b)               (((a) < (b)) ? (a) : (b))
+#define UTIL_CLAMP(lower, x, upper) (UTIL_MIN(upper, UTIL_MAX(x, lower)))
+
 class Palette;
 
 class FontHelper;

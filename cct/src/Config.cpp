@@ -1,7 +1,7 @@
 #include "Config.hpp"
 
-#define X_AXIS 90
-#define Y_AXIS 70
+#define X_AXIS 100
+#define Y_AXIS 100
 
 Config::Config(const std::string * texture, const std::string * config, SDL_helper * h, DialogElementSettings * s)
 {
@@ -32,6 +32,7 @@ Config::~Config()
 
 void Config::draw_elements(void)
 {
+	m_cs.draw_background();
 	/* Draw elements */
 	std::vector<std::unique_ptr<Element>>::iterator iterator;
 	for (iterator = m_elements.begin(); iterator != m_elements.end(); iterator++)
@@ -43,7 +44,7 @@ void Config::draw_elements(void)
 	}
 
 	/* Draw coordinate system */
-	m_cs.draw_background();
+
 	m_cs.draw_foreground();
 }
 

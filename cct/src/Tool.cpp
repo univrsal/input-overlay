@@ -99,7 +99,7 @@ void Tool::action_performed(uint8_t type)
 		case TOOL_ACTION_NEW_ELEMENT_OPEN:
 			close_toplevel();
 			m_state = IN_NEW_ELEMENT;
-			m_toplevel = new DialogNewElement(m_helper, SDL_Point { 1200, 720 }, "New element", this);
+			m_toplevel = new DialogNewElement(m_helper, SDL_Point { 1200, 700 }, "New element", this);
 			m_toplevel->init();
 		break;
 	}
@@ -144,7 +144,14 @@ void Tool::handle_input()
 			break;
 		case IN_NEW_ELEMENT:
 			if (m_toplevel)
+			{
 				m_toplevel->handle_events(&m_event);
+				if (m_event.type == SDL_WINDOWEVENT
+					&& m_event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED)
+				{
+					m_config->handle_events(&m_event); /* Still need it to resize*/
+				}
+			}
 			break;
 		}
 	}

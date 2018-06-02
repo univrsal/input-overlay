@@ -11,8 +11,9 @@ void DialogNewElement::close(void)
 void DialogNewElement::init()
 {
 	Dialog::init();
-	SDL_Rect temp = { get_left(), get_top() + 30, m_dimensions.w - 16, m_dimensions.h - 80 };
-	m_cs = new CoordinateSystem(SDL_Point { 8, 40 }, temp, m_helper);
+	SDL_Rect temp = { get_left() + 8, get_top() + 30, m_dimensions.w - 120, m_dimensions.h - 46 };
+	m_cs = new CoordinateSystem(SDL_Point { 90, 90 }, temp, m_helper);
+	m_cs->enable_border();
 	set_flags(DIALOG_CENTERED | DIALOG_TOP_MOST);
 }
 
@@ -38,6 +39,15 @@ bool DialogNewElement::handle_events(SDL_Event * event)
 	bool was_handled = false;
 	if (Dialog::handle_events(event))
 		was_handled = true;
+
+	if (event->type == SDL_WINDOWEVENT)
+	{
+		if (event->window.event == SDL_WINDOWEVENT_SIZE_CHANGED)
+		{
+			m_cs->set_pos(get_left() + 8, get_top() + 30);
+		}
+	}
+
 	if (m_cs->handle_events(event))
 		was_handled = true;
 	return was_handled;
