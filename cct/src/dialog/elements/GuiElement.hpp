@@ -30,6 +30,12 @@ public:
 
 	virtual void resize(void);
 
+	virtual bool is_mouse_over(const int &x, const int &y);
+
+	virtual void set_pos(const int &x, const int &y);
+
+	virtual uint8_t get_cursor(void);
+
 	Dialog * get_parent(void);
 
 	SDL_helper * get_helper();
@@ -41,10 +47,6 @@ public:
 	int8_t get_id(void);
 
 	void init(Dialog *parent, SDL_Rect dim, int8_t id);
-
-	virtual bool is_mouse_over(const int &x, const int &y);
-
-	virtual void set_pos(const int &x, const int &y);
 
 	void set_flags(uint8_t flags);
 

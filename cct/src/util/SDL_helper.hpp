@@ -23,6 +23,13 @@
 #define UTIL_MIN(a,b)               (((a) < (b)) ? (a) : (b))
 #define UTIL_CLAMP(lower, x, upper) (UTIL_MIN(upper, UTIL_MAX(x, lower)))
 
+#define CURSOR_ARROW	0
+#define CURSOR_SIZE_H	1
+#define CURSOR_SIZE_V	2
+#define CURSOR_SIZE_ALL 3
+#define CURSOR_I_BEAM	4
+#define CURSOR_SPECIAL	5 /* The element will handle the cursor */
+
 class Palette;
 
 class FontHelper;
@@ -88,6 +95,8 @@ class SDL_helper
 			return m_palette;
 		}
 
+		void set_cursor(uint8_t type);
+
 		bool is_ctrl_down(void);
 
 		void exit_loop(void);
@@ -97,8 +106,8 @@ class SDL_helper
 		SDL_Point m_window_size;
 		SDL_Renderer * m_sdl_renderer;
 		SDL_Window * m_sdl_window;
-		TTF_Font *m_default_font;
-		TTF_Font *m_utf8_font;
+		TTF_Font * m_default_font;
+		TTF_Font * m_utf8_font;
 
 		bool m_init_success;
 
@@ -109,4 +118,11 @@ class SDL_helper
 
 		Palette *m_palette;
 		FontHelper *m_font_helper;
+
+		bool m_have_cursors = false;
+		SDL_Cursor * m_size_h = nullptr;
+		SDL_Cursor * m_size_v = nullptr;
+		SDL_Cursor * m_move = nullptr;
+		SDL_Cursor * m_i_beam = nullptr;
+		SDL_Cursor * m_arrow = nullptr;
 };

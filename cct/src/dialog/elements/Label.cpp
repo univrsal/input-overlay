@@ -52,15 +52,15 @@ void Label::draw_background(void)
 	}
 }
 
-bool Label::handle_events(SDL_Event *event)
-{
-	return false;
-}
-
 void Label::draw_foreground(void)
 {
 	GuiElement::draw_foreground();
 
+}
+
+bool Label::handle_events(SDL_Event * event)
+{
+	return false;
 }
 
 void Label::set_text(std::string text)

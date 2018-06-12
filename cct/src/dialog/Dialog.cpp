@@ -32,6 +32,23 @@ Dialog::~Dialog()
 void Dialog::init()
 {
 	add(new Label(0, 8, 6, m_title.c_str(), this));
+
+	SDL_Point * temp = m_helper->util_window_size();
+
+	if (m_flags & DIALOG_FLUID)
+	{
+		m_dimensions.w = temp->x - FLUID_BORDER;
+		m_dimensions.h = temp->y - FLUID_BORDER;
+		m_dimensions.x = temp->x / 2 - m_dimensions.w / 2;
+		m_dimensions.y = temp->y / 2 - m_dimensions.h / 2;
+	}
+
+	if (m_flags & DIALOG_CENTERED)
+	{
+		m_dimensions.x = temp->x / 2 - m_dimensions.w / 2;
+		m_dimensions.y = temp->y / 2 - m_dimensions.h / 2;
+	}
+	m_title_bar = { m_dimensions.x + 5, m_dimensions.y + 5, m_dimensions.w - 10, 20 };
 }
 
 void Dialog::draw_background(void)
@@ -144,16 +161,26 @@ bool Dialog::handle_events(SDL_Event * event)
 				m_dimensions.y = temp->y - m_dimensions.h;
 			}
 
+			if (m_flags & DIALOG_FLUID)
+			{
+				m_dimensions.w = temp->x - FLUID_BORDER;
+				m_dimensions.h = temp->y - FLUID_BORDER;
+				m_dimensions.x = temp->x / 2 - m_dimensions.w / 2;
+				m_dimensions.y = temp->y / 2 - m_dimensions.h / 2;
+			}
+
 			if (m_flags & DIALOG_CENTERED)
 			{
 				m_dimensions.x = temp->x / 2 - m_dimensions.w / 2;
 				m_dimensions.y = temp->y / 2 - m_dimensions.h / 2;
 			}
+
 			m_title_bar = { m_dimensions.x + 5, m_dimensions.y + 5, m_dimensions.w - 10, 20 };
 		}
 	}
 
 	std::vector<std::unique_ptr<GuiElement>>::iterator iterator;
+	bool cursor_handled = false;
 
 	for (iterator = m_screen_elements.begin(); iterator != m_screen_elements.end(); iterator++)
 	{
@@ -161,8 +188,16 @@ bool Dialog::handle_events(SDL_Event * event)
 		{
 			was_handled = true;
 		}
+
+		if (!cursor_handled && m_helper->util_is_in_rect(iterator->get()->get_dimensions(), event->button.x, event->button.y))
+		{
+			cursor_handled = true;
+			m_helper->set_cursor(iterator->get()->get_cursor());
+		}
 	}
 
+	if (!cursor_handled)
+		m_helper->set_cursor(CURSOR_ARROW);
 	return was_handled;
 }
 
@@ -190,7 +225,7 @@ void Dialog::add(GuiElement * e)
 	m_screen_elements.emplace_back(e);
 }
 
-void Dialog::set_flags(uint8_t flags)
+void Dialog::set_flags(uint16_t flags)
 {
 	m_flags = flags;
 }

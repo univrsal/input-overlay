@@ -32,7 +32,8 @@ SDL_helper::~SDL_helper()
 
 bool SDL_helper::init()
 {
-	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+	if (SDL_Init(SDL_INIT_VIDEO) < 0)
+	{
 		printf("Initialization of SDL failed! Error: %s\n", SDL_GetError());
 		m_init_success = false;
 	}
@@ -41,7 +42,8 @@ bool SDL_helper::init()
 		WINDOW_WIDTH, WINDOW_HEIGHT,
 		SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
 
-	if (m_sdl_window == NULL) {
+	if (m_sdl_window == NULL)
+	{
 		printf("Creating SDL Window failed! Error: %s\n", SDL_GetError());
 		m_init_success = false;
 	}
@@ -51,7 +53,8 @@ bool SDL_helper::init()
 		m_sdl_renderer = SDL_CreateRenderer(m_sdl_window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 	}
 
-	if (m_sdl_renderer == NULL) {
+	if (m_sdl_renderer == NULL)
+	{
 		printf("Creating SDL Renderer failed! Error: %s\n", SDL_GetError());
 		m_init_success = false;
 	}
@@ -61,11 +64,13 @@ bool SDL_helper::init()
 		SDL_GetWindowSize(m_sdl_window, &m_window_size.x, &m_window_size.y);
 	}
 
-	if (TTF_Init() == -1) {
+	if (TTF_Init() == -1)
+	{
 		printf("Initializing SDL_ttf failed! Error: %s\n", TTF_GetError());
 		m_init_success = false;
 	}
-	else {
+	else
+	{
 
 		m_default_font = TTF_OpenFont("./roboto-regular.ttf", FONT_DEFAULT);
 		m_utf8_font = TTF_OpenFont("./antique-maru.ttf", FONT_DEFAULT);
@@ -79,6 +84,15 @@ bool SDL_helper::init()
 		{
 			m_font_helper = new FontHelper(this);
 		}
+
+		/* Cursors */
+		m_size_h = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZEWE);
+		m_size_v = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZENS);
+		m_move = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZEALL);
+		m_i_beam = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_IBEAM);
+		m_arrow = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_ARROW);
+
+		m_have_cursors = m_size_h && m_size_v && m_move && m_i_beam && m_arrow;
 	}
 
 	m_palette = new Palette();
@@ -101,6 +115,28 @@ void SDL_helper::close()
 
 	TTF_Quit();
 	SDL_Quit();
+
+
+	if (m_size_v)
+		SDL_FreeCursor(m_size_v);
+
+	if (m_size_h)
+		SDL_FreeCursor(m_size_h);
+
+	if (m_move)
+		SDL_FreeCursor(m_move);
+
+	if (m_i_beam)
+		SDL_FreeCursor(m_i_beam);
+
+	if (m_arrow)
+		SDL_FreeCursor(m_arrow);
+
+	m_size_v = nullptr;
+	m_size_h = nullptr;
+	m_move = nullptr;
+	m_i_beam = nullptr;
+	m_arrow = nullptr;
 }
 
 void SDL_helper::clear()
@@ -265,6 +301,31 @@ bool SDL_helper::util_check_texture_path(const char * path)
 	bool flag = temp.load(path, m_sdl_renderer);
 	temp.free();
 	return flag;
+}
+
+void SDL_helper::set_cursor(uint8_t type)
+{
+	if (m_have_cursors)
+	{
+		switch (type)
+		{
+			case CURSOR_ARROW:
+				SDL_SetCursor(m_arrow);
+			break;
+			case CURSOR_I_BEAM:
+				SDL_SetCursor(m_i_beam);
+				break;
+			case CURSOR_SIZE_ALL:
+				SDL_SetCursor(m_move);
+				break;
+			case CURSOR_SIZE_H:
+				SDL_SetCursor(m_size_h);
+				break;
+			case CURSOR_SIZE_V:
+				SDL_SetCursor(m_size_v);
+				break;
+		}
+	}
 }
 
 bool SDL_helper::is_ctrl_down(void)

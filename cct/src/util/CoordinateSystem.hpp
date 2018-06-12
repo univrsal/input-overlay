@@ -76,7 +76,7 @@ public:
 	int get_scale(void) { return m_scale_f; }
 	SDL_Rect get_dimensions(void) { return m_dimensions; }
 	SDL_helper * get_helper(void) { return m_helper; }
-
+	const SDL_Rect * get_system_area(void) { return & m_system_area; }
 private:
 	uint8_t m_scale_f; /* Multiplier for zooming */
 	SDL_Rect m_dimensions; /* Complete size of the system */

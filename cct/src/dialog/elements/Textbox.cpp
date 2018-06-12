@@ -179,6 +179,11 @@ void Textbox::append_text(std::string s)
 	set_text(m_text + s);
 }
 
+uint8_t Textbox::get_cursor(void)
+{
+	return CURSOR_I_BEAM;
+}
+
 const std::string * Textbox::get_text()
 {
 	if (m_flags & TEXTBOX_NUMERIC && m_text.empty())

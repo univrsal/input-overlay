@@ -18,6 +18,7 @@ void AtlasSelector::close(void)
 	if (m_cs)
 		delete m_cs;
 	m_cs = nullptr;
+
 }
 
 void AtlasSelector::init(Dialog *parent, SDL_Rect dim, int8_t id)
@@ -30,9 +31,13 @@ void AtlasSelector::init(Dialog *parent, SDL_Rect dim, int8_t id)
 void AtlasSelector::draw_foreground(void)
 {
 	m_cs->draw_foreground();
-	SDL_Rect temp = m_selection;
-	m_cs->crop_rect(SDL_Rect {}, temp);
-	get_helper()->util_draw_rect(&temp, get_helper()->palette()->red());
+
+	if (!SDL_RectEmpty(&m_selection))
+	{
+		SDL_Rect temp = m_selection;
+		m_cs->crop_rect(SDL_Rect{}, temp);
+		get_helper()->util_draw_rect(&temp, get_helper()->palette()->red());
+	}
 }
 
 void AtlasSelector::draw_background(void)
@@ -46,6 +51,7 @@ void AtlasSelector::draw_background(void)
 	temp.w *= m_cs->get_scale();
 	temp.h *= m_cs->get_scale();
 
+	
 	m_cs->crop_rect(temp_mapping, temp);
 
 	m_atlas->draw(get_helper()->renderer(), &temp, &temp_mapping);
@@ -62,16 +68,20 @@ bool AtlasSelector::handle_events(SDL_Event * event)
 	{
 		if (event->button.button == SDL_BUTTON_LEFT)
 		{
-			if (SDL_RectEmpty(&m_selection))
+			if (get_helper()->util_is_in_rect(m_cs->get_system_area(),
+				event->button.x, event->button.y))
 			{
-				m_selection_a.x = event->button.x;
-				m_selection_a.y = event->button.y;
-				m_selecting = true;
-				was_handled = true;
-			}
-			else
-			{
+				if (SDL_RectEmpty(&m_selection))
+				{
+					m_selection_a.x = event->button.x;
+					m_selection_a.y = event->button.y;
+					m_selecting = true;
+					was_handled = true;
+				}
+				else
+				{
 
+				}
 			}
 		}
 	}
@@ -96,4 +106,10 @@ bool AtlasSelector::handle_events(SDL_Event * event)
 SDL_Rect * AtlasSelector::get_selection()
 {
 	return &m_selection;
+}
+
+void AtlasSelector::resize()
+{
+	m_cs->set_pos(m_dimensions.x, m_dimensions.y);
+	m_cs->set_dimensions(m_dimensions);
 }

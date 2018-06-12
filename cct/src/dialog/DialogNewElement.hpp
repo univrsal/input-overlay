@@ -66,4 +66,7 @@ private:
 	Textbox * m_y = nullptr;
 
 	Textbox * m_keycode = nullptr;
+
+	Button * m_ok = nullptr;
+	Button * m_cancel = nullptr;
 };

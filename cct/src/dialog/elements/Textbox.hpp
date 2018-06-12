@@ -31,11 +31,13 @@ public:
 
 	void draw_foreground(void);
 
-	bool handle_events(SDL_Event *event);
+	bool handle_events(SDL_Event * event);
 
 	void set_text(std::string s);
 
 	void append_text(std::string s);
+
+	uint8_t get_cursor(void);
 
 	const std::string * get_text();
 

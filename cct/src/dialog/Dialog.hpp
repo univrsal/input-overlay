@@ -18,6 +18,9 @@
 #define DIALOG_CENTERED  1 << 1 /* Always center on window resize */
 #define DIALOG_TEXTINPUT 1 << 2 /* Hint SDL to read text input */
 #define DIALOG_TOP_MOST	 1 << 3 /* Draws background tint */
+#define DIALOG_FLUID	 1 << 4 /* Dialog adapts to window size. Includes DIALOG_CENTERED */
+
+#define FLUID_BORDER	 32
 
 #define ACTION_FOCUSED -1
 #define ACTION_UNFOCUSED -2
@@ -50,7 +53,7 @@ public:
 
 	void add(GuiElement * e);
 
-	void set_flags(uint8_t flags);
+	void set_flags(uint16_t flags);
 
 	const SDL_Point position(void);
 
@@ -69,7 +72,7 @@ protected:
 
 	int m_offset_x, m_offset_y;
 	bool m_is_dragging = false;
-	uint8_t m_flags = 0x0000;
+	uint16_t m_flags = 0x00000000;
 
 	SDL_helper * m_helper;
 	SDL_Rect m_dimensions;

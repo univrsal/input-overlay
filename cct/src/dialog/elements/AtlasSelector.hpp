@@ -39,10 +39,14 @@ public:
 
 	SDL_Rect * get_selection();
 private:
+	void resize();
+
 	SDL_Rect m_selection = { 0, 0, 0, 0 };
 	SDL_Point m_selection_a;
 
 	bool m_selecting = false;
 	Texture * m_atlas;
 	CoordinateSystem * m_cs;
+
+	bool m_have_cursors = false;
 };

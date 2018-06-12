@@ -23,7 +23,7 @@ void GuiElement::close(void)
 
 void GuiElement::resize(void)
 {
-	// NO-OP
+
 }
 
 Dialog *GuiElement::get_parent()
@@ -52,8 +52,10 @@ void GuiElement::init(Dialog *parent, SDL_Rect dim, int8_t id)
 {
 	m_parent_dialog = parent;
 	m_dimensions = dim;
+
 	m_position.x = dim.x;
 	m_position.y = dim.y;
+	
 	m_element_id = id;
 }
 
@@ -66,6 +68,11 @@ void GuiElement::set_pos(const int& x, const int& y)
 {
 	m_dimensions.x = x;
 	m_dimensions.y = y;
+}
+
+uint8_t GuiElement::get_cursor(void)
+{
+	return CURSOR_ARROW;
 }
 
 void GuiElement::set_flags(uint8_t flags)
