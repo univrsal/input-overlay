@@ -230,6 +230,7 @@ typedef void (*dispatcher_t)(uiohook_event *const);
 #define VC_SCROLL_LOCK							0x0046
 #define VC_PAUSE								0x0E45
 
+#define VC_LESSER_GREATER						0x0E46 // '<', '>', '|' on qwertz layout
 
 // Begin Edit Key Zone
 #define VC_INSERT								0x0E52
