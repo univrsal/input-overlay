@@ -62,11 +62,14 @@ private:
 	Textbox * m_h = nullptr;
 	Textbox * m_u = nullptr;
 	Textbox * m_v = nullptr;
-	Textbox * m_x = nullptr;
-	Textbox * m_y = nullptr;
 
 	Textbox * m_keycode = nullptr;
 
 	Button * m_ok = nullptr;
 	Button * m_cancel = nullptr;
+
+	/* UV mappings */
+	SDL_Rect m_selection_1;
+	SDL_Rect m_selection_2;
+
 };

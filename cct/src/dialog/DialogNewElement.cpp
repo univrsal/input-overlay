@@ -15,6 +15,7 @@ void DialogNewElement::init()
 
 		add(m_selector = new AtlasSelector(m_id++, get_left() + 270,
 			get_top() + 30, m_dimensions.w - 278, m_dimensions.h - 38, m_tool->get_atlas(), this));
+		m_selector->set_selection(&m_selection_1);
 		add_selection_elements();
 		add_keycode_elements();
 		break;
@@ -85,11 +86,17 @@ bool DialogNewElement::handle_events(SDL_Event * event)
 				SDL_Rect t = { get_left() + 270,
 					get_top() + 30, m_dimensions.w - 278, m_dimensions.h - 38 };
 				m_selector->set_dim(t);
-								
 			}
 		}
+		m_h->set_text(std::to_string(m_selection_1.h));
+		m_w->set_text(std::to_string(m_selection_1.w));
+		m_u->set_text(std::to_string(m_selection_1.x));
+		m_v->set_text(std::to_string(m_selection_1.y));
 		break;
 	}
+
+	m_ok->set_pos(8, m_dimensions.h - 32);
+	m_cancel->set_pos(124, m_dimensions.h - 32);
 	return was_handled;
 }
 
@@ -109,12 +116,6 @@ void DialogNewElement::add_selection_elements(void)
 	add(m_h = new Textbox(m_id++, 8 + panel_w / 4 * 3 + 4, m_element_y, panel_w / 4, 20, "0", this));
 
 	m_element_y += 30;
-	add(new Label(m_id++, 8, m_element_y, "X:", this));
-	add(new Label(m_id++, 16 + panel_w / 2, m_element_y, "Y:", this));
-	add(m_x = new Textbox(m_id++, 8 + panel_w / 4 + 4, m_element_y, panel_w / 4, 20, "0", this));
-	add(m_y = new Textbox(m_id++, 8 + panel_w / 4 * 3 + 4, m_element_y, panel_w / 4, 20, "0", this));
-
-	m_element_y += 30;
 	add(new Label(m_id++, 8, m_element_y, "U:", this));
 	add(new Label(m_id++, 16 + panel_w / 2, m_element_y, "V:", this));
 	add(m_u = new Textbox(m_id++, 8 + panel_w / 4 + 4, m_element_y, panel_w / 4, 20, "0", this));
@@ -122,8 +123,6 @@ void DialogNewElement::add_selection_elements(void)
 
 	m_w->set_flags(TEXTBOX_NUMERIC); m_w->set_cutoff(20);
 	m_h->set_flags(TEXTBOX_NUMERIC); m_h->set_cutoff(20);
-	m_x->set_flags(TEXTBOX_NUMERIC); m_x->set_cutoff(20);
-	m_y->set_flags(TEXTBOX_NUMERIC); m_y->set_cutoff(20);
 	m_u->set_flags(TEXTBOX_NUMERIC); m_u->set_cutoff(20);
 	m_v->set_flags(TEXTBOX_NUMERIC); m_v->set_cutoff(20);
 

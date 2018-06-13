@@ -14,13 +14,6 @@
 #include "GuiElement.hpp"
 #include "../Dialog.hpp"
 
-#define SIZE_LEFT 0
-#define SIZE_RIGHT 1
-#define SIZE_TOP 2
-#define SIZE_BOTTOM 3
-#define SIZE_MOVE 4
-#define SIZE_NONE 5
-
 class SDL_helper;
 
 class CoordinateSystem;
@@ -44,21 +37,12 @@ public:
 
 	bool handle_events(SDL_Event * event);
 
-	SDL_Rect * get_selection();
-
 	uint8_t get_cursor(void);
+
+	void set_selection(SDL_Rect * r) { m_cs->set_selection(r); }
 private:
 	void resize();
-
-	inline bool in_range(int a, int b, int range);
-	void mouse_state(SDL_Event * event);
-	uint8_t m_size_mode = SIZE_NONE;
-
-	SDL_Rect m_selection = { 0, 0, 0, 0 };
-	SDL_Point m_selection_a;
-
-	bool m_selecting = false;
-	bool m_sizing = false;
+	
 	Texture * m_atlas;
 	CoordinateSystem * m_cs;
 

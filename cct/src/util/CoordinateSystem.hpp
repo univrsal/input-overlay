@@ -10,6 +10,13 @@
 #include <SDL.h>
 #include "SDL_helper.hpp"
 
+#define SIZE_LEFT 0
+#define SIZE_RIGHT 1
+#define SIZE_TOP 2
+#define SIZE_BOTTOM 3
+#define SIZE_MOVE 4
+#define SIZE_NONE 5
+
 class SDL_helper;
 
 class CoordinateSystem
@@ -77,11 +84,27 @@ public:
 	SDL_Rect get_dimensions(void) { return m_dimensions; }
 	SDL_helper * get_helper(void) { return m_helper; }
 	const SDL_Rect * get_system_area(void) { return & m_system_area; }
+
+	void set_selection(SDL_Rect * r) { m_selection = r; }
 private:
+	void mouse_state(SDL_Event * event);
+
+	inline bool in_range(int a, int b, int range)
+	{
+		return a <= b + range && a >= b - range;
+	}
+
 	uint8_t m_scale_f; /* Multiplier for zooming */
 	SDL_Rect m_dimensions; /* Complete size of the system */
 	SDL_Rect m_system_area; /* Area minus axes and scale text */
-	
+
+	SDL_Rect * m_selection = nullptr; /* For atlas selector */
+	SDL_Point m_selection_a;
+	uint8_t m_size_mode = SIZE_NONE;
+
+	bool m_selecting = false;
+	bool m_sizing = false;
+
 	SDL_Point m_origin_anchor; /* Constant poisition of the origin*/
 	SDL_Point m_origin; /* Origin after zooming and moving */
 	SDL_Point m_drag_offset;
