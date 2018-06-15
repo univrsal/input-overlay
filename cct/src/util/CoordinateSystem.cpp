@@ -3,7 +3,7 @@
 /*
 	This crops any rectangle to fit
 	inside the coordinate boundaries
-	it'll also crop the texture coutout
+	it'll also crop the texture cutout
 	accordingly.
 	returns true, if the cropping succeeded
 	returns false, if the rectangle is out of
@@ -12,7 +12,7 @@
 bool CoordinateSystem::crop_rect(SDL_Rect & mapping, SDL_Rect& destination)
 {
 	SDL_Rect intersect;
-	
+
 	if (SDL_IntersectRect(&destination, &m_system_area, &intersect))
 	{
 		if (intersect.w == destination.w && intersect.h == destination.h)
@@ -20,10 +20,11 @@ bool CoordinateSystem::crop_rect(SDL_Rect & mapping, SDL_Rect& destination)
 
 		if (!SDL_RectEmpty(&mapping))
 		{
-			mapping.x += round((intersect.x - destination.x) / m_scale_f);
-			mapping.y += round((intersect.y - destination.y) / m_scale_f);
-			mapping.w = round(intersect.w / m_scale_f);
-			mapping.h = round(intersect.h / m_scale_f);
+			mapping.x += (int) round((intersect.x - destination.x) / m_scale_f);
+			mapping.y += (int) round((intersect.y - destination.y) / m_scale_f);
+			mapping.w = (int) round(intersect.w / m_scale_f);
+			mapping.h = (int) round(intersect.h / m_scale_f);
+			
 		}
 		
 		destination = intersect;
@@ -82,12 +83,8 @@ bool CoordinateSystem::handle_events(SDL_Event * e)
 	{
 		if (m_dragging && (e->motion.state & SDL_BUTTON_RMASK))
 		{
-			/* Align movement to grid*/
-			printf("ORIGIN LEFT: X: %i, Y: %i\n", get_origin_left(), get_origin_top());
-			printf("ORIGIN     : X: %i, Y: %i\n", e->button.x - m_drag_offset.x, e->button.y - m_drag_offset.y);
-
-			m_origin.x = adjust((SDL_min(e->button.x - m_drag_offset.x, get_origin_left())));
-			m_origin.y = adjust((SDL_min(e->button.y - m_drag_offset.y, get_origin_top())));
+			m_origin.x = SDL_min(adjust(e->button.x - m_drag_offset.x), get_origin_left());
+			m_origin.y = SDL_min(adjust(e->button.y - m_drag_offset.y), get_origin_top());
 			was_handled = true;
 		}
 
@@ -104,18 +101,18 @@ bool CoordinateSystem::handle_events(SDL_Event * e)
 			switch (m_size_mode)
 			{
 				case SIZE_RIGHT:
-					m_selection->w = round((e->button.x - m_origin.x) / m_scale_f - m_selection->x);
+					m_selection->w = UTIL_MAX(round((e->button.x - m_origin.x) / m_scale_f - m_selection->x), 4);
 					break;
 				case SIZE_BOTTOM:
-					m_selection->h = round((e->button.y - m_origin.y) / m_scale_f - m_selection->y);
+					m_selection->h = UTIL_MAX(round((e->button.y - m_origin.y) / m_scale_f - m_selection->y), 4);
 					break;
 				case SIZE_LEFT:
-					m_selection->x = round((e->button.x - m_origin.x) / m_scale_f);
-					m_selection->w = m_selection_a.x - m_selection->x;
+					m_selection->x = UTIL_MAX(round((e->button.x - m_origin.x) / m_scale_f), 0);
+					m_selection->w = UTIL_MAX(m_selection_a.x - m_selection->x, 4);
 					break;
 				case SIZE_TOP:
-					m_selection->y = round((e->button.y - m_origin.y) / m_scale_f);
-					m_selection->h = m_selection_a.y - m_selection->y;
+					m_selection->y = UTIL_MAX(round((e->button.y - m_origin.y) / m_scale_f), 0);
+					m_selection->h = UTIL_MAX(m_selection_a.y - m_selection->y, 4);
 					break;
 			}
 		}
@@ -135,8 +132,8 @@ bool CoordinateSystem::handle_events(SDL_Event * e)
 			m_scale_f = SDL_max(m_scale_f--, 1);
 		}
 
-		m_origin.x = adjust((SDL_min(m_origin.x, get_origin_left())));
-		m_origin.y = adjust((SDL_min(m_origin.y, get_origin_top())));
+		m_origin.x = SDL_min(m_origin.x, get_origin_left());
+		m_origin.y = SDL_min(m_origin.y, get_origin_top());
 		was_handled = true;
 
 		m_selecting = false;
@@ -160,7 +157,7 @@ void CoordinateSystem::draw_foreground(void)
 	int start;
 
 	/* I think this makes sense */
-	start = get_origin_left() + ((m_origin.x - get_origin_left()) % (10 * m_scale_f)) + step;
+	start = get_origin_left() + ((m_origin.x - get_origin_left()) % ((int) (10 * m_scale_f))) + step;
 	
 	/* X Axis*/
 	for (int x = start; x < get_right(); x += step)
@@ -168,7 +165,7 @@ void CoordinateSystem::draw_foreground(void)
 		bool flag = (x - m_origin.x) % 100 == 0 && (x - m_origin.x) != 0;
 		if (flag)
 		{
-			std::string tag = std::to_string((x - m_origin.x) / m_scale_f);
+			std::string tag = std::to_string((int) ((x - m_origin.x) / m_scale_f));
 			SDL_Rect dim = m_helper->util_text_dim(&tag);
 			m_helper->util_text(&tag,
 				UTIL_CLAMP(get_origin_left() + dim.h + 2,x + dim.h / 2, get_right() - 2),
@@ -183,7 +180,7 @@ void CoordinateSystem::draw_foreground(void)
 		}
 	}
 	
-	start = get_origin_top() + ((m_origin.y - get_origin_top()) % (10 * m_scale_f)) + step;
+	start = get_origin_top() + ((m_origin.y - get_origin_top()) % ((int) (10 * m_scale_f))) + step;
 
 	for (int y = start; y < get_bottom(); y += step)
 	{
@@ -191,7 +188,7 @@ void CoordinateSystem::draw_foreground(void)
 
 		if (flag)
 		{
-			std::string tag = std::to_string((y - m_origin.y) / m_scale_f);
+			std::string tag = std::to_string((int) ((y - m_origin.y) / m_scale_f));
 			SDL_Rect dim = m_helper->util_text_dim(&tag);
 
 			m_helper->util_text(&tag, get_origin_left() - dim.w - 5,
@@ -221,7 +218,7 @@ void CoordinateSystem::draw_foreground(void)
 	dim = m_helper->util_text_dim(&t);
 	m_helper->util_text(&t, get_origin_left(), get_origin_top() - 15 - dim.w, m_helper->palette()->white(), 90);
 
-	t = "Scale: " + std::to_string(m_scale_f);
+	t = "Scale: " + std::to_string((int) m_scale_f);
 	dim = m_helper->util_text_dim(&t);
 	m_helper->util_text(&t, get_right() - dim.w - 5, m_dimensions.y + dim.h + 5, m_helper->palette()->white());
 
@@ -230,9 +227,9 @@ void CoordinateSystem::draw_foreground(void)
 		SDL_Rect temp = *m_selection;
 		temp.x = temp.x * m_scale_f + m_origin.x;
 		temp.y = temp.y * m_scale_f + m_origin.y;
-		temp.w *= m_scale_f;
-		temp.h *= m_scale_f;
-
+		temp.w = adjust(temp.w * m_scale_f);
+		temp.h = adjust(temp.h * m_scale_f);
+		
 		crop_rect(SDL_Rect{}, temp);
 
 		if (temp.x + temp.w > get_system_area()->x && temp.y + temp.h > get_system_area()->y &&
@@ -273,11 +270,11 @@ int CoordinateSystem::adjust(int i)
 }
 
 /*
-Analysises how the mouse is positioned
-to the selection box.
-Returns horizontal cursor id, if the mouse
-is close enough to either side of the selection.
-Same for up and down.
+  Analyzes how the mouse is positioned
+  to the selection box.
+  Returns horizontal cursor id, if the mouse
+  is close enough to either side of the selection.
+  Same for up and down.
 */
 #define EXTENDED_BORDER 2
 void CoordinateSystem::mouse_state(SDL_Event * event)

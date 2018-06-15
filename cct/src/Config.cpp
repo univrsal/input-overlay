@@ -1,4 +1,5 @@
 #include "Config.hpp"
+#include "dialog/DialogElementSettings.hpp"
 
 #define X_AXIS 100
 #define Y_AXIS 100
@@ -67,9 +68,9 @@ void Config::handle_events(SDL_Event * e)
 				{
 					m_selected = iterator->get();
 					m_dragging_element = true;
-					m_drag_element_offset = { e->button.x - (m_selected->get_x() * m_cs.get_scale())
-					+ m_cs.get_origin()->x, e->button.y - (m_selected->get_y() * m_cs.get_scale())
-					+ m_cs.get_origin()->y };
+					m_drag_element_offset = { (int) (e->button.x - (m_selected->get_x() * m_cs.get_scale())
+					+ m_cs.get_origin()->x), (int) (e->button.y - (m_selected->get_y() * m_cs.get_scale())
+					+ m_cs.get_origin()->y) };
 
 					m_settings->set_dimensions(m_selected->get_w(), m_selected->get_h());
 					m_settings->set_position(m_selected->get_x(), m_selected->get_y());

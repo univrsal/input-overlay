@@ -1,6 +1,6 @@
 /**
  * Created by universal on 30.05.2018.
- * This file is part of reloded which is licenced
+ * This file is part of reloded which is licensed
  * under the MOZILLA PUBLIC LICENSE 2.0 - mozilla.org/en-US/MPL/2.0/
  * github.com/univrsal/input-overlay
  */
@@ -80,7 +80,7 @@ public:
 	int get_width(void) { return m_dimensions.w; }
 	int get_height(void) { return m_dimensions.h; }
 
-	int get_scale(void) { return m_scale_f; }
+	double get_scale(void) { return m_scale_f; }
 	SDL_Rect get_dimensions(void) { return m_dimensions; }
 	SDL_helper * get_helper(void) { return m_helper; }
 	const SDL_Rect * get_system_area(void) { return & m_system_area; }
@@ -94,7 +94,7 @@ private:
 		return a <= b + range && a >= b - range;
 	}
 
-	uint8_t m_scale_f; /* Multiplier for zooming */
+	double m_scale_f; /* Multiplier for zooming */
 	SDL_Rect m_dimensions; /* Complete size of the system */
 	SDL_Rect m_system_area; /* Area minus axes and scale text */
 
@@ -105,7 +105,7 @@ private:
 	bool m_selecting = false;
 	bool m_sizing = false;
 
-	SDL_Point m_origin_anchor; /* Constant poisition of the origin*/
+	SDL_Point m_origin_anchor; /* Constant position of the origin*/
 	SDL_Point m_origin; /* Origin after zooming and moving */
 	SDL_Point m_drag_offset;
 

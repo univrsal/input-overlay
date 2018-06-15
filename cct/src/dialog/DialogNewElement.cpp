@@ -131,11 +131,11 @@ void DialogNewElement::add_selection_elements(void)
 
 void DialogNewElement::add_keycode_elements(void)
 {
-	uint16_t panel_w = 262;
+	uint16_t panel_w = 254;
 	
 	if (m_element_y == 0)
 		m_element_y += 30;
-	add(new Label(m_id++, 8, m_element_y, "Keycode:", this));
+	add(new Label(m_id++, 8, m_element_y, "Key code:", this));
 	m_element_y += 30;
 	add(m_keycode = new Textbox(m_id++, 8, m_element_y, panel_w - 8, 20, "0", this));
 	m_keycode->set_cutoff(10);

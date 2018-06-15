@@ -1,6 +1,6 @@
 /**
  * Created by universal on 8/1/17.
- * This file is part of reloded which is licenced
+ * This file is part of reloded which is licensed
  * under the MOZILLA PUBLIC LICENSE 2.0 - mozilla.org/en-US/MPL/2.0/
  * github.com/univrsal/reloded
  */
