@@ -41,6 +41,7 @@ set(io-cct_SOURCES
 	src/dialog/DialogElementSettings.hpp
 	../ccl/ccl.cpp
 	../ccl/ccl.hpp
+	../libuiohook/include/uiohook.h
 	src/dialog/DialogHelp.cpp
 	src/dialog/DialogHelp.hpp
 	src/dialog/DialogNewElement.cpp
