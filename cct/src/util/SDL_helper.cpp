@@ -285,12 +285,12 @@ void SDL_helper::util_cut_string(std::string & s, int max_width, bool front)
 	}
 }
 
-void SDL_helper::util_enable_mask(uint16_t & masks, uint16_t mask)
+inline void SDL_helper::util_enable_mask(uint16_t & masks, uint16_t mask)
 {
 	masks |= mask;
 }
 
-void SDL_helper::util_disable_mask(uint16_t & masks, uint16_t mask)
+inline void SDL_helper::util_disable_mask(uint16_t & masks, uint16_t mask)
 {
 	masks &= ~mask;
 }

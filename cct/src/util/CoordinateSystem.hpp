@@ -39,7 +39,7 @@ public:
 		m_origin.y = origin.y + size.y;
 		m_origin_anchor = origin;
 		m_dimensions = size;
-		m_scale_f = 1.0;
+		m_scale_f = 1;
 		m_system_area = { get_origin_left(), get_origin_top(),
 			m_dimensions.w - m_origin_anchor.x, m_dimensions.h - m_origin_anchor.y };
 	}
@@ -81,7 +81,8 @@ public:
 	/* Returns origin adjusted to viewport */
 	int get_origin_y() { return m_origin.y - get_top() - m_origin_anchor.y; }
 
-	double get_scale(void) { return m_scale_f; }
+	int get_scale(void) { return m_scale_f; }
+
 	SDL_Rect get_dimensions(void) { return m_dimensions; }
 	SDL_helper * get_helper(void) { return m_helper; }
 	const SDL_Rect * get_system_area(void) { return & m_system_area; }
@@ -106,7 +107,7 @@ private:
 		return a >= min * m_scale_f + o && a <= max * m_scale_f + o;
 	}
 
-	double m_scale_f; /* Multiplier for zooming */
+	int m_scale_f; /* Multiplier for zooming */
 	SDL_Rect m_dimensions; /* Complete size of the system */
 	SDL_Rect m_system_area; /* Area minus axes and scale text */
 
