@@ -1,5 +1,5 @@
 /**
- * Created by universallp on 30.05.2018.
+ * Created by univrsal on 30.05.2018.
  * This file is part of input-overlay which is licensed
  * under the MOZILLA PUBLIC LICENSE 2.0 - mozilla.org/en-US/MPL/2.0/
  * github.com/univrsal/input-overlay
@@ -43,6 +43,13 @@ public:
 	void draw_foreground(void);
 
 	bool handle_events(SDL_Event * event);
+
+	ElementType get_type(void);
+
+	SDL_Rect get_selection_1(void);
+
+	uint16_t get_key_code(void);
+
 private:
 	/* Adds default elements*/
 	void add_selection_elements(void);

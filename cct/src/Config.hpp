@@ -125,6 +125,8 @@ public:
 
 	Texture * get_texture(void);
 private:
+	uint16_t vc_to_sdl_key(uint16_t key);
+
 	CoordinateSystem m_cs;
 
 	SDL_helper * m_helper = nullptr;

@@ -34,40 +34,40 @@ void Tool::program_loop()
 		// Drawing
 		switch (m_state)
 		{
-			case IN_SETUP:
-				m_setup_dialog->draw_background();
-				m_setup_dialog->draw_foreground();
+		case IN_SETUP:
+			m_setup_dialog->draw_background();
+			m_setup_dialog->draw_foreground();
 
-				if (m_setup_dialog->is_finished())
-				{
-					m_element_settings = new DialogElementSettings(m_helper,
-						SDL_Rect { 10, 200, 240, 310 }, this);
-					m_config = new Config(m_setup_dialog->get_texture_path(),
-						m_setup_dialog->get_config_path(), m_helper, m_element_settings);
+			if (m_setup_dialog->is_finished())
+			{
+				m_element_settings = new DialogElementSettings(m_helper,
+					SDL_Rect{ 10, 200, 240, 310 }, this);
+				m_config = new Config(m_setup_dialog->get_texture_path(),
+					m_setup_dialog->get_config_path(), m_helper, m_element_settings);
 
-					m_element_settings->init();
-					
-					/* Free it up */
-					delete m_setup_dialog;
-					m_setup_dialog = nullptr;
-					m_state = IN_BUILD;
-				}
+				m_element_settings->init();
+
+				/* Free it up */
+				delete m_setup_dialog;
+				m_setup_dialog = nullptr;
+				m_state = IN_BUILD;
+			}
 			break;
-			case IN_BUILD:
-				m_config->draw_elements();
-				m_element_settings->draw_background();
-				m_element_settings->draw_foreground();
+		case IN_BUILD:
+			m_config->draw_elements();
+			m_element_settings->draw_background();
+			m_element_settings->draw_foreground();
 			break;
-			case IN_NEW_ELEMENT:
-			case IN_HELP:
-				m_config->draw_elements();
-				m_element_settings->draw_background();
-				m_element_settings->draw_foreground();
-				if (m_toplevel)
-				{
-					m_toplevel->draw_background();
-					m_toplevel->draw_foreground();
-				}	
+		case IN_NEW_ELEMENT:
+		case IN_HELP:
+			m_config->draw_elements();
+			m_element_settings->draw_background();
+			m_element_settings->draw_foreground();
+			if (m_toplevel)
+			{
+				m_toplevel->draw_background();
+				m_toplevel->draw_foreground();
+			}
 			break;
 		}
 
@@ -84,30 +84,71 @@ Element * Tool::get_selected(void)
 
 void Tool::action_performed(uint8_t type)
 {
+	DialogNewElement * d = nullptr;
+	Element * e = nullptr;
+
 	switch (type)
 	{
-		case TOOL_ACTION_HELP_OPEN:
-			close_toplevel();
-			m_state = IN_HELP;
-			m_toplevel = new DialogHelp(m_helper, SDL_Point { 350, 370 }, this);
-			m_toplevel->init();
+	case TOOL_ACTION_HELP_OPEN:
+		close_toplevel();
+		m_state = IN_HELP;
+		m_toplevel = new DialogHelp(m_helper, SDL_Point{ 350, 370 }, this);
+		m_toplevel->init();
 		break;
-		case TOOL_ACTION_HELP_EXIT:
-			m_state = IN_BUILD;
-			m_queue_close = true;
+	case TOOL_ACTION_HELP_EXIT:
+		m_state = IN_BUILD;
+		m_queue_close = true;
 		break;
-		case TOOL_ACTION_NEW_ELEMENT_OPEN:
-			close_toplevel();
-			m_state = IN_NEW_ELEMENT;
-			m_toplevel = new DialogNewElement(m_helper, SDL_Point {}, "New element", this, TEXTURE);
-			m_toplevel->init();
+	case TOOL_ACTION_NEW_ELEMENT_OPEN:
+		close_toplevel();
+		m_state = IN_NEW_ELEMENT;
+		m_toplevel = new DialogNewElement(m_helper, SDL_Point{}, "New element", this, TEXTURE);
+		m_toplevel->init();
+		break;
+	case TOOL_ACTION_NEW_ELEMENT_ADD:
+		d = reinterpret_cast<DialogNewElement*>(m_toplevel);
+		
+		switch (d->get_type())
+		{
+
+		case TEXTURE:
+		case BUTTON_KEYBOARD:
+		case BUTTON_GAMEPAD:
+		case MOUSE_MOVEMENT:
+		case ANALOG_STICK:
+		case BUTTON_MOUSE:
+			e = new Element(d->get_type(), SDL_Point{ 0, 0 }, d->get_selection_1(), d->get_key_code());
+			break;
+		case TRIGGER_GAMEPAD:
+			break;
+		case TEXT:
+			break;
+		case DPAD:
+			break;
+		case DPAD_STICK:
+			break;	
+		}
+
+		if (e)
+			add_element(e);
+		m_queue_close = true;
+		m_state = IN_BUILD;
+		break;
+	case TOOL_ACTION_NEW_ELEMENT_EXIT:
+		m_queue_close = true;
+		m_state = IN_BUILD;
 		break;
 	}
 }
 
 Texture * Tool::get_atlas(void)
 {
-    return m_config->get_texture();
+	return m_config->get_texture();
+}
+
+void Tool::add_element(Element * e)
+{
+	m_config->m_elements.emplace_back(e);
 }
 
 void Tool::close_toplevel(void)

@@ -1,5 +1,5 @@
 /**
-* Created by universallp on 14.07.2017.
+* Created by univrsal on 14.07.2017.
 * This file is part of input-overlay which is licensed
 * under the MOZILLA PUBLIC LICENSE 2.0 - mozilla.org/en-US/MPL/2.0/
 * github.com/univrsal/input-overlay
@@ -23,7 +23,7 @@ void GuiElement::close(void)
 
 void GuiElement::resize(void)
 {
-
+	//NO-OP
 }
 
 Dialog *GuiElement::get_parent()
@@ -64,10 +64,13 @@ bool GuiElement::is_mouse_over(const int & x, const int & y)
 	return get_helper()->util_is_in_rect(get_dimensions(), x, y);
 }
 
-void GuiElement::set_pos(const int& x, const int& y)
+void GuiElement::set_pos(int x, int y)
 {
-	m_dimensions.x = x;
-	m_dimensions.y = y;
+	m_dimensions.x = m_parent_dialog->position().x + x;
+	m_dimensions.y = m_parent_dialog->position().y + y;
+	m_position.x = x;
+	m_position.y = y;
+	resize();
 }
 
 uint8_t GuiElement::get_cursor(void)
@@ -112,12 +115,11 @@ int GuiElement::get_height(void)
 
 void GuiElement::draw_foreground(void)
 {
-	if (DEBUG_DRAW_OUTLINE)
-	{
-		const SDL_Rect * r = get_dimensions();
-		printf("X. %i, Y. %i, W. %i, H. %i \n", r->x, r->y, r->w, r->w);
-		get_helper()->util_draw_rect(get_dimensions(), get_helper()->palette()->black());
-	}
+#if DEBUG_DRAW_OUTLINE
+	const SDL_Rect * r = get_dimensions();
+	printf("X. %i, Y. %i, W. %i, H. %i \n", r->x, r->y, r->w, r->w);
+	get_helper()->util_draw_rect(get_dimensions(), get_helper()->palette()->black());
+#endif
 }
 
 void GuiElement::set_dim(SDL_Rect r)

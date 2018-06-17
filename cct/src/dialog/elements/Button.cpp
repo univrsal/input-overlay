@@ -30,6 +30,13 @@ Button::~Button()
 	close();
 }
 
+void Button::resize(void)
+{
+	SDL_Rect text_dim = m_parent_dialog->helper()->util_text_dim(&m_text);
+	m_text_pos.x = m_dimensions.w / 2 - text_dim.w / 2;
+	m_text_pos.y = m_dimensions.h / 2 - text_dim.h / 2;
+}
+
 void Button::draw_background(void)
 {
 	SDL_Color *color = m_hovered ? get_helper()->palette()->light_gray() : get_helper()->palette()->dark_gray();

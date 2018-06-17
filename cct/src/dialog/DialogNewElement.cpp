@@ -10,7 +10,6 @@ void DialogNewElement::init()
 	case BUTTON_KEYBOARD:
 	case BUTTON_GAMEPAD:
 	case BUTTON_MOUSE:
-
 	case TEXTURE:
 
 		add(m_selector = new AtlasSelector(m_id++, get_left() + 270,
@@ -30,10 +29,10 @@ void DialogNewElement::action_performed(int8_t action_id)
 	switch (action_id)
 	{
 	case ACTION_OK:
-
+		m_tool->action_performed(TOOL_ACTION_NEW_ELEMENT_ADD);
 		break;
 	case ACTION_CANCEL:
-
+		m_tool->action_performed(TOOL_ACTION_NEW_ELEMENT_EXIT);
 		break;
 	}
 }
@@ -86,6 +85,8 @@ bool DialogNewElement::handle_events(SDL_Event * event)
 				SDL_Rect t = { get_left() + 270,
 					get_top() + 30, m_dimensions.w - 278, m_dimensions.h - 38 };
 				m_selector->set_dim(t);
+				m_ok->set_pos(8, m_dimensions.h - 32);
+				m_cancel->set_pos(124, m_dimensions.h - 32);
 			}
 		}
 		m_h->set_text(std::to_string(m_selection_1.h));
@@ -95,15 +96,33 @@ bool DialogNewElement::handle_events(SDL_Event * event)
 		break;
 	}
 
-	m_ok->set_pos(8, m_dimensions.h - 32);
-	m_cancel->set_pos(124, m_dimensions.h - 32);
 	return was_handled;
+}
+
+ElementType DialogNewElement::get_type(void)
+{
+	return m_type;
+}
+
+SDL_Rect DialogNewElement::get_selection_1(void)
+{
+	return m_selection_1;
+}
+
+uint16_t DialogNewElement::get_key_code(void)
+{
+	if (m_keycode)
+		return std::atoi(m_keycode->get_text()->c_str());
+	else
+		return 0x0;
 }
 
 void DialogNewElement::add_selection_elements(void)
 {
 	uint16_t panel_w = 254;
-	
+
+	m_selection_1 = { 0, 0, 0, 0 };
+
 	if (m_element_y == 0)
 		m_element_y += 30;
 
@@ -132,12 +151,12 @@ void DialogNewElement::add_selection_elements(void)
 void DialogNewElement::add_keycode_elements(void)
 {
 	uint16_t panel_w = 254;
-	
+
 	if (m_element_y == 0)
 		m_element_y += 30;
 	add(new Label(m_id++, 8, m_element_y, "Key code:", this));
 	m_element_y += 30;
-	add(m_keycode = new Textbox(m_id++, 8, m_element_y, panel_w - 8, 20, "0", this));
+	add(m_keycode = new Textbox(m_id++, 8, m_element_y, panel_w, 20, "0", this));
 	m_keycode->set_cutoff(10);
 	m_element_y += 40;
 }
