@@ -11,29 +11,45 @@
 */
 bool CoordinateSystem::crop_rect(SDL_Rect & mapping, SDL_Rect& destination)
 {
-	SDL_Rect intersect;
 
-	if (SDL_IntersectRect(&destination, &m_system_area, &intersect))
+	if (destination.x < m_system_area.x)
 	{
-		if (intersect.w == destination.w && intersect.h == destination.h)
-			return true; /* No cropping needed */
+		int x_diff = m_system_area.x - destination.x;
+		destination.x = m_system_area.x + ();
+		destination.w -= x_diff;
+		mapping.x += ceil(x_diff / m_scale_f);
+		mapping.w = ceil(destination.w / m_scale_f);
+	}
 
-		if (!SDL_RectEmpty(&mapping))
-		{
-			mapping.x += (int) round((intersect.x - destination.x) / m_scale_f);
-			mapping.y += (int) round((intersect.y - destination.y) / m_scale_f);
-			mapping.w = (int) round(intersect.w / m_scale_f);
-			mapping.h = (int) round(intersect.h / m_scale_f);
-			
-		}
-		
-		destination = intersect;
-		return true;
-	}
-	else
+	if (destination.x + destination.w > m_system_area.x + m_system_area.w)
 	{
-		return false;
+		int x_diff = (destination.x + destination.w) -
+			(m_system_area.x + m_system_area.w);
+		destination.w -= x_diff;
+		mapping.w -= ceil(x_diff / m_scale_f);
 	}
+
+	if (destination.y < m_system_area.y)
+	{
+		int y_diff = m_system_area.y - destination.y;
+		destination.y = m_system_area.y;
+		destination.h -= y_diff;
+		mapping.y += ceil(y_diff / m_scale_f);
+		mapping.h = ceil(destination.h / m_scale_f);
+	}
+
+	if (destination.y + destination.h > m_system_area.y + m_system_area.h)
+	{
+		int y_diff = (destination.y + destination.h) -
+			(m_system_area.y + m_system_area.h);
+		destination.h -= y_diff;
+		mapping.h -= ceil(y_diff / m_scale_f);
+	}
+	int step = 10 * m_scale_f;
+	int start = ((m_origin.x - get_origin_left()) % step);
+	printf("start: %i\n", start);
+
+	return !SDL_RectEmpty(&destination);
 }
 
 bool CoordinateSystem::handle_events(SDL_Event * e)
@@ -46,8 +62,8 @@ bool CoordinateSystem::handle_events(SDL_Event * e)
 		{
 			if (m_helper->util_is_in_rect(&m_system_area, e->button.x, e->button.y))
 			{
-				m_drag_offset = { adjust(e->button.x - m_origin.x),
-					adjust(e->button.y - m_origin.y) };
+				m_drag_offset = { e->button.x - m_origin.x,
+					e->button.y - m_origin.y };
 				m_dragging = true;
 				was_handled = true;
 			}
@@ -83,35 +99,34 @@ bool CoordinateSystem::handle_events(SDL_Event * e)
 	{
 		if (m_dragging && (e->motion.state & SDL_BUTTON_RMASK))
 		{
-			m_origin.x = SDL_min(adjust(e->button.x - m_drag_offset.x), get_origin_left());
-			m_origin.y = SDL_min(adjust(e->button.y - m_drag_offset.y), get_origin_top());
+			m_origin.x = SDL_min(e->button.x - m_drag_offset.x, get_origin_left());
+			m_origin.y = SDL_min(e->button.y - m_drag_offset.y, get_origin_top());
 			was_handled = true;
 		}
-
-		if (m_selecting)
+		else if (m_selecting && (e->motion.state & SDL_BUTTON_LMASK))
 		{
-			m_selection->x = round((UTIL_MIN(m_selection_a.x, e->button.x) - m_origin.x) / m_scale_f);
-			m_selection->y = round((UTIL_MIN(m_selection_a.y, e->button.y) - m_origin.y) / m_scale_f);
-			m_selection->w = round(SDL_abs(m_selection_a.x - e->button.x) / m_scale_f);
-			m_selection->h = round(SDL_abs(m_selection_a.y - e->button.y) / m_scale_f);
+			m_selection->x = ceil((UTIL_MIN(m_selection_a.x, e->button.x) - m_origin.x) / m_scale_f);
+			m_selection->y = ceil((UTIL_MIN(m_selection_a.y, e->button.y) - m_origin.y) / m_scale_f);
+			m_selection->w = ceil(SDL_abs(m_selection_a.x - e->button.x) / m_scale_f);
+			m_selection->h = ceil(SDL_abs(m_selection_a.y - e->button.y) / m_scale_f);
 		}
-		else if (m_sizing)
+		else if (m_sizing && (e->motion.state & SDL_BUTTON_LMASK))
 		{
 
 			switch (m_size_mode)
 			{
 				case SIZE_RIGHT:
-					m_selection->w = UTIL_MAX(round((e->button.x - m_origin.x) / m_scale_f - m_selection->x), 4);
+					m_selection->w = UTIL_MAX(ceil((e->button.x - m_origin.x) / m_scale_f - m_selection->x), 4);
 					break;
 				case SIZE_BOTTOM:
-					m_selection->h = UTIL_MAX(round((e->button.y - m_origin.y) / m_scale_f - m_selection->y), 4);
+					m_selection->h = UTIL_MAX(ceil((e->button.y - m_origin.y) / m_scale_f - m_selection->y), 4);
 					break;
 				case SIZE_LEFT:
-					m_selection->x = UTIL_MAX(round((e->button.x - m_origin.x) / m_scale_f), 0);
+					m_selection->x = UTIL_MAX(ceil((e->button.x - m_origin.x) / m_scale_f), 0);
 					m_selection->w = UTIL_MAX(m_selection_a.x - m_selection->x, 4);
 					break;
 				case SIZE_TOP:
-					m_selection->y = UTIL_MAX(round((e->button.y - m_origin.y) / m_scale_f), 0);
+					m_selection->y = UTIL_MAX(ceil((e->button.y - m_origin.y) / m_scale_f), 0);
 					m_selection->h = UTIL_MAX(m_selection_a.y - m_selection->y, 4);
 					break;
 			}
@@ -125,7 +140,7 @@ bool CoordinateSystem::handle_events(SDL_Event * e)
 	{
 		if (e->wheel.y > 0) /* UP */
 		{
-			m_scale_f = SDL_min(m_scale_f++, 7);
+			m_scale_f = SDL_min(m_scale_f++, 8);
 		}
 		else
 		{
@@ -157,7 +172,8 @@ void CoordinateSystem::draw_foreground(void)
 	int start;
 
 	/* I think this makes sense */
-	start = get_origin_left() + ((m_origin.x - get_origin_left()) % ((int) (10 * m_scale_f))) + step;
+
+	start = get_origin_left() + ((m_origin.x - get_origin_left()) % step) + step;
 	
 	/* X Axis*/
 	for (int x = start; x < get_right(); x += step)
@@ -181,7 +197,7 @@ void CoordinateSystem::draw_foreground(void)
 	}
 	
 	start = get_origin_top() + ((m_origin.y - get_origin_top()) % ((int) (10 * m_scale_f))) + step;
-
+	
 	for (int y = start; y < get_bottom(); y += step)
 	{
 		bool flag = (y - m_origin.y) % 100 == 0 && (y - m_origin.y) != 0;
@@ -222,16 +238,16 @@ void CoordinateSystem::draw_foreground(void)
 	dim = m_helper->util_text_dim(&t);
 	m_helper->util_text(&t, get_right() - dim.w - 5, m_dimensions.y + dim.h + 5, m_helper->palette()->white());
 
+	/* Draw selection */
 	if (!SDL_RectEmpty(m_selection))
 	{
 		SDL_Rect temp = *m_selection;
 		temp.x = temp.x * m_scale_f + m_origin.x;
 		temp.y = temp.y * m_scale_f + m_origin.y;
-		temp.w = adjust(temp.w * m_scale_f);
-		temp.h = adjust(temp.h * m_scale_f);
+		temp.w = temp.w * m_scale_f;
+		temp.h = temp.h * m_scale_f;
 		
-		crop_rect(SDL_Rect{}, temp);
-
+		//crop_rect(SDL_Rect{}, temp);
 		if (temp.x + temp.w > get_system_area()->x && temp.y + temp.h > get_system_area()->y &&
 			temp.x < get_right() && temp.y < get_bottom())
 			get_helper()->util_draw_rect(&temp, get_helper()->palette()->red());
@@ -240,6 +256,11 @@ void CoordinateSystem::draw_foreground(void)
 	/* Border around the entire thing */
 	if (m_border)
 		m_helper->util_draw_rect(&m_dimensions, m_helper->palette()->white());
+
+	/* temp */
+	SDL_Rect oririg = { m_origin.x - 2, m_origin.y - 2, 4, 4 };
+
+	m_helper->util_fill_rect(&oririg, m_helper->palette()->red());
 }
 
 void CoordinateSystem::draw_background(void)
@@ -256,7 +277,6 @@ void CoordinateSystem::set_dimensions(SDL_Rect r)
 
 void CoordinateSystem::set_pos(int x, int y)
 {
-	//SDL_Point diff = {, m_dimensions.y - y };
 	m_origin.x -= m_dimensions.x - x;
 	m_origin.y -= m_dimensions.y - y;
 	m_dimensions.x = x; m_dimensions.y = y;
@@ -266,13 +286,13 @@ void CoordinateSystem::set_pos(int x, int y)
 
 int CoordinateSystem::adjust(int i)
 {
-	return round(i / m_scale_f) * m_scale_f;
+	return ceil(i / m_scale_f) * m_scale_f;
 }
 
 /*
   Analyzes how the mouse is positioned
   to the selection box.
-  Returns horizontal cursor id, if the mouse
+  Sets horizontal cursor id, if the mouse
   is close enough to either side of the selection.
   Same for up and down.
 */
@@ -283,24 +303,28 @@ void CoordinateSystem::mouse_state(SDL_Event * event)
 		return;
 
 	SDL_Point mouse = { event->button.x, event->button.y };
-	if (in_range(mouse.x, m_selection->x * m_scale_f + m_origin.x, EXTENDED_BORDER))
+	if (in_range(mouse.x, m_selection->x * m_scale_f + m_origin.x, EXTENDED_BORDER)
+		&& in_between(mouse.y, m_selection->y, m_selection->y + m_selection->h, m_origin.y))
 	{
-		m_size_mode = SIZE_LEFT;
-		get_helper()->set_cursor(CURSOR_SIZE_H);
+			m_size_mode = SIZE_LEFT;
+			get_helper()->set_cursor(CURSOR_SIZE_H);
 	}
 	else if (in_range(mouse.x, (m_selection->x + m_selection->w) * m_scale_f + m_origin.x,
-		EXTENDED_BORDER))
+		EXTENDED_BORDER)
+		&& in_between(mouse.y, m_selection->y, m_selection->y + m_selection->h, m_origin.y))
 	{
 		m_size_mode = SIZE_RIGHT;
 		get_helper()->set_cursor(CURSOR_SIZE_H);
 	}
-	else if (in_range(mouse.y, m_selection->y * m_scale_f + m_origin.y, EXTENDED_BORDER))
+	else if (in_range(mouse.y, m_selection->y * m_scale_f + m_origin.y, EXTENDED_BORDER)
+		&& in_between(mouse.x, m_selection->x, m_selection->x + m_selection->w, m_origin.x))
 	{
 		m_size_mode = SIZE_TOP;
 		get_helper()->set_cursor(CURSOR_SIZE_V);
 	}
 	else if (in_range(mouse.y, (m_selection->y + m_selection->h) * m_scale_f + m_origin.y,
-		EXTENDED_BORDER))
+		EXTENDED_BORDER)
+		&& in_between(mouse.x, m_selection->x, m_selection->x + m_selection->w, m_origin.x))
 	{
 		m_size_mode = SIZE_BOTTOM;
 		get_helper()->set_cursor(CURSOR_SIZE_V);

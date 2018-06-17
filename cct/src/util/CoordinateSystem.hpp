@@ -94,6 +94,11 @@ private:
 		return a <= b + range && a >= b - range;
 	}
 
+	inline bool in_between(int a, int min, int max, int o)
+	{
+		return a >= min * m_scale_f + o && a <= max * m_scale_f + o;
+	}
+
 	double m_scale_f; /* Multiplier for zooming */
 	SDL_Rect m_dimensions; /* Complete size of the system */
 	SDL_Rect m_system_area; /* Area minus axes and scale text */
