@@ -39,14 +39,12 @@ public:
 		m_origin.y = origin.y + size.y;
 		m_origin_anchor = origin;
 		m_dimensions = size;
-		m_scale_f = 1;
+		m_scale_f = 1.0;
 		m_system_area = { get_origin_left(), get_origin_top(),
 			m_dimensions.w - m_origin_anchor.x, m_dimensions.h - m_origin_anchor.y };
 	}
 
 	void enable_border(void) { m_border = true; }
-
-	bool crop_rect(SDL_Rect & mapping, SDL_Rect& destination);
 
 	bool handle_events(SDL_Event * e);
 
@@ -69,16 +67,19 @@ public:
 
 	SDL_Point * get_origin(void) { return &m_origin; }
 
-	/* Absolute position of moved origin, 0 meaning not moved */
-	int get_origin_x(void) { return m_origin.x - m_origin_anchor.x; }
-	/* Absolute position of moved origin, 0 meaning not moved */
-	int get_origin_y(void) { return m_origin.y - m_origin_anchor.y; }
-
 	int get_bottom(void) { return m_dimensions.y + m_dimensions.h; }
 	int get_right(void) { return m_dimensions.x + m_dimensions.w; }
 
+	int get_left(void) { return m_dimensions.x; }
+	int get_top(void) { return m_dimensions.y; }
+
 	int get_width(void) { return m_dimensions.w; }
 	int get_height(void) { return m_dimensions.h; }
+
+	/* Returns origin adjusted to viewport */
+	int get_origin_x() { return m_origin.x - get_left() - m_origin_anchor.x; }
+	/* Returns origin adjusted to viewport */
+	int get_origin_y() { return m_origin.y - get_top() - m_origin_anchor.y; }
 
 	double get_scale(void) { return m_scale_f; }
 	SDL_Rect get_dimensions(void) { return m_dimensions; }
@@ -86,6 +87,12 @@ public:
 	const SDL_Rect * get_system_area(void) { return & m_system_area; }
 
 	void set_selection(SDL_Rect * r) { m_selection = r; }
+
+	/* Prepares the viewport to fit inside the coordinate system area */
+	void begin_draw(void) { SDL_RenderSetViewport(m_helper->renderer(), &m_system_area); }
+	/* Resets the viewport */
+	void end_draw(void) { SDL_RenderSetViewport(m_helper->renderer(), NULL); }
+
 private:
 	void mouse_state(SDL_Event * event);
 

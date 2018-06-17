@@ -30,22 +30,19 @@ void AtlasSelector::init(Dialog *parent, SDL_Rect dim, int8_t id)
 
 void AtlasSelector::draw_foreground(void)
 {
-	m_cs->draw_foreground();
-	SDL_Rect temp;
-	SDL_Rect temp_mapping = m_atlas->get_dim();
+	SDL_Rect temp = m_atlas->get_dim();
+	temp.w *= m_cs->get_scale();
+	temp.h *= m_cs->get_scale();
+	temp.x = m_cs->get_origin_x();
+	temp.y = m_cs->get_origin_y();
 
-	temp.x = m_cs->get_origin()->x;
-	temp.y = m_cs->get_origin()->y;
-	temp.w = temp_mapping.w * m_cs->get_scale();
-	temp.h = temp_mapping.h * m_cs->get_scale();
-
-
-	if (m_cs->crop_rect(temp_mapping, temp))
+	m_cs->begin_draw();
 	{
-		m_atlas->draw(get_helper()->renderer(), &temp, &temp_mapping);
-		
-		get_helper()->util_draw_rect(&temp, get_helper()->palette()->red());
+		m_atlas->draw(get_helper()->renderer(), &temp, NULL);
 	}
+	m_cs->end_draw();
+	m_cs->draw_foreground();
+
 }
 
 void AtlasSelector::draw_background(void)

@@ -1,57 +1,4 @@
 #include "CoordinateSystem.hpp"
-
-/*
-	This crops any rectangle to fit
-	inside the coordinate boundaries
-	it'll also crop the texture cutout
-	accordingly.
-	returns true, if the cropping succeeded
-	returns false, if the rectangle is out of
-	bounds or has no size
-*/
-bool CoordinateSystem::crop_rect(SDL_Rect & mapping, SDL_Rect& destination)
-{
-
-	if (destination.x < m_system_area.x)
-	{
-		int x_diff = m_system_area.x - destination.x;
-		destination.x = m_system_area.x + ();
-		destination.w -= x_diff;
-		mapping.x += ceil(x_diff / m_scale_f);
-		mapping.w = ceil(destination.w / m_scale_f);
-	}
-
-	if (destination.x + destination.w > m_system_area.x + m_system_area.w)
-	{
-		int x_diff = (destination.x + destination.w) -
-			(m_system_area.x + m_system_area.w);
-		destination.w -= x_diff;
-		mapping.w -= ceil(x_diff / m_scale_f);
-	}
-
-	if (destination.y < m_system_area.y)
-	{
-		int y_diff = m_system_area.y - destination.y;
-		destination.y = m_system_area.y;
-		destination.h -= y_diff;
-		mapping.y += ceil(y_diff / m_scale_f);
-		mapping.h = ceil(destination.h / m_scale_f);
-	}
-
-	if (destination.y + destination.h > m_system_area.y + m_system_area.h)
-	{
-		int y_diff = (destination.y + destination.h) -
-			(m_system_area.y + m_system_area.h);
-		destination.h -= y_diff;
-		mapping.h -= ceil(y_diff / m_scale_f);
-	}
-	int step = 10 * m_scale_f;
-	int start = ((m_origin.x - get_origin_left()) % step);
-	printf("start: %i\n", start);
-
-	return !SDL_RectEmpty(&destination);
-}
-
 bool CoordinateSystem::handle_events(SDL_Event * e)
 {
 	bool was_handled = false;
@@ -242,25 +189,21 @@ void CoordinateSystem::draw_foreground(void)
 	if (!SDL_RectEmpty(m_selection))
 	{
 		SDL_Rect temp = *m_selection;
-		temp.x = temp.x * m_scale_f + m_origin.x;
-		temp.y = temp.y * m_scale_f + m_origin.y;
+		temp.x = temp.x * m_scale_f + get_origin_x();
+		temp.y = temp.y * m_scale_f + get_origin_y();
 		temp.w = temp.w * m_scale_f;
 		temp.h = temp.h * m_scale_f;
 		
-		//crop_rect(SDL_Rect{}, temp);
-		if (temp.x + temp.w > get_system_area()->x && temp.y + temp.h > get_system_area()->y &&
-			temp.x < get_right() && temp.y < get_bottom())
+		begin_draw();
+		{
 			get_helper()->util_draw_rect(&temp, get_helper()->palette()->red());
+		}
+		end_draw();
 	}
 
 	/* Border around the entire thing */
 	if (m_border)
 		m_helper->util_draw_rect(&m_dimensions, m_helper->palette()->white());
-
-	/* temp */
-	SDL_Rect oririg = { m_origin.x - 2, m_origin.y - 2, 4, 4 };
-
-	m_helper->util_fill_rect(&oririg, m_helper->palette()->red());
 }
 
 void CoordinateSystem::draw_background(void)
