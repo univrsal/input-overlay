@@ -47,9 +47,11 @@ void Notifier::draw(void)
 		y++;
 	}
 
-	for (auto msg : overdue)
+	/* Remove old messages */
+	std::sort(overdue.begin(), overdue.end()); 
+	for (auto &i = overdue.rbegin(); i != overdue.rend(); ++i)
 	{
-		m_messages.erase(std::remove(m_messages.begin(), m_messages.end(), m_messages[msg]), m_messages.end());
+		m_messages.erase(m_messages.begin() + *i);
 		m_dim.y -= m_helper->util_default_text_height() + 8;
 	}
 }

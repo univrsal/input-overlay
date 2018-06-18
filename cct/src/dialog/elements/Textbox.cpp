@@ -111,7 +111,8 @@ bool Textbox::handle_events(SDL_Event * event)
 				{
 					std::string temp = std::string(SDL_GetClipboardText());
 
-					if (!(m_flags & TEXTBOX_NUMERIC) || is_numeric(temp))
+					if (!(m_flags & TEXTBOX_NUMERIC) || is_numeric(temp)
+						&& (!(m_flags & TEXTBOX_HEX) || is_hex(temp)))
 					{
 						append_text(temp);
 					}
@@ -139,7 +140,11 @@ bool Textbox::handle_events(SDL_Event * event)
 		else if (event->type == SDL_TEXTINPUT)
 		{
 			std::string temp = m_text + std::string(event->text.text);
-			if (!(m_flags & TEXTBOX_NUMERIC) || is_numeric(temp))
+			bool a = !(m_flags & TEXTBOX_NUMERIC) || is_numeric(temp);
+			bool b = !(m_flags & TEXTBOX_HEX) || is_hex(temp);
+
+			if ((!(m_flags & TEXTBOX_NUMERIC) || is_numeric(temp))
+				&& (!(m_flags & TEXTBOX_HEX) || is_hex(temp)))
 			{
 				set_text(temp);
 			}
@@ -158,10 +163,10 @@ bool Textbox::handle_events(SDL_Event * event)
 
 void Textbox::set_text(std::string s)
 {
-	m_text = s;
-	if (m_flags & TEXTBOX_NUMERIC)
+		m_text = s;
+	if (m_flags & TEXTBOX_NUMERIC || m_flags & TEXTBOX_HEX)
 	{
-		m_text = m_text.substr(0, 5); /* 5 digits is more than enough */
+		m_text = m_text.substr(0, 6); /* 5 digits is more than enough */
 	}
 	m_cut_text = m_text;
 
@@ -188,6 +193,8 @@ const std::string * Textbox::get_text()
 {
 	if (m_flags & TEXTBOX_NUMERIC && m_text.empty())
 		set_text("0");
+	if (m_flags & TEXTBOX_HEX && m_text.empty())
+		set_text("0x0");
 	return &m_text;
 }
 
@@ -198,6 +205,12 @@ inline bool Textbox::is_numeric(const std::string & s)
 		if (!(s[i] >= '0' && s[i] <= '9')) return false;
 	}
 	return true;
+}
+
+bool Textbox::is_hex(const std::string& s)
+{
+	const char * c = s.c_str();
+	return c[strspn(c, "0123456789xabcdefABCDEF")] == 0;
 }
 
 void Textbox::set_alert(bool state)

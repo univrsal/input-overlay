@@ -113,10 +113,14 @@ SDL_Rect DialogNewElement::get_selection_1(void)
 
 uint16_t DialogNewElement::get_key_code(void)
 {
+	uint16_t t = 0x0;
+
 	if (m_keycode)
-		return std::atoi(m_keycode->get_text()->c_str());
-	else
-		return 0x0;
+	{
+		t = (uint16_t) strtoul(m_keycode->get_text()->c_str(), NULL, 16);
+	}
+
+	return t;
 }
 
 const std::string * DialogNewElement::get_id(void)
@@ -165,6 +169,7 @@ void DialogNewElement::add_keycode_elements(void)
 	m_element_y += 25;
 	add(m_keycode = new Textbox(m_id++, 8, m_element_y, panel_w, 20, "0", this));
 	m_keycode->set_cutoff(10);
+	m_keycode->set_flags(TEXTBOX_HEX);
 	m_element_y += 40;
 }
 

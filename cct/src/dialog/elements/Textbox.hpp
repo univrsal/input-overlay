@@ -13,6 +13,7 @@
 #include <string>
 
 #define TEXTBOX_NUMERIC 1 << 0
+#define TEXTBOX_HEX 1 << 1
 
 class Dialog;
 
@@ -42,6 +43,8 @@ public:
 	const std::string * get_text();
 
 	inline bool is_numeric(const std::string& s);
+
+	inline bool is_hex(const std::string& s);
 
 	void set_alert(bool state);
 

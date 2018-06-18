@@ -99,7 +99,7 @@ void Tool::action_performed(uint8_t type)
 	case TOOL_ACTION_HELP_OPEN:
 		close_toplevel();
 		m_state = IN_HELP;
-		m_toplevel = new DialogHelp(m_helper, SDL_Point{ 350, 370 }, this);
+		m_toplevel = new DialogHelp(m_helper, SDL_Point{ 350, 400 }, this);
 		m_toplevel->init();
 		break;
 	case TOOL_ACTION_HELP_EXIT:
@@ -109,7 +109,7 @@ void Tool::action_performed(uint8_t type)
 	case TOOL_ACTION_NEW_ELEMENT_OPEN:
 		close_toplevel();
 		m_state = IN_NEW_ELEMENT;
-		m_toplevel = new DialogNewElement(m_helper, SDL_Point{}, "New element", this, TEXTURE);
+		m_toplevel = new DialogNewElement(m_helper, SDL_Point{}, "New element", this, BUTTON_KEYBOARD);
 		m_toplevel->init();
 		break;
 	case TOOL_ACTION_NEW_ELEMENT_ADD:
@@ -155,23 +155,31 @@ Texture * Tool::get_atlas(void)
 
 void Tool::add_element(Element * e)
 {
-	bool unique_id = true;
+	bool can_add = true;
 	for (auto& const element : m_config->m_elements)
 	{
 		if (element->get_id()->compare(e->get_id()->c_str()) == 0)
 		{
-			unique_id = false;
+			can_add = false;
+			m_notify->add_msg(MESSAGE_ERROR, "Element id must be unique!");
 			break;
 		}
 	}
 
-	if (unique_id)
+	if (e->get_vc() == 0)
+	{
+		m_notify->add_msg(MESSAGE_INFO, "Key code 0x0 is invalid");
+	}
+
+	if (SDL_RectEmpty(e->get_mapping()))
+	{
+		m_notify->add_msg(MESSAGE_ERROR, "Selection was empty!");
+		can_add = false;
+	}
+
+	if (can_add)
 	{
 		m_config->m_elements.emplace_back(e);
-	}
-	else
-	{
-		m_notify->add_msg(MESSAGE_ERROR, "Element id must be unique!");
 	}
 }
 

@@ -101,37 +101,59 @@ void Config::handle_events(SDL_Event * e)
 			m_settings->set_position(x, y);
 		}
 	}
-	else if (e->type == SDL_KEYDOWN && m_selected)
+	else if (e->type == SDL_KEYDOWN)
 	{
-		int x = m_selected->get_x();
-		int y = m_selected->get_y();
-
-		bool moved = false;
-
-		switch (e->key.keysym.sym)
+		if (m_selected)
+		/* Move selected element with arrow keys */
 		{
-		case SDLK_UP:
-			y = SDL_max(y - 1, 0);
-			moved = true;
-			break;
-		case SDLK_DOWN:
-			y++;
-			moved = true;
-			break;
-		case SDLK_RIGHT:
-			x++;
-			moved = true;
-			break;
-		case SDLK_LEFT:
-			x = SDL_max(0, x - 1);
-			moved = true;
-			break;
+			int x = m_selected->get_x();
+			int y = m_selected->get_y();
+
+			bool moved = false;
+
+			switch (e->key.keysym.sym)
+			{
+			case SDLK_UP:
+				y = SDL_max(y - 1, 0);
+				moved = true;
+				break;
+			case SDLK_DOWN:
+				y++;
+				moved = true;
+				break;
+			case SDLK_RIGHT:
+				x++;
+				moved = true;
+				break;
+			case SDLK_LEFT:
+				x = SDL_max(0, x - 1);
+				moved = true;
+				break;
+			}
+
+			if (moved)
+			{
+				m_selected->set_pos(x, y);
+				m_settings->set_position(x, y);
+			}
 		}
 
-		if (moved)
+		for (auto& const element : m_elements)
 		{
-			m_selected->set_pos(x, y);
-			m_settings->set_position(x, y);
+			if (e->key.keysym.sym == vc_to_sdl_key(element->get_vc()))
+			{
+				element->set_pressed(true);
+			}
+		}
+	}
+	else if (e->type == SDL_KEYUP)
+	{
+		for (auto& const element : m_elements)
+		{
+			if (e->key.keysym.sym == vc_to_sdl_key(element->get_vc()))
+			{
+				element->set_pressed(false);
+			}
 		}
 	}
 	else if (e->type == SDL_WINDOWEVENT)

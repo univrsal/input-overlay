@@ -65,6 +65,9 @@ public:
 			m_texture_mapping.h * cs->get_scale()};
 		SDL_Rect temp_mapping = m_texture_mapping;
 
+		if (m_pressed)
+			temp_mapping.y += temp_mapping.h + 3;
+
 		atlas->draw(cs->get_helper()->renderer(), &temp, &temp_mapping);
 
 		if (selected)
@@ -98,12 +101,19 @@ public:
 	int get_h() { return m_texture_mapping.h; }
 	int get_u() { return m_texture_mapping.x; }
 	int get_v() { return m_texture_mapping.y; }
+
+	uint16_t get_vc(void) { return m_keycode; }
+	void set_pressed(bool b) { m_pressed = b; }
+
+	const SDL_Rect * get_mapping(void) { return &m_texture_mapping; }
 private:
 	ElementType m_type;
 	SDL_Point m_pos; /* Final position in overlay */
 	SDL_Rect m_texture_mapping; /* Position in texture*/
 	uint16_t m_keycode;
 	std::string m_id;
+
+	bool m_pressed = false; /* used to highlight in preview */
 };
 
 class Config

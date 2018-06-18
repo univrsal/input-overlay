@@ -6,6 +6,7 @@
  */
 
 #pragma once
+#include <stdlib.h>
 
 #include "Dialog.hpp"
 #include "elements/Button.hpp"
