@@ -85,6 +85,9 @@ bool SDL_helper::init()
 			m_font_helper = new FontHelper(this);
 		}
 
+		m_default_font_height = TTF_FontHeight(m_default_font);
+		m_utf8_font_height = TTF_FontHeight(m_utf8_font);
+
 		/* Cursors */
 		m_size_h = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZEWE);
 		m_size_v = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZENS);

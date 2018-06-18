@@ -17,6 +17,11 @@ Tool::~Tool()
 	close_toplevel();
 	m_config = nullptr;
 	m_setup_dialog = nullptr;
+	if (m_notify)
+	{
+		delete m_notify;
+		m_notify = nullptr;
+	}
 }
 
 void Tool::program_loop()
@@ -25,6 +30,8 @@ void Tool::program_loop()
 	m_setup_dialog->init();
 	m_setup_dialog->action_performed(ACTION_FOCUSED);
 	m_helper->set_runflag(&m_run_flag);
+
+	m_notify = new Notifier(m_helper);
 
 	while (m_run_flag)
 	{
@@ -70,7 +77,7 @@ void Tool::program_loop()
 			}
 			break;
 		}
-
+		m_notify->draw(); /* Notifications have top priority */
 		m_helper->repaint();
 	}
 }
@@ -117,7 +124,7 @@ void Tool::action_performed(uint8_t type)
 		case MOUSE_MOVEMENT:
 		case ANALOG_STICK:
 		case BUTTON_MOUSE:
-			e = new Element(d->get_type(), SDL_Point{ 0, 0 }, d->get_selection_1(), d->get_key_code());
+			e = new Element(d->get_type(), *d->get_id(), SDL_Point{ 0, 0 }, d->get_selection_1(), d->get_key_code());
 			break;
 		case TRIGGER_GAMEPAD:
 			break;
@@ -148,7 +155,24 @@ Texture * Tool::get_atlas(void)
 
 void Tool::add_element(Element * e)
 {
-	m_config->m_elements.emplace_back(e);
+	bool unique_id = true;
+	for (auto& const element : m_config->m_elements)
+	{
+		if (element->get_id()->compare(e->get_id()->c_str()) == 0)
+		{
+			unique_id = false;
+			break;
+		}
+	}
+
+	if (unique_id)
+	{
+		m_config->m_elements.emplace_back(e);
+	}
+	else
+	{
+		m_notify->add_msg(MESSAGE_ERROR, "Element id must be unique!");
+	}
 }
 
 void Tool::close_toplevel(void)

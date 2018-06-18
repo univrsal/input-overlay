@@ -13,6 +13,7 @@
 #include "dialog/DialogHelp.hpp"
 #include "dialog/DialogNewElement.hpp"
 #include "util/Texture.hpp"
+#include "util/Notifier.hpp"
 #include "Config.hpp"
 #include <SDL.h>
 
@@ -68,5 +69,6 @@ private:
 	DialogSetup * m_setup_dialog = nullptr;
 	DialogElementSettings * m_element_settings = nullptr;
 	Dialog * m_toplevel = nullptr;
+	Notifier * m_notify = nullptr;
 	ToolState m_state;
 };

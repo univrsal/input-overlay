@@ -75,6 +75,9 @@ class SDL_helper
 
 		void util_cut_string(std::string &s, int max_width, bool front);
 
+		uint8_t util_default_text_height(void) { return m_default_font_height; }
+		uint8_t util_utf8_text_height(void) { return m_utf8_font_height; }
+
 		inline void util_enable_mask(uint16_t & masks, uint16_t mask);
 		inline void util_disable_mask(uint16_t & masks, uint16_t mask);
 
@@ -108,6 +111,9 @@ class SDL_helper
 		SDL_Window * m_sdl_window;
 		TTF_Font * m_default_font;
 		TTF_Font * m_utf8_font;
+
+		uint8_t m_default_font_height;
+		uint8_t m_utf8_font_height;
 
 		bool m_init_success;
 

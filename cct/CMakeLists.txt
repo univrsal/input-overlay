@@ -47,7 +47,9 @@ set(io-cct_SOURCES
 	src/dialog/DialogNewElement.cpp
 	src/dialog/DialogNewElement.hpp
 	src/util/CoordinateSystem.cpp
-	src/util/CoordinateSystem.hpp)
+	src/util/CoordinateSystem.hpp
+	src/util/Notifier.cpp
+	src/util/Notifier.hpp)
 
 include_directories(${SDL_INCLUDE_DIR}
 	${SDL_TTF_INCLUDE_DIR}

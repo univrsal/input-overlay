@@ -40,12 +40,13 @@ enum ElementType
 class Element
 {
 public:
-	Element(ElementType t, SDL_Point pos, SDL_Rect map, uint16_t keycode)
+	Element(ElementType t, std::string id, SDL_Point pos, SDL_Rect map, uint16_t keycode)
 	{
 		m_type = t;
 		m_pos = pos;
 		m_texture_mapping = map;
 		m_keycode = keycode;
+		m_id = id;
 	}
 
 	SDL_Rect get_abs_dim(CoordinateSystem * cs)
@@ -63,11 +64,6 @@ public:
 			m_texture_mapping.w * cs->get_scale(),
 			m_texture_mapping.h * cs->get_scale()};
 		SDL_Rect temp_mapping = m_texture_mapping;
-
-		//bool result = (cs->crop_rect(temp_mapping, temp));
-		
-		//if (!result)
-		//	return;
 
 		atlas->draw(cs->get_helper()->renderer(), &temp, &temp_mapping);
 
@@ -95,6 +91,7 @@ public:
 		m_texture_mapping.h = h;
 	}
 
+	std::string * get_id() { return &m_id; }
 	int get_x() { return m_pos.x; }
 	int get_y() { return m_pos.y; }
 	int get_w() { return m_texture_mapping.w; }
@@ -106,6 +103,7 @@ private:
 	SDL_Point m_pos; /* Final position in overlay */
 	SDL_Rect m_texture_mapping; /* Position in texture*/
 	uint16_t m_keycode;
+	std::string m_id;
 };
 
 class Config

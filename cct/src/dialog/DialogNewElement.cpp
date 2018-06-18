@@ -5,18 +5,20 @@ void DialogNewElement::init()
 	set_flags(DIALOG_TOP_MOST | DIALOG_FLUID);
 	Dialog::init();
 	m_element_y = get_top() + 30;
+
+	add_element_id();
+
 	switch (m_type)
 	{
 	case BUTTON_KEYBOARD:
 	case BUTTON_GAMEPAD:
 	case BUTTON_MOUSE:
+		add_keycode_elements();
 	case TEXTURE:
-
 		add(m_selector = new AtlasSelector(m_id++, get_left() + 270,
 			get_top() + 30, m_dimensions.w - 278, m_dimensions.h - 38, m_tool->get_atlas(), this));
 		m_selector->set_selection(&m_selection_1);
 		add_selection_elements();
-		add_keycode_elements();
 		break;
 	}
 
@@ -117,6 +119,11 @@ uint16_t DialogNewElement::get_key_code(void)
 		return 0x0;
 }
 
+const std::string * DialogNewElement::get_id(void)
+{
+	return m_element_id->get_text();
+}
+
 void DialogNewElement::add_selection_elements(void)
 {
 	uint16_t panel_w = 254;
@@ -124,17 +131,17 @@ void DialogNewElement::add_selection_elements(void)
 	m_selection_1 = { 0, 0, 0, 0 };
 
 	if (m_element_y == 0)
-		m_element_y += 30;
+		m_element_y = 30;
 
 	add(new Label(m_id++, 8, m_element_y, "Texture selection", this));
 
-	m_element_y += 30;
+	m_element_y += 25;
 	add(new Label(m_id++, 8, m_element_y, "Width:", this));
 	add(new Label(m_id++, 16 + panel_w / 2, m_element_y, "Height:", this));
 	add(m_w = new Textbox(m_id++, 8 + panel_w / 4 + 4, m_element_y, panel_w / 4, 20, "0", this));
 	add(m_h = new Textbox(m_id++, 8 + panel_w / 4 * 3 + 4, m_element_y, panel_w / 4, 20, "0", this));
 
-	m_element_y += 30;
+	m_element_y += 25;
 	add(new Label(m_id++, 8, m_element_y, "U:", this));
 	add(new Label(m_id++, 16 + panel_w / 2, m_element_y, "V:", this));
 	add(m_u = new Textbox(m_id++, 8 + panel_w / 4 + 4, m_element_y, panel_w / 4, 20, "0", this));
@@ -153,10 +160,22 @@ void DialogNewElement::add_keycode_elements(void)
 	uint16_t panel_w = 254;
 
 	if (m_element_y == 0)
-		m_element_y += 30;
+		m_element_y = 30;
 	add(new Label(m_id++, 8, m_element_y, "Key code:", this));
-	m_element_y += 30;
+	m_element_y += 25;
 	add(m_keycode = new Textbox(m_id++, 8, m_element_y, panel_w, 20, "0", this));
 	m_keycode->set_cutoff(10);
+	m_element_y += 40;
+}
+
+void DialogNewElement::add_element_id(void)
+{
+	uint16_t panel_w = 254;
+
+	if (m_element_y == 0)
+		m_element_y = 30;
+	add(new Label(m_id++, 9, m_element_y, "Element id:", this));
+	m_element_y += 25;
+	add(m_element_id = new Textbox(m_id++, 8, m_element_y, panel_w, 20, "unnamed", this));
 	m_element_y += 40;
 }

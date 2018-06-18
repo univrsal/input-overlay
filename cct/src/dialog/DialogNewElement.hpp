@@ -50,12 +50,16 @@ public:
 
 	uint16_t get_key_code(void);
 
+	const std::string * get_id(void);
 private:
 	/* Adds default elements*/
 	void add_selection_elements(void);
 
 	/* Adds key code elements */
 	void add_keycode_elements(void);
+
+	/* Adds text box for element id*/
+	void add_element_id(void);
 
 	/* Y position of the lowest element */
 	uint16_t m_element_y = 0;
@@ -70,6 +74,7 @@ private:
 	Textbox * m_u = nullptr;
 	Textbox * m_v = nullptr;
 
+	Textbox * m_element_id = nullptr;
 	Textbox * m_keycode = nullptr;
 
 	Button * m_ok = nullptr;
