@@ -5,16 +5,19 @@
 #define X_AXIS 100
 #define Y_AXIS 100
 
-Config::Config(const std::string * texture, const std::string * config, SDL_helper * h, DialogElementSettings * s)
+Config::Config(const std::string * texture, const std::string * config, SDL_Point def_dim, SDL_helper * h, DialogElementSettings * s)
 {
 	m_texture_path = texture;
 	m_config_path = config;
 	m_settings = s;
 	m_atlas = new Texture(texture->c_str(), h->renderer());
 	m_helper = h;
-
+	m_default_dim = def_dim;
 	SDL_Point * w = h->util_window_size();
 	m_cs = CoordinateSystem(SDL_Point { X_AXIS, Y_AXIS }, SDL_Rect { 0, 0, w->x, w->y }, h);
+
+	if (def_dim.x > 0 && def_dim.y > 0)
+		m_cs.set_grid_space(def_dim);
 
 	SDL_Point pos = { 0, 0 };
 	SDL_Rect map = { 1, 1, 157, 128 };
@@ -47,6 +50,12 @@ void Config::draw_elements(void)
 	/* Draw coordinate system */
 
 	m_cs.draw_foreground();
+
+	if (m_element_to_delete >= 0 && m_element_to_delete < m_elements.size())
+	{
+		m_elements.erase(m_elements.begin() + m_element_to_delete);
+		m_element_to_delete = -1;
+	}
 }
 
 void Config::handle_events(SDL_Event * e)
@@ -59,7 +68,7 @@ void Config::handle_events(SDL_Event * e)
 		{
 			/* Handle selection of elements */
 			std::vector<std::unique_ptr<Element>>::iterator iterator;
-
+			int i = 0;
 			for (iterator = m_elements.begin(); iterator != m_elements.end(); iterator++)
 			{
 				if (m_helper->util_is_in_rect(
@@ -67,6 +76,7 @@ void Config::handle_events(SDL_Event * e)
 					e->button.x, e->button.y))
 				{
 					m_selected = iterator->get();
+					m_selected_id = i;
 					m_dragging_element = true;
 					m_drag_element_offset = { (int) (e->button.x - (m_selected->get_x() * m_cs.get_scale())
 					+ m_cs.get_origin()->x), (int) (e->button.y - (m_selected->get_y() * m_cs.get_scale())
@@ -75,8 +85,10 @@ void Config::handle_events(SDL_Event * e)
 					m_settings->set_dimensions(m_selected->get_w(), m_selected->get_h());
 					m_settings->set_position(m_selected->get_x(), m_selected->get_y());
 					m_settings->set_uv(m_selected->get_u(), m_selected->get_v());
+					m_settings->set_id(*m_selected->get_id());
 					break;
 				}
+				i++;
 			}
 		}
 	}
@@ -169,6 +181,11 @@ void Config::handle_events(SDL_Event * e)
 Texture * Config::get_texture(void)
 {
     return m_atlas;
+}
+
+SDL_Point Config::get_default_dim(void)
+{
+	return m_default_dim;
 }
 
 uint16_t Config::vc_to_sdl_key(uint16_t key)

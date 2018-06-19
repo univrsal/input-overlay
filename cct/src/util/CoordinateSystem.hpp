@@ -46,6 +46,8 @@ public:
 
 	void enable_border(void) { m_border = true; }
 
+	void enable_crosshair(void) { m_crosshair = true; }
+
 	bool handle_events(SDL_Event * e);
 
 	void draw_foreground(void);
@@ -56,6 +58,7 @@ public:
 
 	void set_pos(int x, int y);
 
+	void set_grid_space(SDL_Point p) { m_grid_spacing = p; }
 	/* Adjusts to pixel raster */
 	int adjust(int i);
 
@@ -121,9 +124,10 @@ private:
 	SDL_Point m_origin_anchor; /* Constant position of the origin*/
 	SDL_Point m_origin; /* Origin after zooming and moving */
 	SDL_Point m_drag_offset;
-
+	SDL_Point m_grid_spacing = { 0, 0 };
 	SDL_helper * m_helper = nullptr;
 
 	bool m_dragging = false;
 	bool m_border = false; /* Used inside dialogs */
+	bool m_crosshair = false;
 };

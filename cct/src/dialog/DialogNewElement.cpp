@@ -128,6 +128,20 @@ const std::string * DialogNewElement::get_id(void)
 	return m_element_id->get_text();
 }
 
+void DialogNewElement::set_default_dim(int w, int h)
+{
+	m_selection_1.w = w;
+	m_selection_1.h = h;
+	m_selection_2.w = w;
+	m_selection_2.h = w;
+
+	m_selection_1.x = 1;
+	m_selection_1.y = 1;
+
+	m_selection_2.x = 1;
+	m_selection_2.y = 1;
+}
+
 void DialogNewElement::add_selection_elements(void)
 {
 	uint16_t panel_w = 254;

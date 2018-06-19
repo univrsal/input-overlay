@@ -18,14 +18,14 @@ void DialogSetup::init()
 	add(new Label(id++, 8, 85, "Default element width:", this));
 	add(new Label(id++, (m_dimensions.w / 2) + 4, 85, "Default element height:", this));
 
-	Textbox * def_w = new Textbox(id++, 8, 105, (m_dimensions.w / 2) - 16, 20, "0", this);
-	Textbox * def_h = new Textbox(id++, (m_dimensions.w / 2) + 4, 105, (m_dimensions.w / 2) - 12, 20, "0", this);
+	m_def_w = new Textbox(id++, 8, 105, (m_dimensions.w / 2) - 16, 20, "0", this);
+	m_def_h = new Textbox(id++, (m_dimensions.w / 2) + 4, 105, (m_dimensions.w / 2) - 12, 20, "0", this);
 
-	def_w->set_flags(TEXTBOX_NUMERIC);
-	def_h->set_flags(TEXTBOX_NUMERIC);
+	m_def_w->set_flags(TEXTBOX_NUMERIC);
+	m_def_h->set_flags(TEXTBOX_NUMERIC);
 
-	add(def_w);
-	add(def_h);
+	add(m_def_w);
+	add(m_def_h);
 
 	add(new Button(ACTION_OK, 8, m_dimensions.h - 32, "OK", this));
 	add(new Button(ACTION_CANCEL, 116, m_dimensions.h - 32, "Exit", this));
@@ -82,4 +82,10 @@ const std::string * DialogSetup::get_config_path(void)
 const std::string * DialogSetup::get_texture_path(void)
 {
 	return m_texture_path->get_text();
+}
+
+SDL_Point DialogSetup::get_default_dim()
+{
+	return SDL_Point{ std::stoi(m_def_w->get_text()->c_str()),
+		std::stoi(m_def_h->get_text()->c_str()) };
 }

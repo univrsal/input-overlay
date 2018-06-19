@@ -50,10 +50,13 @@ public:
 
 	Element * get_selected(void);
 
+	uint16_t get_selected_id(void);
+
 	void action_performed(uint8_t type);
 
 	Texture * get_atlas(void);
 
+	void delete_element(uint16_t id);
 private:
 	void add_element(Element * e);
 

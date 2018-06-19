@@ -48,9 +48,9 @@ void Tool::program_loop()
 			if (m_setup_dialog->is_finished())
 			{
 				m_element_settings = new DialogElementSettings(m_helper,
-					SDL_Rect{ 10, 200, 240, 310 }, this);
+					SDL_Rect{ 10, 200, 240, 360 }, this);
 				m_config = new Config(m_setup_dialog->get_texture_path(),
-					m_setup_dialog->get_config_path(), m_helper, m_element_settings);
+					m_setup_dialog->get_config_path(), m_setup_dialog->get_default_dim(), m_helper, m_element_settings);
 
 				m_element_settings->init();
 
@@ -70,6 +70,7 @@ void Tool::program_loop()
 			m_config->draw_elements();
 			m_element_settings->draw_background();
 			m_element_settings->draw_foreground();
+
 			if (m_toplevel)
 			{
 				m_toplevel->draw_background();
@@ -85,8 +86,13 @@ void Tool::program_loop()
 Element * Tool::get_selected(void)
 {
 	if (m_config)
-		return m_config->m_selected;
+		return m_config->selected();
 	return nullptr;
+}
+
+uint16_t Tool::get_selected_id(void)
+{
+	return m_config->selecte_id();
 }
 
 void Tool::action_performed(uint8_t type)
@@ -111,6 +117,8 @@ void Tool::action_performed(uint8_t type)
 		m_state = IN_NEW_ELEMENT;
 		m_toplevel = new DialogNewElement(m_helper, SDL_Point{}, "New element", this, BUTTON_KEYBOARD);
 		m_toplevel->init();
+		d = reinterpret_cast<DialogNewElement*>(m_toplevel);
+		d->set_default_dim(m_config->get_default_dim().x, m_config->get_default_dim().y);
 		break;
 	case TOOL_ACTION_NEW_ELEMENT_ADD:
 		d = reinterpret_cast<DialogNewElement*>(m_toplevel);
@@ -151,6 +159,11 @@ void Tool::action_performed(uint8_t type)
 Texture * Tool::get_atlas(void)
 {
 	return m_config->get_texture();
+}
+
+void Tool::delete_element(uint16_t id)
+{
+	m_config->queue_delete(id);
 }
 
 void Tool::add_element(Element * e)

@@ -52,6 +52,8 @@ public:
 	uint16_t get_key_code(void);
 
 	const std::string * get_id(void);
+
+	void set_default_dim(int w, int h);
 private:
 	/* Adds default elements*/
 	void add_selection_elements(void);
@@ -85,4 +87,5 @@ private:
 	SDL_Rect m_selection_1;
 	SDL_Rect m_selection_2;
 
+	SDL_Point m_default_dim;
 };

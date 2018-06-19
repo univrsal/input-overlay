@@ -38,6 +38,7 @@ public:
 	void set_dimensions(int w, int h);
 	void set_position(int x, int y);
 	void set_uv(int u, int v);
+	void set_id(std::string id);
 private:
 	bool m_finished = false;
 

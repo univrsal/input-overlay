@@ -94,6 +94,8 @@ public:
 		m_texture_mapping.h = h;
 	}
 
+	void set_id(std::string id) { m_id = id; }
+
 	std::string * get_id() { return &m_id; }
 	int get_x() { return m_pos.x; }
 	int get_y() { return m_pos.y; }
@@ -119,21 +121,33 @@ private:
 class Config
 {
 public:
-	Config(const std::string * texture, const std::string * config, SDL_helper * h, DialogElementSettings * s);
+	Config(const std::string * texture, const std::string * config, SDL_Point def_dim, SDL_helper * h, DialogElementSettings * s);
 	~Config();
 
 	void draw_elements(void);
 
 	void handle_events(SDL_Event * e);
 
-	Element * m_selected = nullptr;
 	const std::string * m_texture_path;
 	const std::string * m_config_path;
+	
+	Texture * get_texture(void);
+
+	SDL_Point get_default_dim(void);
+
+	void queue_delete(uint16_t id) { m_element_to_delete = id; }
+
 	std::vector<std::unique_ptr<Element>> m_elements;
 
-	Texture * get_texture(void);
+	Element * selected() { return m_selected; }
+	uint16_t selecte_id() { return m_selected_id; }
 private:
+	
 	uint16_t vc_to_sdl_key(uint16_t key);
+
+	int16_t m_element_to_delete = -1;
+	uint16_t m_selected_id = 0;
+	Element * m_selected = nullptr;
 
 	CoordinateSystem m_cs;
 
@@ -143,4 +157,6 @@ private:
 
 	bool m_dragging_element = false;
 	SDL_Point m_drag_element_offset;
+
+	SDL_Point m_default_dim;
 };

@@ -132,6 +132,8 @@ void CoordinateSystem::draw_foreground(void)
 	for (int x = start; x < get_right(); x += step)
 	{
 		bool flag = (x - m_origin.x) % 100 == 0 && (x - m_origin.x) != 0;
+		bool flag2 = m_grid_spacing.x > 0 && (x - m_origin.x ) % m_grid_spacing.x == 0;
+
 		if (flag)
 		{
 			std::string tag = std::to_string(((x - m_origin.x) / m_scale_f));
@@ -139,13 +141,16 @@ void CoordinateSystem::draw_foreground(void)
 			m_helper->util_text(&tag,
 				UTIL_CLAMP(get_origin_left() + dim.h + 2,x + dim.h / 2, get_right() - 2),
 				get_origin_top() - dim.w - 6, m_helper->palette()->white(), 90);
-
 			m_helper->util_draw_line(x, get_origin_top() - 4, x, get_origin_top() + 4, m_helper->palette()->white());
-			m_helper->util_draw_line(x, get_origin_top() + 4, x, get_bottom(), m_helper->palette()->gray());
 		}
 		else
 		{
 			m_helper->util_draw_line(x, get_origin_top() - 2, x, get_origin_top() + 2, m_helper->palette()->white());
+		}
+
+		if (flag && m_grid_spacing.x == 0 || flag2)
+		{
+			m_helper->util_draw_line(x, get_origin_top() + 4, x, get_bottom(), m_helper->palette()->gray());
 		}
 	}
 	
@@ -206,6 +211,22 @@ void CoordinateSystem::draw_foreground(void)
 		}
 		end_draw();
 	}
+
+	if (m_crosshair)
+	{
+		SDL_Point * w = m_helper->util_window_size();
+		SDL_Point mouse;
+
+		SDL_GetMouseState(&mouse.x, &mouse.y);
+		mouse.x = adjust(mouse.x);
+		mouse.y = adjust(mouse.y);
+
+		m_helper->util_draw_line(mouse.x, m_origin_anchor.y + m_dimensions.y,
+			mouse.x, m_origin_anchor.y + m_dimensions.h, m_helper->palette()->get_accent());
+		m_helper->util_draw_line(m_origin_anchor.x + m_dimensions.x, mouse.y,
+			m_origin_anchor.x + m_dimensions.x + m_dimensions.w, mouse.y, m_helper->palette()->get_accent());
+	}
+
 
 	/* Border around the entire thing */
 	if (m_border)

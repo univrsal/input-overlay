@@ -12,6 +12,7 @@ void DialogElementSettings::init()
 	add(new Label(id++, (m_dimensions.w / 2) + 4, 65, "Y: ", this));
 	add(new Label(id++, 8, 95, "U: ", this));
 	add(new Label(id++, (m_dimensions.w / 2) + 4, 95, "V: ", this));
+	add(new Label(id++, 8, 125, "Element id:", this));
 
 	/* Textboxes */
 	m_element_width = new Textbox(id++, 55, 32, (m_dimensions.w / 2) - 63, 20, "0", this);
@@ -22,6 +23,8 @@ void DialogElementSettings::init()
 
 	m_element_u = new Textbox(id++, 55, 92, (m_dimensions.w / 2) - 63, 20, "0", this);
 	m_element_v = new Textbox(id++, (m_dimensions.w / 2) + 55, 92, (m_dimensions.w / 2) - 63, 20, "0", this);
+
+	add(m_element_id = new Textbox(id++, 8, 145, m_dimensions.w - 16, 20, "", this));
 
 	m_element_width->set_flags(TEXTBOX_NUMERIC);
 	m_element_height->set_flags(TEXTBOX_NUMERIC);
@@ -69,6 +72,13 @@ void DialogElementSettings::action_performed(int8_t action_id)
 			m_tool->get_selected()->set_dim(std::stoi(
 				m_element_width->get_text()->c_str()), std::stoi(
 					m_element_height->get_text()->c_str()));
+			m_tool->get_selected()->set_id(*m_element_id->get_text());
+		}
+		break;
+	case ACTION_DEL_ELEMENT:
+		if (m_tool->get_selected())
+		{
+			m_tool->delete_element(m_tool->get_selected_id());
 		}
 		break;
 	case ACTION_HELP_BUTTON:
@@ -117,4 +127,9 @@ void DialogElementSettings::set_uv(int u, int v)
 	{
 		m_element_v->set_text(std::to_string(v));
 	}
+}
+
+void DialogElementSettings::set_id(std::string id)
+{
+	m_element_id->set_text(id);
 }

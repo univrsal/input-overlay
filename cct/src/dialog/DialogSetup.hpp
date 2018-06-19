@@ -36,4 +36,8 @@ private:
 	bool m_finished = false;
 	Textbox * m_texture_path = nullptr;
 	Textbox * m_config_path = nullptr;
+	Textbox * m_def_w = nullptr;
+	Textbox * m_def_h = nullptr;
+public:
+	SDL_Point get_default_dim();
 };
