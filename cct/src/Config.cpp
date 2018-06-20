@@ -38,6 +38,7 @@ void Config::draw_elements(void)
 {
 	m_cs.draw_background();
 	/* Draw elements */
+	m_cs.begin_draw();
 	std::vector<std::unique_ptr<Element>>::iterator iterator;
 	for (iterator = m_elements.begin(); iterator != m_elements.end(); iterator++)
 	{
@@ -46,7 +47,7 @@ void Config::draw_elements(void)
 		else
 			iterator->get()->draw(m_atlas, &m_cs, false);
 	}
-
+	m_cs.end_draw();
 	/* Draw coordinate system */
 
 	m_cs.draw_foreground();

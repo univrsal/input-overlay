@@ -22,8 +22,8 @@ bool CoordinateSystem::handle_events(SDL_Event * e)
 			{
 				if (SDL_RectEmpty(m_selection))
 				{
-					m_selection_a.x = e->button.x;
-					m_selection_a.y = e->button.y;
+					m_selection_a.x = round((e->button.x - m_origin.x) / ((float) m_scale_f));
+					m_selection_a.y = round((e->button.y - m_origin.y) / ((float) m_scale_f));
 					m_selecting = true;
 					was_handled = true;
 				}
@@ -54,10 +54,10 @@ bool CoordinateSystem::handle_events(SDL_Event * e)
 		}
 		else if (m_selecting && (e->motion.state & SDL_BUTTON_LMASK))
 		{
-			m_selection->x = ceil((UTIL_MIN(m_selection_a.x, e->button.x) - m_origin.x) / m_scale_f);
-			m_selection->y = ceil((UTIL_MIN(m_selection_a.y, e->button.y) - m_origin.y) / m_scale_f);
-			m_selection->w = ceil(SDL_abs(m_selection_a.x - e->button.x) / m_scale_f);
-			m_selection->h = ceil(SDL_abs(m_selection_a.y - e->button.y) / m_scale_f);
+			m_selection->x = UTIL_MIN(m_selection_a.x, round((e->button.x - m_origin.x) / ((float)m_scale_f)));
+			m_selection->y = UTIL_MIN(m_selection_a.y, round((e->button.y - m_origin.y) / ((float)m_scale_f)));
+			m_selection->w = SDL_abs(m_selection_a.x - round((e->button.x - m_origin.x) / ((float)m_scale_f)));
+			m_selection->h = SDL_abs(m_selection_a.y - round((e->button.y - m_origin.y) / ((float)m_scale_f)));
 		}
 		else if (m_sizing && (e->motion.state & SDL_BUTTON_LMASK))
 		{
@@ -65,22 +65,22 @@ bool CoordinateSystem::handle_events(SDL_Event * e)
 			switch (m_size_mode)
 			{
 				case SIZE_RIGHT:
-					m_selection->w = UTIL_MAX(ceil((e->button.x - m_origin.x) / m_scale_f - m_selection->x), 4);
+					m_selection->w = UTIL_MAX(round((e->button.x - m_origin.x) / ((float)m_scale_f) - m_selection->x), 4);
 					break;
 				case SIZE_BOTTOM:
-					m_selection->h = UTIL_MAX(ceil((e->button.y - m_origin.y) / m_scale_f - m_selection->y), 4);
+					m_selection->h = UTIL_MAX(round((e->button.y - m_origin.y) / ((float)m_scale_f) - m_selection->y), 4);
 					break;
 				case SIZE_LEFT:
-					m_selection->x = UTIL_MAX(ceil((e->button.x - m_origin.x) / m_scale_f), 0);
+					m_selection->x = UTIL_MAX(round((e->button.x - m_origin.x) / ((float)m_scale_f)), 0);
 					m_selection->w = UTIL_MAX(m_selection_a.x - m_selection->x, 4);
 					break;
 				case SIZE_TOP:
-					m_selection->y = UTIL_MAX(ceil((e->button.y - m_origin.y) / m_scale_f), 0);
+					m_selection->y = UTIL_MAX(round((e->button.y - m_origin.y) / ((float)m_scale_f)), 0);
 					m_selection->h = UTIL_MAX(m_selection_a.y - m_selection->y, 4);
 					break;
 				case SIZE_MOVE:
-					m_selection->x = UTIL_MAX(ceil((e->button.x - m_selection_a.x) / m_scale_f), 0);
-					m_selection->y = UTIL_MAX(ceil((e->button.y - m_selection_a.y) / m_scale_f), 0);
+					m_selection->x = UTIL_MAX(round((e->button.x - m_selection_a.x) / ((float)m_scale_f)), 0);
+					m_selection->y = UTIL_MAX(round((e->button.y - m_selection_a.y) / ((float)m_scale_f)), 0);
 					break;
 			}
 		}
@@ -212,21 +212,20 @@ void CoordinateSystem::draw_foreground(void)
 		end_draw();
 	}
 
-	if (m_crosshair)
+	if (m_crosshair && !m_selecting && m_size_mode == SIZE_NONE)
 	{
+		begin_draw();
 		SDL_Point * w = m_helper->util_window_size();
 		SDL_Point mouse;
 
 		SDL_GetMouseState(&mouse.x, &mouse.y);
-		mouse.x = adjust(mouse.x);
-		mouse.y = adjust(mouse.y);
+		mouse.x = mouse.x - m_dimensions.x - m_origin_anchor.x;
+		mouse.y = mouse.y - m_dimensions.y - m_origin_anchor.y;
 
-		m_helper->util_draw_line(mouse.x, m_origin_anchor.y + m_dimensions.y,
-			mouse.x, m_origin_anchor.y + m_dimensions.h, m_helper->palette()->get_accent());
-		m_helper->util_draw_line(m_origin_anchor.x + m_dimensions.x, mouse.y,
-			m_origin_anchor.x + m_dimensions.x + m_dimensions.w, mouse.y, m_helper->palette()->get_accent());
+		m_helper->util_draw_line(mouse.x, 0, mouse.x, m_system_area.h, m_helper->palette()->get_accent());
+		m_helper->util_draw_line(0, mouse.y, m_system_area.w, mouse.y, m_helper->palette()->get_accent());
+		end_draw();
 	}
-
 
 	/* Border around the entire thing */
 	if (m_border)
@@ -266,7 +265,7 @@ int CoordinateSystem::adjust(int i)
   is close enough to either side of the selection.
   Same for up and down.
 */
-#define EXTENDED_BORDER 2
+#define EXTENDED_BORDER 4
 void CoordinateSystem::mouse_state(SDL_Event * event)
 {
 	if (!m_selection)
