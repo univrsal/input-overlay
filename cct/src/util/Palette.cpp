@@ -11,7 +11,7 @@
 Palette::Palette()
 {
 	m_black = { 0, 0, 0, 255 };
-	m_white = { 213, 213, 213, 213 };
+	m_white = { 213, 213, 213, 255 };
 
 	m_foreground = { 255, 255, 255, 255 };
 	m_background = { 255, 255, 255, 255 };

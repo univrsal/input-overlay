@@ -141,9 +141,12 @@ public:
 
 	Element * selected() { return m_selected; }
 	uint16_t selecte_id() { return m_selected_id; }
+
+	void reset_selected_element(void);
 private:
 	
 	uint16_t vc_to_sdl_key(uint16_t key);
+	inline bool is_rect_in_rect(const SDL_Rect * a, const SDL_Rect * b);
 
 	int16_t m_element_to_delete = -1;
 	uint16_t m_selected_id = 0;
@@ -159,4 +162,11 @@ private:
 	SDL_Point m_drag_element_offset;
 
 	SDL_Point m_default_dim;
+
+	/* Selection stuff */
+	std::vector<uint16_t> m_selected_elements;
+	SDL_Rect m_total_selection;
+	SDL_Rect m_temp_selection;
+	SDL_Point m_selection_start;
+	bool m_selecting = false;
 };

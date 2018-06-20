@@ -52,6 +52,16 @@ void Config::draw_elements(void)
 
 	m_cs.draw_foreground();
 
+	if (!SDL_RectEmpty(&m_total_selection))
+	{
+		m_helper->util_draw_rect(&m_total_selection, m_helper->palette()->red());
+	}
+
+	if (!SDL_RectEmpty(&m_temp_selection))
+	{
+		m_helper->util_draw_rect(&m_temp_selection, m_helper->palette()->white());
+	}
+
 	if (m_element_to_delete >= 0 && m_element_to_delete < m_elements.size())
 	{
 		m_elements.erase(m_elements.begin() + m_element_to_delete);
@@ -67,7 +77,10 @@ void Config::handle_events(SDL_Event * e)
 	{
 		if (e->button.button == SDL_BUTTON_LEFT)
 		{
+			m_selected_elements.clear();
+			m_total_selection = {};
 			/* Handle selection of elements */
+			bool flag = true;
 			std::vector<std::unique_ptr<Element>>::iterator iterator;
 			int i = 0;
 			for (iterator = m_elements.begin(); iterator != m_elements.end(); iterator++)
@@ -87,18 +100,28 @@ void Config::handle_events(SDL_Event * e)
 					m_settings->set_position(m_selected->get_x(), m_selected->get_y());
 					m_settings->set_uv(m_selected->get_u(), m_selected->get_v());
 					m_settings->set_id(*m_selected->get_id());
+					flag = false;
 					break;
 				}
 				i++;
+			}
+
+			if (flag)
+			/* No element was directly select -> start groups selection*/
+			{
+				m_selecting = true;
+				reset_selected_element();
+				printf("yeee\n");
+				m_selection_start = { e->button.x, e->button.y };
 			}
 		}
 	}
 	else if (e->type == SDL_MOUSEBUTTONUP)
 	{
-		if (e->button.button == SDL_BUTTON_LEFT)
-		{
-			m_dragging_element = false;
-		}
+		m_dragging_element = false;
+		m_selecting = false;
+		m_selected_elements.clear();
+		m_temp_selection = {};
 	}
 	else if (e->type == SDL_MOUSEMOTION)
 	{
@@ -113,6 +136,31 @@ void Config::handle_events(SDL_Event * e)
 			m_selected->set_pos(x, y);
 			m_settings->set_position(x, y);
 		}
+
+		if (m_selecting)
+		{
+			m_total_selection = {};
+			SDL_Rect elem_dim;
+			m_temp_selection.x = UTIL_MIN(e->button.x, m_selection_start.x);
+			m_temp_selection.y = UTIL_MIN(e->button.y, m_selection_start.y);
+			m_temp_selection.w = SDL_abs(e->button.x - m_selection_start.x);
+			m_temp_selection.h = SDL_abs(e->button.y - m_selection_start.y);
+
+			
+			m_selected_elements.clear();
+			int index = 0;
+			for (auto& const elem : m_elements)
+			{
+				elem_dim = elem->get_abs_dim(&m_cs);
+
+				if (is_rect_in_rect(&elem_dim, &m_temp_selection))
+				{
+					m_selected_elements.emplace_back(index);
+					SDL_UnionRect(&m_total_selection, &elem_dim, &m_total_selection);
+				}
+				index++;
+			}
+		}		
 	}
 	else if (e->type == SDL_KEYDOWN)
 	{
@@ -187,6 +235,15 @@ Texture * Config::get_texture(void)
 SDL_Point Config::get_default_dim(void)
 {
 	return m_default_dim;
+}
+
+void Config::reset_selected_element(void)
+{
+	m_selected = nullptr;
+	m_settings->set_id("");
+	m_settings->set_uv(0, 0);
+	m_settings->set_position(0, 0);
+	m_settings->set_dimensions(0, 0);
 }
 
 uint16_t Config::vc_to_sdl_key(uint16_t key)
@@ -286,4 +343,10 @@ uint16_t Config::vc_to_sdl_key(uint16_t key)
 		case VC_BACKSPACE:
 			return SDLK_BACKSPACE;
 	}
+}
+
+inline bool Config::is_rect_in_rect(const SDL_Rect * a, const SDL_Rect * b)
+{
+	return a->x >= b->x && a->x + a->w <= b->x + b->w
+		&& a->y >= b->y && a->y + a->h <= b->y + b->h;
 }
