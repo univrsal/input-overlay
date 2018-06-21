@@ -36,21 +36,21 @@ Config::~Config()
 
 void Config::draw_elements(void)
 {
+	/* Draw coordinate system */
 	m_cs.draw_background();
+	m_cs.draw_foreground();
+
 	/* Draw elements */
 	m_cs.begin_draw();
-	std::vector<std::unique_ptr<Element>>::iterator iterator;
-	for (iterator = m_elements.begin(); iterator != m_elements.end(); iterator++)
 	{
-		if (iterator->get() == m_selected)
-			iterator->get()->draw(m_atlas, &m_cs, true);
-		else
-			iterator->get()->draw(m_atlas, &m_cs, false);
+		for (auto& const element : m_elements)
+		{
+			if (element.get() == m_selected)
+				element->draw(m_atlas, &m_cs, true);
+			else
+				element->draw(m_atlas, &m_cs, false);
+		}
 	}
-	m_cs.end_draw();
-	/* Draw coordinate system */
-
-	m_cs.draw_foreground();
 
 	if (!SDL_RectEmpty(&m_total_selection))
 	{
@@ -67,6 +67,9 @@ void Config::draw_elements(void)
 		m_elements.erase(m_elements.begin() + m_element_to_delete);
 		m_element_to_delete = -1;
 	}
+
+	m_cs.end_draw();
+
 }
 
 void Config::handle_events(SDL_Event * e)
@@ -77,48 +80,58 @@ void Config::handle_events(SDL_Event * e)
 	{
 		if (e->button.button == SDL_BUTTON_LEFT)
 		{
-			m_selected_elements.clear();
-			m_total_selection = {};
 			/* Handle selection of elements */
-			bool flag = true;
-			std::vector<std::unique_ptr<Element>>::iterator iterator;
-			int i = 0;
-			for (iterator = m_elements.begin(); iterator != m_elements.end(); iterator++)
+			bool is_single_selection = false;
+			bool selection_empty = SDL_RectEmpty(&m_total_selection);
+
+			if (selection_empty)
 			{
-				if (m_helper->util_is_in_rect(
-					&iterator->get()->get_abs_dim(&m_cs),
-					e->button.x, e->button.y))
+				int i = 0;
+				for (auto& const elem : m_elements)
 				{
-					m_selected = iterator->get();
-					m_selected_id = i;
-					m_dragging_element = true;
-					m_drag_element_offset = { (int) (e->button.x - (m_selected->get_x() * m_cs.get_scale())
-					+ m_cs.get_origin()->x), (int) (e->button.y - (m_selected->get_y() * m_cs.get_scale())
-					+ m_cs.get_origin()->y) };
+					if (m_helper->util_is_in_rect(&elem.get()->get_abs_dim(&m_cs), e->button.x, e->button.y))
+					{
+						m_selected = elem.get();
+						m_selected_id = i;
+						
+						m_dragging_element = true;
+						m_drag_offset = { (e->button.x - (m_selected->get_x() * m_cs.get_scale())
+							+ m_cs.get_origin()->x), (e->button.y - (m_selected->get_y() * m_cs.get_scale())
+							+ m_cs.get_origin()->y) };
 
-					m_settings->set_dimensions(m_selected->get_w(), m_selected->get_h());
-					m_settings->set_position(m_selected->get_x(), m_selected->get_y());
-					m_settings->set_uv(m_selected->get_u(), m_selected->get_v());
-					m_settings->set_id(*m_selected->get_id());
-					flag = false;
-					break;
+						m_settings->select_element(m_selected);
+						is_single_selection = true;
+						break;
+					}
+					i++;
 				}
-				i++;
-			}
 
-			if (flag)
-			/* No element was directly select -> start groups selection*/
+				if (!is_single_selection)
+				/* No element was directly select -> start groups selection*/
+				{
+					m_selecting = true;
+					reset_selected_element();
+					m_selection_start = { e->button.x, e->button.y };
+					m_selected_elements.clear();
+					m_total_selection = {};
+				}
+			}
+			else if (m_helper->util_is_in_rect(&m_total_selection, e->button.x, e->button.y))
 			{
-				m_selecting = true;
-				reset_selected_element();
-				printf("yeee\n");
-				m_selection_start = { e->button.x, e->button.y };
+				m_dragging_elements = true;
+				m_drag_offset = { e->button.x - m_total_selection.x,
+					e->button.y - m_total_selection.y };
+			}
+			else
+			{
+				m_total_selection = {};
 			}
 		}
 	}
 	else if (e->type == SDL_MOUSEBUTTONUP)
 	{
 		m_dragging_element = false;
+		m_dragging_elements = false;
 		m_selecting = false;
 		m_selected_elements.clear();
 		m_temp_selection = {};
@@ -128,16 +141,15 @@ void Config::handle_events(SDL_Event * e)
 		if (m_dragging_element && m_selected)
 		{
 			int x, y;
-			x = SDL_max((e->button.x - m_drag_element_offset.x +
+			x = SDL_max((e->button.x - m_drag_offset.x +
 				m_cs.get_origin()->x) / m_cs.get_scale(), 0);
-			y = SDL_max((e->button.y - m_drag_element_offset.y +
+			y = SDL_max((e->button.y - m_drag_offset.y +
 				m_cs.get_origin()->y) / m_cs.get_scale(), 0);
 
 			m_selected->set_pos(x, y);
-			m_settings->set_position(x, y);
+			m_settings->set_xy(x, y);
 		}
-
-		if (m_selecting)
+		else if (m_selecting)
 		{
 			m_total_selection = {};
 			SDL_Rect elem_dim;
@@ -146,13 +158,14 @@ void Config::handle_events(SDL_Event * e)
 			m_temp_selection.w = SDL_abs(e->button.x - m_selection_start.x);
 			m_temp_selection.h = SDL_abs(e->button.y - m_selection_start.y);
 
-			
+			m_cs.translate(m_temp_selection.x, m_temp_selection.y);
+
 			m_selected_elements.clear();
 			int index = 0;
 			for (auto& const elem : m_elements)
 			{
 				elem_dim = elem->get_abs_dim(&m_cs);
-
+				m_cs.translate(elem_dim.x, elem_dim.y);
 				if (is_rect_in_rect(&elem_dim, &m_temp_selection))
 				{
 					m_selected_elements.emplace_back(index);
@@ -160,7 +173,12 @@ void Config::handle_events(SDL_Event * e)
 				}
 				index++;
 			}
-		}		
+		}
+		else if (m_dragging_elements)
+		{
+			m_total_selection.x = e->button.x - m_drag_offset.x;
+			m_total_selection.y = e->button.y - m_drag_offset.y;
+		}
 	}
 	else if (e->type == SDL_KEYDOWN)
 	{
@@ -195,7 +213,7 @@ void Config::handle_events(SDL_Event * e)
 			if (moved)
 			{
 				m_selected->set_pos(x, y);
-				m_settings->set_position(x, y);
+				m_settings->set_xy(x, y);
 			}
 		}
 
@@ -242,8 +260,8 @@ void Config::reset_selected_element(void)
 	m_selected = nullptr;
 	m_settings->set_id("");
 	m_settings->set_uv(0, 0);
-	m_settings->set_position(0, 0);
-	m_settings->set_dimensions(0, 0);
+	m_settings->set_xy(0, 0);
+	m_settings->set_wh(0, 0);
 }
 
 uint16_t Config::vc_to_sdl_key(uint16_t key)

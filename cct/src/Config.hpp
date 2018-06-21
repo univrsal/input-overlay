@@ -158,8 +158,8 @@ private:
 	Texture * m_atlas = nullptr;
 	DialogElementSettings * m_settings = nullptr;
 
-	bool m_dragging_element = false;
-	SDL_Point m_drag_element_offset;
+	bool m_dragging_element = false; /* Flag for dragging single element */
+	SDL_Point m_drag_offset;
 
 	SDL_Point m_default_dim;
 
@@ -169,4 +169,5 @@ private:
 	SDL_Rect m_temp_selection;
 	SDL_Point m_selection_start;
 	bool m_selecting = false;
+	bool m_dragging_elements = false; /* Flag for dragging entire selection*/
 };

@@ -37,12 +37,14 @@ void AtlasSelector::draw_foreground(void)
 	temp.x = m_cs->get_origin_x();
 	temp.y = m_cs->get_origin_y();
 
+	m_cs->draw_foreground();
+
 	m_cs->begin_draw();
 	{
 		m_atlas->draw(get_helper()->renderer(), &temp, NULL);
 	}
 	m_cs->end_draw();
-	m_cs->draw_foreground();
+	
 
 }
 

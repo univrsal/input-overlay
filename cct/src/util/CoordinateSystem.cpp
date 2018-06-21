@@ -215,15 +215,15 @@ void CoordinateSystem::draw_foreground(void)
 	if (m_crosshair && !m_selecting && m_size_mode == SIZE_NONE)
 	{
 		begin_draw();
-		SDL_Point * w = m_helper->util_window_size();
-		SDL_Point mouse;
+		{
+			SDL_Point mouse;
 
-		SDL_GetMouseState(&mouse.x, &mouse.y);
-		mouse.x = mouse.x - m_dimensions.x - m_origin_anchor.x;
-		mouse.y = mouse.y - m_dimensions.y - m_origin_anchor.y;
+			SDL_GetMouseState(&mouse.x, &mouse.y);
+			translate(mouse.x, mouse.y);
 
-		m_helper->util_draw_line(mouse.x, 0, mouse.x, m_system_area.h, m_helper->palette()->get_accent());
-		m_helper->util_draw_line(0, mouse.y, m_system_area.w, mouse.y, m_helper->palette()->get_accent());
+			m_helper->util_draw_line(mouse.x, 0, mouse.x, m_system_area.h, m_helper->palette()->white());
+			m_helper->util_draw_line(0, mouse.y, m_system_area.w, mouse.y, m_helper->palette()->white());
+		}
 		end_draw();
 	}
 
@@ -256,6 +256,12 @@ void CoordinateSystem::set_pos(int x, int y)
 int CoordinateSystem::adjust(int i)
 {
 	return ceil(i / m_scale_f) * m_scale_f;
+}
+
+void CoordinateSystem::translate(int& x, int& y)
+{
+	x -= m_dimensions.x + m_origin_anchor.x;
+	y -= m_dimensions.y + m_origin_anchor.y;
 }
 
 /*

@@ -22,6 +22,8 @@ class SDL_helper;
 
 class Tool;
 
+class Element;
+
 class DialogElementSettings : public Dialog
 {
 public:
@@ -35,10 +37,12 @@ public:
 
 	void action_performed(int8_t action_id);
 
-	void set_dimensions(int w, int h);
-	void set_position(int x, int y);
+	void set_wh(int w, int h);
+	void set_xy(int x, int y);
 	void set_uv(int u, int v);
 	void set_id(std::string id);
+
+	void select_element(Element * e);
 private:
 	bool m_finished = false;
 

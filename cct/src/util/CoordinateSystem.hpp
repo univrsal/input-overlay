@@ -97,6 +97,8 @@ public:
 	/* Resets the viewport */
 	void end_draw(void) { SDL_RenderSetViewport(m_helper->renderer(), NULL); }
 
+	/* Translates any point to the viewport*/
+	void translate(int& x, int& y);
 private:
 	void mouse_state(SDL_Event * event);
 

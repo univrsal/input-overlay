@@ -1,4 +1,5 @@
 #include "DialogElementSettings.hpp"
+#include "../Config.hpp"
 
 void DialogElementSettings::init()
 {
@@ -90,20 +91,20 @@ void DialogElementSettings::action_performed(int8_t action_id)
 	}
 }
 
-void DialogElementSettings::set_dimensions(int w, int h)
+void DialogElementSettings::set_wh(int w, int h)
 {
-	if (w > 0)
+	if (w >= 0)
 	{
 		m_element_width->set_text(std::to_string(w));
 	}
 
-	if (h > 0)
+	if (h >= 0)
 	{
 		m_element_height->set_text(std::to_string(h));
 	}
 }
 
-void DialogElementSettings::set_position(int x, int y)
+void DialogElementSettings::set_xy(int x, int y)
 {
 	if (x >= 0)
 	{
@@ -118,12 +119,12 @@ void DialogElementSettings::set_position(int x, int y)
 
 void DialogElementSettings::set_uv(int u, int v)
 {
-	if (u > 0)
+	if (u >= 0)
 	{
 		m_element_u->set_text(std::to_string(u));
 	}
 
-	if (v > 0)
+	if (v >= 0)
 	{
 		m_element_v->set_text(std::to_string(v));
 	}
@@ -132,4 +133,15 @@ void DialogElementSettings::set_uv(int u, int v)
 void DialogElementSettings::set_id(std::string id)
 {
 	m_element_id->set_text(id);
+}
+
+void DialogElementSettings::select_element(Element * e)
+{
+	if (e)
+	{
+		set_id(*e->get_id());
+		set_uv(e->get_u(), e->get_v());
+		set_xy(e->get_x(), e->get_y());
+		set_wh(e->get_w(), e->get_h());
+	}
 }
