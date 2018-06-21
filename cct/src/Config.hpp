@@ -57,6 +57,11 @@ public:
 		return temp;
 	}
 
+	SDL_Rect get_dim()
+	{
+		return SDL_Rect { m_pos.x, m_pos.y, m_texture_mapping.w, m_texture_mapping.h };
+	}
+
 	void draw(Texture * atlas, CoordinateSystem * cs, bool selected)
 	{
 		SDL_Rect temp = { m_pos.x * cs->get_scale() + cs->get_origin_x(),

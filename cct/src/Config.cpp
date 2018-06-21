@@ -50,24 +50,31 @@ void Config::draw_elements(void)
 			else
 				element->draw(m_atlas, &m_cs, false);
 		}
-	}
+	
 
-	if (!SDL_RectEmpty(&m_total_selection))
-	{
-		m_helper->util_draw_rect(&m_total_selection, m_helper->palette()->red());
-	}
+		if (!SDL_RectEmpty(&m_total_selection))
+		{
+			SDL_Rect temp = m_total_selection;
 
-	if (!SDL_RectEmpty(&m_temp_selection))
-	{
-		m_helper->util_draw_rect(&m_temp_selection, m_helper->palette()->white());
-	}
+			temp.x = temp.x * m_cs.get_scale() + m_cs.get_origin_x();
+			temp.y = temp.y * m_cs.get_scale() + m_cs.get_origin_y();
+			temp.w *= m_cs.get_scale();
+			temp.h *= m_cs.get_scale();
 
-	if (m_element_to_delete >= 0 && m_element_to_delete < m_elements.size())
-	{
-		m_elements.erase(m_elements.begin() + m_element_to_delete);
-		m_element_to_delete = -1;
-	}
+			m_helper->util_draw_rect(&temp, m_helper->palette()->red());
+		}
 
+		if (!SDL_RectEmpty(&m_temp_selection))
+		{
+			m_helper->util_draw_rect(&m_temp_selection, m_helper->palette()->white());
+		}
+
+		if (m_element_to_delete >= 0 && m_element_to_delete < m_elements.size())
+		{
+			m_elements.erase(m_elements.begin() + m_element_to_delete);
+			m_element_to_delete = -1;
+		}
+	}
 	m_cs.end_draw();
 
 }
@@ -164,8 +171,7 @@ void Config::handle_events(SDL_Event * e)
 			int index = 0;
 			for (auto& const elem : m_elements)
 			{
-				elem_dim = elem->get_abs_dim(&m_cs);
-				m_cs.translate(elem_dim.x, elem_dim.y);
+				elem_dim = elem->get_dim();
 				if (is_rect_in_rect(&elem_dim, &m_temp_selection))
 				{
 					m_selected_elements.emplace_back(index);
