@@ -27,6 +27,8 @@ void DialogElementSettings::init()
 
 	add(m_element_id = new Textbox(id++, 8, 145, m_dimensions.w - 16, 20, "", this));
 
+	m_element_id->set_flags(TEXTBOX_NO_SPACE);
+
 	m_element_width->set_flags(TEXTBOX_NUMERIC);
 	m_element_height->set_flags(TEXTBOX_NUMERIC);
 	m_element_x->set_flags(TEXTBOX_NUMERIC);
@@ -73,7 +75,11 @@ void DialogElementSettings::action_performed(int8_t action_id)
 			m_tool->get_selected()->set_dim(std::stoi(
 				m_element_width->get_text()->c_str()), std::stoi(
 					m_element_height->get_text()->c_str()));
-			m_tool->get_selected()->set_id(*m_element_id->get_text());
+
+			if (!m_element_id->get_text()->empty())
+				m_tool->get_selected()->set_id(*m_element_id->get_text());
+			else
+				m_element_id->set_alert(true);
 		}
 		break;
 	case ACTION_DEL_ELEMENT:

@@ -14,6 +14,7 @@
 
 #define TEXTBOX_NUMERIC 1 << 0
 #define TEXTBOX_HEX 1 << 1
+#define TEXTBOX_NO_SPACE 1 << 2
 
 class Dialog;
 
@@ -42,14 +43,18 @@ public:
 
 	const std::string * get_text();
 
-	inline bool is_numeric(const std::string& s);
-
-	inline bool is_hex(const std::string& s);
-
 	void set_alert(bool state);
 
 	void set_cutoff(uint8_t c);
 private:
+	inline bool is_numeric(const std::string& s);
+
+	inline bool is_hex(const std::string& s);
+
+	inline bool is_spacefree(const std::string& s);
+
+	inline bool is_unicode(char c);
+
 	std::string m_text;
 	std::string m_composition;
 	std::string m_cut_text;

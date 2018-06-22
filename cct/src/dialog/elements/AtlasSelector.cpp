@@ -45,7 +45,6 @@ void AtlasSelector::draw_foreground(void)
 	}
 	m_cs->end_draw();
 	
-
 }
 
 void AtlasSelector::draw_background(void)

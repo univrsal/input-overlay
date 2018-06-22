@@ -196,5 +196,6 @@ void DialogNewElement::add_element_id(void)
 	add(new Label(m_id++, 9, m_element_y, "Element id:", this));
 	m_element_y += 25;
 	add(m_element_id = new Textbox(m_id++, 8, m_element_y, panel_w, 20, "unnamed", this));
+	m_element_id->set_flags(TEXTBOX_NO_SPACE);
 	m_element_y += 40;
 }

@@ -54,8 +54,8 @@ bool CoordinateSystem::handle_events(SDL_Event * e)
 		}
 		else if (m_selecting && (e->motion.state & SDL_BUTTON_LMASK))
 		{
-			m_selection->x = UTIL_MAX(UTIL_MIN(m_selection_a.x, round((e->button.x - m_origin.x) / ((float)m_scale_f))), 0);
-			m_selection->y = UTIL_MAX(UTIL_MIN(m_selection_a.y, round((e->button.y - m_origin.y) / ((float)m_scale_f))), 0);
+			m_selection->x = UTIL_MIN(m_selection_a.x, round((e->button.x - m_origin.x) / ((float)m_scale_f)));
+			m_selection->y = UTIL_MIN(m_selection_a.y, round((e->button.y - m_origin.y) / ((float)m_scale_f)));
 			m_selection->w = SDL_abs(m_selection_a.x - m_selection->x);
 			m_selection->h = SDL_abs(m_selection_a.y - m_selection->y);
 		}
