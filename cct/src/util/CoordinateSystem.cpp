@@ -196,13 +196,15 @@ void CoordinateSystem::draw_foreground(void)
 	dim = m_helper->util_text_dim(&t);
 	m_helper->util_text(&t, get_right() - dim.w - 5, m_dimensions.y + dim.h + 5, m_helper->palette()->white());
 
-	if (m_crosshair && !m_selecting && m_size_mode == SIZE_NONE)
+	SDL_Point mouse;
+	SDL_GetMouseState(&mouse.x, &mouse.y);
+
+	if (m_crosshair && m_size_mode == SIZE_NONE
+		&& m_helper->util_is_in_rect(&m_system_area, mouse.x,  mouse.y))
 	{
 		begin_draw();
 		{
-			SDL_Point mouse;
-
-			SDL_GetMouseState(&mouse.x, &mouse.y);
+		
 			translate(mouse.x, mouse.y);
 
 			m_helper->util_draw_line(mouse.x, 0, mouse.x, m_system_area.h, m_helper->palette()->white());
@@ -277,13 +279,16 @@ void CoordinateSystem::draw_selection(void)
 #define EXTENDED_BORDER 4
 void CoordinateSystem::mouse_state(SDL_Event * event)
 {
-	if (!m_selection || SDL_RectEmpty(m_selection))
+	if (!m_selection)
 		return;
 
 	SDL_Point mouse = { event->button.x, event->button.y };
 	SDL_Rect selection = { m_selection->x * m_scale_f + m_origin.x, m_selection->y * m_scale_f + m_origin.y,
 		m_selection->w * m_scale_f,  m_selection->h * m_scale_f };
-	
+
+	if (SDL_RectEmpty(&selection))
+		return;
+
 	if (in_range(mouse.x, selection.x, EXTENDED_BORDER)
 		&& in_between(mouse.y, m_selection->y, m_selection->y + m_selection->h, m_origin.y))
 	{
@@ -315,7 +320,11 @@ void CoordinateSystem::mouse_state(SDL_Event * event)
 		m_size_mode = SIZE_MOVE;
 		m_helper->set_cursor(CURSOR_SIZE_ALL);
 	}
-	else
+	else if (m_helper->util_is_in_rect(&m_system_area, event->button.x, event->button.y))
+	/*
+		Only reset the cursor within the coordinate system,
+		because outside it might be set to I_BEAM by a textbox
+	*/
 	{
 		m_size_mode = SIZE_NONE;
 		m_helper->set_cursor(CURSOR_ARROW);

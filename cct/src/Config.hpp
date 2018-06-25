@@ -149,8 +149,7 @@ public:
 
 	void reset_selected_element(void);
 private:
-	
-	uint16_t vc_to_sdl_key(uint16_t key);
+
 	inline bool is_rect_in_rect(const SDL_Rect * a, const SDL_Rect * b);
 
 	int16_t m_element_to_delete = -1;

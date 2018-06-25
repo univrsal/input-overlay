@@ -16,6 +16,7 @@
 #define TEXTBOX_HEX 1 << 1
 #define TEXTBOX_NO_SPACE 1 << 2
 
+
 class Dialog;
 
 class GuiElement;

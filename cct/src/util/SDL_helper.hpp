@@ -88,6 +88,9 @@ class SDL_helper
 		std::wstring util_utf8_to_wstring(const std::string& str);
 		std::string util_wstring_to_utf8(const std::wstring& str);
 
+		uint16_t vc_to_sdl_key(uint16_t key);
+		uint16_t sdl_key_to_vc(uint16_t key);
+
 		SDL_Renderer * renderer()
 		{
 			return m_sdl_renderer;
