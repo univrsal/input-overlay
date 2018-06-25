@@ -38,17 +38,17 @@ void Textbox::draw_foreground(void)
 
 	if (!m_cut_text.empty())
 	{
-		get_helper()->util_text_utf8(&m_cut_text, cursor_pos, get_top() + 2,
+		get_helper()->util_text_wstr(&m_cut_text, cursor_pos, get_top() + 2,
 			get_helper()->palette()->white());
-		cursor_pos += get_helper()->util_text_utf8_dim(&m_cut_text).w;
+		cursor_pos += get_helper()->util_text_wstr_dim(&m_cut_text).w;
 
 	}
 
 	if (!m_composition.empty())
 	{
-		get_helper()->util_text_utf8(&m_composition, 2 + cursor_pos, get_top() + 2,
+		get_helper()->util_text_wstr(&m_composition, 2 + cursor_pos, get_top() + 2,
 			get_helper()->palette()->blue());
-		cursor_pos += get_helper()->util_text_utf8_dim(&m_composition).w;
+		cursor_pos += get_helper()->util_text_wstr_dim(&m_composition).w;
 	}
 
 	if (m_focused)
@@ -125,18 +125,7 @@ bool Textbox::handle_events(SDL_Event * event)
 			{
 				if (!m_text.empty() && m_composition.empty())
 				{
-					/*
-						Unicode takes up two characters
-						(Sometimes even more but meh)
-					*/
-					if (is_unicode(m_text.back()))
-					{
-						m_text = m_text.substr(0, m_text.length() - 3);
-					}
-					else
-					{
-						m_text.pop_back();
-					}
+					pop_back(m_text);
 					set_text(m_text);
 				}
 				was_handled = true;
@@ -219,21 +208,22 @@ inline bool Textbox::is_numeric(const std::string & s)
 	return true;
 }
 
+inline bool Textbox::is_spacefree(const std::string & s)
+{
+	return s.find(' ') == std::string::npos;
+}
+
 bool Textbox::is_hex(const std::string& s)
 {
 	const char * c = s.c_str();
 	return c[strspn(c, "0123456789xabcdefABCDEF")] == 0;
 }
 
-inline bool Textbox::is_spacefree(const std::string & s)
+void Textbox::pop_back(std::string& s)
 {
-	return s.find(' ') == std::string::npos;
-}
-
-#define CONTINUATION_BYTE 0x80
-bool Textbox::is_unicode(char c)
-{
-	return c & CONTINUATION_BYTE;
+	std::wstring convert = get_helper()->util_utf8_to_wstring(s);
+	convert.pop_back();
+	s = get_helper()->util_wstring_to_utf8(convert);
 }
 
 void Textbox::set_alert(bool state)

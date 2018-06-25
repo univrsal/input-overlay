@@ -49,11 +49,16 @@ public:
 private:
 	inline bool is_numeric(const std::string& s);
 
-	inline bool is_hex(const std::string& s);
 
 	inline bool is_spacefree(const std::string& s);
 
-	inline bool is_unicode(char c);
+	inline bool is_hex(const std::string& s);
+
+	/*
+		Properly deletes last character in
+		unicode utf8 strings
+	*/
+	void pop_back(std::string& s);
 
 	std::string m_text;
 	std::string m_composition;

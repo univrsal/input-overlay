@@ -86,7 +86,7 @@ bool SDL_helper::init()
 		}
 
 		m_default_font_height = TTF_FontHeight(m_default_font);
-		m_utf8_font_height = TTF_FontHeight(m_utf8_font);
+		m_wstr_font_height = TTF_FontHeight(m_utf8_font);
 
 		/* Cursors */
 		m_size_h = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZEWE);
@@ -223,7 +223,7 @@ void SDL_helper::util_fill_rect(const SDL_Rect * rect, const SDL_Color * color, 
 
 bool SDL_helper::util_is_in_rect(const SDL_Rect * rect, int x, int y)
 {
-    return x >= rect->x && x <= (rect->x + rect->w) && y >= rect->y && y <= (rect->y + rect->h);
+	return x >= rect->x && x <= (rect->x + rect->w) && y >= rect->y && y <= (rect->y + rect->h);
 }
 
 void SDL_helper::util_text(std::string * text, int x, int y, const SDL_Color * color)
@@ -247,7 +247,7 @@ SDL_Rect SDL_helper::util_text_dim(std::string * text)
 	return m_font_helper->get_text_dimension(m_default_font, text);
 }
 
-void SDL_helper::util_text_utf8(std::string * text, int x, int y, const SDL_Color * color)
+void SDL_helper::util_text_wstr(std::string * text, int x, int y, const SDL_Color * color)
 {
 	if (color == NULL)
 		m_font_helper->draw(text, x, y, m_utf8_font, m_palette->white());
@@ -255,7 +255,7 @@ void SDL_helper::util_text_utf8(std::string * text, int x, int y, const SDL_Colo
 		m_font_helper->draw(text, x, y, m_utf8_font, color);
 }
 
-SDL_Rect SDL_helper::util_text_utf8_dim(std::string * text)
+SDL_Rect SDL_helper::util_text_wstr_dim(std::string * text)
 {
 	return m_font_helper->get_text_dimension(m_utf8_font, text);
 }
@@ -312,21 +312,22 @@ void SDL_helper::set_cursor(uint8_t type)
 	{
 		switch (type)
 		{
-			case CURSOR_ARROW:
-				SDL_SetCursor(m_arrow);
+		default:
+		case CURSOR_ARROW:
+			SDL_SetCursor(m_arrow);
 			break;
-			case CURSOR_I_BEAM:
-				SDL_SetCursor(m_i_beam);
-				break;
-			case CURSOR_SIZE_ALL:
-				SDL_SetCursor(m_move);
-				break;
-			case CURSOR_SIZE_H:
-				SDL_SetCursor(m_size_h);
-				break;
-			case CURSOR_SIZE_V:
-				SDL_SetCursor(m_size_v);
-				break;
+		case CURSOR_I_BEAM:
+			SDL_SetCursor(m_i_beam);
+			break;
+		case CURSOR_SIZE_ALL:
+			SDL_SetCursor(m_move);
+			break;
+		case CURSOR_SIZE_H:
+			SDL_SetCursor(m_size_h);
+			break;
+		case CURSOR_SIZE_V:
+			SDL_SetCursor(m_size_v);
+			break;
 		}
 	}
 }
@@ -379,4 +380,16 @@ void SDL_helper::handle_events(SDL_Event * event)
 			SDL_GetWindowSize(m_sdl_window, &m_window_size.x, &m_window_size.y);
 		}
 	}
+}
+
+std::wstring SDL_helper::util_utf8_to_wstring(const std::string& str)
+{
+	std::wstring_convert<std::codecvt_utf8<wchar_t>> myconv;
+	return myconv.from_bytes(str);
+}
+
+std::string SDL_helper::util_wstring_to_utf8(const std::wstring& str)
+{
+	std::wstring_convert<std::codecvt_utf8<wchar_t>> myconv;
+	return myconv.to_bytes(str);
 }

@@ -11,6 +11,8 @@
 #include <SDL_ttf.h>
 #include <SDL_image.h>
 
+#include <codecvt>
+
 #include "Palette.hpp"
 #include "FontHelper.hpp"
 #include "Texture.hpp"
@@ -68,20 +70,23 @@ class SDL_helper
 
 		SDL_Rect util_text_dim(std::string *text);
 
-		void util_text_utf8(std::string * text, int x, int y, const SDL_Color * color);
-		SDL_Rect util_text_utf8_dim(std::string *text);
+		void util_text_wstr(std::string * text, int x, int y, const SDL_Color * color);
+		SDL_Rect util_text_wstr_dim(std::string *text);
 
 		SDL_Point * util_window_size(void);
 
 		void util_cut_string(std::string &s, int max_width, bool front);
 
 		uint8_t util_default_text_height(void) { return m_default_font_height; }
-		uint8_t util_utf8_text_height(void) { return m_utf8_font_height; }
+		uint8_t util_wstr_text_height(void) { return m_wstr_font_height; }
 
 		inline void util_enable_mask(uint16_t & masks, uint16_t mask);
 		inline void util_disable_mask(uint16_t & masks, uint16_t mask);
 
 		bool util_check_texture_path(const char * path);
+
+		std::wstring util_utf8_to_wstring(const std::string& str);
+		std::string util_wstring_to_utf8(const std::wstring& str);
 
 		SDL_Renderer * renderer()
 		{
@@ -113,7 +118,7 @@ class SDL_helper
 		TTF_Font * m_utf8_font;
 
 		uint8_t m_default_font_height;
-		uint8_t m_utf8_font_height;
+		uint8_t m_wstr_font_height;
 
 		bool m_init_success;
 
