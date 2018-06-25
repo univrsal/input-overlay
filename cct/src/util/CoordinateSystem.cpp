@@ -196,22 +196,6 @@ void CoordinateSystem::draw_foreground(void)
 	dim = m_helper->util_text_dim(&t);
 	m_helper->util_text(&t, get_right() - dim.w - 5, m_dimensions.y + dim.h + 5, m_helper->palette()->white());
 
-	/* Draw selection */
-	if (!SDL_RectEmpty(m_selection))
-	{
-		SDL_Rect temp = *m_selection;
-		temp.x = temp.x * m_scale_f + get_origin_x();
-		temp.y = temp.y * m_scale_f + get_origin_y();
-		temp.w = temp.w * m_scale_f;
-		temp.h = temp.h * m_scale_f;
-		
-		begin_draw();
-		{
-			m_helper->util_draw_rect(&temp, m_helper->palette()->red());
-		}
-		end_draw();
-	}
-
 	if (m_crosshair && !m_selecting && m_size_mode == SIZE_NONE)
 	{
 		begin_draw();
@@ -262,6 +246,25 @@ void CoordinateSystem::translate(int& x, int& y)
 {
 	x -= m_dimensions.x + m_origin_anchor.x;
 	y -= m_dimensions.y + m_origin_anchor.y;
+}
+
+void CoordinateSystem::draw_selection(void)
+{
+	/* Draw selection separate, since it needs to be topmost */
+	if (!SDL_RectEmpty(m_selection))
+	{
+		SDL_Rect temp = *m_selection;
+		temp.x = temp.x * m_scale_f + get_origin_x();
+		temp.y = temp.y * m_scale_f + get_origin_y();
+		temp.w = temp.w * m_scale_f;
+		temp.h = temp.h * m_scale_f;
+
+		begin_draw();
+		{
+			m_helper->util_draw_rect(&temp, m_helper->palette()->red());
+		}
+		end_draw();
+	}
 }
 
 /*

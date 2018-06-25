@@ -99,6 +99,8 @@ public:
 
 	/* Translates any point to the viewport*/
 	void translate(int& x, int& y);
+
+	void draw_selection(void);
 private:
 	void mouse_state(SDL_Event * event);
 

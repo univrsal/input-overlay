@@ -44,13 +44,13 @@ void AtlasSelector::draw_foreground(void)
 		m_atlas->draw(get_helper()->renderer(), &temp, NULL);
 	}
 	m_cs->end_draw();
-	
+
+	m_cs->draw_selection();
 }
 
 void AtlasSelector::draw_background(void)
 {
 	m_cs->draw_background();
-
 }
 
 bool AtlasSelector::handle_events(SDL_Event * event)
@@ -67,7 +67,6 @@ uint8_t AtlasSelector::get_cursor(void)
 {
 	return CURSOR_SPECIAL;
 }
-
 void AtlasSelector::resize()
 {
 	m_cs->set_pos(m_dimensions.x, m_dimensions.y);
