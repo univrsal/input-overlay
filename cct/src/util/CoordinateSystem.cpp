@@ -274,7 +274,7 @@ void CoordinateSystem::translate(int& x, int& y)
 #define EXTENDED_BORDER 4
 void CoordinateSystem::mouse_state(SDL_Event * event)
 {
-	if (!m_selection)
+	if (!m_selection || SDL_RectEmpty(m_selection))
 		return;
 
 	SDL_Point mouse = { event->button.x, event->button.y };
