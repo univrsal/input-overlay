@@ -11,11 +11,13 @@
 #include "./GuiElement.hpp"
 #include "../Dialog.hpp"
 #include <string>
+#include <iomanip>
+#include <sstream>
 
 #define TEXTBOX_NUMERIC 1 << 0
 #define TEXTBOX_HEX 1 << 1
 #define TEXTBOX_NO_SPACE 1 << 2
-
+#define TEXTBOX_KEYBIND 1 << 3
 
 class Dialog;
 

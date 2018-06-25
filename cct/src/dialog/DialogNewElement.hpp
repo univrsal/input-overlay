@@ -12,6 +12,7 @@
 #include "elements/Button.hpp"
 #include "elements/Textbox.hpp"
 #include "elements/AtlasSelector.hpp"
+#include "elements/Checkbox.hpp"
 #include "../Tool.hpp"
 #include "../util/SDL_helper.hpp"
 #include "../util/Texture.hpp"
@@ -82,6 +83,8 @@ private:
 
 	Button * m_ok = nullptr;
 	Button * m_cancel = nullptr;
+
+	Checkbox * m_read_keybind = nullptr;
 
 	/* UV mappings */
 	SDL_Rect m_selection_1;

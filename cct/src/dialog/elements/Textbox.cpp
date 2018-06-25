@@ -5,7 +5,6 @@
  * github.com/univrsal/reloded
  */
 
-
 #include "Textbox.hpp"
 #include "../../util/SDL_helper.hpp"
 
@@ -104,41 +103,52 @@ bool Textbox::handle_events(SDL_Event * event)
 	{
 		if (event->type == SDL_KEYDOWN)
 		{
-			/* Clipboard handling */
-			if (event->key.keysym.sym == SDLK_v && get_helper()->is_ctrl_down())
+			if ((m_flags & TEXTBOX_KEYBIND))
 			{
-				if (SDL_HasClipboardText())
+				uint16_t code = get_helper()->sdl_key_to_vc(event->key.keysym.sym);
+				std::stringstream stream;
+				stream << "0x"
+					<< std::setfill('0') << std::setw(sizeof(uint16_t) * 2)
+					<< std::hex << code;
+				set_text(stream.str());
+			}
+			else
+			{
+				/* Clipboard handling */
+				if (event->key.keysym.sym == SDLK_v && get_helper()->is_ctrl_down()
+					&& SDL_HasClipboardText())
 				{
 					std::string temp = std::string(SDL_GetClipboardText());
+					bool a = !(m_flags & TEXTBOX_NUMERIC) || is_numeric(temp);
+					bool b = !(m_flags & TEXTBOX_HEX) || is_hex(temp);
+					bool c = !(m_flags & TEXTBOX_NO_SPACE) || is_spacefree(temp);
 
-					if (!(m_flags & TEXTBOX_NUMERIC) || is_numeric(temp)
-						&& (!(m_flags & TEXTBOX_HEX) || is_hex(temp))
-						&& (!(m_flags & TEXTBOX_NO_SPACE) || is_spacefree(temp)))
+					if (a && b && c )
 					{
 						append_text(temp);
 					}
 					was_handled = true;
 				}
-			}
-			/* Deleting */
-			else if (event->key.keysym.sym == SDLK_BACKSPACE)
-			{
-				if (!m_text.empty() && m_composition.empty())
+				/* Deleting */
+				else if (event->key.keysym.sym == SDLK_BACKSPACE)
 				{
-					pop_back(m_text);
-					set_text(m_text);
+					if (!m_text.empty() && m_composition.empty())
+					{
+						pop_back(m_text);
+						set_text(m_text);
+					}
+					was_handled = true;
 				}
-				was_handled = true;
-			}
-			/* IME input accepted -> clear composition */
-			else if (event->key.keysym.sym == SDLK_RETURN)
-			{
-				m_composition.clear();
-				was_handled = true;
+				/* IME input accepted -> clear composition */
+				else if (event->key.keysym.sym == SDLK_RETURN)
+				{
+					m_composition.clear();
+					was_handled = true;
+				}
 			}
 		}
 		/* Added IME input to text */
-		else if (event->type == SDL_TEXTINPUT)
+		else if (event->type == SDL_TEXTINPUT && !(m_flags & TEXTBOX_KEYBIND))
 		{
 	
 			std::string temp = m_text + std::string(event->text.text);
@@ -153,7 +163,7 @@ bool Textbox::handle_events(SDL_Event * event)
 			was_handled = true;
 		}
 		/* IME composition changed */
-		else if (event->type == SDL_TEXTEDITING)
+		else if (event->type == SDL_TEXTEDITING && !(m_flags & TEXTBOX_KEYBIND))
 		{
 			m_composition = event->edit.text;
 			was_handled = true;

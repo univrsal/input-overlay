@@ -395,6 +395,7 @@ std::string SDL_helper::util_wstring_to_utf8(const std::wstring& str)
 }
 
 #include "../../../libuiohook/include/uiohook.h"
+#define CCT /* Prevents util.hpp from including external headers */
 #include "../../../util/util.hpp"
 static uint32_t KEY_MAP[][2]
 {
@@ -435,7 +436,7 @@ static uint32_t KEY_MAP[][2]
 };
 #define KEY_MAP_SIZE 113
 
-uint16_t SDL_helper::vc_to_sdl_key(uint16_t key)
+uint32_t SDL_helper::vc_to_sdl_key(uint16_t key)
 {
 	for (int i = 0; i < 113; ++i)
 	{
@@ -445,7 +446,7 @@ uint16_t SDL_helper::vc_to_sdl_key(uint16_t key)
 	return SDLK_UNKNOWN;
 }
 
-uint16_t SDL_helper::sdl_key_to_vc(uint16_t key)
+uint16_t SDL_helper::sdl_key_to_vc(uint32_t key)
 {
 	for (int i = 0; i < 113; ++i)
 	{

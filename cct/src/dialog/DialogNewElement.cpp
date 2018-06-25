@@ -36,6 +36,11 @@ void DialogNewElement::action_performed(int8_t action_id)
 	case ACTION_CANCEL:
 		m_tool->action_performed(TOOL_ACTION_NEW_ELEMENT_EXIT);
 		break;
+	default:
+		if (m_read_keybind->get_state())
+			m_keycode->set_flags(TEXTBOX_HEX | TEXTBOX_KEYBIND);
+		else
+			m_keycode->set_flags(TEXTBOX_HEX);
 	}
 }
 
@@ -183,7 +188,9 @@ void DialogNewElement::add_keycode_elements(void)
 	m_element_y += 25;
 	add(m_keycode = new Textbox(m_id++, 8, m_element_y, panel_w, 20, "0", this));
 	m_keycode->set_cutoff(10);
-	m_keycode->set_flags(TEXTBOX_HEX);
+	m_keycode->set_flags(TEXTBOX_HEX | TEXTBOX_KEYBIND);
+	m_element_y += 25;
+	add(m_read_keybind = new Checkbox(m_id++, 8, m_element_y, "Record keybind", this, true));
 	m_element_y += 40;
 }
 
