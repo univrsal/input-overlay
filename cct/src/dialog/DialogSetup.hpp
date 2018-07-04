@@ -15,14 +15,17 @@
 
 class SDL_helper;
 
+class Notifier;
+
 class DialogSetup : public Dialog
 {
 public:
-	DialogSetup(SDL_helper * sdl, SDL_Point size)
+	DialogSetup(SDL_helper * sdl, SDL_Point size, Notifier * notifier)
 		: Dialog(sdl, size, "Overlay setup")
 	{
-		/* NO-OP */
+		m_notifier = notifier;
 	};
+
 	void init();
 
 	void action_performed(int8_t action_id);
@@ -33,6 +36,8 @@ public:
 
 	const std::string * get_texture_path(void);
 private:
+	Notifier * m_notifier = nullptr;
+
 	bool m_finished = false;
 	Textbox * m_texture_path = nullptr;
 	Textbox * m_config_path = nullptr;

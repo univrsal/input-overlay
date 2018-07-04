@@ -26,12 +26,12 @@ Tool::~Tool()
 
 void Tool::program_loop()
 {
-	m_setup_dialog = new DialogSetup(m_helper, SDL_Point{ 500, 230 });
+	m_notify = new Notifier(m_helper);
+
+	m_setup_dialog = new DialogSetup(m_helper, SDL_Point{ 500, 230 }, m_notify);
 	m_setup_dialog->init();
 	m_setup_dialog->action_performed(ACTION_FOCUSED);
 	m_helper->set_runflag(&m_run_flag);
-
-	m_notify = new Notifier(m_helper);
 
 	while (m_run_flag)
 	{

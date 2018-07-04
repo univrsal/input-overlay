@@ -63,7 +63,7 @@ public:
 
 	void draw(void);
 private:
-
+	std::string m_last_message = "";
 	std::vector<std::unique_ptr<Message>> m_messages;
 	SDL_helper * m_helper;
 	SDL_Point m_dim;

@@ -2,13 +2,21 @@
 
 void Notifier::add_msg(uint8_t type, std::string msg)
 {
-	m_messages.emplace_back(new Message(type, msg));
-	m_dim.y += m_helper->util_default_text_height() + 8;
+	if (!msg.empty() && (m_last_message.empty() || m_last_message.compare(msg.c_str()) != 0))
+	{
+		m_last_message = msg;
+		m_messages.emplace_back(new Message(type, msg));
+		m_dim.y += m_helper->util_default_text_height() + 8;
 
-	SDL_Rect temp = m_helper->util_text_dim(&msg);
+		SDL_Rect temp = m_helper->util_text_dim(&msg);
 
-	if (temp.w > m_dim.x)
-		m_dim.x = temp.w + 20;
+		if (temp.w > m_dim.x)
+			m_dim.x = temp.w + 20;
+	}
+	else
+	{
+		printf("Notifier error: Duplicate message or empty message\n");
+	}
 }
 
 void Notifier::draw(void)

@@ -63,7 +63,8 @@ private:
 	void close_toplevel(void);
 	void handle_input();
 	bool m_run_flag = true;
-	bool m_queue_close = false; /* True when toplevel dialog should be closede */
+	bool m_queue_close = false; /* True when toplevel dialog should be closed */
+
 	SDL_Event m_event;
 	SDL_helper * m_helper;
 

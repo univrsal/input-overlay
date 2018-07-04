@@ -6,6 +6,7 @@
  */
 
 #include "DialogSetup.hpp"
+#include "../util/Notifier.hpp"
 
 void DialogSetup::init()
 {
@@ -13,7 +14,7 @@ void DialogSetup::init()
 	int8_t id = 1;
 
 	add(new Label(id++, 8, 35, "Enter the path to the texture file:", this));
-	add(m_texture_path = new Textbox(id++, 8, 55, m_dimensions.w - 16, 20, "F:\\Projects\\prog\\cpp\\input-overlay-releases\\build\\v4.6-pre\\presets\\\wasd-full\\wasd.png", this));
+	add(m_texture_path = new Textbox(id++, 8, 55, m_dimensions.w - 16, 20, "D:\\Projects\\prog\\cpp\\input-overlay-releases\\build\\v4.6-pre\\presets\\\wasd-full\\wasd.png", this));
 
 	add(new Label(id++, 8, 85, "Default element width:", this));
 	add(new Label(id++, (m_dimensions.w / 2) + 4, 85, "Default element height:", this));
@@ -57,10 +58,16 @@ void DialogSetup::action_performed(int8_t action_id)
 		else
 		{
 			if (m_texture_path->get_text()->empty() || !valid_texture)
+			{
 				m_texture_path->set_alert(true);
-
+				m_notifier->add_msg(MESSAGE_ERROR, "Invalid texture path!");
+			}
+				
 			if (m_config_path->get_text()->empty() || !valid_config)
+			{
 				m_config_path->set_alert(true);
+				m_notifier->add_msg(MESSAGE_ERROR, "Invalid config path!");
+			}
 		}
 		break;
 	case ACTION_CANCEL:
