@@ -328,6 +328,8 @@ void SDL_helper::set_cursor(uint8_t type)
 		case CURSOR_SIZE_V:
 			SDL_SetCursor(m_size_v);
 			break;
+		case CURSOR_SPECIAL:
+			break; /* NO-OP */
 		}
 	}
 }

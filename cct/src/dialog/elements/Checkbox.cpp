@@ -63,7 +63,7 @@ void Checkbox::draw_foreground(void)
 	if (m_state)
 	{
 		get_helper()->util_fill_rect(get_left() + 4, get_top() + m_checkbox.y +4,
-			CHECKBOX_SIZE - 8, CHECKBOX_SIZE - 8, get_helper()->palette()->light_gray());
+			CHECKBOX_SIZE - 8, CHECKBOX_SIZE - 8, get_helper()->palette()->green());
 	}
 }
 

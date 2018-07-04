@@ -102,6 +102,8 @@ public:
 
 	void draw_selection(void);
 private:
+	
+	void draw_rulers(void);
 	void mouse_state(SDL_Event * event);
 
 	inline bool in_range(int a, int b, int range)

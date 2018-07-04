@@ -37,6 +37,8 @@ public:
     SDL_Color * blue(void);
 
     SDL_Color * red(void);
+
+    SDL_Color * green(void);
 private:
     SDL_Color m_background;
     SDL_Color m_foreground;
@@ -48,9 +50,10 @@ private:
 
     SDL_Color m_gray;
     SDL_Color m_dark_gray;
-    SDL_Color m_blue;
 
+    SDL_Color m_blue;
     SDL_Color m_red;
+    SDL_Color m_green;
 
     SDL_Color m_tooltip_body;
 };

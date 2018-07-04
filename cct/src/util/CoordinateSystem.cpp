@@ -54,10 +54,23 @@ bool CoordinateSystem::handle_events(SDL_Event * e)
 		}
 		else if (m_selecting && (e->motion.state & SDL_BUTTON_LMASK))
 		{
-			m_selection->x = UTIL_MIN(m_selection_a.x, round((e->button.x - m_origin.x) / ((float)m_scale_f)));
-			m_selection->y = UTIL_MIN(m_selection_a.y, round((e->button.y - m_origin.y) / ((float)m_scale_f)));
-			m_selection->w = SDL_abs(m_selection_a.x - m_selection->x);
-			m_selection->h = SDL_abs(m_selection_a.y - m_selection->y);
+			int x, y;
+			x = UTIL_MIN(m_selection_a.x, round((e->button.x - m_origin.x) / ((float)m_scale_f)));
+			y = UTIL_MIN(m_selection_a.y, round((e->button.y - m_origin.y) / ((float)m_scale_f)));
+
+			m_selection->x = UTIL_MAX(0, x);
+			m_selection->y = UTIL_MAX(0, y);
+			m_selection->w = SDL_abs(x - m_selection_a.x);
+			m_selection->h = SDL_abs(y - m_selection_a.y);
+		/*
+			int m_x = round((e->button.x - m_origin.x) / ((float)m_scale_f));
+			int m_y = round((e->button.y - m_origin.y) / ((float)m_scale_f));
+
+			m_selection->x = UTIL_MAX(UTIL_MIN(m_selection_a.x, m_x), 0);
+			m_selection->y = UTIL_MAX(UTIL_MIN(m_selection_a.y, m_y), 0);
+			m_selection->w = SDL_abs(m_x - m_selection->x);
+			m_selection->h = SDL_abs(m_y - m_selection->y);
+			*/
 		}
 		else if (m_sizing && (e->motion.state & SDL_BUTTON_LMASK))
 		{
@@ -212,6 +225,10 @@ void CoordinateSystem::draw_foreground(void)
 		}
 		end_draw();
 	}
+	else if (m_size_mode != SIZE_NONE)
+	{
+		draw_rulers();
+	}
 
 	/* Border around the entire thing */
 	if (m_border)
@@ -264,6 +281,28 @@ void CoordinateSystem::draw_selection(void)
 		begin_draw();
 		{
 			m_helper->util_draw_rect(&temp, m_helper->palette()->red());
+		}
+		end_draw();
+	}
+}
+
+void CoordinateSystem::draw_rulers(void)
+{
+	if (!SDL_RectEmpty(m_selection))
+	{
+		SDL_Rect temp = *m_selection;
+		begin_draw();
+		{
+			temp.x = temp.x * m_scale_f + get_origin_x();
+			temp.y = temp.y * m_scale_f + get_origin_y();
+			temp.w = temp.w * m_scale_f - 1;
+			temp.h = temp.h * m_scale_f - 1;
+
+			m_helper->util_draw_line(0, temp.y, m_system_area.w, temp.y, m_helper->palette()->white());
+			m_helper->util_draw_line(0, temp.y + temp.h, m_system_area.w - 1, temp.y + temp.h, m_helper->palette()->white());
+
+			m_helper->util_draw_line(temp.x, 0, temp.x, m_system_area.h, m_helper->palette()->white());
+			m_helper->util_draw_line(temp.x + temp.w, 0, temp.x + temp.w, m_system_area.h, m_helper->palette()->white());
 		}
 		end_draw();
 	}

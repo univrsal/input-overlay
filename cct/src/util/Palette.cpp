@@ -20,6 +20,7 @@ Palette::Palette()
 	m_tooltip_body = { 248, 230, 177, 128 };
 
 	m_red = { 240, 20, 20, 255 };
+	m_green = { 33, 135, 55, 255 };
 	m_blue = { 33, 118, 243, 255 };
 	m_gray = { 55, 55, 55, 255 };
 	m_dark_gray = { 45, 45, 45, 255 };
@@ -79,6 +80,11 @@ SDL_Color * Palette::blue(void)
 SDL_Color * Palette::red(void)
 {
 	return &m_red;
+}
+
+SDL_Color * Palette::green(void)
+{
+    return &m_green;
 }
 
 SDL_Color * Palette::get_tooltip_body(void)
