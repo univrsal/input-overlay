@@ -55,16 +55,16 @@ bool CoordinateSystem::handle_events(SDL_Event * e)
 		}
 		else if (m_selecting && (e->motion.state & SDL_BUTTON_LMASK))
 		{
-			m_selection->x = UTIL_MIN(e->button.x, m_selection_a.x) / m_scale_f;
-			m_selection->y = UTIL_MIN(e->button.y, m_selection_a.y) / m_scale_f;
+			m_selection->x = UTIL_MIN(e->button.x, m_selection_a.x);
+			m_selection->y = UTIL_MIN(e->button.y, m_selection_a.y);
 
 			translate(m_selection->x, m_selection->y);
 
-			m_selection->x = UTIL_MAX(m_selection->x, 0);
-			m_selection->y = UTIL_MAX(m_selection->y, 0);
+			m_selection->x = ceil(UTIL_MAX((m_selection->x - get_origin_x()) / ((float)m_scale_f), 0));
+			m_selection->y = ceil(UTIL_MAX((m_selection->y - get_origin_y()) / ((float)m_scale_f), 0));
 
-			m_selection->w = SDL_abs(m_selection_a.x - e->button.x) / m_scale_f;
-			m_selection->h = SDL_abs(m_selection_a.y - e->button.y) / m_scale_f;
+			m_selection->w = ceil(SDL_abs(m_selection_a.x - e->button.x) / ((float)m_scale_f));
+			m_selection->h = ceil(SDL_abs(m_selection_a.y - e->button.y) / ((float)m_scale_f));
 		}
 		else if (m_sizing && (e->motion.state & SDL_BUTTON_LMASK))
 		{
