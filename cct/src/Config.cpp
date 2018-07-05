@@ -269,7 +269,6 @@ void Config::reset_selected_element(void)
 	m_settings->set_wh(0, 0);
 }
 
-
 inline bool Config::is_rect_in_rect(const SDL_Rect * a, const SDL_Rect * b)
 {
 	return a->x >= b->x && a->x + a->w <= b->x + b->w

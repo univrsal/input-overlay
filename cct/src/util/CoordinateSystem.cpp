@@ -22,14 +22,15 @@ bool CoordinateSystem::handle_events(SDL_Event * e)
 			{
 				if (SDL_RectEmpty(m_selection))
 				{
-					m_selection_a.x = round((e->button.x - m_origin.x) / ((float) m_scale_f));
-					m_selection_a.y = round((e->button.y - m_origin.y) / ((float) m_scale_f));
+					m_selection_a.x = e->button.x;
+					m_selection_a.y = e->button.y;
 					m_selecting = true;
 					was_handled = true;
 				}
 				else if (m_size_mode != SIZE_NONE)
 				{
 					m_sizing = true;
+					was_handled = true;
 					if (m_size_mode != SIZE_MOVE)
 					{
 						m_selection_a = { m_selection->x + m_selection->w,
@@ -54,23 +55,16 @@ bool CoordinateSystem::handle_events(SDL_Event * e)
 		}
 		else if (m_selecting && (e->motion.state & SDL_BUTTON_LMASK))
 		{
-			int x, y;
-			x = UTIL_MIN(m_selection_a.x, round((e->button.x - m_origin.x) / ((float)m_scale_f)));
-			y = UTIL_MIN(m_selection_a.y, round((e->button.y - m_origin.y) / ((float)m_scale_f)));
+			m_selection->x = UTIL_MIN(e->button.x, m_selection_a.x) / m_scale_f;
+			m_selection->y = UTIL_MIN(e->button.y, m_selection_a.y) / m_scale_f;
 
-			m_selection->x = UTIL_MAX(0, x);
-			m_selection->y = UTIL_MAX(0, y);
-			m_selection->w = SDL_abs(x - m_selection_a.x);
-			m_selection->h = SDL_abs(y - m_selection_a.y);
-		/*
-			int m_x = round((e->button.x - m_origin.x) / ((float)m_scale_f));
-			int m_y = round((e->button.y - m_origin.y) / ((float)m_scale_f));
+			translate(m_selection->x, m_selection->y);
 
-			m_selection->x = UTIL_MAX(UTIL_MIN(m_selection_a.x, m_x), 0);
-			m_selection->y = UTIL_MAX(UTIL_MIN(m_selection_a.y, m_y), 0);
-			m_selection->w = SDL_abs(m_x - m_selection->x);
-			m_selection->h = SDL_abs(m_y - m_selection->y);
-			*/
+			m_selection->x = UTIL_MAX(m_selection->x, 0);
+			m_selection->y = UTIL_MAX(m_selection->y, 0);
+
+			m_selection->w = SDL_abs(m_selection_a.x - e->button.x) / m_scale_f;
+			m_selection->h = SDL_abs(m_selection_a.y - e->button.y) / m_scale_f;
 		}
 		else if (m_sizing && (e->motion.state & SDL_BUTTON_LMASK))
 		{
