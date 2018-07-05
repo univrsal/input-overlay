@@ -121,7 +121,38 @@ bool CoordinateSystem::handle_events(SDL_Event * e)
 		m_sizing = false;
 		m_selecting = false;
 	}
+	else if (e->type == SDL_KEYDOWN)
+	{
+		int x = m_selection->x;
+		int y = m_selection->y;
 
+		bool moved = false;
+		switch (e->key.keysym.sym)
+		{
+		case SDLK_UP:
+			y = SDL_max(y - 1, 0);
+			moved = true;
+			break;
+		case SDLK_DOWN:
+			y++;
+			moved = true;
+			break;
+		case SDLK_RIGHT:
+			x++;
+			moved = true;
+			break;
+		case SDLK_LEFT:
+			x = SDL_max(0, x - 1);
+			moved = true;
+			break;
+		}
+
+		if (moved)
+		{
+			m_selection->x = x;
+			m_selection->y = y;
+		}
+	}
 	return was_handled;
 }
 
