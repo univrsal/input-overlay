@@ -149,6 +149,8 @@ public:
 
 	void reset_selected_element(void);
 private:
+	/* Move selected elements*/
+	void move_elements(int new_x, int new_y);
 
 	inline bool is_rect_in_rect(const SDL_Rect * a, const SDL_Rect * b);
 
@@ -169,9 +171,10 @@ private:
 
 	/* Selection stuff */
 	std::vector<uint16_t> m_selected_elements;
-	SDL_Rect m_total_selection;
-	SDL_Rect m_temp_selection;
+	SDL_Rect m_total_selection; /* Rectangle fitting all selected elements, oriented to origin */
+	SDL_Rect m_temp_selection; /* Indicator of current rectangle selected by mouse */
 	SDL_Point m_selection_start;
+
 	bool m_selecting = false;
 	bool m_dragging_elements = false; /* Flag for dragging entire selection*/
 };

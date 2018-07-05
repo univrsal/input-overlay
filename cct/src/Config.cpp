@@ -65,7 +65,12 @@ void Config::draw_elements(void)
 
 		if (!SDL_RectEmpty(&m_temp_selection))
 		{
-			m_helper->util_draw_rect(&m_temp_selection, m_helper->palette()->white());
+			SDL_Rect temp = m_temp_selection;
+			temp.x = temp.x * m_cs.get_scale() + m_cs.get_origin_x();
+			temp.y = temp.y * m_cs.get_scale() + m_cs.get_origin_y();
+			temp.w *= m_cs.get_scale();
+			temp.h *= m_cs.get_scale();
+			m_helper->util_draw_rect(&temp, m_helper->palette()->white());
 		}
 
 		if (m_element_to_delete >= 0 && m_element_to_delete < m_elements.size())
@@ -89,6 +94,10 @@ void Config::handle_events(SDL_Event * e)
 			/* Handle selection of elements */
 			bool is_single_selection = false;
 			bool selection_empty = SDL_RectEmpty(&m_total_selection);
+
+			int m_x = e->button.x;
+			int m_y = e->button.y;
+			m_cs.translate(m_x, m_y);
 
 			if (selection_empty)
 			{
@@ -122,7 +131,7 @@ void Config::handle_events(SDL_Event * e)
 					m_total_selection = {};
 				}
 			}
-			else if (m_helper->util_is_in_rect(&m_total_selection, e->button.x, e->button.y))
+			else if (m_helper->util_is_in_rect(&m_total_selection, m_x, m_y))
 			{
 				m_dragging_elements = true;
 				m_drag_offset = { e->button.x - m_total_selection.x,
@@ -138,13 +147,13 @@ void Config::handle_events(SDL_Event * e)
 	{
 		m_dragging_element = false;
 		m_dragging_elements = false;
-		m_selecting = false;
-		m_selected_elements.clear();
 		m_temp_selection = {};
+		m_selecting = false;
 	}
 	else if (e->type == SDL_MOUSEMOTION)
 	{
 		if (m_dragging_element && m_selected)
+		/* Dragging single element */
 		{
 			int x, y;
 			x = SDL_max((e->button.x - m_drag_offset.x +
@@ -156,23 +165,33 @@ void Config::handle_events(SDL_Event * e)
 			m_settings->set_xy(x, y);
 		}
 		else if (m_selecting)
+		/* Selecting multiple elements */
 		{
 			m_total_selection = {};
 			SDL_Rect elem_dim;
+			SDL_Rect elem_abs_dim;
+
 			m_temp_selection.x = UTIL_MIN(e->button.x, m_selection_start.x);
 			m_temp_selection.y = UTIL_MIN(e->button.y, m_selection_start.y);
-			m_temp_selection.w = SDL_abs(e->button.x - m_selection_start.x);
-			m_temp_selection.h = SDL_abs(e->button.y - m_selection_start.y);
 
 			m_cs.translate(m_temp_selection.x, m_temp_selection.y);
 
+			m_temp_selection.x = ceil(UTIL_MAX((m_temp_selection.x - m_cs.get_origin_x()) / ((float)m_cs.get_scale()), 0));
+			m_temp_selection.y = ceil(UTIL_MAX((m_temp_selection.y - m_cs.get_origin_y()) / ((float)m_cs.get_scale()), 0));
+
+			m_temp_selection.w = ceil(SDL_abs(m_selection_start.x - e->button.x) / ((float)m_cs.get_scale()));
+			m_temp_selection.h = ceil(SDL_abs(m_selection_start.y - e->button.y) / ((float)m_cs.get_scale()));
+
 			m_selected_elements.clear();
+
 			int index = 0;
 			for (auto& const elem : m_elements)
 			{
 				elem_dim = elem->get_dim();
+
 				if (is_rect_in_rect(&elem_dim, &m_temp_selection))
 				{
+					m_cs.translate(elem_abs_dim.x, elem_abs_dim.y);
 					m_selected_elements.emplace_back(index);
 					SDL_UnionRect(&m_total_selection, &elem_dim, &m_total_selection);
 				}
@@ -180,9 +199,10 @@ void Config::handle_events(SDL_Event * e)
 			}
 		}
 		else if (m_dragging_elements)
+		/* Dragging multiple elements */
 		{
-			m_total_selection.x = e->button.x - m_drag_offset.x;
-			m_total_selection.y = e->button.y - m_drag_offset.y;
+			move_elements(e->button.x - m_drag_offset.x,
+				e->button.y - m_drag_offset.y);
 		}
 	}
 	else if (e->type == SDL_KEYDOWN)
@@ -267,6 +287,33 @@ void Config::reset_selected_element(void)
 	m_settings->set_uv(0, 0);
 	m_settings->set_xy(0, 0);
 	m_settings->set_wh(0, 0);
+}
+
+void Config::move_elements(int new_x, int new_y)
+{
+	if (!m_selected_elements.empty())
+	{
+		int delta_x = new_x - m_total_selection.x;
+		int delta_y = new_y - m_total_selection.y;
+
+		m_total_selection.x = new_x;
+		m_total_selection.y = new_y;
+
+		Element * e = nullptr;
+		for (auto& const index : m_selected_elements)
+		{
+			if (index < m_elements.size())
+			{
+				e = m_elements[index].get();
+				if (e)
+				{
+					e->set_pos(
+						e->get_x() + delta_x,
+						e->get_y() + delta_y);
+				}
+			}
+		}
+	}
 }
 
 inline bool Config::is_rect_in_rect(const SDL_Rect * a, const SDL_Rect * b)

@@ -387,7 +387,7 @@ void CoordinateSystem::mouse_state(SDL_Event * event)
 	else if (m_helper->util_is_in_rect(&m_system_area, event->button.x, event->button.y))
 	/*
 		Only reset the cursor within the coordinate system,
-		because outside it might be set to I_BEAM by a textbox
+		because outside it might be set to I_BEAM by a text box
 	*/
 	{
 		m_size_mode = SIZE_NONE;
