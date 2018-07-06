@@ -241,6 +241,38 @@ void Config::handle_events(SDL_Event * e)
 				m_settings->set_xy(x, y);
 			}
 		}
+		else if (!m_selected_elements.empty())
+		{
+			int x = m_total_selection.x;
+			int y = m_total_selection.y;
+
+			bool moved = false;
+
+			switch (e->key.keysym.sym)
+			{
+			case SDLK_UP:
+				y = SDL_max(y - 1, 0);
+				moved = true;
+				break;
+			case SDLK_DOWN:
+				y++;
+				moved = true;
+				break;
+			case SDLK_RIGHT:
+				x++;
+				moved = true;
+				break;
+			case SDLK_LEFT:
+				x = SDL_max(0, x - 1);
+				moved = true;
+				break;
+			}
+
+			if (moved)
+			{
+				move_elements(x, y);
+			}
+		}
 
 		for (auto& const element : m_elements)
 		{
@@ -296,23 +328,30 @@ void Config::move_elements(int new_x, int new_y)
 		int delta_x = new_x - m_total_selection.x;
 		int delta_y = new_y - m_total_selection.y;
 
-		m_total_selection.x = new_x;
-		m_total_selection.y = new_y;
+		bool flag_x = new_x >= 0, flag_y = new_y >= 0;
 
 		Element * e = nullptr;
-		for (auto& const index : m_selected_elements)
-		{
-			if (index < m_elements.size())
+
+		if (flag_x)
+			m_total_selection.x = new_x;
+		if (flag_y)
+			m_total_selection.y = new_y;
+
+		if (flag_x || flag_y)
+			for (auto& const index : m_selected_elements)
 			{
-				e = m_elements[index].get();
-				if (e)
+				if (index < m_elements.size())
 				{
-					e->set_pos(
-						e->get_x() + delta_x,
-						e->get_y() + delta_y);
+					e = m_elements[index].get();
+					if (e)
+					{
+						e->set_pos(
+							e->get_x() + (flag_x ? delta_x : 0),
+							e->get_y() + (flag_y ? delta_y : 0));
+					}
 				}
 			}
-		}
+
 	}
 }
 

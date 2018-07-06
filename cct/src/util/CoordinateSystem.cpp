@@ -121,7 +121,7 @@ bool CoordinateSystem::handle_events(SDL_Event * e)
 		m_sizing = false;
 		m_selecting = false;
 	}
-	else if (e->type == SDL_KEYDOWN)
+	else if (e->type == SDL_KEYDOWN && m_selection)
 	{
 		int x = m_selection->x;
 		int y = m_selection->y;

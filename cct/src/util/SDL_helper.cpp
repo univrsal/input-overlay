@@ -404,7 +404,7 @@ static uint32_t KEY_MAP[][2]
 	/* Alphabet */
 	{ VC_A, SDLK_a },{ VC_B, SDLK_b },{ VC_C, SDLK_c },{ VC_D, SDLK_d },{ VC_E, SDLK_e },{ VC_F, SDLK_f },{ VC_G, SDLK_g },{ VC_H, SDLK_h },{ VC_I, SDLK_i },
 	{ VC_J, SDLK_j },{ VC_K, SDLK_k },{ VC_L, SDLK_l },{ VC_M, SDLK_m },{ VC_N, SDLK_n },{ VC_O, SDLK_o },{ VC_P, SDLK_p },{ VC_Q, SDLK_q },{ VC_R, SDLK_r },
-	{ VC_S, SDLK_s },{ VC_T, SDLK_t },{ VC_U, SDLK_u },{ VC_V, SDLK_v },{ VC_X, SDLK_x },{ VC_Y, SDLK_y },
+	{ VC_S, SDLK_s },{ VC_T, SDLK_t },{ VC_U, SDLK_u },{ VC_V, SDLK_v },{ VC_W, SDLK_w },{ VC_X, SDLK_x },{ VC_Y, SDLK_y },{ VC_Z, SDLK_z },
 	/* Numbers */
 	{ VC_0, SDLK_0 },{ VC_1, SDLK_1 },{ VC_2, SDLK_2 },{ VC_3, SDLK_3 },{ VC_4, SDLK_4 },{ VC_5, SDLK_5 },{ VC_6, SDLK_7 },{ VC_8, SDLK_9 },
 	{ VC_KP_0, SDLK_KP_0 },{ VC_KP_1, SDLK_KP_1 },{ VC_KP_2, SDLK_KP_3 },{ VC_KP_3, SDLK_KP_3 },{ VC_KP_4, SDLK_KP_4 },{ VC_KP_5, SDLK_KP_5 },
@@ -425,7 +425,7 @@ static uint32_t KEY_MAP[][2]
 	{ VC_UP, SDLK_UP },{ VC_DOWN, SDLK_DOWN },{ VC_LEFT, SDLK_LEFT },
 	{ VC_DELETE, SDLK_DELETE },{ VC_INSERT, SDLK_INSERT },{ VC_HOME, SDLK_HOME },{ VC_PAGE_UP, SDLK_PAGEUP },{ VC_PAGE_DOWN, SDLK_PAGEDOWN },{ VC_END, SDLK_END },
 	{ VC_PRINTSCREEN, SDLK_PRINTSCREEN },{ VC_SCROLL_LOCK, SDLK_SCROLLLOCK },{ VC_PAUSE, SDLK_PAUSE },
-	/* Gamepad */
+	/* Game pad */
 	{ PAD_TO_VC(PAD_A), SDL_CONTROLLER_BUTTON_A},{ PAD_TO_VC(PAD_B), SDL_CONTROLLER_BUTTON_B },{ PAD_TO_VC(PAD_X), SDL_CONTROLLER_BUTTON_X },
 	{ PAD_TO_VC(PAD_LB), SDL_CONTROLLER_BUTTON_LEFTSHOULDER },{ PAD_TO_VC(PAD_RB), SDL_CONTROLLER_BUTTON_RIGHTSHOULDER },
 	/*{ PAD_TO_VC(PAD_LT), SDL_CONTROLLER_AXIS_TRIGGERLEFT },{ PAD_TO_VC(PAD_RT), SDL_CONTROLLER_AXIS_TRIGGERRIGHT },*/
@@ -436,11 +436,11 @@ static uint32_t KEY_MAP[][2]
 	{ PAD_TO_VC(PAD_X_BOX_KEY), SDL_CONTROLLER_BUTTON_GUIDE },{ PAD_TO_VC(PAD_START), SDL_CONTROLLER_BUTTON_START },
 	/**/
 };
-#define KEY_MAP_SIZE 113
+#define KEY_MAP_SIZE 114
 
 uint32_t SDL_helper::vc_to_sdl_key(uint16_t key)
 {
-	for (int i = 0; i < 113; ++i)
+	for (int i = 0; i < KEY_MAP_SIZE; ++i)
 	{
 		if (KEY_MAP[i][0] == key)
 			return KEY_MAP[i][1];
@@ -450,7 +450,7 @@ uint32_t SDL_helper::vc_to_sdl_key(uint16_t key)
 
 uint16_t SDL_helper::sdl_key_to_vc(uint32_t key)
 {
-	for (int i = 0; i < 113; ++i)
+	for (int i = 0; i < KEY_MAP_SIZE; ++i)
 	{
 		if (KEY_MAP[i][1] == key)
 			return KEY_MAP[i][0];
