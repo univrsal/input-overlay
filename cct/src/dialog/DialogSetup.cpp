@@ -7,6 +7,7 @@
 
 #include "DialogSetup.hpp"
 #include "../util/Notifier.hpp"
+#include "../Tool.hpp"
 
 void DialogSetup::init()
 {
@@ -53,7 +54,7 @@ void DialogSetup::action_performed(int8_t action_id)
 
 		if (!m_texture_path->get_text()->empty() && !m_config_path->get_text()->empty() && valid_texture && valid_config)
 		{
-			m_finished = true;
+			m_tool->action_performed(TOOL_ACTION_SETUP_EXIT);
 		}
 		else
 		{
@@ -74,11 +75,6 @@ void DialogSetup::action_performed(int8_t action_id)
 		m_helper->exit_loop();
 		break;
 	}
-}
-
-bool DialogSetup::is_finished(void)
-{
-	return m_finished;
 }
 
 const std::string * DialogSetup::get_config_path(void)

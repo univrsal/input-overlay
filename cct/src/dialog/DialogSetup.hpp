@@ -13,6 +13,8 @@
 #include "elements/Button.hpp"
 #include "../../../ccl/ccl.hpp"
 
+class Tool;
+
 class SDL_helper;
 
 class Notifier;
@@ -20,17 +22,18 @@ class Notifier;
 class DialogSetup : public Dialog
 {
 public:
-	DialogSetup(SDL_helper * sdl, SDL_Point size, Notifier * notifier)
+	DialogSetup(SDL_helper * sdl, SDL_Point size, Notifier * notifier, Tool * t)
 		: Dialog(sdl, size, "Overlay setup")
 	{
 		m_notifier = notifier;
+		m_tool = t;
 	};
 
 	void init();
 
 	void action_performed(int8_t action_id);
 
-	bool is_finished(void);
+	SDL_Point get_default_dim();
 
 	const std::string * get_config_path(void);
 
@@ -38,11 +41,10 @@ public:
 private:
 	Notifier * m_notifier = nullptr;
 
-	bool m_finished = false;
 	Textbox * m_texture_path = nullptr;
 	Textbox * m_config_path = nullptr;
 	Textbox * m_def_w = nullptr;
 	Textbox * m_def_h = nullptr;
-public:
-	SDL_Point get_default_dim();
+
+	Tool * m_tool = nullptr;
 };

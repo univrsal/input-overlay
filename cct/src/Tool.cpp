@@ -9,14 +9,12 @@ Tool::Tool(SDL_helper * helper)
 Tool::~Tool()
 {
 	m_helper = nullptr;
-	if (m_setup_dialog)
-		delete m_setup_dialog;
 
 	if (m_config)
 		delete m_config;
 	close_toplevel();
 	m_config = nullptr;
-	m_setup_dialog = nullptr;
+
 	if (m_notify)
 	{
 		delete m_notify;
@@ -28,9 +26,8 @@ void Tool::program_loop()
 {
 	m_notify = new Notifier(m_helper);
 
-	m_setup_dialog = new DialogSetup(m_helper, SDL_Point{ 500, 230 }, m_notify);
-	m_setup_dialog->init();
-	m_setup_dialog->action_performed(ACTION_FOCUSED);
+	m_toplevel = new DialogSetup(m_helper, SDL_Point{ 500, 230 }, m_notify, this);
+	m_toplevel->init();
 	m_helper->set_runflag(&m_run_flag);
 
 	while (m_run_flag)
@@ -42,23 +39,8 @@ void Tool::program_loop()
 		switch (m_state)
 		{
 		case IN_SETUP:
-			m_setup_dialog->draw_background();
-			m_setup_dialog->draw_foreground();
-
-			if (m_setup_dialog->is_finished())
-			{
-				m_element_settings = new DialogElementSettings(m_helper,
-					SDL_Rect{ 1030, 200, 240, 400 }, this);
-				m_config = new Config(m_setup_dialog->get_texture_path(),
-					m_setup_dialog->get_config_path(), m_setup_dialog->get_default_dim(), m_helper, m_element_settings);
-
-				m_element_settings->init();
-
-				/* Free it up */
-				delete m_setup_dialog;
-				m_setup_dialog = nullptr;
-				m_state = IN_BUILD;
-			}
+			m_toplevel->draw_background();
+			m_toplevel->draw_foreground();
 			break;
 		case IN_BUILD:
 			m_config->draw_elements();
@@ -98,10 +80,23 @@ uint16_t Tool::get_selected_id(void)
 void Tool::action_performed(uint8_t type)
 {
 	DialogNewElement * d = nullptr;
+	DialogSetup * s = nullptr;
 	Element * e = nullptr;
 
 	switch (type)
 	{
+	case TOOL_ACTION_SETUP_EXIT:
+		s = reinterpret_cast<DialogSetup*>(m_toplevel);
+		m_element_settings = new DialogElementSettings(m_helper,
+			SDL_Rect{ 1030, 200, 240, 400 }, this);
+		m_config = new Config(s->get_texture_path(),
+			s->get_config_path(), s->get_default_dim(), m_helper, m_element_settings);
+
+		m_element_settings->init();
+
+		m_queue_close = true;
+		m_state = IN_BUILD;
+		break;
 	case TOOL_ACTION_HELP_OPEN:
 		close_toplevel();
 		m_state = IN_HELP;
@@ -177,6 +172,9 @@ void Tool::action_performed(uint8_t type)
 		m_queue_close = true;
 		m_state = IN_BUILD;
 		break;
+	case TOOL_ACTION_SAVE_CONFIG:
+		
+		break;
 	}
 }
 
@@ -243,7 +241,7 @@ void Tool::handle_input()
 		switch (m_state)
 		{
 		case IN_SETUP:
-			m_setup_dialog->handle_events(&m_event);
+			m_toplevel->handle_events(&m_event);
 			break;
 		case IN_BUILD:
 			if (m_element_settings && !m_element_settings->handle_events(&m_event))

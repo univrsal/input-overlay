@@ -3,22 +3,25 @@
 
 void DialogNewElement::load_from_element(Element * e)
 {
-	m_u->set_text(std::to_string(e->get_u()));
-	m_v->set_text(std::to_string(e->get_v()));
+	if (e)
+	{
+		m_u->set_text(std::to_string(e->get_u()));
+		m_v->set_text(std::to_string(e->get_v()));
 
-	m_w->set_text(std::to_string(e->get_w()));
-	m_h->set_text(std::to_string(e->get_h()));
+		m_w->set_text(std::to_string(e->get_w()));
+		m_h->set_text(std::to_string(e->get_h()));
 
-	m_element_id->set_text(*e->get_id());
+		m_element_id->set_text(*e->get_id());
 
-	m_keycode->set_hex_int(e->get_vc());
+		m_keycode->set_hex_int(e->get_vc());
 
-	m_selection_1.x = e->get_u();
-	m_selection_1.y = e->get_v();
-	m_selection_1.w = e->get_w();
-	m_selection_1.h = e->get_h();
+		m_selection_1.x = e->get_u();
+		m_selection_1.y = e->get_v();
+		m_selection_1.w = e->get_w();
+		m_selection_1.h = e->get_h();
 
-	m_modify_mode = true;
+		m_modify_mode = true;
+	}
 }
 
 void DialogNewElement::init()

@@ -40,6 +40,8 @@ enum ToolState
 #define TOOL_ACTION_NEW_ELEMENT_ADD 4
 #define TOOL_ACTION_MOD_ELEMENT_OPEN 5
 #define TOOL_ACTION_MOD_ELEMENT_APPLY 6
+#define TOOL_ACTION_SAVE_CONFIG 7
+#define TOOL_ACTION_SETUP_EXIT 8
 
 class Tool
 {
@@ -72,7 +74,6 @@ private:
 
 	Config * m_config = nullptr;
 
-	DialogSetup * m_setup_dialog = nullptr;
 	DialogElementSettings * m_element_settings = nullptr;
 	Dialog * m_toplevel = nullptr;
 	Notifier * m_notify = nullptr;
