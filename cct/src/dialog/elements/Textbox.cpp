@@ -105,12 +105,7 @@ bool Textbox::handle_events(SDL_Event * event)
 		{
 			if ((m_flags & TEXTBOX_KEYBIND))
 			{
-				uint16_t code = get_helper()->sdl_key_to_vc(event->key.keysym.sym);
-				std::stringstream stream;
-				stream << "0x"
-					<< std::setfill('0') << std::setw(sizeof(uint16_t) * 2)
-					<< std::hex << code;
-				set_text(stream.str());
+				set_hex_int(get_helper()->sdl_key_to_vc(event->key.keysym.sym));
 			}
 			else
 			{
@@ -188,6 +183,15 @@ void Textbox::set_text(std::string s)
 	*/
 
 	get_helper()->util_cut_string(m_cut_text.append(m_composition), get_dimensions()->w - m_cut_off, false);
+}
+
+void Textbox::set_hex_int(uint16_t i)
+{
+	std::stringstream stream;
+	stream << "0x"
+		<< std::setfill('0') << std::setw(sizeof(uint16_t) * 2)
+		<< std::hex << i;
+	set_text(stream.str());
 }
 
 void Textbox::append_text(std::string s)

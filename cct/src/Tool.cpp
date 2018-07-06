@@ -48,7 +48,7 @@ void Tool::program_loop()
 			if (m_setup_dialog->is_finished())
 			{
 				m_element_settings = new DialogElementSettings(m_helper,
-					SDL_Rect{ 10, 200, 240, 360 }, this);
+					SDL_Rect{ 1030, 200, 240, 400 }, this);
 				m_config = new Config(m_setup_dialog->get_texture_path(),
 					m_setup_dialog->get_config_path(), m_setup_dialog->get_default_dim(), m_helper, m_element_settings);
 
@@ -120,6 +120,30 @@ void Tool::action_performed(uint8_t type)
 		d = reinterpret_cast<DialogNewElement*>(m_toplevel);
 		d->set_default_dim(m_config->get_default_dim().x, m_config->get_default_dim().y);
 		break;
+	case TOOL_ACTION_MOD_ELEMENT_OPEN:
+		if (m_config->selected())
+		{
+			close_toplevel();
+			m_state = IN_NEW_ELEMENT;
+			m_toplevel = new DialogNewElement(m_helper, SDL_Point{}, "New element", this, BUTTON_KEYBOARD);
+			m_toplevel->init();
+			d = reinterpret_cast<DialogNewElement*>(m_toplevel);
+			d->set_default_dim(m_config->get_default_dim().x, m_config->get_default_dim().y);
+			d->load_from_element(m_config->selected());
+		}
+		break;
+	case TOOL_ACTION_MOD_ELEMENT_APPLY:
+		if (m_config->selected())
+		{
+			d = reinterpret_cast<DialogNewElement*>(m_toplevel);
+			m_config->selected()->set_map(d->get_selection_1());
+			m_config->selected()->set_id(*d->get_id());
+			m_config->selected()->set_vc(d->get_vc());
+			m_element_settings->select_element(m_config->selected()); /* Refresh Dialog*/
+		}
+		m_queue_close = true;
+		m_state = IN_BUILD;
+		break;
 	case TOOL_ACTION_NEW_ELEMENT_ADD:
 		d = reinterpret_cast<DialogNewElement*>(m_toplevel);
 		
@@ -132,7 +156,7 @@ void Tool::action_performed(uint8_t type)
 		case MOUSE_MOVEMENT:
 		case ANALOG_STICK:
 		case BUTTON_MOUSE:
-			e = new Element(d->get_type(), *d->get_id(), SDL_Point{ 0, 0 }, d->get_selection_1(), d->get_key_code());
+			e = new Element(d->get_type(), *d->get_id(), SDL_Point{ 0, 0 }, d->get_selection_1(), d->get_vc());
 			break;
 		case TRIGGER_GAMEPAD:
 			break;

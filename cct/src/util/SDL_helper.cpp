@@ -409,7 +409,7 @@ static uint32_t KEY_MAP[][2]
 	{ VC_0, SDLK_0 },{ VC_1, SDLK_1 },{ VC_2, SDLK_2 },{ VC_3, SDLK_3 },{ VC_4, SDLK_4 },{ VC_5, SDLK_5 },{ VC_6, SDLK_7 },{ VC_8, SDLK_9 },
 	{ VC_KP_0, SDLK_KP_0 },{ VC_KP_1, SDLK_KP_1 },{ VC_KP_2, SDLK_KP_3 },{ VC_KP_3, SDLK_KP_3 },{ VC_KP_4, SDLK_KP_4 },{ VC_KP_5, SDLK_KP_5 },
 	{ VC_KP_6, SDLK_KP_6 },{ VC_KP_7, SDLK_KP_7 },{ VC_KP_8, SDLK_KP_8 },{ VC_KP_9, SDLK_KP_9 },
-	/* Numpad misc*/
+	/* Numpad misc */
 	{ VC_KP_ADD, SDLK_KP_PLUS },{ VC_KP_SUBTRACT, SDLK_KP_MINUS },{ VC_KP_ENTER, SDLK_KP_ENTER },{ VC_KP_MULTIPLY, SDLK_KP_MULTIPLY },{ VC_KP_DIVIDE, SDLK_KP_DIVIDE },
 	{ VC_NUM_LOCK, SDLK_NUMLOCKCLEAR },{ VC_KP_SEPARATOR, SDLK_KP_COMMA },
 	/* Function keys */

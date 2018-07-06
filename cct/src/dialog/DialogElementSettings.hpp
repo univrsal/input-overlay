@@ -17,6 +17,7 @@
 #define ACTION_NEW_ELEMENT -11
 #define ACTION_SAVE_CONFIG -12
 #define ACTION_DEL_ELEMENT -13
+#define ACTION_MOD_ELEMENT -14
 
 class SDL_helper;
 
@@ -41,12 +42,13 @@ public:
 	void set_xy(int x, int y);
 	void set_uv(int u, int v);
 	void set_id(std::string id);
-
+	void set_vc(uint16_t vc);
 	void select_element(Element * e);
 private:
 	bool m_finished = false;
 
 	Textbox * m_element_id = nullptr;
+	Textbox * m_keycode = nullptr;
 	Textbox * m_element_width = nullptr;
 	Textbox * m_element_height = nullptr;
 	Textbox * m_element_x = nullptr;

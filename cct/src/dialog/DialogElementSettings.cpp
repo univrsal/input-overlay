@@ -14,8 +14,9 @@ void DialogElementSettings::init()
 	add(new Label(id++, 8, 95, "U: ", this));
 	add(new Label(id++, (m_dimensions.w / 2) + 4, 95, "V: ", this));
 	add(new Label(id++, 8, 125, "Element id:", this));
+	add(new Label(id++, 8, 170, "Key code:", this));
 
-	/* Textboxes */
+	/* Text boxes */
 	m_element_width = new Textbox(id++, 55, 32, (m_dimensions.w / 2) - 63, 20, "0", this);
 	m_element_height = new Textbox(id++, (m_dimensions.w / 2) + 55, 32, (m_dimensions.w / 2) - 63, 20, "0", this);
 
@@ -26,8 +27,10 @@ void DialogElementSettings::init()
 	m_element_v = new Textbox(id++, (m_dimensions.w / 2) + 55, 92, (m_dimensions.w / 2) - 63, 20, "0", this);
 
 	add(m_element_id = new Textbox(id++, 8, 145, m_dimensions.w - 16, 20, "", this));
+	add(m_keycode = new Textbox(id++, 8, 190, m_dimensions.w - 16, 20, "", this));
 
 	m_element_id->set_flags(TEXTBOX_NO_SPACE);
+	m_keycode->set_flags(TEXTBOX_HEX | TEXTBOX_NO_SPACE);
 
 	m_element_width->set_flags(TEXTBOX_NUMERIC);
 	m_element_height->set_flags(TEXTBOX_NUMERIC);
@@ -50,8 +53,9 @@ void DialogElementSettings::init()
 	add(m_element_u);
 	add(m_element_v);
 
-	add(new Button(ACTION_NEW_ELEMENT, 8, m_dimensions.h - 154, m_dimensions.w - 16, "Add new element", this));
-	add(new Button(ACTION_DEL_ELEMENT, 8, m_dimensions.h - 126, m_dimensions.w - 16, "Delete selected", this));
+	add(new Button(ACTION_NEW_ELEMENT, 8, m_dimensions.h - 182, m_dimensions.w - 16, "Add new element", this));
+	add(new Button(ACTION_DEL_ELEMENT, 8, m_dimensions.h - 154, m_dimensions.w - 16, "Delete selected", this));
+	add(new Button(ACTION_MOD_ELEMENT, 8, m_dimensions.h - 126, m_dimensions.w - 16, "Modify selected", this));
 	add(new Button(ACTION_SAVE_CONFIG, 8, m_dimensions.h - 98, m_dimensions.w - 16, "Save config", this));
 	add(new Button(ACTION_HELP_BUTTON, 8, m_dimensions.h - 70, m_dimensions.w - 16, "Help", this));
 	add(new Button(ACTION_OK, 8, m_dimensions.h - 32, "OK", this));
@@ -75,11 +79,17 @@ void DialogElementSettings::action_performed(int8_t action_id)
 			m_tool->get_selected()->set_dim(std::stoi(
 				m_element_width->get_text()->c_str()), std::stoi(
 					m_element_height->get_text()->c_str()));
-
+			
 			if (!m_element_id->get_text()->empty())
 				m_tool->get_selected()->set_id(*m_element_id->get_text());
 			else
 				m_element_id->set_alert(true);
+
+			if (!m_keycode->get_text()->empty())
+				m_tool->get_selected()->set_vc((uint16_t)strtoul(m_keycode->get_text()->c_str(), NULL, 16));
+			else
+				m_keycode->set_alert(true);
+
 		}
 		break;
 	case ACTION_DEL_ELEMENT:
@@ -87,6 +97,9 @@ void DialogElementSettings::action_performed(int8_t action_id)
 		{
 			m_tool->delete_element(m_tool->get_selected_id());
 		}
+		break;
+	case ACTION_MOD_ELEMENT:
+		m_tool->action_performed(TOOL_ACTION_MOD_ELEMENT_OPEN);
 		break;
 	case ACTION_HELP_BUTTON:
 		m_tool->action_performed(TOOL_ACTION_HELP_OPEN);
@@ -141,6 +154,11 @@ void DialogElementSettings::set_id(std::string id)
 	m_element_id->set_text(id);
 }
 
+void DialogElementSettings::set_vc(uint16_t vc)
+{
+	m_keycode->set_hex_int(vc);
+}
+
 void DialogElementSettings::select_element(Element * e)
 {
 	if (e)
@@ -149,5 +167,6 @@ void DialogElementSettings::select_element(Element * e)
 		set_uv(e->get_u(), e->get_v());
 		set_xy(e->get_x(), e->get_y());
 		set_wh(e->get_w(), e->get_h());
+		set_vc(e->get_vc());
 	}
 }

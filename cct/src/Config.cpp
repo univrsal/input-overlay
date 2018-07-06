@@ -319,6 +319,7 @@ void Config::reset_selected_element(void)
 	m_settings->set_uv(0, 0);
 	m_settings->set_xy(0, 0);
 	m_settings->set_wh(0, 0);
+	m_settings->set_vc(0);
 }
 
 void Config::move_elements(int new_x, int new_y)

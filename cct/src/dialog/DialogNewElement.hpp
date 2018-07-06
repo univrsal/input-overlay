@@ -24,6 +24,8 @@ class Texture;
 
 class Tool;
 
+class Element;
+
 enum ElementType;
 
 class DialogNewElement : public Dialog
@@ -35,6 +37,8 @@ public:
 		m_tool = tool;
 		m_type = type;
 	}
+
+	void load_from_element(Element * e);
 
 	void init();
 
@@ -50,7 +54,7 @@ public:
 
 	SDL_Rect get_selection_1(void);
 
-	uint16_t get_key_code(void);
+	uint16_t get_vc(void);
 
 	const std::string * get_id(void);
 
@@ -65,7 +69,7 @@ private:
 	/* Adds text box for element id*/
 	void add_element_id(void);
 
-	/* Y position of the lowest element */
+	/* Y position of the lowest gui element */
 	uint16_t m_element_y = 0;
 	uint16_t m_id = 1;
 
@@ -91,4 +95,6 @@ private:
 	SDL_Rect m_selection_2;
 
 	SDL_Point m_default_dim;
+
+	bool m_modify_mode = false;
 };

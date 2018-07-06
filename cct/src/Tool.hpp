@@ -38,6 +38,8 @@ enum ToolState
 #define TOOL_ACTION_NEW_ELEMENT_OPEN 2
 #define TOOL_ACTION_NEW_ELEMENT_EXIT 3
 #define TOOL_ACTION_NEW_ELEMENT_ADD 4
+#define TOOL_ACTION_MOD_ELEMENT_OPEN 5
+#define TOOL_ACTION_MOD_ELEMENT_APPLY 6
 
 class Tool
 {
@@ -63,7 +65,7 @@ private:
 	void close_toplevel(void);
 	void handle_input();
 	bool m_run_flag = true;
-	bool m_queue_close = false; /* True when toplevel dialog should be closed */
+	bool m_queue_close = false; /* True when top level dialog should be closed */
 
 	SDL_Event m_event;
 	SDL_helper * m_helper;

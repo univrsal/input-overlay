@@ -40,6 +40,8 @@ public:
 
 	void set_text(std::string s);
 
+	void set_hex_int(uint16_t i);
+
 	void append_text(std::string s);
 
 	uint8_t get_cursor(void);

@@ -1,4 +1,25 @@
 #include "DialogNewElement.hpp"
+#include "../Config.hpp"
+
+void DialogNewElement::load_from_element(Element * e)
+{
+	m_u->set_text(std::to_string(e->get_u()));
+	m_v->set_text(std::to_string(e->get_v()));
+
+	m_w->set_text(std::to_string(e->get_w()));
+	m_h->set_text(std::to_string(e->get_h()));
+
+	m_element_id->set_text(*e->get_id());
+
+	m_keycode->set_hex_int(e->get_vc());
+
+	m_selection_1.x = e->get_u();
+	m_selection_1.y = e->get_v();
+	m_selection_1.w = e->get_w();
+	m_selection_1.h = e->get_h();
+
+	m_modify_mode = true;
+}
 
 void DialogNewElement::init()
 {
@@ -31,7 +52,10 @@ void DialogNewElement::action_performed(int8_t action_id)
 	switch (action_id)
 	{
 	case ACTION_OK:
-		m_tool->action_performed(TOOL_ACTION_NEW_ELEMENT_ADD);
+		if (m_modify_mode)
+			m_tool->action_performed(TOOL_ACTION_MOD_ELEMENT_APPLY);
+		else
+			m_tool->action_performed(TOOL_ACTION_NEW_ELEMENT_ADD);
 		break;
 	case ACTION_CANCEL:
 		m_tool->action_performed(TOOL_ACTION_NEW_ELEMENT_EXIT);
@@ -116,7 +140,7 @@ SDL_Rect DialogNewElement::get_selection_1(void)
 	return m_selection_1;
 }
 
-uint16_t DialogNewElement::get_key_code(void)
+uint16_t DialogNewElement::get_vc(void)
 {
 	uint16_t t = 0x0;
 

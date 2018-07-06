@@ -99,7 +99,13 @@ public:
 		m_texture_mapping.h = h;
 	}
 
+	void set_map(SDL_Rect map)
+	{
+		m_texture_mapping = map;
+	}
+
 	void set_id(std::string id) { m_id = id; }
+	void set_vc(uint16_t vc){ m_keycode = vc; }
 
 	std::string * get_id() { return &m_id; }
 	int get_x() { return m_pos.x; }
