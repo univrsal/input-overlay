@@ -15,6 +15,10 @@
 #include <memory>
 #include <vector>
 
+class ccl_config;
+
+class Notifier;
+
 class CoordinateSystem;
 
 class DialogElementSettings;
@@ -81,6 +85,8 @@ public:
 		}
 	}
 
+	void write_to_file(ccl_config * cfg, SDL_Point * default_dim);
+
 	void set_pos(int x, int y)
 	{
 		m_pos.x = x;
@@ -132,16 +138,18 @@ private:
 class Config
 {
 public:
-	Config(const std::string * texture, const std::string * config, SDL_Point def_dim, SDL_helper * h, DialogElementSettings * s);
+	Config(const char * texture, const char * config, SDL_Point def_dim, SDL_helper * h, DialogElementSettings * s);
 	~Config();
 
 	void draw_elements(void);
 
 	void handle_events(SDL_Event * e);
 
-	const std::string * m_texture_path;
-	const std::string * m_config_path;
-	
+	std::string m_texture_path;
+	std::string m_config_path;
+
+	void write_config(Notifier * n);
+
 	Texture * get_texture(void);
 
 	SDL_Point get_default_dim(void);

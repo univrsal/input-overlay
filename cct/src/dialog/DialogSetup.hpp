@@ -35,9 +35,9 @@ public:
 
 	SDL_Point get_default_dim();
 
-	const std::string * get_config_path(void);
+	const char * get_config_path(void);
 
-	const std::string * get_texture_path(void);
+	const char * get_texture_path(void);
 private:
 	Notifier * m_notifier = nullptr;
 

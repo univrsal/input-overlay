@@ -1,15 +1,18 @@
 #include "Config.hpp"
 #include "dialog/DialogElementSettings.hpp"
+#include "util/Notifier.hpp"
+#include <sstream>
 
 #define X_AXIS 100
 #define Y_AXIS 100
 
-Config::Config(const std::string * texture, const std::string * config, SDL_Point def_dim, SDL_helper * h, DialogElementSettings * s)
+Config::Config(const char * texture, const char * config, SDL_Point def_dim, SDL_helper * h, DialogElementSettings * s)
 {
 	m_texture_path = texture;
 	m_config_path = config;
+
 	m_settings = s;
-	m_atlas = new Texture(texture->c_str(), h->renderer());
+	m_atlas = new Texture(texture, h->renderer());
 	m_helper = h;
 	m_default_dim = def_dim;
 	SDL_Point * w = h->util_window_size();
@@ -27,8 +30,6 @@ Config::~Config()
 	if (m_atlas)
 		delete m_atlas;
 	m_atlas = nullptr;
-	m_texture_path = nullptr;
-	m_config_path = nullptr;
 	m_helper = nullptr;
 	m_settings = nullptr;
 }
@@ -302,6 +303,39 @@ void Config::handle_events(SDL_Event * e)
 	}
 }
 
+void Config::write_config(Notifier * n)
+{
+	if (m_elements.empty())
+	{
+		n->add_msg(MESSAGE_INFO, "Nothing to saves");
+		return;
+	}
+	uint32_t start = SDL_GetTicks();
+	ccl_config cfg = ccl_config(m_config_path, "CCT generated config");
+
+	for (auto& const e : m_elements)
+	{
+		e->write_to_file(&cfg, &m_default_dim);
+	}
+
+	cfg.write();
+
+	uint32_t end = SDL_GetTicks();
+
+	if (cfg.has_errors())
+	{
+		n->add_msg(MESSAGE_ERROR, "CCL encountered errors when saving!");
+		n->add_msg(MESSAGE_ERROR, cfg.get_error_message());
+	}
+	else
+	{
+		std::stringstream result;
+		result << "Successfully wrote " << m_elements.size() << " Element(s) in " << (end - start) << "ms";
+		n->add_msg(MESSAGE_INFO, result.str());
+	}
+	cfg.free();
+}
+
 Texture * Config::get_texture(void)
 {
     return m_atlas;
@@ -360,4 +394,46 @@ inline bool Config::is_rect_in_rect(const SDL_Rect * a, const SDL_Rect * b)
 {
 	return a->x >= b->x && a->x + a->w <= b->x + b->w
 		&& a->y >= b->y && a->y + a->h <= b->y + b->h;
+}
+
+#include "../../util/layout_constants.hpp"
+
+void Element::write_to_file(ccl_config * cfg, SDL_Point * default_dim)
+{
+	std::stringstream stream;
+	const char * id = m_id.c_str();
+
+	stream << "Type id of " << id;
+	cfg->add_int(m_id.append(CFG_TYPE), stream.str(), m_type);
+	stream.str(std::string());
+
+	stream << "X position of " << id;
+	cfg->add_int(m_id.append(CFG_X_POS), stream.str(), m_pos.x);
+	stream.str(std::string());
+
+	stream << "Y position of " << id;
+	cfg->add_int(m_id.append(CFG_Y_POS), stream.str(), m_pos.y);
+	stream.str(std::string());
+
+	stream << "Texture U of " << id;
+	cfg->add_int(m_id.append(CFG_U), stream.str(), m_texture_mapping.x);
+	stream.str(std::string());
+
+	stream << "Texture V of " << id;
+	cfg->add_int(m_id.append(CFG_V), stream.str(), m_texture_mapping.y);
+	stream.str(std::string());
+
+	if (m_texture_mapping.w != default_dim->x)
+	{
+		stream << "Width of " << id;
+		cfg->add_int(m_id.append(CFG_WIDTH), stream.str(), m_texture_mapping.w);
+		stream.str(std::string());
+	}
+
+	if (m_texture_mapping.h != default_dim->y)
+	{
+		stream << "Height of " << id;
+		cfg->add_int(m_id.append(CFG_WIDTH), stream.str(), m_texture_mapping.w);
+		stream.str(std::string());
+	}
 }

@@ -51,6 +51,25 @@ bool SDL_helper::init()
 	{
 		SDL_SetWindowMinimumSize(m_sdl_window, WINDOW_WIDTH, WINDOW_HEIGHT);
 		m_sdl_renderer = SDL_CreateRenderer(m_sdl_window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+
+		/* Window icon */
+		std::string windows = "Windows";
+		if (windows.compare(SDL_GetPlatform()) != 0) /* Windows gets the icon from the exe */
+		{
+			SDL_Surface * ico_surface = IMG_Load(WINDOW_ICON);
+
+			if (ico_surface)
+			{
+				SDL_SetWindowIcon(m_sdl_window, ico_surface);
+				SDL_FreeSurface(ico_surface);
+			}
+			else
+			{
+				printf("Loading window icon failed! Error: %s\n", IMG_GetError());
+				/* Non fatal */
+			}
+		}
+
 	}
 
 	if (m_sdl_renderer == NULL)

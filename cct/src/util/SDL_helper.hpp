@@ -17,6 +17,7 @@
 #include "FontHelper.hpp"
 #include "Texture.hpp"
 
+#define WINDOW_ICON "icon.png"
 #define WINDOW_TITLE "io-cct"
 #define WINDOW_WIDTH 1280
 #define WINDOW_HEIGHT 720

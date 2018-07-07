@@ -1,3 +1,5 @@
+cmake_minimum_required(VERSION 2.8)
+
 project(io-cct)
 
 find_path(SDL_INCLUDE_DIR SDL.h)
@@ -8,6 +10,8 @@ find_library(SDL_TTF_LIB SDL2_ttf)
 
 find_path(SDL_IMG_INCLUDE_DIR SDL_image.h)
 find_library(SDL_IMG_LIB SDL2_image)
+
+set(APP_ICON_RC "${CMAKE_CURRENT_SOURCE_DIR}/res/icon.ico")
 
 set(io-cct_SOURCES
 	main.cpp

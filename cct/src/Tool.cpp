@@ -173,7 +173,7 @@ void Tool::action_performed(uint8_t type)
 		m_state = IN_BUILD;
 		break;
 	case TOOL_ACTION_SAVE_CONFIG:
-		
+		m_config->write_config(m_notify);
 		break;
 	}
 }

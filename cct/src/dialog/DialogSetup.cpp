@@ -77,14 +77,14 @@ void DialogSetup::action_performed(int8_t action_id)
 	}
 }
 
-const std::string * DialogSetup::get_config_path(void)
+const char * DialogSetup::get_config_path(void)
 {
-	return m_config_path->get_text();
+	return m_config_path->get_text()->c_str();
 }
 
-const std::string * DialogSetup::get_texture_path(void)
+const char * DialogSetup::get_texture_path(void)
 {
-	return m_texture_path->get_text();
+	return m_texture_path->get_text()->c_str();
 }
 
 SDL_Point DialogSetup::get_default_dim()
