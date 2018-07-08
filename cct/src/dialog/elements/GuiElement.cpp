@@ -21,6 +21,16 @@ void GuiElement::close(void)
 	m_dimensions = { 0, 0, 0, 0 };
 }
 
+bool GuiElement::can_select(void)
+{
+	return false;
+}
+
+void GuiElement::select_state(bool state)
+{
+	// NO-OP
+}
+
 void GuiElement::resize(void)
 {
 	//NO-OP

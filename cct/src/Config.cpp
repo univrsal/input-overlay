@@ -318,7 +318,7 @@ void Config::write_config(Notifier * n)
 		e->write_to_file(&cfg, &m_default_dim);
 	}
 
-	/*cfg.write();*/
+	cfg.write();
 
 	uint32_t end = SDL_GetTicks();
 
@@ -333,7 +333,7 @@ void Config::write_config(Notifier * n)
 		result << "Successfully wrote " << m_elements.size() << " Element(s) in " << (end - start) << "ms";
 		n->add_msg(MESSAGE_INFO, result.str());
 	}
-	/*cfg.free();*/
+	cfg.free();
 }
 
 Texture * Config::get_texture(void)
@@ -403,29 +403,29 @@ void Element::write_to_file(ccl_config * cfg, SDL_Point * default_dim)
 	std::string comment;
 
 	comment = "Type id of " + m_id;
-	cfg->add_int(m_id + CFG_TYPE, comment, m_type);
+	cfg->add_int(m_id + CFG_TYPE, comment, m_type, true);
 
 	comment = "X position of " + m_id;
-	cfg->add_int(m_id + CFG_X_POS, comment, m_pos.x);
+	cfg->add_int(m_id + CFG_X_POS, comment, m_pos.x, true);
 	
 	comment = "Y position of " + m_id;
-	cfg->add_int(m_id + CFG_Y_POS, comment, m_pos.y);
+	cfg->add_int(m_id + CFG_Y_POS, comment, m_pos.y, true);
 	
 	comment = "Texture U of " + m_id;
-	cfg->add_int(m_id + CFG_U, comment, m_texture_mapping.x);
+	cfg->add_int(m_id + CFG_U, comment, m_texture_mapping.x, true);
 	
 	comment = "Texture V of " + m_id;
-	cfg->add_int(m_id + CFG_V, comment, m_texture_mapping.y);
+	cfg->add_int(m_id + CFG_V, comment, m_texture_mapping.y, true);
 	
 	if (m_texture_mapping.w != default_dim->x)
 	{
 		comment = "Width of " + m_id;
-		cfg->add_int(m_id + CFG_WIDTH, comment, m_texture_mapping.w);
+		cfg->add_int(m_id + CFG_WIDTH, comment, m_texture_mapping.w, true);
 	}
 
 	if (m_texture_mapping.h != default_dim->y)
 	{
 		comment = "Height of " + m_id;
-		cfg->add_int(m_id + CFG_WIDTH, comment, m_texture_mapping.w);
+		cfg->add_int(m_id + CFG_WIDTH, comment, m_texture_mapping.w, true);
 	}
 }

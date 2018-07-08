@@ -167,6 +167,16 @@ bool Textbox::handle_events(SDL_Event * event)
 	return was_handled;
 }
 
+bool Textbox::can_select(void)
+{
+    return true;
+}
+
+void Textbox::select_state(bool state)
+{
+	m_focused = state;
+}
+
 void Textbox::set_text(std::string s)
 {
 		m_text = s;

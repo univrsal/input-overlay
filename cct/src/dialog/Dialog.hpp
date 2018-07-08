@@ -68,8 +68,10 @@ public:
 	int get_bottom(void);
 protected:
 	std::vector<std::unique_ptr<GuiElement>> m_screen_elements;
+	std::vector<GuiElement*> m_tab_items;
 	std::string m_title;
-
+	
+	int16_t m_selected_element = 0;
 	int m_offset_x, m_offset_y;
 	bool m_is_dragging = false;
 	uint16_t m_flags = 0x00000000;

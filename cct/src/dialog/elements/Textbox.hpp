@@ -38,6 +38,10 @@ public:
 
 	bool handle_events(SDL_Event * event);
 
+	bool can_select(void);
+
+	void select_state(bool state);
+
 	void set_text(std::string s);
 
 	void set_hex_int(uint16_t i);

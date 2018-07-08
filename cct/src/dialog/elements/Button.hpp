@@ -24,6 +24,10 @@ public:
 
 	~Button();
 
+	bool can_select(void);
+
+	void select_state(bool state);
+
 	void draw_background(void);
 
 	void draw_foreground(void);
@@ -35,12 +39,12 @@ public:
 	void resize(void);
 
 protected:
-	bool m_pressed;
-	bool m_hovered;
-	bool m_tooltip_shown;
+	bool m_pressed = false;
+	bool m_hovered = false;
+	bool m_tab_focused = false;
+
 	std::string m_text;
 	SDL_Point m_text_pos;
-	int m_hover_start;
 };
 
 #endif

@@ -28,6 +28,10 @@ public:
 
 	virtual bool handle_events(SDL_Event * event) = 0;
 
+	virtual bool can_select(void); /* Tab selection */
+
+	virtual void select_state(bool state);
+
 	virtual void resize(void);
 
 	virtual bool is_mouse_over(const int &x, const int &y);

@@ -29,11 +29,11 @@ void DialogSetup::init()
 	add(m_def_w);
 	add(m_def_h);
 
-	add(new Button(ACTION_OK, 8, m_dimensions.h - 32, "OK", this));
-	add(new Button(ACTION_CANCEL, 116, m_dimensions.h - 32, "Exit", this));
-
 	add(new Label(id++, 8, 135, "Enter config path for saving or loading:", this));
 	add(m_config_path = new Textbox(id++, 8, 155, m_dimensions.w - 16, 20, "C:\\Users\\usr\\Desktop\\test.ini", this));
+
+	add(new Button(ACTION_OK, 8, m_dimensions.h - 32, "OK", this));
+	add(new Button(ACTION_CANCEL, 116, m_dimensions.h - 32, "Exit", this));
 
 	set_flags(DIALOG_CENTERED | DIALOG_TEXTINPUT);
 }

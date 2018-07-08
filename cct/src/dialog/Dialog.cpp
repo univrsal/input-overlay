@@ -64,7 +64,7 @@ void Dialog::draw_background(void)
 	m_helper->util_fill_rect_shadow(&m_dimensions, m_helper->palette()->get_accent());
 	m_helper->util_draw_rect(&m_dimensions, m_helper->palette()->dark_gray());
 
-	// Dialog titlebar
+	// Dialog title bar
 	m_helper->util_fill_rect(&m_title_bar, m_helper->palette()->light_gray());
 
 	std::vector<std::unique_ptr<GuiElement>>::iterator iterator;
@@ -85,6 +85,7 @@ void Dialog::draw_foreground(void)
 
 void Dialog::close(void)
 {
+	m_tab_items.clear();
 	m_screen_elements.clear();
 }
 
@@ -178,21 +179,36 @@ bool Dialog::handle_events(SDL_Event * event)
 			m_title_bar = { m_dimensions.x + 5, m_dimensions.y + 5, m_dimensions.w - 10, 20 };
 		}
 	}
+	else if (event->type == SDL_KEYDOWN)
+	{
+		if (event->key.keysym.sym == SDLK_TAB)
+		{
+			m_tab_items[m_selected_element]->select_state(false);
 
-	std::vector<std::unique_ptr<GuiElement>>::iterator iterator;
+			m_selected_element += m_helper->is_shift_down() ? -1 : 1;
+
+			if (m_selected_element < 0)
+				m_selected_element = m_tab_items.size() - 1;
+			else if (m_selected_element > m_tab_items.size() - 1)
+				m_selected_element = 0;
+
+			m_tab_items[m_selected_element]->select_state(true);	
+		}
+	}
+
 	bool cursor_handled = false;
 
-	for (iterator = m_screen_elements.begin(); iterator != m_screen_elements.end(); iterator++)
+	for (auto& const element : m_screen_elements)
 	{
-		if (iterator->get()->handle_events(event))
+		if (element->handle_events(event))
 		{
 			was_handled = true;
 		}
 
-		if (!cursor_handled && m_helper->util_is_in_rect(iterator->get()->get_dimensions(), event->button.x, event->button.y))
+		if (!cursor_handled && m_helper->util_is_in_rect(element->get_dimensions(), event->button.x, event->button.y))
 		{
 			cursor_handled = true;
-			m_helper->set_cursor(iterator->get()->get_cursor());
+			m_helper->set_cursor(element->get_cursor());
 		}
 	}
 
@@ -223,6 +239,8 @@ void Dialog::action_performed(int8_t action_id)
 void Dialog::add(GuiElement * e)
 {
 	m_screen_elements.emplace_back(e);
+	if (e->can_select())
+		m_tab_items.emplace_back(e);
 }
 
 void Dialog::set_flags(uint16_t flags)

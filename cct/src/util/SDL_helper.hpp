@@ -66,7 +66,7 @@ class SDL_helper
 		void util_draw_rect(int x, int y, int w, int h, const SDL_Color *color = NULL);
 
 		void util_fill_rect(const SDL_Rect *rect, const SDL_Color *color = NULL);
-		void util_fill_rect_shadow(const SDL_Rect *rect, const SDL_Color *color = NULL);
+		void util_fill_rect_shadow(const SDL_Rect *rect, const SDL_Color *color = NULL, int8_t offset = 3);
 		void util_fill_rect(int x, int y, int w, int h, const SDL_Color *color = NULL);
 		void util_fill_rect(const SDL_Rect *rect, const SDL_Color *color, uint8_t alpha);
 
@@ -118,6 +118,7 @@ class SDL_helper
 		void set_cursor(uint8_t type);
 
 		bool is_ctrl_down(void);
+		bool is_shift_down(void);
 
 		void exit_loop(void);
 		void set_runflag(bool * flag);

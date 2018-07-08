@@ -216,9 +216,9 @@ void SDL_helper::util_fill_rect(const SDL_Rect * rect, const SDL_Color * color)
 	SDL_RenderFillRect(m_sdl_renderer, rect);
 }
 
-void SDL_helper::util_fill_rect_shadow(const SDL_Rect * rect, const SDL_Color * color)
+void SDL_helper::util_fill_rect_shadow(const SDL_Rect * rect, const SDL_Color * color, int8_t offset)
 {
-	SDL_Rect temp_rect = { rect->x + 3, rect->y + 3, rect->w, rect->h };
+	SDL_Rect temp_rect = { rect->x + offset, rect->y + offset, rect->w, rect->h };
 	util_fill_rect(&temp_rect, m_palette->black());
 	util_fill_rect(rect, color);
 }
@@ -356,6 +356,11 @@ void SDL_helper::set_cursor(uint8_t type)
 bool SDL_helper::is_ctrl_down(void)
 {
 	return m_ctrl_down;
+}
+
+bool SDL_helper::is_shift_down(void)
+{
+	return m_shift_down;
 }
 
 void SDL_helper::exit_loop(void)
