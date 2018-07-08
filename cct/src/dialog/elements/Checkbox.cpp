@@ -47,6 +47,16 @@ void Checkbox::close(void)
 	m_label = nullptr;
 }
 
+bool Checkbox::can_select(void)
+{
+    return true;
+}
+
+void Checkbox::select_state(bool state)
+{
+	m_focused = state;
+}
+
 void Checkbox::draw_background(void)
 {
 	m_label->draw_background();
@@ -55,6 +65,11 @@ void Checkbox::draw_background(void)
 		+ m_checkbox.y, CHECKBOX_SIZE, CHECKBOX_SIZE, get_helper()->palette()->dark_gray());
 	get_helper()->util_draw_rect(get_left(), get_top()
 		+ m_checkbox.y, CHECKBOX_SIZE, CHECKBOX_SIZE, get_helper()->palette()->light_gray());
+	if (m_focused)
+	{
+		get_helper()->util_draw_rect(get_left() - 2, get_top() - 2,
+			get_width() + 4,get_height() + 4, get_helper()->palette()->light_gray());
+	}
 }
 
 void Checkbox::draw_foreground(void)
@@ -75,6 +90,14 @@ bool Checkbox::handle_events(SDL_Event * event)
 		if (event->button.button == SDL_BUTTON_LEFT && is_mouse_over(event->button.x, event->button.y))
 		{
 			handled = true;
+			m_state = !m_state;
+			get_parent()->action_performed(get_id());
+		}
+	}
+	else if (m_focused && event->type == SDL_KEYUP)
+	{
+		if (event->key.keysym.sym == SDLK_RETURN)
+		{
 			m_state = !m_state;
 			get_parent()->action_performed(get_id());
 		}

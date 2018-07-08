@@ -26,12 +26,6 @@ void DialogElementSettings::init()
 	m_element_u = new Textbox(id++, 55, 92, (m_dimensions.w / 2) - 63, 20, "0", this);
 	m_element_v = new Textbox(id++, (m_dimensions.w / 2) + 55, 92, (m_dimensions.w / 2) - 63, 20, "0", this);
 
-	add(m_element_id = new Textbox(id++, 8, 145, m_dimensions.w - 16, 20, "", this));
-	add(m_keycode = new Textbox(id++, 8, 190, m_dimensions.w - 16, 20, "", this));
-
-	m_element_id->set_flags(TEXTBOX_NO_SPACE);
-	m_keycode->set_flags(TEXTBOX_HEX | TEXTBOX_NO_SPACE);
-
 	m_element_width->set_flags(TEXTBOX_NUMERIC);
 	m_element_height->set_flags(TEXTBOX_NUMERIC);
 	m_element_x->set_flags(TEXTBOX_NUMERIC);
@@ -52,6 +46,12 @@ void DialogElementSettings::init()
 	add(m_element_y);
 	add(m_element_u);
 	add(m_element_v);
+
+	add(m_element_id = new Textbox(id++, 8, 145, m_dimensions.w - 16, 20, "", this));
+	add(m_keycode = new Textbox(id++, 8, 190, m_dimensions.w - 16, 20, "", this));
+
+	m_element_id->set_flags(TEXTBOX_NO_SPACE);
+	m_keycode->set_flags(TEXTBOX_HEX | TEXTBOX_NO_SPACE);
 
 	add(new Button(ACTION_NEW_ELEMENT, 8, m_dimensions.h - 182, m_dimensions.w - 16, "Add new element", this));
 	add(new Button(ACTION_DEL_ELEMENT, 8, m_dimensions.h - 154, m_dimensions.w - 16, "Delete selected", this));

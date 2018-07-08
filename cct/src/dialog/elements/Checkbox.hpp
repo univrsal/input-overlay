@@ -23,6 +23,10 @@ public:
 
 	void close(void);
 
+	bool can_select(void);
+
+	void select_state(bool state);
+
 	void draw_background(void);
 
 	void draw_foreground(void);
@@ -31,6 +35,7 @@ public:
 
 	bool get_state(void) { return m_state; }
 private:
+	bool m_focused = false;
 	bool m_state = false;
 	Label * m_label = nullptr;
 	SDL_Rect m_checkbox;
