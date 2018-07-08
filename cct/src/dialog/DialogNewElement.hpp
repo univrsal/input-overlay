@@ -38,6 +38,8 @@ public:
 		m_type = type;
 	}
 
+	void close(void);
+
 	void load_from_element(Element * e);
 
 	void init();

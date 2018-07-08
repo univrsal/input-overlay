@@ -415,6 +415,47 @@ std::string SDL_helper::util_wstring_to_utf8(const std::wstring& str)
 	return myconv.to_bytes(str);
 }
 
+void SDL_helper::format_text(std::string & s, std::vector<std::unique_ptr<std::string>> & out, SDL_Rect & dim)
+{
+	if (s.empty())
+		return;
+	SDL_Rect temp = {};
+
+	int width = 0;
+	int lines = 1;
+
+	auto start = 0U;
+	auto end = s.find(NEW_LINE);
+	std::string token;
+
+	while (end != std::string::npos)
+	{
+		token = s.substr(start, end - start);
+		out.push_back(std::unique_ptr<std::string>(new std::string(token)));
+		start = end + NEW_LINE.length();
+		end = s.find(NEW_LINE, start);
+
+		if (!token.empty())
+			temp = util_text_dim(&token);
+
+		if (temp.w > width)
+			width = temp.w;
+		lines++;
+	}
+
+	token = s.substr(start, end);
+	out.push_back(std::unique_ptr<std::string>(new std::string(token)));
+
+	if (!token.empty())
+		temp = util_text_dim(&token);
+
+	if (temp.w > width)
+		width = temp.w;
+
+	dim.h = ((m_default_font_height + LINE_SPACE) * lines) - LINE_SPACE; // Last line space doesn't count
+	dim.w = width;
+}
+
 #include "../../../libuiohook/include/uiohook.h"
 #define CCT /* Prevents util.hpp from including external headers */
 #include "../../../util/util.hpp"

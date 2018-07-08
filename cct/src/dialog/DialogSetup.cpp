@@ -48,9 +48,11 @@ void DialogSetup::action_performed(int8_t action_id)
 	{
 	case ACTION_OK:
 		valid_texture = m_helper->util_check_texture_path(m_texture_path->get_text()->c_str());
-		cfg = ccl_config(*m_config_path->get_text(), "");
+		/*cfg = ccl_config(*m_config_path->get_text(), "");
 		valid_config = cfg.can_write();
-		cfg.free();
+		cfg.free();*/
+
+		valid_config = true;
 
 		if (!m_texture_path->get_text()->empty() && !m_config_path->get_text()->empty() && valid_texture && valid_config)
 		{

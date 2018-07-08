@@ -18,7 +18,6 @@ void AtlasSelector::close(void)
 	if (m_cs)
 		delete m_cs;
 	m_cs = nullptr;
-
 }
 
 void AtlasSelector::init(Dialog *parent, SDL_Rect dim, int8_t id)

@@ -106,6 +106,7 @@ void DialogElementSettings::action_performed(int8_t action_id)
 		break;
 	case ACTION_NEW_ELEMENT:
 		m_tool->action_performed(TOOL_ACTION_NEW_ELEMENT_OPEN);
+		break;
 	case ACTION_SAVE_CONFIG:
 		m_tool->action_performed(TOOL_ACTION_SAVE_CONFIG);
 		break;

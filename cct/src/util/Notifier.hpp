@@ -9,7 +9,7 @@
 
 #include "../util/SDL_helper.hpp"
 #include <vector>
-#include <memory.h>
+#include <memory>
 #include <algorithm>
 
 #define MESSAGE_INFO  0
@@ -19,25 +19,25 @@
 
 class SDL_helper;
 
-
 struct Message
 {
 public:
-	Message(uint8_t type, std::string msg)
+	Message(uint8_t type, std::string msg, SDL_helper * h)
 	{
-		m_message = msg;
+		h->format_text(msg, m_message_lines, m_dim);
 		m_type = type;
 		m_time_stamp = SDL_GetTicks();
 	}
 
 	~Message()
 	{
-		m_message.clear();
+		m_message_lines.clear();
 		m_type = 0;
 		m_time_stamp = 0;
 	}
 
-	std::string m_message;
+	std::vector<std::unique_ptr<std::string>> m_message_lines;
+	SDL_Rect m_dim;
 	uint8_t m_type;
 	uint32_t m_time_stamp;
 };

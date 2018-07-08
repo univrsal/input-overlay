@@ -39,14 +39,16 @@ void Label::draw_background(void)
 	if (!m_lines.empty())
 	{
 		int i = 0;
-		for (auto it = m_lines.begin(); it != m_lines.end(); ++it)
+		int y = 0;
+		for (auto& const line : m_lines)
 		{
-			if (!it->get()->empty())
+			if (!line.get()->empty())
 			{
-				get_helper()->util_text(it->get(), get_left(),
-					get_top() + ((LABEL_LINE_SPACE + m_line_height) * i),
+				get_helper()->util_text(line.get(), get_left(),
+					get_top() + y,
 					m_color);
 			}
+			y += LINE_SPACE + get_helper()->util_default_text_height();
 			i++;
 		}
 	}
@@ -65,45 +67,9 @@ bool Label::handle_events(SDL_Event * event)
 
 void Label::set_text(std::string text)
 {
-	format_text(text);
-}
-
-void Label::format_text(std::string& s)
-{
-	if (s.empty())
-		return;
-
-	SDL_Rect dim = { 0, 0, 0, 0 };
-	int width = 0;
-	int lines = 1;
-
-	auto start = 0U;
-	auto end = s.find(NEW_LINE);
-	std::string token;
-
-	while (end != std::string::npos) {
-		token = s.substr(start, end - start);
-		m_lines.push_back(std::unique_ptr<std::string>(new std::string(token)));
-		start = end + NEW_LINE.length();
-		end = s.find(NEW_LINE, start);
-
-		if (!token.empty())
-			dim = get_helper()->util_text_dim(&token);
-
-		if (dim.w > width)
-			width = dim.w;
-		lines++;
+	if (!text.empty())
+	{
+		m_lines.clear();
+		get_helper()->format_text(text, m_lines, m_dimensions);
 	}
-	token = s.substr(start, end);
-	m_lines.push_back(std::unique_ptr<std::string>(new std::string(token)));
-
-	if (!token.empty())
-		dim = get_helper()->util_text_dim(&token);
-
-	if (dim.w > width)
-		width = dim.w;
-
-	m_line_height = dim.h;
-	m_dimensions.h = ((dim.h + LABEL_LINE_SPACE) * lines) - LABEL_LINE_SPACE; // Last line space doesn't count
-	m_dimensions.w = width;
 }

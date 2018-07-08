@@ -1,7 +1,6 @@
 #include "Config.hpp"
 #include "dialog/DialogElementSettings.hpp"
 #include "util/Notifier.hpp"
-#include <sstream>
 
 #define X_AXIS 100
 #define Y_AXIS 100
@@ -307,9 +306,10 @@ void Config::write_config(Notifier * n)
 {
 	if (m_elements.empty())
 	{
-		n->add_msg(MESSAGE_INFO, "Nothing to saves");
+		n->add_msg(MESSAGE_INFO, "Nothing to save");
 		return;
 	}
+
 	uint32_t start = SDL_GetTicks();
 	ccl_config cfg = ccl_config(m_config_path, "CCT generated config");
 
@@ -318,7 +318,7 @@ void Config::write_config(Notifier * n)
 		e->write_to_file(&cfg, &m_default_dim);
 	}
 
-	cfg.write();
+	/*cfg.write();*/
 
 	uint32_t end = SDL_GetTicks();
 
@@ -333,7 +333,7 @@ void Config::write_config(Notifier * n)
 		result << "Successfully wrote " << m_elements.size() << " Element(s) in " << (end - start) << "ms";
 		n->add_msg(MESSAGE_INFO, result.str());
 	}
-	cfg.free();
+	/*cfg.free();*/
 }
 
 Texture * Config::get_texture(void)
@@ -400,40 +400,32 @@ inline bool Config::is_rect_in_rect(const SDL_Rect * a, const SDL_Rect * b)
 
 void Element::write_to_file(ccl_config * cfg, SDL_Point * default_dim)
 {
-	std::stringstream stream;
-	const char * id = m_id.c_str();
+	std::string comment;
 
-	stream << "Type id of " << id;
-	cfg->add_int(m_id.append(CFG_TYPE), stream.str(), m_type);
-	stream.str(std::string());
+	comment = "Type id of " + m_id;
+	cfg->add_int(m_id + CFG_TYPE, comment, m_type);
 
-	stream << "X position of " << id;
-	cfg->add_int(m_id.append(CFG_X_POS), stream.str(), m_pos.x);
-	stream.str(std::string());
-
-	stream << "Y position of " << id;
-	cfg->add_int(m_id.append(CFG_Y_POS), stream.str(), m_pos.y);
-	stream.str(std::string());
-
-	stream << "Texture U of " << id;
-	cfg->add_int(m_id.append(CFG_U), stream.str(), m_texture_mapping.x);
-	stream.str(std::string());
-
-	stream << "Texture V of " << id;
-	cfg->add_int(m_id.append(CFG_V), stream.str(), m_texture_mapping.y);
-	stream.str(std::string());
-
+	comment = "X position of " + m_id;
+	cfg->add_int(m_id + CFG_X_POS, comment, m_pos.x);
+	
+	comment = "Y position of " + m_id;
+	cfg->add_int(m_id + CFG_Y_POS, comment, m_pos.y);
+	
+	comment = "Texture U of " + m_id;
+	cfg->add_int(m_id + CFG_U, comment, m_texture_mapping.x);
+	
+	comment = "Texture V of " + m_id;
+	cfg->add_int(m_id + CFG_V, comment, m_texture_mapping.y);
+	
 	if (m_texture_mapping.w != default_dim->x)
 	{
-		stream << "Width of " << id;
-		cfg->add_int(m_id.append(CFG_WIDTH), stream.str(), m_texture_mapping.w);
-		stream.str(std::string());
+		comment = "Width of " + m_id;
+		cfg->add_int(m_id + CFG_WIDTH, comment, m_texture_mapping.w);
 	}
 
 	if (m_texture_mapping.h != default_dim->y)
 	{
-		stream << "Height of " << id;
-		cfg->add_int(m_id.append(CFG_WIDTH), stream.str(), m_texture_mapping.w);
-		stream.str(std::string());
+		comment = "Height of " + m_id;
+		cfg->add_int(m_id + CFG_WIDTH, comment, m_texture_mapping.w);
 	}
 }

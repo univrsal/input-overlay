@@ -1,6 +1,11 @@
 #include "DialogNewElement.hpp"
 #include "../Config.hpp"
 
+void DialogNewElement::close(void)
+{
+	
+}
+
 void DialogNewElement::load_from_element(Element * e)
 {
 	if (e)

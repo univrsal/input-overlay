@@ -12,6 +12,8 @@
 #include <SDL_image.h>
 
 #include <codecvt>
+#include <vector>
+#include <memory>
 
 #include "Palette.hpp"
 #include "FontHelper.hpp"
@@ -33,11 +35,15 @@
 #define CURSOR_I_BEAM	4
 #define CURSOR_SPECIAL	5 /* The element will handle the cursor */
 
+#define LINE_SPACE 2
+
 class Palette;
 
 class FontHelper;
 
 class Texture;
+
+static const std::string NEW_LINE = "\n";
 
 class SDL_helper
 {
@@ -88,6 +94,8 @@ class SDL_helper
 
 		std::wstring util_utf8_to_wstring(const std::string& str);
 		std::string util_wstring_to_utf8(const std::wstring& str);
+
+		void format_text(std::string& s, std::vector<std::unique_ptr<std::string>>& out, SDL_Rect& dim);
 
 		uint32_t vc_to_sdl_key(uint16_t key);
 		uint16_t sdl_key_to_vc(uint32_t key);

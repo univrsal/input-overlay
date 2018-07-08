@@ -43,7 +43,7 @@ public:
 private:
 	void resize();
 	
-	Texture * m_atlas;
+	Texture * m_atlas; /* Is loaded in Config, and will be deleted there */
 	CoordinateSystem * m_cs;
 
 	bool m_have_cursors = false;
