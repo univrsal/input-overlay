@@ -313,6 +313,8 @@ void Config::write_config(Notifier * n)
 	uint32_t start = SDL_GetTicks();
 	ccl_config cfg = ccl_config(m_config_path, "CCT generated config");
 
+	cfg.free_nodes(); /* Don't need existing values */
+
 	for (auto& const e : m_elements)
 	{
 		e->write_to_file(&cfg, &m_default_dim);
@@ -333,7 +335,7 @@ void Config::write_config(Notifier * n)
 		result << "Successfully wrote " << m_elements.size() << " Element(s) in " << (end - start) << "ms";
 		n->add_msg(MESSAGE_INFO, result.str());
 	}
-	cfg.free();
+	cfg.free_nodes();
 }
 
 Texture * Config::get_texture(void)
@@ -402,30 +404,47 @@ void Element::write_to_file(ccl_config * cfg, SDL_Point * default_dim)
 {
 	std::string comment;
 
-	comment = "Type id of " + m_id;
-	cfg->add_int(m_id + CFG_TYPE, comment, m_type, true);
-
-	comment = "X position of " + m_id;
-	cfg->add_int(m_id + CFG_X_POS, comment, m_pos.x, true);
-	
-	comment = "Y position of " + m_id;
-	cfg->add_int(m_id + CFG_Y_POS, comment, m_pos.y, true);
-	
-	comment = "Texture U of " + m_id;
-	cfg->add_int(m_id + CFG_U, comment, m_texture_mapping.x, true);
-	
-	comment = "Texture V of " + m_id;
-	cfg->add_int(m_id + CFG_V, comment, m_texture_mapping.y, true);
-	
-	if (m_texture_mapping.w != default_dim->x)
+	switch (m_type)
 	{
-		comment = "Width of " + m_id;
-		cfg->add_int(m_id + CFG_WIDTH, comment, m_texture_mapping.w, true);
-	}
 
-	if (m_texture_mapping.h != default_dim->y)
-	{
-		comment = "Height of " + m_id;
-		cfg->add_int(m_id + CFG_WIDTH, comment, m_texture_mapping.w, true);
+	case BUTTON_KEYBOARD:
+	case BUTTON_GAMEPAD:
+	case BUTTON_MOUSE:
+	case TRIGGER_GAMEPAD:
+	case MOUSE_MOVEMENT:
+	case DPAD:
+	case ANALOG_STICK:
+	case DPAD_STICK:
+		comment = "Key code of " + m_id;
+		cfg->add_int(m_id + CFG_KEY_CODE, comment, m_keycode, true);
+	case TEXTURE: /* NO-OP*/
+		comment = "Type id of " + m_id;
+		cfg->add_int(m_id + CFG_TYPE, comment, m_type, true);
+
+		comment = "Position of " + m_id;
+		cfg->add_int(m_id + CFG_X_POS, "", m_pos.x, true);
+
+		cfg->add_int(m_id + CFG_Y_POS, comment, m_pos.y, true);
+
+		comment = "Texture position of " + m_id;
+		cfg->add_int(m_id + CFG_U, "", m_texture_mapping.x, true);
+
+		cfg->add_int(m_id + CFG_V, comment, m_texture_mapping.y, true);
+
+		comment = "Width and height of " + m_id;
+
+		if (m_texture_mapping.w != default_dim->x)
+		{
+			cfg->add_int(m_id + CFG_WIDTH, "", m_texture_mapping.w, true);
+		}
+
+		if (m_texture_mapping.h != default_dim->y)
+		{
+			cfg->add_int(m_id + CFG_HEIGHT, comment, m_texture_mapping.h, true);
+		}
+		break;
+	case TEXT: /* TODO: Font? Size?*/
+		break;
+
 	}
 }

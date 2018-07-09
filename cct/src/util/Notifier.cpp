@@ -33,36 +33,34 @@ void Notifier::draw(void)
 	message_box.y = 20;
 
 	m_helper->util_fill_rect_shadow(&message_box, m_helper->palette()->gray());
-	uint8_t y = 0;
-
+	uint8_t index = 0;
+	int y_pos = 4;
 	std::vector<uint8_t> overdue;
 
 	for (auto& const msg : m_messages)
 	{
-		if (SDL_GetTicks() - msg->m_time_stamp > MESSAGE_TIMEOUT)
+		if (SDL_GetTicks() - msg->m_time_stamp > (MESSAGE_TIMEOUT * msg->m_message_lines.size()))
 		{
-			overdue.emplace_back(y);
+			overdue.emplace_back(index);
 		}
 		else
 		{
 			SDL_Color * c = msg->m_type == MESSAGE_ERROR ? m_helper->palette()->red()
 				: m_helper->palette()->white();
 
-			int i = 0;
-			int y = 4;
+			
 			for (auto& const line : msg->m_message_lines)
 			{
 				if (!line.get()->empty())
 				{
 					m_helper->util_text(line.get(), message_box.x + 10,
-						message_box.y + y,
+						message_box.y + y_pos,
 						c);
 				}
-				y += LINE_SPACE + m_helper->util_default_text_height();
-				i++;
+				y_pos += LINE_SPACE + m_helper->util_default_text_height();
 			}
 		}
-		y++;
+		index++;
 	}
 
 	/* Remove old messages */
