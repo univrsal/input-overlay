@@ -1,6 +1,7 @@
 #include "Config.hpp"
 #include "dialog/DialogElementSettings.hpp"
 #include "util/Notifier.hpp"
+#include <sstream>
 
 #define X_AXIS 100
 #define Y_AXIS 100
@@ -315,18 +316,26 @@ void Config::write_config(Notifier * n)
 
 	cfg.free_nodes(); /* Don't need existing values */
 
+	cfg.add_string(CFG_FIRST_ID, " Starting point for loading elements", *m_elements[0]->get_id(), true);
+
+	int index = 0;
 	for (auto& const e : m_elements)
 	{
 		e->write_to_file(&cfg, &m_default_dim);
+		if (index + 1 < m_elements.size())
+		{
+			cfg.add_string((*e->get_id()) + CFG_NEXT_ID, "Next element in list", *m_elements[index + 1]->get_id());
+		}
+		index++;
 	}
 
 	cfg.write();
 
 	uint32_t end = SDL_GetTicks();
 
-	if (cfg.has_errors())
+	if (cfg.has_fatal_errors())
 	{
-		n->add_msg(MESSAGE_ERROR, "CCL encountered errors when saving!");
+		n->add_msg(MESSAGE_ERROR, "CCL encountered fatal errors while saving!");
 		n->add_msg(MESSAGE_ERROR, cfg.get_error_message());
 	}
 	else
@@ -336,6 +345,80 @@ void Config::write_config(Notifier * n)
 		n->add_msg(MESSAGE_INFO, result.str());
 	}
 	cfg.free_nodes();
+}
+
+void Config::read_config(Notifier * n)
+{
+	uint32_t start = SDL_GetTicks();
+	ccl_config cfg = ccl_config(m_config_path, "");
+
+	if (cfg.is_empty())
+	{
+		n->add_msg(MESSAGE_INFO, "Target config file is empty");
+		return;
+	}
+
+	if (!cfg.node_exists(CFG_FIRST_ID, true))
+	{
+		n->add_msg(MESSAGE_INFO, "Config file is missing first id entry. Possible corrupt file?");
+		return;
+	}
+
+	std::string element_id = cfg.get_string(CFG_FIRST_ID);
+
+	bool flag = true;
+
+	/* Used to construct the elements */
+	int type = 0;
+	ElementType t = ElementType::INVALID;
+	SDL_Point pos;
+	SDL_Rect u_v;
+	uint16_t vc;
+
+	while (!element_id.empty())
+	{
+		type = cfg.get_int(element_id + CFG_TYPE);
+		if (type < 0 || type > ElementType::DPAD_STICK)
+		{
+			std::stringstream stream;
+			stream << element_id.c_str() << " has invalid type " << type;
+			n->add_msg(MESSAGE_ERROR, stream.str());
+
+			element_id = cfg.get_string(element_id + CFG_NEXT_ID);
+			continue;
+		}
+		
+		t = (ElementType) type;
+		
+		pos.x = cfg.get_int(element_id + CFG_X_POS);
+		pos.y = cfg.get_int(element_id + CFG_Y_POS);
+
+		u_v.x = cfg.get_int(element_id + CFG_U);
+		u_v.y = cfg.get_int(element_id + CFG_V);
+
+		u_v.w = cfg.get_int(element_id + CFG_WIDTH);
+		u_v.h = cfg.get_int(element_id + CFG_HEIGHT);
+
+		vc = cfg.get_int(element_id + CFG_KEY_CODE);
+
+		m_elements.emplace_back(new Element(t, element_id, pos, u_v, vc));
+
+		element_id = cfg.get_string(element_id + CFG_NEXT_ID);
+	}
+
+	uint32_t end = SDL_GetTicks();
+
+	if (cfg.has_fatal_errors())
+	{
+		n->add_msg(MESSAGE_ERROR, "CCL encountered fatal errors while loading!");
+		n->add_msg(MESSAGE_ERROR, cfg.get_error_message());
+	}
+	else
+	{
+		std::stringstream result;
+		result << "Successfully loaded " << m_elements.size() << " Element(s) in " << (end - start) << "ms";
+		n->add_msg(MESSAGE_INFO, result.str());
+	}
 }
 
 Texture * Config::get_texture(void)
@@ -397,8 +480,6 @@ inline bool Config::is_rect_in_rect(const SDL_Rect * a, const SDL_Rect * b)
 	return a->x >= b->x && a->x + a->w <= b->x + b->w
 		&& a->y >= b->y && a->y + a->h <= b->y + b->h;
 }
-
-#include "../../util/layout_constants.hpp"
 
 void Element::write_to_file(ccl_config * cfg, SDL_Point * default_dim)
 {

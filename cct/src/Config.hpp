@@ -9,6 +9,7 @@
 
 #include "util/SDL_helper.hpp"
 #include "util/Texture.hpp"
+#include "../../util/layout_constants.hpp"
 #include "util/CoordinateSystem.hpp"
 #include <string>
 #include <SDL.h>
@@ -29,6 +30,7 @@ class Texture;
 
 enum ElementType
 {
+	INVALID,
 	TEXTURE,
 	BUTTON_KEYBOARD,
 	BUTTON_GAMEPAD,
@@ -149,6 +151,7 @@ public:
 	std::string m_config_path;
 
 	void write_config(Notifier * n);
+	void read_config(Notifier * n);
 
 	Texture * get_texture(void);
 

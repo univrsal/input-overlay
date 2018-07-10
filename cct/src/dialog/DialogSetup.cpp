@@ -9,13 +9,21 @@
 #include "../util/Notifier.hpp"
 #include "../Tool.hpp"
 
+#if _DEBUG
+#define TEXTURE_PATH "D:\\Projects\\prog\\cpp\\input-overlay-releases\\build\\v4.6-pre\\presets\\\wasd-full\\wasd.png"
+#define CONFIG_PATH "C:\\Users\\usr\\Desktop\\test.ini"
+#else
+#define TEXTURE_PATH ""
+#define CONFIG_PATH ""
+#endif
+
 void DialogSetup::init()
 {
 	Dialog::init();
 	int8_t id = 1;
 
 	add(new Label(id++, 8, 35, "Enter the path to the texture file:", this));
-	add(m_texture_path = new Textbox(id++, 8, 55, m_dimensions.w - 16, 20, "D:\\Projects\\prog\\cpp\\input-overlay-releases\\build\\v4.6-pre\\presets\\\wasd-full\\wasd.png", this));
+	add(m_texture_path = new Textbox(id++, 8, 55, m_dimensions.w - 16, 20, TEXTURE_PATH, this));
 
 	add(new Label(id++, 8, 85, "Default element width:", this));
 	add(new Label(id++, (m_dimensions.w / 2) + 4, 85, "Default element height:", this));
@@ -30,7 +38,7 @@ void DialogSetup::init()
 	add(m_def_h);
 
 	add(new Label(id++, 8, 135, "Enter config path for saving or loading:", this));
-	add(m_config_path = new Textbox(id++, 8, 155, m_dimensions.w - 16, 20, "C:\\Users\\usr\\Desktop\\test.ini", this));
+	add(m_config_path = new Textbox(id++, 8, 155, m_dimensions.w - 16, 20, CONFIG_PATH, this));
 
 	add(new Button(ACTION_OK, 8, m_dimensions.h - 32, "OK", this));
 	add(new Button(ACTION_CANCEL, 116, m_dimensions.h - 32, "Exit", this));
@@ -40,21 +48,19 @@ void DialogSetup::init()
 
 void DialogSetup::action_performed(int8_t action_id)
 {
-	bool valid_texture;
-	bool valid_config;
-	ccl_config cfg;
+	bool valid_texture = false;
+	bool empty_config = false;
+	ccl_config * cfg;
 	
 	switch (action_id)
 	{
 	case ACTION_OK:
 		valid_texture = m_helper->util_check_texture_path(m_texture_path->get_text()->c_str());
-		/*cfg = ccl_config(*m_config_path->get_text(), "");
-		valid_config = cfg.can_write();
-		cfg.free();*/
+		cfg = new ccl_config(*m_config_path->get_text(), "");
+		m_load_cfg = cfg->can_write();
+		empty_config = cfg->is_empty();
 
-		valid_config = true;
-
-		if (!m_texture_path->get_text()->empty() && !m_config_path->get_text()->empty() && valid_texture && valid_config)
+		if (!m_texture_path->get_text()->empty() && !m_config_path->get_text()->empty() && valid_texture && m_load_cfg)
 		{
 			m_tool->action_performed(TOOL_ACTION_SETUP_EXIT);
 		}
@@ -66,7 +72,7 @@ void DialogSetup::action_performed(int8_t action_id)
 				m_notifier->add_msg(MESSAGE_ERROR, "Invalid texture path!");
 			}
 				
-			if (m_config_path->get_text()->empty() || !valid_config)
+			if (m_config_path->get_text()->empty() || !m_load_cfg)
 			{
 				m_config_path->set_alert(true);
 				m_notifier->add_msg(MESSAGE_ERROR, "Invalid config path!");
@@ -76,6 +82,12 @@ void DialogSetup::action_performed(int8_t action_id)
 	case ACTION_CANCEL:
 		m_helper->exit_loop();
 		break;
+	}
+
+	if (cfg)
+	{
+		delete cfg;
+		cfg = nullptr;
 	}
 }
 
@@ -93,4 +105,9 @@ SDL_Point DialogSetup::get_default_dim()
 {
 	return SDL_Point{ std::stoi(m_def_w->get_text()->c_str()),
 		std::stoi(m_def_h->get_text()->c_str()) };
+}
+
+bool DialogSetup::should_load_cfg(void)
+{
+	return m_load_cfg;
 }

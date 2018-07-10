@@ -92,6 +92,10 @@ void Tool::action_performed(uint8_t type)
 		m_config = new Config(s->get_texture_path(),
 			s->get_config_path(), s->get_default_dim(), m_helper, m_element_settings);
 
+		if (s->should_load_cfg())
+		{
+			m_config->read_config(m_notify);
+		}
 		m_element_settings->init();
 
 		m_queue_close = true;

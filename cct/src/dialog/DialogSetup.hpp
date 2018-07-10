@@ -35,11 +35,15 @@ public:
 
 	SDL_Point get_default_dim();
 
+	bool should_load_cfg(void);
+
 	const char * get_config_path(void);
 
 	const char * get_texture_path(void);
 private:
 	Notifier * m_notifier = nullptr;
+
+	bool m_load_cfg = false;
 
 	Textbox * m_texture_path = nullptr;
 	Textbox * m_config_path = nullptr;

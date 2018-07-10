@@ -2,6 +2,9 @@
 
 void Notifier::add_msg(uint8_t type, std::string msg)
 {
+#if _DEBUG
+	printf("[Notifier] %s]: %s\n", type == MESSAGE_INFO ? " [INFO" : "[ERROR", msg.c_str());
+#endif
 	if (!msg.empty() && (m_last_message.empty() || m_last_message.compare(msg.c_str()) != 0))
 	{
 		m_last_message = msg;
@@ -48,7 +51,6 @@ void Notifier::draw(void)
 			SDL_Color * c = msg->m_type == MESSAGE_ERROR ? m_helper->palette()->red()
 				: m_helper->palette()->white();
 
-			
 			for (auto& const line : msg->m_message_lines)
 			{
 				if (!line.get()->empty())
@@ -71,8 +73,9 @@ void Notifier::draw(void)
 		{
 			m_last_message.clear();
 		}
+		m_dim.y -= m_helper->util_default_text_height() + 8
+			* m_messages.at(*i)->m_message_lines.size();
 		m_messages.erase(m_messages.begin() + *i);
-		m_dim.y -= m_helper->util_default_text_height() + 8;
 	}
 
 	if (m_messages.empty())
