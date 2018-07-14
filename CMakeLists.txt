@@ -32,6 +32,7 @@ set(input-overlay_SOURCES
 	util/util.hpp
 	util/layout.cpp
 	util/layout.hpp
+	util/layout_constants.hpp
 	ccl/ccl.cpp
 	ccl/ccl.hpp)
 
