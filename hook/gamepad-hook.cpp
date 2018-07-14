@@ -26,22 +26,25 @@ void start_pad_hook(void)
 
 void init_pad_devices(void)
 {
+#ifdef LINUX
 	pad_states[0].init(0);
 	pad_states[1].init(1);
 	pad_states[2].init(2);
 	pad_states[3].init(3);
+#endif
 }
 
 void end_pad_hook(void)
 {
 #ifdef LINUX
 	pthread_cancel(game_pad_hook_thread);
-#endif
+
 
 	pad_states[0].unload();
 	pad_states[1].unload();
 	pad_states[2].unload();
 	pad_states[3].unload();
+#endif
 }
 
 #ifdef HAVE_XINPUT
@@ -49,7 +52,7 @@ void update_gamepads(void)
 {
 	for (int i = 0; i < PAD_COUNT; i++)
 	{
-		pad_states[i].put_in_vc();
+		//pad_states[i].put_in_vc();
 	}
 }
 #endif
@@ -76,7 +79,7 @@ float get_stick_value_y(uint8_t pad_id, bool left)
 		return pad_states[pad_id].r_y;
 }
 
-/* Linux background process for gamepads*/
+/* Linux background process for game pads */
 #ifdef LINUX
 
 #define ID_TYPE         6

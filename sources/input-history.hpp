@@ -11,12 +11,15 @@
 #include "../util/util.hpp"
 #include "../util/layout.hpp"
 #include "../hook/gamepad-hook.hpp"
+#include "../hook/hook-helper.hpp"
 
 extern "C" {
 #include <graphics/image-file.h>
 }
 
+
 #define MAX_HISTORY_SIZE 5
+#define MAX_SIMULTANEOUS_KEYS 10
 
 #define SET_MASK(a, b)      (util_set_mask(m_bool_values, a, b))
 #define GET_MASK(a)         (m_bool_values & a)
@@ -39,7 +42,13 @@ extern "C" {
  * github.com/univrsal/input-overlay
  */
 
-struct KeyNames {
+namespace Sources {
+
+class KeyNames;
+class KeyBundle;
+
+class KeyNames {
+public:
 	void load_from_file(std::string path);
 	const char * get_name(uint16_t vc);
 
@@ -49,7 +58,8 @@ private:
 	std::map<uint16_t, std::string> m_names;
 };
 
-struct KeyBundle {
+class KeyBundle {
+public:
 	bool m_empty = true;
 	uint16_t m_keys[MAX_SIMULTANEOUS_KEYS] = { 0 };
 
@@ -58,6 +68,9 @@ struct KeyBundle {
 	std::string to_string(uint8_t masks, KeyNames* names);
 	bool compare(KeyBundle* other);
 	bool is_only_mouse();
+	void add_key(uint16_t key);
+private:
+	uint8_t m_index = 0;
 };
 
 struct CommandHandler
@@ -176,7 +189,7 @@ struct InputHistorySource
 	uint32_t m_update_interval = 1, m_counter = 0;
 	int16_t m_icon_v_space = 0, m_icon_h_space = 0;
 
-	uint16_t m_bool_values = 0x00000000;
+	uint16_t m_bool_values = 0x0000;
 	IconDirection m_history_direction = DIR_DOWN;
 
 	KeyBundle m_current_keys;
@@ -220,7 +233,7 @@ struct InputHistorySource
 	inline void unload_translation(void);
 	inline void unload_command_handler(void);
 
-	KeyBundle check_keys(void);
+	KeyBundle check_keys(void); /* Checks currently pressed keys and puts them in a bundle */
 	void add_to_history(KeyBundle b);
 	void clear_history(void);
 	void handle_text_history(void);
@@ -242,4 +255,5 @@ static obs_properties_t *get_properties_for_history(void *data);
 
 void register_history();
 
+};
 #endif

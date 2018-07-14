@@ -15,23 +15,20 @@ extern "C" {
 
 #include "../ccl/ccl.hpp"
 #include "../hook/hook-helper.hpp"
+#include "layout_constants.hpp"
 
 /* Texture constants */
 #define INNER_BORDER 3
 #define OUTTER_BORDER 1
 
-/* Config value names*/
-#define DEFAULT_WIDTH "default_width"
-#define DEFAULT_HEIGHT "default_height"
-
 /**
  * This file is part of input-overlay
- * which is licenced under the MIT licence.
+ * which is licensed under the MIT license.
  * See LICENCE or https://mit-license.org
  * github.com/univrsal/input-overlay
  */
 
-namespace Layout {
+//namespace Data {
 
 	enum ButtonState
 	{
@@ -112,9 +109,9 @@ namespace Layout {
 		bool data_exists(uint16_t keycode);
 		void remove_data(uint16_t keycode);
 		ElementData * get_by_code(uint16_t keycode);
+		bool empty(void) { return m_data.empty(); }
 
-	private:
-		std::map<uint16_t, std::unique_ptr<ElementData>> m_data;
+		std::map<uint16_t, std::unique_ptr<ElementData>> m_data;		
 	};
 
 	class Element
@@ -125,8 +122,8 @@ namespace Layout {
 			m_type = type;
 		}
 
-		virtual void load(ccl_config * cfg, std::string id) = 0;
-		virtual void draw(gs_effect_t *effect, gs_image_file_t * m_image, ElementData * data) = 0;
+		virtual void load(ccl_config * cfg, std::string id) { /*NO-OP*/ };
+		virtual void draw(gs_effect_t *effect, gs_image_file_t * m_image, ElementData * data) { /*NO-OP*/ };
 
 		ElementType get_type() { return m_type; }
 		uint16_t get_keycode() { return m_keycode; }
@@ -134,16 +131,28 @@ namespace Layout {
 	protected:
 		void read_size(ccl_config * cfg, std::string id)
 		{
-			if (cfg->node_exists(id.append("_width")))
+			if (cfg->node_exists(id.append(CFG_WIDTH)))
 			{
-				m_width = cfg->get_int(id.append("_width"));
-				m_height = cfg->get_int(id.append("_height"));
+				m_width = cfg->get_int(id.append(CFG_WIDTH));
+				m_height = cfg->get_int(id.append(CFG_HEIGHT));
 			}
 			else
 			{
 				m_width = cfg->get_int(DEFAULT_WIDTH);
 				m_width = cfg->get_int(DEFAULT_HEIGHT);
 			}
+		}
+
+		void read_pos(ccl_config * cfg, std::string id)
+		{
+			m_xpos = cfg->get_int(id.append(CFG_X_POS));
+			m_ypos = cfg->get_int(id.append(CFG_Y_POS));
+		}
+
+		void read_uv(ccl_config * cfg, std::string id)
+		{
+			m_u = cfg->get_int(id.append(CFG_U));
+			m_v = cfg->get_int(id.append(CFG_V));
 		}
 
 		int m_xpos, m_ypos;
@@ -168,6 +177,7 @@ namespace Layout {
 	class Overlay
 	{
 	public:
+		Overlay() { /* NO-OP*/ }
 		Overlay(std::string ini, std::string texture);
 
 		bool load(std::string cfg_path, std::string texture_path);
@@ -196,5 +206,5 @@ namespace Layout {
 		float m_arrow_rot = 0.f;
 	};
 
-};
+//};
 #endif // LAYOUT_HPP

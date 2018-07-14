@@ -6,6 +6,9 @@
  */
 #pragma once
 
+#define DEFAULT_WIDTH "default_width"
+#define DEFAULT_HEIGHT "default_height"
+
 #define CFG_X_POS	"_x_pos"
 #define CFG_Y_POS	"_y_pos"
 #define CFG_U		"_u"

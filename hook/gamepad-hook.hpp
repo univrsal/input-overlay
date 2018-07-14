@@ -117,7 +117,7 @@ struct GamepadState
 	// Writes all pressed buttons into the global
 	// array
 	void put_in_vc(uint16_t l_dz, uint16_t r_dz)
-	{
+	{/*
 		util_set_pad_state(PAD_L_ANALOG, m_pad_id, X_PRESSED(XINPUT_GAMEPAD_LEFT_THUMB));
 		util_set_pad_state(PAD_R_ANALOG, m_pad_id, X_PRESSED(XINPUT_GAMEPAD_RIGHT_THUMB));
 
@@ -159,11 +159,12 @@ struct GamepadState
 			r_y = fmaxf(-1, (float)m_xinput.Gamepad.sThumbRY / STICK_MAX_VAL);
 		else
 			r_y = 0.f;
+			*/
 	}
 private:
 	XINPUT_STATE m_xinput;
 	bool m_valid = false;
-	int8_t m_id = -1;
+	int8_t m_pad_id = -1;
 };
 
 void update_gamepads(void);

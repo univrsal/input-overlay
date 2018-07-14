@@ -49,11 +49,12 @@ public:
 	std::string m_layout_file;
 
 	float m_old_angle = 0.f; /* For drawing the mouse arrow*/
-	std::unique_ptr<Layout::Overlay> m_overlay;
+	std::unique_ptr<Overlay> m_overlay;
 
 	inline InputSource(obs_source_t *source_, obs_data_t *settings) :
 		m_source(source_)
 	{
+		m_overlay = std::make_unique<Overlay>();
 		obs_source_update(m_source, settings);
 	}
 

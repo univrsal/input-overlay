@@ -1,8 +1,9 @@
 #include "layout.hpp"
 
-namespace Layout {
 
-	Overlay::Overlay(std::string ini, std::string texture)
+//namespace Layout {
+
+Overlay::Overlay(std::string ini, std::string texture)
 	{
 		load_texture(texture);
 		load_cfg(ini);
@@ -90,10 +91,8 @@ namespace Layout {
 
 	void Overlay::load_element(std::string id, ccl_config * cfg)
 	{
-		int type = cfg->get_int(id.append("_type"));
+		int type = cfg->get_int(id.append(CFG_TYPE));
 		
-
-
 		switch (type)
 		{
 		case ELEMENT_TEXTURE:
@@ -109,12 +108,8 @@ namespace Layout {
 
 	void ElementTexture::load(ccl_config * cfg, std::string id)
 	{
-		m_xpos = cfg->get_int(id.append("_x_pos"));
-		m_ypos = cfg->get_int(id.append("_y_pos"));
-
-		m_u = cfg->get_int(id.append("_u"));
-		m_v = cfg->get_int(id.append("_v"));
-
+		read_pos(cfg, id);
+		read_uv(cfg, id);
 		read_size(cfg, id);
 	}
 
@@ -129,14 +124,9 @@ namespace Layout {
 
 	void ElementButton::load(ccl_config * cfg, std::string id)
 	{
-		m_xpos = cfg->get_int(id.append("_x_pos"));
-		m_ypos = cfg->get_int(id.append("_y_pos"));
-
-		m_u = cfg->get_int(id.append("_u"));
-		m_v = cfg->get_int(id.append("_v"));
-
+		read_pos(cfg, id);
+		read_uv(cfg, id);
 		read_size(cfg, id);
-
 		m_keycode = cfg->get_hex(id.append("_code"));
 	}
 
@@ -169,4 +159,4 @@ namespace Layout {
 		return nullptr;
 	}
 
-};
+//};

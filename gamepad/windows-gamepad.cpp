@@ -1,7 +1,7 @@
 #include "windows-gamepad.hpp"
 
 #if HAVE_XINPUT
-
+#if 0
 /**
  * This file is part of input-overlay
  * which is licenced under the MIT licence.
@@ -83,5 +83,6 @@ void WindowsGamepad::check_keys()
 			m_r_stick_y = 0.f;
 	}
 }
+#endif
 
 #endif // HAVE_XINPUT

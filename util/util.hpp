@@ -12,21 +12,24 @@
 #define NULL 0
 #endif // !NULL
 
+#ifndef CCT
+
 #ifndef WINDOWS
 #ifdef _WIN32
 #define WINDOWS
 #include <windows.h>
 #else
-#ifndef LINUX
 #define LINUX
 #endif
-#endif
-#endif
+#endif // WINDOWS / LINUX
 
-#include <uiohook.h>
+
+
 #ifdef LINUX
 #include <math.h>
 #endif
+
+#include <uiohook.h>
 #include <string>
 #include <obs-module.h>
 #include <algorithm>
@@ -34,6 +37,9 @@
 #ifdef DEBUG
 #include <random>
 #endif
+
+#endif // CCT
+
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
@@ -158,6 +164,8 @@
 
 #define VC_MOUSE_MASK         0xED00
 #define VC_MOUSE_WHEEL	      0xED10
+#define VC_MOUSE_WHEEL_UP     0xED11
+#define VC_MOUSE_WHEEL_DOWN   0xED12
 
 #define VC_MOUSE_BUTTON1      (MOUSE_BUTTON1 | VC_MOUSE_MASK)
 #define VC_MOUSE_BUTTON2      (MOUSE_BUTTON2 | VC_MOUSE_MASK)
@@ -201,13 +209,13 @@
 #define PAD_LT              15
 #define PAD_RT              16
 
-// Get default keynames from a libuiohook keycode
+// Get default key names from a libuiohook keycode
 const char * key_to_text(int key_code);
 
 // Creates string for obs to use as accepted files for a file dialog
 std::string util_file_filter(const char * display, const char * formats);
 
-// Changes slashes in path to fit unix formatting
+// Changes slashes in path to fit Unix formatting
 void util_format_path(std::string & path);
 
 void util_enable_mask(uint16_t& masks, uint16_t mask);

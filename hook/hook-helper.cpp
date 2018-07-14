@@ -1,8 +1,10 @@
+#include <stdarg.h>
 #include "hook-helper.hpp"
+#include "../util/layout.hpp"
 
 /**
  * This file is part of input-overlay
- * which is licenced under the MIT licence.
+ * which is licensed under the MIT license.
  * See LICENCE or https://mit-license.org
  * github.com/univrsal/input-overlay
  */
@@ -14,7 +16,7 @@ namespace Hook {
 	    https://github.com/kwhat/libuiohook/blob/master/src/demo_hook_async.c
 	*/
 
-	Layout::ElementDataHolder * input_data = nullptr;
+	ElementDataHolder * input_data = nullptr;
 	wint_t last_character;
 	int16_t mouse_x, mouse_y, mouse_x_smooth, mouse_y_smooth, mouse_last_x, mouse_last_y;
 	bool hook_initialized = false;
@@ -153,7 +155,7 @@ namespace Hook {
 		case UIOHOOK_SUCCESS:
 			// We no longer block, so we need to explicitly wait for the thread to die.
 			hook_initialized = true;
-			input_data = new Layout::ElementDataHolder();
+			input_data = new ElementDataHolder();
 			break;
 		case UIOHOOK_ERROR_OUT_OF_MEMORY:
 			blog(LOG_ERROR, "[input-overlay] Failed to allocate memory. (%#X)\n", status);
@@ -197,35 +199,37 @@ namespace Hook {
 
 	void proccess_event(uiohook_event * const event)
 	{
-		Layout::ElementData * d = input_data->get_by_code(VC_MOUSE_WHEEL);
-		Layout::ElementDataWheel * wheel = nullptr;
+		ElementData * d = input_data->get_by_code(VC_MOUSE_WHEEL);
+		ElementDataWheel * wheel = nullptr;
+		WheelDirection dir;
+		int new_amount = 0;
+
 		if (d)
 		{
-			wheel = reinterpret_cast<Layout::ElementDataWheel*>(d);
+			wheel = reinterpret_cast<ElementDataWheel*>(d);
 		}
 
 		switch (event->type)
 		{
 		case EVENT_KEY_PRESSED:
-			input_data->add_data(event->data.keyboard.keycode, new Layout::ElementDataButton(Layout::ButtonState::STATE_PRESSED));
+			input_data->add_data(event->data.keyboard.keycode, new ElementDataButton(ButtonState::STATE_PRESSED));
 			break;
 		case EVENT_KEY_RELEASED:
 			input_data->remove_data(event->data.keyboard.keycode);
 			break;
 		case EVENT_MOUSE_PRESSED:
-			input_data->add_data(util_mouse_to_vc(event->data.mouse.button), new Layout::ElementDataButton(Layout::ButtonState::STATE_PRESSED));
+			input_data->add_data(util_mouse_to_vc(event->data.mouse.button), new ElementDataButton(ButtonState::STATE_PRESSED));
 			break;
 		case EVENT_MOUSE_RELEASED:
 			input_data->remove_data(util_mouse_to_vc(event->data.mouse.button));
 			break;
 		case EVENT_MOUSE_WHEEL:
-			Layout::WheelDirection dir;
-			int new_amount = 0;
+
 
 			if (event->data.wheel.rotation >= WHEEL_DOWN)
-				dir = Layout::WheelDirection::WHEEL_DIR_DOWN;
+				dir = WheelDirection::WHEEL_DIR_DOWN;
 			else
-				dir = Layout::WheelDirection::WHEEL_DIR_UP;
+				dir = WheelDirection::WHEEL_DIR_UP;
 
 			if (wheel)
 			{
@@ -239,7 +243,7 @@ namespace Hook {
 				new_amount = event->data.wheel.rotation;
 			}
 
-			input_data->add_data(VC_MOUSE_WHEEL, new Layout::ElementDataWheel(dir, new_amount));
+			input_data->add_data(VC_MOUSE_WHEEL, new ElementDataWheel(dir, new_amount));
 			break;
 		case EVENT_KEY_TYPED:
 			last_character = event->data.keyboard.keychar;

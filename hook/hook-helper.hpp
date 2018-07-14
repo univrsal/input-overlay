@@ -1,14 +1,12 @@
 #ifndef HOOK_HELPER_HPP
 #define HOOK_HELPER_HPP
 
+#include <uiohook.h>
+#include "../util/util.hpp"
+
 #ifdef LINUX
 #include <stdint.h>
 #endif
-#include <uiohook.h>
-#include <stdarg.h>
-
-#include "../util/util.hpp"
-#include "../util/layout.hpp"
 
 #ifdef WINDOWS
 #include <windows.h>
@@ -16,14 +14,16 @@
 
 /**
  * This file is part of input-overlay
- * which is licenced under the MIT licence.
+ * which is licensed under the MIT license.
  * See LICENCE or https://mit-license.org
  * github.com/univrsal/input-overlay
  */
 
+class ElementDataHolder;
+
 namespace Hook {
 
-	extern Layout::ElementDataHolder * input_data;
+	extern ElementDataHolder * input_data;
 
 	extern wint_t last_character;
 	extern int16_t mouse_x, mouse_y, mouse_x_smooth, mouse_y_smooth, mouse_last_x, mouse_last_y;
