@@ -9,7 +9,7 @@
 
 #include <SDL.h>
 
-#define DEBUG_DRAW_OUTLINE 0
+#define DEBUG_DRAW_OUTLINE 1
 
 class Dialog;
 

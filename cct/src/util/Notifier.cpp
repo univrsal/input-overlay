@@ -40,7 +40,7 @@ void Notifier::draw(void)
 	int y_pos = 4;
 	std::vector<uint8_t> overdue;
 
-	for (auto& const msg : m_messages)
+	for (auto const &msg : m_messages)
 	{
 		if (SDL_GetTicks() - msg->m_time_stamp > (MESSAGE_TIMEOUT * msg->m_message_lines.size()))
 		{
@@ -51,7 +51,7 @@ void Notifier::draw(void)
 			SDL_Color * c = msg->m_type == MESSAGE_ERROR ? m_helper->palette()->red()
 				: m_helper->palette()->white();
 
-			for (auto& const line : msg->m_message_lines)
+			for (auto const &line : msg->m_message_lines)
 			{
 				if (!line.get()->empty())
 				{
@@ -67,7 +67,11 @@ void Notifier::draw(void)
 
 	/* Remove old messages */
 	std::sort(overdue.begin(), overdue.end()); 
+#ifdef WINDOWS
 	for (auto &i = overdue.rbegin(); i != overdue.rend(); ++i)
+#else
+	for (auto i = overdue.rbegin(); i != overdue.rend(); ++i)
+#endif
 	{
 		if (m_messages.at(*i)->m_message_lines[0]->compare(m_last_message) == 0)
 		{

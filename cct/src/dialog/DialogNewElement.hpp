@@ -13,6 +13,7 @@
 #include "elements/Textbox.hpp"
 #include "elements/AtlasSelector.hpp"
 #include "elements/Checkbox.hpp"
+#include "../Config.hpp"
 #include "../Tool.hpp"
 #include "../util/SDL_helper.hpp"
 #include "../util/Texture.hpp"

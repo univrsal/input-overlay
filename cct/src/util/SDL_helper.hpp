@@ -9,11 +9,16 @@
 
 #include <SDL.h>
 #include <SDL_ttf.h>
-#include <SDL_image.h>
+#include <SDL2/SDL_image.h>
 
 #include <codecvt>
+#include <locale>
+#include <iostream>
 #include <vector>
 #include <memory>
+#ifdef LINUX
+#include <clocale>
+#endif
 
 #include "Palette.hpp"
 #include "FontHelper.hpp"
@@ -95,7 +100,7 @@ class SDL_helper
 		std::wstring util_utf8_to_wstring(const std::string& str);
 		std::string util_wstring_to_utf8(const std::wstring& str);
 
-		void format_text(std::string& s, std::vector<std::unique_ptr<std::string>>& out, SDL_Rect& dim);
+		void format_text(const std::string * s, std::vector<std::unique_ptr<std::string>>& out, SDL_Rect& dim);
 
 		uint32_t vc_to_sdl_key(uint16_t key);
 		uint16_t sdl_key_to_vc(uint32_t key);

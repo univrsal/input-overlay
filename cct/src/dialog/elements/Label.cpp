@@ -40,7 +40,7 @@ void Label::draw_background(void)
 	{
 		int i = 0;
 		int y = 0;
-		for (auto& const line : m_lines)
+		for (auto const &line : m_lines)
 		{
 			if (!line.get()->empty())
 			{
@@ -50,6 +50,7 @@ void Label::draw_background(void)
 			}
 			y += LINE_SPACE + get_helper()->util_default_text_height();
 			i++;
+			break;
 		}
 	}
 }
@@ -70,6 +71,6 @@ void Label::set_text(std::string text)
 	if (!text.empty())
 	{
 		m_lines.clear();
-		get_helper()->format_text(text, m_lines, m_dimensions);
+		get_helper()->format_text(&text, m_lines, m_dimensions);
 	}
 }

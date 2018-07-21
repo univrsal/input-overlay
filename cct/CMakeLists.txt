@@ -1,17 +1,38 @@
 cmake_minimum_required(VERSION 2.8)
-
 project(io-cct)
 
-find_path(SDL_INCLUDE_DIR SDL.h)
-find_library(SDL_LIB SDL2)
+macro(use_cxx11)
+  if (CMAKE_VERSION VERSION_LESS "3.1")
+    if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+      set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11")
+    endif ()
+  else ()
+    set (CMAKE_CXX_STANDARD 11)
+  endif ()
+endmacro(use_cxx11)
 
-find_path(SDL_TTF_INCLUDE_DIR SDL_ttf.h)
-find_library(SDL_TTF_LIB SDL2_ttf)
+use_cxx11()
 
-find_path(SDL_IMG_INCLUDE_DIR SDL_image.h)
-find_library(SDL_IMG_LIB SDL2_image)
+if(MSVC)
+	find_path(SDL2_INCLUDE_DIRS SDL.h)
+	find_library(SDL2_LIBRARIES SDL2)
+
+	find_path(SDLTTF2_INCLUDE_DIRS SDL_ttf.h)
+	find_library(SDLTTF_LIBRARIES SDL2_ttf)
+
+	find_path(SDL2_IMAGE_INCLUDE_DIRS SDL_image.h)
+	find_library(SDL2IMAGE_LIBRARIES SDL2_image)
+else()
+	SET(GCC_FLAGS "-fpermissive")
+	INCLUDE(FindPkgConfig)
+
+	PKG_SEARCH_MODULE(SDL2 REQUIRED sdl2)
+	PKG_SEARCH_MODULE(SDL2IMAGE REQUIRED SDL2_image>=2.0.0)
+	PKG_SEARCH_MODULE(SDLTTF2 REQUIRED SDL2_ttf)
+endif()
 
 set(APP_ICON_RC "${CMAKE_CURRENT_SOURCE_DIR}/res/icon.ico")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GCC_FLAGS}")
 
 set(io-cct_SOURCES
 	main.cpp
@@ -57,10 +78,7 @@ set(io-cct_SOURCES
 	src/util/Notifier.cpp
 	src/util/Notifier.hpp)
 
-include_directories(${SDL_INCLUDE_DIR}
-	${SDL_TTF_INCLUDE_DIR}
-	${SDL_IMG_INCLUDE_DIR})
-
 add_executable(io-cct ${io-cct_SOURCES})
 
-TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${SDL_LIB} ${SDL_IMG_LIB} ${SDL_TTF_LIB})
+INCLUDE_DIRECTORIES(${SDL2_INCLUDE_DIRS} ${SDL2IMAGE_INCLUDE_DIRS} ${SDLTTF2_INCLUDE_DIRS})
+TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${SDL2_LIBRARIES} ${SDL2IMAGE_LIBRARIES} ${SDLTTF2_LIBRARIES})

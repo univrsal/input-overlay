@@ -25,7 +25,7 @@ struct Message
 public:
 	Message(uint8_t type, std::string msg, SDL_helper * h)
 	{
-		h->format_text(msg, m_message_lines, m_dim);
+		h->format_text(&msg, m_message_lines, m_dim);
 		m_type = type;
 		m_time_stamp = SDL_GetTicks();
 	}

@@ -410,19 +410,27 @@ void SDL_helper::handle_events(SDL_Event * event)
 
 std::wstring SDL_helper::util_utf8_to_wstring(const std::string& str)
 {
-	std::wstring_convert<std::codecvt_utf8<wchar_t>> myconv;
-	return myconv.from_bytes(str);
+#ifdef WINDOWS
+	std::wstring_convert<std::codecvt_utf8<wchar_t>> conv;
+	return conv.from_bytes(str);
+#else
+	return L"UNIMPLEMENTED :(";
+#endif
 }
 
 std::string SDL_helper::util_wstring_to_utf8(const std::wstring& str)
 {
-	std::wstring_convert<std::codecvt_utf8<wchar_t>> myconv;
-	return myconv.to_bytes(str);
+#ifdef WINDOWS
+	std::wstring_convert<std::codecvt_utf8<wchar_t>> conv;
+	return conv.to_bytes(str);
+#else
+	return "UNIMPLEMENTED :(";
+#endif
 }
 
-void SDL_helper::format_text(std::string & s, std::vector<std::unique_ptr<std::string>> & out, SDL_Rect & dim)
+void SDL_helper::format_text(const std::string * s, std::vector<std::unique_ptr<std::string>> & out, SDL_Rect & dim)
 {
-	if (s.empty())
+	if (s->empty())
 		return;
 	SDL_Rect temp = {};
 
@@ -430,15 +438,15 @@ void SDL_helper::format_text(std::string & s, std::vector<std::unique_ptr<std::s
 	int lines = 1;
 
 	auto start = 0U;
-	auto end = s.find(NEW_LINE);
+	auto end = s->find(NEW_LINE);
 	std::string token;
 
 	while (end != std::string::npos)
 	{
-		token = s.substr(start, end - start);
+		token = s->substr(start, end - start);
 		out.push_back(std::unique_ptr<std::string>(new std::string(token)));
 		start = end + NEW_LINE.length();
-		end = s.find(NEW_LINE, start);
+		end = s->find(NEW_LINE, start);
 
 		if (!token.empty())
 			temp = util_text_dim(&token);
@@ -448,7 +456,29 @@ void SDL_helper::format_text(std::string & s, std::vector<std::unique_ptr<std::s
 		lines++;
 	}
 
-	token = s.substr(start, end);
+	token = s->substr(start, end);
+	out.push_back(std::unique_ptr<std::string>(new std::string(token)));
+
+	if (!token.empty())
+	token = s->substr(start, end);
+	out.push_back(std::unique_ptr<std::string>(new std::string(token)));
+
+	if (!token.empty())
+	{
+		token = s->substr(start, end - start);
+		out.push_back(std::unique_ptr<std::string>(new std::string(token)));
+		start = end + NEW_LINE.length();
+		end = s->find(NEW_LINE, start);
+
+		if (!token.empty())
+			temp = util_text_dim(&token);
+
+		if (temp.w > width)
+			width = temp.w;
+		lines++;
+	}
+
+	token = s->substr(start, end);
 	out.push_back(std::unique_ptr<std::string>(new std::string(token)));
 
 	if (!token.empty())
@@ -475,7 +505,8 @@ static uint32_t KEY_MAP[][2]
 	{ VC_KP_0, SDLK_KP_0 },{ VC_KP_1, SDLK_KP_1 },{ VC_KP_2, SDLK_KP_3 },{ VC_KP_3, SDLK_KP_3 },{ VC_KP_4, SDLK_KP_4 },{ VC_KP_5, SDLK_KP_5 },
 	{ VC_KP_6, SDLK_KP_6 },{ VC_KP_7, SDLK_KP_7 },{ VC_KP_8, SDLK_KP_8 },{ VC_KP_9, SDLK_KP_9 },
 	/* Numpad misc */
-	{ VC_KP_ADD, SDLK_KP_PLUS },{ VC_KP_SUBTRACT, SDLK_KP_MINUS },{ VC_KP_ENTER, SDLK_KP_ENTER },{ VC_KP_MULTIPLY, SDLK_KP_MULTIPLY },{ VC_KP_DIVIDE, SDLK_KP_DIVIDE },
+	{ VC_KP_ADD, SDLK_KP_PLUS },{ VC_KP_SUBTRACT, SDLK_KP_MINUS },{ VC_KP_ENTER, SDLK_KP_ENTER },{ VC_KP_MULTIPLY, SDLK_KP_MULTIPLY },{ VC_KP_DIVIDE, 
+SDLK_KP_DIVIDE },
 	{ VC_NUM_LOCK, SDLK_NUMLOCKCLEAR },{ VC_KP_SEPARATOR, SDLK_KP_COMMA },
 	/* Function keys */
 	{ VC_F1, SDLK_F1 },{ VC_F2, SDLK_F2 },{ VC_F3, SDLK_F3 },{ VC_F4, SDLK_F4 },{ VC_F5, SDLK_F5 },{ VC_F6, SDLK_F6 },{ VC_F7, SDLK_F7 },{ VC_F8, SDLK_F8 },
@@ -483,12 +514,14 @@ static uint32_t KEY_MAP[][2]
 	{ VC_F16, SDLK_F16 },{ VC_F17, SDLK_F17 },{ VC_F18, SDLK_F18 },{ VC_F19, SDLK_F19 },{ VC_F20, SDLK_F20 },{ VC_F21, SDLK_F21 },{ VC_F22, SDLK_F22 },
 	{ VC_F23, SDLK_F23 },{ VC_F24, SDLK_F24 },
 	/* Mask keys*/
-	{ VC_ALT_L, SDLK_LALT },{ VC_ALT_R, SDLK_RALT },{ VC_CONTROL_L, SDLK_LCTRL },{ VC_CONTROL_R, SDLK_RCTRL },{ VC_SHIFT_L, SDLK_LSHIFT },{ VC_SHIFT_R, SDLK_RSHIFT },
+	{ VC_ALT_L, SDLK_LALT },{ VC_ALT_R, SDLK_RALT },{ VC_CONTROL_L, SDLK_LCTRL },{ VC_CONTROL_R, SDLK_RCTRL },{ VC_SHIFT_L, SDLK_LSHIFT },{ VC_SHIFT_R, 
+SDLK_RSHIFT },
 	{ VC_META_L, SDLK_LGUI },{ VC_META_R, SDLK_RGUI },
 	/* Misc*/
 	{ VC_BACKSPACE, SDLK_BACKSPACE },{ VC_ENTER, SDLK_RETURN },{ VC_SPACE, SDLK_SPACE },{ VC_TAB, SDLK_TAB },{ VC_ESCAPE, SDLK_ESCAPE },
 	{ VC_UP, SDLK_UP },{ VC_DOWN, SDLK_DOWN },{ VC_LEFT, SDLK_LEFT },
-	{ VC_DELETE, SDLK_DELETE },{ VC_INSERT, SDLK_INSERT },{ VC_HOME, SDLK_HOME },{ VC_PAGE_UP, SDLK_PAGEUP },{ VC_PAGE_DOWN, SDLK_PAGEDOWN },{ VC_END, SDLK_END },
+	{ VC_DELETE, SDLK_DELETE },{ VC_INSERT, SDLK_INSERT },{ VC_HOME, SDLK_HOME },{ VC_PAGE_UP, SDLK_PAGEUP },{ VC_PAGE_DOWN, SDLK_PAGEDOWN },{ VC_END, 
+SDLK_END },
 	{ VC_PRINTSCREEN, SDLK_PRINTSCREEN },{ VC_SCROLL_LOCK, SDLK_SCROLLLOCK },{ VC_PAUSE, SDLK_PAUSE },
 	/* Game pad */
 	{ PAD_TO_VC(PAD_A), SDL_CONTROLLER_BUTTON_A},{ PAD_TO_VC(PAD_B), SDL_CONTROLLER_BUTTON_B },{ PAD_TO_VC(PAD_X), SDL_CONTROLLER_BUTTON_X },
