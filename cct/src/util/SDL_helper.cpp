@@ -245,7 +245,7 @@ bool SDL_helper::util_is_in_rect(const SDL_Rect * rect, int x, int y)
 	return x >= rect->x && x <= (rect->x + rect->w) && y >= rect->y && y <= (rect->y + rect->h);
 }
 
-void SDL_helper::util_text(std::string * text, int x, int y, const SDL_Color * color)
+void SDL_helper::util_text(const std::string * text, int x, int y, const SDL_Color * color)
 {
 	if (color == NULL)
 		m_font_helper->draw(text, x, y, m_default_font, m_palette->white());
@@ -253,7 +253,7 @@ void SDL_helper::util_text(std::string * text, int x, int y, const SDL_Color * c
 		m_font_helper->draw(text, x, y, m_default_font, color);
 }
 
-void SDL_helper::util_text(std::string * text, int x, int y, const SDL_Color * color, double angle)
+void SDL_helper::util_text(const std::string * text, int x, int y, const SDL_Color * color, double angle)
 {
 	if (color == NULL)
 		m_font_helper->draw_rot(text, x, y, m_default_font, m_palette->white(), angle);
@@ -261,12 +261,12 @@ void SDL_helper::util_text(std::string * text, int x, int y, const SDL_Color * c
 		m_font_helper->draw_rot(text, x, y, m_default_font, color, angle);
 }
 
-SDL_Rect SDL_helper::util_text_dim(std::string * text)
+SDL_Rect SDL_helper::util_text_dim(const std::string * text)
 {
 	return m_font_helper->get_text_dimension(m_default_font, text);
 }
 
-void SDL_helper::util_text_wstr(std::string * text, int x, int y, const SDL_Color * color)
+void SDL_helper::util_text_wstr(const std::string * text, int x, int y, const SDL_Color * color)
 {
 	if (color == NULL)
 		m_font_helper->draw(text, x, y, m_utf8_font, m_palette->white());
@@ -274,7 +274,7 @@ void SDL_helper::util_text_wstr(std::string * text, int x, int y, const SDL_Colo
 		m_font_helper->draw(text, x, y, m_utf8_font, color);
 }
 
-SDL_Rect SDL_helper::util_text_wstr_dim(std::string * text)
+SDL_Rect SDL_helper::util_text_wstr_dim(const std::string * text)
 {
 	return m_font_helper->get_text_dimension(m_utf8_font, text);
 }
@@ -430,9 +430,19 @@ std::string SDL_helper::util_wstring_to_utf8(const std::wstring& str)
 
 void SDL_helper::format_text(const std::string * s, std::vector<std::unique_ptr<std::string>> & out, SDL_Rect & dim)
 {
-	if (s->empty())
+	if (!s || s->empty())
 		return;
+
 	SDL_Rect temp = {};
+	if (s->find(NEW_LINE) == std::string::npos)
+	{
+		out.push_back(std::unique_ptr<std::string>(new std::string(*s)));
+		dim.h = util_default_text_height();
+		temp = util_text_dim(s);
+		dim.w = temp.w;
+		return;
+	}
+
 
 	int width = 0;
 	int lines = 1;
@@ -460,7 +470,7 @@ void SDL_helper::format_text(const std::string * s, std::vector<std::unique_ptr<
 	out.push_back(std::unique_ptr<std::string>(new std::string(token)));
 
 	if (!token.empty())
-	token = s->substr(start, end);
+		token = s->substr(start, end);
 	out.push_back(std::unique_ptr<std::string>(new std::string(token)));
 
 	if (!token.empty())

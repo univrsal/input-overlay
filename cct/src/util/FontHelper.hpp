@@ -43,7 +43,7 @@ public:
 
     void draw_rot(std::string * text, int x, int y, TTF_Font * font, const SDL_Color * fg, double angle);
 
-    SDL_Rect get_text_dimension(TTF_Font *font, std::string *text);
+    SDL_Rect get_text_dimension(TTF_Font *font, const std::string *text);
 
 private:
 	SDL_helper *m_helper;
