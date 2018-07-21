@@ -7,6 +7,7 @@
 
 #include "DialogSetup.hpp"
 #include "../util/Notifier.hpp"
+#include "../util/Constants.hpp"
 #include "../Tool.hpp"
 
 #if _DEBUG
@@ -22,11 +23,11 @@ void DialogSetup::init()
 	Dialog::init();
 	int8_t id = 1;
 
-	add(new Label(id++, 8, 35, "Enter the path to the texture file:", this));
+	add(new Label(id++, 8, 35, LABEL_TEXTURE_PATH, this));
 	add(m_texture_path = new Textbox(id++, 8, 55, m_dimensions.w - 16, 20, TEXTURE_PATH, this));
 
-	add(new Label(id++, 8, 85, "Default element width:", this));
-	add(new Label(id++, (m_dimensions.w / 2) + 4, 85, "Default element height:", this));
+	add(new Label(id++, 8, 85, LABEL_DEFAULT_WIDTH, this));
+	add(new Label(id++, (m_dimensions.w / 2) + 4, 85, LABEL_DEFAULT_HEIGHT, this));
 
 	m_def_w = new Textbox(id++, 8, 105, (m_dimensions.w / 2) - 16, 20, "0", this);
 	m_def_h = new Textbox(id++, (m_dimensions.w / 2) + 4, 105, (m_dimensions.w / 2) - 12, 20, "0", this);
@@ -37,11 +38,11 @@ void DialogSetup::init()
 	add(m_def_w);
 	add(m_def_h);
 
-	add(new Label(id++, 8, 135, "Enter config path for saving or loading:", this));
+	add(new Label(id++, 8, 135, LABEL_CONFIG_PATH, this));
 	add(m_config_path = new Textbox(id++, 8, 155, m_dimensions.w - 16, 20, CONFIG_PATH, this));
 
-	add(new Button(ACTION_OK, 8, m_dimensions.h - 32, "OK", this));
-	add(new Button(ACTION_CANCEL, 116, m_dimensions.h - 32, "Exit", this));
+	add(new Button(ACTION_OK, 8, m_dimensions.h - 32, BUTTON_OK, this));
+	add(new Button(ACTION_CANCEL, 116, m_dimensions.h - 32, BUTTON_EXIT, this));
 
 	set_flags(DIALOG_CENTERED | DIALOG_TEXTINPUT);
 }
@@ -50,7 +51,7 @@ void DialogSetup::action_performed(int8_t action_id)
 {
 	bool valid_texture = false;
 	bool empty_config = false;
-	ccl_config * cfg;
+	ccl_config * cfg = nullptr;
 	
 	switch (action_id)
 	{
@@ -69,13 +70,13 @@ void DialogSetup::action_performed(int8_t action_id)
 			if (m_texture_path->get_text()->empty() || !valid_texture)
 			{
 				m_texture_path->set_alert(true);
-				m_notifier->add_msg(MESSAGE_ERROR, "Invalid texture path!");
+				m_notifier->add_msg(MESSAGE_ERROR, ERROR_INVALID_TEXTURE_PATH);
 			}
 				
 			if (m_config_path->get_text()->empty() || !m_load_cfg)
 			{
 				m_config_path->set_alert(true);
-				m_notifier->add_msg(MESSAGE_ERROR, "Invalid config path!");
+				m_notifier->add_msg(MESSAGE_ERROR, ERROR_INVALID_CONFIG_PATH);
 			}
 		}
 		break;

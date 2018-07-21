@@ -349,8 +349,7 @@ void Config::write_config(Notifier * n)
 	else
 	{
 		std::stringstream result;
-		result << MSG_SAVE_SUCESS(m_element.size(), (end - start));
-		//result << "Successfully wrote " << m_elements.size() << " Element(s) in " << (end - start) << "ms";
+		result << MSG_SAVE_SUCESS(m_elements.size(), (end - start));
 		n->add_msg(MESSAGE_INFO, result.str());
 	}
 	cfg.free_nodes();

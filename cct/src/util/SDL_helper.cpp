@@ -34,7 +34,7 @@ bool SDL_helper::init()
 {
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
 	{
-		printf("Initialization of SDL failed! Error: %s\n", SDL_GetError());
+		printf(SDL_INIT_FAILED, SDL_GetError());
 		m_init_success = false;
 	}
 
@@ -44,7 +44,7 @@ bool SDL_helper::init()
 
 	if (m_sdl_window == NULL)
 	{
-		printf("Creating SDL Window failed! Error: %s\n", SDL_GetError());
+		printf(SDL_CREATE_WINDOW_FAILED, SDL_GetError());
 		m_init_success = false;
 	}
 	else
@@ -65,7 +65,7 @@ bool SDL_helper::init()
 			}
 			else
 			{
-				printf("Loading window icon failed! Error: %s\n", IMG_GetError());
+				printf(SDL_LOAD_WINDOW_ICON_FAILED, IMG_GetError());
 				/* Non fatal */
 			}
 		}
@@ -74,7 +74,7 @@ bool SDL_helper::init()
 
 	if (m_sdl_renderer == NULL)
 	{
-		printf("Creating SDL Renderer failed! Error: %s\n", SDL_GetError());
+		printf(SDL_CREATE_RENDERER_FAILED, SDL_GetError());
 		m_init_success = false;
 	}
 	else
@@ -85,18 +85,18 @@ bool SDL_helper::init()
 
 	if (TTF_Init() == -1)
 	{
-		printf("Initializing SDL_ttf failed! Error: %s\n", TTF_GetError());
+		printf(SDL_TTF_INIT_FAILED, TTF_GetError());
 		m_init_success = false;
 	}
 	else
 	{
 
-		m_default_font = TTF_OpenFont("./roboto-regular.ttf", FONT_DEFAULT);
-		m_utf8_font = TTF_OpenFont("./antique-maru.ttf", FONT_DEFAULT);
+		m_default_font = TTF_OpenFont(PATH_ROBOTO_FONT, FONT_DEFAULT);
+		m_utf8_font = TTF_OpenFont(PATH_UNICODE_FONT, FONT_DEFAULT);
 
 		if (!m_default_font || !m_utf8_font)
 		{
-			printf("Couldn't load fonts!\n");
+			printf(SDL_FONT_LOADING_FAILED);
 			m_init_success = false;
 		}
 		else

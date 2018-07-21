@@ -18,6 +18,7 @@
 #include "../util/SDL_helper.hpp"
 #include "../util/Texture.hpp"
 #include "../util/CoordinateSystem.hpp"
+#include "../util/Constants.hpp"
 
 class SDL_helper;
 

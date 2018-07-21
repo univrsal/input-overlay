@@ -114,7 +114,7 @@ void Tool::action_performed(uint8_t type)
 	case TOOL_ACTION_NEW_ELEMENT_OPEN:
 		close_toplevel();
 		m_state = IN_NEW_ELEMENT;
-		m_toplevel = new DialogNewElement(m_helper, SDL_Point{}, DIALOG_NEW, this, BUTTON_KEYBOARD);
+		m_toplevel = new DialogNewElement(m_helper, SDL_Point{}, DIALOG_NEW_ELEMENT, this, BUTTON_KEYBOARD);
 		m_toplevel->init();
 		d = reinterpret_cast<DialogNewElement*>(m_toplevel);
 		d->set_default_dim(m_config->get_default_dim().x, m_config->get_default_dim().y);

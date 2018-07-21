@@ -9,6 +9,7 @@
 
 #include "Dialog.hpp"
 #include "../util/SDL_helper.hpp"
+#include "../util/Constants.hpp"
 #include "./elements/Button.hpp"
 #include "../Tool.hpp"
 
@@ -20,7 +21,7 @@ class DialogHelp : public Dialog
 {
 public:
 	DialogHelp(SDL_helper * sdl, SDL_Point size, Tool * tool)
-		: Dialog(sdl, size, "Help and about")
+		: Dialog(sdl, size, DIALOG_HELP)
 	{
 		m_tool = tool;
 	};

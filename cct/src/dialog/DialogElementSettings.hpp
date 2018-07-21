@@ -9,6 +9,7 @@
 
 #include "Dialog.hpp"
 #include "../util/SDL_helper.hpp"
+#include "../util/Constants.hpp"
 #include "./elements/Textbox.hpp"
 #include "./elements/Button.hpp"
 #include "../Tool.hpp"
@@ -29,7 +30,7 @@ class DialogElementSettings : public Dialog
 {
 public:
 	DialogElementSettings(SDL_helper * sdl, SDL_Rect size, Tool * tool)
-		: Dialog(sdl, size, "Selected element settings")
+		: Dialog(sdl, size, DIALOG_ELEMENT_SETTINGS)
 	{
 		m_tool = tool;
 	};

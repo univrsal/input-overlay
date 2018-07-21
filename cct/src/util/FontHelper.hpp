@@ -22,6 +22,7 @@
 #include <SDL_ttf.h>
 #include <string>
 #include "SDL_helper.hpp"
+#include "Constants.hpp"
 
 class SDL_helper;
 

@@ -222,15 +222,15 @@ void CoordinateSystem::draw_foreground(void)
 		get_origin_left(), get_bottom() - 1, m_helper->palette()->white());
 
 	/* Axe titles */
-	std::string t = "X in pixels";
+	std::string t = LABEL_X_AXIS;
 	SDL_Rect dim = m_helper->util_text_dim(&t);
 
 	m_helper->util_text(&t, get_origin_left() - dim.w - 15, get_origin_top() - dim.h, m_helper->palette()->white());
-	t = "Y in pixels";
+	t = LABEL_Y_AXIS;
 	dim = m_helper->util_text_dim(&t);
 	m_helper->util_text(&t, get_origin_left(), get_origin_top() - 15 - dim.w, m_helper->palette()->white(), 90);
 
-	t = "Scale: " + std::to_string(m_scale_f);
+	t = LABEL_SCALE(std::to_string(m_scale_f));
 	dim = m_helper->util_text_dim(&t);
 	m_helper->util_text(&t, get_right() - dim.w - 5, m_dimensions.y + dim.h + 5, m_helper->palette()->white());
 

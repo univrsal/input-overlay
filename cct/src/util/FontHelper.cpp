@@ -43,11 +43,11 @@ void FontHelper::draw(std::string *text, int x, int y, TTF_Font *font, const SDL
 			SDL_FreeSurface(surface);
 		}
 		else {
-			printf("Error while creating texture from surface in text rendering! ERROR: %s\n", TTF_GetError());
+			printf(SDL_TEXT_TO_TEXTURE, TTF_GetError());
 		}
 	}
 	else {
-		printf("Error while creating surface from font in text rendering! ERROR: %s\n", TTF_GetError());
+		printf(SDL_TEXT_TO_SURFACE, TTF_GetError());
 	}
 }
 
@@ -79,11 +79,11 @@ void FontHelper::draw_rot(std::string * text, int x, int y, TTF_Font * font, con
 			SDL_FreeSurface(surface);
 		}
 		else {
-			printf("Error while creating texture from surface in text rendering! ERROR: %s\n", TTF_GetError());
+			printf(SDL_TEXT_TO_TEXTURE, TTF_GetError());
 		}
 	}
 	else {
-		printf("Error while creating surface from font in text rendering! ERROR: %s\n", TTF_GetError());
+		printf(SDL_TEXT_TO_SURFACE, TTF_GetError());
 	}
 }
 
@@ -104,7 +104,7 @@ SDL_Rect FontHelper::get_text_dimension(TTF_Font *font, std::string *text)
 		dest.h = surface->h;
 	}
 	else {
-		printf("Error while creating surface from font in text rendering! ERROR: %s\n", TTF_GetError());
+		printf(SDL_TEXT_TO_SURFACE, TTF_GetError());
 	}
 	SDL_FreeSurface(surface);
 	return dest;
