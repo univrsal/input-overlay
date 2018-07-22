@@ -414,7 +414,67 @@ std::wstring SDL_helper::util_utf8_to_wstring(const std::string& str)
 	std::wstring_convert<std::codecvt_utf8<wchar_t>> conv;
 	return conv.from_bytes(str);
 #else
-	return L"UNIMPLEMENTED :(";
+    /* Conversion taken from
+	 * https://www.linuxquestions.org/questions/programming-9/wstring-utf8-conversion-in-pure-c-701084/
+	 **/	
+	std::wstring dest = L"";
+	wchar_t w = 0;
+	int bytes = 0;
+	wchar_t err = L'�';
+
+	for (size_t i = 0; i < str.size(); i++)
+	{
+		unsigned char c = (unsigned char)str[i];
+		if (c <= 0x7f)
+		// first byte
+		{
+			if (bytes)
+			{
+				dest.push_back(err);
+				bytes = 0;
+			}
+			dest.push_back((wchar_t)c);
+		}
+		else if (c <= 0xbf)
+		//second/third/etc byte
+		{
+			if (bytes)
+			{
+				w = ((w << 6) | (c & 0x3f));
+				bytes--;
+				if (bytes == 0)
+					dest.push_back(w);
+			}
+			else
+				dest.push_back(err);
+		}
+		else if (c <= 0xdf)
+		//2byte sequence start
+		{
+			bytes = 1;
+			w = c & 0x1f;
+		}
+		else if (c <= 0xef)
+		//3byte sequence start
+		{
+			bytes = 2;
+			w = c & 0x0f;
+		}
+		else if (c <= 0xf7)
+		//3byte sequence start
+		{
+			bytes = 3;
+			w = c & 0x07;
+		}
+		else
+		{
+			dest.push_back(err);
+			bytes = 0;
+		}
+	}
+	if (bytes)
+		dest.push_back(err);
+	return dest;
 #endif
 }
 
@@ -424,7 +484,41 @@ std::string SDL_helper::util_wstring_to_utf8(const std::wstring& str)
 	std::wstring_convert<std::codecvt_utf8<wchar_t>> conv;
 	return conv.to_bytes(str);
 #else
-	return "UNIMPLEMENTED :(";
+	/* Conversion taken from
+	 * https://www.linuxquestions.org/questions/programming-9/wstring-utf8-conversion-in-pure-c-701084/
+	 **/
+	std::string dest = "";
+	for (size_t i = 0; i < str.size(); i++)
+	{
+		wchar_t w = str[i];
+		if (w <= 0x7f)
+		{
+			dest.push_back((char)w);
+		}
+		else if (w <= 0x7ff)
+		{
+			dest.push_back(0xc0 | ((w >> 6) & 0x1f));
+			dest.push_back(0x80 | (w & 0x3f));
+		}
+		else if (w <= 0xffff)
+		{
+			dest.push_back(0xe0 | ((w >> 12) & 0x0f));
+			dest.push_back(0x80 | ((w >> 6)  & 0x3f));
+			dest.push_back(0x80 | (w & 0x3f));
+		}
+		else if (w <= 0x10ffff)
+		{
+			dest.push_back(0xf0 | ((w >> 18) & 0x07));
+			dest.push_back(0x80 | ((w >> 12) & 0x3f));
+			dest.push_back(0x80 | ((w >> 6)  & 0x3f));
+			dest.push_back(0x80 | (w & 0x3f));
+		}
+		else
+		{
+			dest.push_back('?');
+		}
+	}
+	return dest;
 #endif
 }
 
@@ -443,7 +537,6 @@ void SDL_helper::format_text(const std::string * s, std::vector<std::unique_ptr<
 		return;
 	}
 
-
 	int width = 0;
 	int lines = 1;
 
@@ -451,51 +544,26 @@ void SDL_helper::format_text(const std::string * s, std::vector<std::unique_ptr<
 	auto end = s->find(NEW_LINE);
 	std::string token;
 
-	while (end != std::string::npos)
+	do
 	{
 		token = s->substr(start, end - start);
 		out.push_back(std::unique_ptr<std::string>(new std::string(token)));
 		start = end + NEW_LINE.length();
-		end = s->find(NEW_LINE, start);
-
+	
 		if (!token.empty())
 			temp = util_text_dim(&token);
-
-		if (temp.w > width)
-			width = temp.w;
+		width = UTIL_MAX(temp.w, width);
 		lines++;
-	}
+	} while((end = s->find(NEW_LINE, start)) != std::string::npos);
 
-	token = s->substr(start, end);
+	token = s->substr(start, std::string::npos);
 	out.push_back(std::unique_ptr<std::string>(new std::string(token)));
-
-	if (!token.empty())
-		token = s->substr(start, end);
-	out.push_back(std::unique_ptr<std::string>(new std::string(token)));
-
+	
 	if (!token.empty())
 	{
-		token = s->substr(start, end - start);
-		out.push_back(std::unique_ptr<std::string>(new std::string(token)));
-		start = end + NEW_LINE.length();
-		end = s->find(NEW_LINE, start);
-
-		if (!token.empty())
-			temp = util_text_dim(&token);
-
-		if (temp.w > width)
-			width = temp.w;
-		lines++;
-	}
-
-	token = s->substr(start, end);
-	out.push_back(std::unique_ptr<std::string>(new std::string(token)));
-
-	if (!token.empty())
 		temp = util_text_dim(&token);
-
-	if (temp.w > width)
-		width = temp.w;
+		width = UTIL_MAX(temp.w, width);
+	}
 
 	dim.h = ((m_default_font_height + LINE_SPACE) * lines) - LINE_SPACE; // Last line space doesn't count
 	dim.w = width;
