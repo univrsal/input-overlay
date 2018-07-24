@@ -43,11 +43,11 @@ void FontHelper::draw(std::string *text, int x, int y, TTF_Font *font, const SDL
 			SDL_FreeSurface(surface);
 		}
 		else {
-			printf("Error while creating texture from surface in text rendering! ERROR: %s\n", TTF_GetError());
+			printf(SDL_TEXT_TO_TEXTURE, TTF_GetError());
 		}
 	}
 	else {
-		printf("Error while creating surface from font in text rendering! ERROR: %s\n", TTF_GetError());
+		printf(SDL_TEXT_TO_SURFACE, TTF_GetError());
 	}
 }
 
@@ -68,26 +68,30 @@ void FontHelper::draw_rot(std::string * text, int x, int y, TTF_Font * font, con
 
 	surface = TTF_RenderUTF8_Blended(font, text->c_str(), *fg);
 
-	if (surface) {
+	if (surface)
+	{
 		texture = SDL_CreateTextureFromSurface(m_helper->renderer(), surface);
 
-		if (texture) {
+		if (texture)
+		{
 			SDL_Rect dest = { x, y, surface->w, surface->h };
 			SDL_Point rot = { 0, 0 };
 			SDL_RenderCopyEx(m_helper->renderer(), texture, NULL, &dest, angle, &rot, SDL_FLIP_NONE);
 			SDL_DestroyTexture(texture);
 			SDL_FreeSurface(surface);
 		}
-		else {
-			printf("Error while creating texture from surface in text rendering! ERROR: %s\n", TTF_GetError());
+		else
+		{
+			printf(SDL_TEXT_TO_TEXTURE, TTF_GetError());
 		}
 	}
-	else {
-		printf("Error while creating surface from font in text rendering! ERROR: %s\n", TTF_GetError());
+	else
+	{
+		printf(SDL_TEXT_TO_SURFACE, TTF_GetError());
 	}
 }
 
-SDL_Rect FontHelper::get_text_dimension(TTF_Font *font, std::string *text)
+SDL_Rect FontHelper::get_text_dimension(TTF_Font *font, const std::string *text)
 {
 	if (text->empty())
 	{
@@ -99,12 +103,14 @@ SDL_Rect FontHelper::get_text_dimension(TTF_Font *font, std::string *text)
 		*m_helper->palette()->white());
 	SDL_Rect dest = {};
 
-	if (surface) {
+	if (surface)
+	{
 		dest.w = surface->w;
 		dest.h = surface->h;
 	}
-	else {
-		printf("Error while creating surface from font in text rendering! ERROR: %s\n", TTF_GetError());
+	else
+	{
+		printf(SDL_TEXT_TO_SURFACE, TTF_GetError());
 	}
 	SDL_FreeSurface(surface);
 	return dest;

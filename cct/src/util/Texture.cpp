@@ -43,7 +43,7 @@ bool Texture::load(const char *path, SDL_Renderer *renderer)
 	SDL_Surface *surface = IMG_Load(path);
 
 	if (surface == NULL) {
-		printf("ERROR: Couldn't load image %s! SDL_Error: %s\n", path, SDL_GetError());
+		printf(SDL_IMAGE_TO_SURFACE, path, SDL_GetError());
 		return false;
 	}
 
@@ -51,7 +51,7 @@ bool Texture::load(const char *path, SDL_Renderer *renderer)
 
 	if (m_sdl_texture == NULL)
 	{
-		printf("ERROR: Couldn't load image %s! SDL_Error: %s\n", path, SDL_GetError());
+		printf(SDL_SURFACE_TO_TEXTURE_FAILED, path, SDL_GetError());
 		return false;
 	}
 

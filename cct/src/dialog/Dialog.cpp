@@ -198,7 +198,7 @@ bool Dialog::handle_events(SDL_Event * event)
 
 	bool cursor_handled = false;
 
-	for (auto& const element : m_screen_elements)
+	for (auto const& element : m_screen_elements)
 	{
 		if (element->handle_events(event))
 		{

@@ -11,6 +11,7 @@
 #include "util/Texture.hpp"
 #include "../../util/layout_constants.hpp"
 #include "util/CoordinateSystem.hpp"
+#include "util/Constants.hpp"
 #include <string>
 #include <SDL.h>
 #include <memory>

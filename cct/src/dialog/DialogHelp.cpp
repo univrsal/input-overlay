@@ -3,7 +3,7 @@
 void DialogHelp::init()
 {
 	Dialog::init();
-	add(new Label(1, 8, 32, "input-overlay config creation tool\nlicensed under the Mozilla Public Licence 2.0\ngithub.com/univrsal/input-overlay\n\nThanks to:\nThe OBS Studio team and contributers\nobsproject.com\nThe SDL developers (also SDL_image and SDL_ttf)\nlibsdl.org\n\nUsage:\nScroll wheel: Zoom in/out\nLeft mouse: move elements\nRight mouse: move preview\n\nSome keys will work within the preview\nand light up when pressed", this));
+	add(new Label(1, 8, 32, LABEL_HELP_AND_ABOUT, this));
 
 	add(new Button(ACTION_OK, 8, m_dimensions.h - 32, "OK", this));
 

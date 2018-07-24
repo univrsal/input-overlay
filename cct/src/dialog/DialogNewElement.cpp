@@ -51,8 +51,8 @@ void DialogNewElement::init()
 		break;
 	}
 
-	add(m_ok = new Button(ACTION_OK, 8, m_dimensions.h - 32, "OK", this));
-	add(m_cancel = new Button(ACTION_CANCEL, 124, m_dimensions.h - 32, "Cancel", this));
+	add(m_ok = new Button(ACTION_OK, 8, m_dimensions.h - 32, BUTTON_OK, this));
+	add(m_cancel = new Button(ACTION_CANCEL, 124, m_dimensions.h - 32, BUTTON_CANCEL, this));
 }
 
 void DialogNewElement::action_performed(int8_t action_id)
@@ -188,17 +188,17 @@ void DialogNewElement::add_selection_elements(void)
 	if (m_element_y == 0)
 		m_element_y = 30;
 
-	add(new Label(m_id++, 8, m_element_y, "Texture selection", this));
+	add(new Label(m_id++, 8, m_element_y, LABEL_TEXTURE_SELECTION, this));
 
 	m_element_y += 25;
-	add(new Label(m_id++, 8, m_element_y, "Width:", this));
-	add(new Label(m_id++, 16 + panel_w / 2, m_element_y, "Height:", this));
+	add(new Label(m_id++, 8, m_element_y, LABEL_WIDTH, this));
+	add(new Label(m_id++, 16 + panel_w / 2, m_element_y, LABEL_HEIGHT, this));
 	add(m_w = new Textbox(m_id++, 8 + panel_w / 4 + 4, m_element_y, panel_w / 4, 20, "0", this));
 	add(m_h = new Textbox(m_id++, 8 + panel_w / 4 * 3 + 4, m_element_y, panel_w / 4, 20, "0", this));
 
 	m_element_y += 25;
-	add(new Label(m_id++, 8, m_element_y, "U:", this));
-	add(new Label(m_id++, 16 + panel_w / 2, m_element_y, "V:", this));
+	add(new Label(m_id++, 8, m_element_y, LABEL_U, this));
+	add(new Label(m_id++, 16 + panel_w / 2, m_element_y, LABEL_V, this));
 	add(m_u = new Textbox(m_id++, 8 + panel_w / 4 + 4, m_element_y, panel_w / 4, 20, "0", this));
 	add(m_v = new Textbox(m_id++, 8 + panel_w / 4 * 3 + 4, m_element_y, panel_w / 4, 20, "0", this));
 
@@ -216,13 +216,13 @@ void DialogNewElement::add_keycode_elements(void)
 
 	if (m_element_y == 0)
 		m_element_y = 30;
-	add(new Label(m_id++, 8, m_element_y, "Key code:", this));
+	add(new Label(m_id++, 8, m_element_y, LABEL_KEY_CODE, this));
 	m_element_y += 25;
 	add(m_keycode = new Textbox(m_id++, 8, m_element_y, panel_w, 20, "0", this));
 	m_keycode->set_cutoff(10);
 	m_keycode->set_flags(TEXTBOX_HEX | TEXTBOX_KEYBIND);
 	m_element_y += 25;
-	add(m_read_keybind = new Checkbox(m_id++, 8, m_element_y, "Record keybind", this, true));
+	add(m_read_keybind = new Checkbox(m_id++, 8, m_element_y, CHECKBOX_RECORD_KEYBIND, this, true));
 	m_element_y += 40;
 }
 
@@ -232,9 +232,9 @@ void DialogNewElement::add_element_id(void)
 
 	if (m_element_y == 0)
 		m_element_y = 30;
-	add(new Label(m_id++, 9, m_element_y, "Element id:", this));
+	add(new Label(m_id++, 9, m_element_y, LABEL_ELEMENT_ID, this));
 	m_element_y += 25;
-	add(m_element_id = new Textbox(m_id++, 8, m_element_y, panel_w, 20, "unnamed", this));
+	add(m_element_id = new Textbox(m_id++, 8, m_element_y, panel_w, 20, ELEMENT_UNNAMED, this));
 	m_element_id->set_flags(TEXTBOX_NO_SPACE);
 	m_element_y += 40;
 }

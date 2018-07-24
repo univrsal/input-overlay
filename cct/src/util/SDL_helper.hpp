@@ -9,11 +9,16 @@
 
 #include <SDL.h>
 #include <SDL_ttf.h>
-#include <SDL_image.h>
+#include <SDL2/SDL_image.h>
 
 #include <codecvt>
+#include <locale>
+#include <iostream>
 #include <vector>
 #include <memory>
+#ifdef LINUX
+#include <clocale>
+#endif
 
 #include "Palette.hpp"
 #include "FontHelper.hpp"
@@ -57,28 +62,28 @@ class SDL_helper
 		void repaint();
 
 		void util_set_color(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
-		void util_set_color(const SDL_Color *color);
+		void util_set_color(const SDL_Color * color);
 
-		void util_draw_line(int x1, int y1, int x2, int y2, const SDL_Color *color = NULL);
-		void util_draw_line(const SDL_Point &p1, const SDL_Point &p2, const SDL_Color *color = NULL);
+		void util_draw_line(int x1, int y1, int x2, int y2, const SDL_Color * color = NULL);
+		void util_draw_line(const SDL_Point &p1, const SDL_Point &p2, const SDL_Color * color = NULL);
 
 		void util_draw_rect(const SDL_Rect *rect, const SDL_Color *color = NULL);
-		void util_draw_rect(int x, int y, int w, int h, const SDL_Color *color = NULL);
+		void util_draw_rect(int x, int y, int w, int h, const SDL_Color * color = NULL);
 
-		void util_fill_rect(const SDL_Rect *rect, const SDL_Color *color = NULL);
-		void util_fill_rect_shadow(const SDL_Rect *rect, const SDL_Color *color = NULL, int8_t offset = 3);
-		void util_fill_rect(int x, int y, int w, int h, const SDL_Color *color = NULL);
-		void util_fill_rect(const SDL_Rect *rect, const SDL_Color *color, uint8_t alpha);
+		void util_fill_rect(const SDL_Rect * rect, const SDL_Color *color = NULL);
+		void util_fill_rect_shadow(const SDL_Rect *rect, const SDL_Color * color = NULL, int8_t offset = 3);
+		void util_fill_rect(int x, int y, int w, int h, const SDL_Color * color = NULL);
+		void util_fill_rect(const SDL_Rect * rect, const SDL_Color *color, uint8_t alpha);
 
 		bool util_is_in_rect(const SDL_Rect * rect, int x, int y);
 
-		void util_text(std::string * text, int x, int y, const SDL_Color * color);
-		void util_text(std::string * text, int x, int y, const SDL_Color * color, double angle);
+		void util_text(const std::string * text, int x, int y, const SDL_Color * color);
+		void util_text(const std::string * text, int x, int y, const SDL_Color * color, double angle);
 
-		SDL_Rect util_text_dim(std::string *text);
+		SDL_Rect util_text_dim(const std::string * text);
 
-		void util_text_wstr(std::string * text, int x, int y, const SDL_Color * color);
-		SDL_Rect util_text_wstr_dim(std::string *text);
+		void util_text_wstr(const std::string * text, int x, int y, const SDL_Color * color);
+		SDL_Rect util_text_wstr_dim(const std::string * text);
 
 		SDL_Point * util_window_size(void);
 
@@ -95,7 +100,7 @@ class SDL_helper
 		std::wstring util_utf8_to_wstring(const std::string& str);
 		std::string util_wstring_to_utf8(const std::wstring& str);
 
-		void format_text(std::string& s, std::vector<std::unique_ptr<std::string>>& out, SDL_Rect& dim);
+		void format_text(const std::string * s, std::vector<std::unique_ptr<std::string>>& out, SDL_Rect& dim);
 
 		uint32_t vc_to_sdl_key(uint16_t key);
 		uint16_t sdl_key_to_vc(uint32_t key);
