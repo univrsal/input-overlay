@@ -50,7 +50,7 @@ void DialogSetup::action_performed(int8_t action_id)
 {
 	bool valid_texture = false;
 	bool empty_config = false;
-	ccl_config * cfg;
+	ccl_config * cfg = nullptr;
 	
 	switch (action_id)
 	{
