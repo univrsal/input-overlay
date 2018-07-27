@@ -18,6 +18,7 @@
 #define TEXTBOX_HEX 1 << 1
 #define TEXTBOX_NO_SPACE 1 << 2
 #define TEXTBOX_KEYBIND 1 << 3
+#define TEXTBOX_DROP_FILE 1 << 4
 
 class Dialog;
 

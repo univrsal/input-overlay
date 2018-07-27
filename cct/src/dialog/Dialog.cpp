@@ -188,8 +188,8 @@ bool Dialog::handle_events(SDL_Event * event)
 			m_selected_element += m_helper->is_shift_down() ? -1 : 1;
 
 			if (m_selected_element < 0)
-				m_selected_element = m_tab_items.size() - 1;
-			else if (m_selected_element > m_tab_items.size() - 1)
+				m_selected_element = (int16_t) m_tab_items.size() - 1;
+			else if (m_selected_element >(int16_t) m_tab_items.size() - 1)
 				m_selected_element = 0;
 
 			m_tab_items[m_selected_element]->select_state(true);	

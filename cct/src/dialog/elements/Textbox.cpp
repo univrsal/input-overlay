@@ -163,6 +163,13 @@ bool Textbox::handle_events(SDL_Event * event)
 			m_composition = event->edit.text;
 			was_handled = true;
 		}
+		else if (m_flags & TEXTBOX_DROP_FILE && event->type == SDL_DROPFILE)
+		{
+			char * dropped_file = event->drop.file;
+			if (dropped_file)
+				set_text(std::string(dropped_file));
+			SDL_free(dropped_file);
+		}
 	}
 	return was_handled;
 }

@@ -102,19 +102,18 @@ bool SDL_helper::init()
 		else
 		{
 			m_font_helper = new FontHelper(this);
+			m_default_font_height = TTF_FontHeight(m_default_font);
+			m_wstr_font_height = TTF_FontHeight(m_utf8_font);
+
+			/* Cursors */
+			m_size_h = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZEWE);
+			m_size_v = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZENS);
+			m_move = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZEALL);
+			m_i_beam = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_IBEAM);
+			m_arrow = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_ARROW);
+
+			m_have_cursors = m_size_h && m_size_v && m_move && m_i_beam && m_arrow;
 		}
-
-		m_default_font_height = TTF_FontHeight(m_default_font);
-		m_wstr_font_height = TTF_FontHeight(m_utf8_font);
-
-		/* Cursors */
-		m_size_h = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZEWE);
-		m_size_v = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZENS);
-		m_move = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZEALL);
-		m_i_beam = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_IBEAM);
-		m_arrow = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_ARROW);
-
-		m_have_cursors = m_size_h && m_size_v && m_move && m_i_beam && m_arrow;
 	}
 
 	m_palette = new Palette();

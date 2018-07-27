@@ -70,5 +70,5 @@ protected:
 	SDL_Rect m_dimensions; /* Width/Height and absolute position */
 	SDL_Point m_position; /* Position relative to dialog*/
 	int8_t m_element_id;
-	uint8_t m_flags = 0x0000;
+	uint16_t m_flags = 0x0000;
 };

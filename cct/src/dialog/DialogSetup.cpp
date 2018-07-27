@@ -41,6 +41,9 @@ void DialogSetup::init()
 	add(new Label(id++, 8, 135, LABEL_CONFIG_PATH, this));
 	add(m_config_path = new Textbox(id++, 8, 155, m_dimensions.w - 16, 20, CONFIG_PATH, this));
 
+	m_config_path->set_flags(TEXTBOX_DROP_FILE);
+	m_texture_path->set_flags(TEXTBOX_DROP_FILE);
+
 	add(new Button(ACTION_OK, 8, m_dimensions.h - 32, BUTTON_OK, this));
 	add(new Button(ACTION_CANCEL, 116, m_dimensions.h - 32, BUTTON_EXIT, this));
 

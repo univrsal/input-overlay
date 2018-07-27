@@ -35,13 +35,13 @@ public:
 
     void set_mode(int m);
 
-    void draw(std::string * text, int x, int y, TTF_Font * font, const SDL_Color * fg, const SDL_Color * bg);
+    void draw(const std::string * text, int x, int y, TTF_Font * font, const SDL_Color * fg, const SDL_Color * bg);
 
-    void draw(std::string * text, int x, int y, TTF_Font * font, const SDL_Color * fg);
+    void draw(const std::string * text, int x, int y, TTF_Font * font, const SDL_Color * fg);
 
-    void draw(std::string * text, int x, int y, TTF_Font * font);
+    void draw(const std::string * text, int x, int y, TTF_Font * font);
 
-    void draw_rot(std::string * text, int x, int y, TTF_Font * font, const SDL_Color * fg, double angle);
+    void draw_rot(const std::string * text, int x, int y, TTF_Font * font, const SDL_Color * fg, double angle);
 
     SDL_Rect get_text_dimension(TTF_Font *font, const std::string *text);
 

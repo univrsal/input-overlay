@@ -18,7 +18,7 @@ FontHelper::~FontHelper()
 	m_helper = NULL;
 }
 
-void FontHelper::draw(std::string *text, int x, int y, TTF_Font *font, const SDL_Color *fg, const SDL_Color *bg)
+void FontHelper::draw(const std::string *text, int x, int y, TTF_Font *font, const SDL_Color *fg, const SDL_Color *bg)
 {
 	SDL_Surface *surface = NULL;
 	SDL_Texture *texture = NULL;
@@ -56,12 +56,12 @@ void FontHelper::set_mode(int m)
 	m_mode = m;
 }
 
-void FontHelper::draw(std::string *text, int x, int y, TTF_Font *font)
+void FontHelper::draw(const std::string *text, int x, int y, TTF_Font *font)
 {
 	draw(text, x, y, font, m_helper->palette()->black(), m_helper->palette()->white());
 }
 
-void FontHelper::draw_rot(std::string * text, int x, int y, TTF_Font * font, const SDL_Color * fg, double angle)
+void FontHelper::draw_rot(const std::string * text, int x, int y, TTF_Font * font, const SDL_Color * fg, double angle)
 {
 	SDL_Surface *surface = NULL;
 	SDL_Texture *texture = NULL;
@@ -116,7 +116,7 @@ SDL_Rect FontHelper::get_text_dimension(TTF_Font *font, const std::string *text)
 	return dest;
 }
 
-void FontHelper::draw(std::string *text, int x, int y, TTF_Font *font, const SDL_Color *fg)
+void FontHelper::draw(const std::string *text, int x, int y, TTF_Font *font, const SDL_Color *fg)
 {
 	set_mode(FONT_BLENDED);
 	draw(text, x, y, font, fg, NULL);
