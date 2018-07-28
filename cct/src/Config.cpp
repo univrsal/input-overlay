@@ -14,7 +14,7 @@
 #define Y_AXIS 100
 
 Config::Config(const char * texture, const char * config, SDL_Point def_dim, SDL_helper * h,
-		DialogElementSettings * s)
+	DialogElementSettings * s)
 {
 	m_texture_path = texture;
 	m_config_path = config;
@@ -55,7 +55,7 @@ void Config::draw_elements(void)
 		{
 			element->draw(m_atlas, &m_cs, element.get() == m_selected);
 		}
-	
+
 
 		if (!SDL_RectEmpty(&m_total_selection))
 		{
@@ -114,7 +114,7 @@ void Config::handle_events(SDL_Event * e)
 					{
 						m_selected = elem.get();
 						m_selected_id = i;
-						
+
 						m_dragging_element = true;
 						m_drag_offset = { (e->button.x - (m_selected->get_x() * m_cs.get_scale())
 							+ m_cs.get_origin()->x), (e->button.y - (m_selected->get_y() * m_cs.get_scale())
@@ -128,7 +128,7 @@ void Config::handle_events(SDL_Event * e)
 				}
 
 				if (!is_single_selection)
-				/* No element was directly select -> start groups selection*/
+					/* No element was directly select -> start groups selection*/
 				{
 					m_selecting = true;
 					reset_selected_element();
@@ -159,7 +159,7 @@ void Config::handle_events(SDL_Event * e)
 	else if (e->type == SDL_MOUSEMOTION)
 	{
 		if (m_dragging_element && m_selected)
-		/* Dragging single element */
+			/* Dragging single element */
 		{
 			int x, y;
 			x = SDL_max((e->button.x - m_drag_offset.x +
@@ -171,7 +171,7 @@ void Config::handle_events(SDL_Event * e)
 			m_settings->set_xy(x, y);
 		}
 		else if (m_selecting)
-		/* Selecting multiple elements */
+			/* Selecting multiple elements */
 		{
 			m_total_selection = {};
 			SDL_Rect elem_dim;
@@ -182,13 +182,13 @@ void Config::handle_events(SDL_Event * e)
 
 			m_cs.translate(m_temp_selection.x, m_temp_selection.y);
 
-			m_temp_selection.x = ceil(UTIL_MAX((m_temp_selection.x - m_cs.get_origin_x()) / 
-						((float)m_cs.get_scale()), 0));
+			m_temp_selection.x = ceil(UTIL_MAX((m_temp_selection.x - m_cs.get_origin_x()) /
+				((float) m_cs.get_scale()), 0));
 			m_temp_selection.y = ceil(UTIL_MAX((m_temp_selection.y - m_cs.get_origin_y()) /
-					   	((float)m_cs.get_scale()), 0));
+				((float) m_cs.get_scale()), 0));
 
-			m_temp_selection.w = ceil(SDL_abs(m_selection_start.x - e->button.x) / ((float)m_cs.get_scale()));
-			m_temp_selection.h = ceil(SDL_abs(m_selection_start.y - e->button.y) / ((float)m_cs.get_scale()));
+			m_temp_selection.w = ceil(SDL_abs(m_selection_start.x - e->button.x) / ((float) m_cs.get_scale()));
+			m_temp_selection.h = ceil(SDL_abs(m_selection_start.y - e->button.y) / ((float) m_cs.get_scale()));
 
 			m_selected_elements.clear();
 
@@ -207,7 +207,7 @@ void Config::handle_events(SDL_Event * e)
 			}
 		}
 		else if (m_dragging_elements)
-		/* Dragging multiple elements */
+			/* Dragging multiple elements */
 		{
 			move_elements(e->button.x - m_drag_offset.x,
 				e->button.y - m_drag_offset.y);
@@ -216,7 +216,7 @@ void Config::handle_events(SDL_Event * e)
 	else if (e->type == SDL_KEYDOWN)
 	{
 		if (m_selected)
-		/* Move selected element with arrow keys */
+			/* Move selected element with arrow keys */
 		{
 			int x = m_selected->get_x();
 			int y = m_selected->get_y();
@@ -305,7 +305,7 @@ void Config::handle_events(SDL_Event * e)
 		if (e->window.event == SDL_WINDOWEVENT_SIZE_CHANGED)
 		{
 			SDL_Point * w = m_helper->util_window_size();
-			m_cs.set_dimensions(SDL_Rect{ 0, 0, w->x, w->y });
+			m_cs.set_dimensions(SDL_Rect { 0, 0, w->x, w->y });
 		}
 	}
 }
@@ -323,19 +323,29 @@ void Config::write_config(Notifier * n)
 
 	cfg.free_nodes(); /* Don't need existing values */
 
-	cfg.add_string(CFG_FIRST_ID, " Starting point for loading elements", *m_elements[0]->get_id(), true);
+	cfg.add_string(CFG_FIRST_ID, "Starting point for loading elements", *m_elements[0]->get_id(), true);
+	cfg.add_int(CFG_DEFAULT_WIDTH, "", m_default_dim.x);
+	cfg.add_int(CFG_DEFAULT_HEIGHT, "Default element dimension", m_default_dim.y);
+
+	int height = 0, width = 0; /* The most bottom right element determines the width/height */
 
 	int index = 0;
 	for (auto const &e : m_elements)
 	{
 		e->write_to_file(&cfg, &m_default_dim);
+
+		width = UTIL_MAX(width, e->get_x() + e->get_u());
+		height = UTIL_MAX(height, e->get_y() + e->get_v());
+
 		if (index + 1 < m_elements.size())
 		{
-			cfg.add_string((*e->get_id()) + CFG_NEXT_ID, "Next element in list", 
-					*m_elements[index + 1]->get_id());
+			cfg.add_string((*e->get_id()) + CFG_NEXT_ID, "Next element in list",
+				*m_elements[index + 1]->get_id());
 		}
 		index++;
 	}
+	cfg.add_int(CFG_TOTAL_WIDTH, "", width);
+	cfg.add_int(CFG_TOTAL_HEIGHT, "Full overlay dimensions", height);
 
 	cfg.write();
 
@@ -365,7 +375,7 @@ void Config::read_config(Notifier * n)
 		n->add_msg(MESSAGE_INFO, MSG_CONFIG_EMPTY);
 		return;
 	}
-	
+
 
 	if (!cfg.node_exists(CFG_FIRST_ID, true))
 	{
@@ -376,6 +386,8 @@ void Config::read_config(Notifier * n)
 	std::string element_id = cfg.get_string(CFG_FIRST_ID);
 
 	bool flag = true;
+	m_default_dim.x = cfg.get_int(CFG_DEFAULT_WIDTH);
+	m_default_dim.y = cfg.get_int(CFG_DEFAULT_HEIGHT);
 
 	/* Used to construct the elements */
 	int type = 0;
@@ -397,18 +409,24 @@ void Config::read_config(Notifier * n)
 			element_id = cfg.get_string(element_id + CFG_NEXT_ID);
 			continue;
 		}
-		
+
 		t = (ElementType) type;
-		
+
 		pos.x = cfg.get_int(element_id + CFG_X_POS);
 		pos.y = cfg.get_int(element_id + CFG_Y_POS);
 
 		u_v.x = cfg.get_int(element_id + CFG_U);
 		u_v.y = cfg.get_int(element_id + CFG_V);
 
-		u_v.w = cfg.get_int(element_id + CFG_WIDTH);
-		u_v.h = cfg.get_int(element_id + CFG_HEIGHT);
+		if (cfg.node_exists(element_id + CFG_WIDTH, true))
+			u_v.w = cfg.get_int(element_id + CFG_WIDTH);
+		else
+			u_v.w = m_default_dim.x;
 
+		if (cfg.node_exists(element_id + CFG_HEIGHT, true))
+			u_v.h = cfg.get_int(element_id + CFG_HEIGHT);
+		else
+			u_v.h = m_default_dim.y;
 		vc = cfg.get_int(element_id + CFG_KEY_CODE);
 
 		m_elements.emplace_back(new Element(t, element_id, pos, u_v, vc));
@@ -434,7 +452,7 @@ void Config::read_config(Notifier * n)
 
 Texture * Config::get_texture(void)
 {
-    return m_atlas;
+	return m_atlas;
 }
 
 SDL_Point Config::get_default_dim(void)

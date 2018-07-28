@@ -3,7 +3,7 @@
 
 void DialogNewElement::close(void)
 {
-	
+
 }
 
 void DialogNewElement::load_from_element(Element * e)
@@ -154,7 +154,7 @@ uint16_t DialogNewElement::get_vc(void)
 
 	if (m_keycode)
 	{
-		t = (uint16_t) strtoul(m_keycode->get_text()->c_str(), NULL, 16);
+		t = (uint16_t) strtoul(m_keycode->get_text()->c_str(), nullptr, 16);
 	}
 
 	return t;

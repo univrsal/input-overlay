@@ -18,9 +18,9 @@ if(MSVC)
 	find_library(SDL2_LIBRARIES SDL2)
 
 	find_path(SDLTTF2_INCLUDE_DIRS SDL_ttf.h)
-	find_library(SDLTTF_LIBRARIES SDL2_ttf)
+	find_library(SDLTTF2_LIBRARIES SDL2_ttf)
 
-	find_path(SDL2_IMAGE_INCLUDE_DIRS SDL_image.h)
+	find_path(SDL2IMAGE_INCLUDE_DIRS SDL_image.h)
 	find_library(SDL2IMAGE_LIBRARIES SDL2_image)
 else()
 	SET(GCC_FLAGS "-fpermissive")

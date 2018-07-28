@@ -66,7 +66,7 @@ void Notifier::draw(void)
 	}
 
 	/* Remove old messages */
-	std::sort(overdue.begin(), overdue.end()); 
+	std::sort(overdue.begin(), overdue.end());
 #ifdef WINDOWS
 	for (auto &i = overdue.rbegin(); i != overdue.rend(); ++i)
 #else

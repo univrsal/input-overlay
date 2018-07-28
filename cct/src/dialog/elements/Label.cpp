@@ -10,7 +10,7 @@
 
 Label::Label(int8_t id, int x, int y, const char *text, Dialog *parent)
 {
-	SDL_Rect temp{ x, y, 0, 0 }; /* Width/Height will be calculated by set_text */
+	SDL_Rect temp { x, y, 0, 0 }; /* Width/Height will be calculated by set_text */
 	init(parent, temp, id);
 
 	set_text(std::string(text));

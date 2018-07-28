@@ -9,20 +9,20 @@
 
 Texture::Texture()
 {
-	m_sdl_texture = NULL;
+	m_sdl_texture = nullptr;
 }
 
 
 Texture::Texture(const char *path, SDL_Renderer *renderer)
 {
-	m_sdl_texture = NULL;
-	m_scale = NULL;
+	m_sdl_texture = nullptr;
+	m_scale = nullptr;
 	load(path, renderer);
 }
 
 Texture::Texture(const char *path, SDL_Renderer *renderer, uint8_t *scale)
 {
-	m_sdl_texture = NULL;
+	m_sdl_texture = nullptr;
 	load(path, renderer);
 	m_scale = scale;
 }
@@ -31,25 +31,26 @@ Texture::~Texture()
 {
 	free();
 	m_dimensions = { 0, 0, 0, 0 };
-	m_scale = NULL;
+	m_scale = nullptr;
 }
 
 bool Texture::load(const char *path, SDL_Renderer *renderer)
 {
 	free();
-	if (renderer == NULL)
+	if (renderer == nullptr)
 		return false;
 
 	SDL_Surface *surface = IMG_Load(path);
 
-	if (surface == NULL) {
+	if (surface == nullptr)
+	{
 		printf(SDL_IMAGE_TO_SURFACE, path, SDL_GetError());
 		return false;
 	}
 
 	m_sdl_texture = SDL_CreateTextureFromSurface(renderer, surface);
 
-	if (m_sdl_texture == NULL)
+	if (m_sdl_texture == nullptr)
 	{
 		printf(SDL_SURFACE_TO_TEXTURE_FAILED, path, SDL_GetError());
 		return false;
@@ -66,9 +67,9 @@ bool Texture::load(const char *path, SDL_Renderer *renderer)
 
 void Texture::free()
 {
-	if (m_sdl_texture != NULL)
+	if (m_sdl_texture != nullptr)
 		SDL_DestroyTexture(m_sdl_texture);
-	m_sdl_texture = NULL;
+	m_sdl_texture = nullptr;
 }
 
 SDL_Rect Texture::get_dim(void)
@@ -78,7 +79,7 @@ SDL_Rect Texture::get_dim(void)
 
 void Texture::draw(SDL_Renderer *renderer)
 {
-	SDL_RenderCopy(renderer, m_sdl_texture, NULL, NULL);
+	SDL_RenderCopy(renderer, m_sdl_texture, nullptr, nullptr);
 }
 
 void Texture::draw_tiling(SDL_Renderer *renderer, const SDL_Rect *target, int scale_f)
@@ -96,8 +97,10 @@ void Texture::draw_tiling(SDL_Renderer *renderer, const SDL_Rect *target, int sc
 	else
 		y_tiles = target->h / dim_temp.h;
 
-	for (int x = 0; x < x_tiles; x++) {
-		for (int y = 0; y < y_tiles; y++) {
+	for (int x = 0; x < x_tiles; x++)
+	{
+		for (int y = 0; y < y_tiles; y++)
+		{
 			draw(renderer, target->x + x * dim_temp.w, target->y + y * dim_temp.h);
 		}
 	}
@@ -112,38 +115,41 @@ void Texture::draw(SDL_Renderer *renderer, int x, int y)
 {
 	SDL_Rect temp_rect = { x, y, m_dimensions.w, m_dimensions.h };
 
-	if (m_scale != NULL) {
-		temp_rect.w *= (int)(*m_scale);
-		temp_rect.h *= (int)(*m_scale);
+	if (m_scale != nullptr)
+	{
+		temp_rect.w *= (int) (*m_scale);
+		temp_rect.h *= (int) (*m_scale);
 	}
 
-	SDL_RenderCopy(renderer, m_sdl_texture, NULL, &temp_rect);
+	SDL_RenderCopy(renderer, m_sdl_texture, nullptr, &temp_rect);
 }
 
 void Texture::draw(SDL_Renderer *renderer, const SDL_Point *p)
 {
 	SDL_Rect temp_rect = { p->x, p->y, m_dimensions.w, m_dimensions.h };
 
-	if (m_scale != NULL) {
-		temp_rect.w *= (int)(*m_scale);
-		temp_rect.h *= (int)(*m_scale);
+	if (m_scale != nullptr)
+	{
+		temp_rect.w *= (int) (*m_scale);
+		temp_rect.h *= (int) (*m_scale);
 	}
 
-	SDL_RenderCopy(renderer, m_sdl_texture, NULL, &temp_rect);
+	SDL_RenderCopy(renderer, m_sdl_texture, nullptr, &temp_rect);
 }
 
 void Texture::draw(SDL_Renderer *renderer, const SDL_Point *p, int scaled_offset_x, int scaled_offset_y)
 {
 	SDL_Rect temp_rect = { p->x, p->y, m_dimensions.w, m_dimensions.h };
 
-	if (m_scale != NULL) {
-		temp_rect.w *= (int)(*m_scale);
-		temp_rect.h *= (int)(*m_scale);
-		temp_rect.x += scaled_offset_x * (int)(*m_scale);
-		temp_rect.y += scaled_offset_y * (int)(*m_scale);
+	if (m_scale != nullptr)
+	{
+		temp_rect.w *= (int) (*m_scale);
+		temp_rect.h *= (int) (*m_scale);
+		temp_rect.x += scaled_offset_x * (int) (*m_scale);
+		temp_rect.y += scaled_offset_y * (int) (*m_scale);
 	}
 
-	SDL_RenderCopy(renderer, m_sdl_texture, NULL, &temp_rect);
+	SDL_RenderCopy(renderer, m_sdl_texture, nullptr, &temp_rect);
 }
 
 void Texture::draw(SDL_Renderer *renderer, const SDL_Rect *target_dim, const SDL_Rect *cutout)

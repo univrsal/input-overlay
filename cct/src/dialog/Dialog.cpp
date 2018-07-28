@@ -69,7 +69,8 @@ void Dialog::draw_background(void)
 
 	std::vector<std::unique_ptr<GuiElement>>::iterator iterator;
 
-	for (iterator = m_screen_elements.begin(); iterator != m_screen_elements.end(); iterator++) {
+	for (iterator = m_screen_elements.begin(); iterator != m_screen_elements.end(); iterator++)
+	{
 		iterator->get()->draw_background();
 	}
 }
@@ -78,7 +79,8 @@ void Dialog::draw_foreground(void)
 {
 	std::vector<std::unique_ptr<GuiElement>>::iterator iterator;
 
-	for (iterator = m_screen_elements.begin(); iterator != m_screen_elements.end(); iterator++) {
+	for (iterator = m_screen_elements.begin(); iterator != m_screen_elements.end(); iterator++)
+	{
 		iterator->get()->draw_foreground();
 	}
 }
@@ -189,10 +191,10 @@ bool Dialog::handle_events(SDL_Event * event)
 
 			if (m_selected_element < 0)
 				m_selected_element = (int16_t) m_tab_items.size() - 1;
-			else if (m_selected_element >(int16_t) m_tab_items.size() - 1)
+			else if (m_selected_element > (int16_t) m_tab_items.size() - 1)
 				m_selected_element = 0;
 
-			m_tab_items[m_selected_element]->select_state(true);	
+			m_tab_items[m_selected_element]->select_state(true);
 		}
 	}
 
@@ -250,7 +252,7 @@ void Dialog::set_flags(uint16_t flags)
 
 const SDL_Point Dialog::position(void)
 {
-	return SDL_Point{ m_dimensions.x, m_dimensions.y };
+	return SDL_Point { m_dimensions.x, m_dimensions.y };
 }
 
 SDL_helper * Dialog::helper(void)

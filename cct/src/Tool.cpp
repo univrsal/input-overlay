@@ -26,7 +26,7 @@ void Tool::program_loop()
 {
 	m_notify = new Notifier(m_helper);
 
-	m_toplevel = new DialogSetup(m_helper, SDL_Point{ 500, 230 }, m_notify, this);
+	m_toplevel = new DialogSetup(m_helper, SDL_Point { 500, 230 }, m_notify, this);
 	m_toplevel->init();
 	m_helper->set_runflag(&m_run_flag);
 
@@ -88,7 +88,7 @@ void Tool::action_performed(uint8_t type)
 	case TOOL_ACTION_SETUP_EXIT:
 		s = reinterpret_cast<DialogSetup*>(m_toplevel);
 		m_element_settings = new DialogElementSettings(m_helper,
-			SDL_Rect{ 1030, 200, 240, 400 }, this);
+			SDL_Rect { 1030, 200, 240, 400 }, this);
 		m_config = new Config(s->get_texture_path(),
 			s->get_config_path(), s->get_default_dim(), m_helper, m_element_settings);
 
@@ -104,7 +104,7 @@ void Tool::action_performed(uint8_t type)
 	case TOOL_ACTION_HELP_OPEN:
 		close_toplevel();
 		m_state = IN_HELP;
-		m_toplevel = new DialogHelp(m_helper, SDL_Point{ 350, 420 }, this);
+		m_toplevel = new DialogHelp(m_helper, SDL_Point { 350, 420 }, this);
 		m_toplevel->init();
 		break;
 	case TOOL_ACTION_HELP_EXIT:
@@ -114,7 +114,7 @@ void Tool::action_performed(uint8_t type)
 	case TOOL_ACTION_NEW_ELEMENT_OPEN:
 		close_toplevel();
 		m_state = IN_NEW_ELEMENT;
-		m_toplevel = new DialogNewElement(m_helper, SDL_Point{}, DIALOG_NEW_ELEMENT, this, BUTTON_KEYBOARD);
+		m_toplevel = new DialogNewElement(m_helper, SDL_Point {}, DIALOG_NEW_ELEMENT, this, BUTTON_KEYBOARD);
 		m_toplevel->init();
 		d = reinterpret_cast<DialogNewElement*>(m_toplevel);
 		d->set_default_dim(m_config->get_default_dim().x, m_config->get_default_dim().y);
@@ -124,8 +124,8 @@ void Tool::action_performed(uint8_t type)
 		{
 			close_toplevel();
 			m_state = IN_NEW_ELEMENT;
-			m_toplevel = new DialogNewElement(m_helper, SDL_Point{}, DIALOG_NEW_ELEMENT, this,
-					BUTTON_KEYBOARD);
+			m_toplevel = new DialogNewElement(m_helper, SDL_Point {}, DIALOG_NEW_ELEMENT, this,
+				BUTTON_KEYBOARD);
 			m_toplevel->init();
 			d = reinterpret_cast<DialogNewElement*>(m_toplevel);
 			d->set_default_dim(m_config->get_default_dim().x, m_config->get_default_dim().y);
@@ -146,7 +146,7 @@ void Tool::action_performed(uint8_t type)
 		break;
 	case TOOL_ACTION_NEW_ELEMENT_ADD:
 		d = reinterpret_cast<DialogNewElement*>(m_toplevel);
-		
+
 		switch (d->get_type())
 		{
 
@@ -156,7 +156,7 @@ void Tool::action_performed(uint8_t type)
 		case MOUSE_MOVEMENT:
 		case ANALOG_STICK:
 		case BUTTON_MOUSE:
-			e = new Element(d->get_type(), *d->get_id(), SDL_Point{ 0, 0 }, d->get_selection_1(), d->get_vc());
+			e = new Element(d->get_type(), *d->get_id(), SDL_Point { 0, 0 }, d->get_selection_1(), d->get_vc());
 			break;
 		case TRIGGER_GAMEPAD:
 			break;
@@ -165,7 +165,7 @@ void Tool::action_performed(uint8_t type)
 		case DPAD:
 			break;
 		case DPAD_STICK:
-			break;	
+			break;
 		}
 
 		if (e)

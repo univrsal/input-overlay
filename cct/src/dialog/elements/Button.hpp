@@ -24,19 +24,19 @@ public:
 
 	~Button();
 
-	bool can_select(void);
+	bool can_select(void) override;
 
-	void select_state(bool state);
+	void select_state(bool state) override;
 
-	void draw_background(void);
+	void draw_background(void) override;
 
-	void draw_foreground(void);
+	void draw_foreground(void) override;
 
-	bool handle_events(SDL_Event *event);
+	bool handle_events(SDL_Event *event) override;
 
-	void close(void);
+	void close(void) override;
 
-	void resize(void);
+	void resize(void) override;
 
 protected:
 	bool m_pressed = false;

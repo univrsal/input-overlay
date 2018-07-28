@@ -118,7 +118,7 @@ bool Textbox::handle_events(SDL_Event * event)
 					bool b = !(m_flags & TEXTBOX_HEX) || is_hex(temp);
 					bool c = !(m_flags & TEXTBOX_NO_SPACE) || is_spacefree(temp);
 
-					if (a && b && c )
+					if (a && b && c)
 					{
 						append_text(temp);
 					}
@@ -145,7 +145,7 @@ bool Textbox::handle_events(SDL_Event * event)
 		/* Added IME input to text */
 		else if (event->type == SDL_TEXTINPUT && !(m_flags & TEXTBOX_KEYBIND))
 		{
-	
+
 			std::string temp = m_text + std::string(event->text.text);
 			bool a = !(m_flags & TEXTBOX_NUMERIC) || is_numeric(temp);
 			bool b = !(m_flags & TEXTBOX_HEX) || is_hex(temp);
@@ -169,6 +169,7 @@ bool Textbox::handle_events(SDL_Event * event)
 			if (dropped_file)
 				set_text(std::string(dropped_file));
 			SDL_free(dropped_file);
+			m_parent_dialog->action_performed(ACTION_FILE_DROPPED);
 		}
 	}
 	return was_handled;
@@ -176,7 +177,7 @@ bool Textbox::handle_events(SDL_Event * event)
 
 bool Textbox::can_select(void)
 {
-    return true;
+	return true;
 }
 
 void Textbox::select_state(bool state)
@@ -186,7 +187,7 @@ void Textbox::select_state(bool state)
 
 void Textbox::set_text(std::string s)
 {
-		m_text = s;
+	m_text = s;
 	if (m_flags & TEXTBOX_NUMERIC || m_flags & TEXTBOX_HEX)
 	{
 		m_text = m_text.substr(0, 6); /* 5 digits is more than enough */
@@ -232,9 +233,9 @@ const std::string * Textbox::get_text()
 
 inline bool Textbox::is_numeric(const std::string & s)
 {
-	for (int i = 0; i < s.length(); i++)
+	for (char i : s)
 	{
-		if (!(s[i] >= '0' && s[i] <= '9')) return false;
+		if (!(i >= '0' && i <= '9')) return false;
 	}
 	return true;
 }

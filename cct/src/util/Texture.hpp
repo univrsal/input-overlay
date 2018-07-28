@@ -30,17 +30,11 @@ public:
 	SDL_Rect get_dim(void);
 
 	void draw(SDL_Renderer *renderer);
-
 	void draw_tiling(SDL_Renderer *renderer, const SDL_Rect *target, int scale_f);
-
 	void draw_tiling_scaled(SDL_Renderer *renderer, const SDL_Rect *target);
-
 	void draw(SDL_Renderer *renderer, int x, int y);
-
 	void draw(SDL_Renderer *renderer, const SDL_Point *p);
-
 	void draw(SDL_Renderer *renderer, const SDL_Point *p, int scaled_offset_x, int scaled_offset_y);
-
 	void draw(SDL_Renderer *renderer, const SDL_Rect *target_dim, const SDL_Rect *cutout);
 
 private:

@@ -45,8 +45,8 @@ void Button::select_state(bool state)
 
 void Button::draw_background(void)
 {
-	SDL_Color *color = (m_hovered || m_tab_focused)? get_helper()->palette()->light_gray() : get_helper()->palette()->dark_gray();
-	
+	SDL_Color *color = (m_hovered || m_tab_focused) ? get_helper()->palette()->light_gray() : get_helper()->palette()->dark_gray();
+
 	if (m_pressed)
 	{
 		SDL_Rect dim = *get_dimensions();
@@ -109,8 +109,8 @@ bool Button::handle_events(SDL_Event *event)
 	else if (event->type == SDL_KEYDOWN
 		&& m_tab_focused && event->key.keysym.sym == SDLK_RETURN)
 	{
-			m_pressed = true;
-			was_handled = true;
+		m_pressed = true;
+		was_handled = true;
 	}
 	else if (event->type == SDL_KEYUP && event->key.keysym.sym == SDLK_RETURN)
 	{

@@ -29,9 +29,9 @@ public:
 		m_tool = t;
 	};
 
-	void init();
+	void init() override;
 
-	void action_performed(int8_t action_id);
+	void action_performed(int8_t action_id) override;
 
 	SDL_Point get_default_dim();
 

@@ -79,14 +79,14 @@ void DialogElementSettings::action_performed(int8_t action_id)
 			m_tool->get_selected()->set_dim(std::stoi(
 				m_element_width->get_text()->c_str()), std::stoi(
 					m_element_height->get_text()->c_str()));
-			
+
 			if (!m_element_id->get_text()->empty())
 				m_tool->get_selected()->set_id(*m_element_id->get_text());
 			else
 				m_element_id->set_alert(true);
 
 			if (!m_keycode->get_text()->empty())
-				m_tool->get_selected()->set_vc((uint16_t)strtoul(m_keycode->get_text()->c_str(), NULL, 16));
+				m_tool->get_selected()->set_vc((uint16_t) strtoul(m_keycode->get_text()->c_str(), nullptr, 16));
 			else
 				m_keycode->set_alert(true);
 

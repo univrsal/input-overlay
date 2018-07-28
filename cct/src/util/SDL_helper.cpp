@@ -9,12 +9,12 @@
 
 SDL_helper::SDL_helper()
 {
-	m_sdl_renderer = NULL;
-	m_sdl_window = NULL;
+	m_sdl_renderer = nullptr;
+	m_sdl_window = nullptr;
 	m_init_success = true;
-	m_default_font = NULL;
-	m_font_helper = NULL;
-	m_palette = NULL;
+	m_default_font = nullptr;
+	m_font_helper = nullptr;
+	m_palette = nullptr;
 }
 
 SDL_helper::~SDL_helper()
@@ -23,11 +23,11 @@ SDL_helper::~SDL_helper()
 	delete m_palette;
 	delete m_font_helper;
 
-	m_font_helper = NULL;
-	m_sdl_renderer = NULL;
-	m_sdl_window = NULL;
-	m_default_font = NULL;
-	m_palette = NULL;
+	m_font_helper = nullptr;
+	m_sdl_renderer = nullptr;
+	m_sdl_window = nullptr;
+	m_default_font = nullptr;
+	m_palette = nullptr;
 }
 
 bool SDL_helper::init()
@@ -42,7 +42,7 @@ bool SDL_helper::init()
 		WINDOW_WIDTH, WINDOW_HEIGHT,
 		SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
 
-	if (m_sdl_window == NULL)
+	if (m_sdl_window == nullptr)
 	{
 		printf(SDL_CREATE_WINDOW_FAILED, SDL_GetError());
 		m_init_success = false;
@@ -72,7 +72,7 @@ bool SDL_helper::init()
 
 	}
 
-	if (m_sdl_renderer == NULL)
+	if (m_sdl_renderer == nullptr)
 	{
 		printf(SDL_CREATE_RENDERER_FAILED, SDL_GetError());
 		m_init_success = false;
@@ -178,7 +178,7 @@ void SDL_helper::util_set_color(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
 
 void SDL_helper::util_set_color(const SDL_Color * color)
 {
-	if (color == NULL)
+	if (color == nullptr)
 		util_set_color(m_palette->white()->r, m_palette->white()->g, m_palette->white()->b, m_palette->white()->a);
 	else
 		util_set_color(color->r, color->g, color->b, color->a);
@@ -225,7 +225,7 @@ void SDL_helper::util_fill_rect_shadow(const SDL_Rect * rect, const SDL_Color * 
 void SDL_helper::util_fill_rect(int x, int y, int w, int h, const SDL_Color * color)
 {
 	util_set_color(color);
-	SDL_Rect temp_rect = SDL_Rect{ x, y, w, h };
+	SDL_Rect temp_rect = SDL_Rect { x, y, w, h };
 	SDL_RenderFillRect(m_sdl_renderer, &temp_rect);
 }
 
@@ -246,7 +246,7 @@ bool SDL_helper::util_is_in_rect(const SDL_Rect * rect, int x, int y)
 
 void SDL_helper::util_text(const std::string * text, int x, int y, const SDL_Color * color)
 {
-	if (color == NULL)
+	if (color == nullptr)
 		m_font_helper->draw(text, x, y, m_default_font, m_palette->white());
 	else
 		m_font_helper->draw(text, x, y, m_default_font, color);
@@ -254,7 +254,7 @@ void SDL_helper::util_text(const std::string * text, int x, int y, const SDL_Col
 
 void SDL_helper::util_text(const std::string * text, int x, int y, const SDL_Color * color, double angle)
 {
-	if (color == NULL)
+	if (color == nullptr)
 		m_font_helper->draw_rot(text, x, y, m_default_font, m_palette->white(), angle);
 	else
 		m_font_helper->draw_rot(text, x, y, m_default_font, color, angle);
@@ -267,7 +267,7 @@ SDL_Rect SDL_helper::util_text_dim(const std::string * text)
 
 void SDL_helper::util_text_wstr(const std::string * text, int x, int y, const SDL_Color * color)
 {
-	if (color == NULL)
+	if (color == nullptr)
 		m_font_helper->draw(text, x, y, m_utf8_font, m_palette->white());
 	else
 		m_font_helper->draw(text, x, y, m_utf8_font, color);
@@ -413,9 +413,9 @@ std::wstring SDL_helper::util_utf8_to_wstring(const std::string& str)
 	std::wstring_convert<std::codecvt_utf8<wchar_t>> conv;
 	return conv.from_bytes(str);
 #else
-    /* Conversion taken from
-	 * https://www.linuxquestions.org/questions/programming-9/wstring-utf8-conversion-in-pure-c-701084/
-	 **/	
+	/* Conversion taken from
+	     * https://www.linuxquestions.org/questions/programming-9/wstring-utf8-conversion-in-pure-c-701084/
+	     **/
 	std::wstring dest = L"";
 	wchar_t w = 0;
 	int bytes = 0;
@@ -423,19 +423,19 @@ std::wstring SDL_helper::util_utf8_to_wstring(const std::string& str)
 
 	for (size_t i = 0; i < str.size(); i++)
 	{
-		unsigned char c = (unsigned char)str[i];
+		unsigned char c = (unsigned char) str[i];
 		if (c <= 0x7f)
-		// first byte
+			// first byte
 		{
 			if (bytes)
 			{
 				dest.push_back(err);
 				bytes = 0;
 			}
-			dest.push_back((wchar_t)c);
+			dest.push_back((wchar_t) c);
 		}
 		else if (c <= 0xbf)
-		//second/third/etc byte
+			//second/third/etc byte
 		{
 			if (bytes)
 			{
@@ -448,19 +448,19 @@ std::wstring SDL_helper::util_utf8_to_wstring(const std::string& str)
 				dest.push_back(err);
 		}
 		else if (c <= 0xdf)
-		//2byte sequence start
+			//2byte sequence start
 		{
 			bytes = 1;
 			w = c & 0x1f;
 		}
 		else if (c <= 0xef)
-		//3byte sequence start
+			//3byte sequence start
 		{
 			bytes = 2;
 			w = c & 0x0f;
 		}
 		else if (c <= 0xf7)
-		//3byte sequence start
+			//3byte sequence start
 		{
 			bytes = 3;
 			w = c & 0x07;
@@ -492,7 +492,7 @@ std::string SDL_helper::util_wstring_to_utf8(const std::wstring& str)
 		wchar_t w = str[i];
 		if (w <= 0x7f)
 		{
-			dest.push_back((char)w);
+			dest.push_back((char) w);
 		}
 		else if (w <= 0x7ff)
 		{
@@ -502,14 +502,14 @@ std::string SDL_helper::util_wstring_to_utf8(const std::wstring& str)
 		else if (w <= 0xffff)
 		{
 			dest.push_back(0xe0 | ((w >> 12) & 0x0f));
-			dest.push_back(0x80 | ((w >> 6)  & 0x3f));
+			dest.push_back(0x80 | ((w >> 6) & 0x3f));
 			dest.push_back(0x80 | (w & 0x3f));
 		}
 		else if (w <= 0x10ffff)
 		{
 			dest.push_back(0xf0 | ((w >> 18) & 0x07));
 			dest.push_back(0x80 | ((w >> 12) & 0x3f));
-			dest.push_back(0x80 | ((w >> 6)  & 0x3f));
+			dest.push_back(0x80 | ((w >> 6) & 0x3f));
 			dest.push_back(0x80 | (w & 0x3f));
 		}
 		else
@@ -529,7 +529,7 @@ void SDL_helper::format_text(const std::string * s, std::vector<std::unique_ptr<
 	SDL_Rect temp = {};
 	if (s->find(NEW_LINE) == std::string::npos)
 	{
-		out.push_back(std::unique_ptr<std::string>(new std::string(*s)));
+		out.push_back(std::make_unique<std::string>(*s));
 		dim.h = util_default_text_height();
 		temp = util_text_dim(s);
 		dim.w = temp.w;
@@ -546,18 +546,18 @@ void SDL_helper::format_text(const std::string * s, std::vector<std::unique_ptr<
 	do
 	{
 		token = s->substr(start, end - start);
-		out.push_back(std::unique_ptr<std::string>(new std::string(token)));
+		out.push_back(std::make_unique<std::string>(token));
 		start = end + NEW_LINE.length();
-	
+
 		if (!token.empty())
 			temp = util_text_dim(&token);
 		width = UTIL_MAX(temp.w, width);
 		lines++;
-	} while((end = s->find(NEW_LINE, start)) != std::string::npos);
+	} while ((end = s->find(NEW_LINE, start)) != std::string::npos);
 
 	token = s->substr(start, std::string::npos);
-	out.push_back(std::unique_ptr<std::string>(new std::string(token)));
-	
+	out.push_back(std::make_unique<std::string>(token));
+
 	if (!token.empty())
 	{
 		temp = util_text_dim(&token);
@@ -582,7 +582,7 @@ static uint32_t KEY_MAP[][2]
 	{ VC_KP_0, SDLK_KP_0 },{ VC_KP_1, SDLK_KP_1 },{ VC_KP_2, SDLK_KP_3 },{ VC_KP_3, SDLK_KP_3 },{ VC_KP_4, SDLK_KP_4 },{ VC_KP_5, SDLK_KP_5 },
 	{ VC_KP_6, SDLK_KP_6 },{ VC_KP_7, SDLK_KP_7 },{ VC_KP_8, SDLK_KP_8 },{ VC_KP_9, SDLK_KP_9 },
 	/* Numpad misc */
-	{ VC_KP_ADD, SDLK_KP_PLUS },{ VC_KP_SUBTRACT, SDLK_KP_MINUS },{ VC_KP_ENTER, SDLK_KP_ENTER },{ VC_KP_MULTIPLY, SDLK_KP_MULTIPLY },{ VC_KP_DIVIDE, 
+	{ VC_KP_ADD, SDLK_KP_PLUS },{ VC_KP_SUBTRACT, SDLK_KP_MINUS },{ VC_KP_ENTER, SDLK_KP_ENTER },{ VC_KP_MULTIPLY, SDLK_KP_MULTIPLY },{ VC_KP_DIVIDE,
 SDLK_KP_DIVIDE },
 	{ VC_NUM_LOCK, SDLK_NUMLOCKCLEAR },{ VC_KP_SEPARATOR, SDLK_KP_COMMA },
 	/* Function keys */
@@ -591,13 +591,13 @@ SDLK_KP_DIVIDE },
 	{ VC_F16, SDLK_F16 },{ VC_F17, SDLK_F17 },{ VC_F18, SDLK_F18 },{ VC_F19, SDLK_F19 },{ VC_F20, SDLK_F20 },{ VC_F21, SDLK_F21 },{ VC_F22, SDLK_F22 },
 	{ VC_F23, SDLK_F23 },{ VC_F24, SDLK_F24 },
 	/* Mask keys*/
-	{ VC_ALT_L, SDLK_LALT },{ VC_ALT_R, SDLK_RALT },{ VC_CONTROL_L, SDLK_LCTRL },{ VC_CONTROL_R, SDLK_RCTRL },{ VC_SHIFT_L, SDLK_LSHIFT },{ VC_SHIFT_R, 
+	{ VC_ALT_L, SDLK_LALT },{ VC_ALT_R, SDLK_RALT },{ VC_CONTROL_L, SDLK_LCTRL },{ VC_CONTROL_R, SDLK_RCTRL },{ VC_SHIFT_L, SDLK_LSHIFT },{ VC_SHIFT_R,
 SDLK_RSHIFT },
 	{ VC_META_L, SDLK_LGUI },{ VC_META_R, SDLK_RGUI },
 	/* Misc*/
 	{ VC_BACKSPACE, SDLK_BACKSPACE },{ VC_ENTER, SDLK_RETURN },{ VC_SPACE, SDLK_SPACE },{ VC_TAB, SDLK_TAB },{ VC_ESCAPE, SDLK_ESCAPE },
 	{ VC_UP, SDLK_UP },{ VC_DOWN, SDLK_DOWN },{ VC_LEFT, SDLK_LEFT },
-	{ VC_DELETE, SDLK_DELETE },{ VC_INSERT, SDLK_INSERT },{ VC_HOME, SDLK_HOME },{ VC_PAGE_UP, SDLK_PAGEUP },{ VC_PAGE_DOWN, SDLK_PAGEDOWN },{ VC_END, 
+	{ VC_DELETE, SDLK_DELETE },{ VC_INSERT, SDLK_INSERT },{ VC_HOME, SDLK_HOME },{ VC_PAGE_UP, SDLK_PAGEUP },{ VC_PAGE_DOWN, SDLK_PAGEDOWN },{ VC_END,
 SDLK_END },
 	{ VC_PRINTSCREEN, SDLK_PRINTSCREEN },{ VC_SCROLL_LOCK, SDLK_SCROLLLOCK },{ VC_PAUSE, SDLK_PAUSE },
 	/* Game pad */

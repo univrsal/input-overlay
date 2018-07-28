@@ -74,7 +74,7 @@ public:
 		SDL_Rect temp = { m_pos.x * cs->get_scale() + cs->get_origin_x(),
 			m_pos.y * cs->get_scale() + cs->get_origin_y(),
 			m_texture_mapping.w * cs->get_scale(),
-			m_texture_mapping.h * cs->get_scale()};
+			m_texture_mapping.h * cs->get_scale() };
 		SDL_Rect temp_mapping = m_texture_mapping;
 
 		if (m_pressed)
@@ -114,7 +114,7 @@ public:
 	}
 
 	void set_id(std::string id) { m_id = id; }
-	void set_vc(uint16_t vc){ m_keycode = vc; }
+	void set_vc(uint16_t vc) { m_keycode = vc; }
 
 	std::string * get_id() { return &m_id; }
 	int get_x() { return m_pos.x; }

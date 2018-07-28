@@ -28,9 +28,7 @@ Palette::Palette()
 }
 
 Palette::~Palette()
-{
-
-}
+= default;
 
 SDL_Color * Palette::get_bg(void)
 {
@@ -84,7 +82,7 @@ SDL_Color * Palette::red(void)
 
 SDL_Color * Palette::green(void)
 {
-    return &m_green;
+	return &m_green;
 }
 
 SDL_Color * Palette::get_tooltip_body(void)

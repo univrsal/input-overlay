@@ -49,7 +49,7 @@ void Checkbox::close(void)
 
 bool Checkbox::can_select(void)
 {
-    return true;
+	return true;
 }
 
 void Checkbox::select_state(bool state)
@@ -68,7 +68,7 @@ void Checkbox::draw_background(void)
 	if (m_focused)
 	{
 		get_helper()->util_draw_rect(get_left() - 2, get_top() - 2,
-			get_width() + 4,get_height() + 4, get_helper()->palette()->light_gray());
+			get_width() + 4, get_height() + 4, get_helper()->palette()->light_gray());
 	}
 }
 
@@ -77,7 +77,7 @@ void Checkbox::draw_foreground(void)
 	m_label->draw_foreground();
 	if (m_state)
 	{
-		get_helper()->util_fill_rect(get_left() + 4, get_top() + m_checkbox.y +4,
+		get_helper()->util_fill_rect(get_left() + 4, get_top() + m_checkbox.y + 4,
 			CHECKBOX_SIZE - 8, CHECKBOX_SIZE - 8, get_helper()->palette()->green());
 	}
 }

@@ -20,6 +20,8 @@
 #define TEXTBOX_KEYBIND 1 << 3
 #define TEXTBOX_DROP_FILE 1 << 4
 
+#define ACTION_FILE_DROPPED -20
+
 class Dialog;
 
 class GuiElement;
@@ -31,25 +33,25 @@ public:
 
 	~Textbox();
 
-	void close(void);
+	void close(void) override;
 
-	void draw_background(void);
+	void draw_background(void) override;
 
-	void draw_foreground(void);
+	void draw_foreground(void) override;
 
-	bool handle_events(SDL_Event * event);
+	bool handle_events(SDL_Event * event) override;
 
-	bool can_select(void);
+	bool can_select(void) override;
 
-	void select_state(bool state);
+	void select_state(bool state) override;
+
+	uint8_t get_cursor(void) override;
 
 	void set_text(std::string s);
 
 	void set_hex_int(uint16_t i);
 
 	void append_text(std::string s);
-
-	uint8_t get_cursor(void);
 
 	const std::string * get_text();
 

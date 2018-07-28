@@ -35,9 +35,9 @@ public:
 		m_tool = tool;
 	};
 
-	void init();
+	void init() override;
 
-	void action_performed(int8_t action_id);
+	void action_performed(int8_t action_id) override;
 
 	void set_wh(int w, int h);
 	void set_xy(int x, int y);

@@ -17,28 +17,18 @@ public:
     ~Palette();
 
     SDL_Color * get_bg(void);
-
     SDL_Color * get_fg(void);
-
     SDL_Color * get_accent(void);
-
     SDL_Color * get_tooltip_body(void);
-
     SDL_Color * white(void);
-
     SDL_Color * black(void);
-
     SDL_Color * gray(void);
-
     SDL_Color * dark_gray(void);
-
     SDL_Color * light_gray(void);
-
     SDL_Color * blue(void);
-
     SDL_Color * red(void);
-
     SDL_Color * green(void);
+
 private:
     SDL_Color m_background;
     SDL_Color m_foreground;

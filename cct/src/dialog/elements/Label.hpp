@@ -26,13 +26,13 @@ public:
 
 	~Label();
 
-	void close(void);
+	void close(void) override;
 
-	void draw_background(void);
+	void draw_background(void) override;
 
-	void draw_foreground(void);
+	void draw_foreground(void) override;
 
-	bool handle_events(SDL_Event * event);
+	bool handle_events(SDL_Event * event) override;
 
 	void set_text(std::string text);
 	

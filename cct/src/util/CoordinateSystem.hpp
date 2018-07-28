@@ -88,21 +88,21 @@ public:
 
 	SDL_Rect get_dimensions(void) { return m_dimensions; }
 	SDL_helper * get_helper(void) { return m_helper; }
-	const SDL_Rect * get_system_area(void) { return & m_system_area; }
+	const SDL_Rect * get_system_area(void) { return &m_system_area; }
 
 	void set_selection(SDL_Rect * r) { m_selection = r; }
 
 	/* Prepares the viewport to fit inside the coordinate system area */
 	void begin_draw(void) { SDL_RenderSetViewport(m_helper->renderer(), &m_system_area); }
 	/* Resets the viewport */
-	void end_draw(void) { SDL_RenderSetViewport(m_helper->renderer(), NULL); }
+	void end_draw(void) { SDL_RenderSetViewport(m_helper->renderer(), nullptr); }
 
 	/* Translates any point to the viewport*/
 	void translate(int& x, int& y);
 
 	void draw_selection(void);
 private:
-	
+
 	void draw_rulers(void);
 	void mouse_state(SDL_Event * event);
 

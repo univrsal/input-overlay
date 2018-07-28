@@ -27,22 +27,22 @@ public:
 
 	~AtlasSelector();
 
-	void close(void);
+	void close(void) override;
 
 	void init(Dialog *parent, SDL_Rect dim, int8_t id);
 
-	void draw_foreground(void);
+	void draw_foreground(void) override;
 
-	void draw_background(void);
+	void draw_background(void) override;
 
-	bool handle_events(SDL_Event * event);
+	bool handle_events(SDL_Event * event) override;
 
-	uint8_t get_cursor(void);
+	uint8_t get_cursor(void) override;
 
 	void set_selection(SDL_Rect * r) { m_cs->set_selection(r); }
 private:
-	void resize();
-	
+	void resize() override;
+
 	Texture * m_atlas; /* Is loaded in Config, and will be deleted there */
 	CoordinateSystem * m_cs;
 

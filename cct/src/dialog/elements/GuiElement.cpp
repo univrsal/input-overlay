@@ -12,7 +12,7 @@
 GuiElement::~GuiElement()
 {
 	close();
-	m_parent_dialog = NULL;
+	m_parent_dialog = nullptr;
 }
 
 void GuiElement::close(void)
@@ -65,7 +65,7 @@ void GuiElement::init(Dialog *parent, SDL_Rect dim, int8_t id)
 
 	m_position.x = dim.x;
 	m_position.y = dim.y;
-	
+
 	m_element_id = id;
 }
 
@@ -115,7 +115,7 @@ int GuiElement::get_bottom()
 
 int GuiElement::get_width(void)
 {
-    return m_dimensions.w;
+	return m_dimensions.w;
 }
 
 int GuiElement::get_height(void)

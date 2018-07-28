@@ -40,19 +40,19 @@ public:
 		m_type = type;
 	}
 
-	void close(void);
+	void close(void) override;
+
+	void init() override;
+
+	void action_performed(int8_t action_id) override;
+
+	void draw_background(void) override;
+
+	void draw_foreground(void) override;
+
+	bool handle_events(SDL_Event * event) override;
 
 	void load_from_element(Element * e);
-
-	void init();
-
-	void action_performed(int8_t action_id);
-
-	void draw_background(void);
-
-	void draw_foreground(void);
-
-	bool handle_events(SDL_Event * event);
 
 	ElementType get_type(void);
 

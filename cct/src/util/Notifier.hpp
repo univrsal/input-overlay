@@ -50,7 +50,7 @@ public:
 	{
 		m_messages = std::vector<std::unique_ptr<Message>>();
 		m_helper = h;
-		m_dim = { 0, 0};
+		m_dim = { 0, 0 };
 	}
 
 	~Notifier()
