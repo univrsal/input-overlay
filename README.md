@@ -10,11 +10,14 @@ Available for OBS Studio 19.0.3+ on windows (32bit/64bit) and linux (64bit).
 Does NOT work with OBS Streamlabs!
 Head over to [releases](https://github.com/univrsal/input-overlay/releases) for binaries.
 
+## Contributing
+Any contribution is greatly appreciated.
+If you have questions on how to get started I'm open to questions
+
 [Layout presets](https://github.com/univrsal/input-overlay/tree/master/presets)
 
 ### How to use
 ![tut](http://hnng.moe/f/WHe)
-![tut2](http://hnng.moe/f/Xcp)
 
 ## Credits
 input-overlay depends on [libuiohook](https://github.com/kwhat/libuiohook) by [kwhat](https://github.com/kwhat) licenced under the [GNU General Public Licence v3.0](https://www.gnu.org/licenses/gpl-3.0.txt)
