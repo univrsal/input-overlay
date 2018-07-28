@@ -23,7 +23,7 @@ bool obs_module_load(void)
 {
 	Sources::register_history();
 	Sources::register_overlay_source();
-	Hook::start_hook();
+	//Hook::start_hook();
 
 	start_pad_hook();
 

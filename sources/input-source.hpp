@@ -34,7 +34,6 @@ class InputSource
 {
 public:
 	obs_source_t *m_source = nullptr;
-	gs_image_file_t *m_image = nullptr;
 	uint32_t cx = 0;
 	uint32_t cy = 0;
 

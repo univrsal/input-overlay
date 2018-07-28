@@ -46,7 +46,7 @@ enum WheelDirection
 enum ElementType
 {
 	ELEMENT_TEXTURE,
-	ELEMENT_BUTTON,
+	ELEMENT_BUTTON = 2,
 	ELEMENT_WHEEL,
 	ELEMENT_MOUSE_MOVEMENT,
 	ELEMENT_ANALOG_STICK,
@@ -132,7 +132,7 @@ public:
 
 	virtual void load(ccl_config * cfg, std::string id) { /*NO-OP*/
 	};
-	virtual void draw(gs_effect_t *effect, gs_image_file_t * m_image, ElementData * data) { /*NO-OP*/
+	virtual void draw(gs_effect_t * effect, gs_image_file_t * m_image, ElementData * data) { /*NO-OP*/
 	};
 
 	ElementType get_type() {
@@ -145,28 +145,28 @@ public:
 protected:
 	void read_size(ccl_config * cfg, std::string id)
 	{
-		if (cfg->node_exists(id.append(CFG_WIDTH)))
+		if (cfg->node_exists(id + CFG_WIDTH))
 		{
-			m_width = cfg->get_int(id.append(CFG_WIDTH));
-			m_height = cfg->get_int(id.append(CFG_HEIGHT));
+			m_width = cfg->get_int(id + CFG_WIDTH);
+			m_height = cfg->get_int(id + CFG_HEIGHT);
 		}
 		else
 		{
-			m_width = cfg->get_int(DEFAULT_WIDTH);
-			m_width = cfg->get_int(DEFAULT_HEIGHT);
+			m_width = cfg->get_int(CFG_DEFAULT_WIDTH);
+			m_height = cfg->get_int(CFG_DEFAULT_HEIGHT);
 		}
 	}
 
 	void read_pos(ccl_config * cfg, std::string id)
 	{
-		m_xpos = cfg->get_int(id.append(CFG_X_POS));
-		m_ypos = cfg->get_int(id.append(CFG_Y_POS));
+		m_xpos = cfg->get_int(id + CFG_X_POS);
+		m_ypos = cfg->get_int(id + CFG_Y_POS);
 	}
 
 	void read_uv(ccl_config * cfg, std::string id)
 	{
-		m_u = cfg->get_int(id.append(CFG_U));
-		m_v = cfg->get_int(id.append(CFG_V));
+		m_u = cfg->get_int(id + CFG_U);
+		m_v = cfg->get_int(id + CFG_V);
 	}
 
 	int m_xpos, m_ypos;
@@ -178,14 +178,18 @@ protected:
 
 class ElementTexture : public Element
 {
-	void load(ccl_config * cfg, std::string id);
-	void draw(gs_effect_t * effect, gs_image_file_t * image, ElementData * data);
+public:
+	ElementTexture() : Element(ElementType::ELEMENT_TEXTURE) { };
+	void load(ccl_config * cfg, std::string id) override;
+	void draw(gs_effect_t * effect, gs_image_file_t * image, ElementData * data) override;
 };
 
 class ElementButton : public Element
 {
-	void load(ccl_config * cfg, std::string id);
-	void draw(gs_effect_t * effect, gs_image_file_t * image, ElementData * data);
+public:
+	ElementButton() : Element(ElementType::ELEMENT_BUTTON) { };
+	void load(ccl_config * cfg, std::string id) override;
+	void draw(gs_effect_t * effect, gs_image_file_t * image, ElementData * data) override;
 };
 
 class Overlay
@@ -206,19 +210,22 @@ public:
 		return m_image;
 	}
 
+	int get_widt() { return m_w; }
+	int get_height() { return m_h; }
 private:
 	bool load_cfg(std::string path);
 	bool load_texture(std::string path);
 	void unload_texture();
-	void load_element(std::string id, ccl_config * cfg);
+	void load_element(ccl_config * cfg, std::string id);
 
 	gs_image_file_t * m_image = nullptr;
 
 	uint16_t m_w, m_h;
+	uint16_t m_default_element_w, m_default_element_h;
 	uint16_t texture_v_space;
 
 	bool m_is_loaded = false;
-	std::vector<Element> m_elements;
+	std::vector<std::unique_ptr<Element>> m_elements;
 
 	uint16_t m_track_radius;
 	uint16_t m_max_mouse_movement;

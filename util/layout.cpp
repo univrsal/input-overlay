@@ -26,8 +26,23 @@ bool Overlay::load_cfg(std::string path)
 {
 	ccl_config * cfg = new ccl_config(path, "");
 	bool flag = true;
-	// TODO: Load general values and elements
 
+	if (!cfg->has_fatal_errors())
+	{
+		m_default_element_h = cfg->get_int(CFG_DEFAULT_HEIGHT);
+		m_default_element_w = cfg->get_int(CFG_DEFAULT_WIDTH);
+
+		m_w = cfg->get_int(CFG_TOTAL_WIDTH);
+		m_h = cfg->get_int(CFG_TOTAL_HEIGHT);
+
+		std::string element_id = cfg->get_string(CFG_FIRST_ID);
+
+		while(!element_id.empty())
+		{
+			load_element(cfg, element_id);
+			element_id = cfg->get_string(element_id + CFG_NEXT_ID);
+		}
+	}
 
 	if (cfg->has_errors())
 	{
@@ -37,7 +52,6 @@ bool Overlay::load_cfg(std::string path)
 			flag = false;
 		}
 	}
-
 	delete cfg;
 	cfg = nullptr;
 	return flag;
@@ -78,32 +92,45 @@ void Overlay::unload_texture()
 
 void Overlay::draw(gs_effect_t * effect)
 {
-	for (auto element : m_elements)
+	if (m_is_loaded)
 	{
-		ElementData * data = nullptr;
-		if (element.get_type() != ELEMENT_TEXTURE)
+		for (auto const& element : m_elements)
 		{
-			data = Hook::input_data->get_by_code(element.get_keycode());
+			ElementData * data = nullptr;
+			if (element->get_type() != ELEMENT_TEXTURE)
+			{
+				//data = Hook::input_data->get_by_code(element->get_keycode());
+			}
+			element->draw(effect, m_image, data);
 		}
-		element.draw(effect, m_image, data);
 	}
 }
 
-void Overlay::load_element(std::string id, ccl_config * cfg)
+void Overlay::load_element(ccl_config * cfg, std::string id)
 {
-	int type = cfg->get_int(id.append(CFG_TYPE));
-
+	int type = cfg->get_int(id + CFG_TYPE);
+	Element * new_element = nullptr;
 	switch (type)
 	{
 	case ELEMENT_TEXTURE:
 
 		break;
 	case ELEMENT_BUTTON:
-
+		new_element = new ElementButton();
+		reinterpret_cast<ElementButton*>(new_element)->load(cfg, id);
 		break;
 	default:
 		break;
 	}
+
+	if (new_element)
+	{
+		m_elements.emplace_back(new_element);
+#ifdef _DEBUG
+		blog(LOG_WARNING, "Added overlay element:\n Type: %i\n ID: %s\n ", new_element->get_type(), id.c_str());
+#endif
+	}
+		
 }
 
 void ElementTexture::load(ccl_config * cfg, std::string id)
@@ -127,12 +154,24 @@ void ElementButton::load(ccl_config * cfg, std::string id)
 	read_pos(cfg, id);
 	read_uv(cfg, id);
 	read_size(cfg, id);
-	m_keycode = cfg->get_hex(id.append("_code"));
+	m_keycode = cfg->get_hex(id + CFG_KEY_CODE);
 }
 
 void ElementButton::draw(gs_effect_t * effect, gs_image_file_t * image, ElementData * data)
 {
+	gs_effect_set_texture(gs_effect_get_param_by_name(effect, "image"), image->texture);
+	gs_matrix_translate3f((float) m_xpos, (float) m_ypos, 1.f);
 
+	if (data && reinterpret_cast<ElementDataButton*>(data)->get_state() == STATE_PRESSED)
+	{
+		gs_draw_sprite_subregion(image->texture, 0, m_u + m_width + INNER_BORDER - OUTTER_BORDER, m_v + m_width
+			+ INNER_BORDER - OUTTER_BORDER, m_width + OUTTER_BORDER * 2, m_height + OUTTER_BORDER * 2);
+	}
+	else
+	{
+		gs_draw_sprite_subregion(image->texture, 0, m_u - OUTTER_BORDER, m_v - OUTTER_BORDER,
+			m_width + OUTTER_BORDER * 2, m_height + OUTTER_BORDER * 2);
+	}
 }
 
 void ElementDataHolder::add_data(uint16_t keycode, ElementData * data)

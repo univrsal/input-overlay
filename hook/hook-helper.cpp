@@ -134,6 +134,7 @@ namespace Hook {
 
 	void start_hook(void)
 	{
+		input_data = new ElementDataHolder();
 #ifdef _WIN32
 		hook_running_mutex = CreateMutex(NULL, FALSE, TEXT("hook_running_mutex"));
 		hook_control_mutex = CreateMutex(NULL, FALSE, TEXT("hook_control_mutex"));
@@ -155,7 +156,6 @@ namespace Hook {
 		case UIOHOOK_SUCCESS:
 			// We no longer block, so we need to explicitly wait for the thread to die.
 			hook_initialized = true;
-			input_data = new ElementDataHolder();
 			break;
 		case UIOHOOK_ERROR_OUT_OF_MEMORY:
 			blog(LOG_ERROR, "[input-overlay] Failed to allocate memory. (%#X)\n", status);

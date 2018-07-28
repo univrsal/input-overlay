@@ -6,8 +6,11 @@
  */
 #pragma once
 
-#define DEFAULT_WIDTH "default_width"
-#define DEFAULT_HEIGHT "default_height"
+#define CFG_DEFAULT_WIDTH "default_width"
+#define CFG_DEFAULT_HEIGHT "default_height"
+
+#define CFG_TOTAL_WIDTH	"overlay_width"
+#define CFG_TOTAL_HEIGHT "overlay_height"
 
 #define CFG_X_POS	"_x_pos"
 #define CFG_Y_POS	"_y_pos"

@@ -228,13 +228,4 @@ uint16_t util_mouse_to_vc(int m);
 uint16_t random_vc(void);
 #endif
 
-#ifndef WINDOWS
-// uiohook doesn't define these on linux
-// and I don't want to header guard them
-// in the switch case...
-#define VC_KP_UP 	0xEE48
-#define VC_KP_DOWN 	0xEE4B
-#define VC_KP_LEFT	0xEE4D
-#define VC_KP_RIGHT	0xEE50
-#endif
 #endif
