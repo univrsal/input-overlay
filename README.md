@@ -12,7 +12,7 @@ Head over to [releases](https://github.com/univrsal/input-overlay/releases) for 
 
 ## Contributing
 Any contribution is greatly appreciated.
-If you have questions on how to get started I'm open to questions
+If you have questions on how to get started I'll try my best to help
 
 [Layout presets](https://github.com/univrsal/input-overlay/tree/master/presets)
 
