@@ -104,7 +104,7 @@ void Tool::action_performed(uint8_t type)
 	case TOOL_ACTION_HELP_OPEN:
 		close_toplevel();
 		m_state = IN_HELP;
-		m_toplevel = new DialogHelp(m_helper, SDL_Point { 350, 420 }, this);
+		m_toplevel = new DialogHelp(m_helper, SDL_Point { 355, 420 }, this);
 		m_toplevel->init();
 		break;
 	case TOOL_ACTION_HELP_EXIT:

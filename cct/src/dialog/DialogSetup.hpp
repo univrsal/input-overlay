@@ -31,6 +31,8 @@ public:
 
 	void init() override;
 
+	void draw_background(void) override;
+	
 	void action_performed(int8_t action_id) override;
 
 	SDL_Point get_default_dim();

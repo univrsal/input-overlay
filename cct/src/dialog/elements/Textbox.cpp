@@ -37,17 +37,17 @@ void Textbox::draw_foreground(void)
 
 	if (!m_cut_text.empty())
 	{
-		get_helper()->util_text_wstr(&m_cut_text, cursor_pos, get_top() + 2,
-			get_helper()->palette()->white());
-		cursor_pos += get_helper()->util_text_wstr_dim(&m_cut_text).w;
+		get_helper()->util_text(&m_cut_text, cursor_pos, get_top() + 2,
+			get_helper()->palette()->white(), FONT_WSTRING);
+		cursor_pos += get_helper()->util_text_dim(&m_cut_text, FONT_WSTRING).w;
 
 	}
 
 	if (!m_composition.empty())
 	{
-		get_helper()->util_text_wstr(&m_composition, 2 + cursor_pos, get_top() + 2,
-			get_helper()->palette()->blue());
-		cursor_pos += get_helper()->util_text_wstr_dim(&m_composition).w;
+		get_helper()->util_text(&m_composition, 2 + cursor_pos, get_top() + 2,
+			get_helper()->palette()->blue(), FONT_WSTRING);
+		cursor_pos += get_helper()->util_text_dim(&m_composition, FONT_WSTRING).w;
 	}
 
 	if (m_focused)

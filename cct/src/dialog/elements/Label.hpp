@@ -22,6 +22,7 @@ class Label :
 {
 public:
 	Label(int8_t id, int x, int y, const char * text, Dialog * parent);
+	Label(int8_t id, int x, int y, const char * text, Dialog * parent, uint8_t font);
 	Label(int8_t id, int x, int y, const char * text, Dialog * parent, SDL_Color * color);
 
 	~Label();
@@ -35,11 +36,12 @@ public:
 	bool handle_events(SDL_Event * event) override;
 
 	void set_text(std::string text);
-	
+
+	void set_font(uint8_t font) { m_font = UTIL_CLAMP(FONT_ROBOTO_SMALL, font, FONT_WSTRING); }
 private:
 	std::vector<std::unique_ptr<std::string>> m_lines;
 
 	SDL_Color *m_color;
 
-	uint8_t m_type;
+	uint8_t m_font = FONT_ROBOTO_SMALL;
 };

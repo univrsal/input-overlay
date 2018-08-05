@@ -11,10 +11,11 @@
 
 #define FONT_SMALL 10
 #define FONT_DEFAULT 15
-#define FONT_LARGE 25
+#define FONT_LARGE 18
 
-#define FONT_ROBOTO 0
-#define FONT_LODE 1
+#define FONT_ROBOTO_SMALL 0
+#define FONT_ROBOTO_LARGE 1
+#define FONT_WSTRING 2
 
 #ifndef RELODED_FONT_H
 #define RELODED_FONT_H

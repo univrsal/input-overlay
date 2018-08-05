@@ -12,7 +12,7 @@
 
 #if _DEBUG
 #define TEXTURE_PATH "D:\\Projects\\prog\\cpp\\input-overlay-releases\\build\\v4.6-pre\\presets\\\wasd-full\\wasd.png"
-#define CONFIG_PATH "C:\\Users\\usr\\Desktop\\test.ini"
+#define CONFIG_PATH "C:\\Users\\user\\Desktop\\test.ini"
 #else
 #define TEXTURE_PATH ""
 #define CONFIG_PATH ""
@@ -23,6 +23,17 @@ void DialogSetup::init()
 	Dialog::init();
 	int8_t id = 1;
 
+	// info labels
+	Label * build_number = nullptr;
+	Label * tip = nullptr;
+	std::string info = std::string(LABEL_BUILD);
+	info.append(std::to_string(BUILD_NUMBER));
+
+	add(build_number = new Label(id++, 8, 8, info.c_str(), this, FONT_ROBOTO_LARGE));
+	build_number->set_flags(ELEMENT_ABSOLUTE_POSITION);
+	add(tip = new Label(id++, 8, 28, LABEL_INFO, this));
+	tip->set_flags(ELEMENT_ABSOLUTE_POSITION);
+	
 	add(new Label(id++, 8, 35, LABEL_TEXTURE_PATH, this));
 	add(m_texture_path = new Textbox(id++, 8, 55, m_dimensions.w - 16, 20, TEXTURE_PATH, this));
 
@@ -48,6 +59,11 @@ void DialogSetup::init()
 	add(new Button(ACTION_CANCEL, 116, m_dimensions.h - 32, BUTTON_EXIT, this));
 
 	set_flags(DIALOG_CENTERED | DIALOG_TEXTINPUT);
+}
+
+void DialogSetup::draw_background(void)
+{
+	Dialog::draw_background();
 }
 
 void DialogSetup::action_performed(int8_t action_id)

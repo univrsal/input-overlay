@@ -95,7 +95,7 @@ void GuiElement::set_flags(uint8_t flags)
 
 int GuiElement::get_left()
 {
-	return m_position.x + get_parent()->position().x;
+	return m_flags & ELEMENT_ABSOLUTE_POSITION ? m_position.x : m_position.x + get_parent()->position().x;
 }
 
 int GuiElement::get_right()
@@ -105,7 +105,7 @@ int GuiElement::get_right()
 
 int GuiElement::get_top()
 {
-	return m_position.y + get_parent()->position().y;
+	return m_flags & ELEMENT_ABSOLUTE_POSITION ? m_position.y : m_position.y + get_parent()->position().y;
 }
 
 int GuiElement::get_bottom()

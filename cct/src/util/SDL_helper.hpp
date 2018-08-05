@@ -77,20 +77,17 @@ public:
 
 	bool util_is_in_rect(const SDL_Rect * rect, int x, int y);
 
-	void util_text(const std::string * text, int x, int y, const SDL_Color * color);
-	void util_text(const std::string * text, int x, int y, const SDL_Color * color, double angle);
-
-	SDL_Rect util_text_dim(const std::string * text);
-
-	void util_text_wstr(const std::string * text, int x, int y, const SDL_Color * color);
-	SDL_Rect util_text_wstr_dim(const std::string * text);
+	void util_text(const std::string * text, int x, int y, const SDL_Color * color, uint8_t font = FONT_ROBOTO_SMALL);
+	void util_text_rot(const std::string * text, int x, int y, const SDL_Color * color, double angle, uint8_t font = FONT_ROBOTO_SMALL);
+	SDL_Rect util_text_dim(const std::string * text, uint8_t font = FONT_ROBOTO_SMALL);
 
 	SDL_Point * util_window_size(void);
 
 	void util_cut_string(std::string &s, int max_width, bool front);
 
 	uint8_t util_default_text_height(void) { return m_default_font_height; }
-	uint8_t util_wstr_text_height(void) { return m_wstr_font_height; }
+	uint8_t util_wstring_text_height(void) { return m_wstring_font_height; }
+	uint8_t util_large_text_height(void) { return m_large_font_height; }
 
 	inline void util_enable_mask(uint16_t & masks, uint16_t mask);
 	inline void util_disable_mask(uint16_t & masks, uint16_t mask);
@@ -99,8 +96,8 @@ public:
 
 	std::wstring util_utf8_to_wstring(const std::string& str);
 	std::string util_wstring_to_utf8(const std::wstring& str);
-
-	void format_text(const std::string * s, std::vector<std::unique_ptr<std::string>>& out, SDL_Rect& dim);
+	
+	void format_text(const std::string * s, std::vector<std::unique_ptr<std::string>>& out, SDL_Rect& dim, uint8_t font = FONT_ROBOTO_SMALL);
 
 	uint32_t vc_to_sdl_key(uint16_t key);
 	uint16_t sdl_key_to_vc(uint32_t key);
@@ -128,15 +125,35 @@ public:
 	void exit_loop(void);
 	void set_runflag(bool * flag);
 	void handle_events(SDL_Event * event);
+
+	uint8_t util_font_height(uint8_t font);
 private:
+	TTF_Font * get_font(uint8_t type)
+	{
+		switch (type)
+		{
+			default:
+			case FONT_ROBOTO_SMALL:
+				return m_default_font;
+			case FONT_ROBOTO_LARGE:
+				return m_large_font;
+			case FONT_WSTRING:
+				return m_wstring_font;
+		}
+	}
+
+
 	SDL_Point m_window_size;
-	SDL_Renderer * m_sdl_renderer;
-	SDL_Window * m_sdl_window;
-	TTF_Font * m_default_font;
-	TTF_Font * m_utf8_font;
+	SDL_Renderer * m_sdl_renderer = nullptr;
+	SDL_Window * m_sdl_window = nullptr;
+
+	TTF_Font * m_default_font = nullptr;
+	TTF_Font * m_large_font = nullptr;
+	TTF_Font * m_wstring_font = nullptr;
 
 	uint8_t m_default_font_height;
-	uint8_t m_wstr_font_height;
+	uint8_t m_large_font_height;
+	uint8_t m_wstring_font_height;
 
 	bool m_init_success;
 
@@ -145,8 +162,8 @@ private:
 	bool m_ctrl_down = false;
 	bool m_shift_down = false;
 
-	Palette *m_palette;
-	FontHelper *m_font_helper;
+	Palette * m_palette = nullptr;
+	FontHelper * m_font_helper = nullptr;
 
 	bool m_have_cursors = false;
 	SDL_Cursor * m_size_h = nullptr;

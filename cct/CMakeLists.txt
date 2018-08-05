@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 2.8)
 project(io-cct)
 
+file (STRINGS "build.txt" BUILD_NUMBER_)
+add_definitions(-DBUILD_NUMBER=${BUILD_NUMBER_})
+
 macro(use_cxx11)
   if (CMAKE_VERSION VERSION_LESS "3.1")
     if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")

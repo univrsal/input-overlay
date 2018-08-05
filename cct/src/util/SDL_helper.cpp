@@ -9,12 +9,6 @@
 
 SDL_helper::SDL_helper()
 {
-	m_sdl_renderer = nullptr;
-	m_sdl_window = nullptr;
-	m_init_success = true;
-	m_default_font = nullptr;
-	m_font_helper = nullptr;
-	m_palette = nullptr;
 }
 
 SDL_helper::~SDL_helper()
@@ -38,7 +32,7 @@ bool SDL_helper::init()
 		m_init_success = false;
 	}
 
-	m_sdl_window = SDL_CreateWindow(WINDOW_TITLE, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+	m_sdl_window = SDL_CreateWindow(WINDOW_TITLE, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
 		WINDOW_WIDTH, WINDOW_HEIGHT,
 		SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
 
@@ -92,9 +86,10 @@ bool SDL_helper::init()
 	{
 
 		m_default_font = TTF_OpenFont(PATH_ROBOTO_FONT, FONT_DEFAULT);
-		m_utf8_font = TTF_OpenFont(PATH_UNICODE_FONT, FONT_DEFAULT);
+		m_large_font = TTF_OpenFont(PATH_ROBOTO_FONT, FONT_LARGE);
+		m_wstring_font = TTF_OpenFont(PATH_UNICODE_FONT, FONT_DEFAULT);
 
-		if (!m_default_font || !m_utf8_font)
+		if (!m_default_font || !m_wstring_font)
 		{
 			printf(SDL_FONT_LOADING_FAILED);
 			m_init_success = false;
@@ -103,8 +98,9 @@ bool SDL_helper::init()
 		{
 			m_font_helper = new FontHelper(this);
 			m_default_font_height = TTF_FontHeight(m_default_font);
-			m_wstr_font_height = TTF_FontHeight(m_utf8_font);
-
+			m_large_font_height = TTF_FontHeight(m_large_font);
+			m_wstring_font_height = TTF_FontHeight(m_wstring_font);
+			
 			/* Cursors */
 			m_size_h = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZEWE);
 			m_size_v = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZENS);
@@ -128,15 +124,14 @@ void SDL_helper::close()
 
 	if (m_default_font)
 		TTF_CloseFont(m_default_font);
-	if (m_utf8_font)
-		TTF_CloseFont(m_utf8_font);
+	if (m_wstring_font)
+		TTF_CloseFont(m_wstring_font);
 
 	m_default_font = nullptr;
-	m_utf8_font = nullptr;
+	m_wstring_font = nullptr;
 
 	TTF_Quit();
 	SDL_Quit();
-
 
 	if (m_size_v)
 		SDL_FreeCursor(m_size_v);
@@ -244,38 +239,27 @@ bool SDL_helper::util_is_in_rect(const SDL_Rect * rect, int x, int y)
 	return x >= rect->x && x <= (rect->x + rect->w) && y >= rect->y && y <= (rect->y + rect->h);
 }
 
-void SDL_helper::util_text(const std::string * text, int x, int y, const SDL_Color * color)
+void SDL_helper::util_text(const std::string * text, int x, int y, const SDL_Color * color, uint8_t font)
 {
+	TTF_Font * ttf_font = get_font(font);
 	if (color == nullptr)
-		m_font_helper->draw(text, x, y, m_default_font, m_palette->white());
+		m_font_helper->draw(text, x, y, ttf_font, m_palette->white());
 	else
-		m_font_helper->draw(text, x, y, m_default_font, color);
+		m_font_helper->draw(text, x, y, ttf_font, color);
 }
 
-void SDL_helper::util_text(const std::string * text, int x, int y, const SDL_Color * color, double angle)
+void SDL_helper::util_text_rot(const std::string * text, int x, int y, const SDL_Color * color, double angle, uint8_t font)
 {
+	TTF_Font * ttf_font = get_font(font);
 	if (color == nullptr)
-		m_font_helper->draw_rot(text, x, y, m_default_font, m_palette->white(), angle);
+		m_font_helper->draw_rot(text, x, y, ttf_font, m_palette->white(), angle);
 	else
-		m_font_helper->draw_rot(text, x, y, m_default_font, color, angle);
+		m_font_helper->draw_rot(text, x, y, ttf_font, color, angle);
 }
 
-SDL_Rect SDL_helper::util_text_dim(const std::string * text)
+SDL_Rect SDL_helper::util_text_dim(const std::string * text, uint8_t font)
 {
-	return m_font_helper->get_text_dimension(m_default_font, text);
-}
-
-void SDL_helper::util_text_wstr(const std::string * text, int x, int y, const SDL_Color * color)
-{
-	if (color == nullptr)
-		m_font_helper->draw(text, x, y, m_utf8_font, m_palette->white());
-	else
-		m_font_helper->draw(text, x, y, m_utf8_font, color);
-}
-
-SDL_Rect SDL_helper::util_text_wstr_dim(const std::string * text)
-{
-	return m_font_helper->get_text_dimension(m_utf8_font, text);
+	return m_font_helper->get_text_dimension(get_font(font), text);
 }
 
 SDL_Point * SDL_helper::util_window_size(void)
@@ -407,6 +391,20 @@ void SDL_helper::handle_events(SDL_Event * event)
 	}
 }
 
+uint8_t SDL_helper::util_font_height(uint8_t font)
+{
+	switch (font)
+	{
+	default:
+	case FONT_ROBOTO_SMALL:
+		return m_default_font_height;
+	case FONT_ROBOTO_LARGE:
+		return m_large_font_height;
+	case FONT_WSTRING:
+		return m_wstring_font_height;
+	}
+}
+
 std::wstring SDL_helper::util_utf8_to_wstring(const std::string& str)
 {
 #ifdef WINDOWS
@@ -521,17 +519,18 @@ std::string SDL_helper::util_wstring_to_utf8(const std::wstring& str)
 #endif
 }
 
-void SDL_helper::format_text(const std::string * s, std::vector<std::unique_ptr<std::string>> & out, SDL_Rect & dim)
+void SDL_helper::format_text(const std::string * s, std::vector<std::unique_ptr<std::string>> & out, SDL_Rect & dim, uint8_t font)
 {
 	if (!s || s->empty())
 		return;
+	uint8_t height = util_font_height(font);
 
 	SDL_Rect temp = {};
 	if (s->find(NEW_LINE) == std::string::npos)
 	{
 		out.push_back(std::make_unique<std::string>(*s));
-		dim.h = util_default_text_height();
-		temp = util_text_dim(s);
+		dim.h = height;
+		temp = util_text_dim(s, font);
 		dim.w = temp.w;
 		return;
 	}
@@ -550,7 +549,7 @@ void SDL_helper::format_text(const std::string * s, std::vector<std::unique_ptr<
 		start = end + NEW_LINE.length();
 
 		if (!token.empty())
-			temp = util_text_dim(&token);
+			temp = util_text_dim(&token, font);
 		width = UTIL_MAX(temp.w, width);
 		lines++;
 	} while ((end = s->find(NEW_LINE, start)) != std::string::npos);
@@ -560,11 +559,11 @@ void SDL_helper::format_text(const std::string * s, std::vector<std::unique_ptr<
 
 	if (!token.empty())
 	{
-		temp = util_text_dim(&token);
+		temp = util_text_dim(&token, font);
 		width = UTIL_MAX(temp.w, width);
 	}
 
-	dim.h = ((m_default_font_height + LINE_SPACE) * lines) - LINE_SPACE; // Last line space doesn't count
+	dim.h = ((height + LINE_SPACE) * lines) - LINE_SPACE; // Last line space doesn't count
 	dim.w = width;
 }
 

@@ -176,7 +176,7 @@ void CoordinateSystem::draw_foreground(void)
 		{
 			std::string tag = std::to_string(((x - m_origin.x) / m_scale_f));
 			SDL_Rect dim = m_helper->util_text_dim(&tag);
-			m_helper->util_text(&tag,
+			m_helper->util_text_rot(&tag,
 				UTIL_CLAMP(get_origin_left() + dim.h + 2, x + dim.h / 2, get_right() - 2),
 				get_origin_top() - dim.w - 6, m_helper->palette()->white(), 90);
 			m_helper->util_draw_line(x, get_origin_top() - 4, x, get_origin_top() + 4, m_helper->palette()->white());
@@ -228,7 +228,7 @@ void CoordinateSystem::draw_foreground(void)
 	m_helper->util_text(&t, get_origin_left() - dim.w - 15, get_origin_top() - dim.h, m_helper->palette()->white());
 	t = LABEL_Y_AXIS;
 	dim = m_helper->util_text_dim(&t);
-	m_helper->util_text(&t, get_origin_left(), get_origin_top() - 15 - dim.w, m_helper->palette()->white(), 90);
+	m_helper->util_text_rot(&t, get_origin_left(), get_origin_top() - 15 - dim.w, m_helper->palette()->white(), 90);
 
 	t = LABEL_SCALE(std::to_string(m_scale_f));
 	dim = m_helper->util_text_dim(&t);

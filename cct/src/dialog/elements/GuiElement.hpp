@@ -11,6 +11,8 @@
 
 #define DEBUG_DRAW_OUTLINE 0
 
+#define ELEMENT_ABSOLUTE_POSITION 1 << 5 /* Element will not align to parent dialog position */
+
 class Dialog;
 
 class SDL_helper;

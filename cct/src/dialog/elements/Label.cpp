@@ -18,6 +18,12 @@ Label::Label(int8_t id, int x, int y, const char *text, Dialog *parent)
 	m_color = get_helper()->palette()->white();
 }
 
+Label::Label(int8_t id, int x, int y, const char * text, Dialog * parent, uint8_t font)
+	: Label(id, x, y, text, parent)
+{
+	m_font = font;
+}
+
 Label::Label(int8_t id, int x, int y, const char * text, Dialog * parent, SDL_Color * color)
 	: Label(id, x, y, text, parent)
 {
@@ -42,15 +48,14 @@ void Label::draw_background(void)
 		int y = 0;
 		for (auto const &line : m_lines)
 		{
-			if (!line.get()->empty())
+			if (!line->empty())
 			{
 				get_helper()->util_text(line.get(), get_left(),
 					get_top() + y,
-					m_color);
+					m_color, m_font);
 			}
-			y += LINE_SPACE + get_helper()->util_default_text_height();
+			y += LINE_SPACE + get_helper()->util_font_height(m_font);
 			i++;
-			break;
 		}
 	}
 }
@@ -58,7 +63,6 @@ void Label::draw_background(void)
 void Label::draw_foreground(void)
 {
 	GuiElement::draw_foreground();
-
 }
 
 bool Label::handle_events(SDL_Event * event)
@@ -72,5 +76,9 @@ void Label::set_text(std::string text)
 	{
 		m_lines.clear();
 		get_helper()->format_text(&text, m_lines, m_dimensions);
+	}
+	else
+	{
+		m_lines.clear();
 	}
 }
