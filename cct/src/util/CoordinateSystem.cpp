@@ -230,7 +230,7 @@ void CoordinateSystem::draw_foreground(void)
 	dim = m_helper->util_text_dim(&t);
 	m_helper->util_text_rot(&t, get_origin_left(), get_origin_top() - 15 - dim.w, m_helper->palette()->white(), 90);
 
-	t = LABEL_SCALE(std::to_string(m_scale_f));
+	t = m_helper->format(LABEL_SCALE, m_scale_f);
 	dim = m_helper->util_text_dim(&t);
 	m_helper->util_text(&t, get_right() - dim.w - 5, m_dimensions.y + dim.h + 5, m_helper->palette()->white());
 

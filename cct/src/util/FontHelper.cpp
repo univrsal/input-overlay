@@ -115,7 +115,7 @@ SDL_Rect FontHelper::get_text_dimension(TTF_Font *font, const std::string *text)
 	}
 	else
 	{
-		printf(SDL_TEXT_TO_SURFACE, TTF_GetError());
+		printf(SDL_TEXT_TO_TEXTURE, TTF_GetError());
 	}
 	SDL_FreeSurface(surface);
 	return dest;

@@ -23,7 +23,7 @@ class DialogSetup : public Dialog
 {
 public:
 	DialogSetup(SDL_helper * sdl, SDL_Point size, Notifier * notifier, Tool * t)
-		: Dialog(sdl, size, DIALOG_SETUP)
+		: Dialog(sdl, size, LANG_DIALOG_SETUP)
 	{
 		m_notifier = notifier;
 		m_tool = t;

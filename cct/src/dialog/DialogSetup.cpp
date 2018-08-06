@@ -31,17 +31,17 @@ void DialogSetup::init()
 
 	add(build_number = new Label(id++, 8, 8, info.c_str(), this, FONT_ROBOTO_LARGE));
 	build_number->set_flags(ELEMENT_ABSOLUTE_POSITION);
-	add(tip = new Label(id++, 8, 28, LABEL_INFO, this));
+	add(tip = new Label(id++, 8, 28, LANG_LABEL_INFO, this));
 	tip->set_flags(ELEMENT_ABSOLUTE_POSITION);
 	
-	add(new Label(id++, 8, 35, LABEL_TEXTURE_PATH, this));
+	add(new Label(id++, 8, 35, LANG_LABEL_TEXTURE_PATH, this));
 	add(m_texture_path = new Textbox(id++, 8, 55, m_dimensions.w - 16, 20, TEXTURE_PATH, this));
 
-	add(new Label(id++, 8, 85, LABEL_CONFIG_PATH, this));
+	add(new Label(id++, 8, 85, LANG_LABEL_CONFIG_PATH, this));
 	add(m_config_path = new Textbox(id++, 8, 105, m_dimensions.w - 16, 20, CONFIG_PATH, this));
 
-	add(new Label(id++, 8, 135, LABEL_DEFAULT_WIDTH, this));
-	add(new Label(id++, (m_dimensions.w / 2) + 4, 135, LABEL_DEFAULT_HEIGHT, this));
+	add(new Label(id++, 8, 135, LANG_LABEL_DEFAULT_WIDTH, this));
+	add(new Label(id++, (m_dimensions.w / 2) + 4, 135, LANG_LABEL_DEFAULT_HEIGHT, this));
 
 	m_def_w = new Textbox(id++, 8, 155, (m_dimensions.w / 2) - 16, 20, "0", this);
 	m_def_h = new Textbox(id++, (m_dimensions.w / 2) + 4, 155, (m_dimensions.w / 2) - 12, 20, "0", this);
@@ -55,8 +55,8 @@ void DialogSetup::init()
 	m_config_path->set_flags(TEXTBOX_DROP_FILE);
 	m_texture_path->set_flags(TEXTBOX_DROP_FILE);
 
-	add(new Button(ACTION_OK, 8, m_dimensions.h - 32, BUTTON_OK, this));
-	add(new Button(ACTION_CANCEL, 116, m_dimensions.h - 32, BUTTON_EXIT, this));
+	add(new Button(ACTION_OK, 8, m_dimensions.h - 32, LANG_BUTTON_OK, this));
+	add(new Button(ACTION_CANCEL, 116, m_dimensions.h - 32, LANG_BUTTON_EXIT, this));
 
 	set_flags(DIALOG_CENTERED | DIALOG_TEXTINPUT);
 }
@@ -89,13 +89,13 @@ void DialogSetup::action_performed(int8_t action_id)
 			if (m_texture_path->get_text()->empty() || !valid_texture)
 			{
 				m_texture_path->set_alert(true);
-				m_notifier->add_msg(MESSAGE_ERROR, ERROR_INVALID_TEXTURE_PATH);
+				m_notifier->add_msg(MESSAGE_ERROR, *m_helper->loc(LANG_ERROR_INVALID_TEXTURE_PATH));
 			}
 
 			if (m_config_path->get_text()->empty() || !m_load_cfg)
 			{
 				m_config_path->set_alert(true);
-				m_notifier->add_msg(MESSAGE_ERROR, ERROR_INVALID_CONFIG_PATH);
+				m_notifier->add_msg(MESSAGE_ERROR, *m_helper->loc(LANG_ERROR_INVALID_CONFIG_PATH));
 			}
 		}
 		break;

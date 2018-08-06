@@ -6,7 +6,23 @@
  */
 #pragma once
 
- /* SDL Error messages*/
+/* Resources */
+#define PATH_ROBOTO_FONT			"res/roboto-regular.ttf"
+#define PATH_UNICODE_FONT			"res/antique-maru.ttf"
+#define PATH_TRANSLATIONS			"res/lang"
+
+#define ERROR_NO_TRANSLATION			"Error: No translation was found. Make sure that at least en_US.ini is in ./res/lang/"
+
+#define LABEL_BUILD				"io-cct build "
+#define ELEMENT_UNNAMED				"Unnamed"
+#define LABEL_X_AXIS				"X in pixels"
+#define LABEL_Y_AXIS				"Y in pixels"
+#define LABEL_SCALE				"Scale: %ix"
+
+/* Translation constants*/
+#define LANG_ID					"language"
+
+/* SDL errors */
 #define SDL_INIT_FAILED				"Initialization of SDL failed! Error: %s\n"
 #define SDL_CREATE_WINDOW_FAILED		"Creating SDL Window failed! Error: %s\n"
 #define SDL_LOAD_WINDOW_ICON_FAILED		"Loading window icon failed! Error: %s\n"
@@ -18,73 +34,60 @@
 #define SDL_TEXT_TO_TEXTURE			"Error while creating texture from surface in text rendering! ERROR: %s\n"
 #define SDL_TEXT_TO_SURFACE			"Error while creating surface from font in text rendering! ERROR: %s\n"
 
-/* Resources */
-#define PATH_ROBOTO_FONT			"./roboto-regular.ttf"
-#define PATH_UNICODE_FONT			"./antique-maru.ttf"
-
-/* Notifier messages*/
-#define MSG_SAVING_ERROR			"CCL encountered fatal errors while saving!"
-#define MSG_LOADING_ERROR			"CCL encountered fatal errors while loading!"
-#define MSG_SAVE_SUCESS(amount, time)		"Successfully wrote " << amount << " Element(s) in " << time\
-		<< "ms"
-#define MSG_LOAD_SUCCESS(amount,time)		"Successfully loaded " << amount << " Element(s) in " << time\
-		<< "ms"
-#define MSG_CONFIG_EMPTY			"Target config file is empty"
-#define MSG_CONFIG_CORRUPT			"Config file is missing first id entry. Possible corrupt file?"
-#define MSG_INVALID_TYPE(id,type)		id << " has invalid type " << type
-#define MSG_NOTHING_TO_SAVE			"Nothing to save"
+/* Notifications */
+#define LANG_MSG_SAVE_ERROR			"msg_save_error"
+#define LANG_MSG_LOAD_ERROR			"msg_load_error"
+#define LANG_MSG_SAVE_SUCCESS			"msg_save_success"
+#define LANG_MSG_LOAD_SUCCESS			"msg_load_success"
+#define LANG_MSG_CONFIG_EMPTY			"msg_config_empty"
+#define LANG_MSG_CONFIG_CORRUPT			"msg_config_corrupt"
+#define LANG_MSG_VALUE_TYPE_INVALID		"msg_value_invalid_type"
+#define LANG_MSG_NOTHING_TO_SAVE		"msg_nothing_to_save"
 
 /* Dialog titles*/
-#define DIALOG_NEW_ELEMENT			"New Element"
-#define DIALOG_SETUP				"Overlay setup"
-#define DIALOG_HELP				"Help and about"
-#define DIALOG_ELEMENT_SETTINGS			"Selected element settings"
+#define LANG_DIALOG_NEW_ELEMENT			"dialog_new_element"
+#define LANG_DIALOG_SETUP			"dialog_setup"
+#define LANG_DIALOG_HELP			"dialog_help"
+#define LANG_DIALOG_ELEMENT_SETTINGS		"dialog_element_settings"
 
 /* Errors */
-#define ERROR_ID_NOT_UNIQUE			"Element ID must be unique"
-#define ERROR_KEY_CODE_INVALID			"0x0 is not a valid keycode"
-#define ERROR_SELECTION_EMPTY			"Selection was empty"
+#define LANG_ERROR_ID_NOT_UNIQUE		"error_id_not_unique"
+#define LANG_ERROR_KEYCODE_INVALID		"error_keycode_invalid"
+#define LANG_ERROR_SELECTION_EMTPY		"error_selection_empty"
+#define LANG_ERROR_INVALID_TEXTURE_PATH		"error_invalid_texture_path"
+#define LANG_ERROR_INVALID_CONFIG_PATH		"error_invalid_config_path"
 
 /* Setup dialog */
-#define LABEL_INFO				"You can drag and drop files into focused text fields"
-#define LABEL_BUILD				"io-cct build "
-#define LABEL_TEXTURE_PATH			"Enter the path to the texture file:"
-#define LABEL_DEFAULT_WIDTH			"Default element width:"
-#define LABEL_DEFAULT_HEIGHT			"Default element height:"
-#define LABEL_CONFIG_PATH			"Enter config path for saving or loading:"
-#define ERROR_INVALID_TEXTURE_PATH		"Invalid texture path!"
-#define ERROR_INVALID_CONFIG_PATH		"Invalid config path!"
+#define LANG_LABEL_INFO				"label_info"
+#define LANG_LABEL_TEXTURE_PATH			"label_texture_path"
+#define LANG_LABEL_CONFIG_PATH			"label_config_path"
+#define LANG_LABEL_DEFAULT_WIDTH		"label_default_width"
+#define LANG_LABEL_DEFAULT_HEIGHT		"label_default_height"
 
-/* Buttons */
-#define BUTTON_OK				"OK"
-#define BUTTON_EXIT				"Exit"
-#define BUTTON_CANCEL				"Cancel"
+/* Reusable elements */
+#define LANG_BUTTON_OK				"button_ok"
+#define LANG_BUTTON_EXIT			"button_exit"
+#define LANG_BUTTON_CANCEL			"button_cancel"
 
-/* Misc */
-#define ELEMENT_UNNAMED				"unnamed"
-#define LABEL_X_AXIS				"X in pixels"
-#define LABEL_Y_AXIS				"Y in pixels"
-#define LABEL_SCALE(scale)			"Scale: " + scale + "x"
+#define LANG_LABEL_WIDTH			"label_width"
+#define LANG_LABEL_HEIGHT			"label_height"
+#define LANG_LABEL_X				"label_x"
+#define LANG_LABEL_Y				"label_y"
+#define LANG_LABEL_U				"label_u"
+#define LANG_LABEL_V				"label_v"
 
 /* New Element Dialog */
-#define LABEL_TEXTURE_SELECTION			"Texture selection"
-#define LABEL_WIDTH 				"Width:"
-#define LABEL_HEIGHT 				"Height:"
-#define LABEL_U 				"U:"
-#define LABEL_V 				"V:"
-
-#define LABEL_KEY_CODE				"Key code:"
-#define CHECKBOX_RECORD_KEYBIND			"Record keybind"
-#define LABEL_ELEMENT_ID			"Element id:"
+#define LANG_LABEL_TEXTURE_SELECTION		"label_texture_selection"
+#define LANG_LABEL_KEY_CODE			"label_keycode"
+#define LANG_LABEL_ELEMENT_ID			"label_element_id"
+#define LANG_CHECKBOX_RECORD_KEYBIND		"checkbox_record_keybind"
 
 /* Selected element settings */
-#define LABEL_X 				"X:"
-#define LABEL_Y 				"Y:"
-#define BUTTON_ADD_ELEMENT			"Add new element"
-#define BUTTON_DELETE_ELEMENT			"Delete selected"
-#define BUTTON_MODIFY_ELEMENT			"Modify selected"
-#define BUTTON_SAVE_CONFIG			"Save config"
-#define BUTTON_HELP				"Help"
+#define LANG_BUTTON_ADD_ELEMENT			"button_add_element"
+#define LANG_BUTTON_DELETE_ELEMENT		"button_delete_element"
+#define LANG_BUTTON_MODIFY_ELEMENT		"button_modify_element"
+#define LANG_BUTTON_SAVE_CONFIG			"button_save_config"
+#define LANG_BUTTON_HELP			"button_help"
 
 /* Help and about dialog*/
 #define LABEL_HELP_AND_ABOUT			"input-overlay config creation tool\

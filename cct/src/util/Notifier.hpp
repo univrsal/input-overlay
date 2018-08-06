@@ -19,7 +19,6 @@
 
 class SDL_helper;
 
-
 struct Message
 {
 public:

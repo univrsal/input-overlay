@@ -6,6 +6,7 @@
  */
 
 #include "SDL_helper.hpp"
+#include "Localization.hpp"
 
 SDL_helper::SDL_helper()
 {
@@ -16,7 +17,9 @@ SDL_helper::~SDL_helper()
 	close();
 	delete m_palette;
 	delete m_font_helper;
+	delete m_localization;
 
+	m_localization = nullptr;
 	m_font_helper = nullptr;
 	m_sdl_renderer = nullptr;
 	m_sdl_window = nullptr;
@@ -109,6 +112,8 @@ bool SDL_helper::init()
 			m_arrow = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_ARROW);
 
 			m_have_cursors = m_size_h && m_size_v && m_move && m_i_beam && m_arrow;
+
+			m_localization = new Localization(PATH_TRANSLATIONS, this);
 		}
 	}
 
@@ -565,6 +570,14 @@ void SDL_helper::format_text(const std::string * s, std::vector<std::unique_ptr<
 
 	dim.h = ((height + LINE_SPACE) * lines) - LINE_SPACE; // Last line space doesn't count
 	dim.w = width;
+}
+
+const std::string * SDL_helper::loc(const char * id)
+{
+	if (m_localization)
+		return m_localization->localize(id);
+	else
+		return nullptr;
 }
 
 #include "../../../libuiohook/include/uiohook.h"

@@ -39,6 +39,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GCC_FLAGS}")
 
 set(io-cct_SOURCES
 	main.cpp
+	src/util/Constants.hpp
 	src/util/FontHelper.cpp
 	src/util/FontHelper.hpp
 	src/util/Palette.cpp
@@ -79,7 +80,9 @@ set(io-cct_SOURCES
 	src/util/CoordinateSystem.cpp
 	src/util/CoordinateSystem.hpp
 	src/util/Notifier.cpp
-	src/util/Notifier.hpp)
+	src/util/Notifier.hpp
+	src/util/Localization.cpp
+	src/util/Localization.hpp)
 
 add_executable(io-cct ${io-cct_SOURCES})
 

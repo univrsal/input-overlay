@@ -114,7 +114,7 @@ void Tool::action_performed(uint8_t type)
 	case TOOL_ACTION_NEW_ELEMENT_OPEN:
 		close_toplevel();
 		m_state = IN_NEW_ELEMENT;
-		m_toplevel = new DialogNewElement(m_helper, SDL_Point {}, DIALOG_NEW_ELEMENT, this, BUTTON_KEYBOARD);
+		m_toplevel = new DialogNewElement(m_helper, SDL_Point {}, LANG_DIALOG_NEW_ELEMENT, this, BUTTON_KEYBOARD);
 		m_toplevel->init();
 		d = reinterpret_cast<DialogNewElement*>(m_toplevel);
 		d->set_default_dim(m_config->get_default_dim().x, m_config->get_default_dim().y);
@@ -124,7 +124,7 @@ void Tool::action_performed(uint8_t type)
 		{
 			close_toplevel();
 			m_state = IN_NEW_ELEMENT;
-			m_toplevel = new DialogNewElement(m_helper, SDL_Point {}, DIALOG_NEW_ELEMENT, this,
+			m_toplevel = new DialogNewElement(m_helper, SDL_Point {}, LANG_DIALOG_NEW_ELEMENT, this,
 				BUTTON_KEYBOARD);
 			m_toplevel->init();
 			d = reinterpret_cast<DialogNewElement*>(m_toplevel);
@@ -201,19 +201,19 @@ void Tool::add_element(Element * e)
 		if (element->get_id()->compare(e->get_id()->c_str()) == 0)
 		{
 			can_add = false;
-			m_notify->add_msg(MESSAGE_ERROR, ERROR_ID_NOT_UNIQUE);
+			m_notify->add_msg(MESSAGE_ERROR, *m_helper->loc(LANG_ERROR_ID_NOT_UNIQUE));
 			break;
 		}
 	}
 
 	if (e->get_vc() == 0)
 	{
-		m_notify->add_msg(MESSAGE_INFO, ERROR_KEY_CODE_INVALID);
+		m_notify->add_msg(MESSAGE_INFO, *m_helper->loc(LANG_ERROR_KEYCODE_INVALID));
 	}
 
 	if (SDL_RectEmpty(e->get_mapping()))
 	{
-		m_notify->add_msg(MESSAGE_ERROR, ERROR_SELECTION_EMPTY);
+		m_notify->add_msg(MESSAGE_ERROR, *m_helper->loc(LANG_ERROR_SELECTION_EMTPY));
 		can_add = false;
 	}
 

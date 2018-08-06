@@ -48,6 +48,8 @@ class FontHelper;
 
 class Texture;
 
+class Localization;
+
 static const std::string NEW_LINE = "\n";
 
 class SDL_helper
@@ -92,12 +94,16 @@ public:
 	inline void util_enable_mask(uint16_t & masks, uint16_t mask);
 	inline void util_disable_mask(uint16_t & masks, uint16_t mask);
 
+	template<typename ... Args> std::string format(const char * format, Args ... args);
+
 	bool util_check_texture_path(const char * path);
 
 	std::wstring util_utf8_to_wstring(const std::string& str);
 	std::string util_wstring_to_utf8(const std::wstring& str);
 	
 	void format_text(const std::string * s, std::vector<std::unique_ptr<std::string>>& out, SDL_Rect& dim, uint8_t font = FONT_ROBOTO_SMALL);
+
+	const std::string * loc(const char * id);
 
 	uint32_t vc_to_sdl_key(uint16_t key);
 	uint16_t sdl_key_to_vc(uint32_t key);
@@ -164,6 +170,7 @@ private:
 
 	Palette * m_palette = nullptr;
 	FontHelper * m_font_helper = nullptr;
+	Localization * m_localization = nullptr;
 
 	bool m_have_cursors = false;
 	SDL_Cursor * m_size_h = nullptr;
@@ -172,3 +179,12 @@ private:
 	SDL_Cursor * m_i_beam = nullptr;
 	SDL_Cursor * m_arrow = nullptr;
 };
+
+template<typename ...Args>
+inline std::string SDL_helper::format(const char * format, Args ...args)
+{
+	size_t size = snprintf(nullptr, 0, format, args ...) + 1;
+	std::unique_ptr<char[]> buf(new char[size]);
+	snprintf(buf.get(), size, format, args ...);
+	return std::string(buf.get(), buf.get() + size - 1);
+}
