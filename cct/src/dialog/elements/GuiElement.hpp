@@ -12,6 +12,7 @@
 #define DEBUG_DRAW_OUTLINE 0
 
 #define ELEMENT_ABSOLUTE_POSITION 1 << 5 /* Element will not align to parent dialog position */
+#define ELEMENT_UNLOCALIZED 1 << 6 /* The element will not look up localized strings */
 
 class Dialog;
 
@@ -35,6 +36,8 @@ public:
 	virtual void select_state(bool state);
 
 	virtual void resize(void);
+
+	virtual void refresh(void); /* Update localization */
 
 	virtual bool is_mouse_over(const int &x, const int &y);
 

@@ -572,7 +572,7 @@ void SDL_helper::format_text(const std::string * s, std::vector<std::unique_ptr<
 	dim.w = width;
 }
 
-const std::string * SDL_helper::loc(const char * id)
+std::string SDL_helper::loc(const char * id)
 {
 	if (m_localization)
 		return m_localization->localize(id);

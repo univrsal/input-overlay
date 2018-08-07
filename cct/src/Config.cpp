@@ -314,7 +314,7 @@ void Config::write_config(Notifier * n)
 {
 	if (m_elements.empty())
 	{
-		n->add_msg(MESSAGE_INFO, *m_helper->loc(LANG_MSG_NOTHING_TO_SAVE));
+		n->add_msg(MESSAGE_INFO, m_helper->loc(LANG_MSG_NOTHING_TO_SAVE));
 		return;
 	}
 
@@ -353,12 +353,12 @@ void Config::write_config(Notifier * n)
 
 	if (cfg.has_fatal_errors())
 	{
-		n->add_msg(MESSAGE_ERROR, *m_helper->loc(LANG_MSG_SAVE_ERROR));
+		n->add_msg(MESSAGE_ERROR, m_helper->loc(LANG_MSG_SAVE_ERROR));
 		n->add_msg(MESSAGE_ERROR, cfg.get_error_message());
 	}
 	else
 	{
-		std::string result = m_helper->format(m_helper->loc(LANG_MSG_SAVE_SUCCESS)->c_str(), m_elements.size(), (end - start));
+		std::string result = m_helper->format(m_helper->loc(LANG_MSG_SAVE_SUCCESS).c_str(), m_elements.size(), (end - start));
 		n->add_msg(MESSAGE_INFO, result);
 	}
 	cfg.free_nodes();
@@ -371,14 +371,14 @@ void Config::read_config(Notifier * n)
 
 	if (cfg.is_empty())
 	{
-		n->add_msg(MESSAGE_INFO, *m_helper->loc(LANG_MSG_CONFIG_EMPTY));
+		n->add_msg(MESSAGE_INFO, m_helper->loc(LANG_MSG_CONFIG_EMPTY));
 		return;
 	}
 
 
 	if (!cfg.node_exists(CFG_FIRST_ID, true))
 	{
-		n->add_msg(MESSAGE_INFO, *m_helper->loc(LANG_MSG_CONFIG_CORRUPT));
+		n->add_msg(MESSAGE_INFO, m_helper->loc(LANG_MSG_CONFIG_CORRUPT));
 		return;
 	}
 
@@ -400,7 +400,7 @@ void Config::read_config(Notifier * n)
 		type = cfg.get_int(element_id + CFG_TYPE);
 		if (type < 0 || type > ElementType::DPAD_STICK)
 		{
-			std::string result = m_helper->format(m_helper->loc(LANG_MSG_VALUE_TYPE_INVALID)->c_str(), element_id.c_str(), type);
+			std::string result = m_helper->format(m_helper->loc(LANG_MSG_VALUE_TYPE_INVALID).c_str(), element_id.c_str(), type);
 			n->add_msg(MESSAGE_ERROR, result);
 
 			element_id = cfg.get_string(element_id + CFG_NEXT_ID);
@@ -435,12 +435,12 @@ void Config::read_config(Notifier * n)
 
 	if (cfg.has_fatal_errors())
 	{
-		n->add_msg(MESSAGE_ERROR, *m_helper->loc(LANG_MSG_LOAD_ERROR));
+		n->add_msg(MESSAGE_ERROR, m_helper->loc(LANG_MSG_LOAD_ERROR));
 		n->add_msg(MESSAGE_ERROR, cfg.get_error_message());
 	}
 	else
 	{
-		std::string result = m_helper->format(m_helper->loc(LANG_MSG_LOAD_SUCCESS)->c_str(), m_elements.size(), (end - start));
+		std::string result = m_helper->format(m_helper->loc(LANG_MSG_LOAD_SUCCESS).c_str(), m_elements.size(), (end - start));
 		n->add_msg(MESSAGE_INFO, result);
 	}
 }

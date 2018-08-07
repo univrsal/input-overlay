@@ -30,7 +30,8 @@ void DialogSetup::init()
 	info.append(std::to_string(BUILD_NUMBER));
 
 	add(build_number = new Label(id++, 8, 8, info.c_str(), this, FONT_ROBOTO_LARGE));
-	build_number->set_flags(ELEMENT_ABSOLUTE_POSITION);
+	build_number->set_flags(ELEMENT_ABSOLUTE_POSITION | ELEMENT_UNLOCALIZED);
+	build_number->refresh();
 	add(tip = new Label(id++, 8, 28, LANG_LABEL_INFO, this));
 	tip->set_flags(ELEMENT_ABSOLUTE_POSITION);
 	
@@ -89,13 +90,13 @@ void DialogSetup::action_performed(int8_t action_id)
 			if (m_texture_path->get_text()->empty() || !valid_texture)
 			{
 				m_texture_path->set_alert(true);
-				m_notifier->add_msg(MESSAGE_ERROR, *m_helper->loc(LANG_ERROR_INVALID_TEXTURE_PATH));
+				m_notifier->add_msg(MESSAGE_ERROR, m_helper->loc(LANG_ERROR_INVALID_TEXTURE_PATH));
 			}
 
 			if (m_config_path->get_text()->empty() || !m_load_cfg)
 			{
 				m_config_path->set_alert(true);
-				m_notifier->add_msg(MESSAGE_ERROR, *m_helper->loc(LANG_ERROR_INVALID_CONFIG_PATH));
+				m_notifier->add_msg(MESSAGE_ERROR, m_helper->loc(LANG_ERROR_INVALID_CONFIG_PATH));
 			}
 		}
 		break;

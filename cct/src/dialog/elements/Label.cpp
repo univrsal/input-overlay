@@ -13,8 +13,8 @@ Label::Label(int8_t id, int x, int y, const char *text, Dialog *parent)
 	SDL_Rect temp { x, y, 0, 0 }; /* Width/Height will be calculated by set_text */
 	init(parent, temp, id);
 
-	set_text(std::string(text));
-
+	m_unlocalized_text = text;
+	refresh();
 	m_color = get_helper()->palette()->white();
 }
 
@@ -80,5 +80,17 @@ void Label::set_text(std::string text)
 	else
 	{
 		m_lines.clear();
+	}
+}
+
+void Label::refresh(void)
+{
+	if (m_flags & ELEMENT_UNLOCALIZED)
+	{
+		set_text(m_unlocalized_text);
+	}
+	else
+	{
+		set_text(get_helper()->loc(m_unlocalized_text));
 	}
 }

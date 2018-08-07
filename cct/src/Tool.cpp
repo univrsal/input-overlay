@@ -201,19 +201,19 @@ void Tool::add_element(Element * e)
 		if (element->get_id()->compare(e->get_id()->c_str()) == 0)
 		{
 			can_add = false;
-			m_notify->add_msg(MESSAGE_ERROR, *m_helper->loc(LANG_ERROR_ID_NOT_UNIQUE));
+			m_notify->add_msg(MESSAGE_ERROR, m_helper->loc(LANG_ERROR_ID_NOT_UNIQUE));
 			break;
 		}
 	}
 
 	if (e->get_vc() == 0)
 	{
-		m_notify->add_msg(MESSAGE_INFO, *m_helper->loc(LANG_ERROR_KEYCODE_INVALID));
+		m_notify->add_msg(MESSAGE_INFO, m_helper->loc(LANG_ERROR_KEYCODE_INVALID));
 	}
 
 	if (SDL_RectEmpty(e->get_mapping()))
 	{
-		m_notify->add_msg(MESSAGE_ERROR, *m_helper->loc(LANG_ERROR_SELECTION_EMTPY));
+		m_notify->add_msg(MESSAGE_ERROR, m_helper->loc(LANG_ERROR_SELECTION_EMTPY));
 		can_add = false;
 	}
 

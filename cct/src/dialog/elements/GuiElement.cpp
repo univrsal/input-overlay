@@ -36,6 +36,11 @@ void GuiElement::resize(void)
 	//NO-OP
 }
 
+void GuiElement::refresh(void)
+{
+	/* NO OP */
+}
+
 Dialog *GuiElement::get_parent()
 {
 	return m_parent_dialog;

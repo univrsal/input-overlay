@@ -22,7 +22,7 @@ public:
 	void load_lang_by_id(uint8_t id);
 	const std::map<std::string, std::string> * get_languages(void) { return &m_lang_files; }
 
-	const std::string * localize(const char * id);
+	std::string localize(const char * id);
 private:
 	void scan_lang_folder(void);
 	void load_default_language(void);
@@ -35,6 +35,6 @@ private:
 
 	SDL_helper * m_helper = nullptr;
 
-	std::unique_ptr<ccl_config> m_english = nullptr;
-	std::unique_ptr<ccl_config> m_current = nullptr;
+	std::unique_ptr<ccl_config> m_english;
+	std::unique_ptr<ccl_config> m_current;
 };
