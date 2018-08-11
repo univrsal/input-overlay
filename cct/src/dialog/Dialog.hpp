@@ -55,6 +55,8 @@ public:
 
 	void set_flags(uint16_t flags);
 
+	void reload_lang(void);
+
 	const SDL_Point position(void);
 
 	SDL_helper * helper(void);

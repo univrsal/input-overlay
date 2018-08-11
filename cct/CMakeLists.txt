@@ -66,6 +66,8 @@ set(io-cct_SOURCES
 	src/dialog/elements/Button.hpp
 	src/dialog/elements/Checkbox.cpp
 	src/dialog/elements/Checkbox.hpp
+	src/dialog/elements/Combobox.cpp
+	src/dialog/elements/Combobox.hpp
 	src/Config.cpp
 	src/Config.hpp
 	src/dialog/DialogElementSettings.cpp

@@ -9,6 +9,7 @@
 #include "../util/Notifier.hpp"
 #include "../util/Constants.hpp"
 #include "../Tool.hpp"
+#include "../util/Localization.hpp"
 
 #if _DEBUG
 #define TEXTURE_PATH "D:\\Projects\\prog\\cpp\\input-overlay-releases\\build\\v4.6-pre\\presets\\\wasd-full\\wasd.png"
@@ -24,14 +25,13 @@ void DialogSetup::init()
 	int8_t id = 1;
 
 	// info labels
-	Label * build_number = nullptr;
-	Label * tip = nullptr;
+
 	std::string info = std::string(LABEL_BUILD);
 	info.append(std::to_string(BUILD_NUMBER));
 
-	add(build_number = new Label(id++, 8, 8, info.c_str(), FONT_ROBOTO_LARGE, this, ELEMENT_UNLOCALIZED | ELEMENT_ABSOLUTE_POSITION));
-	add(tip = new Label(id++, 8, 28, LANG_LABEL_INFO, this, ELEMENT_ABSOLUTE_POSITION));
-	
+	add(new Label(id++, 8, 28, info.c_str(), FONT_ROBOTO_LARGE, this, ELEMENT_UNLOCALIZED | ELEMENT_ABSOLUTE_POSITION));
+	add(new Label(id++, 8, 48, LANG_LABEL_INFO, this, ELEMENT_ABSOLUTE_POSITION));
+
 	add(new Label(id++, 8, 35, LANG_LABEL_TEXTURE_PATH, this));
 	add(m_texture_path = new Textbox(id++, 8, 55, m_dimensions.w - 16, 20, TEXTURE_PATH, this));
 
@@ -56,6 +56,17 @@ void DialogSetup::init()
 	add(new Button(ACTION_OK, 8, m_dimensions.h - 32, LANG_BUTTON_OK, this));
 	add(new Button(ACTION_CANCEL, 116, m_dimensions.h - 32, LANG_BUTTON_EXIT, this));
 
+	add(m_lang_box = new Combobox(id++, m_dimensions.w - 128, m_dimensions.h - 28, 120, 20, this));
+
+	const std::vector<std::unique_ptr<LangFile>> * files = m_helper->localization()->get_languages();
+
+	for (auto const& f : *files)
+	{
+		m_lang_box->add_item(f->language);
+	}
+
+	m_lang_box->select_item(m_helper->localization()->get_english_id());
+
 	set_flags(DIALOG_CENTERED | DIALOG_TEXTINPUT);
 }
 
@@ -66,6 +77,8 @@ void DialogSetup::draw_background(void)
 
 void DialogSetup::action_performed(int8_t action_id)
 {
+	Dialog::action_performed(action_id);
+
 	bool valid_texture = false;
 	bool empty_config = false;
 	ccl_config * cfg = nullptr;
@@ -111,6 +124,10 @@ void DialogSetup::action_performed(int8_t action_id)
 			if (def_h)
 				m_def_h->set_text(def_h->get_value());
 		}
+		break;
+	case ACTION_COMBO_ITEM_SELECTED:
+		m_helper->localization()->load_lang_by_id(m_lang_box->get_selected());
+		reload_lang();
 		break;
 	}
 

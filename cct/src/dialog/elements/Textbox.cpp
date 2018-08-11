@@ -15,7 +15,6 @@ Textbox::Textbox(int8_t id, int x, int y, int w, int h, std::string text, Dialog
 	SDL_Rect temp = { x, y, w, h };
 	init(parent, temp, id);
 	set_text(text);
-	m_focused = false;
 }
 
 Textbox::~Textbox()

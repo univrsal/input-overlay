@@ -11,6 +11,7 @@
 #include "../util/SDL_helper.hpp"
 #include "elements/Textbox.hpp"
 #include "elements/Button.hpp"
+#include "elements/Combobox.hpp"
 #include "../../../ccl/ccl.hpp"
 
 class Tool;
@@ -47,6 +48,7 @@ private:
 
 	bool m_load_cfg = false;
 
+	Combobox * m_lang_box = nullptr;
 	Textbox * m_texture_path = nullptr;
 	Textbox * m_config_path = nullptr;
 	Textbox * m_def_w = nullptr;

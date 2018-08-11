@@ -104,6 +104,7 @@ public:
 	void format_text(const std::string * s, std::vector<std::unique_ptr<std::string>>& out, SDL_Rect& dim, uint8_t font = FONT_ROBOTO_SMALL);
 
 	std::string loc(const char * id);
+	Localization * localization(void) { return m_localization; }
 
 	uint32_t vc_to_sdl_key(uint16_t key);
 	uint16_t sdl_key_to_vc(uint32_t key);

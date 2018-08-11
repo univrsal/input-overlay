@@ -30,6 +30,8 @@ void AtlasSelector::init(Dialog *parent, SDL_Rect dim, int8_t id)
 
 void AtlasSelector::draw_foreground(void)
 {
+	GuiElement::draw_foreground();
+
 	SDL_Rect temp = m_atlas->get_dim();
 	temp.w *= m_cs->get_scale();
 	temp.h *= m_cs->get_scale();

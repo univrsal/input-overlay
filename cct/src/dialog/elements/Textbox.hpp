@@ -77,5 +77,5 @@ private:
 	std::string m_cut_text;
 	uint8_t m_cut_off = 38;
 	bool m_alert = false;
-	bool m_focused;
+	bool m_focused = false;
 };

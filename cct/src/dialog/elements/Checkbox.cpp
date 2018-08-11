@@ -74,6 +74,7 @@ void Checkbox::draw_background(void)
 
 void Checkbox::draw_foreground(void)
 {
+	GuiElement::draw_foreground();
 	m_label->draw_foreground();
 	if (m_state)
 	{

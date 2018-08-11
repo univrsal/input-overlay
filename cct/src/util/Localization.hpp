@@ -35,11 +35,14 @@ public:
 	const std::vector<std::unique_ptr<LangFile>> * get_languages(void) { return &m_langfiles; }
 
 	std::string localize(const char * id);
+	uint8_t get_english_id(void) { return m_english_id; }
 private:
 	void scan_lang_folder(void);
 	void load_default_language(void);
 
 	bool m_valid = false;
+
+	uint8_t m_english_id = 0;
 
 	std::string m_lang_folder;
 	std::vector<std::unique_ptr<LangFile>> m_langfiles;

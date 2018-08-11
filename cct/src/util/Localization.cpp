@@ -88,6 +88,7 @@ void Localization::scan_lang_folder(void)
 	path.append("/*.ini");
 	hFind = FindFirstFile(path.c_str(), &data);
 	ccl_config * lang = nullptr;
+	uint8_t id = 0;
 	if (hFind != INVALID_HANDLE_VALUE)
 	{
 		do
@@ -102,6 +103,9 @@ void Localization::scan_lang_folder(void)
 				{
 					m_langfiles.emplace_back(new LangFile(file_name, node->get_value()));
 					m_valid = true;
+					if (file_name.compare("en_US.ini") == 0)
+						m_english_id = id;
+					id++;
 				}
 				else
 				{
@@ -135,6 +139,7 @@ void Localization::scan_lang_folder(void)
 			if (S_ISREG(path_stat.st_mode) == 1)
 			{
 				m_langfiles.emplace_back(file_name);
+				id++;
 			}
 		}
 	}

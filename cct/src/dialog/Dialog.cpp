@@ -67,21 +67,17 @@ void Dialog::draw_background(void)
 	// Dialog title bar
 	m_helper->util_fill_rect(&m_title_bar, m_helper->palette()->light_gray());
 
-	std::vector<std::unique_ptr<GuiElement>>::iterator iterator;
-
-	for (iterator = m_screen_elements.begin(); iterator != m_screen_elements.end(); iterator++)
+	for (auto const &element : m_screen_elements)
 	{
-		iterator->get()->draw_background();
+		element->draw_background();
 	}
 }
 
 void Dialog::draw_foreground(void)
 {
-	std::vector<std::unique_ptr<GuiElement>>::iterator iterator;
-
-	for (iterator = m_screen_elements.begin(); iterator != m_screen_elements.end(); iterator++)
+	for (auto const &element : m_screen_elements)
 	{
-		iterator->get()->draw_foreground();
+		element->draw_foreground();
 	}
 }
 
@@ -248,6 +244,14 @@ void Dialog::add(GuiElement * e)
 void Dialog::set_flags(uint16_t flags)
 {
 	m_flags = flags;
+}
+
+void Dialog::reload_lang(void)
+{
+	for (auto const& element : m_screen_elements)
+	{
+		element->refresh();
+	}
 }
 
 const SDL_Point Dialog::position(void)

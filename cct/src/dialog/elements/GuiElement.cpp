@@ -130,10 +130,12 @@ int GuiElement::get_height(void)
 
 void GuiElement::draw_foreground(void)
 {
+#if _DEBUG
 #if DEBUG_DRAW_OUTLINE
 	const SDL_Rect * r = get_dimensions();
 	printf("X. %i, Y. %i, W. %i, H. %i \n", r->x, r->y, r->w, r->w);
 	get_helper()->util_draw_rect(get_dimensions(), get_helper()->palette()->black());
+#endif
 #endif
 }
 
