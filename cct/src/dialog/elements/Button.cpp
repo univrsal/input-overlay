@@ -8,17 +8,10 @@ Button::Button(int8_t id, int x, int y, const char* text, Dialog * parent)
 
 Button::Button(int8_t id, int x, int y, int w, const char * text, Dialog * parent)
 {
-	SDL_Rect temp_rect;
-	m_text = std::string(text);
-
-	SDL_Rect text_dim = parent->helper()->util_text_dim(&m_text);
-
-	temp_rect = { x, y, text_dim.w + 10, text_dim.h + 4 };
-	temp_rect.w = temp_rect.w < w ? w : temp_rect.w;
+	SDL_Rect temp_rect = { x, y, w, 0 };
+	m_unlocalized_text = text;
 	init(parent, temp_rect, id);
-
-	m_text_pos.x = temp_rect.w / 2 - text_dim.w / 2;
-	m_text_pos.y = temp_rect.h / 2 - text_dim.h / 2;
+	refresh();
 }
 
 Button::~Button()
@@ -33,9 +26,26 @@ bool Button::can_select(void)
 
 void Button::resize(void)
 {
-	SDL_Rect text_dim = m_parent_dialog->helper()->util_text_dim(&m_text);
+	SDL_Rect text_dim;
+	text_dim = m_parent_dialog->helper()->util_text_dim(&m_localized_text);
+
+	m_dimensions.h = text_dim.h + 4;
+	m_dimensions.w = m_dimensions.w > text_dim.w + 10 ? m_dimensions.w : text_dim.w + 10;
 	m_text_pos.x = m_dimensions.w / 2 - text_dim.w / 2;
 	m_text_pos.y = m_dimensions.h / 2 - text_dim.h / 2;
+}
+
+void Button::refresh(void)
+{
+	if (m_flags & ELEMENT_UNLOCALIZED)
+	{
+		m_localized_text = m_unlocalized_text;
+	}
+	else
+	{
+		m_localized_text = get_helper()->loc(m_unlocalized_text.c_str());
+	}
+	resize();
 }
 
 void Button::select_state(bool state)
@@ -53,7 +63,7 @@ void Button::draw_background(void)
 		dim.x += 2;
 		dim.y += 2;
 		get_helper()->util_fill_rect_shadow(&dim, color, 1);
-		get_helper()->util_text(&m_text, dim.x + m_text_pos.x,
+		get_helper()->util_text(&m_localized_text, dim.x + m_text_pos.x,
 			dim.y + m_text_pos.y,
 			get_helper()->palette()->white());
 	}
@@ -61,7 +71,7 @@ void Button::draw_background(void)
 	{
 		get_helper()->util_fill_rect_shadow(get_dimensions(), color);
 
-		get_helper()->util_text(&m_text, get_dimensions()->x + m_text_pos.x,
+		get_helper()->util_text(&m_localized_text, get_dimensions()->x + m_text_pos.x,
 			get_dimensions()->y + m_text_pos.y,
 			get_helper()->palette()->white());
 	}
@@ -126,5 +136,5 @@ bool Button::handle_events(SDL_Event *event)
 
 void Button::close(void)
 {
-	m_text.clear();
+	m_localized_text.clear();
 }

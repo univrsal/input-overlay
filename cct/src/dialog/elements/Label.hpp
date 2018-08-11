@@ -21,8 +21,8 @@ class Label :
 	public GuiElement
 {
 public:
-	Label(int8_t id, int x, int y, const char * text, Dialog * parent);
-	Label(int8_t id, int x, int y, const char * text, Dialog * parent, uint8_t font);
+	Label(int8_t id, int x, int y, const char * text, Dialog * parent, uint16_t flags = 0x0);
+	Label(int8_t id, int x, int y, const char * text, uint8_t font, Dialog * parent, uint16_t flags = 0x0);
 	Label(int8_t id, int x, int y, const char * text, Dialog * parent, SDL_Color * color);
 
 	~Label();

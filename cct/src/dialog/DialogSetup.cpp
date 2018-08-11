@@ -29,11 +29,8 @@ void DialogSetup::init()
 	std::string info = std::string(LABEL_BUILD);
 	info.append(std::to_string(BUILD_NUMBER));
 
-	add(build_number = new Label(id++, 8, 8, info.c_str(), this, FONT_ROBOTO_LARGE));
-	build_number->set_flags(ELEMENT_ABSOLUTE_POSITION | ELEMENT_UNLOCALIZED);
-	build_number->refresh();
-	add(tip = new Label(id++, 8, 28, LANG_LABEL_INFO, this));
-	tip->set_flags(ELEMENT_ABSOLUTE_POSITION);
+	add(build_number = new Label(id++, 8, 8, info.c_str(), FONT_ROBOTO_LARGE, this, ELEMENT_UNLOCALIZED | ELEMENT_ABSOLUTE_POSITION));
+	add(tip = new Label(id++, 8, 28, LANG_LABEL_INFO, this, ELEMENT_ABSOLUTE_POSITION));
 	
 	add(new Label(id++, 8, 35, LANG_LABEL_TEXTURE_PATH, this));
 	add(m_texture_path = new Textbox(id++, 8, 55, m_dimensions.w - 16, 20, TEXTURE_PATH, this));

@@ -8,18 +8,18 @@
 #include "Label.hpp"
 #include "../../util/SDL_helper.hpp"
 
-Label::Label(int8_t id, int x, int y, const char *text, Dialog *parent)
+Label::Label(int8_t id, int x, int y, const char *text, Dialog *parent, uint16_t flags)
 {
 	SDL_Rect temp { x, y, 0, 0 }; /* Width/Height will be calculated by set_text */
 	init(parent, temp, id);
-
+	m_flags = flags;
 	m_unlocalized_text = text;
 	refresh();
 	m_color = get_helper()->palette()->white();
 }
 
-Label::Label(int8_t id, int x, int y, const char * text, Dialog * parent, uint8_t font)
-	: Label(id, x, y, text, parent)
+Label::Label(int8_t id, int x, int y, const char * text, uint8_t font, Dialog * parent, uint16_t flags)
+	: Label(id, x, y, text, parent, flags)
 {
 	m_font = font;
 }

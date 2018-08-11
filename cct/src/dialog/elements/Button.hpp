@@ -38,12 +38,15 @@ public:
 
 	void resize(void) override;
 
+	void refresh(void) override;
+
 protected:
 	bool m_pressed = false;
 	bool m_hovered = false;
 	bool m_tab_focused = false;
 
-	std::string m_text;
+	std::string m_localized_text;
+	std::string m_unlocalized_text;
 	SDL_Point m_text_pos;
 };
 

@@ -5,7 +5,7 @@
  * github.com/univrsal/input-overlay
  */
 
-#include <map>
+#include <vector>
 #include <string>
 #include <memory.h>
 #include "../../../ccl/ccl.hpp"
@@ -14,13 +14,25 @@ class ccl_config;
 
 class SDL_helper;
 
+struct LangFile
+{
+public:
+	LangFile(std::string name, std::string lang)
+	{
+		file_name = name;
+		language = lang;
+	}
+	std::string file_name;
+	std::string language;
+};
+
 class Localization
 {
 public:
 	Localization(const char * lang_folder, SDL_helper * h);
 
 	void load_lang_by_id(uint8_t id);
-	const std::map<std::string, std::string> * get_languages(void) { return &m_lang_files; }
+	const std::vector<std::unique_ptr<LangFile>> * get_languages(void) { return &m_langfiles; }
 
 	std::string localize(const char * id);
 private:
@@ -30,8 +42,7 @@ private:
 	bool m_valid = false;
 
 	std::string m_lang_folder;
-	std::string m_unlocalized = "<unlocalized>";
-	std::map<std::string, std::string> m_lang_files;
+	std::vector<std::unique_ptr<LangFile>> m_langfiles;
 
 	SDL_helper * m_helper = nullptr;
 

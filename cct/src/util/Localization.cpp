@@ -25,9 +25,9 @@ Localization::Localization(const char * lang_folder, SDL_helper * helper)
 	m_helper = helper;
 	scan_lang_folder();
 
-	if (m_lang_files.empty())
+	if (m_langfiles.empty() || !m_valid)
 	{
-		printf("No language files found! GUI will use identifiers instead\n");
+		printf("No valid language files found! GUI will use identifiers instead\n");
 	}
 	else
 	{
@@ -37,9 +37,19 @@ Localization::Localization(const char * lang_folder, SDL_helper * helper)
 
 void Localization::load_lang_by_id(uint8_t id)
 {
-	if (!m_lang_files.empty() && id >= 0 && id < m_lang_files.size())
+	if (!m_langfiles.empty() && id >= 0 && id < m_langfiles.size())
 	{
-		
+		LangFile * lang = m_langfiles[id].get();
+		if (lang)
+		{
+			m_current.reset();
+			std::string path = PATH_TRANSLATIONS + std::string("/") + lang->file_name;
+			m_english = std::make_unique<ccl_config>(path, "");
+		}
+		else
+		{
+			printf("Can't load language with id %i\n", id);
+		}
 	}
 }
 
@@ -63,7 +73,7 @@ std::string Localization::localize(const char * id)
 	if (!m_valid || value.empty())
 	{
 		printf("Couldn't find localization for %s.\n", id);
-		value = m_unlocalized;
+		value = std::string(id);
 	}
 	return value;
 }
@@ -76,10 +86,8 @@ void Localization::scan_lang_folder(void)
 	std::string path = m_lang_folder;
 	std::string file_name;
 	path.append("/*.ini");
-	char def_char = ' ';
 	hFind = FindFirstFile(path.c_str(), &data);
 	ccl_config * lang = nullptr;
-
 	if (hFind != INVALID_HANDLE_VALUE)
 	{
 		do
@@ -92,7 +100,8 @@ void Localization::scan_lang_folder(void)
 
 				if (lang && (node = lang->get_node(LANG_ID)) != nullptr)
 				{
-					m_lang_files[file_name.erase(file_name.size() - 4)] = node->get_value();
+					m_langfiles.emplace_back(new LangFile(file_name, node->get_value()));
+					m_valid = true;
 				}
 				else
 				{
@@ -125,7 +134,7 @@ void Localization::scan_lang_folder(void)
 
 			if (S_ISREG(path_stat.st_mode) == 1)
 			{
-				m_lang_files.emplace_back(file_name);
+				m_langfiles.emplace_back(file_name);
 			}
 		}
 	}
@@ -140,9 +149,10 @@ void Localization::scan_lang_folder(void)
 
 void Localization::load_default_language(void)
 {
-	if (!m_lang_files["de_DE"].empty())
+	bool flag = true;
+	if (m_valid)
 	{
-		std::string path = PATH_TRANSLATIONS +  std::string("/de_DE.ini");
+		std::string path = PATH_TRANSLATIONS + std::string("/en_US.ini");
 		m_english = std::make_unique<ccl_config>(path, "");
 		if (!m_english->is_empty())
 		{
@@ -150,11 +160,13 @@ void Localization::load_default_language(void)
 		}
 		else
 		{
-			printf("Loading of English translation failed!\n");
+			flag = false;
 		}
 	}
-	else
+
+	if (!flag)
 	{
+		printf("Loading of English translation failed!\n");
 		printf("Couldn't load default language! Localization might not work!\n");
 	}
 }

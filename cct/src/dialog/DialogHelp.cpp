@@ -3,9 +3,9 @@
 void DialogHelp::init()
 {
 	Dialog::init();
-	add(new Label(1, 8, 32, LABEL_HELP_AND_ABOUT, this));
+	add(new Label(1, 8, 32, LABEL_HELP_AND_ABOUT, this, ELEMENT_UNLOCALIZED));
 
-	add(new Button(ACTION_OK, 8, m_dimensions.h - 32, "OK", this));
+	add(new Button(ACTION_OK, 8, m_dimensions.h - 32, LANG_BUTTON_OK, this));
 
 	set_flags(DIALOG_CENTERED | DIALOG_TOP_MOST);
 }
