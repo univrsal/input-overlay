@@ -90,22 +90,4 @@
 #define LANG_BUTTON_HELP			"button_help"
 
 /* Help and about dialog*/
-#define LABEL_HELP_AND_ABOUT			"input-overlay config creation tool\
-\n  licensed under the Mozilla Public Licence 2.0\
-\n  github.com/univrsal/input-overlay\
-\n\
-\nThanks to:\
-\n  The OBS Studio team and contributers\
-\n  obsproject.com\
-\n  The SDL developers (also SDL_image and SDL_ttf)\
-\n  libsdl.org\
-\n\
-\n\
-Usage:\
-\n  Scroll wheel: Zoom in/out\
-\n  Left mouse: move elements\
-\n  Right mouse: move preview\
-\n\
-\n  Some keys will work within the preview\
-\n  and light up when pressed"
-
+#define LANG_LABEL_HELP_AND_ABOUT		"label_help_about"

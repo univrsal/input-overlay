@@ -36,11 +36,14 @@ public:
 
 	std::string localize(const char * id);
 	uint8_t get_english_id(void) { return m_english_id; }
+
+	bool is_roman(void); /* True if selected language uses roman alphabet */
 private:
 	void scan_lang_folder(void);
 	void load_default_language(void);
 
 	bool m_valid = false;
+	bool m_roman = true;
 
 	uint8_t m_english_id = 0;
 

@@ -41,7 +41,7 @@ public:
 
 	void set_font(uint8_t font) { m_font = UTIL_CLAMP(FONT_ROBOTO_SMALL, font, FONT_WSTRING); }
 private:
-	const char * m_unlocalized_text;
+	std::string m_unlocalized_text;
 	std::vector<std::unique_ptr<std::string>> m_lines;
 
 	SDL_Color *m_color;

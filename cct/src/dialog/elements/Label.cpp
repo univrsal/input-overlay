@@ -7,6 +7,7 @@
 
 #include "Label.hpp"
 #include "../../util/SDL_helper.hpp"
+#include "../../util/Localization.hpp"
 
 Label::Label(int8_t id, int x, int y, const char *text, Dialog *parent, uint16_t flags)
 {
@@ -91,6 +92,14 @@ void Label::refresh(void)
 	}
 	else
 	{
-		set_text(get_helper()->loc(m_unlocalized_text));
+		set_text(get_helper()->loc(m_unlocalized_text.c_str()));
+		if (get_helper()->localization()->is_roman())
+		{
+			m_font = FONT_ROBOTO_SMALL;
+		}
+		else
+		{
+			m_font = FONT_WSTRING;
+		}
 	}
 }

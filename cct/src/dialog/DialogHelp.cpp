@@ -3,7 +3,7 @@
 void DialogHelp::init()
 {
 	Dialog::init();
-	add(new Label(1, 8, 32, LABEL_HELP_AND_ABOUT, this, ELEMENT_UNLOCALIZED));
+	add(new Label(1, 8, 32, LANG_LABEL_HELP_AND_ABOUT, this));
 
 	add(new Button(ACTION_OK, 8, m_dimensions.h - 32, LANG_BUTTON_OK, this));
 

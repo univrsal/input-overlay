@@ -56,7 +56,7 @@ void DialogSetup::init()
 	add(new Button(ACTION_OK, 8, m_dimensions.h - 32, LANG_BUTTON_OK, this));
 	add(new Button(ACTION_CANCEL, 116, m_dimensions.h - 32, LANG_BUTTON_EXIT, this));
 
-	add(m_lang_box = new Combobox(id++, m_dimensions.w - 128, m_dimensions.h - 28, 120, 20, this));
+	add(m_lang_box = new Combobox(id++, m_dimensions.w - 148, m_dimensions.h - 28, 140, 20, this));
 
 	const std::vector<std::unique_ptr<LangFile>> * files = m_helper->localization()->get_languages();
 

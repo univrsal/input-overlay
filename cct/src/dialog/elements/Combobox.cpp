@@ -6,12 +6,12 @@
  */
 
 #include "Combobox.hpp"
-
 Combobox::Combobox(int8_t id, int x, int y, int w, int h, Dialog * parent, uint16_t flags)
 {
 	SDL_Rect temp = { x, y, w, h };
 	m_flags = flags;
 	init(parent, temp, id);
+
 }
 
 void Combobox::close(void)
@@ -22,7 +22,6 @@ void Combobox::close(void)
 void Combobox::draw_background(void)
 {
 	get_helper()->util_fill_rect(get_dimensions(), get_helper()->palette()->gray());
-	
 	if (m_focused)
 	{
 		get_helper()->util_draw_rect(get_dimensions(), get_helper()->palette()->light_gray());
@@ -110,18 +109,39 @@ bool Combobox::handle_events(SDL_Event * event)
 			m_list_open = !m_list_open;
 			m_hovered_id = 0;
 		}
-		else if (m_list_open)
+		else if (m_list_open || m_focused)
 		{
 			if (event->key.keysym.sym == SDLK_UP)
-				m_hovered_id--;
-			else
-				m_hovered_id++;
-
-			if (m_hovered_id >= m_items.size())
-				m_hovered_id = 0;
-			else if (m_hovered_id < 0)
-				m_hovered_id = m_items.size() - 1;
+				cycle_up(!m_list_open);
+			else if (event->key.keysym.sym == SDLK_DOWN)
+				cycle_down(!m_list_open);
 		}
 	}
 	return was_handled;
+}
+
+void Combobox::cycle_up(bool select)
+{
+	if (m_hovered_id - 1 < 0)
+		m_hovered_id = m_items.size() - 1;
+	else
+		m_hovered_id--;
+	if (select)
+	{
+		m_selected_id = m_hovered_id;
+		m_parent_dialog->action_performed(ACTION_COMBO_ITEM_SELECTED);
+	}
+}
+
+void Combobox::cycle_down(bool select)
+{
+	if (m_hovered_id + 1 >= m_items.size())
+		m_hovered_id = 0;
+	else
+		m_hovered_id++;
+	if (select)
+	{
+		m_selected_id = m_hovered_id;
+		m_parent_dialog->action_performed(ACTION_COMBO_ITEM_SELECTED);
+	}
 }

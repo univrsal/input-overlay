@@ -13,6 +13,8 @@
 
 #define ACTION_COMBO_ITEM_SELECTED -15
 
+#define ARROW_DOWN_SIZE 15
+
 class Combobox :
 	public GuiElement
 {
@@ -36,6 +38,10 @@ public:
 	void select_state(bool state) override;
 
 	bool handle_events(SDL_Event * event) override;
+
+	void cycle_up(bool select);
+
+	void cycle_down(bool select);
 private:
 	std::vector<std::string> m_items;
 	uint8_t m_selected_id = 0;

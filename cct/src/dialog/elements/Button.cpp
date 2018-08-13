@@ -1,4 +1,5 @@
 #include "Button.hpp"
+#include "../../util/Localization.hpp"
 
 Button::Button(int8_t id, int x, int y, const char* text, Dialog * parent)
 	: Button(id, x, y, 100, text, parent)
@@ -27,9 +28,9 @@ bool Button::can_select(void)
 void Button::resize(void)
 {
 	SDL_Rect text_dim;
-	text_dim = m_parent_dialog->helper()->util_text_dim(&m_localized_text);
+	text_dim = m_parent_dialog->helper()->util_text_dim(&m_localized_text, m_font);
 
-	m_dimensions.h = text_dim.h + 4;
+	m_dimensions.h = UTIL_MAX(text_dim.h + 4, m_dimensions.h);
 	m_dimensions.w = m_dimensions.w > text_dim.w + 10 ? m_dimensions.w : text_dim.w + 10;
 	m_text_pos.x = m_dimensions.w / 2 - text_dim.w / 2;
 	m_text_pos.y = m_dimensions.h / 2 - text_dim.h / 2;
@@ -44,6 +45,14 @@ void Button::refresh(void)
 	else
 	{
 		m_localized_text = get_helper()->loc(m_unlocalized_text.c_str());
+		if (get_helper()->localization()->is_roman())
+		{
+			m_font = FONT_ROBOTO_SMALL;
+		}
+		else
+		{
+			m_font = FONT_WSTRING;
+		}
 	}
 	resize();
 }
@@ -65,7 +74,7 @@ void Button::draw_background(void)
 		get_helper()->util_fill_rect_shadow(&dim, color, 1);
 		get_helper()->util_text(&m_localized_text, dim.x + m_text_pos.x,
 			dim.y + m_text_pos.y,
-			get_helper()->palette()->white());
+			get_helper()->palette()->white(), m_font);
 	}
 	else
 	{
@@ -73,7 +82,7 @@ void Button::draw_background(void)
 
 		get_helper()->util_text(&m_localized_text, get_dimensions()->x + m_text_pos.x,
 			get_dimensions()->y + m_text_pos.y,
-			get_helper()->palette()->white());
+			get_helper()->palette()->white(), m_font);
 	}
 }
 
