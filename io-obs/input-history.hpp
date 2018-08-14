@@ -7,7 +7,7 @@
 #include <iomanip>
 #include <map>
 #include "input-source.hpp"
-#include "../ccl/ccl.hpp"
+#include "../../ccl/ccl.hpp"
 #include "../util/util.hpp"
 #include "../util/layout.hpp"
 #include "../hook/gamepad-hook.hpp"

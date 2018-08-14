@@ -9,7 +9,7 @@
 
 #include "util/SDL_helper.hpp"
 #include "util/Texture.hpp"
-#include "../../util/layout_constants.hpp"
+#include "../../io-obs/util/layout_constants.hpp"
 #include "util/CoordinateSystem.hpp"
 #include "util/Constants.hpp"
 #include <string>

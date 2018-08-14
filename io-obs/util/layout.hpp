@@ -13,7 +13,7 @@ extern "C" {
 #include <graphics/image-file.h>
 }
 
-#include "../ccl/ccl.hpp"
+#include "../../ccl/ccl.hpp"
 #include "../hook/hook-helper.hpp"
 #include "layout_constants.hpp"
 
