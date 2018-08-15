@@ -26,7 +26,7 @@ void Tool::program_loop()
 {
 	m_notify = new Notifier(m_helper);
 
-	m_toplevel = new DialogSetup(m_helper, SDL_Point { 500, 230 }, m_notify, this);
+	m_toplevel = new DialogSetup(m_helper, m_notify, this);
 	m_toplevel->init();
 	m_helper->set_runflag(&m_run_flag);
 
@@ -47,6 +47,7 @@ void Tool::program_loop()
 			m_element_settings->draw_background();
 			m_element_settings->draw_foreground();
 			break;
+		case IN_ELEMENT_TYPE:
 		case IN_NEW_ELEMENT:
 		case IN_HELP:
 			m_config->draw_elements();
@@ -87,8 +88,7 @@ void Tool::action_performed(uint8_t type)
 	{
 	case TOOL_ACTION_SETUP_EXIT:
 		s = reinterpret_cast<DialogSetup*>(m_toplevel);
-		m_element_settings = new DialogElementSettings(m_helper,
-			SDL_Rect { 1030, 200, 240, 400 }, this);
+		m_element_settings = new DialogElementSettings(m_helper, this);
 		m_config = new Config(s->get_texture_path(),
 			s->get_config_path(), s->get_default_dim(), m_helper, m_element_settings);
 
@@ -104,9 +104,11 @@ void Tool::action_performed(uint8_t type)
 	case TOOL_ACTION_HELP_OPEN:
 		close_toplevel();
 		m_state = IN_HELP;
-		m_toplevel = new DialogHelp(m_helper, SDL_Point { 355, 420 }, this);
+		m_toplevel = new DialogHelp(m_helper, this);
 		m_toplevel->init();
 		break;
+	case TOOL_ACTION_ELEMENT_TYPE_EXIT:
+	case TOOL_ACTION_NEW_ELEMENT_EXIT:
 	case TOOL_ACTION_HELP_EXIT:
 		m_state = IN_BUILD;
 		m_queue_close = true;
@@ -114,7 +116,7 @@ void Tool::action_performed(uint8_t type)
 	case TOOL_ACTION_NEW_ELEMENT_OPEN:
 		close_toplevel();
 		m_state = IN_NEW_ELEMENT;
-		m_toplevel = new DialogNewElement(m_helper, SDL_Point {}, LANG_DIALOG_NEW_ELEMENT, this, BUTTON_KEYBOARD);
+		m_toplevel = new DialogNewElement(m_helper, LANG_DIALOG_NEW_ELEMENT, this, ElementType::BUTTON);
 		m_toplevel->init();
 		d = reinterpret_cast<DialogNewElement*>(m_toplevel);
 		d->set_default_dim(m_config->get_default_dim().x, m_config->get_default_dim().y);
@@ -124,8 +126,8 @@ void Tool::action_performed(uint8_t type)
 		{
 			close_toplevel();
 			m_state = IN_NEW_ELEMENT;
-			m_toplevel = new DialogNewElement(m_helper, SDL_Point {}, LANG_DIALOG_NEW_ELEMENT, this,
-				BUTTON_KEYBOARD);
+			m_toplevel = new DialogNewElement(m_helper, LANG_DIALOG_NEW_ELEMENT, this,
+				m_config->selected()->get_type());
 			m_toplevel->init();
 			d = reinterpret_cast<DialogNewElement*>(m_toplevel);
 			d->set_default_dim(m_config->get_default_dim().x, m_config->get_default_dim().y);
@@ -151,20 +153,19 @@ void Tool::action_performed(uint8_t type)
 		{
 
 		case TEXTURE:
-		case BUTTON_KEYBOARD:
-		case BUTTON_GAMEPAD:
-		case MOUSE_MOVEMENT:
-		case ANALOG_STICK:
-		case BUTTON_MOUSE:
 			e = new Element(d->get_type(), *d->get_id(), SDL_Point { 0, 0 }, d->get_selection_1(), d->get_vc());
 			break;
-		case TRIGGER_GAMEPAD:
+		case TRIGGER:
 			break;
 		case TEXT:
 			break;
-		case DPAD:
+		case MOUSE_WHEEL:
 			break;
 		case DPAD_STICK:
+			break;
+		case MOUSE_MOVEMENT:
+			break;
+		case ANALOG_STICK:
 			break;
 		}
 
@@ -173,12 +174,14 @@ void Tool::action_performed(uint8_t type)
 		m_queue_close = true;
 		m_state = IN_BUILD;
 		break;
-	case TOOL_ACTION_NEW_ELEMENT_EXIT:
-		m_queue_close = true;
-		m_state = IN_BUILD;
-		break;
 	case TOOL_ACTION_SAVE_CONFIG:
 		m_config->write_config(m_notify);
+		break;
+	case TOOL_ACTION_ELEMENT_TYPE_OPEN:
+		close_toplevel();
+		m_state = IN_ELEMENT_TYPE;
+		m_toplevel = new DialogElementType(m_helper, this);
+		m_toplevel->init();
 		break;
 	}
 }
@@ -245,8 +248,17 @@ void Tool::handle_input()
 
 		switch (m_state)
 		{
+		case IN_ELEMENT_TYPE:
+		case IN_NEW_ELEMENT:
+		case IN_HELP:
+			if (m_config && m_event.type == SDL_WINDOWEVENT
+				&& m_event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED)
+			{
+				m_config->handle_events(&m_event); /* Still need it to resize*/
+			}
 		case IN_SETUP:
-			m_toplevel->handle_events(&m_event);
+			if (m_toplevel)
+				m_toplevel->handle_events(&m_event);
 			break;
 		case IN_BUILD:
 			if (m_element_settings && !m_element_settings->handle_events(&m_event))
@@ -254,26 +266,6 @@ void Tool::handle_input()
 				/* Focused dialog didn't handle the event */
 				if (m_config)
 					m_config->handle_events(&m_event);
-			}
-			break;
-		case IN_HELP:
-			if (m_toplevel)
-				m_toplevel->handle_events(&m_event);
-			if (m_event.type == SDL_WINDOWEVENT
-				&& m_event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED)
-			{
-				m_config->handle_events(&m_event); /* Still need it to resize*/
-			}
-			break;
-		case IN_NEW_ELEMENT:
-			if (m_toplevel)
-			{
-				m_toplevel->handle_events(&m_event);
-				if (m_event.type == SDL_WINDOWEVENT
-					&& m_event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED)
-				{
-					m_config->handle_events(&m_event); /* Still need it to resize*/
-				}
 			}
 			break;
 		}

@@ -32,7 +32,7 @@ public:
 
 	void draw_foreground(void) override;
 
-	bool handle_events(SDL_Event *event) override;
+	bool handle_events(SDL_Event *event, bool was_handled) override;
 
 	void close(void) override;
 

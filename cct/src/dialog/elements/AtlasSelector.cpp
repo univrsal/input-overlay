@@ -54,14 +54,14 @@ void AtlasSelector::draw_background(void)
 	m_cs->draw_background();
 }
 
-bool AtlasSelector::handle_events(SDL_Event * event)
+bool AtlasSelector::handle_events(SDL_Event * event, bool was_handled)
 {
-	bool was_handled = false;
+	bool handled = false;
 
 	if (m_cs->handle_events(event))
-		was_handled = true;
+		handled = true;
 
-	return was_handled;
+	return handled;
 }
 
 uint8_t AtlasSelector::get_cursor(void)

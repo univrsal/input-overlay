@@ -92,26 +92,26 @@ void Button::draw_foreground(void)
 	GuiElement::draw_foreground();
 }
 
-bool Button::handle_events(SDL_Event *event)
+bool Button::handle_events(SDL_Event *event, bool was_handled)
 {
-	bool was_handled = false;
+	bool handled = false;
 
 	m_hovered = is_mouse_over(event->button.x, event->button.y);
 
-	if (event->type == SDL_MOUSEBUTTONDOWN && event->button.button == SDL_BUTTON_LEFT)
+	if (!was_handled && event->type == SDL_MOUSEBUTTONDOWN && event->button.button == SDL_BUTTON_LEFT)
 	{
 		if (m_hovered)
 		{
 			m_pressed = true;
-			was_handled = true;
+			handled = true;
 		}
 	}
-	else if (event->type == SDL_MOUSEBUTTONUP && event->button.button == SDL_BUTTON_LEFT)
+	else if (!was_handled &&event->type == SDL_MOUSEBUTTONUP && event->button.button == SDL_BUTTON_LEFT)
 	{
 		if (m_hovered)
 		{
 			get_parent()->action_performed(m_element_id);
-			was_handled = true;
+			handled = true;
 		}
 		m_pressed = false;
 	}
@@ -129,18 +129,18 @@ bool Button::handle_events(SDL_Event *event)
 		&& m_tab_focused && event->key.keysym.sym == SDLK_RETURN)
 	{
 		m_pressed = true;
-		was_handled = true;
+		handled = true;
 	}
 	else if (event->type == SDL_KEYUP && event->key.keysym.sym == SDLK_RETURN)
 	{
 		if (m_tab_focused)
 		{
 			get_parent()->action_performed(m_element_id);
-			was_handled = true;
+			handled = true;
 		}
 		m_pressed = false;
 	}
-	return was_handled;
+	return handled;
 }
 
 void Button::close(void)

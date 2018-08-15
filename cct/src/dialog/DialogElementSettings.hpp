@@ -29,8 +29,8 @@ class Element;
 class DialogElementSettings : public Dialog
 {
 public:
-	DialogElementSettings(SDL_helper * sdl, SDL_Rect size, Tool * tool)
-		: Dialog(sdl, size, LANG_DIALOG_ELEMENT_SETTINGS)
+	DialogElementSettings(SDL_helper * sdl, Tool * tool)
+		: Dialog(sdl, SDL_Rect { 1030, 200, 240, 400 }, LANG_DIALOG_ELEMENT_SETTINGS)
 	{
 		m_tool = tool;
 	};

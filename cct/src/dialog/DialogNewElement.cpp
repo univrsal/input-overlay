@@ -39,9 +39,7 @@ void DialogNewElement::init()
 
 	switch (m_type)
 	{
-	case BUTTON_KEYBOARD:
-	case BUTTON_GAMEPAD:
-	case BUTTON_MOUSE:
+	case BUTTON:
 		add_keycode_elements();
 	case TEXTURE:
 		add(m_selector = new AtlasSelector(m_id++, get_left() + 270,
@@ -82,8 +80,7 @@ void DialogNewElement::draw_background(void)
 	switch (m_type)
 	{
 	case TEXTURE:
-	case BUTTON_KEYBOARD:
-	case BUTTON_GAMEPAD:
+	case BUTTON:
 	case MOUSE_MOVEMENT:
 
 		break;
@@ -96,8 +93,7 @@ void DialogNewElement::draw_foreground(void)
 	switch (m_type)
 	{
 	case TEXTURE:
-	case BUTTON_KEYBOARD:
-	case BUTTON_GAMEPAD:
+	case BUTTON:
 	case MOUSE_MOVEMENT:
 	case ANALOG_STICK:
 		break;
@@ -113,8 +109,7 @@ bool DialogNewElement::handle_events(SDL_Event * event)
 	switch (m_type)
 	{
 	case TEXTURE:
-	case BUTTON_KEYBOARD:
-	case BUTTON_GAMEPAD:
+	case BUTTON:
 	case MOUSE_MOVEMENT:
 	case ANALOG_STICK:
 		if (event->type == SDL_WINDOWEVENT)

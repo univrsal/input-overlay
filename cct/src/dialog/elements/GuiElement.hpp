@@ -29,7 +29,7 @@ public:
 
 	virtual void close(void);
 
-	virtual bool handle_events(SDL_Event * event) = 0;
+	virtual bool handle_events(SDL_Event * event, bool was_handled) = 0;
 
 	virtual bool can_select(void); /* Tab selection */
 

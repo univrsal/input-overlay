@@ -1,9 +1,9 @@
 #include "Checkbox.hpp"
 /**
- * Created by univrsal on 25.06.20178.
- * This file is part of reloded which is licensed
+ * Created by univrsal on 25.06.2018.
+ * This file is part of input-overlay which is licensed
  * under the MOZILLA PUBLIC LICENSE 2.0 - mozilla.org/en-US/MPL/2.0/
- * github.com/univrsal/reloded
+ * github.com/univrsal/input-overlay
  */
 
 Checkbox::Checkbox(int8_t id, int x, int y, const char * text, Dialog * parent)
@@ -83,7 +83,7 @@ void Checkbox::draw_foreground(void)
 	}
 }
 
-bool Checkbox::handle_events(SDL_Event * event)
+bool Checkbox::handle_events(SDL_Event * event, bool was_handled)
 {
 	bool handled = false;
 	if (event->type == SDL_MOUSEBUTTONDOWN)

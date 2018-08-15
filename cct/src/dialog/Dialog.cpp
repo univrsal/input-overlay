@@ -198,7 +198,7 @@ bool Dialog::handle_events(SDL_Event * event)
 
 	for (auto const& element : m_screen_elements)
 	{
-		if (element->handle_events(event))
+		if (element->handle_events(event, was_handled))
 		{
 			was_handled = true;
 		}

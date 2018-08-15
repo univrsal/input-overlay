@@ -13,8 +13,6 @@
 
 #define ACTION_COMBO_ITEM_SELECTED -15
 
-#define ARROW_DOWN_SIZE 15
-
 class Combobox :
 	public GuiElement
 {
@@ -29,7 +27,11 @@ public:
 
 	void add_item(std::string item)
 	{
-		m_items.emplace_back(item);
+		if (m_flags & ELEMENT_UNLOCALIZED)
+			m_items.emplace_back(item);
+		else
+			m_items.emplace_back(get_helper()->loc(item.c_str()));
+
 		m_item_box = { get_left(), get_bottom() - 1, get_width(),
 			(int) (m_items.size() * m_item_v_space + ITEM_V_SPACE) };
 	};
@@ -46,7 +48,7 @@ public:
 
 	void select_state(bool state) override;
 
-	bool handle_events(SDL_Event * event) override;
+	bool handle_events(SDL_Event * event, bool was_handled) override;
 
 	bool is_mouse_over_list(const int & x, const int & y);
 

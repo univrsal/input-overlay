@@ -33,8 +33,8 @@ enum ElementType;
 class DialogNewElement : public Dialog
 {
 public:
-	DialogNewElement(SDL_helper * sdl, SDL_Point size, std::string title, Tool * tool, ElementType type)
-		: Dialog(sdl, size, title)
+	DialogNewElement(SDL_helper * sdl, std::string title, Tool * tool, ElementType type)
+		: Dialog(sdl, SDL_Point {}, title)
 	{
 		m_tool = tool;
 		m_type = type;

@@ -48,6 +48,7 @@
 #define LANG_DIALOG_NEW_ELEMENT			"dialog_new_element"
 #define LANG_DIALOG_SETUP			"dialog_setup"
 #define LANG_DIALOG_HELP			"dialog_help"
+#define LANG_DIALOG_ELEMENT_TYPE		"dialog_element_type"
 #define LANG_DIALOG_ELEMENT_SETTINGS		"dialog_element_settings"
 
 /* Errors */
@@ -91,3 +92,14 @@
 
 /* Help and about dialog*/
 #define LANG_LABEL_HELP_AND_ABOUT		"label_help_about"
+
+/* Dialog element type */
+#define LANG_LABEL_SELECT_ELEMENT_TYPE		"label_element_type"
+#define LANG_ELEMENT_TEXTURE			"element_texture"
+#define LANG_ELEMENT_BUTTON			"element_button"
+#define LANG_ELEMENT_MOUSE_WHEEL		"element_mouse_wheel"
+#define LANG_ELEMENT_MOUSE_MOVEMENT		"element_mouse_movement"
+#define LANG_ELEMENT_ANALOG_STICK		"element_analog_stick"
+#define LANG_ELEMENT_TRIGGER			"element_trigger"
+#define LANG_ELEMENT_TEXT			"element_text"
+#define LANG_ELEMENT_DPAD_STICK			"element_dpad_stick"

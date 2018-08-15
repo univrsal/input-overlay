@@ -12,6 +12,7 @@
 #include "dialog/DialogElementSettings.hpp"
 #include "dialog/DialogHelp.hpp"
 #include "dialog/DialogNewElement.hpp"
+#include "dialog/DialogElementType.hpp"
 #include "util/Texture.hpp"
 #include "util/Notifier.hpp"
 #include "Config.hpp"
@@ -30,6 +31,7 @@ enum ToolState
 	IN_SETUP,
 	IN_BUILD,
 	IN_HELP,
+	IN_ELEMENT_TYPE,
 	IN_NEW_ELEMENT
 };
 
@@ -42,6 +44,8 @@ enum ToolState
 #define TOOL_ACTION_MOD_ELEMENT_APPLY 6
 #define TOOL_ACTION_SAVE_CONFIG 7
 #define TOOL_ACTION_SETUP_EXIT 8
+#define TOOL_ACTION_ELEMENT_TYPE_OPEN 9
+#define TOOL_ACTION_ELEMENT_TYPE_EXIT 10
 
 class Tool
 {

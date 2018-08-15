@@ -35,7 +35,7 @@ public:
 
 	void draw_background(void) override;
 
-	bool handle_events(SDL_Event * event) override;
+	bool handle_events(SDL_Event * event, bool was_handled) override;
 
 	uint8_t get_cursor(void) override;
 

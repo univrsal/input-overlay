@@ -512,14 +512,7 @@ void Element::write_to_file(ccl_config * cfg, SDL_Point * default_dim)
 	switch (m_type)
 	{
 
-	case BUTTON_KEYBOARD:
-	case BUTTON_GAMEPAD:
-	case BUTTON_MOUSE:
-	case TRIGGER_GAMEPAD:
-	case MOUSE_MOVEMENT:
-	case DPAD:
-	case ANALOG_STICK:
-	case DPAD_STICK:
+	case BUTTON:
 		comment = "Key code of " + m_id;
 		cfg->add_int(m_id + CFG_KEY_CODE, comment, m_keycode, true);
 	case TEXTURE: /* NO-OP*/
@@ -539,17 +532,20 @@ void Element::write_to_file(ccl_config * cfg, SDL_Point * default_dim)
 		comment = "Width and height of " + m_id;
 
 		if (m_texture_mapping.w != default_dim->x)
-		{
 			cfg->add_int(m_id + CFG_WIDTH, "", m_texture_mapping.w, true);
-		}
 
 		if (m_texture_mapping.h != default_dim->y)
-		{
 			cfg->add_int(m_id + CFG_HEIGHT, comment, m_texture_mapping.h, true);
-		}
 		break;
 	case TEXT: /* TODO: Font? Size?*/
 		break;
-
+	case DPAD_STICK:
+		break;
+	case TRIGGER:
+		break;
+	case MOUSE_MOVEMENT:
+		break;
+	case MOUSE_WHEEL:
+		break;
 	}
 }

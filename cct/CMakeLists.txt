@@ -79,6 +79,8 @@ set(io-cct_SOURCES
 	src/dialog/DialogHelp.hpp
 	src/dialog/DialogNewElement.cpp
 	src/dialog/DialogNewElement.hpp
+	src/dialog/DialogElementType.cpp
+	src/dialog/DialogElementType.hpp
 	src/util/CoordinateSystem.cpp
 	src/util/CoordinateSystem.hpp
 	src/util/Notifier.cpp

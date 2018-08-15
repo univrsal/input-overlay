@@ -29,21 +29,6 @@ class SDL_helper;
 
 class Texture;
 
-enum ElementType
-{
-	INVALID,
-	TEXTURE,
-	BUTTON_KEYBOARD,
-	BUTTON_GAMEPAD,
-	BUTTON_MOUSE,
-	TRIGGER_GAMEPAD,
-	MOUSE_MOVEMENT,
-	ANALOG_STICK,
-	TEXT,
-	DPAD,
-	DPAD_STICK
-};
-
 class Element
 {
 public:
@@ -123,6 +108,8 @@ public:
 	int get_h() { return m_texture_mapping.h; }
 	int get_u() { return m_texture_mapping.x; }
 	int get_v() { return m_texture_mapping.y; }
+
+	ElementType get_type() { return m_type; }
 
 	uint16_t get_vc(void) { return m_keycode; }
 	void set_pressed(bool b) { m_pressed = b; }

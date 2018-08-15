@@ -582,7 +582,7 @@ std::string SDL_helper::loc(const char * id)
 
 #include "../../../libuiohook/include/uiohook.h"
 #define CCT /* Prevents util.hpp from including external headers */
-#include "../../../util/util.hpp"
+#include "../../../io-obs/util/util.hpp"
 static uint32_t KEY_MAP[][2]
 {
 	/* Alphabet */

@@ -66,7 +66,7 @@ void Label::draw_foreground(void)
 	GuiElement::draw_foreground();
 }
 
-bool Label::handle_events(SDL_Event * event)
+bool Label::handle_events(SDL_Event * event, bool was_handled)
 {
 	return false;
 }

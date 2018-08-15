@@ -76,9 +76,9 @@ void Textbox::draw_background(void)
 	}
 }
 
-bool Textbox::handle_events(SDL_Event * event)
+bool Textbox::handle_events(SDL_Event * event, bool was_handled)
 {
-	bool was_handled = false;
+	bool handled = false;
 	if (event->type == SDL_MOUSEBUTTONDOWN)
 	{
 		/* Handle focus */
@@ -89,7 +89,7 @@ bool Textbox::handle_events(SDL_Event * event)
 			{
 				m_alert = false;
 				SDL_SetTextInputRect(get_dimensions());
-				was_handled = true;
+				handled = true;
 			}
 			else if (m_flags & TEXTBOX_NUMERIC)
 			{
@@ -121,7 +121,7 @@ bool Textbox::handle_events(SDL_Event * event)
 					{
 						append_text(temp);
 					}
-					was_handled = true;
+					handled = true;
 				}
 				/* Deleting */
 				else if (event->key.keysym.sym == SDLK_BACKSPACE)
@@ -131,13 +131,13 @@ bool Textbox::handle_events(SDL_Event * event)
 						pop_back(m_text);
 						set_text(m_text);
 					}
-					was_handled = true;
+					handled = true;
 				}
 				/* IME input accepted -> clear composition */
 				else if (event->key.keysym.sym == SDLK_RETURN)
 				{
 					m_composition.clear();
-					was_handled = true;
+					handled = true;
 				}
 			}
 		}
@@ -154,13 +154,13 @@ bool Textbox::handle_events(SDL_Event * event)
 			{
 				set_text(temp);
 			}
-			was_handled = true;
+			handled = true;
 		}
 		/* IME composition changed */
 		else if (event->type == SDL_TEXTEDITING && !(m_flags & TEXTBOX_KEYBIND))
 		{
 			m_composition = event->edit.text;
-			was_handled = true;
+			handled = true;
 		}
 		else if (m_flags & TEXTBOX_DROP_FILE && event->type == SDL_DROPFILE)
 		{
@@ -171,7 +171,7 @@ bool Textbox::handle_events(SDL_Event * event)
 			m_parent_dialog->action_performed(ACTION_FILE_DROPPED);
 		}
 	}
-	return was_handled;
+	return handled;
 }
 
 bool Textbox::can_select(void)
