@@ -8,6 +8,7 @@
 #include <vector>
 #include <string>
 #include <memory.h>
+#include "FontHelper.hpp"
 #include "../../../ccl/ccl.hpp"
 
 class ccl_config;
@@ -38,6 +39,9 @@ public:
 	uint8_t get_english_id(void) { return m_english_id; }
 
 	bool is_roman(void); /* True if selected language uses roman alphabet */
+
+	/* Return required font for current language */
+	uint8_t get_font(void) { return is_roman() ? FONT_ROBOTO_SMALL : FONT_WSTRING; }
 private:
 	void scan_lang_folder(void);
 	void load_default_language(void);

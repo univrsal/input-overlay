@@ -6,6 +6,8 @@
  */
 
 #include "Combobox.hpp"
+#include "../../util/Localization.hpp"
+
 Combobox::Combobox(int8_t id, int x, int y, int w, int h, Dialog * parent, uint16_t flags)
 {
 	SDL_Rect temp = { x, y, w, h };
@@ -54,7 +56,8 @@ void Combobox::draw_foreground(void)
 	GuiElement::draw_foreground();
 
 	if (!m_items.empty() && m_selected_id >= 0 && m_selected_id < m_items.size())
-		get_helper()->util_text(&m_items[m_selected_id], get_left() + 2, get_top() + 2, get_helper()->palette()->white(), FONT_WSTRING);
+		get_helper()->util_text(&m_items[m_selected_id], get_left() + 2, get_top() + 2, get_helper()->palette()->white(),
+		m_flags & ELEMENT_UNLOCALIZED ? FONT_WSTRING : get_helper()->localization()->get_font());
 
 	if (m_list_open)
 	{
@@ -62,7 +65,8 @@ void Combobox::draw_foreground(void)
 
 		for (auto const& element : m_items)
 		{
-			get_helper()->util_text(&element, get_left() + 2, get_bottom() + y, get_helper()->palette()->white(), FONT_WSTRING);
+			get_helper()->util_text(&element, get_left() + 2, get_bottom() + y, get_helper()->palette()->white(),
+				m_flags & ELEMENT_UNLOCALIZED ? FONT_WSTRING : get_helper()->localization()->get_font());
 			y += m_item_v_space;
 		}
 	}
@@ -107,10 +111,20 @@ bool Combobox::handle_events(SDL_Event * event, bool was_handled)
 	}
 	else if (m_list_open && event->type == SDL_MOUSEWHEEL)
 	{
-		if (event->wheel.y > 0)
-			cycle_up(false);
-		else
-			cycle_down(false);
+		
+		SDL_Point mouse_pos = { 0, 0 };
+		SDL_GetMouseState(&mouse_pos.x, &mouse_pos.y);
+		if (mouse_pos.x >= get_left() && mouse_pos.x <= get_right())
+		{
+			if (event->wheel.y > 0)
+				cycle_up(false);
+			else
+				cycle_down(false);
+
+			// Move mouse to item position (Little gimmick, but I like the feature)
+			mouse_pos.y = get_bottom() + m_hovered_id * m_item_v_space + ITEM_V_SPACE * 1.5;
+			SDL_WarpMouseInWindow(NULL, mouse_pos.x, mouse_pos.y);
+		}
 	}
 	else if (m_list_open && event->type == SDL_MOUSEMOTION)
 	{

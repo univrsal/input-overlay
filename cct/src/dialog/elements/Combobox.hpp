@@ -58,6 +58,7 @@ public:
 private:
 	std::vector<std::string> m_items;
 	SDL_Rect m_item_box;
+	uint8_t m_font = FONT_WSTRING;
 	uint8_t m_selected_id = 0;
 	uint8_t m_hovered_id = 0;
 	uint8_t m_item_v_space = 0;
