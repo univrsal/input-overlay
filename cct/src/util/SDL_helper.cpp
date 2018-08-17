@@ -126,7 +126,6 @@ void SDL_helper::close()
 	SDL_DestroyRenderer(m_sdl_renderer);
 	SDL_DestroyWindow(m_sdl_window);
 
-
 	if (m_default_font)
 		TTF_CloseFont(m_default_font);
 	if (m_wstring_font)
@@ -335,8 +334,6 @@ void SDL_helper::set_cursor(uint8_t type)
 		case CURSOR_SIZE_V:
 			SDL_SetCursor(m_size_v);
 			break;
-		case CURSOR_SPECIAL:
-			break; /* NO-OP */
 		}
 	}
 }

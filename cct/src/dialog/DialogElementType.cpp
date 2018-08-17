@@ -10,7 +10,7 @@
 #include "../Tool.hpp"
 
 DialogElementType::DialogElementType(SDL_helper * sdl, Tool * tool)
-	: Dialog(sdl, SDL_Point { 350, 120}, LANG_DIALOG_ELEMENT_TYPE)
+	: Dialog(sdl, SDL_Point { 350, 120 }, LANG_DIALOG_ELEMENT_TYPE)
 {
 	m_tool = tool;
 }
@@ -22,8 +22,8 @@ void DialogElementType::init()
 	
 	add(new Button(ACTION_OK, 8, m_dimensions.h - 32, LANG_BUTTON_OK, this));
 	add(new Button(ACTION_CANCEL, 124, m_dimensions.h - 32, LANG_BUTTON_CANCEL, this));
-
 	add(m_type = new Combobox(2, 8, 52, m_dimensions.w - 16, 20, this));
+	
 	/* Populate combobox with element types */
 	m_type->add_item(LANG_ELEMENT_TEXTURE);
 	m_type->add_item(LANG_ELEMENT_BUTTON);
@@ -42,8 +42,11 @@ void DialogElementType::action_performed(int8_t action_id)
 	switch (action_id)
 	{
 	case ACTION_CANCEL:
+		m_tool->queue_dialog_close();
 		break;
 	case ACTION_OK:
+		m_tool->set_new_element_type((ElementType) m_type->get_selected());
+		m_tool->queue_dialog_open(DialogID::NEW_ELEMENT);
 		break;
 	}
 }

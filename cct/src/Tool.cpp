@@ -61,6 +61,7 @@ void Tool::program_loop()
 			}
 			break;
 		}
+
 		m_notify->draw(); /* Notifications have top priority */
 		m_helper->repaint();
 	}
@@ -101,39 +102,6 @@ void Tool::action_performed(uint8_t type)
 		m_queue_close = true;
 		m_state = IN_BUILD;
 		break;
-	case TOOL_ACTION_HELP_OPEN:
-		close_toplevel();
-		m_state = IN_HELP;
-		m_toplevel = new DialogHelp(m_helper, this);
-		m_toplevel->init();
-		break;
-	case TOOL_ACTION_ELEMENT_TYPE_EXIT:
-	case TOOL_ACTION_NEW_ELEMENT_EXIT:
-	case TOOL_ACTION_HELP_EXIT:
-		m_state = IN_BUILD;
-		m_queue_close = true;
-		break;
-	case TOOL_ACTION_NEW_ELEMENT_OPEN:
-		close_toplevel();
-		m_state = IN_NEW_ELEMENT;
-		m_toplevel = new DialogNewElement(m_helper, LANG_DIALOG_NEW_ELEMENT, this, ElementType::BUTTON);
-		m_toplevel->init();
-		d = reinterpret_cast<DialogNewElement*>(m_toplevel);
-		d->set_default_dim(m_config->get_default_dim().x, m_config->get_default_dim().y);
-		break;
-	case TOOL_ACTION_MOD_ELEMENT_OPEN:
-		if (m_config->selected())
-		{
-			close_toplevel();
-			m_state = IN_NEW_ELEMENT;
-			m_toplevel = new DialogNewElement(m_helper, LANG_DIALOG_NEW_ELEMENT, this,
-				m_config->selected()->get_type());
-			m_toplevel->init();
-			d = reinterpret_cast<DialogNewElement*>(m_toplevel);
-			d->set_default_dim(m_config->get_default_dim().x, m_config->get_default_dim().y);
-			d->load_from_element(m_config->selected());
-		}
-		break;
 	case TOOL_ACTION_MOD_ELEMENT_APPLY:
 		if (m_config->selected())
 		{
@@ -151,7 +119,7 @@ void Tool::action_performed(uint8_t type)
 
 		switch (d->get_type())
 		{
-
+		case BUTTON:
 		case TEXTURE:
 			e = new Element(d->get_type(), *d->get_id(), SDL_Point { 0, 0 }, d->get_selection_1(), d->get_vc());
 			break;
@@ -177,12 +145,6 @@ void Tool::action_performed(uint8_t type)
 	case TOOL_ACTION_SAVE_CONFIG:
 		m_config->write_config(m_notify);
 		break;
-	case TOOL_ACTION_ELEMENT_TYPE_OPEN:
-		close_toplevel();
-		m_state = IN_ELEMENT_TYPE;
-		m_toplevel = new DialogElementType(m_helper, this);
-		m_toplevel->init();
-		break;
 	}
 }
 
@@ -194,6 +156,17 @@ Texture * Tool::get_atlas(void)
 void Tool::delete_element(uint16_t id)
 {
 	m_config->queue_delete(id);
+}
+
+void Tool::queue_dialog_open(DialogID id)
+{
+	m_queued_dialog = id;
+}
+
+void Tool::queue_dialog_close(void)
+{
+	m_queue_close = true;
+	m_state = IN_BUILD;
 }
 
 void Tool::add_element(Element * e)
@@ -256,6 +229,7 @@ void Tool::handle_input()
 			{
 				m_config->handle_events(&m_event); /* Still need it to resize*/
 			}
+			/* Fall through intended */
 		case IN_SETUP:
 			if (m_toplevel)
 				m_toplevel->handle_events(&m_event);
@@ -275,5 +249,46 @@ void Tool::handle_input()
 	{
 		m_queue_close = false;
 		close_toplevel();
+	}
+
+	if (m_queued_dialog != DialogID::NONE)
+	{
+		DialogNewElement * d = nullptr;
+		close_toplevel();
+		switch (m_queued_dialog)
+		{
+		case HELP:
+			m_state = IN_HELP;
+			m_toplevel = new DialogHelp(m_helper, this);
+			m_toplevel->init();
+			break;
+		case NEW_ELEMENT:
+			m_state = IN_NEW_ELEMENT;
+			m_toplevel = new DialogNewElement(m_helper, LANG_DIALOG_NEW_ELEMENT, this, m_new_element_type);
+			m_toplevel->init();
+			d = reinterpret_cast<DialogNewElement*>(m_toplevel);
+			d->set_default_dim(m_config->get_default_dim().x, m_config->get_default_dim().y);
+			break;
+		case MOD_ELEMENT:
+			if (m_config && m_config->selected())
+			{
+				m_state = IN_NEW_ELEMENT;
+				m_toplevel = new DialogNewElement(m_helper, LANG_DIALOG_NEW_ELEMENT, this,
+					m_config->selected()->get_type());
+				m_toplevel->init();
+				d = reinterpret_cast<DialogNewElement*>(m_toplevel);
+				d->set_default_dim(m_config->get_default_dim().x, m_config->get_default_dim().y);
+				d->load_from_element(m_config->selected());
+			}
+
+			break;
+		case SELECECT_TYPE:
+			m_state = IN_ELEMENT_TYPE;
+			m_toplevel = new DialogElementType(m_helper, this);
+			break;
+		}
+		if (m_toplevel)
+			m_toplevel->init();
+		m_queued_dialog = DialogID::NONE;
 	}
 }

@@ -66,11 +66,14 @@ void Button::draw_background(void)
 {
 	SDL_Color *color = (m_hovered || m_tab_focused) ? get_helper()->palette()->light_gray() : get_helper()->palette()->dark_gray();
 
+	
 	if (m_pressed)
 	{
 		SDL_Rect dim = *get_dimensions();
+		printf("X: %i\n", dim.x);
 		dim.x += 2;
 		dim.y += 2;
+		printf("X: %i\n", dim.x);
 		get_helper()->util_fill_rect_shadow(&dim, color, 1);
 		get_helper()->util_text(&m_localized_text, dim.x + m_text_pos.x,
 			dim.y + m_text_pos.y,
@@ -96,32 +99,34 @@ bool Button::handle_events(SDL_Event *event, bool was_handled)
 {
 	bool handled = false;
 
-	m_hovered = is_mouse_over(event->button.x, event->button.y);
-
-	if (!was_handled && event->type == SDL_MOUSEBUTTONDOWN && event->button.button == SDL_BUTTON_LEFT)
+	if (!was_handled)
 	{
-		if (m_hovered)
-		{
-			m_pressed = true;
-			handled = true;
-		}
-	}
-	else if (!was_handled &&event->type == SDL_MOUSEBUTTONUP && event->button.button == SDL_BUTTON_LEFT)
-	{
-		if (m_hovered)
-		{
-			get_parent()->action_performed(m_element_id);
-			handled = true;
-		}
-		m_pressed = false;
-	}
-	else if (event->type == SDL_MOUSEMOTION)
-	{
-		if (event->motion.state & SDL_BUTTON_LMASK)
+		m_hovered = is_mouse_over(event->button.x, event->button.y);
+		if (event->type == SDL_MOUSEBUTTONDOWN && event->button.button == SDL_BUTTON_LEFT)
 		{
 			if (m_hovered)
 			{
 				m_pressed = true;
+				handled = true;
+			}
+		}
+		else if (event->type == SDL_MOUSEBUTTONUP && event->button.button == SDL_BUTTON_LEFT)
+		{
+			if (m_hovered)
+			{
+				get_parent()->action_performed(m_element_id);
+				handled = true;
+			}
+			m_pressed = false;
+		}
+		else if (event->type == SDL_MOUSEMOTION)
+		{
+			if (event->motion.state & SDL_BUTTON_LMASK)
+			{
+				if (m_hovered)
+				{
+					m_pressed = true;
+				}
 			}
 		}
 	}

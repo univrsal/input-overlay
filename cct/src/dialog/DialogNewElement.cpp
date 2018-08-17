@@ -64,7 +64,7 @@ void DialogNewElement::action_performed(int8_t action_id)
 			m_tool->action_performed(TOOL_ACTION_NEW_ELEMENT_ADD);
 		break;
 	case ACTION_CANCEL:
-		m_tool->action_performed(TOOL_ACTION_NEW_ELEMENT_EXIT);
+		m_tool->queue_dialog_close();
 		break;
 	default:
 		if (m_read_keybind->get_state())

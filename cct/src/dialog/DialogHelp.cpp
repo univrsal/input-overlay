@@ -13,5 +13,5 @@ void DialogHelp::init()
 void DialogHelp::action_performed(int8_t action_id)
 {
 	if (m_tool)
-		m_tool->action_performed(TOOL_ACTION_HELP_EXIT);
+		m_tool->queue_dialog_close();
 }

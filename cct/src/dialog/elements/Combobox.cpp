@@ -61,11 +61,11 @@ void Combobox::draw_foreground(void)
 
 	if (m_list_open)
 	{
-		uint16_t y = ITEM_V_SPACE;
+		uint16_t y = get_bottom() + ITEM_V_SPACE;
 
 		for (auto const& element : m_items)
 		{
-			get_helper()->util_text(&element, get_left() + 2, get_bottom() + y, get_helper()->palette()->white(),
+			get_helper()->util_text(&element, get_left() + 2, y, get_helper()->palette()->white(),
 				m_flags & ELEMENT_UNLOCALIZED ? FONT_WSTRING : get_helper()->localization()->get_font());
 			y += m_item_v_space;
 		}
@@ -85,7 +85,7 @@ void Combobox::select_state(bool state)
 bool Combobox::handle_events(SDL_Event * event, bool was_handled)
 {
 	bool handled = false;
-	if (event->type == SDL_MOUSEBUTTONDOWN)
+	if (event->type == SDL_MOUSEBUTTONDOWN && !was_handled)
 	{
 		/* Handle focus */
 		if (event->button.button == SDL_BUTTON_LEFT)

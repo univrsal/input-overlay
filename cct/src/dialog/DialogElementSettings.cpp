@@ -99,13 +99,13 @@ void DialogElementSettings::action_performed(int8_t action_id)
 		}
 		break;
 	case ACTION_MOD_ELEMENT:
-		m_tool->action_performed(TOOL_ACTION_MOD_ELEMENT_OPEN);
+		m_tool->queue_dialog_open(DialogID::MOD_ELEMENT);
 		break;
 	case ACTION_HELP_BUTTON:
-		m_tool->action_performed(TOOL_ACTION_HELP_OPEN);
+		m_tool->queue_dialog_open(DialogID::HELP);
 		break;
 	case ACTION_NEW_ELEMENT:
-		m_tool->action_performed(TOOL_ACTION_ELEMENT_TYPE_OPEN);
+		m_tool->queue_dialog_open(DialogID::SELECECT_TYPE);
 		break;
 	case ACTION_SAVE_CONFIG:
 		m_tool->action_performed(TOOL_ACTION_SAVE_CONFIG);

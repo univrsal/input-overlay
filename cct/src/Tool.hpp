@@ -35,17 +35,19 @@ enum ToolState
 	IN_NEW_ELEMENT
 };
 
-#define TOOL_ACTION_HELP_OPEN 0
-#define TOOL_ACTION_HELP_EXIT 1
-#define TOOL_ACTION_NEW_ELEMENT_OPEN 2
-#define TOOL_ACTION_NEW_ELEMENT_EXIT 3
 #define TOOL_ACTION_NEW_ELEMENT_ADD 4
-#define TOOL_ACTION_MOD_ELEMENT_OPEN 5
 #define TOOL_ACTION_MOD_ELEMENT_APPLY 6
 #define TOOL_ACTION_SAVE_CONFIG 7
 #define TOOL_ACTION_SETUP_EXIT 8
-#define TOOL_ACTION_ELEMENT_TYPE_OPEN 9
-#define TOOL_ACTION_ELEMENT_TYPE_EXIT 10
+
+enum DialogID
+{
+	NONE,
+	HELP,
+	NEW_ELEMENT,
+	MOD_ELEMENT,
+	SELECECT_TYPE
+};
 
 class Tool
 {
@@ -65,14 +67,24 @@ public:
 	Texture * get_atlas(void);
 
 	void delete_element(uint16_t id);
+
+	void set_new_element_type(ElementType type) { m_new_element_type = type; }
+
+	void queue_dialog_open(DialogID id);
+	void queue_dialog_close(void);
 private:
 	void add_element(Element * e);
 
 	void close_toplevel(void);
 	void handle_input();
 	bool m_run_flag = true;
-	bool m_queue_close = false; /* True when top level dialog should be closed */
 
+	bool m_queue_close = false; /* True when top level dialog should be closed */
+	DialogID m_queued_dialog = DialogID::NONE;
+
+	/* Stores the type, which the user selected for the next element */
+	ElementType m_new_element_type = ElementType::INVALID;
+	
 	SDL_Event m_event;
 	SDL_helper * m_helper;
 

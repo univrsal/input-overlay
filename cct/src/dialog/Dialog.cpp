@@ -195,12 +195,13 @@ bool Dialog::handle_events(SDL_Event * event)
 	}
 
 	bool cursor_handled = false;
+	bool element_handled = false;
 
 	for (auto const& element : m_screen_elements)
 	{
-		if (element->handle_events(event, was_handled))
+		if (element->handle_events(event, element_handled))
 		{
-			was_handled = true;
+			element_handled = true;
 		}
 
 		if (!cursor_handled && m_helper->util_is_in_rect(element->get_dimensions(), event->button.x, event->button.y))
@@ -212,7 +213,7 @@ bool Dialog::handle_events(SDL_Event * event)
 
 	if (!cursor_handled)
 		m_helper->set_cursor(CURSOR_ARROW);
-	return was_handled;
+	return was_handled || element_handled;
 }
 
 void Dialog::action_performed(int8_t action_id)
