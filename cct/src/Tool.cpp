@@ -285,10 +285,9 @@ void Tool::handle_input()
 		case SELECECT_TYPE:
 			m_state = IN_ELEMENT_TYPE;
 			m_toplevel = new DialogElementType(m_helper, this);
+			m_toplevel->init();
 			break;
 		}
-		if (m_toplevel)
-			m_toplevel->init();
 		m_queued_dialog = DialogID::NONE;
 	}
 }
