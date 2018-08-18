@@ -22,6 +22,11 @@
 /* Translation constants*/
 #define LANG_ID					"language"
 
+/* Coordinate system */
+#define LANG_LABEL_X_AXIS			"label_x_axis"
+#define LANG_LABEL_Y_AXIS			"label_y_axis"
+#define LANG_LABEL_SCALE			"label_scale"
+			
 /* SDL errors */
 #define SDL_INIT_FAILED				"Initialization of SDL failed! Error: %s\n"
 #define SDL_CREATE_WINDOW_FAILED		"Creating SDL Window failed! Error: %s\n"

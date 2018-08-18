@@ -18,7 +18,8 @@ void DialogNewElement::load_from_element(Element * e)
 
 		m_element_id->set_text(*e->get_id());
 
-		m_keycode->set_hex_int(e->get_vc());
+		if (m_keycode)
+			m_keycode->set_hex_int(e->get_vc());
 
 		m_selection_1.x = e->get_u();
 		m_selection_1.y = e->get_v();

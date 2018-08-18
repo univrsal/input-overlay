@@ -158,16 +158,33 @@ bool CoordinateSystem::handle_events(SDL_Event * e)
 
 void CoordinateSystem::draw_foreground(void)
 {
-	/* Draw Scale*/
 	int step = 10 * m_scale_f;
-	int start;
+	
+	int x, y;
+	int start_x, start_y;
+	bool enable_custom_grid = m_grid_spacing.x > 0;
 
-	/* I think this makes sense */
+	/* Draw custom grid, which adjusts to button dimensions */
+	if (enable_custom_grid)
+	{
+		int step_x = m_grid_spacing.x * m_scale_f;
+		int step_y = m_grid_spacing.y * m_scale_f;
+		start_x = get_origin_left() + ((m_origin.x - get_origin_left()) % step_x) + step_x;
+		start_y = get_origin_top() + ((m_origin.y - get_origin_top()) % step_y) + step_y;
 
-	start = get_origin_left() + ((m_origin.x - get_origin_left()) % step) + step;
+		for (x = start_x; x < get_right(); x += step_x)
+			m_helper->util_draw_line(x, get_origin_top() + 4, x, get_bottom(), m_helper->palette()->gray());
+
+		for (y = start_y; y < get_bottom(); y += step_y)
+			m_helper->util_draw_line(get_origin_left() + 4, y, get_right(), y, m_helper->palette()->gray());
+	}
+
+	/* Draw Scale*/
+	start_x = get_origin_left() + ((m_origin.x - get_origin_left()) % step) + step;
+	start_y = get_origin_top() + ((m_origin.y - get_origin_top()) % step) + step;
 
 	/* X Axis*/
-	for (int x = start; x < get_right(); x += step)
+	for (x = start_x; x < get_right(); x += step)
 	{
 		bool flag = (x - m_origin.x) % 100 == 0 && (x - m_origin.x) != 0;
 		bool flag2 = m_grid_spacing.x > 0 && (x - m_origin.x) % m_grid_spacing.x == 0;
@@ -180,21 +197,17 @@ void CoordinateSystem::draw_foreground(void)
 				UTIL_CLAMP(get_origin_left() + dim.h + 2, x + dim.h / 2, get_right() - 2),
 				get_origin_top() - dim.w - 6, m_helper->palette()->white(), 90);
 			m_helper->util_draw_line(x, get_origin_top() - 4, x, get_origin_top() + 4, m_helper->palette()->white());
+			if (!enable_custom_grid)
+				m_helper->util_draw_line(x, get_origin_top() + 4, x, get_bottom(), m_helper->palette()->gray());
 		}
-		else
+		else 
 		{
 			m_helper->util_draw_line(x, get_origin_top() - 2, x, get_origin_top() + 2, m_helper->palette()->white());
 		}
-
-		if (flag && m_grid_spacing.x == 0 || flag2)
-		{
-			m_helper->util_draw_line(x, get_origin_top() + 4, x, get_bottom(), m_helper->palette()->gray());
-		}
 	}
 
-	start = get_origin_top() + ((m_origin.y - get_origin_top()) % ((10 * m_scale_f))) + step;
-
-	for (int y = start; y < get_bottom(); y += step)
+	/* Y Axis */
+	for (y = start_y; y < get_bottom(); y += step)
 	{
 		bool flag = (y - m_origin.y) % 100 == 0 && (y - m_origin.y) != 0;
 
@@ -207,7 +220,8 @@ void CoordinateSystem::draw_foreground(void)
 				UTIL_CLAMP(get_origin_top() + 2, y - dim.h / 2, get_bottom() - dim.h - 2),
 				m_helper->palette()->white());
 			m_helper->util_draw_line(get_origin_left() - 4, y, get_origin_left() + 4, y, m_helper->palette()->white());
-			m_helper->util_draw_line(get_origin_left() + 4, y, get_right(), y, m_helper->palette()->gray());
+			if (!enable_custom_grid)
+				m_helper->util_draw_line(get_origin_left() + 4, y, get_right(), y, m_helper->palette()->gray());
 		}
 		else
 		{
@@ -222,18 +236,19 @@ void CoordinateSystem::draw_foreground(void)
 		get_origin_left(), get_bottom() - 1, m_helper->palette()->white());
 
 	/* Axe titles */
-	std::string t = LABEL_X_AXIS;
+	std::string t = m_helper->loc(LANG_LABEL_X_AXIS);
 	SDL_Rect dim = m_helper->util_text_dim(&t);
-
 	m_helper->util_text(&t, get_origin_left() - dim.w - 15, get_origin_top() - dim.h, m_helper->palette()->white());
-	t = LABEL_Y_AXIS;
+
+	t = m_helper->loc(LANG_LABEL_Y_AXIS);
 	dim = m_helper->util_text_dim(&t);
 	m_helper->util_text_rot(&t, get_origin_left(), get_origin_top() - 15 - dim.w, m_helper->palette()->white(), 90);
 
-	t = m_helper->format(LABEL_SCALE, m_scale_f);
+	t = m_helper->format(m_helper->loc(LANG_LABEL_SCALE).c_str(), m_scale_f);
 	dim = m_helper->util_text_dim(&t);
 	m_helper->util_text(&t, get_right() - dim.w - 5, m_dimensions.y + dim.h + 5, m_helper->palette()->white());
 
+	/* Cross hair */
 	SDL_Point mouse;
 	SDL_GetMouseState(&mouse.x, &mouse.y);
 

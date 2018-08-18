@@ -216,6 +216,13 @@ void Tool::handle_input()
 		{
 			m_run_flag = false;
 		}
+		else if (m_helper->is_ctrl_down() && m_event.type == SDL_KEYDOWN)
+		{
+			if (m_event.key.keysym.sym == SDLK_s) // CTRL + S
+			{
+				action_performed(TOOL_ACTION_SAVE_CONFIG);
+			}
+		}
 
 		m_helper->handle_events(&m_event);
 
@@ -270,7 +277,7 @@ void Tool::handle_input()
 			d->set_default_dim(m_config->get_default_dim().x, m_config->get_default_dim().y);
 			break;
 		case MOD_ELEMENT:
-			if (m_config && m_config->selected())
+			if (m_config->selected())
 			{
 				m_state = IN_NEW_ELEMENT;
 				m_toplevel = new DialogNewElement(m_helper, LANG_DIALOG_NEW_ELEMENT, this,
@@ -280,7 +287,6 @@ void Tool::handle_input()
 				d->set_default_dim(m_config->get_default_dim().x, m_config->get_default_dim().y);
 				d->load_from_element(m_config->selected());
 			}
-
 			break;
 		case SELECECT_TYPE:
 			m_state = IN_ELEMENT_TYPE;

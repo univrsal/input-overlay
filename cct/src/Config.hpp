@@ -119,7 +119,7 @@ private:
 	ElementType m_type;
 	SDL_Point m_pos; /* Final position in overlay */
 	SDL_Rect m_texture_mapping; /* Position in texture*/
-	uint16_t m_keycode;
+	uint16_t m_keycode = 0x0;
 	std::string m_id;
 
 	bool m_pressed = false; /* used to highlight in preview */

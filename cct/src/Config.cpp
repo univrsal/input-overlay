@@ -27,7 +27,7 @@ Config::Config(const char * texture, const char * config, SDL_Point def_dim, SDL
 	m_cs = CoordinateSystem(SDL_Point { X_AXIS, Y_AXIS }, SDL_Rect { 0, 0, w->x, w->y }, h);
 
 	if (def_dim.x > 0 && def_dim.y > 0)
-		m_cs.set_grid_space(def_dim);
+		m_cs.set_grid_space(m_default_dim);
 	std::string test;
 	SDL_Point pos = { 0, 0 };
 	SDL_Rect map = { 1, 1, 157, 128 };

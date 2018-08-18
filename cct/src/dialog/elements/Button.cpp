@@ -70,10 +70,8 @@ void Button::draw_background(void)
 	if (m_pressed)
 	{
 		SDL_Rect dim = *get_dimensions();
-		printf("X: %i\n", dim.x);
 		dim.x += 2;
 		dim.y += 2;
-		printf("X: %i\n", dim.x);
 		get_helper()->util_fill_rect_shadow(&dim, color, 1);
 		get_helper()->util_text(&m_localized_text, dim.x + m_text_pos.x,
 			dim.y + m_text_pos.y,
