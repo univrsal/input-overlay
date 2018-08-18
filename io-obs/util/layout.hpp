@@ -20,6 +20,7 @@ extern "C" {
 /* Texture constants */
 #define INNER_BORDER 3
 #define OUTTER_BORDER 1
+#define PRESSED_OFFSET 2
 
 /**
  * This file is part of input-overlay
@@ -43,17 +44,6 @@ enum WheelDirection
 	WHEEL_DIR_DOWN = 1
 };
 
-enum ElementType
-{
-	ELEMENT_TEXTURE,
-	ELEMENT_BUTTON = 2,
-	ELEMENT_WHEEL,
-	ELEMENT_MOUSE_MOVEMENT,
-	ELEMENT_ANALOG_STICK,
-	ELEMENT_TRIGGER,
-	ELEMENT_TEXT
-};
-
 class ElementData
 {
 public:
@@ -74,12 +64,13 @@ class ElementDataButton : public ElementData
 {
 public:
 	ElementDataButton(ButtonState state)
-		: ElementData(ElementType::ELEMENT_BUTTON)
+		: ElementData(ElementType::BUTTON)
 	{
 		m_state = state;
 	}
 
-	ButtonState get_state() {
+	ButtonState get_state()
+	{
 		return m_state;
 	}
 private:
@@ -90,16 +81,18 @@ class ElementDataWheel : public ElementData
 {
 public:
 	ElementDataWheel(WheelDirection dir, int amount)
-		: ElementData(ElementType::ELEMENT_WHEEL)
+		: ElementData(ElementType::MOUSE_SCROLLWHEEL)
 	{
 		m_dir = dir;
 		m_amount = amount;
 	}
 
-	int get_amount() {
+	int get_amount()
+	{
 		return m_amount;
 	}
-	WheelDirection get_dir() {
+	WheelDirection get_dir()
+	{
 		return m_dir;
 	}
 
@@ -111,14 +104,21 @@ private:
 class ElementDataHolder
 {
 public:
+	~ElementDataHolder()
+	{
+		m_data.clear();
+		m_map_cleared = true;
+	}
 	void add_data(uint16_t keycode, ElementData * data);
 	bool data_exists(uint16_t keycode);
 	void remove_data(uint16_t keycode);
 	ElementData * get_by_code(uint16_t keycode);
-	bool empty(void) {
-		return m_data.empty();
+	bool is_empty(void)
+	{
+		return m_map_cleared || m_data.empty();
 	}
 
+	bool m_map_cleared = false;
 	std::map<uint16_t, std::unique_ptr<ElementData>> m_data;
 };
 
@@ -130,15 +130,19 @@ public:
 		m_type = type;
 	}
 
-	virtual void load(ccl_config * cfg, std::string id) { /*NO-OP*/
+	virtual void load(ccl_config * cfg, std::string id)
+	{ /*NO-OP*/
 	};
-	virtual void draw(gs_effect_t * effect, gs_image_file_t * m_image, ElementData * data) { /*NO-OP*/
+	virtual void draw(gs_effect_t * effect, gs_image_file_t * m_image, ElementData * data)
+	{ /*NO-OP*/
 	};
 
-	ElementType get_type() {
+	ElementType get_type()
+	{
 		return m_type;
 	}
-	uint16_t get_keycode() {
+	uint16_t get_keycode()
+	{
 		return m_keycode;
 	}
 
@@ -146,15 +150,14 @@ protected:
 	void read_size(ccl_config * cfg, std::string id)
 	{
 		if (cfg->node_exists(id + CFG_WIDTH))
-		{
 			m_width = cfg->get_int(id + CFG_WIDTH);
-			m_height = cfg->get_int(id + CFG_HEIGHT);
-		}
 		else
-		{
 			m_width = cfg->get_int(CFG_DEFAULT_WIDTH);
+
+		if (cfg->node_exists(id + CFG_HEIGHT))
+			m_height = cfg->get_int(id + CFG_HEIGHT);
+		else
 			m_height = cfg->get_int(CFG_DEFAULT_HEIGHT);
-		}
 	}
 
 	void read_pos(ccl_config * cfg, std::string id)
@@ -179,7 +182,7 @@ protected:
 class ElementTexture : public Element
 {
 public:
-	ElementTexture() : Element(ElementType::ELEMENT_TEXTURE) { };
+	ElementTexture() : Element(ElementType::TEXTURE) { };
 	void load(ccl_config * cfg, std::string id) override;
 	void draw(gs_effect_t * effect, gs_image_file_t * image, ElementData * data) override;
 };
@@ -187,7 +190,7 @@ public:
 class ElementButton : public Element
 {
 public:
-	ElementButton() : Element(ElementType::ELEMENT_BUTTON) { };
+	ElementButton() : Element(ElementType::BUTTON) { };
 	void load(ccl_config * cfg, std::string id) override;
 	void draw(gs_effect_t * effect, gs_image_file_t * image, ElementData * data) override;
 };
@@ -195,7 +198,8 @@ public:
 class Overlay
 {
 public:
-	Overlay() { /* NO-OP*/
+	Overlay()
+	{ /* NO-OP*/
 	}
 	Overlay(std::string ini, std::string texture);
 
@@ -203,10 +207,12 @@ public:
 	void unload();
 
 	void draw(gs_effect_t * effect);
-	bool is_loaded() {
+	bool is_loaded()
+	{
 		return m_is_loaded;
 	}
-	gs_image_file_t * get_texture() {
+	gs_image_file_t * get_texture()
+	{
 		return m_image;
 	}
 
@@ -232,5 +238,4 @@ private:
 	float m_arrow_rot = 0.f;
 };
 
-//};
 #endif // LAYOUT_HPP

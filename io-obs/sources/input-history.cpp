@@ -12,7 +12,7 @@ namespace Sources {
 	void InputHistorySource::load_text_source(void)
 	{
 #ifdef WINDOWS
-		m_text_source = obs_source_create("text_gdiplus\0", "history-text-source", m_settings, NULL);
+		m_text_source = obs_source_create("text_gdiplus\0", "history-text-source", m_settings, nullptr);
 #else
 		m_text_source = obs_source_create("text_ft2_source\0", "history-text-source", m_settings, NULL);
 #endif
@@ -85,9 +85,9 @@ namespace Sources {
 	void InputHistorySource::clear_history(void)
 	{
 
-		for (int i = 0; i < MAX_HISTORY_SIZE; i++)
+		for (auto & i : m_history)
 		{
-			m_history[i] = {};
+			i = {};
 		}
 
 		if (GET_MASK(MASK_COMMAND_MODE) && m_command_handler)
@@ -104,7 +104,7 @@ namespace Sources {
 	KeyBundle InputHistorySource::check_keys(void)
 	{
 		KeyBundle temp = KeyBundle();
-		if (!Hook::input_data->empty() || GET_MASK(MASK_INCLUDE_PAD))
+		if (!Hook::input_data->is_empty() || GET_MASK(MASK_INCLUDE_PAD))
 		{
 			for (auto& const data : Hook::input_data->m_data)
 			{
@@ -114,8 +114,8 @@ namespace Sources {
 				if (!GET_MASK(MASK_INCLUDE_MOUSE) && (data.first & VC_MOUSE_MASK))
 					continue;
 
-				bool btn = data.second->get_type() == ElementType::ELEMENT_BUTTON;
-				bool wheel = data.second->get_type() == ElementType::ELEMENT_WHEEL;
+				bool btn = data.second->get_type() == ElementType::BUTTON;
+				bool wheel = data.second->get_type() == ElementType::MOUSE_SCROLLWHEEL;
 
 				if (btn)
 				{
@@ -197,9 +197,9 @@ namespace Sources {
 				for (int i = START; CONDITION; INCREMENT)
 				{
 					index2 = 0;
-					for (int k = 0; k < MAX_SIMULTANEOUS_KEYS; k++)
+					for (unsigned short key : m_history[i].m_keys)
 					{
-						icon = m_key_icons->get_icon_for_key(m_history[i].m_keys[k]);
+						icon = m_key_icons->get_icon_for_key(key);
 						if (icon)
 						{
 							gs_matrix_push();
@@ -220,9 +220,9 @@ namespace Sources {
 				for (int i = START; CONDITION; INCREMENT)
 				{
 					index2 = 0;
-					for (int k = 0; k < MAX_SIMULTANEOUS_KEYS; k++)
+					for (unsigned short key : m_history[i].m_keys)
 					{
-						icon = m_key_icons->get_icon_for_key(m_history[i].m_keys[k]);
+						icon = m_key_icons->get_icon_for_key(key);
 						if (icon)
 						{
 							gs_matrix_push();
@@ -433,15 +433,15 @@ namespace Sources {
 		std::string text;
 		bool flag = false;
 
-		for (int i = 0; i < MAX_SIMULTANEOUS_KEYS; i++)
+		for (unsigned short key : m_keys)
 		{
-			if (m_keys[i] == 0)
+			if (key == 0)
 				break; // Array is filled from beginning to end
 				       // -> First entry with zero means there are none after it
 
 			if (!(masks & MASK_INCLUDE_MOUSE))
 			{
-				switch (m_keys[i])
+				switch (key)
 				{
 				case VC_MOUSE_BUTTON1:
 				case VC_MOUSE_BUTTON2:
@@ -454,20 +454,20 @@ namespace Sources {
 				}
 			}
 
-			if (m_keys[i] > 0)
+			if (key > 0)
 			{
-				const char* temp = NULL;
+				const char* temp = nullptr;
 
 				if (masks & MASK_TRANSLATION)
 				{
-					temp = names->get_name(m_keys[i]);
+					temp = names->get_name(key);
 
 					if (!temp && (masks & MASK_USE_FALLBACK))
-						temp = key_to_text(m_keys[i]);
+						temp = key_to_text(key);
 				}
 				else
 				{
-					temp = key_to_text(m_keys[i]);
+					temp = key_to_text(key);
 				}
 
 				if (temp)
@@ -487,7 +487,7 @@ namespace Sources {
 						flag = true;
 					std::stringstream stream;
 					stream << "0x" << std::setfill('0') << std::setw(sizeof(uint16_t) * 2)
-						<< std::hex << m_keys[i];
+						<< std::hex << key;
 					text.append(stream.str());
 				}
 #endif
@@ -514,9 +514,9 @@ namespace Sources {
 
 	bool KeyBundle::is_only_mouse()
 	{
-		for (int i = 0; i < MAX_SIMULTANEOUS_KEYS; i++)
+		for (unsigned short key : m_keys)
 		{
-			switch (m_keys[i])
+			switch (key)
 			{
 			case 0:
 			case VC_MOUSE_BUTTON1:
@@ -729,7 +729,7 @@ namespace Sources {
 					key_code = std::stoul(val, nullptr, 16);
 					m_names[key_code] = node->get_value();
 				}
-			} while ((node = node->get_next()) != NULL);
+			} while ((node = node->get_next()) != nullptr);
 		}
 
 		if (cfg->has_errors())
@@ -857,9 +857,9 @@ namespace Sources {
 
 	bool KeyIcons::has_texture_for_bundle(KeyBundle * bundle)
 	{
-		for (int i = 0; i < MAX_SIMULTANEOUS_KEYS; i++)
+		for (unsigned short key : bundle->m_keys)
 		{
-			if (get_icon_for_key(bundle->m_keys[i])) // Any key inside a bundle has icon --> draw the entire bundle
+			if (get_icon_for_key(key)) // Any key inside a bundle has icon --> draw the entire bundle
 				return true;
 		}
 		return false;

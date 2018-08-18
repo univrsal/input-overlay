@@ -16,7 +16,7 @@
 #include <uiohook.h>
 #include <list>
 
-#include "../ccl/ccl.hpp"
+#include "../../ccl/ccl.hpp"
 #include "../util/layout.hpp"
 #include "../util/util.hpp"
 

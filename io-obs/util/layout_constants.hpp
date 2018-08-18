@@ -22,3 +22,16 @@
 #define CFG_HEIGHT	"_height"
 #define CFG_FIRST_ID	"first_element"
 #define CFG_NEXT_ID	"_next"
+
+enum ElementType
+{
+	INVALID = -1,
+	TEXTURE,
+	BUTTON,
+	MOUSE_SCROLLWHEEL, /* MOUSE_WHEEL was taken :( */
+	MOUSE_MOVEMENT,
+	ANALOG_STICK,
+	TRIGGER,
+	TEXT,
+	DPAD_STICK,
+};

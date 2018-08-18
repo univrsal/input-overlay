@@ -127,14 +127,18 @@ namespace Hook {
 		pthread_mutex_destroy(&hook_control_mutex);
 		pthread_cond_destroy(&hook_control_cond);
 #endif
-		hook_stop();
 		if (input_data)
 			delete input_data;
+		hook_stop();
+
 	}
 
 	void start_hook(void)
 	{
 		input_data = new ElementDataHolder();
+#ifdef _DEBUG
+		blog(LOG_INFO, "libuiohook init start... Dataholder@0x%X\n", (int) input_data);
+#endif
 #ifdef _WIN32
 		hook_running_mutex = CreateMutex(NULL, FALSE, TEXT("hook_running_mutex"));
 		hook_control_mutex = CreateMutex(NULL, FALSE, TEXT("hook_control_mutex"));
@@ -199,10 +203,13 @@ namespace Hook {
 
 	void proccess_event(uiohook_event * const event)
 	{
-		ElementData * d = input_data->get_by_code(VC_MOUSE_WHEEL);
+		
+		ElementData * d = nullptr;
 		ElementDataWheel * wheel = nullptr;
 		WheelDirection dir;
 		int new_amount = 0;
+
+		if (input_data) d = input_data->get_by_code(VC_MOUSE_WHEEL);
 
 		if (d)
 		{
@@ -224,7 +231,6 @@ namespace Hook {
 			input_data->remove_data(util_mouse_to_vc(event->data.mouse.button));
 			break;
 		case EVENT_MOUSE_WHEEL:
-
 
 			if (event->data.wheel.rotation >= WHEEL_DOWN)
 				dir = WheelDirection::WHEEL_DIR_DOWN;
