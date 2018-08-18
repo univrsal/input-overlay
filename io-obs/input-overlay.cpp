@@ -11,8 +11,8 @@
 
 /**
  * This file is part of input-overlay
- * which is licenced under the MIT licence.
- * See LICENCE or https://mit-license.org
+ * which is licensed under the MPL 2.0 license
+ * See LICENSE or mozilla.org/en-US/MPL/2.0/
  * github.com/univrsal/input-overlay
  */
 
@@ -23,7 +23,7 @@ bool obs_module_load(void)
 {
 	Sources::register_history();
 	Sources::register_overlay_source();
-	//Hook::start_hook();
+	Hook::start_hook();
 
 	start_pad_hook();
 

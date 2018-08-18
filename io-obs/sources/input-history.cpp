@@ -2,8 +2,9 @@
 
 /**
  * This file is part of input-overlay
- * which is licensed under the MIT license.
- * See LICENCE or https://mit-license.org
+ * which is licensed under the
+ * MOZILLA PUBLIC LICENCE 2.0 - mozilla.org/en-US/MPL/2.0/
+ * See LICENSE or mozilla.org/en-US/MPL/2.0/
  * github.com/univrsal/input-overlay
  */
 
