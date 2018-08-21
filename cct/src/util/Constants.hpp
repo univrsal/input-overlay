@@ -28,16 +28,17 @@
 #define LANG_LABEL_SCALE			"label_scale"
 			
 /* SDL errors */
-#define SDL_INIT_FAILED				"Initialization of SDL failed! Error: %s\n"
-#define SDL_CREATE_WINDOW_FAILED		"Creating SDL Window failed! Error: %s\n"
-#define SDL_LOAD_WINDOW_ICON_FAILED		"Loading window icon failed! Error: %s\n"
-#define SDL_CREATE_RENDERER_FAILED		"Creating SDL Renderer failed! Error: %s\n"
-#define SDL_TTF_INIT_FAILED			"Initializing SDL_ttf failed! Error: %s\n"
+#define SDL_INIT_FAILED				"Initialization of SDL failed! SDL_Error: %s\n"
+#define SDL_CREATE_WINDOW_FAILED		"Creating SDL Window failed! SDL_Error: %s\n"
+#define SDL_LOAD_WINDOW_ICON_FAILED		"Loading window icon failed! SDL_Error: %s\n"
+#define SDL_CREATE_RENDERER_FAILED		"Creating SDL Renderer failed! SDL_Error: %s\n"
+#define SDL_TTF_INIT_FAILED			"Initializing SDL_ttf failed! SDL_Error: %s\n"
 #define SDL_FONT_LOADING_FAILED			"Couldn't load fonts!\n"
-#define SDL_IMAGE_TO_SURFACE			"ERROR: Couldn't create surface %s! SDL_Error: %s\n"
-#define SDL_SURFACE_TO_TEXTURE_FAILED		"ERROR: Couldn't load image %s! SDL_Error: %s\n"
-#define SDL_TEXT_TO_TEXTURE			"Error while creating texture from surface in text rendering! ERROR: %s\n"
-#define SDL_TEXT_TO_SURFACE			"Error while creating surface from font in text rendering! ERROR: %s\n"
+#define SDL_IMAGE_TO_SURFACE			"Error: Couldn't create surface %s! SDL_Error: %s\n"
+#define SDL_SURFACE_TO_TEXTURE_FAILED		"Error: Couldn't load image %s! SDL_Error: %s\n"
+#define SDL_TEXT_TO_TEXTURE			"Error while creating texture from surface in text rendering! SDL_Error: %s\n"
+#define SDL_TEXT_TO_SURFACE			"Error while creating surface from font in text rendering! SDL_Error: %s\n"
+#define SDL_OPEN_CONTROLLER_FAILED		"Error while opening controller with id %i! SDL_Error: %s\n"
 
 /* Notifications */
 #define LANG_MSG_SAVE_ERROR			"msg_save_error"
@@ -48,6 +49,8 @@
 #define LANG_MSG_CONFIG_CORRUPT			"msg_config_corrupt"
 #define LANG_MSG_VALUE_TYPE_INVALID		"msg_value_invalid_type"
 #define LANG_MSG_NOTHING_TO_SAVE		"msg_nothing_to_save"
+#define LANG_MSG_GAMEPAD_CONNECTED		"msg_gamepad_connected"
+#define LANG_MSG_GAMEPAD_DISCONNECTED		"msg_gamepad_disconnected"
 
 /* Dialog titles*/
 #define LANG_DIALOG_NEW_ELEMENT			"dialog_new_element"

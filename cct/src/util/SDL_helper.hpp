@@ -124,6 +124,7 @@ public:
 		return m_palette;
 	}
 
+	void init_controllers(void);
 	void set_cursor(uint8_t type);
 
 	bool is_ctrl_down(void);
@@ -134,6 +135,9 @@ public:
 	void handle_events(SDL_Event * event);
 
 	uint8_t util_font_height(uint8_t font);
+
+	bool handle_controller_disconnect(uint8_t id);
+	bool handle_controller_connect(uint8_t id);
 private:
 	TTF_Font * get_font(uint8_t type)
 	{
@@ -179,6 +183,8 @@ private:
 	SDL_Cursor * m_move = nullptr;
 	SDL_Cursor * m_i_beam = nullptr;
 	SDL_Cursor * m_arrow = nullptr;
+
+	std::vector<SDL_GameController*> m_controllers;
 };
 
 template<typename ...Args>

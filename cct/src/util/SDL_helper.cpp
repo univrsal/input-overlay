@@ -29,7 +29,7 @@ SDL_helper::~SDL_helper()
 
 bool SDL_helper::init()
 {
-	if (SDL_Init(SDL_INIT_VIDEO) < 0)
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER) < 0)
 	{
 		printf(SDL_INIT_FAILED, SDL_GetError());
 		m_init_success = false;
@@ -103,7 +103,7 @@ bool SDL_helper::init()
 			m_default_font_height = TTF_FontHeight(m_default_font);
 			m_large_font_height = TTF_FontHeight(m_large_font);
 			m_wstring_font_height = TTF_FontHeight(m_wstring_font);
-			
+
 			/* Cursors */
 			m_size_h = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZEWE);
 			m_size_v = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZENS);
@@ -312,6 +312,22 @@ bool SDL_helper::util_check_texture_path(const char * path)
 	return flag;
 }
 
+void SDL_helper::init_controllers(void)
+{
+	for (int i = 0; i < SDL_NumJoysticks(); i++)
+	{
+		SDL_GameController * c = SDL_GameControllerOpen(i);
+		if (c)
+		{
+			m_controllers.emplace_back(c);
+		}
+		else
+		{
+			printf(SDL_OPEN_CONTROLLER_FAILED, i, SDL_GetError());
+		}
+	}
+}
+
 void SDL_helper::set_cursor(uint8_t type)
 {
 	if (m_have_cursors)
@@ -405,6 +421,63 @@ uint8_t SDL_helper::util_font_height(uint8_t font)
 	case FONT_WSTRING:
 		return m_wstring_font_height;
 	}
+}
+
+bool SDL_helper::handle_controller_disconnect(uint8_t id)
+{
+	bool flag = false;
+	if (id < m_controllers.size())
+	{
+		if (m_controllers[id])
+		{
+			SDL_GameControllerClose(m_controllers[id]);
+			m_controllers[id] = nullptr;
+			flag = true;
+		}
+	}
+	else if (!m_controllers.empty()) /* Just disconnect the last one :P who even uses multiple game pads */
+	{
+		SDL_GameControllerClose(m_controllers[m_controllers.size() - 1]);
+		m_controllers[m_controllers.size() - 1] = nullptr;
+		flag = true;
+	}
+	return flag;
+}
+
+bool SDL_helper::handle_controller_connect(uint8_t id)
+{
+	SDL_GameController * c;
+	bool flag = false;
+	if (id < m_controllers.size())
+	{
+		if (!m_controllers[id])
+		{
+			c = SDL_GameControllerOpen(id);
+			if (c)
+			{
+				m_controllers[id] = c;
+				flag = true;
+			}
+			else
+			{
+				printf(SDL_OPEN_CONTROLLER_FAILED, id, SDL_GetError());
+			}
+		}
+	}
+	else
+	{
+		c = SDL_GameControllerOpen(id);
+		if (c)
+		{
+			m_controllers.emplace_back(c);
+			flag = true;
+		}
+		else
+		{
+			printf(SDL_OPEN_CONTROLLER_FAILED, id, SDL_GetError());
+		}
+	}
+	return flag;
 }
 
 std::wstring SDL_helper::util_utf8_to_wstring(const std::string& str)
@@ -610,8 +683,8 @@ SDLK_RSHIFT },
 SDLK_END },
 	{ VC_PRINTSCREEN, SDLK_PRINTSCREEN },{ VC_SCROLL_LOCK, SDLK_SCROLLLOCK },{ VC_PAUSE, SDLK_PAUSE },
 	/* Game pad */
-	{ PAD_TO_VC(PAD_A), SDL_CONTROLLER_BUTTON_A},{ PAD_TO_VC(PAD_B), SDL_CONTROLLER_BUTTON_B },{ PAD_TO_VC(PAD_X), SDL_CONTROLLER_BUTTON_X },
-	{ PAD_TO_VC(PAD_LB), SDL_CONTROLLER_BUTTON_LEFTSHOULDER },{ PAD_TO_VC(PAD_RB), SDL_CONTROLLER_BUTTON_RIGHTSHOULDER },
+	{ PAD_TO_VC(PAD_A), SDL_CONTROLLER_BUTTON_A },{ PAD_TO_VC(PAD_B), SDL_CONTROLLER_BUTTON_B },{ PAD_TO_VC(PAD_X), SDL_CONTROLLER_BUTTON_X },
+	{ PAD_TO_VC(PAD_Y), SDL_CONTROLLER_BUTTON_Y }, { PAD_TO_VC(PAD_LB), SDL_CONTROLLER_BUTTON_LEFTSHOULDER },{ PAD_TO_VC(PAD_RB), SDL_CONTROLLER_BUTTON_RIGHTSHOULDER },
 	/*{ PAD_TO_VC(PAD_LT), SDL_CONTROLLER_AXIS_TRIGGERLEFT },{ PAD_TO_VC(PAD_RT), SDL_CONTROLLER_AXIS_TRIGGERRIGHT },*/
 	{ PAD_TO_VC(PAD_BACK), SDL_CONTROLLER_BUTTON_BACK },{ PAD_TO_VC(PAD_START), SDL_CONTROLLER_BUTTON_START },
 	{ PAD_TO_VC(PAD_DPAD_DOWN), SDL_CONTROLLER_BUTTON_DPAD_DOWN },{ PAD_TO_VC(PAD_DPAD_UP), SDL_CONTROLLER_BUTTON_DPAD_UP },
@@ -620,7 +693,7 @@ SDLK_END },
 	{ PAD_TO_VC(PAD_X_BOX_KEY), SDL_CONTROLLER_BUTTON_GUIDE },{ PAD_TO_VC(PAD_START), SDL_CONTROLLER_BUTTON_START },
 	/* Mouse */
 };
-#define KEY_MAP_SIZE 114
+#define KEY_MAP_SIZE 116
 
 uint32_t SDL_helper::vc_to_sdl_key(uint16_t key)
 {

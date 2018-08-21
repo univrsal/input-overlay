@@ -29,7 +29,6 @@ void Tool::program_loop()
 	m_toplevel = new DialogSetup(m_helper, m_notify, this);
 	m_toplevel->init();
 	m_helper->set_runflag(&m_run_flag);
-
 	while (m_run_flag)
 	{
 		handle_input();
@@ -127,7 +126,7 @@ void Tool::action_performed(uint8_t type)
 			break;
 		case TEXT:
 			break;
-		case MOUSE_WHEEL:
+		case MOUSE_SCROLLWHEEL:
 			break;
 		case DPAD_STICK:
 			break;
@@ -222,6 +221,16 @@ void Tool::handle_input()
 			{
 				action_performed(TOOL_ACTION_SAVE_CONFIG);
 			}
+		}
+		else if (m_event.type == SDL_JOYDEVICEADDED)
+		{
+			if (m_event.cdevice.which >= 0 && m_helper->handle_controller_connect(m_event.cdevice.which))
+				m_notify->add_msg(MESSAGE_INFO, m_helper->loc(LANG_MSG_GAMEPAD_CONNECTED));
+		}
+		else if (m_event.type == SDL_JOYDEVICEREMOVED)
+		{
+			if (m_event.cdevice.which >= 0 && m_helper->handle_controller_disconnect(m_event.cdevice.which))
+				m_notify->add_msg(MESSAGE_INFO, m_helper->loc(LANG_MSG_GAMEPAD_DISCONNECTED));
 		}
 
 		m_helper->handle_events(&m_event);

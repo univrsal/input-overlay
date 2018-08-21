@@ -282,13 +282,7 @@ void Config::handle_events(SDL_Event * e)
 			}
 		}
 
-		for (auto const &element : m_elements)
-		{
-			if (e->key.keysym.sym == m_helper->vc_to_sdl_key(element->get_vc()))
-			{
-				element->set_pressed(true);
-			}
-		}
+		update_key_states(e->key.keysym.sym, true);
 	}
 	else if (e->type == SDL_KEYUP)
 	{
@@ -299,6 +293,15 @@ void Config::handle_events(SDL_Event * e)
 				element->set_pressed(false);
 			}
 		}
+		update_key_states(e->key.keysym.sym, false);
+	}
+	else if (e->type == SDL_JOYBUTTONDOWN)
+	{
+		update_key_states(e->jbutton.button, true);
+	}
+	else if (e->type == SDL_JOYBUTTONUP)
+	{
+		update_key_states(e->jbutton.button, false);
 	}
 	else if (e->type == SDL_WINDOWEVENT)
 	{
@@ -465,6 +468,19 @@ void Config::reset_selected_element(void)
 	m_settings->set_vc(0);
 }
 
+void Config::update_key_states(uint32_t keycode, bool state)
+{
+	for (auto const &element : m_elements)
+	{
+		if (keycode == m_helper->vc_to_sdl_key(element->get_vc()))
+		{
+			if (element->get_type() == ElementType::TEXTURE)
+				continue;
+			element->set_pressed(state);
+		}
+	}
+}
+
 void Config::move_elements(int new_x, int new_y)
 {
 	if (!m_selected_elements.empty())
@@ -545,7 +561,7 @@ void Element::write_to_file(ccl_config * cfg, SDL_Point * default_dim)
 		break;
 	case MOUSE_MOVEMENT:
 		break;
-	case MOUSE_WHEEL:
+	case MOUSE_SCROLLWHEEL:
 		break;
 	}
 }

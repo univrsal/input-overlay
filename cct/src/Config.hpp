@@ -154,6 +154,8 @@ public:
 
 	void reset_selected_element(void);
 private:
+	void update_key_states(uint32_t keycode, bool state); /* For previewing button funcionality */
+	
 	/* Move selected elements*/
 	void move_elements(int new_x, int new_y);
 

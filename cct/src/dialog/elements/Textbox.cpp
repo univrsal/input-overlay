@@ -141,6 +141,13 @@ bool Textbox::handle_events(SDL_Event * event, bool was_handled)
 				}
 			}
 		}
+		else if (event->type == SDL_JOYBUTTONDOWN)
+		{
+			if ((m_flags & TEXTBOX_KEYBIND))
+			{
+				set_hex_int(get_helper()->sdl_key_to_vc(event->jbutton.button));
+			}
+		}
 		/* Added IME input to text */
 		else if (event->type == SDL_TEXTINPUT && !(m_flags & TEXTBOX_KEYBIND))
 		{
