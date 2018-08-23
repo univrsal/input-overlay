@@ -51,9 +51,11 @@ void Config::draw_elements(void)
 	/* Draw elements */
 	m_cs.begin_draw();
 	{
+		
 		for (auto const &element : m_elements)
 		{
-			element->draw(m_atlas, &m_cs, element.get() == m_selected);
+
+			element->draw(m_atlas, &m_cs, element.get() == m_selected, m_helper->is_ctrl_down());
 		}
 
 

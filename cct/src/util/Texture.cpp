@@ -156,3 +156,24 @@ void Texture::draw(SDL_Renderer *renderer, const SDL_Rect *target_dim, const SDL
 {
 	SDL_RenderCopy(renderer, m_sdl_texture, cutout, target_dim);
 }
+
+void Texture::draw(SDL_Renderer * renderer, int x, int y, uint8_t alpha)
+{
+	SDL_SetTextureAlphaMod(m_sdl_texture, alpha);
+	draw(renderer, x, y);
+	SDL_SetTextureAlphaMod(m_sdl_texture, 255);
+}
+
+void Texture::draw(SDL_Renderer * renderer, const SDL_Rect * target_dim, const SDL_Rect * cutout, uint8_t alpha)
+{
+	if (alpha < 255)
+	{
+		SDL_SetTextureAlphaMod(m_sdl_texture, alpha);
+		draw(renderer, target_dim, cutout);
+		SDL_SetTextureAlphaMod(m_sdl_texture, 255);
+	}
+	else
+	{
+		draw(renderer, target_dim, cutout);
+	}
+}

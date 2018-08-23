@@ -54,7 +54,7 @@ public:
 		return SDL_Rect { m_pos.x, m_pos.y, m_texture_mapping.w, m_texture_mapping.h };
 	}
 
-	void draw(Texture * atlas, CoordinateSystem * cs, bool selected)
+	void draw(Texture * atlas, CoordinateSystem * cs, bool selected, bool alpha)
 	{
 		SDL_Rect temp = { m_pos.x * cs->get_scale() + cs->get_origin_x(),
 			m_pos.y * cs->get_scale() + cs->get_origin_y(),
@@ -65,7 +65,7 @@ public:
 		if (m_pressed)
 			temp_mapping.y += temp_mapping.h + 3;
 
-		atlas->draw(cs->get_helper()->renderer(), &temp, &temp_mapping);
+		atlas->draw(cs->get_helper()->renderer(), &temp, &temp_mapping, alpha && !selected ? 60 : 255);
 
 		if (selected)
 		{
