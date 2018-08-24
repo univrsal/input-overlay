@@ -32,13 +32,14 @@ class Texture;
 class Element
 {
 public:
-	Element(ElementType t, std::string id, SDL_Point pos, SDL_Rect map, uint16_t keycode)
+	Element(ElementType t, std::string id, SDL_Point pos, SDL_Rect map, uint16_t keycode, uint8_t z)
 	{
 		m_type = t;
 		m_pos = pos;
 		m_texture_mapping = map;
 		m_keycode = keycode;
 		m_id = id;
+		m_z_level = z;
 	}
 
 	SDL_Rect get_abs_dim(CoordinateSystem * cs)
@@ -49,7 +50,7 @@ public:
 		return temp;
 	}
 
-	SDL_Rect get_dim()
+	SDL_Rect get_dim(void)
 	{
 		return SDL_Rect { m_pos.x, m_pos.y, m_texture_mapping.w, m_texture_mapping.h };
 	}
@@ -101,7 +102,10 @@ public:
 	void set_id(std::string id) { m_id = id; }
 	void set_vc(uint16_t vc) { m_keycode = vc; }
 
-	std::string * get_id() { return &m_id; }
+	void set_z_level(uint8_t z) { m_z_level = z; }
+	uint8_t get_z_level(void) { return m_z_level; }
+
+	std::string * get_id(void) { return &m_id; }
 	int get_x() { return m_pos.x; }
 	int get_y() { return m_pos.y; }
 	int get_w() { return m_texture_mapping.w; }
@@ -109,7 +113,7 @@ public:
 	int get_u() { return m_texture_mapping.x; }
 	int get_v() { return m_texture_mapping.y; }
 
-	ElementType get_type() { return m_type; }
+	ElementType get_type(void) { return m_type; }
 
 	uint16_t get_vc(void) { return m_keycode; }
 	void set_pressed(bool b) { m_pressed = b; }
@@ -120,6 +124,7 @@ private:
 	SDL_Point m_pos; /* Final position in overlay */
 	SDL_Rect m_texture_mapping; /* Position in texture*/
 	uint16_t m_keycode = 0x0;
+	uint8_t m_z_level = 0; /* Determines draw and selection order */
 	std::string m_id;
 
 	bool m_pressed = false; /* used to highlight in preview */
@@ -154,7 +159,7 @@ public:
 
 	void reset_selected_element(void);
 private:
-	void update_key_states(uint32_t keycode, bool state); /* For previewing button funcionality */
+	void update_key_states(uint32_t keycode, bool state); /* For previewing button functionality */
 	
 	/* Move selected elements*/
 	void move_elements(int new_x, int new_y);

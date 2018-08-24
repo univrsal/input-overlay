@@ -51,11 +51,21 @@ void Config::draw_elements(void)
 	/* Draw elements */
 	m_cs.begin_draw();
 	{
-		
-		for (auto const &element : m_elements)
-		{
 
-			element->draw(m_atlas, &m_cs, element.get() == m_selected, m_helper->is_ctrl_down());
+		int elements_drawn = 0;
+		int layer = 0;
+
+		while (elements_drawn < m_elements.size())
+		{
+			for (auto const &element : m_elements)
+			{
+				if (element->get_z_level() == layer)
+				{
+					element->draw(m_atlas, &m_cs, element.get() == m_selected, m_helper->is_ctrl_down());
+					elements_drawn++;
+				}
+			}
+			layer++;
 		}
 
 
@@ -110,24 +120,26 @@ void Config::handle_events(SDL_Event * e)
 			if (selection_empty)
 			{
 				int i = 0;
+				int highest_layer_id = 0;
+				int highest_layer = 0;
+
 				for (auto const &elem : m_elements)
 				{
-					if (m_helper->util_is_in_rect(&elem.get()->get_abs_dim(&m_cs), e->button.x, e->button.y))
+					if (m_helper->util_is_in_rect(&elem->get_abs_dim(&m_cs), e->button.x, e->button.y))
 					{
-						m_selected = elem.get();
-						m_selected_id = i;
+						if (elem->get_z_level() >= highest_layer)
+						{
+							highest_layer = elem->get_z_level();
+							highest_layer_id = i;
+						}
 
 						m_dragging_element = true;
-						m_drag_offset = { (e->button.x - (m_selected->get_x() * m_cs.get_scale())
-							+ m_cs.get_origin()->x), (e->button.y - (m_selected->get_y() * m_cs.get_scale())
-							+ m_cs.get_origin()->y) };
-
-						m_settings->select_element(m_selected);
 						is_single_selection = true;
-						break;
 					}
 					i++;
 				}
+
+
 
 				if (!is_single_selection)
 					/* No element was directly select -> start groups selection*/
@@ -137,6 +149,14 @@ void Config::handle_events(SDL_Event * e)
 					m_selection_start = { e->button.x, e->button.y };
 					m_selected_elements.clear();
 					m_total_selection = {};
+				}
+				else
+				{
+					m_selected = m_elements[highest_layer_id].get();
+					m_drag_offset = { (e->button.x - (m_selected->get_x() * m_cs.get_scale())
+						+ m_cs.get_origin()->x), (e->button.y - (m_selected->get_y() * m_cs.get_scale())
+							+ m_cs.get_origin()->y) };
+					m_settings->select_element(m_selected);
 				}
 			}
 			else if (m_helper->util_is_in_rect(&m_total_selection, m_x, m_y))
@@ -431,7 +451,7 @@ void Config::read_config(Notifier * n)
 			u_v.h = m_default_dim.y;
 		vc = cfg.get_int(element_id + CFG_KEY_CODE);
 
-		m_elements.emplace_back(new Element(t, element_id, pos, u_v, vc));
+		m_elements.emplace_back(new Element(t, element_id, pos, u_v, vc, 0 /* TEMPORARY*/ ));
 
 		element_id = cfg.get_string(element_id + CFG_NEXT_ID);
 	}

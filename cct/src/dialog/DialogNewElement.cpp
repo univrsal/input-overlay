@@ -37,6 +37,7 @@ void DialogNewElement::init()
 	m_element_y = get_top() + 30;
 
 	add_element_id();
+	add_z_level();
 
 	switch (m_type)
 	{
@@ -156,6 +157,11 @@ uint16_t DialogNewElement::get_vc(void)
 	return t;
 }
 
+uint8_t DialogNewElement::get_z_level(void)
+{
+	return atoi(m_z_level->get_text()->c_str());
+}
+
 const std::string * DialogNewElement::get_id(void)
 {
 	return m_element_id->get_text();
@@ -231,6 +237,19 @@ void DialogNewElement::add_element_id(void)
 	add(new Label(m_id++, 9, m_element_y, LANG_LABEL_ELEMENT_ID, this));
 	m_element_y += 25;
 	add(m_element_id = new Textbox(m_id++, 8, m_element_y, panel_w, 20, ELEMENT_UNNAMED, this));
-	m_element_id->set_flags(TEXTBOX_NO_SPACE);
+	m_element_id->set_flags(TEXTBOX_ALPHA_NUMERIC);
+	m_element_y += 40;
+}
+
+void DialogNewElement::add_z_level(void)
+{
+	uint16_t panel_w = 254;
+
+	if (m_element_y == 0)
+		m_element_y = 30;
+	add(new Label(m_id++, 9, m_element_y, LANG_LABEL_Z_LEVEL, this));
+	m_element_y += 25;
+	add(m_z_level = new Textbox(m_id++, 8, m_element_y, panel_w, 20, "0", this));
+	m_z_level->set_flags(TEXTBOX_NUMERIC);
 	m_element_y += 40;
 }

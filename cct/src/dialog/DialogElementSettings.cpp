@@ -15,6 +15,7 @@ void DialogElementSettings::init()
 	add(new Label(id++, (m_dimensions.w / 2) + 4, 95, LANG_LABEL_V, this));
 	add(new Label(id++, 8, 125, LANG_LABEL_ELEMENT_ID, this));
 	add(new Label(id++, 8, 170, LANG_LABEL_KEY_CODE, this));
+	add(new Label(id++, (m_dimensions.w / 2) + 8, 170, LANG_LABEL_Z_LEVEL, this));
 
 	/* Text boxes */
 	m_element_width = new Textbox(id++, 55, 32, (m_dimensions.w / 2) - 63, 20, "0", this);
@@ -48,11 +49,15 @@ void DialogElementSettings::init()
 	add(m_element_v);
 
 	add(m_element_id = new Textbox(id++, 8, 145, m_dimensions.w - 16, 20, "", this));
-	add(m_keycode = new Textbox(id++, 8, 190, m_dimensions.w - 16, 20, "", this));
+	add(m_keycode = new Textbox(id++, 8, 190, m_dimensions.w / 2 - 16, 20, "", this));
 
-	m_element_id->set_flags(TEXTBOX_NO_SPACE);
+	add(m_element_z_level = new Textbox(id++, m_dimensions.w / 2 + 8, 190, m_dimensions.w / 2 - 16, 20, "0", this));
+
+	m_element_id->set_flags(TEXTBOX_NO_SPACE | TEXTBOX_ALPHA_NUMERIC);
 	m_keycode->set_flags(TEXTBOX_HEX | TEXTBOX_NO_SPACE);
+	m_element_z_level->set_flags(TEXTBOX_NUMERIC);
 
+	/* Controls */
 	add(new Button(ACTION_NEW_ELEMENT, 8, m_dimensions.h - 182, m_dimensions.w - 16, LANG_BUTTON_ADD_ELEMENT, this));
 	add(new Button(ACTION_DEL_ELEMENT, 8, m_dimensions.h - 154, m_dimensions.w - 16, LANG_BUTTON_DELETE_ELEMENT, this));
 	add(new Button(ACTION_MOD_ELEMENT, 8, m_dimensions.h - 126, m_dimensions.w - 16, LANG_BUTTON_MODIFY_ELEMENT, this));
@@ -70,15 +75,18 @@ void DialogElementSettings::action_performed(int8_t action_id)
 	case ACTION_OK:
 		if (m_tool->get_selected())
 		{
-			m_tool->get_selected()->set_pos(std::stoi(
-				m_element_x->get_text()->c_str()), std::stoi(
+			m_tool->get_selected()->set_pos(atoi(
+				m_element_x->get_text()->c_str()), atoi(
 					m_element_y->get_text()->c_str()));
-			m_tool->get_selected()->set_uv(std::stoi(
-				m_element_u->get_text()->c_str()), std::stoi(
+			m_tool->get_selected()->set_uv(atoi(
+				m_element_u->get_text()->c_str()), atoi(
 					m_element_v->get_text()->c_str()));
-			m_tool->get_selected()->set_dim(std::stoi(
-				m_element_width->get_text()->c_str()), std::stoi(
+			m_tool->get_selected()->set_dim(atoi(
+				m_element_width->get_text()->c_str()), atoi(
 					m_element_height->get_text()->c_str()));
+
+			m_tool->get_selected()->set_z_level(atoi(
+				m_element_z_level->get_text()->c_str()));
 
 			if (!m_element_id->get_text()->empty())
 				m_tool->get_selected()->set_id(*m_element_id->get_text());
@@ -162,6 +170,11 @@ void DialogElementSettings::set_vc(uint16_t vc)
 	m_keycode->set_hex_int(vc);
 }
 
+void DialogElementSettings::set_z_level(uint8_t z)
+{
+	m_element_z_level->set_text(std::to_string(z));
+}
+
 void DialogElementSettings::select_element(Element * e)
 {
 	if (e)
@@ -171,5 +184,6 @@ void DialogElementSettings::select_element(Element * e)
 		set_xy(e->get_x(), e->get_y());
 		set_wh(e->get_w(), e->get_h());
 		set_vc(e->get_vc());
+		set_z_level(e->get_z_level());
 	}
 }

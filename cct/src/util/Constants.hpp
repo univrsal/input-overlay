@@ -90,6 +90,7 @@
 #define LANG_LABEL_KEY_CODE			"label_keycode"
 #define LANG_LABEL_ELEMENT_ID			"label_element_id"
 #define LANG_CHECKBOX_RECORD_KEYBIND		"checkbox_record_keybind"
+#define LANG_LABEL_Z_LEVEL			"label_z_level"
 
 /* Selected element settings */
 #define LANG_BUTTON_ADD_ELEMENT			"button_add_element"

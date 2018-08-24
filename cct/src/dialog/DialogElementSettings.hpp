@@ -44,6 +44,7 @@ public:
 	void set_uv(int u, int v);
 	void set_id(std::string id);
 	void set_vc(uint16_t vc);
+	void set_z_level(uint8_t z);
 	void select_element(Element * e);
 private:
 	bool m_finished = false;
@@ -56,6 +57,7 @@ private:
 	Textbox * m_element_y = nullptr;
 	Textbox * m_element_u = nullptr;
 	Textbox * m_element_v = nullptr;
+	Textbox * m_element_z_level = nullptr;
 
 	Tool * m_tool = nullptr;
 };

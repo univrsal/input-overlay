@@ -60,6 +60,8 @@ public:
 
 	uint16_t get_vc(void);
 
+	uint8_t get_z_level(void);
+
 	const std::string * get_id(void);
 
 	void set_default_dim(int w, int h);
@@ -72,6 +74,9 @@ private:
 
 	/* Adds text box for element id*/
 	void add_element_id(void);
+
+	/* Adds layering elements */
+	void add_z_level(void);
 
 	/* Y position of the lowest gui element */
 	uint16_t m_element_y = 0;
@@ -88,6 +93,7 @@ private:
 
 	Textbox * m_element_id = nullptr;
 	Textbox * m_keycode = nullptr;
+	Textbox * m_z_level = nullptr;
 
 	Button * m_ok = nullptr;
 	Button * m_cancel = nullptr;

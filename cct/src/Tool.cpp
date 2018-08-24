@@ -120,7 +120,8 @@ void Tool::action_performed(uint8_t type)
 		{
 		case BUTTON:
 		case TEXTURE:
-			e = new Element(d->get_type(), *d->get_id(), SDL_Point { 0, 0 }, d->get_selection_1(), d->get_vc());
+			e = new Element(d->get_type(), *d->get_id(), SDL_Point { 0, 0 },
+				d->get_selection_1(), d->get_vc(), d->get_z_level());
 			break;
 		case TRIGGER:
 			break;

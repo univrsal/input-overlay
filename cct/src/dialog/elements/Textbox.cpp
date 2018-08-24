@@ -116,8 +116,9 @@ bool Textbox::handle_events(SDL_Event * event, bool was_handled)
 					bool a = !(m_flags & TEXTBOX_NUMERIC) || is_numeric(temp);
 					bool b = !(m_flags & TEXTBOX_HEX) || is_hex(temp);
 					bool c = !(m_flags & TEXTBOX_NO_SPACE) || is_spacefree(temp);
+					bool d = !(m_flags & TEXTBOX_ALPHA_NUMERIC) || is_alpha_numeric(temp);
 
-					if (a && b && c)
+					if (a && b && c && d)
 					{
 						append_text(temp);
 					}
@@ -156,8 +157,9 @@ bool Textbox::handle_events(SDL_Event * event, bool was_handled)
 			bool a = !(m_flags & TEXTBOX_NUMERIC) || is_numeric(temp);
 			bool b = !(m_flags & TEXTBOX_HEX) || is_hex(temp);
 			bool c = !(m_flags & TEXTBOX_NO_SPACE) || is_spacefree(temp);
+			bool d = !(m_flags & TEXTBOX_ALPHA_NUMERIC) || is_alpha_numeric(temp);
 
-			if (a && b && c)
+			if (a && b && c && d)
 			{
 				set_text(temp);
 			}
@@ -244,6 +246,12 @@ inline bool Textbox::is_numeric(const std::string & s)
 		if (!(i >= '0' && i <= '9')) return false;
 	}
 	return true;
+}
+
+inline bool Textbox::is_alpha_numeric(const std::string & s)
+{
+	const char * c = s.c_str();
+	return c[strspn(c, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_-.:;,0123456789")] == 0;
 }
 
 inline bool Textbox::is_spacefree(const std::string & s)

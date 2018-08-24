@@ -11,8 +11,8 @@
 
 #define DEBUG_DRAW_OUTLINE 0
 
-#define ELEMENT_ABSOLUTE_POSITION 1 << 5 /* Element will not align to parent dialog position */
-#define ELEMENT_UNLOCALIZED 1 << 6 /* The element will not look up localized strings */
+#define ELEMENT_ABSOLUTE_POSITION 1 << 10 /* Element will not align to parent dialog position */
+#define ELEMENT_UNLOCALIZED 1 << 11 /* The element will not look up localized strings */
 
 class Dialog;
 

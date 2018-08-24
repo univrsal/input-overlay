@@ -19,6 +19,7 @@
 #define TEXTBOX_NO_SPACE 1 << 2
 #define TEXTBOX_KEYBIND 1 << 3
 #define TEXTBOX_DROP_FILE 1 << 4
+#define TEXTBOX_ALPHA_NUMERIC 1 << 5
 
 #define ACTION_FILE_DROPPED -20
 
@@ -61,6 +62,7 @@ public:
 private:
 	inline bool is_numeric(const std::string& s);
 
+	inline bool is_alpha_numeric(const std::string& s);
 
 	inline bool is_spacefree(const std::string& s);
 
