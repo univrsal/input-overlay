@@ -175,21 +175,31 @@ void CoordinateSystem::draw_foreground(void)
 		{
 			m_helper->util_draw_line(x, get_origin_top(), x, get_bottom(),
 				m_helper->palette()->gray());
-			if (m_has_rulers)
-			{
-				m_helper->util_draw_line(x + m_ruler_offset.x * m_scale_f, get_origin_top(),
-					x + m_ruler_offset.x * m_scale_f, get_bottom(), m_helper->palette()->orange());
-			}
 		}
 			
 		for (y = start_y; y < get_bottom(); y += step_y)
 		{
 			m_helper->util_draw_line(get_origin_left(), y, get_right(), y,
 				m_helper->palette()->gray());
-			if (m_has_rulers)
+		}
+
+		if (m_has_rulers)
+		{
+			step_x = (m_grid_spacing.x + m_ruler_offset.x) * m_scale_f;
+			step_y = (m_grid_spacing.y + m_ruler_offset.y) * m_scale_f;
+			start_x = get_origin_left() + ((m_origin.x - get_origin_left()) % step_x) + step_x;
+			start_y = get_origin_top() + ((m_origin.y - get_origin_top()) % step_y) + step_y;
+
+			for (x = start_x; x < get_right(); x += step_x)
 			{
-				m_helper->util_draw_line(get_origin_left(), y + m_ruler_offset.y * m_scale_f,
-					get_right(), y + m_ruler_offset.y * m_scale_f, m_helper->palette()->orange());
+				m_helper->util_draw_line(x, get_origin_top(), x, get_bottom(),
+					m_helper->palette()->orange());
+			}
+
+			for (y = start_y; y < get_bottom(); y += step_y)
+			{
+				m_helper->util_draw_line(get_origin_left(), y, get_right(), y,
+					m_helper->palette()->orange());
 			}
 		}
 	}

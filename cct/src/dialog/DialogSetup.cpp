@@ -125,10 +125,17 @@ void DialogSetup::action_performed(int8_t action_id)
 		{
 			ccl_data * def_w = cfg->get_node(CFG_DEFAULT_WIDTH, true);
 			ccl_data * def_h = cfg->get_node(CFG_DEFAULT_HEIGHT, true);
+			ccl_data * space_h = cfg->get_node(CFG_H_SPACE, true);
+			ccl_data * space_v = cfg->get_node(CFG_V_SPACE, true);
+
 			if (def_w)
 				m_def_w->set_text(def_w->get_value());
 			if (def_h)
 				m_def_h->set_text(def_h->get_value());
+			if (space_h)
+				m_h_space->set_text(space_h->get_value());
+			if (space_v)
+				m_v_space->set_text(space_v->get_value());
 		}
 		break;
 	case ACTION_COMBO_ITEM_SELECTED:

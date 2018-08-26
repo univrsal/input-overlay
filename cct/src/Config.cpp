@@ -347,7 +347,7 @@ void Config::write_config(Notifier * n)
 		n->add_msg(MESSAGE_INFO, m_helper->loc(LANG_MSG_NOTHING_TO_SAVE));
 		return;
 	}
-
+	
 	uint32_t start = SDL_GetTicks();
 	ccl_config cfg = ccl_config(m_config_path, "CCT generated config");
 
@@ -356,6 +356,8 @@ void Config::write_config(Notifier * n)
 	cfg.add_string(CFG_FIRST_ID, "Starting point for loading elements", *m_elements[0]->get_id(), true);
 	cfg.add_int(CFG_DEFAULT_WIDTH, "", m_default_dim.x);
 	cfg.add_int(CFG_DEFAULT_HEIGHT, "Default element dimension", m_default_dim.y);
+	cfg.add_int(CFG_H_SPACE, "", m_offset.x);
+	cfg.add_int(CFG_V_SPACE, "Element offset for visual help", m_offset.y);
 
 	int height = 0, width = 0; /* The most bottom right element determines the width/height */
 
@@ -364,8 +366,8 @@ void Config::write_config(Notifier * n)
 	{
 		e->write_to_file(&cfg, &m_default_dim);
 
-		width = UTIL_MAX(width, e->get_x() + e->get_u());
-		height = UTIL_MAX(height, e->get_y() + e->get_v());
+		width = UTIL_MAX(width, e->get_x() + e->get_w());
+		height = UTIL_MAX(height, e->get_y() + e->get_h());
 
 		if (index + 1 < m_elements.size())
 		{
@@ -415,8 +417,10 @@ void Config::read_config(Notifier * n)
 	std::string element_id = cfg.get_string(CFG_FIRST_ID);
 
 	bool flag = true;
-	m_default_dim.x = cfg.get_int(CFG_DEFAULT_WIDTH);
-	m_default_dim.y = cfg.get_int(CFG_DEFAULT_HEIGHT);
+	if (cfg.get_int(CFG_DEFAULT_WIDTH) != 0)
+		m_default_dim.x = cfg.get_int(CFG_DEFAULT_WIDTH);
+	if (cfg.get_int(CFG_DEFAULT_HEIGHT) != 0)
+		m_default_dim.y = cfg.get_int(CFG_DEFAULT_HEIGHT);
 
 	/* Used to construct the elements */
 	int type = 0;
@@ -424,6 +428,7 @@ void Config::read_config(Notifier * n)
 	SDL_Point pos;
 	SDL_Rect u_v;
 	uint16_t vc;
+	uint8_t layer;
 
 	while (!element_id.empty())
 	{
@@ -455,8 +460,9 @@ void Config::read_config(Notifier * n)
 		else
 			u_v.h = m_default_dim.y;
 		vc = cfg.get_int(element_id + CFG_KEY_CODE);
+		layer = cfg.get_int(element_id + CFG_Z_LEVEL);
 
-		m_elements.emplace_back(new Element(t, element_id, pos, u_v, vc, 0 /* TEMPORARY*/ ));
+		m_elements.emplace_back(new Element(t, element_id, pos, u_v, vc, layer));
 
 		element_id = cfg.get_string(element_id + CFG_NEXT_ID);
 	}
@@ -559,17 +565,18 @@ void Element::write_to_file(ccl_config * cfg, SDL_Point * default_dim)
 		comment = "Key code of " + m_id;
 		cfg->add_int(m_id + CFG_KEY_CODE, comment, m_keycode, true);
 	case TEXTURE: /* NO-OP*/
+		comment = "Z position (Layer) of " + m_id;
+		cfg->add_int(m_id + CFG_Z_LEVEL, comment, m_z_level, true);
+
 		comment = "Type id of " + m_id;
 		cfg->add_int(m_id + CFG_TYPE, comment, m_type, true);
 
 		comment = "Position of " + m_id;
 		cfg->add_int(m_id + CFG_X_POS, "", m_pos.x, true);
-
 		cfg->add_int(m_id + CFG_Y_POS, comment, m_pos.y, true);
 
 		comment = "Texture position of " + m_id;
 		cfg->add_int(m_id + CFG_U, "", m_texture_mapping.x, true);
-
 		cfg->add_int(m_id + CFG_V, comment, m_texture_mapping.y, true);
 
 		comment = "Width and height of " + m_id;
