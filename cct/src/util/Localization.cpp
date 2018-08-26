@@ -13,6 +13,8 @@
 #include <Windows.h>
 #include <sys/stat.h>
 #else
+#include <sys/stat.h>
+#include <unistd.h>
 #include <dirent.h>
 #include <sys/types.h>
 #include <errno.h>
@@ -93,26 +95,59 @@ bool Localization::is_roman(void)
 
 void Localization::scan_lang_folder(void)
 {
+
+	int8_t id = 0;
+	ccl_config * lang = nullptr;
+
 #ifdef _WIN32
+	/* Iterating over items in folder on Win32
+	 * and filtering only *.ini files
+	 */
 	HANDLE hFind;
 	WIN32_FIND_DATA data;
 	std::string path = m_lang_folder;
 	std::string file_name;
 	path.append("/*.ini");
 	hFind = FindFirstFile(path.c_str(), &data);
-	ccl_config * lang = nullptr;
-	uint8_t id = 0;
+	
 	if (hFind != INVALID_HANDLE_VALUE)
 	{
 		do
 		{
-			file_name =  std::string(data.cFileName);
 			if (!(GetFileAttributes(data.cFileName) & FILE_ATTRIBUTE_DIRECTORY));
 			{
+				file_name =  std::string(data.cFileName);
+
+#else
+	/* Iterating over items in folder on linux
+	 * and filtering only *.ini files
+	 */
+	DIR * dir;
+	struct dirent * dirent;
+
+	dir = opendir(m_lang_folder.c_str());
+	std::string file_name;
+	if (dir)
+	{
+		while ((dirent = readdir(dir)))
+		{
+			file_name = std::string(dirent->d_name);
+			struct stat path_stat;
+			std::string full_path = m_lang_folder + "/" + file_name;
+			stat(full_path.c_str(), &path_stat);
+			char * file_type = strrchr(dirent->d_name, '.');
+	
+			if (file_type && !strcmp(file_type, ".ini") /* Checks file ending */
+					&& S_ISREG(path_stat.st_mode))
+			{
+#endif
+				/* After filtering on windows and linux store file anme 
+				 * in file_name
+				 */
 				lang = new ccl_config(m_lang_folder + "/" + file_name, "");
 				ccl_data * node = nullptr;
 
-				if (lang && (node = lang->get_node(LANG_ID)) != nullptr)
+				if (lang && (node = lang->get_node(LANG_ID)))
 				{
 					m_langfiles.emplace_back(new LangFile(file_name, node->get_value()));
 					m_valid = true;
@@ -124,45 +159,24 @@ void Localization::scan_lang_folder(void)
 				{
 					printf("Invalid lang file %s. Missing language identifier\n", file_name.c_str());
 				}
+
 				delete lang;
 				lang = nullptr;
-			}
-		} while (FindNextFile(hFind, &data));
-		FindClose(hFind);
-	}
-	else
-	{
-		printf("Localization: Couldn't load files from lang folder!\n");
-	}
-#else
-	DIR *dir;
-	struct dirent *dirent;
-
-	dir = opendir(m_lang_folder.c_str());
-	std::string file_name;
-	if (dir != NULL)
-	{
-		while ((dirent = readdir(dir)))
-		{
-			file_name = std::string(dirent->d_name);
-			struct stat path_stat;
-			std::string full_path = m_lang_folder + "/" + name;
-			stat(full_path.c_str(), &path_stat);
-
-			if (S_ISREG(path_stat.st_mode) == 1)
-			{
-				m_langfiles.emplace_back(file_name);
+				m_langfiles.emplace_back(new LangFile(file_name, node->get_value()));
 				id++;
 			}
+#ifdef _Win32
+		} while (FindNextFile(hFind, &data));
+		FindClose(hFind);
+#else
 		}
+		closedir(dir);
+#endif
 	}
 	else
 	{
 		printf("Localization: Couldn't load files from lang folder!\n");
 	}
-
-	closedir(dir);
-#endif
 }
 
 void Localization::load_default_language(void)

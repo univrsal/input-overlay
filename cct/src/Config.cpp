@@ -125,7 +125,8 @@ void Config::handle_events(SDL_Event * e)
 
 				for (auto const &elem : m_elements)
 				{
-					if (m_helper->util_is_in_rect(&elem->get_abs_dim(&m_cs), e->button.x, e->button.y))
+					SDL_Rect dim = elem->get_abs_dim(&m_cs);
+					if (m_helper->util_is_in_rect(&dim, e->button.x, e->button.y))
 					{
 						if (elem->get_z_level() >= highest_layer)
 						{

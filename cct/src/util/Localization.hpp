@@ -5,6 +5,8 @@
  * github.com/univrsal/input-overlay
  */
 
+#pragma once
+
 #include <vector>
 #include <string>
 #include <memory.h>

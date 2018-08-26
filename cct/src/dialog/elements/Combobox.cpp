@@ -36,7 +36,7 @@ void Combobox::draw_background(void)
 		if (m_list_open)
 		{
 			SDL_Rect temp = { get_left(), get_bottom() - 1, get_width(),
-				m_items.size() * m_item_v_space + ITEM_V_SPACE };
+				((int)m_items.size()) * m_item_v_space + ITEM_V_SPACE };
 			get_helper()->util_fill_rect(&temp, get_helper()->palette()->gray());
 			get_helper()->util_draw_rect(&temp, get_helper()->palette()->light_gray());
 

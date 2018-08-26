@@ -24,11 +24,6 @@
 #include "FontHelper.hpp"
 #include "Texture.hpp"
 
-#define WINDOW_ICON "icon.png"
-#define WINDOW_TITLE "io-cct"
-#define WINDOW_WIDTH 1280
-#define WINDOW_HEIGHT 720
-
 #define UTIL_MAX(a,b)               (((a) > (b)) ? (a) : (b))
 #define UTIL_MIN(a,b)               (((a) < (b)) ? (a) : (b))
 #define UTIL_CLAMP(lower, x, upper) (UTIL_MIN(upper, UTIL_MAX(x, lower)))
@@ -166,7 +161,7 @@ private:
 	uint8_t m_large_font_height;
 	uint8_t m_wstring_font_height;
 
-	bool m_init_success;
+	bool m_init_success = true;
 
 	bool * m_runflag = nullptr;
 

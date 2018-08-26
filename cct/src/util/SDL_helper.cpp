@@ -7,6 +7,7 @@
 
 #include "SDL_helper.hpp"
 #include "Localization.hpp"
+#include "Constants.hpp"
 
 SDL_helper::SDL_helper()
 {
@@ -35,8 +36,8 @@ bool SDL_helper::init()
 		m_init_success = false;
 	}
 
-	m_sdl_window = SDL_CreateWindow(WINDOW_TITLE, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-		WINDOW_WIDTH, WINDOW_HEIGHT,
+	m_sdl_window = SDL_CreateWindow(SDL_WINDOW_TITLE, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+		SDL_WINDOW_W, SDL_WINDOW_H,
 		SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
 
 	if (m_sdl_window == nullptr)
@@ -46,14 +47,14 @@ bool SDL_helper::init()
 	}
 	else
 	{
-		SDL_SetWindowMinimumSize(m_sdl_window, WINDOW_WIDTH, WINDOW_HEIGHT);
+		SDL_SetWindowMinimumSize(m_sdl_window, SDL_WINDOW_W, SDL_WINDOW_H);
 		m_sdl_renderer = SDL_CreateRenderer(m_sdl_window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
 		/* Window icon */
 		std::string windows = "Windows";
 		if (windows.compare(SDL_GetPlatform()) != 0) /* Windows gets the icon from the exe */
 		{
-			SDL_Surface * ico_surface = IMG_Load(WINDOW_ICON);
+			SDL_Surface * ico_surface = IMG_Load(PATH_WINDOW_ICON);
 
 			if (ico_surface)
 			{
@@ -113,7 +114,7 @@ bool SDL_helper::init()
 
 			m_have_cursors = m_size_h && m_size_v && m_move && m_i_beam && m_arrow;
 
-			m_localization = new Localization(PATH_TRANSLATIONS, this);
+			//m_localization = new Localization(PATH_TRANSLATIONS, this);
 		}
 	}
 
@@ -647,7 +648,7 @@ std::string SDL_helper::loc(const char * id)
 	if (m_localization)
 		return m_localization->localize(id);
 	else
-		return nullptr;
+		return std::string(id);
 }
 
 #include "../../../libuiohook/include/uiohook.h"

@@ -6,10 +6,18 @@
  */
 #pragma once
 
+/* SDL_helper constants */
+#define SDL_WINDOW_W				1280
+#define SDL_WINDOW_H				720
+#define SDL_WINDOW_FPS				60
+#define SDL_WINDOW_TPF				1000 / SDL_WINDOW_FPS
+#define SDL_WINDOW_TITLE			"io-cct"
+
 /* Resources */
 #define PATH_ROBOTO_FONT			"res/roboto-regular.ttf"
 #define PATH_UNICODE_FONT			"res/antique-maru.ttf"
 #define PATH_TRANSLATIONS			"res/lang"
+#define PATH_WINDOW_ICON			"res/icon.png"
 
 #define ERROR_NO_TRANSLATION			"Error: No translation was found. Make sure that at least en_US.ini is in ./res/lang/"
 
