@@ -22,7 +22,7 @@
 
 #include <SDL_ttf.h>
 #include <string>
-#include "SDL_helper.hpp"
+#include "SDL_Helper.hpp"
 #include "Constants.hpp"
 
 class SDL_Helper;

@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "../util/SDL_helper.hpp"
+#include "../util/SDL_Helper.hpp"
 #include "elements/GuiElement.hpp"
 #include "elements/Label.hpp"
 #include <string>

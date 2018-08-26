@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "util/SDL_helper.hpp"
+#include "util/SDL_Helper.hpp"
 #include "dialog/DialogSetup.hpp"
 #include "dialog/DialogElementSettings.hpp"
 #include "dialog/DialogHelp.hpp"
