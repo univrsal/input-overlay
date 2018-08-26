@@ -18,7 +18,7 @@ class Combobox;
 class DialogElementType : public Dialog
 {
 public:
-	DialogElementType(SDL_helper * sdl, Tool * tool);
+	DialogElementType(SDL_Helper * sdl, Tool * tool);
 	void init() override;
 	void action_performed(int8_t action_id) override;
 private:

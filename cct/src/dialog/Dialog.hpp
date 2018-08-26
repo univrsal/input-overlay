@@ -27,15 +27,15 @@
 #define ACTION_OK -3
 #define ACTION_CANCEL -4
 
-class SDL_helper;
+class SDL_Helper;
 
 class GuiElement;
 
 class Dialog
 {
 public:
-	Dialog(SDL_helper * sdl, SDL_Rect size, std::string title);
-	Dialog(SDL_helper * sdl, SDL_Point size, std::string title);
+	Dialog(SDL_Helper * sdl, SDL_Rect size, std::string title);
+	Dialog(SDL_Helper * sdl, SDL_Point size, std::string title);
 
 	virtual ~Dialog();
 
@@ -59,7 +59,7 @@ public:
 
 	const SDL_Point position(void);
 
-	SDL_helper * helper(void);
+	SDL_Helper * helper(void);
 
 	int get_left(void);
 
@@ -78,7 +78,7 @@ protected:
 	bool m_is_dragging = false;
 	uint16_t m_flags = 0x0000;
 
-	SDL_helper * m_helper;
+	SDL_Helper * m_helper;
 	SDL_Rect m_dimensions;
 	SDL_Rect m_title_bar;
 };

@@ -6,7 +6,7 @@
  * github.com/univrsal/input-overlay
  */
 
-Dialog::Dialog(SDL_helper * sdl, SDL_Rect size, std::string title)
+Dialog::Dialog(SDL_Helper * sdl, SDL_Rect size, std::string title)
 {
 	m_helper = sdl;
 	m_dimensions = size;
@@ -14,7 +14,7 @@ Dialog::Dialog(SDL_helper * sdl, SDL_Rect size, std::string title)
 	m_title_bar = { m_dimensions.x + 5, m_dimensions.y + 5, m_dimensions.w - 10, 20 };
 }
 
-Dialog::Dialog(SDL_helper * sdl, SDL_Point size, std::string title)
+Dialog::Dialog(SDL_Helper * sdl, SDL_Point size, std::string title)
 {
 	SDL_Point * window_size = sdl->util_window_size();
 	SDL_Rect temp = { (*window_size).x / 2 - size.x / 2, (*window_size).y / 2 - size.y / 2, size.x, size.y };
@@ -54,6 +54,7 @@ void Dialog::init()
 void Dialog::draw_background(void)
 {
 	if (m_flags & DIALOG_TOP_MOST)
+	/* Tint background in gray */
 	{
 		SDL_Point * s = m_helper->util_window_size();
 		SDL_Rect temp = { 0, 0, s->x, s->y };
@@ -181,7 +182,10 @@ bool Dialog::handle_events(SDL_Event * event)
 	{
 		if (event->key.keysym.sym == SDLK_TAB)
 		{
-			m_tab_items[m_selected_element]->select_state(false);
+			for (auto const& e : m_tab_items)
+			{
+				e->select_state(false);
+			}
 
 			m_selected_element += m_helper->is_shift_down() ? -1 : 1;
 
@@ -260,7 +264,7 @@ const SDL_Point Dialog::position(void)
 	return SDL_Point { m_dimensions.x, m_dimensions.y };
 }
 
-SDL_helper * Dialog::helper(void)
+SDL_Helper * Dialog::helper(void)
 {
 	return m_helper;
 }

@@ -18,7 +18,7 @@
 #include "Config.hpp"
 #include <SDL.h>
 
-class SDL_helper;
+class SDL_Helper;
 class Element;
 class Config;
 class DialogElementSettings;
@@ -53,7 +53,7 @@ class Tool
 {
 public:
 	Tool() { m_helper = nullptr; }
-	Tool(SDL_helper * helper);
+	Tool(SDL_Helper * helper);
 	~Tool();
 
 	void program_loop();
@@ -86,7 +86,7 @@ private:
 	ElementType m_new_element_type = ElementType::INVALID;
 	
 	SDL_Event m_event;
-	SDL_helper * m_helper;
+	SDL_Helper * m_helper;
 
 	Config * m_config = nullptr;
 

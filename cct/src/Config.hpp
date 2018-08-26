@@ -25,7 +25,7 @@ class CoordinateSystem;
 
 class DialogElementSettings;
 
-class SDL_helper;
+class SDL_Helper;
 
 class Texture;
 
@@ -133,7 +133,7 @@ private:
 class Config
 {
 public:
-	Config(const char * texture, const char * config, SDL_Point def_dim, SDL_helper * h, DialogElementSettings * s);
+	Config(const char * texture, const char * config, SDL_Point def_dim, SDL_Point space, SDL_Helper * h, DialogElementSettings * s);
 	~Config();
 
 	void draw_elements(void);
@@ -172,7 +172,7 @@ private:
 
 	CoordinateSystem m_cs;
 
-	SDL_helper * m_helper = nullptr;
+	SDL_Helper * m_helper = nullptr;
 	Texture * m_atlas = nullptr;
 	DialogElementSettings * m_settings = nullptr;
 
@@ -180,6 +180,7 @@ private:
 	SDL_Point m_drag_offset;
 
 	SDL_Point m_default_dim;
+	SDL_Point m_offset;
 
 	/* Selection stuff */
 	std::vector<uint16_t> m_selected_elements;

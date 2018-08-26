@@ -21,7 +21,7 @@
 #include "Localization.hpp"
 #endif
 
-Localization::Localization(const char * lang_folder, SDL_helper * helper)
+Localization::Localization(const char * lang_folder, SDL_Helper * helper)
 {
 	m_lang_folder = lang_folder;
 	m_helper = helper;
@@ -95,10 +95,8 @@ bool Localization::is_roman(void)
 
 void Localization::scan_lang_folder(void)
 {
-
-	int8_t id = 0;
 	ccl_config * lang = nullptr;
-
+	std::string file_name;
 #ifdef _WIN32
 	/* Iterating over items in folder on Win32
 	 * and filtering only *.ini files
@@ -106,7 +104,7 @@ void Localization::scan_lang_folder(void)
 	HANDLE hFind;
 	WIN32_FIND_DATA data;
 	std::string path = m_lang_folder;
-	std::string file_name;
+
 	path.append("/*.ini");
 	hFind = FindFirstFile(path.c_str(), &data);
 	
@@ -126,7 +124,7 @@ void Localization::scan_lang_folder(void)
 	struct dirent * dirent;
 
 	dir = opendir(m_lang_folder.c_str());
-	std::string file_name;
+
 	if (dir)
 	{
 		while ((dirent = readdir(dir)))
@@ -149,11 +147,10 @@ void Localization::scan_lang_folder(void)
 
 				if (lang && (node = lang->get_node(LANG_ID)))
 				{
-					m_langfiles.emplace_back(new LangFile(file_name, node->get_value()));
 					m_valid = true;
 					if (file_name.compare("en_US.ini") == 0)
-						m_english_id = id;
-					id++;
+						m_english_id = m_langfiles.size();
+					m_langfiles.emplace_back(new LangFile(file_name, node->get_value()));
 				}
 				else
 				{
@@ -162,10 +159,8 @@ void Localization::scan_lang_folder(void)
 
 				delete lang;
 				lang = nullptr;
-				m_langfiles.emplace_back(new LangFile(file_name, node->get_value()));
-				id++;
 			}
-#ifdef _Win32
+#ifdef _WIN32
 		} while (FindNextFile(hFind, &data));
 		FindClose(hFind);
 #else

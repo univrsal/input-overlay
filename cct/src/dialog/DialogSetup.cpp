@@ -41,14 +41,20 @@ void DialogSetup::init()
 	add(new Label(id++, 8, 135, LANG_LABEL_DEFAULT_WIDTH, this));
 	add(new Label(id++, (m_dimensions.w / 2) + 4, 135, LANG_LABEL_DEFAULT_HEIGHT, this));
 
-	m_def_w = new Textbox(id++, 8, 155, (m_dimensions.w / 2) - 16, 20, "0", this);
-	m_def_h = new Textbox(id++, (m_dimensions.w / 2) + 4, 155, (m_dimensions.w / 2) - 12, 20, "0", this);
+	add(new Label(id++, 8, 185, LANG_LABEL_ELEMENT_H_SPACE, this));
+	add(new Label(id++, (m_dimensions.w / 2) + 4, 185, LANG_LABEL_ELEMENT_V_SPACE, this));
+
+	add(m_def_w = new Textbox(id++, 8, 155, (m_dimensions.w / 2) - 16, 20, "0", this));
+	add(m_def_h = new Textbox(id++, (m_dimensions.w / 2) + 4, 155, (m_dimensions.w / 2) - 12, 20, "0", this));
+
+	add(m_h_space = new Textbox(id++, 8, 205, (m_dimensions.w / 2) - 16, 20, "0", this));
+	add(m_v_space = new Textbox(id++, (m_dimensions.w / 2) + 4, 205, (m_dimensions.w / 2) - 12, 20, "0", this));
 
 	m_def_w->set_flags(TEXTBOX_NUMERIC);
 	m_def_h->set_flags(TEXTBOX_NUMERIC);
 
-	add(m_def_w);
-	add(m_def_h);
+	m_h_space->set_flags(TEXTBOX_NUMERIC);
+	m_v_space->set_flags(TEXTBOX_NUMERIC);
 
 	m_config_path->set_flags(TEXTBOX_DROP_FILE);
 	m_texture_path->set_flags(TEXTBOX_DROP_FILE);
@@ -146,6 +152,12 @@ const char * DialogSetup::get_config_path(void)
 const char * DialogSetup::get_texture_path(void)
 {
 	return m_texture_path->get_text()->c_str();
+}
+
+SDL_Point DialogSetup::get_rulers()
+{
+	return SDL_Point{ std::stoi(m_h_space->get_text()->c_str()),
+		std::stoi(m_v_space->get_text()->c_str()) };
 }
 
 SDL_Point DialogSetup::get_default_dim()

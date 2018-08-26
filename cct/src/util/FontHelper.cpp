@@ -7,7 +7,7 @@
 
 #include "FontHelper.hpp"
 
-FontHelper::FontHelper(SDL_helper * renderer)
+FontHelper::FontHelper(SDL_Helper * renderer)
 {
 	m_helper = renderer;
 	m_mode = FONT_BLENDED;

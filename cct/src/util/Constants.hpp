@@ -6,7 +6,7 @@
  */
 #pragma once
 
-/* SDL_helper constants */
+ /* SDL_Helper constants */
 #define SDL_WINDOW_W				1280
 #define SDL_WINDOW_H				720
 #define SDL_WINDOW_FPS				60
@@ -34,7 +34,7 @@
 #define LANG_LABEL_X_AXIS			"label_x_axis"
 #define LANG_LABEL_Y_AXIS			"label_y_axis"
 #define LANG_LABEL_SCALE			"label_scale"
-			
+
 /* SDL errors */
 #define SDL_INIT_FAILED				"Initialization of SDL failed! SDL_Error: %s\n"
 #define SDL_CREATE_WINDOW_FAILED		"Creating SDL Window failed! SDL_Error: %s\n"
@@ -80,6 +80,8 @@
 #define LANG_LABEL_CONFIG_PATH			"label_config_path"
 #define LANG_LABEL_DEFAULT_WIDTH		"label_default_width"
 #define LANG_LABEL_DEFAULT_HEIGHT		"label_default_height"
+#define LANG_LABEL_ELEMENT_H_SPACE		"label_element_h_space"
+#define LANG_LABEL_ELEMENT_V_SPACE		"label_element_v_space"
 
 /* Reusable elements */
 #define LANG_BUTTON_OK				"button_ok"

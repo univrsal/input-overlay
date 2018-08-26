@@ -17,7 +17,7 @@
 #define SIZE_MOVE 4
 #define SIZE_NONE 5
 
-class SDL_helper;
+class SDL_Helper;
 
 class CoordinateSystem
 {
@@ -32,7 +32,7 @@ public:
 			m_dimensions.w - m_origin_anchor.x, m_dimensions.h - m_origin_anchor.y };
 	}
 
-	CoordinateSystem(SDL_Point origin, SDL_Rect size, SDL_helper * h)
+	CoordinateSystem(SDL_Point origin, SDL_Rect size, SDL_Helper * h)
 	{
 		m_helper = h;
 		m_origin.x = origin.x + size.x;
@@ -58,7 +58,9 @@ public:
 
 	void set_pos(int x, int y);
 
-	void set_grid_space(SDL_Point p) { m_grid_spacing = p; }
+	void set_grid_space(SDL_Point p) { m_grid_spacing = p; m_has_custom_grid = true; }
+
+	void set_ruler_offset(SDL_Point p) { m_ruler_offset = p; m_has_rulers = true; }
 	/* Adjusts to pixel raster */
 	int adjust(int i);
 
@@ -87,7 +89,7 @@ public:
 	int get_scale(void) { return m_scale_f; }
 
 	SDL_Rect get_dimensions(void) { return m_dimensions; }
-	SDL_helper * get_helper(void) { return m_helper; }
+	SDL_Helper * get_helper(void) { return m_helper; }
 	const SDL_Rect * get_system_area(void) { return &m_system_area; }
 
 	void set_selection(SDL_Rect * r) { m_selection = r; }
@@ -117,21 +119,25 @@ private:
 	}
 
 	int m_scale_f; /* Multiplier for zooming */
-	SDL_Rect m_dimensions; /* Complete size of the system */
-	SDL_Rect m_system_area; /* Area minus axes and scale text */
-
-	SDL_Rect * m_selection = nullptr; /* For atlas selector */
-	SDL_Point m_selection_a;
 	uint8_t m_size_mode = SIZE_NONE;
 
-	bool m_selecting = false;
-	bool m_sizing = false;
-
+	SDL_Rect m_dimensions; /* Complete size of the system */
+	SDL_Rect m_system_area; /* Area minus axes and scale text */
+	SDL_Rect * m_selection = nullptr; /* For atlas selector */
+	
+	SDL_Point m_selection_a;
 	SDL_Point m_origin_anchor; /* Constant position of the origin*/
 	SDL_Point m_origin; /* Origin after zooming and moving */
 	SDL_Point m_drag_offset;
-	SDL_Point m_grid_spacing = { 0, 0 };
-	SDL_helper * m_helper = nullptr;
+	SDL_Point m_grid_spacing;
+	SDL_Point m_ruler_offset;
+
+	SDL_Helper * m_helper = nullptr;
+
+	bool m_selecting = false;
+	bool m_sizing = false;
+	bool m_has_custom_grid = false;
+	bool m_has_rulers = false;
 
 	bool m_dragging = false;
 	bool m_border = false; /* Used inside dialogs */

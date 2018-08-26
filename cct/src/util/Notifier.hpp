@@ -17,12 +17,12 @@
 
 #define MESSAGE_TIMEOUT 4000
 
-class SDL_helper;
+class SDL_Helper;
 
 struct Message
 {
 public:
-	Message(uint8_t type, std::string msg, SDL_helper * h)
+	Message(uint8_t type, std::string msg, SDL_Helper * h)
 	{
 		h->format_text(&msg, m_message_lines, m_dim);
 		m_type = type;
@@ -45,7 +45,7 @@ public:
 class Notifier
 {
 public:
-	Notifier(SDL_helper * h)
+	Notifier(SDL_Helper * h)
 	{
 		m_messages = std::vector<std::unique_ptr<Message>>();
 		m_helper = h;
@@ -65,6 +65,6 @@ public:
 private:
 	std::string m_last_message = "";
 	std::vector<std::unique_ptr<Message>> m_messages;
-	SDL_helper * m_helper;
+	SDL_Helper * m_helper;
 	SDL_Point m_dim;
 };

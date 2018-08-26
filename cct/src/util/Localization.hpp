@@ -15,7 +15,7 @@
 
 class ccl_config;
 
-class SDL_helper;
+class SDL_Helper;
 
 struct LangFile
 {
@@ -32,7 +32,7 @@ public:
 class Localization
 {
 public:
-	Localization(const char * lang_folder, SDL_helper * h);
+	Localization(const char * lang_folder, SDL_Helper * h);
 
 	void load_lang_by_id(uint8_t id);
 	const std::vector<std::unique_ptr<LangFile>> * get_languages(void) { return &m_langfiles; }
@@ -56,7 +56,7 @@ private:
 	std::string m_lang_folder;
 	std::vector<std::unique_ptr<LangFile>> m_langfiles;
 
-	SDL_helper * m_helper = nullptr;
+	SDL_Helper * m_helper = nullptr;
 
 	std::unique_ptr<ccl_config> m_english;
 	std::unique_ptr<ccl_config> m_current;

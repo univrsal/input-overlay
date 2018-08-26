@@ -28,11 +28,14 @@ public:
     SDL_Color * blue(void);
     SDL_Color * red(void);
     SDL_Color * green(void);
+    SDL_Color * orange(void);
 
 private:
     SDL_Color m_background;
     SDL_Color m_foreground;
     SDL_Color m_accent;
+
+    SDL_Color m_orange;
 
     SDL_Color m_white;
     SDL_Color m_black;

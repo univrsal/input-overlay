@@ -46,7 +46,7 @@ Dialog *GuiElement::get_parent()
 	return m_parent_dialog;
 }
 
-SDL_helper * GuiElement::get_helper()
+SDL_Helper * GuiElement::get_helper()
 {
 	return get_parent()->helper();
 }

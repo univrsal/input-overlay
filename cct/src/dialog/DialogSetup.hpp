@@ -16,15 +16,15 @@
 
 class Tool;
 
-class SDL_helper;
+class SDL_Helper;
 
 class Notifier;
 
 class DialogSetup : public Dialog
 {
 public:
-	DialogSetup(SDL_helper * sdl, Notifier * notifier, Tool * t)
-		: Dialog(sdl, SDL_Point { 500, 230 }, LANG_DIALOG_SETUP)
+	DialogSetup(SDL_Helper * sdl, Notifier * notifier, Tool * t)
+		: Dialog(sdl, SDL_Point { 500, 280 }, LANG_DIALOG_SETUP)
 	{
 		m_notifier = notifier;
 		m_tool = t;
@@ -53,6 +53,10 @@ private:
 	Textbox * m_config_path = nullptr;
 	Textbox * m_def_w = nullptr;
 	Textbox * m_def_h = nullptr;
+	Textbox * m_h_space = nullptr;
+	Textbox * m_v_space = nullptr;
 
 	Tool * m_tool = nullptr;
+public:
+	SDL_Point get_rulers();
 };

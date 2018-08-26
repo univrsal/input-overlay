@@ -47,11 +47,11 @@ class Localization;
 
 static const std::string NEW_LINE = "\n";
 
-class SDL_helper
+class SDL_Helper
 {
 public:
-	SDL_helper();
-	~SDL_helper();
+	SDL_Helper();
+	~SDL_Helper();
 
 	bool init();
 	void close();
@@ -183,7 +183,7 @@ private:
 };
 
 template<typename ...Args>
-inline std::string SDL_helper::format(const char * format, Args ...args)
+inline std::string SDL_Helper::format(const char * format, Args ...args)
 {
 	size_t size = snprintf(nullptr, 0, format, args ...) + 1;
 	std::unique_ptr<char[]> buf(new char[size]);

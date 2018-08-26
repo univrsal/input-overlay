@@ -25,12 +25,12 @@
 #include "SDL_helper.hpp"
 #include "Constants.hpp"
 
-class SDL_helper;
+class SDL_Helper;
 
 class FontHelper
 {
 public:
-    FontHelper(SDL_helper *renderer);
+    FontHelper(SDL_Helper *renderer);
 
     ~FontHelper();
 
@@ -47,7 +47,7 @@ public:
     SDL_Rect get_text_dimension(TTF_Font *font, const std::string *text);
 
 private:
-	SDL_helper *m_helper;
+	SDL_Helper *m_helper;
 	uint8_t m_mode;
 };
 

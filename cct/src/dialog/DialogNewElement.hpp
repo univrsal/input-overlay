@@ -20,7 +20,7 @@
 #include "../util/CoordinateSystem.hpp"
 #include "../util/Constants.hpp"
 
-class SDL_helper;
+class SDL_Helper;
 
 class Texture;
 
@@ -33,7 +33,7 @@ enum ElementType;
 class DialogNewElement : public Dialog
 {
 public:
-	DialogNewElement(SDL_helper * sdl, std::string title, Tool * tool, ElementType type)
+	DialogNewElement(SDL_Helper * sdl, std::string title, Tool * tool, ElementType type)
 		: Dialog(sdl, SDL_Point {}, title)
 	{
 		m_tool = tool;

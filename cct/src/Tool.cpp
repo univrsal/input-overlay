@@ -1,6 +1,6 @@
 #include "Tool.hpp"
 
-Tool::Tool(SDL_helper * helper)
+Tool::Tool(SDL_Helper * helper)
 {
 	m_helper = helper;
 	m_state = IN_SETUP;
@@ -90,7 +90,7 @@ void Tool::action_performed(uint8_t type)
 		s = reinterpret_cast<DialogSetup*>(m_toplevel);
 		m_element_settings = new DialogElementSettings(m_helper, this);
 		m_config = new Config(s->get_texture_path(),
-			s->get_config_path(), s->get_default_dim(), m_helper, m_element_settings);
+			s->get_config_path(), s->get_default_dim(), s->get_rulers(), m_helper, m_element_settings);
 
 		if (s->should_load_cfg())
 		{

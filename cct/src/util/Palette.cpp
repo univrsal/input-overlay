@@ -18,6 +18,7 @@ Palette::Palette()
 	m_accent = { 64, 64, 64, 255 };
 
 	m_tooltip_body = { 248, 230, 177, 128 };
+	m_orange = { 255, 92, 38, 255 };
 
 	m_red = { 240, 20, 20, 255 };
 	m_green = { 33, 135, 55, 255 };
@@ -83,6 +84,11 @@ SDL_Color * Palette::red(void)
 SDL_Color * Palette::green(void)
 {
 	return &m_green;
+}
+
+SDL_Color * Palette::orange(void)
+{
+    return &m_orange;
 }
 
 SDL_Color * Palette::get_tooltip_body(void)

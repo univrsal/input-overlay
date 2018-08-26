@@ -8,7 +8,7 @@
 #include "Textbox.hpp"
 #include "../../util/SDL_helper.hpp"
 
-class SDL_helper;
+class SDL_Helper;
 
 Textbox::Textbox(int8_t id, int x, int y, int w, int h, std::string text, Dialog *parent)
 {
@@ -191,6 +191,8 @@ bool Textbox::can_select(void)
 void Textbox::select_state(bool state)
 {
 	m_focused = state;
+	if (!state)
+		get_text(); /* Reset if empty */
 }
 
 void Textbox::set_text(std::string s)
@@ -241,9 +243,12 @@ const std::string * Textbox::get_text()
 
 inline bool Textbox::is_numeric(const std::string & s)
 {
+	int index = 0;
 	for (char i : s)
 	{
+		if (index == 0 && i == '-') continue;
 		if (!(i >= '0' && i <= '9')) return false;
+		index++;
 	}
 	return true;
 }

@@ -20,7 +20,7 @@
 #define ACTION_DEL_ELEMENT -13
 #define ACTION_MOD_ELEMENT -14
 
-class SDL_helper;
+class SDL_Helper;
 
 class Tool;
 
@@ -29,7 +29,7 @@ class Element;
 class DialogElementSettings : public Dialog
 {
 public:
-	DialogElementSettings(SDL_helper * sdl, Tool * tool)
+	DialogElementSettings(SDL_Helper * sdl, Tool * tool)
 		: Dialog(sdl, SDL_Rect { 1030, 200, 240, 400 }, LANG_DIALOG_ELEMENT_SETTINGS)
 	{
 		m_tool = tool;

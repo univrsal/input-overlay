@@ -14,7 +14,7 @@
 #include "GuiElement.hpp"
 #include "../Dialog.hpp"
 
-class SDL_helper;
+class SDL_Helper;
 
 class CoordinateSystem;
 

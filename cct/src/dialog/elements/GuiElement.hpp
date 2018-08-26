@@ -16,7 +16,7 @@
 
 class Dialog;
 
-class SDL_helper;
+class SDL_Helper;
 
 class GuiElement
 {
@@ -47,7 +47,7 @@ public:
 
 	Dialog * get_parent(void);
 
-	SDL_helper * get_helper();
+	SDL_Helper * get_helper();
 
 	SDL_Rect * get_dimensions(void);
 

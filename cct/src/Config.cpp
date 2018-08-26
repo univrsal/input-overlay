@@ -13,7 +13,7 @@
 #define X_AXIS 100
 #define Y_AXIS 100
 
-Config::Config(const char * texture, const char * config, SDL_Point def_dim, SDL_helper * h,
+Config::Config(const char * texture, const char * config, SDL_Point def_dim, SDL_Point space, SDL_Helper * h,
 	DialogElementSettings * s)
 {
 	m_texture_path = texture;
@@ -23,12 +23,16 @@ Config::Config(const char * texture, const char * config, SDL_Point def_dim, SDL
 	m_atlas = new Texture(texture, h->renderer());
 	m_helper = h;
 	m_default_dim = def_dim;
+	m_offset = space;
+
 	SDL_Point * w = h->util_window_size();
 	m_cs = CoordinateSystem(SDL_Point { X_AXIS, Y_AXIS }, SDL_Rect { 0, 0, w->x, w->y }, h);
 
 	if (def_dim.x > 0 && def_dim.y > 0)
 		m_cs.set_grid_space(m_default_dim);
-	std::string test;
+	if (space.x != 0 && space.y != 0)
+		m_cs.set_ruler_offset(space);
+
 	SDL_Point pos = { 0, 0 };
 	SDL_Rect map = { 1, 1, 157, 128 };
 }

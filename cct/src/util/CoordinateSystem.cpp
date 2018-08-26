@@ -162,10 +162,9 @@ void CoordinateSystem::draw_foreground(void)
 	
 	int x, y;
 	int start_x, start_y;
-	bool enable_custom_grid = m_grid_spacing.x > 0;
 
 	/* Draw custom grid, which adjusts to button dimensions */
-	if (enable_custom_grid)
+	if (m_has_custom_grid)
 	{
 		int step_x = m_grid_spacing.x * m_scale_f;
 		int step_y = m_grid_spacing.y * m_scale_f;
@@ -173,10 +172,26 @@ void CoordinateSystem::draw_foreground(void)
 		start_y = get_origin_top() + ((m_origin.y - get_origin_top()) % step_y) + step_y;
 
 		for (x = start_x; x < get_right(); x += step_x)
-			m_helper->util_draw_line(x, get_origin_top() + 4, x, get_bottom(), m_helper->palette()->gray());
-
+		{
+			m_helper->util_draw_line(x, get_origin_top(), x, get_bottom(),
+				m_helper->palette()->gray());
+			if (m_has_rulers)
+			{
+				m_helper->util_draw_line(x + m_ruler_offset.x * m_scale_f, get_origin_top(),
+					x + m_ruler_offset.x * m_scale_f, get_bottom(), m_helper->palette()->orange());
+			}
+		}
+			
 		for (y = start_y; y < get_bottom(); y += step_y)
-			m_helper->util_draw_line(get_origin_left() + 4, y, get_right(), y, m_helper->palette()->gray());
+		{
+			m_helper->util_draw_line(get_origin_left(), y, get_right(), y,
+				m_helper->palette()->gray());
+			if (m_has_rulers)
+			{
+				m_helper->util_draw_line(get_origin_left(), y + m_ruler_offset.y * m_scale_f,
+					get_right(), y + m_ruler_offset.y * m_scale_f, m_helper->palette()->orange());
+			}
+		}
 	}
 
 	/* Draw Scale*/
@@ -197,7 +212,7 @@ void CoordinateSystem::draw_foreground(void)
 				UTIL_CLAMP(get_origin_left() + dim.h + 2, x + dim.h / 2, get_right() - 2),
 				get_origin_top() - dim.w - 6, m_helper->palette()->white(), 90);
 			m_helper->util_draw_line(x, get_origin_top() - 4, x, get_origin_top() + 4, m_helper->palette()->white());
-			if (!enable_custom_grid)
+			if (!m_has_custom_grid)
 				m_helper->util_draw_line(x, get_origin_top() + 4, x, get_bottom(), m_helper->palette()->gray());
 		}
 		else 
@@ -220,7 +235,7 @@ void CoordinateSystem::draw_foreground(void)
 				UTIL_CLAMP(get_origin_top() + 2, y - dim.h / 2, get_bottom() - dim.h - 2),
 				m_helper->palette()->white());
 			m_helper->util_draw_line(get_origin_left() - 4, y, get_origin_left() + 4, y, m_helper->palette()->white());
-			if (!enable_custom_grid)
+			if (!m_has_custom_grid)
 				m_helper->util_draw_line(get_origin_left() + 4, y, get_right(), y, m_helper->palette()->gray());
 		}
 		else

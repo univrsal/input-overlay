@@ -9,7 +9,7 @@
 #include "elements/Combobox.hpp"
 #include "../Tool.hpp"
 
-DialogElementType::DialogElementType(SDL_helper * sdl, Tool * tool)
+DialogElementType::DialogElementType(SDL_Helper * sdl, Tool * tool)
 	: Dialog(sdl, SDL_Point { 350, 120 }, LANG_DIALOG_ELEMENT_TYPE)
 {
 	m_tool = tool;
