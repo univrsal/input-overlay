@@ -6,8 +6,10 @@
  */
 #pragma once
 
-#define CFG_DEFAULT_WIDTH "default_width"
-#define CFG_DEFAULT_HEIGHT "default_height"
+#define CFG_DEFAULT_WIDTH	"default_width"
+#define CFG_DEFAULT_HEIGHT	"default_height"
+#define CFG_H_SPACE		"space_h"
+#define CFG_V_SPACE		"space_v"
 
 #define CFG_TOTAL_WIDTH	"overlay_width"
 #define CFG_TOTAL_HEIGHT "overlay_height"
@@ -20,6 +22,7 @@
 #define CFG_KEY_CODE	"_code"
 #define CFG_WIDTH	"_width"
 #define CFG_HEIGHT	"_height"
+#define CFG_Z_LEVEL	"_z_level"
 #define CFG_FIRST_ID	"first_element"
 #define CFG_NEXT_ID	"_next"
 
