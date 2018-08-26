@@ -8,7 +8,7 @@
 #pragma once
 
 #include "Dialog.hpp"
-#include "../util/SDL_helper.hpp"
+#include "../util/SDL_Helper.hpp"
 #include "elements/Textbox.hpp"
 #include "elements/Button.hpp"
 #include "elements/Combobox.hpp"

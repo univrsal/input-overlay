@@ -8,7 +8,7 @@
 #pragma once
 
 #include "../../util/CoordinateSystem.hpp"
-#include "../../util/SDL_helper.hpp"
+#include "../../util/SDL_Helper.hpp"
 #include "../../util/Texture.hpp"
 #include <SDL.h>
 #include "GuiElement.hpp"

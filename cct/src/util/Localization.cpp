@@ -7,7 +7,7 @@
 
 #include "Localization.hpp"
 #include "Notifier.hpp"
-#include "SDL_helper.hpp"
+#include "SDL_Helper.hpp"
 
 #ifdef _WIN32
 #include <Windows.h>

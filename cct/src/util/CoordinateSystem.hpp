@@ -8,7 +8,7 @@
 #pragma once
 
 #include <SDL.h>
-#include "SDL_helper.hpp"
+#include "SDL_Helper.hpp"
 
 #define SIZE_LEFT 0
 #define SIZE_RIGHT 1

@@ -5,7 +5,7 @@
  * github.com/univrsal/input-overlay
  */
 
-#include "SDL_helper.hpp"
+#include "SDL_Helper.hpp"
 #include "Localization.hpp"
 #include "Constants.hpp"
 

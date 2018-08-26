@@ -11,7 +11,7 @@
 #include <SDL.h>
 #include "GuiElement.hpp"
 #include "../Dialog.hpp"
-#include "../../util/SDL_helper.hpp"
+#include "../../util/SDL_Helper.hpp"
 
 class Dialog;
 

@@ -6,7 +6,7 @@
  */
 
 #include "Label.hpp"
-#include "../../util/SDL_helper.hpp"
+#include "../../util/SDL_Helper.hpp"
 #include "../../util/Localization.hpp"
 
 Label::Label(int8_t id, int x, int y, const char *text, Dialog *parent, uint16_t flags)

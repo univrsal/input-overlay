@@ -6,7 +6,7 @@
  */
 
 #include "Textbox.hpp"
-#include "../../util/SDL_helper.hpp"
+#include "../../util/SDL_Helper.hpp"
 
 class SDL_Helper;
 

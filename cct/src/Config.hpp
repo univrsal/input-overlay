@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "util/SDL_helper.hpp"
+#include "util/SDL_Helper.hpp"
 #include "util/Texture.hpp"
 #include "../../io-obs/util/layout_constants.hpp"
 #include "util/CoordinateSystem.hpp"

@@ -6,7 +6,7 @@
 */
 
 #include "GuiElement.hpp"
-#include "../../util/SDL_helper.hpp"
+#include "../../util/SDL_Helper.hpp"
 #include "../Dialog.hpp"
 
 GuiElement::~GuiElement()
