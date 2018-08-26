@@ -14,7 +14,7 @@ macro(use_cxx14)
   endif ()
 endmacro(use_cxx14)
 
-use_cxx11()
+use_cxx14()
 
 if(MSVC)
 	find_path(SDL2_INCLUDE_DIRS SDL.h)
