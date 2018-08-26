@@ -44,8 +44,8 @@ set(io-cct_SOURCES
 	src/util/FontHelper.hpp
 	src/util/Palette.cpp
 	src/util/Palette.hpp
-	src/util/SDL_helper.cpp
-	src/util/SDL_helper.hpp
+	src/util/SDL_Helper.cpp
+	src/util/SDL_Helper.hpp
 	src/util/Texture.cpp
 	src/util/Texture.hpp
 	src/dialog/Dialog.hpp
