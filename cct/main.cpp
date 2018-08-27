@@ -16,7 +16,7 @@ int main(int argc, char **argv)
 	{
 		printf("Initialization failed!\n");
 
-		printf("If any loading of resources failed make sure that the following files are in the same directory as the exectuable:\n");
+		printf("If any loading of resources failed make sure that the following files are located inside the folder './res':\n");
 		printf(" antique-maru.ttf\n roboto-regular.ttf\n icon.png\n");
 		printf("<press any key to exit>\n");
 		getchar();
