@@ -117,9 +117,7 @@ void Config::handle_events(SDL_Event * e)
 			bool is_single_selection = false;
 			bool selection_empty = SDL_RectEmpty(&m_total_selection);
 
-			int m_x = e->button.x;
-			int m_y = e->button.y;
-			m_cs.translate(m_x, m_y);
+			m_cs.translate(e->button.x, e->button.y);
 
 			if (selection_empty)
 			{
@@ -129,8 +127,7 @@ void Config::handle_events(SDL_Event * e)
 
 				for (auto const &elem : m_elements)
 				{
-					SDL_Rect dim = elem->get_abs_dim(&m_cs);
-					if (m_helper->util_is_in_rect(&dim, e->button.x, e->button.y))
+					if (m_helper->util_is_in_rect(elem->get_abs_dim(&m_cs), e->button.x, e->button.y))
 					{
 						if (elem->get_z_level() >= highest_layer)
 						{
@@ -143,8 +140,6 @@ void Config::handle_events(SDL_Event * e)
 					}
 					i++;
 				}
-
-
 
 				if (!is_single_selection)
 					/* No element was directly select -> start groups selection*/
@@ -164,7 +159,7 @@ void Config::handle_events(SDL_Event * e)
 					m_settings->select_element(m_selected);
 				}
 			}
-			else if (m_helper->util_is_in_rect(&m_total_selection, m_x, m_y))
+			else if (m_helper->util_is_in_rect(&m_total_selection, e->button.x, e->button.y))
 			{
 				m_dragging_elements = true;
 				m_drag_offset = { e->button.x - m_total_selection.x,
@@ -222,9 +217,7 @@ void Config::handle_events(SDL_Event * e)
 			int index = 0;
 			for (auto const &elem : m_elements)
 			{
-				elem_dim = elem->get_dim();
-
-				if (is_rect_in_rect(&elem_dim, &m_temp_selection))
+				if (is_rect_in_rect(elem->get_dim(), &m_temp_selection))
 				{
 					m_cs.translate(elem_abs_dim.x, elem_abs_dim.y);
 					m_selected_elements.emplace_back(index);
@@ -248,29 +241,7 @@ void Config::handle_events(SDL_Event * e)
 			int x = m_selected->get_x();
 			int y = m_selected->get_y();
 
-			bool moved = false;
-
-			switch (e->key.keysym.sym)
-			{
-			case SDLK_UP:
-				y = SDL_max(y - 1, 0);
-				moved = true;
-				break;
-			case SDLK_DOWN:
-				y++;
-				moved = true;
-				break;
-			case SDLK_RIGHT:
-				x++;
-				moved = true;
-				break;
-			case SDLK_LEFT:
-				x = SDL_max(0, x - 1);
-				moved = true;
-				break;
-			}
-
-			if (moved)
+			if (util_move_element(&x, &y, e->key.keysym.sym))
 			{
 				m_selected->set_pos(x, y);
 				m_settings->set_xy(x, y);
@@ -281,54 +252,9 @@ void Config::handle_events(SDL_Event * e)
 			int x = m_total_selection.x;
 			int y = m_total_selection.y;
 
-			bool moved = false;
-
-			switch (e->key.keysym.sym)
-			{
-			case SDLK_UP:
-				y = SDL_max(y - 1, 0);
-				moved = true;
-				break;
-			case SDLK_DOWN:
-				y++;
-				moved = true;
-				break;
-			case SDLK_RIGHT:
-				x++;
-				moved = true;
-				break;
-			case SDLK_LEFT:
-				x = SDL_max(0, x - 1);
-				moved = true;
-				break;
-			}
-
-			if (moved)
-			{
+			if (util_move_element(&x, &y, e->key.keysym.sym))
 				move_elements(x, y);
-			}
 		}
-
-		update_key_states(e->key.keysym.sym, true);
-	}
-	else if (e->type == SDL_KEYUP)
-	{
-		for (auto const &element : m_elements)
-		{
-			if (e->key.keysym.sym == m_helper->vc_to_sdl_key(element->get_vc()))
-			{
-				element->set_pressed(false);
-			}
-		}
-		update_key_states(e->key.keysym.sym, false);
-	}
-	else if (e->type == SDL_JOYBUTTONDOWN)
-	{
-		update_key_states(e->jbutton.button, true);
-	}
-	else if (e->type == SDL_JOYBUTTONUP)
-	{
-		update_key_states(e->jbutton.button, false);
 	}
 	else if (e->type == SDL_WINDOWEVENT)
 	{
@@ -407,7 +333,6 @@ void Config::read_config(Notifier * n)
 		return;
 	}
 
-
 	if (!cfg.node_exists(CFG_FIRST_ID, true))
 	{
 		n->add_msg(MESSAGE_INFO, m_helper->loc(LANG_MSG_CONFIG_CORRUPT));
@@ -416,24 +341,17 @@ void Config::read_config(Notifier * n)
 
 	std::string element_id = cfg.get_string(CFG_FIRST_ID);
 
-	bool flag = true;
 	if (cfg.get_int(CFG_DEFAULT_WIDTH) != 0)
 		m_default_dim.x = cfg.get_int(CFG_DEFAULT_WIDTH);
 	if (cfg.get_int(CFG_DEFAULT_HEIGHT) != 0)
 		m_default_dim.y = cfg.get_int(CFG_DEFAULT_HEIGHT);
 
-	/* Used to construct the elements */
 	int type = 0;
-	ElementType t = ElementType::INVALID;
-	SDL_Point pos;
-	SDL_Rect u_v;
-	uint16_t vc;
-	uint8_t layer;
 
 	while (!element_id.empty())
 	{
 		type = cfg.get_int(element_id + CFG_TYPE);
-		if (type < 0 || type > ElementType::DPAD_STICK)
+		if (!Element::valid_type(type))
 		{
 			std::string result = m_helper->format(m_helper->loc(LANG_MSG_VALUE_TYPE_INVALID).c_str(), element_id.c_str(), type);
 			n->add_msg(MESSAGE_ERROR, result);
@@ -441,28 +359,7 @@ void Config::read_config(Notifier * n)
 			element_id = cfg.get_string(element_id + CFG_NEXT_ID);
 			continue;
 		}
-
-		t = (ElementType) type;
-
-		pos.x = cfg.get_int(element_id + CFG_X_POS);
-		pos.y = cfg.get_int(element_id + CFG_Y_POS);
-
-		u_v.x = cfg.get_int(element_id + CFG_U);
-		u_v.y = cfg.get_int(element_id + CFG_V);
-
-		if (cfg.node_exists(element_id + CFG_WIDTH, true))
-			u_v.w = cfg.get_int(element_id + CFG_WIDTH);
-		else
-			u_v.w = m_default_dim.x;
-
-		if (cfg.node_exists(element_id + CFG_HEIGHT, true))
-			u_v.h = cfg.get_int(element_id + CFG_HEIGHT);
-		else
-			u_v.h = m_default_dim.y;
-		vc = cfg.get_int(element_id + CFG_KEY_CODE);
-		layer = cfg.get_int(element_id + CFG_Z_LEVEL);
-
-		m_elements.emplace_back(new Element(t, element_id, pos, u_v, vc, layer));
+		m_elements.emplace_back(Element::read_from_file(&cfg, element_id, (ElementType) type, &m_default_dim));
 
 		element_id = cfg.get_string(element_id + CFG_NEXT_ID);
 	}
@@ -499,19 +396,6 @@ void Config::reset_selected_element(void)
 	m_settings->set_xy(0, 0);
 	m_settings->set_wh(0, 0);
 	m_settings->set_vc(0);
-}
-
-void Config::update_key_states(uint32_t keycode, bool state)
-{
-	for (auto const &element : m_elements)
-	{
-		if (keycode == m_helper->vc_to_sdl_key(element->get_vc()))
-		{
-			if (element->get_type() == ElementType::TEXTURE)
-				continue;
-			element->set_pressed(state);
-		}
-	}
 }
 
 void Config::move_elements(int new_x, int new_y)
@@ -552,50 +436,4 @@ inline bool Config::is_rect_in_rect(const SDL_Rect * a, const SDL_Rect * b)
 {
 	return a->x >= b->x && a->x + a->w <= b->x + b->w
 		&& a->y >= b->y && a->y + a->h <= b->y + b->h;
-}
-
-void Element::write_to_file(ccl_config * cfg, SDL_Point * default_dim)
-{
-	std::string comment;
-
-	switch (m_type)
-	{
-
-	case BUTTON:
-		comment = "Key code of " + m_id;
-		cfg->add_int(m_id + CFG_KEY_CODE, comment, m_keycode, true);
-	case TEXTURE: /* NO-OP*/
-		comment = "Z position (Layer) of " + m_id;
-		cfg->add_int(m_id + CFG_Z_LEVEL, comment, m_z_level, true);
-
-		comment = "Type id of " + m_id;
-		cfg->add_int(m_id + CFG_TYPE, comment, m_type, true);
-
-		comment = "Position of " + m_id;
-		cfg->add_int(m_id + CFG_X_POS, "", m_pos.x, true);
-		cfg->add_int(m_id + CFG_Y_POS, comment, m_pos.y, true);
-
-		comment = "Texture position of " + m_id;
-		cfg->add_int(m_id + CFG_U, "", m_texture_mapping.x, true);
-		cfg->add_int(m_id + CFG_V, comment, m_texture_mapping.y, true);
-
-		comment = "Width and height of " + m_id;
-
-		if (m_texture_mapping.w != default_dim->x)
-			cfg->add_int(m_id + CFG_WIDTH, "", m_texture_mapping.w, true);
-
-		if (m_texture_mapping.h != default_dim->y)
-			cfg->add_int(m_id + CFG_HEIGHT, comment, m_texture_mapping.h, true);
-		break;
-	case TEXT: /* TODO: Font? Size?*/
-		break;
-	case DPAD_STICK:
-		break;
-	case TRIGGER:
-		break;
-	case MOUSE_MOVEMENT:
-		break;
-	case MOUSE_SCROLLWHEEL:
-		break;
-	}
 }

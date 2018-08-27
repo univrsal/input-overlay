@@ -295,16 +295,6 @@ void SDL_Helper::util_cut_string(std::string & s, int max_width, bool front)
 	}
 }
 
-inline void SDL_Helper::util_enable_mask(uint16_t & masks, uint16_t mask)
-{
-	masks |= mask;
-}
-
-inline void SDL_Helper::util_disable_mask(uint16_t & masks, uint16_t mask)
-{
-	masks &= ~mask;
-}
-
 bool SDL_Helper::util_check_texture_path(const char * path)
 {
 	Texture temp;

@@ -23,10 +23,9 @@
 #include "Palette.hpp"
 #include "FontHelper.hpp"
 #include "Texture.hpp"
-
-#define UTIL_MAX(a,b)               (((a) > (b)) ? (a) : (b))
-#define UTIL_MIN(a,b)               (((a) < (b)) ? (a) : (b))
-#define UTIL_CLAMP(lower, x, upper) (UTIL_MIN(upper, UTIL_MAX(x, lower)))
+extern "C" {
+#include "Util.h"
+}
 
 #define CURSOR_ARROW	0
 #define CURSOR_SIZE_H	1
@@ -85,9 +84,6 @@ public:
 	uint8_t util_default_text_height(void) { return m_default_font_height; }
 	uint8_t util_wstring_text_height(void) { return m_wstring_font_height; }
 	uint8_t util_large_text_height(void) { return m_large_font_height; }
-
-	inline void util_enable_mask(uint16_t & masks, uint16_t mask);
-	inline void util_disable_mask(uint16_t & masks, uint16_t mask);
 
 	template<typename ... Args> std::string format(const char * format, Args ... args);
 
