@@ -1,4 +1,14 @@
 #include "Tool.hpp"
+#include "Config.hpp"
+#include "util/Texture.hpp"
+#include "util/SDL_Helper.hpp"
+#include "util/Notifier.hpp"
+#include "dialog/DialogSetup.hpp"
+#include "dialog/DialogElementSettings.hpp"
+#include "dialog/DialogHelp.hpp"
+#include "dialog/DialogNewElement.hpp"
+#include "dialog/DialogElementType.hpp"
+#include "element/ElementTexture.hpp"
 
 Tool::Tool(SDL_Helper * helper)
 {
@@ -105,9 +115,7 @@ void Tool::action_performed(uint8_t type)
 		if (m_config->selected())
 		{
 			d = reinterpret_cast<DialogNewElement*>(m_toplevel);
-			m_config->selected()->set_map(d->get_selection_1());
-			m_config->selected()->set_id(*d->get_id());
-			m_config->selected()->set_vc(d->get_vc());
+			m_config->selected()->update_settings(d);
 			m_element_settings->select_element(m_config->selected()); /* Refresh Dialog*/
 		}
 		m_queue_close = true;
@@ -123,7 +131,7 @@ void Tool::action_performed(uint8_t type)
 			break;
 		case TEXTURE:
 			e = new ElementTexture(*d->get_id(), SDL_Point{ 0, 0 },
-				d->get_selection_1(), d->get_z_level());
+				d->get_selection(), d->get_z_level());
 			break;
 		case TRIGGER:
 			break;
@@ -184,16 +192,7 @@ void Tool::add_element(Element * e)
 		}
 	}
 
-	if (e->get_vc() == 0)
-	{
-		m_notify->add_msg(MESSAGE_INFO, m_helper->loc(LANG_ERROR_KEYCODE_INVALID));
-	}
-
-	if (SDL_RectEmpty(e->get_mapping()))
-	{
-		m_notify->add_msg(MESSAGE_ERROR, m_helper->loc(LANG_ERROR_SELECTION_EMTPY));
-		can_add = false;
-	}
+	can_add = e->is_valid(m_notify, m_helper);
 
 	if (can_add)
 	{

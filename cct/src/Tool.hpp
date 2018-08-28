@@ -7,17 +7,11 @@
 
 #pragma once
 
-#include "util/SDL_Helper.hpp"
-#include "dialog/DialogSetup.hpp"
-#include "dialog/DialogElementSettings.hpp"
-#include "dialog/DialogHelp.hpp"
-#include "dialog/DialogNewElement.hpp"
-#include "dialog/DialogElementType.hpp"
-#include "util/Texture.hpp"
-#include "util/Notifier.hpp"
-#include "Config.hpp"
 #include <SDL.h>
+#include "../../io-obs/util/layout_constants.hpp"
 
+class Dialog;
+class Notifier;
 class SDL_Helper;
 class Element;
 class Config;

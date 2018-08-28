@@ -7,6 +7,7 @@
 
 #include "DialogElementType.hpp"
 #include "elements/Combobox.hpp"
+#include "elements/Button.hpp"
 #include "../Tool.hpp"
 
 DialogElementType::DialogElementType(SDL_Helper * sdl, Tool * tool)

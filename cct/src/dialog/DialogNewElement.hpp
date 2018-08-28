@@ -56,7 +56,7 @@ public:
 
 	ElementType get_type(void);
 
-	SDL_Rect get_selection_1(void);
+	SDL_Rect get_selection(void);
 
 	uint16_t get_vc(void);
 
@@ -100,9 +100,8 @@ private:
 
 	Checkbox * m_read_keybind = nullptr;
 
-	/* UV mappings */
-	SDL_Rect m_selection_1;
-	SDL_Rect m_selection_2;
+	/* UV mapping */
+	SDL_Rect m_selection;
 
 	SDL_Point m_default_dim;
 

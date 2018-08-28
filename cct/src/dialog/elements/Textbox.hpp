@@ -54,7 +54,9 @@ public:
 
 	void append_text(std::string s);
 
-	const std::string * get_text();
+	const std::string * get_text(void);
+
+	const char * c_str(void);
 
 	void set_alert(bool state);
 

@@ -8,6 +8,10 @@
 #include "Config.hpp"
 #include "dialog/DialogElementSettings.hpp"
 #include "util/Notifier.hpp"
+#include "util/SDL_Helper.hpp"
+#include "util/Constants.hpp"
+#include "util/Texture.hpp"
+#include "../../ccl/ccl.hpp"
 #include <sstream>
 
 #define X_AXIS 100
@@ -71,7 +75,6 @@ void Config::draw_elements(void)
 			}
 			layer++;
 		}
-
 
 		if (!SDL_RectEmpty(&m_total_selection))
 		{
@@ -217,7 +220,7 @@ void Config::handle_events(SDL_Event * e)
 			int index = 0;
 			for (auto const &elem : m_elements)
 			{
-				if (is_rect_in_rect(elem->get_dim(), &m_temp_selection))
+				if (is_rect_in_rect(elem->get_mapping(), &m_temp_selection))
 				{
 					m_cs.translate(elem_abs_dim.x, elem_abs_dim.y);
 					m_selected_elements.emplace_back(index);
@@ -353,13 +356,15 @@ void Config::read_config(Notifier * n)
 		type = cfg.get_int(element_id + CFG_TYPE);
 		if (!Element::valid_type(type))
 		{
-			std::string result = m_helper->format(m_helper->loc(LANG_MSG_VALUE_TYPE_INVALID).c_str(), element_id.c_str(), type);
+			std::string result = m_helper->format(m_helper->
+				loc(LANG_MSG_VALUE_TYPE_INVALID).c_str(), element_id.c_str(), type);
 			n->add_msg(MESSAGE_ERROR, result);
 
 			element_id = cfg.get_string(element_id + CFG_NEXT_ID);
 			continue;
 		}
-		m_elements.emplace_back(Element::read_from_file(&cfg, element_id, (ElementType) type, &m_default_dim));
+		m_elements.emplace_back(Element::read_from_file(&cfg, element_id,
+			(ElementType) type, &m_default_dim));
 
 		element_id = cfg.get_string(element_id + CFG_NEXT_ID);
 	}
@@ -373,7 +378,8 @@ void Config::read_config(Notifier * n)
 	}
 	else
 	{
-		std::string result = m_helper->format(m_helper->loc(LANG_MSG_LOAD_SUCCESS).c_str(), m_elements.size(), (end - start));
+		std::string result = m_helper->format(m_helper->
+			loc(LANG_MSG_LOAD_SUCCESS).c_str(), m_elements.size(), (end - start));
 		n->add_msg(MESSAGE_INFO, result);
 	}
 }
@@ -428,7 +434,6 @@ void Config::move_elements(int new_x, int new_y)
 					}
 				}
 			}
-
 	}
 }
 

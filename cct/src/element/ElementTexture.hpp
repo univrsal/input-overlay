@@ -18,9 +18,11 @@ public:
 
 	void write_to_file(ccl_config * cfg, SDL_Point * default_dim) override;
 
-	void handle_event(SDL_Event * event) override { /* NO-OP */ };
+	void update_settings(DialogNewElement * dialog) override;
 
-	SDL_Rect * get_abs_dim(CoordinateSystem * cs) override;
+	void update_settings(DialogElementSettings * dialog) override;
+
+	void handle_event(SDL_Event * event) override { /* NO-OP */ };
 
 	static ElementTexture * read_from_file(ccl_config * file, std::string id, SDL_Point * default_dim);
 };

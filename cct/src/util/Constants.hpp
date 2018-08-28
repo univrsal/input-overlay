@@ -73,6 +73,8 @@
 #define LANG_ERROR_SELECTION_EMTPY		"error_selection_empty"
 #define LANG_ERROR_INVALID_TEXTURE_PATH		"error_invalid_texture_path"
 #define LANG_ERROR_INVALID_CONFIG_PATH		"error_invalid_config_path"
+#define LANG_ERROR_ID_EMPTY			"error_id_empty"
+#define LANG_ERROR_TYPE_INVALID			"error_type_invalid"
 
 /* Setup dialog */
 #define LANG_LABEL_INFO				"label_info"

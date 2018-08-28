@@ -46,6 +46,19 @@ public:
 	void set_vc(uint16_t vc);
 	void set_z_level(uint8_t z);
 	void select_element(Element * e);
+
+	int get_x(void) { return atoi(m_element_x->c_str()); }
+	int get_y(void) { return atoi(m_element_y->c_str()); }
+	int get_z(void) { return atoi(m_element_z_level->c_str()); }
+	int get_u(void) { return atoi(m_element_u->c_str()); }
+	int get_v(void) { return atoi(m_element_v->c_str()); }
+	int get_w(void) { return atoi(m_element_width->c_str()); }
+	int get_h(void) { return atoi(m_element_height->c_str()); }
+	SDL_Rect get_mapping(void) { return { get_u(), get_v(), get_w(), get_h() }; }
+
+	const std::string * get_id(void) { return m_element_id->get_text(); }
+
+	void alert_element_id(void) { m_element_id->set_alert(true); }
 private:
 	bool m_finished = false;
 

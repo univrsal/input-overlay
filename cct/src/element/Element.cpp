@@ -7,9 +7,13 @@
 
 #include "Element.hpp"
 #include "ElementTexture.hpp"
+#include "../dialog/DialogNewElement.hpp"
+#include "../dialog/DialogElementSettings.hpp"
 #include "../util/SDL_Helper.hpp"
 #include "../util/Texture.hpp"
 #include "../util/CoordinateSystem.hpp"
+#include "../util/Notifier.hpp"
+#include "../util/SDL_Helper.hpp"
 #include "../../../ccl/ccl.hpp"
 
 Element * Element::read_from_file(ccl_config * file, std::string id, ElementType t, SDL_Point * default_dim)
@@ -32,9 +36,8 @@ Element * Element::read_from_file(ccl_config * file, std::string id, ElementType
 		break;
 	case DPAD_STICK:
 		break;
-	default:
-		return nullptr;
 	}
+	return nullptr;
 }
 
 bool Element::valid_type(int t)
@@ -63,30 +66,6 @@ Element::Element(ElementType t, std::string id, SDL_Point pos, uint8_t z)
 		m_z_level = z;
 }
 
-inline SDL_Rect Element::read_mapping(ccl_config * file, std::string id, SDL_Point * default_dim)
-{
-	SDL_Rect result;
-	result.x = file->get_int(id + CFG_U);
-	result.y = file->get_int(id + CFG_V);
-
-	if ((result.w = file->get_int(id + CFG_WIDTH)) == 0)
-		result.w = default_dim->x;
-
-	if ((result.h = file->get_int(id + CFG_HEIGHT)) == 0)
-		result.w = default_dim->y;
-	return result;
-}
-
-inline SDL_Point Element::read_position(ccl_config * file, std::string id)
-{
-	return { file->get_int(id + CFG_X_POS), file->get_int(id + CFG_Y_POS) };
-}
-
-inline uint8_t Element::read_layer(ccl_config * file, std::string id)
-{
-	return file->get_int(id + CFG_Z_LEVEL);
-}
-
 void Element::write_to_file(ccl_config * cfg, SDL_Point * default_dim)
 {
 	/* Write commonly shared values */
@@ -101,9 +80,65 @@ void Element::write_to_file(ccl_config * cfg, SDL_Point * default_dim)
 	cfg->add_int(m_id + CFG_Y_POS, comment, m_position.y, true);
 }
 
-SDL_Rect * Element::get_dim(void)
+SDL_Rect * Element::get_abs_dim(CoordinateSystem * cs)
 {
-	return &m_dimensions;
+	if (m_scale != cs->get_scale())
+		/* If scale changed, update */
+	{
+		m_scale = cs->get_scale();
+		m_dimensions_scaled = { m_position.x * cs->get_scale() + cs->get_origin_x(),
+			m_position.y * cs->get_scale() + cs->get_origin_y(),
+			m_mapping.w * cs->get_scale(),
+			m_mapping.h * cs->get_scale() };
+	}
+	return &m_dimensions_scaled;
+}
+
+void Element::update_settings(DialogNewElement * dialog)
+{
+	set_z_level(dialog->get_z_level());
+	if (!dialog->get_id()->empty())
+		set_id(*dialog->get_id());
+}
+
+void Element::update_settings(DialogElementSettings * dialog)
+{
+	if (!dialog->get_id()->empty())
+		set_id(*dialog->get_id());
+	else
+		dialog->alert_element_id();
+	set_z_level(dialog->get_z());
+	set_pos(dialog->get_x(), dialog->get_y());
+}
+
+bool Element::is_valid(Notifier * n, SDL_Helper * h)
+{
+	bool result = true;
+
+	if (SDL_RectEmpty(&m_mapping))
+	{
+		n->add_msg(MESSAGE_ERROR, h->loc(LANG_ERROR_SELECTION_EMTPY));
+		result = false;
+	}
+
+	if (m_id.empty())
+	{
+		n->add_msg(MESSAGE_ERROR, h->loc(LANG_ERROR_ID_EMPTY));
+		result = false;
+	}
+
+	if (m_type == ElementType::INVALID)
+	{
+		n->add_msg(MESSAGE_ERROR, h->loc(LANG_ERROR_TYPE_INVALID));
+		result = false;
+	}
+	return result;
+}
+
+void Element::set_mapping(SDL_Rect r)
+{
+	m_mapping = r;
+	m_scale = 0; /* Forces a rescale at next draw */
 }
 
 void Element::set_pos(int x, int y)
@@ -112,47 +147,26 @@ void Element::set_pos(int x, int y)
 	m_position.y = y;
 }
 
-void Element::set_id(std::string id)
+SDL_Rect Element::element_read_mapping(ccl_config * file, std::string id, SDL_Point * default_dim)
 {
-	m_id = id;
+	SDL_Rect result;
+	result.x = file->get_int(id + CFG_U);
+	result.y = file->get_int(id + CFG_V);
+
+	if ((result.w = file->get_int(id + CFG_WIDTH)) == 0)
+		result.w = default_dim->x;
+
+	if ((result.h = file->get_int(id + CFG_HEIGHT)) == 0)
+		result.w = default_dim->y;
+	return result;
 }
 
-void Element::set_z_level(uint8_t z)
+SDL_Point Element::element_read_position(ccl_config * file, std::string id)
 {
-	m_z_level = z;
+	return { file->get_int(id + CFG_X_POS), file->get_int(id + CFG_Y_POS) };
 }
 
-uint8_t Element::get_z_level(void)
+uint8_t Element::element_read_layer(ccl_config * file, std::string id)
 {
-	return m_z_level;
-}
-
-std::string * Element::get_id(void)
-{
-	return &m_id;
-}
-
-int Element::get_x()
-{
-	return m_position.x;
-}
-
-int Element::get_y()
-{
-	return m_position.y;
-}
-
-int Element::get_w()
-{
-	return m_dimensions.w;
-}
-
-int Element::get_h()
-{
-	return m_dimensions.h;
-}
-
-ElementType Element::get_type(void)
-{
-	return m_type;
+	return file->get_int(id + CFG_Z_LEVEL);
 }

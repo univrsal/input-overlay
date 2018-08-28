@@ -241,6 +241,11 @@ const std::string * Textbox::get_text()
 	return &m_text;
 }
 
+const char * Textbox::c_str(void)
+{
+	return get_text()->c_str();
+}
+
 inline bool Textbox::is_numeric(const std::string & s)
 {
 	int index = 0;

@@ -74,31 +74,7 @@ void DialogElementSettings::action_performed(int8_t action_id)
 	{
 	case ACTION_OK:
 		if (m_tool->get_selected())
-		{
-			m_tool->get_selected()->set_pos(atoi(
-				m_element_x->get_text()->c_str()), atoi(
-					m_element_y->get_text()->c_str()));
-			m_tool->get_selected()->set_uv(atoi(
-				m_element_u->get_text()->c_str()), atoi(
-					m_element_v->get_text()->c_str()));
-			m_tool->get_selected()->set_dim(atoi(
-				m_element_width->get_text()->c_str()), atoi(
-					m_element_height->get_text()->c_str()));
-
-			m_tool->get_selected()->set_z_level(atoi(
-				m_element_z_level->get_text()->c_str()));
-
-			if (!m_element_id->get_text()->empty())
-				m_tool->get_selected()->set_id(*m_element_id->get_text());
-			else
-				m_element_id->set_alert(true);
-
-			if (!m_keycode->get_text()->empty())
-				m_tool->get_selected()->set_vc((uint16_t) strtoul(m_keycode->get_text()->c_str(), nullptr, 16));
-			else
-				m_keycode->set_alert(true);
-
-		}
+			m_tool->get_selected()->update_settings(this);
 		break;
 	case ACTION_DEL_ELEMENT:
 		if (m_tool->get_selected())
