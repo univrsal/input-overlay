@@ -23,6 +23,7 @@ Element * Element::read_from_file(ccl_config * file, std::string id, ElementType
 	case TEXTURE:
 		return ElementTexture::read_from_file(file, id, default_dim);
 	case BUTTON:
+
 		break;
 	case MOUSE_SCROLLWHEEL:
 		break;

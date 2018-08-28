@@ -60,6 +60,7 @@
 #define LANG_MSG_NOTHING_TO_SAVE        "msg_nothing_to_save"
 #define LANG_MSG_GAMEPAD_CONNECTED      "msg_gamepad_connected"
 #define LANG_MSG_GAMEPAD_DISCONNECTED   "msg_gamepad_disconnected"
+#define LANG_MSG_ELEMENT_LOAD_ERROR     "msg_element_load_error"
 
 /* Dialog titles*/
 #define LANG_DIALOG_NEW_ELEMENT         "dialog_new_element"

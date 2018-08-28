@@ -77,6 +77,7 @@ public:
     static Element * read_from_file(ccl_config * file, std::string id, ElementType t, SDL_Point * default_dim);
 
     static bool valid_type(int t);
+
 protected:
     Element(ElementType t, std::string id, SDL_Point pos, uint8_t z);
 
