@@ -12,31 +12,31 @@
 
 #define CHECKBOX_SIZE 17
 class Checkbox :
-	public GuiElement
+    public GuiElement
 {
 public:
 
-	Checkbox(int8_t id, int x, int y, const char * text, Dialog * parent);
-	Checkbox(int8_t id, int x, int y, const char * text, Dialog * parent, bool state);
+    Checkbox(int8_t id, int x, int y, const char * text, Dialog * parent);
+    Checkbox(int8_t id, int x, int y, const char * text, Dialog * parent, bool state);
 
-	~Checkbox();
+    ~Checkbox();
 
-	void close(void) override;
+    void close(void) override;
 
-	bool can_select(void) override;
+    bool can_select(void) override;
 
-	void select_state(bool state) override;
+    void select_state(bool state) override;
 
-	void draw_background(void) override;
+    void draw_background(void) override;
 
-	void draw_foreground(void) override;
+    void draw_foreground(void) override;
 
-	bool handle_events(SDL_Event * event, bool was_handled) override;
+    bool handle_events(SDL_Event * event, bool was_handled) override;
 
-	bool get_state(void) { return m_state; }
+    bool get_state(void) { return m_state; }
 private:
-	bool m_focused = false;
-	bool m_state = false;
-	Label * m_label = nullptr;
-	SDL_Rect m_checkbox;
+    bool m_focused = false;
+    bool m_state = false;
+    Label * m_label = nullptr;
+    SDL_Rect m_checkbox;
 };

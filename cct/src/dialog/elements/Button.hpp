@@ -5,8 +5,7 @@
 * github.com/univrsal/reloded
 */
 
-#ifndef BUTTON_H
-#define BUTTON_H
+#pragma once
 
 #include <SDL.h>
 #include "GuiElement.hpp"
@@ -18,37 +17,35 @@ class Dialog;
 class Button : public GuiElement
 {
 public:
-	Button(int8_t id, int x, int y, const char *text, Dialog *parent);
+    Button(int8_t id, int x, int y, const char *text, Dialog *parent);
 
-	Button(int8_t id, int x, int y, int w, const char *text, Dialog *parent);
+    Button(int8_t id, int x, int y, int w, const char *text, Dialog *parent);
 
-	~Button();
+    ~Button();
 
-	bool can_select(void) override;
+    bool can_select(void) override;
 
-	void select_state(bool state) override;
+    void select_state(bool state) override;
 
-	void draw_background(void) override;
+    void draw_background(void) override;
 
-	void draw_foreground(void) override;
+    void draw_foreground(void) override;
 
-	bool handle_events(SDL_Event *event, bool was_handled) override;
+    bool handle_events(SDL_Event *event, bool was_handled) override;
 
-	void close(void) override;
+    void close(void) override;
 
-	void resize(void) override;
+    void resize(void) override;
 
-	void refresh(void) override;
+    void refresh(void) override;
 
 protected:
-	bool m_pressed = false;
-	bool m_hovered = false;
-	bool m_tab_focused = false;
+    bool m_pressed = false;
+    bool m_hovered = false;
+    bool m_tab_focused = false;
 
-	std::string m_localized_text;
-	std::string m_unlocalized_text;
-	SDL_Point m_text_pos;
-	uint8_t m_font = FONT_ROBOTO_SMALL;
+    std::string m_localized_text;
+    std::string m_unlocalized_text;
+    SDL_Point m_text_pos;
+    uint8_t m_font = FONT_ROBOTO_SMALL;
 };
-
-#endif

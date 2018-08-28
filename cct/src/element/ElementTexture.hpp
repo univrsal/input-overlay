@@ -6,23 +6,24 @@
  */
 
 #pragma once
+
 #include "Element.hpp"
 
 class ElementTexture
-	: public Element
+    : public Element
 {
 public:
-	ElementTexture(std::string id, SDL_Point pos, SDL_Rect mapping, uint8_t z);
+    ElementTexture(std::string id, SDL_Point pos, SDL_Rect mapping, uint8_t z);
 
-	void draw(Texture * atlas, CoordinateSystem * cs, bool selected, bool alpha) override;
+    void draw(Texture * atlas, CoordinateSystem * cs, bool selected, bool alpha) override;
 
-	void write_to_file(ccl_config * cfg, SDL_Point * default_dim) override;
+    void write_to_file(ccl_config * cfg, SDL_Point * default_dim) override;
 
-	void update_settings(DialogNewElement * dialog) override;
+    void update_settings(DialogNewElement * dialog) override;
 
-	void update_settings(DialogElementSettings * dialog) override;
+    void update_settings(DialogElementSettings * dialog) override;
 
-	void handle_event(SDL_Event * event) override { /* NO-OP */ };
+    void handle_event(SDL_Event * event) override { /* NO-OP */ };
 
-	static ElementTexture * read_from_file(ccl_config * file, std::string id, SDL_Point * default_dim);
+    static ElementTexture * read_from_file(ccl_config * file, std::string id, SDL_Point * default_dim);
 };

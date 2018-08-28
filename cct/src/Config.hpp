@@ -30,59 +30,59 @@ class Texture;
 class Config
 {
 public:
-	Config(const char * texture, const char * config, SDL_Point def_dim, SDL_Point space, SDL_Helper * h, DialogElementSettings * s);
-	~Config();
+    Config(const char * texture, const char * config, SDL_Point def_dim, SDL_Point space, SDL_Helper * h, DialogElementSettings * s);
+    ~Config();
 
-	void draw_elements(void);
+    void draw_elements(void);
 
-	void handle_events(SDL_Event * e);
+    void handle_events(SDL_Event * e);
 
-	std::string m_texture_path;
-	std::string m_config_path;
+    std::string m_texture_path;
+    std::string m_config_path;
 
-	void write_config(Notifier * n);
-	void read_config(Notifier * n);
+    void write_config(Notifier * n);
+    void read_config(Notifier * n);
 
-	Texture * get_texture(void);
+    Texture * get_texture(void);
 
-	SDL_Point get_default_dim(void);
+    SDL_Point get_default_dim(void);
 
-	void queue_delete(uint16_t id) { m_element_to_delete = id; }
+    void queue_delete(uint16_t id) { m_element_to_delete = id; }
 
-	std::vector<std::unique_ptr<Element>> m_elements;
+    std::vector<std::unique_ptr<Element>> m_elements;
 
-	Element * selected() { return m_selected; }
-	uint16_t selecte_id() { return m_selected_id; }
+    Element * selected() { return m_selected; }
+    uint16_t selecte_id() { return m_selected_id; }
 
-	void reset_selected_element(void);
-private:	
-	/* Move selected elements*/
-	void move_elements(int new_x, int new_y);
+    void reset_selected_element(void);
+private:    
+    /* Move selected elements*/
+    void move_elements(int new_x, int new_y);
 
-	inline bool is_rect_in_rect(const SDL_Rect * a, const SDL_Rect * b);
+    inline bool is_rect_in_rect(const SDL_Rect * a, const SDL_Rect * b);
 
-	int16_t m_element_to_delete = -1;
-	uint16_t m_selected_id = 0;
-	Element * m_selected = nullptr;
+    int16_t m_element_to_delete = -1;
+    uint16_t m_selected_id = 0;
+    Element * m_selected = nullptr;
 
-	CoordinateSystem m_cs;
+    CoordinateSystem m_cs;
 
-	SDL_Helper * m_helper = nullptr;
-	Texture * m_atlas = nullptr;
-	DialogElementSettings * m_settings = nullptr;
+    SDL_Helper * m_helper = nullptr;
+    Texture * m_atlas = nullptr;
+    DialogElementSettings * m_settings = nullptr;
 
-	bool m_dragging_element = false; /* Flag for dragging single element */
-	SDL_Point m_drag_offset;
+    bool m_dragging_element = false; /* Flag for dragging single element */
+    SDL_Point m_drag_offset;
 
-	SDL_Point m_default_dim;
-	SDL_Point m_offset;
+    SDL_Point m_default_dim;
+    SDL_Point m_offset;
 
-	/* Selection stuff */
-	std::vector<uint16_t> m_selected_elements;
-	SDL_Rect m_total_selection; /* Rectangle fitting all selected elements, oriented to origin */
-	SDL_Rect m_temp_selection; /* Indicator of current rectangle selected by mouse */
-	SDL_Point m_selection_start;
+    /* Selection stuff */
+    std::vector<uint16_t> m_selected_elements;
+    SDL_Rect m_total_selection; /* Rectangle fitting all selected elements, oriented to origin */
+    SDL_Rect m_temp_selection; /* Indicator of current rectangle selected by mouse */
+    SDL_Point m_selection_start;
 
-	bool m_selecting = false;
-	bool m_dragging_elements = false; /* Flag for dragging entire selection*/
+    bool m_selecting = false;
+    bool m_dragging_elements = false; /* Flag for dragging entire selection*/
 };

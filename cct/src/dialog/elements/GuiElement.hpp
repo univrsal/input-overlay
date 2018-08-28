@@ -21,59 +21,59 @@ class SDL_Helper;
 class GuiElement
 {
 public:
-	virtual ~GuiElement();
+    virtual ~GuiElement();
 
-	virtual void draw_background(void) = 0;
+    virtual void draw_background(void) = 0;
 
-	virtual void draw_foreground(void);
+    virtual void draw_foreground(void);
 
-	virtual void close(void);
+    virtual void close(void);
 
-	virtual bool handle_events(SDL_Event * event, bool was_handled) = 0;
+    virtual bool handle_events(SDL_Event * event, bool was_handled) = 0;
 
-	virtual bool can_select(void); /* Tab selection */
+    virtual bool can_select(void); /* Tab selection */
 
-	virtual void select_state(bool state);
+    virtual void select_state(bool state);
 
-	virtual void resize(void);
+    virtual void resize(void);
 
-	virtual void refresh(void); /* Update localization */
+    virtual void refresh(void); /* Update localization */
 
-	virtual bool is_mouse_over(const int &x, const int &y);
+    virtual bool is_mouse_over(const int &x, const int &y);
 
-	virtual void set_pos(int x, int y);
+    virtual void set_pos(int x, int y);
 
-	virtual uint8_t get_cursor(void);
+    virtual uint8_t get_cursor(void);
 
-	Dialog * get_parent(void);
+    Dialog * get_parent(void);
 
-	SDL_Helper * get_helper();
+    SDL_Helper * get_helper();
 
-	SDL_Rect * get_dimensions(void);
+    SDL_Rect * get_dimensions(void);
 
-	void set_dim(SDL_Rect r);
+    void set_dim(SDL_Rect r);
 
-	int8_t get_id(void);
+    int8_t get_id(void);
 
-	void init(Dialog *parent, SDL_Rect dim, int8_t id);
+    void init(Dialog *parent, SDL_Rect dim, int8_t id);
 
-	void set_flags(uint8_t flags);
+    void set_flags(uint8_t flags);
 
-	int get_left(void);
+    int get_left(void);
 
-	int get_top(void);
+    int get_top(void);
 
-	int get_right(void);
+    int get_right(void);
 
-	int get_bottom(void);
+    int get_bottom(void);
 
-	int get_width(void);
+    int get_width(void);
 
-	int get_height(void);
+    int get_height(void);
 protected:
-	Dialog * m_parent_dialog;
-	SDL_Rect m_dimensions; /* Width/Height and absolute position */
-	SDL_Point m_position; /* Position relative to dialog*/
-	int8_t m_element_id;
-	uint16_t m_flags = 0x0000;
+    Dialog * m_parent_dialog;
+    SDL_Rect m_dimensions; /* Width/Height and absolute position */
+    SDL_Point m_position; /* Position relative to dialog*/
+    int8_t m_element_id;
+    uint16_t m_flags = 0x0000;
 };

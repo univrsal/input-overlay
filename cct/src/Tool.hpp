@@ -22,11 +22,11 @@ class Texture;
 
 enum ToolState
 {
-	IN_SETUP,
-	IN_BUILD,
-	IN_HELP,
-	IN_ELEMENT_TYPE,
-	IN_NEW_ELEMENT
+    IN_SETUP,
+    IN_BUILD,
+    IN_HELP,
+    IN_ELEMENT_TYPE,
+    IN_NEW_ELEMENT
 };
 
 #define TOOL_ACTION_NEW_ELEMENT_ADD 4
@@ -36,56 +36,56 @@ enum ToolState
 
 enum DialogID
 {
-	NONE,
-	HELP,
-	NEW_ELEMENT,
-	MOD_ELEMENT,
-	SELECECT_TYPE
+    NONE,
+    HELP,
+    NEW_ELEMENT,
+    MOD_ELEMENT,
+    SELECECT_TYPE
 };
 
 class Tool
 {
 public:
-	Tool() { m_helper = nullptr; }
-	Tool(SDL_Helper * helper);
-	~Tool();
+    Tool() { m_helper = nullptr; }
+    Tool(SDL_Helper * helper);
+    ~Tool();
 
-	void program_loop();
+    void program_loop();
 
-	Element * get_selected(void);
+    Element * get_selected(void);
 
-	uint16_t get_selected_id(void);
+    uint16_t get_selected_id(void);
 
-	void action_performed(uint8_t type);
+    void action_performed(uint8_t type);
 
-	Texture * get_atlas(void);
+    Texture * get_atlas(void);
 
-	void delete_element(uint16_t id);
+    void delete_element(uint16_t id);
 
-	void set_new_element_type(ElementType type) { m_new_element_type = type; }
+    void set_new_element_type(ElementType type) { m_new_element_type = type; }
 
-	void queue_dialog_open(DialogID id);
-	void queue_dialog_close(void);
+    void queue_dialog_open(DialogID id);
+    void queue_dialog_close(void);
 private:
-	void add_element(Element * e);
+    void add_element(Element * e);
 
-	void close_toplevel(void);
-	void handle_input();
-	bool m_run_flag = true;
+    void close_toplevel(void);
+    void handle_input();
+    bool m_run_flag = true;
 
-	bool m_queue_close = false; /* True when top level dialog should be closed */
-	DialogID m_queued_dialog = DialogID::NONE;
+    bool m_queue_close = false; /* True when top level dialog should be closed */
+    DialogID m_queued_dialog = DialogID::NONE;
 
-	/* Stores the type, which the user selected for the next element */
-	ElementType m_new_element_type = ElementType::INVALID;
-	
-	SDL_Event m_event;
-	SDL_Helper * m_helper;
+    /* Stores the type, which the user selected for the next element */
+    ElementType m_new_element_type = ElementType::INVALID;
+    
+    SDL_Event m_event;
+    SDL_Helper * m_helper;
 
-	Config * m_config = nullptr;
+    Config * m_config = nullptr;
 
-	DialogElementSettings * m_element_settings = nullptr;
-	Dialog * m_toplevel = nullptr;
-	Notifier * m_notify = nullptr;
-	ToolState m_state;
+    DialogElementSettings * m_element_settings = nullptr;
+    Dialog * m_toplevel = nullptr;
+    Notifier * m_notify = nullptr;
+    ToolState m_state;
 };

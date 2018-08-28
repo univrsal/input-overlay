@@ -23,28 +23,28 @@ class Texture;
 class AtlasSelector : public GuiElement
 {
 public:
-	AtlasSelector(int8_t id, int x, int y, int w, int h, Texture * t, Dialog * parent);
+    AtlasSelector(int8_t id, int x, int y, int w, int h, Texture * t, Dialog * parent);
 
-	~AtlasSelector();
+    ~AtlasSelector();
 
-	void close(void) override;
+    void close(void) override;
 
-	void init(Dialog *parent, SDL_Rect dim, int8_t id);
+    void init(Dialog *parent, SDL_Rect dim, int8_t id);
 
-	void draw_foreground(void) override;
+    void draw_foreground(void) override;
 
-	void draw_background(void) override;
+    void draw_background(void) override;
 
-	bool handle_events(SDL_Event * event, bool was_handled) override;
+    bool handle_events(SDL_Event * event, bool was_handled) override;
 
-	uint8_t get_cursor(void) override;
+    uint8_t get_cursor(void) override;
 
-	void set_selection(SDL_Rect * r) { m_cs->set_selection(r); }
+    void set_selection(SDL_Rect * r) { m_cs->set_selection(r); }
 private:
-	void resize() override;
+    void resize() override;
 
-	Texture * m_atlas; /* Is loaded in Config, and will be deleted there */
-	CoordinateSystem * m_cs;
+    Texture * m_atlas; /* Is loaded in Config, and will be deleted there */
+    CoordinateSystem * m_cs;
 
-	bool m_have_cursors = false;
+    bool m_have_cursors = false;
 };

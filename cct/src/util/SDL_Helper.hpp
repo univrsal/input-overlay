@@ -27,14 +27,14 @@ extern "C" {
 #include "Util.h"
 }
 
-#define CURSOR_ARROW	0
-#define CURSOR_SIZE_H	1
-#define CURSOR_SIZE_V	2
+#define CURSOR_ARROW    0
+#define CURSOR_SIZE_H   1
+#define CURSOR_SIZE_V   2
 #define CURSOR_SIZE_ALL 3
-#define CURSOR_I_BEAM	4
-#define CURSOR_SPECIAL	5 /* The element will handle the cursor */
+#define CURSOR_I_BEAM   4
+#define CURSOR_SPECIAL  5 /* The element will handle the cursor */
 
-#define LINE_SPACE 2
+#define LINE_SPACE      2
 
 class Palette;
 
@@ -49,140 +49,140 @@ static const std::string NEW_LINE = "\n";
 class SDL_Helper
 {
 public:
-	SDL_Helper();
-	~SDL_Helper();
+    SDL_Helper();
+    ~SDL_Helper();
 
-	bool init();
-	void close();
-	void clear();
-	void repaint();
+    bool init();
+    void close();
+    void clear();
+    void repaint();
 
-	void util_set_color(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
-	void util_set_color(const SDL_Color * color);
+    void util_set_color(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
+    void util_set_color(const SDL_Color * color);
 
-	void util_draw_line(int x1, int y1, int x2, int y2, const SDL_Color * color = nullptr);
-	void util_draw_line(const SDL_Point &p1, const SDL_Point &p2, const SDL_Color * color = nullptr);
+    void util_draw_line(int x1, int y1, int x2, int y2, const SDL_Color * color = nullptr);
+    void util_draw_line(const SDL_Point &p1, const SDL_Point &p2, const SDL_Color * color = nullptr);
 
-	void util_draw_rect(const SDL_Rect *rect, const SDL_Color *color = nullptr);
-	void util_draw_rect(int x, int y, int w, int h, const SDL_Color * color = nullptr);
+    void util_draw_rect(const SDL_Rect *rect, const SDL_Color *color = nullptr);
+    void util_draw_rect(int x, int y, int w, int h, const SDL_Color * color = nullptr);
 
-	void util_fill_rect(const SDL_Rect * rect, const SDL_Color *color = nullptr);
-	void util_fill_rect_shadow(const SDL_Rect *rect, const SDL_Color * color = nullptr, int8_t offset = 3);
-	void util_fill_rect(int x, int y, int w, int h, const SDL_Color * color = nullptr);
-	void util_fill_rect(const SDL_Rect * rect, const SDL_Color *color, uint8_t alpha);
+    void util_fill_rect(const SDL_Rect * rect, const SDL_Color *color = nullptr);
+    void util_fill_rect_shadow(const SDL_Rect *rect, const SDL_Color * color = nullptr, int8_t offset = 3);
+    void util_fill_rect(int x, int y, int w, int h, const SDL_Color * color = nullptr);
+    void util_fill_rect(const SDL_Rect * rect, const SDL_Color *color, uint8_t alpha);
 
-	bool util_is_in_rect(const SDL_Rect * rect, int x, int y);
+    bool util_is_in_rect(const SDL_Rect * rect, int x, int y);
 
-	void util_text(const std::string * text, int x, int y, const SDL_Color * color, uint8_t font = FONT_ROBOTO_SMALL);
-	void util_text_rot(const std::string * text, int x, int y, const SDL_Color * color, double angle, uint8_t font = FONT_ROBOTO_SMALL);
-	SDL_Rect util_text_dim(const std::string * text, uint8_t font = FONT_ROBOTO_SMALL);
+    void util_text(const std::string * text, int x, int y, const SDL_Color * color, uint8_t font = FONT_ROBOTO_SMALL);
+    void util_text_rot(const std::string * text, int x, int y, const SDL_Color * color, double angle, uint8_t font = FONT_ROBOTO_SMALL);
+    SDL_Rect util_text_dim(const std::string * text, uint8_t font = FONT_ROBOTO_SMALL);
 
-	SDL_Point * util_window_size(void);
+    SDL_Point * util_window_size(void);
 
-	void util_cut_string(std::string &s, int max_width, bool front);
+    void util_cut_string(std::string &s, int max_width, bool front);
 
-	uint8_t util_default_text_height(void) { return m_default_font_height; }
-	uint8_t util_wstring_text_height(void) { return m_wstring_font_height; }
-	uint8_t util_large_text_height(void) { return m_large_font_height; }
+    uint8_t util_default_text_height(void) { return m_default_font_height; }
+    uint8_t util_wstring_text_height(void) { return m_wstring_font_height; }
+    uint8_t util_large_text_height(void) { return m_large_font_height; }
 
-	template<typename ... Args> std::string format(const char * format, Args ... args);
+    template<typename ... Args> std::string format(const char * format, Args ... args);
 
-	bool util_check_texture_path(const char * path);
+    bool util_check_texture_path(const char * path);
 
-	std::wstring util_utf8_to_wstring(const std::string& str);
-	std::string util_wstring_to_utf8(const std::wstring& str);
-	
-	void format_text(const std::string * s, std::vector<std::unique_ptr<std::string>>& out, SDL_Rect& dim, uint8_t font = FONT_ROBOTO_SMALL);
+    std::wstring util_utf8_to_wstring(const std::string& str);
+    std::string util_wstring_to_utf8(const std::wstring& str);
+    
+    void format_text(const std::string * s, std::vector<std::unique_ptr<std::string>>& out, SDL_Rect& dim, uint8_t font = FONT_ROBOTO_SMALL);
 
-	std::string loc(const char * id);
-	Localization * localization(void) { return m_localization; }
+    std::string loc(const char * id);
+    Localization * localization(void) { return m_localization; }
 
-	uint32_t vc_to_sdl_key(uint16_t key);
-	uint16_t sdl_key_to_vc(uint32_t key);
+    uint32_t vc_to_sdl_key(uint16_t key);
+    uint16_t sdl_key_to_vc(uint32_t key);
 
-	SDL_Renderer * renderer()
-	{
-		return m_sdl_renderer;
-	}
+    SDL_Renderer * renderer()
+    {
+        return m_sdl_renderer;
+    }
 
-	SDL_Window * window()
-	{
-		return m_sdl_window;
-	}
+    SDL_Window * window()
+    {
+        return m_sdl_window;
+    }
 
-	Palette * palette()
-	{
-		return m_palette;
-	}
+    Palette * palette()
+    {
+        return m_palette;
+    }
 
-	void init_controllers(void);
-	void set_cursor(uint8_t type);
+    void init_controllers(void);
+    void set_cursor(uint8_t type);
 
-	bool is_ctrl_down(void);
-	bool is_shift_down(void);
+    bool is_ctrl_down(void);
+    bool is_shift_down(void);
 
-	void exit_loop(void);
-	void set_runflag(bool * flag);
-	void handle_events(SDL_Event * event);
+    void exit_loop(void);
+    void set_runflag(bool * flag);
+    void handle_events(SDL_Event * event);
 
-	uint8_t util_font_height(uint8_t font);
+    uint8_t util_font_height(uint8_t font);
 
-	bool handle_controller_disconnect(uint8_t id);
-	bool handle_controller_connect(uint8_t id);
+    bool handle_controller_disconnect(uint8_t id);
+    bool handle_controller_connect(uint8_t id);
 private:
-	TTF_Font * get_font(uint8_t type)
-	{
-		switch (type)
-		{
-			default:
-			case FONT_ROBOTO_SMALL:
-				return m_default_font;
-			case FONT_ROBOTO_LARGE:
-				return m_large_font;
-			case FONT_WSTRING:
-				return m_wstring_font;
-		}
-	}
+    TTF_Font * get_font(uint8_t type)
+    {
+        switch (type)
+        {
+            default:
+            case FONT_ROBOTO_SMALL:
+                return m_default_font;
+            case FONT_ROBOTO_LARGE:
+                return m_large_font;
+            case FONT_WSTRING:
+                return m_wstring_font;
+        }
+    }
 
 
-	SDL_Point m_window_size;
-	SDL_Renderer * m_sdl_renderer = nullptr;
-	SDL_Window * m_sdl_window = nullptr;
+    SDL_Point m_window_size;
+    SDL_Renderer * m_sdl_renderer = nullptr;
+    SDL_Window * m_sdl_window = nullptr;
 
-	TTF_Font * m_default_font = nullptr;
-	TTF_Font * m_large_font = nullptr;
-	TTF_Font * m_wstring_font = nullptr;
+    TTF_Font * m_default_font = nullptr;
+    TTF_Font * m_large_font = nullptr;
+    TTF_Font * m_wstring_font = nullptr;
 
-	uint8_t m_default_font_height;
-	uint8_t m_large_font_height;
-	uint8_t m_wstring_font_height;
+    uint8_t m_default_font_height;
+    uint8_t m_large_font_height;
+    uint8_t m_wstring_font_height;
 
-	bool m_init_success = true;
+    bool m_init_success = true;
 
-	bool * m_runflag = nullptr;
+    bool * m_runflag = nullptr;
 
-	bool m_ctrl_down = false;
-	bool m_shift_down = false;
+    bool m_ctrl_down = false;
+    bool m_shift_down = false;
 
-	Palette * m_palette = nullptr;
-	FontHelper * m_font_helper = nullptr;
-	Localization * m_localization = nullptr;
+    Palette * m_palette = nullptr;
+    FontHelper * m_font_helper = nullptr;
+    Localization * m_localization = nullptr;
 
-	bool m_have_cursors = false;
-	SDL_Cursor * m_size_h = nullptr;
-	SDL_Cursor * m_size_v = nullptr;
-	SDL_Cursor * m_move = nullptr;
-	SDL_Cursor * m_i_beam = nullptr;
-	SDL_Cursor * m_arrow = nullptr;
+    bool m_have_cursors = false;
+    SDL_Cursor * m_size_h = nullptr;
+    SDL_Cursor * m_size_v = nullptr;
+    SDL_Cursor * m_move = nullptr;
+    SDL_Cursor * m_i_beam = nullptr;
+    SDL_Cursor * m_arrow = nullptr;
 
-	std::vector<SDL_GameController*> m_controllers;
+    std::vector<SDL_GameController*> m_controllers;
 };
 
 template<typename ...Args>
 inline std::string SDL_Helper::format(const char * format, Args ...args)
 {
-	size_t size = snprintf(nullptr, 0, format, args ...) + 1;
-	std::unique_ptr<char[]> buf(new char[size]);
-	snprintf(buf.get(), size, format, args ...);
-	return std::string(buf.get(), buf.get() + size - 1);
+    size_t size = snprintf(nullptr, 0, format, args ...) + 1;
+    std::unique_ptr<char[]> buf(new char[size]);
+    snprintf(buf.get(), size, format, args ...);
+    return std::string(buf.get(), buf.get() + size - 1);
 }

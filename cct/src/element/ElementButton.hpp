@@ -4,3 +4,5 @@
  * under the MOZILLA PUBLIC LICENSE 2.0 - mozilla.org/en-US/MPL/2.0/
  * github.com/univrsal/input-overlay
  */
+
+#pragma once

@@ -23,179 +23,179 @@
 
 Localization::Localization(const char * lang_folder, SDL_Helper * helper)
 {
-	m_lang_folder = lang_folder;
-	m_helper = helper;
-	scan_lang_folder();
+    m_lang_folder = lang_folder;
+    m_helper = helper;
+    scan_lang_folder();
 
-	if (m_langfiles.empty() || !m_valid)
-	{
-		printf("No valid language files found! GUI will use identifiers instead\n");
-	}
-	else
-	{
-		load_default_language();
-	}
+    if (m_langfiles.empty() || !m_valid)
+    {
+        printf("No valid language files found! GUI will use identifiers instead\n");
+    }
+    else
+    {
+        load_default_language();
+    }
 }
 
 void Localization::load_lang_by_id(uint8_t id)
 {
-	if (m_valid && id >= 0 && id < m_langfiles.size())
-	{
-		if (id == m_english_id)
-		{
-			m_current.reset();
-			m_roman = true;
-			return; /* English is always loaded */
-		}
+    if (m_valid && id >= 0 && id < m_langfiles.size())
+    {
+        if (id == m_english_id)
+        {
+            m_current.reset();
+            m_roman = true;
+            return; /* English is always loaded */
+        }
 
-		LangFile * lang = m_langfiles[id].get();
-		if (lang)
-		{
-			m_current.reset();
-			std::string path = PATH_TRANSLATIONS + std::string("/") + lang->file_name;
-			m_current = std::make_unique<ccl_config>(path, "");
-			m_roman = m_current->get_bool("roman_letters");
-		}
-		else
-		{
-			printf("Can't load language with id %i\n", id);
-		}
-	}
+        LangFile * lang = m_langfiles[id].get();
+        if (lang)
+        {
+            m_current.reset();
+            std::string path = PATH_TRANSLATIONS + std::string("/") + lang->file_name;
+            m_current = std::make_unique<ccl_config>(path, "");
+            m_roman = m_current->get_bool("roman_letters");
+        }
+        else
+        {
+            printf("Can't load language with id %i\n", id);
+        }
+    }
 }
 
 std::string Localization::localize(const char * id)
 {
-	std::string value = "";
-	if (m_valid)
-	{
-		if (m_current)
-		{
-			value = m_current->get_string(id);
-			if (value.empty())
-				value = m_english->get_string(id);
-		}
-		else if (m_english)
-		{
-			value = m_english->get_string(id);
-		}
-	}
+    std::string value = "";
+    if (m_valid)
+    {
+        if (m_current)
+        {
+            value = m_current->get_string(id);
+            if (value.empty())
+                value = m_english->get_string(id);
+        }
+        else if (m_english)
+        {
+            value = m_english->get_string(id);
+        }
+    }
 
-	if (!m_valid || value.empty())
-	{
-		printf("Couldn't find localization for %s.\n", id);
-		value = std::string(id);
-	}
-	return value;
+    if (!m_valid || value.empty())
+    {
+        printf("Couldn't find localization for %s.\n", id);
+        value = std::string(id);
+    }
+    return value;
 }
 
 bool Localization::is_roman(void)
 {
-	return m_roman;
+    return m_roman;
 }
 
 void Localization::scan_lang_folder(void)
 {
-	ccl_config * lang = nullptr;
-	std::string file_name;
+    ccl_config * lang = nullptr;
+    std::string file_name;
 #ifdef _WIN32
-	/* Iterating over items in folder on Win32
-	 * and filtering only *.ini files
-	 */
-	HANDLE hFind;
-	WIN32_FIND_DATA data;
-	std::string path = m_lang_folder;
+    /* Iterating over items in folder on Win32
+     * and filtering only *.ini files
+     */
+    HANDLE hFind;
+    WIN32_FIND_DATA data;
+    std::string path = m_lang_folder;
 
-	path.append("/*.ini");
-	hFind = FindFirstFile(path.c_str(), &data);
-	
-	if (hFind != INVALID_HANDLE_VALUE)
-	{
-		do
-		{
-			if (!(GetFileAttributes(data.cFileName) & FILE_ATTRIBUTE_DIRECTORY));
-			{
-				file_name =  std::string(data.cFileName);
+    path.append("/*.ini");
+    hFind = FindFirstFile(path.c_str(), &data);
+    
+    if (hFind != INVALID_HANDLE_VALUE)
+    {
+        do
+        {
+            if (!(GetFileAttributes(data.cFileName) & FILE_ATTRIBUTE_DIRECTORY));
+            {
+                file_name =  std::string(data.cFileName);
 
 #else
-	/* Iterating over items in folder on linux
-	 * and filtering only *.ini files
-	 */
-	DIR * dir;
-	struct dirent * dirent;
+    /* Iterating over items in folder on linux
+     * and filtering only *.ini files
+     */
+    DIR * dir;
+    struct dirent * dirent;
 
-	dir = opendir(m_lang_folder.c_str());
+    dir = opendir(m_lang_folder.c_str());
 
-	if (dir)
-	{
-		while ((dirent = readdir(dir)))
-		{
-			file_name = std::string(dirent->d_name);
-			struct stat path_stat;
-			std::string full_path = m_lang_folder + "/" + file_name;
-			stat(full_path.c_str(), &path_stat);
-			char * file_type = strrchr(dirent->d_name, '.');
-	
-			if (file_type && !strcmp(file_type, ".ini") /* Checks file ending */
-					&& S_ISREG(path_stat.st_mode))
-			{
+    if (dir)
+    {
+        while ((dirent = readdir(dir)))
+        {
+            file_name = std::string(dirent->d_name);
+            struct stat path_stat;
+            std::string full_path = m_lang_folder + "/" + file_name;
+            stat(full_path.c_str(), &path_stat);
+            char * file_type = strrchr(dirent->d_name, '.');
+    
+            if (file_type && !strcmp(file_type, ".ini") /* Checks file ending */
+                    && S_ISREG(path_stat.st_mode))
+            {
 #endif
-				/* After filtering on windows and linux store file anme 
-				 * in file_name
-				 */
-				lang = new ccl_config(m_lang_folder + "/" + file_name, "");
-				ccl_data * node = nullptr;
+                /* After filtering on windows and linux store file anme 
+                 * in file_name
+                 */
+                lang = new ccl_config(m_lang_folder + "/" + file_name, "");
+                ccl_data * node = nullptr;
 
-				if (lang && (node = lang->get_node(LANG_ID)))
-				{
-					m_valid = true;
-					if (file_name.compare("en_US.ini") == 0)
-						m_english_id = m_langfiles.size();
-					m_langfiles.emplace_back(new LangFile(file_name, node->get_value()));
-				}
-				else
-				{
-					printf("Invalid lang file %s. Missing language identifier\n", file_name.c_str());
-				}
+                if (lang && (node = lang->get_node(LANG_ID)))
+                {
+                    m_valid = true;
+                    if (file_name.compare("en_US.ini") == 0)
+                        m_english_id = m_langfiles.size();
+                    m_langfiles.emplace_back(new LangFile(file_name, node->get_value()));
+                }
+                else
+                {
+                    printf("Invalid lang file %s. Missing language identifier\n", file_name.c_str());
+                }
 
-				delete lang;
-				lang = nullptr;
-			}
+                delete lang;
+                lang = nullptr;
+            }
 #ifdef _WIN32
-		} while (FindNextFile(hFind, &data));
-		FindClose(hFind);
+        } while (FindNextFile(hFind, &data));
+        FindClose(hFind);
 #else
-		}
-		closedir(dir);
+        }
+        closedir(dir);
 #endif
-	}
-	else
-	{
-		printf("Localization: Couldn't load files from lang folder!\n");
-	}
+    }
+    else
+    {
+        printf("Localization: Couldn't load files from lang folder!\n");
+    }
 }
 
 void Localization::load_default_language(void)
 {
-	bool flag = true;
+    bool flag = true;
 
-	if (m_valid)
-	{
-		std::string path = PATH_TRANSLATIONS + std::string("/en_US.ini");
-		m_english = std::make_unique<ccl_config>(path, "");
-		if (!m_english->is_empty())
-		{
-			m_valid = true;
-		}
-		else
-		{
-			flag = false;
-		}
-	}
+    if (m_valid)
+    {
+        std::string path = PATH_TRANSLATIONS + std::string("/en_US.ini");
+        m_english = std::make_unique<ccl_config>(path, "");
+        if (!m_english->is_empty())
+        {
+            m_valid = true;
+        }
+        else
+        {
+            flag = false;
+        }
+    }
 
 
-	if (!flag)
-	{
-		printf("Loading of English translation failed!\n");
-		printf("Couldn't load default language! Localization might not work!\n");
-	}
+    if (!flag)
+    {
+        printf("Loading of English translation failed!\n");
+        printf("Couldn't load default language! Localization might not work!\n");
+    }
 }

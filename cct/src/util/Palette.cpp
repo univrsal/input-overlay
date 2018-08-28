@@ -5,27 +5,26 @@
  * github.com/univrsal/input-overlay
  */
 
-
 #include "Palette.hpp"
 
 Palette::Palette()
 {
-	m_black = { 0, 0, 0, 255 };
-	m_white = { 213, 213, 213, 255 };
+    m_black = { 0, 0, 0, 255 };
+    m_white = { 213, 213, 213, 255 };
 
-	m_foreground = { 255, 255, 255, 255 };
-	m_background = { 255, 255, 255, 255 };
-	m_accent = { 64, 64, 64, 255 };
+    m_foreground = { 255, 255, 255, 255 };
+    m_background = { 255, 255, 255, 255 };
+    m_accent = { 64, 64, 64, 255 };
 
-	m_tooltip_body = { 248, 230, 177, 128 };
-	m_orange = { 255, 92, 38, 255 };
+    m_tooltip_body = { 248, 230, 177, 128 };
+    m_orange = { 255, 92, 38, 255 };
 
-	m_red = { 240, 20, 20, 255 };
-	m_green = { 33, 135, 55, 255 };
-	m_blue = { 33, 118, 243, 255 };
-	m_gray = { 55, 55, 55, 255 };
-	m_dark_gray = { 45, 45, 45, 255 };
-	m_light_gray = { 80, 80, 80, 255 };
+    m_red = { 240, 20, 20, 255 };
+    m_green = { 33, 135, 55, 255 };
+    m_blue = { 33, 118, 243, 255 };
+    m_gray = { 55, 55, 55, 255 };
+    m_dark_gray = { 45, 45, 45, 255 };
+    m_light_gray = { 80, 80, 80, 255 };
 }
 
 Palette::~Palette()
@@ -33,57 +32,57 @@ Palette::~Palette()
 
 SDL_Color * Palette::get_bg(void)
 {
-	return &m_background;
+    return &m_background;
 }
 
 SDL_Color * Palette::get_fg(void)
 {
-	return &m_foreground;
+    return &m_foreground;
 }
 
 SDL_Color * Palette::get_accent(void)
 {
-	return &m_accent;
+    return &m_accent;
 }
 
 SDL_Color * Palette::white(void)
 {
-	return &m_white;
+    return &m_white;
 }
 
 SDL_Color * Palette::black(void)
 {
-	return &m_black;
+    return &m_black;
 }
 
 SDL_Color * Palette::gray(void)
 {
-	return &m_gray;
+    return &m_gray;
 }
 
 SDL_Color * Palette::dark_gray(void)
 {
-	return &m_dark_gray;
+    return &m_dark_gray;
 }
 
 SDL_Color * Palette::light_gray(void)
 {
-	return &m_light_gray;
+    return &m_light_gray;
 }
 
 SDL_Color * Palette::blue(void)
 {
-	return &m_blue;
+    return &m_blue;
 }
 
 SDL_Color * Palette::red(void)
 {
-	return &m_red;
+    return &m_red;
 }
 
 SDL_Color * Palette::green(void)
 {
-	return &m_green;
+    return &m_green;
 }
 
 SDL_Color * Palette::orange(void)
@@ -93,5 +92,5 @@ SDL_Color * Palette::orange(void)
 
 SDL_Color * Palette::get_tooltip_body(void)
 {
-	return &m_tooltip_body;
+    return &m_tooltip_body;
 }

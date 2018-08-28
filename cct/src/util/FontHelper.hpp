@@ -5,17 +5,17 @@
  * github.com/univrsal/input-overlay
  */
 
-#define FONT_SOLID 0
-#define FONT_SHADED 1
-#define FONT_BLENDED 2
+#define FONT_SOLID          0
+#define FONT_SHADED         1
+#define FONT_BLENDED        2
 
-#define FONT_SMALL 10
-#define FONT_DEFAULT 15
-#define FONT_LARGE 18
+#define FONT_SMALL          10
+#define FONT_DEFAULT        15
+#define FONT_LARGE          18
 
-#define FONT_ROBOTO_SMALL 0
-#define FONT_ROBOTO_LARGE 1
-#define FONT_WSTRING 2
+#define FONT_ROBOTO_SMALL   0
+#define FONT_ROBOTO_LARGE   1
+#define FONT_WSTRING        2
 
 #ifndef RELODED_FONT_H
 #define RELODED_FONT_H
@@ -47,8 +47,8 @@ public:
     SDL_Rect get_text_dimension(TTF_Font *font, const std::string *text);
 
 private:
-	SDL_Helper *m_helper;
-	uint8_t m_mode;
+    SDL_Helper *m_helper;
+    uint8_t m_mode;
 };
 
 

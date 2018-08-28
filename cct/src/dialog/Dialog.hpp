@@ -17,10 +17,10 @@
 #define DIALOG_DRAGGABLE 1 << 0 /* Allow moving by dragging the title bar*/
 #define DIALOG_CENTERED  1 << 1 /* Always center on window resize */
 #define DIALOG_TEXTINPUT 1 << 2 /* Hint SDL to read text input */
-#define DIALOG_TOP_MOST	 1 << 3 /* Draws background tint */
-#define DIALOG_FLUID	 1 << 4 /* Dialog adapts to window size. Includes DIALOG_CENTERED */
+#define DIALOG_TOP_MOST  1 << 3 /* Draws background tint */
+#define DIALOG_FLUID     1 << 4 /* Dialog adapts to window size. Includes DIALOG_CENTERED */
 
-#define FLUID_BORDER	 32
+#define FLUID_BORDER     32
 
 #define ACTION_FOCUSED -1
 #define ACTION_UNFOCUSED -2
@@ -34,51 +34,51 @@ class GuiElement;
 class Dialog
 {
 public:
-	Dialog(SDL_Helper * sdl, SDL_Rect size, std::string title);
-	Dialog(SDL_Helper * sdl, SDL_Point size, std::string title);
+    Dialog(SDL_Helper * sdl, SDL_Rect size, std::string title);
+    Dialog(SDL_Helper * sdl, SDL_Point size, std::string title);
 
-	virtual ~Dialog();
+    virtual ~Dialog();
 
-	virtual void init();
+    virtual void init();
 
-	virtual void draw_background(void);
+    virtual void draw_background(void);
 
-	virtual void draw_foreground(void);
+    virtual void draw_foreground(void);
 
-	virtual void close(void);
+    virtual void close(void);
 
-	virtual bool handle_events(SDL_Event * event);
+    virtual bool handle_events(SDL_Event * event);
 
-	virtual void action_performed(int8_t action_id);
+    virtual void action_performed(int8_t action_id);
 
-	void add(GuiElement * e);
+    void add(GuiElement * e);
 
-	void set_flags(uint16_t flags);
+    void set_flags(uint16_t flags);
 
-	void reload_lang(void);
+    void reload_lang(void);
 
-	const SDL_Point position(void);
+    const SDL_Point position(void);
 
-	SDL_Helper * helper(void);
+    SDL_Helper * helper(void);
 
-	int get_left(void);
+    int get_left(void);
 
-	int get_top(void);
+    int get_top(void);
 
-	int get_right(void);
+    int get_right(void);
 
-	int get_bottom(void);
+    int get_bottom(void);
 protected:
-	std::vector<std::unique_ptr<GuiElement>> m_screen_elements;
-	std::vector<GuiElement*> m_tab_items;
-	std::string m_title;
+    std::vector<std::unique_ptr<GuiElement>> m_screen_elements;
+    std::vector<GuiElement*> m_tab_items;
+    std::string m_title;
 
-	int16_t m_selected_element = 0;
-	int m_offset_x, m_offset_y;
-	bool m_is_dragging = false;
-	uint16_t m_flags = 0x0000;
+    int16_t m_selected_element = 0;
+    int m_offset_x, m_offset_y;
+    bool m_is_dragging = false;
+    uint16_t m_flags = 0x0000;
 
-	SDL_Helper * m_helper;
-	SDL_Rect m_dimensions;
-	SDL_Rect m_title_bar;
+    SDL_Helper * m_helper;
+    SDL_Rect m_dimensions;
+    SDL_Rect m_title_bar;
 };

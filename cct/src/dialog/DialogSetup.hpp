@@ -23,40 +23,40 @@ class Notifier;
 class DialogSetup : public Dialog
 {
 public:
-	DialogSetup(SDL_Helper * sdl, Notifier * notifier, Tool * t)
-		: Dialog(sdl, SDL_Point { 500, 280 }, LANG_DIALOG_SETUP)
-	{
-		m_notifier = notifier;
-		m_tool = t;
-	};
+    DialogSetup(SDL_Helper * sdl, Notifier * notifier, Tool * t)
+        : Dialog(sdl, SDL_Point { 500, 280 }, LANG_DIALOG_SETUP)
+    {
+        m_notifier = notifier;
+        m_tool = t;
+    };
 
-	void init() override;
+    void init() override;
 
-	void draw_background(void) override;
-	
-	void action_performed(int8_t action_id) override;
+    void draw_background(void) override;
+    
+    void action_performed(int8_t action_id) override;
 
-	SDL_Point get_default_dim();
+    SDL_Point get_default_dim();
 
-	bool should_load_cfg(void);
+    bool should_load_cfg(void);
 
-	const char * get_config_path(void);
+    const char * get_config_path(void);
 
-	const char * get_texture_path(void);
+    const char * get_texture_path(void);
 private:
-	Notifier * m_notifier = nullptr;
+    Notifier * m_notifier = nullptr;
 
-	bool m_load_cfg = false;
+    bool m_load_cfg = false;
 
-	Combobox * m_lang_box = nullptr;
-	Textbox * m_texture_path = nullptr;
-	Textbox * m_config_path = nullptr;
-	Textbox * m_def_w = nullptr;
-	Textbox * m_def_h = nullptr;
-	Textbox * m_h_space = nullptr;
-	Textbox * m_v_space = nullptr;
+    Combobox * m_lang_box = nullptr;
+    Textbox * m_texture_path = nullptr;
+    Textbox * m_config_path = nullptr;
+    Textbox * m_def_w = nullptr;
+    Textbox * m_def_h = nullptr;
+    Textbox * m_h_space = nullptr;
+    Textbox * m_v_space = nullptr;
 
-	Tool * m_tool = nullptr;
+    Tool * m_tool = nullptr;
 public:
-	SDL_Point get_rulers();
+    SDL_Point get_rulers();
 };

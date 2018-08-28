@@ -6,52 +6,52 @@
 #include "../../../ccl/ccl.hpp"
 
 ElementTexture::ElementTexture(std::string id, SDL_Point pos, SDL_Rect mapping, uint8_t z)
-	: Element(ElementType::TEXTURE, id, pos, z)
+    : Element(ElementType::TEXTURE, id, pos, z)
 {
-	m_mapping = mapping;
+    m_mapping = mapping;
 }
 
 void ElementTexture::draw(Texture * atlas, CoordinateSystem * cs, bool selected, bool alpha)
 {
-	get_abs_dim(cs);
-	atlas->draw(cs->get_helper()->renderer(), &m_dimensions_scaled, &m_mapping, alpha ? 60 : 255);
+    get_abs_dim(cs);
+    atlas->draw(cs->get_helper()->renderer(), &m_dimensions_scaled, &m_mapping, alpha ? 60 : 255);
 
-	if (selected)
-	{
-		cs->get_helper()->util_draw_rect(&m_dimensions_scaled, cs->get_helper()->palette()->red());
-	}
+    if (selected)
+    {
+        cs->get_helper()->util_draw_rect(&m_dimensions_scaled, cs->get_helper()->palette()->red());
+    }
 }
 
 void ElementTexture::write_to_file(ccl_config * cfg, SDL_Point * default_dim)
 {
-	Element::write_to_file(cfg, default_dim);
-	std::string comment = "Texture position of " + m_id;
-	cfg->add_int(m_id + CFG_U, "", m_mapping.x, true);
-	cfg->add_int(m_id + CFG_V, comment, m_mapping.y, true);
+    Element::write_to_file(cfg, default_dim);
+    std::string comment = "Texture position of " + m_id;
+    cfg->add_int(m_id + CFG_U, "", m_mapping.x, true);
+    cfg->add_int(m_id + CFG_V, comment, m_mapping.y, true);
 
-	comment = "Width and height of " + m_id;
+    comment = "Width and height of " + m_id;
 
-	if (m_mapping.w != default_dim->x)
-		cfg->add_int(m_id + CFG_WIDTH, "", m_mapping.w, true);
+    if (m_mapping.w != default_dim->x)
+        cfg->add_int(m_id + CFG_WIDTH, "", m_mapping.w, true);
 
-	if (m_mapping.h != default_dim->y)
-		cfg->add_int(m_id + CFG_HEIGHT, comment, m_mapping.h, true);
+    if (m_mapping.h != default_dim->y)
+        cfg->add_int(m_id + CFG_HEIGHT, comment, m_mapping.h, true);
 }
 
 void ElementTexture::update_settings(DialogNewElement * dialog)
 {
-	Element::update_settings(dialog);
-	set_mapping(dialog->get_selection());
+    Element::update_settings(dialog);
+    set_mapping(dialog->get_selection());
 }
 
 void ElementTexture::update_settings(DialogElementSettings * dialog)
 {
-	Element::update_settings(dialog);
-	set_mapping(dialog->get_mapping());
+    Element::update_settings(dialog);
+    set_mapping(dialog->get_mapping());
 }
 
 ElementTexture * ElementTexture::read_from_file(ccl_config * file, std::string id, SDL_Point * default_dim)
 {
-	return new ElementTexture(id, Element::element_read_position(file, id),
-		Element::element_read_mapping(file, id, default_dim), Element::element_read_layer(file, id));
+    return new ElementTexture(id, Element::element_read_position(file, id),
+        Element::element_read_mapping(file, id, default_dim), Element::element_read_layer(file, id));
 }
