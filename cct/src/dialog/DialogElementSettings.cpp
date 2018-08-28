@@ -49,12 +49,12 @@ void DialogElementSettings::init()
     add(m_element_v);
 
     add(m_element_id = new Textbox(id++, 8, 145, m_dimensions.w - 16, 20, "", this));
-    add(m_keycode = new Textbox(id++, 8, 190, m_dimensions.w / 2 - 16, 20, "", this));
+    add(m_element_vc = new Textbox(id++, 8, 190, m_dimensions.w / 2 - 16, 20, "", this));
 
     add(m_element_z_level = new Textbox(id++, m_dimensions.w / 2 + 8, 190, m_dimensions.w / 2 - 16, 20, "0", this));
 
     m_element_id->set_flags(TEXTBOX_NO_SPACE | TEXTBOX_ALPHA_NUMERIC);
-    m_keycode->set_flags(TEXTBOX_HEX | TEXTBOX_NO_SPACE);
+    m_element_vc->set_flags(TEXTBOX_HEX | TEXTBOX_NO_SPACE);
     m_element_z_level->set_flags(TEXTBOX_NUMERIC);
 
     /* Controls */
@@ -143,7 +143,7 @@ void DialogElementSettings::set_id(std::string id)
 
 void DialogElementSettings::set_vc(uint16_t vc)
 {
-    m_keycode->set_hex_int(vc);
+    m_element_vc->set_hex_int(vc);
 }
 
 void DialogElementSettings::set_z_level(uint8_t z)

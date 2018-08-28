@@ -23,7 +23,11 @@ public:
 
     void update_settings(DialogElementSettings * dialog) override;
 
-    void handle_event(SDL_Event * event) override { /* NO-OP */ };
+    void handle_event(SDL_Event * event, SDL_Helper * helper) override { /* NO-OP */ };
 
     static ElementTexture * read_from_file(ccl_config * file, std::string id, SDL_Point * default_dim);
+
+protected:
+    ElementTexture(ElementType t, std::string id, SDL_Point pos, SDL_Rect mapping, uint8_t z);
+   
 };

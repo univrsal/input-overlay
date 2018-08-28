@@ -54,6 +54,7 @@ public:
     int get_v(void) { return atoi(m_element_v->c_str()); }
     int get_w(void) { return atoi(m_element_width->c_str()); }
     int get_h(void) { return atoi(m_element_height->c_str()); }
+    uint16_t get_vc(void) { return atoi(m_element_vc->c_str()); }
     SDL_Rect get_mapping(void) { return { get_u(), get_v(), get_w(), get_h() }; }
 
     const std::string * get_id(void) { return m_element_id->get_text(); }
@@ -63,7 +64,7 @@ private:
     bool m_finished = false;
 
     Textbox * m_element_id = nullptr;
-    Textbox * m_keycode = nullptr;
+    Textbox * m_element_vc = nullptr;
     Textbox * m_element_width = nullptr;
     Textbox * m_element_height = nullptr;
     Textbox * m_element_x = nullptr;

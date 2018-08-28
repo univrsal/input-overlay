@@ -95,7 +95,7 @@ public:
     void format_text(const std::string * s, std::vector<std::unique_ptr<std::string>>& out, SDL_Rect& dim, uint8_t font = FONT_ROBOTO_SMALL);
 
     std::string loc(const char * id);
-    template<typename ... Args> std::string format_loc(const char * format, Args ... args);
+    template<typename ... Args> std::string format_loc(const char * unlocalized, Args ... args);
 
     Localization * localization(void) { return m_localization; }
 
@@ -190,7 +190,11 @@ inline std::string SDL_Helper::format(const char * format, Args ... args)
 }
 
 template<typename ...Args>
-inline std::string SDL_Helper::format_loc(const char * format, Args ... args)
+inline std::string SDL_Helper::format_loc(const char * unlocalized, Args ... args)
 {
-    return format(loc(format), args);
+    std::string localized = loc(unlocalized);
+    size_t size = snprintf(nullptr, 0, localized.c_str(), args ...) + 1;
+    std::unique_ptr<char[]> buf(new char[size]);
+    snprintf(buf.get(), size, localized.c_str(), args ...);
+    return std::string(buf.get(), buf.get() + size - 1);
 }

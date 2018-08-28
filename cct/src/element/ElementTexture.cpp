@@ -1,3 +1,10 @@
+/**
+ * Created by universal on 27.08.2018.
+ * This file is part of input-overlay which is licensed
+ * under the MOZILLA PUBLIC LICENSE 2.0 - mozilla.org/en-US/MPL/2.0/
+ * github.com/univrsal/input-overlay
+ */
+
 #include "ElementTexture.hpp"
 #include "../dialog/DialogNewElement.hpp"
 #include "../dialog/DialogElementSettings.hpp"
@@ -7,6 +14,12 @@
 
 ElementTexture::ElementTexture(std::string id, SDL_Point pos, SDL_Rect mapping, uint8_t z)
     : Element(ElementType::TEXTURE, id, pos, z)
+{
+    m_mapping = mapping;
+}
+
+ElementTexture::ElementTexture(ElementType t, std::string id, SDL_Point pos, SDL_Rect mapping, uint8_t z)
+    : Element(t, id, pos, z)
 {
     m_mapping = mapping;
 }

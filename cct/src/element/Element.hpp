@@ -66,13 +66,13 @@ public:
 
     int get_v() { return m_mapping.y; }  
 
-    int get_vc() { return m_keycode; }
+    virtual int get_vc() { return 0; }
 
     ElementType get_type(void) { return m_type; }
 
     SDL_Rect * get_mapping(void) { return &m_mapping; }
 
-    virtual void handle_event(SDL_Event * event) = 0;
+    virtual void handle_event(SDL_Event * event, SDL_Helper * helper) = 0;
 
     static Element * read_from_file(ccl_config * file, std::string id, ElementType t, SDL_Point * default_dim);
 
@@ -93,6 +93,6 @@ protected:
     uint8_t m_scale = 0; /* Currently used scale factor */
 
     uint8_t m_z_level = 0; /* Determines draw and selection order */
-    uint16_t m_keycode = 0;
+   
     std::string m_id;
 };
