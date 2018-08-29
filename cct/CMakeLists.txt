@@ -81,12 +81,27 @@ set(io-cct_SOURCES
 	src/dialog/DialogNewElement.hpp
 	src/dialog/DialogElementType.cpp
 	src/dialog/DialogElementType.hpp
+	src/util/Util.cpp
+	src/util/Util.hpp
 	src/util/CoordinateSystem.cpp
 	src/util/CoordinateSystem.hpp
 	src/util/Notifier.cpp
 	src/util/Notifier.hpp
 	src/util/Localization.cpp
-	src/util/Localization.hpp)
+	src/util/Localization.hpp
+	src/element/Element.cpp
+	src/element/Element.hpp
+	src/element/ElementTexture.cpp
+	src/element/ElementTexture.hpp
+	src/element/ElementText.cpp
+	src/element/ElementText.hpp
+	src/element/ElementButton.cpp
+	src/element/ElementButton.hpp
+	src/element/ElementAnalogStick.cpp
+	src/element/ElementAnalogStick.hpp
+	src/element/ElementScrollWheel.cpp
+	src/element/ElementScrollWheel.hpp
+	)
 
 add_executable(io-cct ${io-cct_SOURCES})
 
