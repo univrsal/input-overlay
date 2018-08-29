@@ -54,10 +54,11 @@ public:
     Element * selected() { return m_selected; }
     uint16_t selecte_id() { return m_selected_id; }
 
-    void reset_selected_element(void);
-private:    
+    void reset_selection(void);
+private:
     /* Move selected elements*/
     void move_elements(int new_x, int new_y);
+    inline void move_element(int mouse_x, int mouse_y);
 
     inline bool is_rect_in_rect(const SDL_Rect * a, const SDL_Rect * b);
 
@@ -71,7 +72,7 @@ private:
     Texture * m_atlas = nullptr;
     DialogElementSettings * m_settings = nullptr;
 
-    bool m_dragging_element = false; /* Flag for dragging single element */
+    bool m_in_single_selection = false; /* Flag for dragging single element */
     SDL_Point m_drag_offset;
 
     SDL_Point m_default_dim;
@@ -83,6 +84,6 @@ private:
     SDL_Rect m_temp_selection; /* Indicator of current rectangle selected by mouse */
     SDL_Point m_selection_start;
 
-    bool m_selecting = false;
+    bool m_in_multi_selection = false;
     bool m_dragging_elements = false; /* Flag for dragging entire selection*/
 };

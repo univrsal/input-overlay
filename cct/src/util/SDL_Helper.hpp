@@ -23,9 +23,7 @@
 #include "Palette.hpp"
 #include "FontHelper.hpp"
 #include "Texture.hpp"
-extern "C" {
-#include "Util.h"
-}
+#include "Util.hpp"
 
 #define CURSOR_ARROW    0
 #define CURSOR_SIZE_H   1

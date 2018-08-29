@@ -126,7 +126,7 @@ private:
     SDL_Rect * m_selection = nullptr; /* For atlas selector */
     
     SDL_Point m_selection_a;
-    SDL_Point m_origin_anchor; /* Constant position of the origin*/
+    SDL_Point m_origin_anchor; /* Constant position of the origin */
     SDL_Point m_origin; /* Origin after zooming and moving */
     SDL_Point m_drag_offset;
     SDL_Point m_grid_spacing;

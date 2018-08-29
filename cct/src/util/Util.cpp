@@ -1,4 +1,4 @@
-#include "Util.h"
+#include "Util.hpp"
 
 SDL_bool util_move_element(int * x, int * y, SDL_Keycode key)
 {

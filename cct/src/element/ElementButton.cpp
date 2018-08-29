@@ -79,6 +79,6 @@ void ElementButton::handle_event(SDL_Event * event, SDL_Helper * helper)
 ElementButton * ElementButton::read_from_file(ccl_config * file, std::string id, SDL_Point * default_dim)
 {
     return new ElementButton(id, Element::element_read_position(file, id),
-        Element::element_read_mapping(file, id, default_dim), file->get_int(CFG_KEY_CODE),
+        Element::element_read_mapping(file, id, default_dim), file->get_int(id + CFG_KEY_CODE),
         Element::element_read_layer(file, id));
 }

@@ -111,55 +111,47 @@ void Config::draw_elements(void)
 void Config::handle_events(SDL_Event * e)
 {
     m_cs.handle_events(e);
+    int m_x = e->button.x, m_y = e->button.y;
 
     if (e->type == SDL_MOUSEBUTTONDOWN)
     {
         if (e->button.button == SDL_BUTTON_LEFT)
         {
             /* Handle selection of elements */
-            bool is_single_selection = false;
-            bool selection_empty = SDL_RectEmpty(&m_total_selection);
+            m_cs.translate(m_x, m_y);
 
-            m_cs.translate(e->button.x, e->button.y);
-
-            if (selection_empty)
+            if (SDL_RectEmpty(&m_total_selection))
+            /* No multiple items already selected */
             {
                 int i = 0;
-                int highest_layer_id = 0;
                 int highest_layer = 0;
 
                 for (auto const &elem : m_elements)
                 {
-                    if (m_helper->util_is_in_rect(elem->get_abs_dim(&m_cs), e->button.x, e->button.y))
+                    if (m_helper->util_is_in_rect(elem->get_abs_dim(&m_cs), m_x, m_y))
                     {
                         if (elem->get_z_level() >= highest_layer)
                         {
                             highest_layer = elem->get_z_level();
-                            highest_layer_id = i;
+                            m_selected = m_elements[i].get();
                         }
-
-                        m_dragging_element = true;
-                        is_single_selection = true;
+                        m_in_single_selection = true;
                     }
                     i++;
                 }
 
-                if (!is_single_selection)
-                    /* No element was directly select -> start groups selection*/
+                if (m_in_single_selection) /* Start single element selection */
                 {
-                    m_selecting = true;
-                    reset_selected_element();
-                    m_selection_start = { e->button.x, e->button.y };
-                    m_selected_elements.clear();
-                    m_total_selection = {};
-                }
-                else
-                {
-                    m_selected = m_elements[highest_layer_id].get();
                     m_drag_offset = { (e->button.x - (m_selected->get_x() * m_cs.get_scale())
                         + m_cs.get_origin()->x), (e->button.y - (m_selected->get_y() * m_cs.get_scale())
-                        + m_cs.get_origin()->y) };
+                            + m_cs.get_origin()->y) };
                     m_settings->select_element(m_selected);
+                }
+                else /* Start multi element selection */
+                {
+                    m_in_multi_selection = true;
+                    reset_selection();
+                    m_selection_start = { e->button.x, e->button.y };
                 }
             }
             else if (m_helper->util_is_in_rect(&m_total_selection, e->button.x, e->button.y))
@@ -176,29 +168,21 @@ void Config::handle_events(SDL_Event * e)
     }
     else if (e->type == SDL_MOUSEBUTTONUP)
     {
-        m_dragging_element = false;
+        m_in_single_selection = false;
         m_dragging_elements = false;
         m_temp_selection = {};
-        m_selecting = false;
+        m_in_multi_selection = false;
     }
     else if (e->type == SDL_MOUSEMOTION)
     {
-        if (m_dragging_element && m_selected)
+        if (m_in_single_selection && m_selected)
             /* Dragging single element */
         {
-            int x, y;
-            x = SDL_max((e->button.x - m_drag_offset.x +
-                m_cs.get_origin()->x) / m_cs.get_scale(), 0);
-            y = SDL_max((e->button.y - m_drag_offset.y +
-                m_cs.get_origin()->y) / m_cs.get_scale(), 0);
-
-            m_selected->set_pos(x, y);
-            m_settings->set_xy(x, y);
+            move_element(e->button.x, e->button.y);
         }
-        else if (m_selecting)
+        else if (m_in_multi_selection)
             /* Selecting multiple elements */
         {
-            m_total_selection = {};
             SDL_Rect elem_dim;
             SDL_Rect elem_abs_dim;
 
@@ -217,7 +201,7 @@ void Config::handle_events(SDL_Event * e)
 
             m_selected_elements.clear();
 
-            int index = 0;
+            uint16_t index = 0;
             for (auto const &elem : m_elements)
             {
                 if (is_rect_in_rect(elem->get_mapping(), &m_temp_selection))
@@ -249,25 +233,25 @@ void Config::handle_events(SDL_Event * e)
                 m_selected->set_pos(x, y);
                 m_settings->set_xy(x, y);
             }
-            ;
         }
         else if (!m_selected_elements.empty())
         {
-            int x = m_total_selection.x;
-            int y = m_total_selection.y;
+            int x = m_total_selection.x, y = m_total_selection.y;
 
             if (util_move_element(&x, &y, e->key.keysym.sym))
                 move_elements(x, y);
         }
     }
-    else if (e->type == SDL_WINDOWEVENT)
+    else if (e->type == SDL_WINDOWEVENT
+        && e->window.event == SDL_WINDOWEVENT_SIZE_CHANGED)
     {
-        if (e->window.event == SDL_WINDOWEVENT_SIZE_CHANGED)
-        {
             SDL_Point * w = m_helper->util_window_size();
             m_cs.set_dimensions(SDL_Rect{ 0, 0, w->x, w->y });
-        }
     }
+
+    /* Let elements react to SDL events */
+    for (auto& const element : m_elements)
+        element->handle_event(e, m_helper);
 }
 
 void Config::write_config(Notifier * n)
@@ -399,7 +383,7 @@ SDL_Point Config::get_default_dim(void)
     return m_default_dim;
 }
 
-void Config::reset_selected_element(void)
+void Config::reset_selection(void)
 {
     m_selected = nullptr;
     m_settings->set_id("");
@@ -407,6 +391,8 @@ void Config::reset_selected_element(void)
     m_settings->set_xy(0, 0);
     m_settings->set_wh(0, 0);
     m_settings->set_vc(0);
+    m_selected_elements.clear();
+    m_total_selection = {};
 }
 
 void Config::move_elements(int new_x, int new_y)
@@ -440,6 +426,18 @@ void Config::move_elements(int new_x, int new_y)
                 }
             }
     }
+}
+
+inline void Config::move_element(int mouse_x, int mouse_y)
+{
+    int x, y;
+    x = SDL_max((mouse_x - m_drag_offset.x +
+        m_cs.get_origin()->x) / m_cs.get_scale(), 0);
+    y = SDL_max((mouse_y - m_drag_offset.y +
+        m_cs.get_origin()->y) / m_cs.get_scale(), 0);
+
+    m_selected->set_pos(x, y);
+    m_settings->set_xy(x, y);
 }
 
 inline bool Config::is_rect_in_rect(const SDL_Rect * a, const SDL_Rect * b)

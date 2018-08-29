@@ -24,7 +24,7 @@ Element * Element::read_from_file(ccl_config * file, std::string id, ElementType
 	case TEXTURE:
 		return ElementTexture::read_from_file(file, id, default_dim);
 	case BUTTON:
-        //return ElementButton::read_from_file(file, id, default_dim);
+        return ElementButton::read_from_file(file, id, default_dim);
 		break;
 	case MOUSE_SCROLLWHEEL:
 		break;
@@ -84,15 +84,11 @@ void Element::write_to_file(ccl_config * cfg, SDL_Point * default_dim)
 
 SDL_Rect * Element::get_abs_dim(CoordinateSystem * cs)
 {
-	if (m_scale != cs->get_scale())
-		/* If scale changed, update */
-	{
-		m_scale = cs->get_scale();
-		m_dimensions_scaled = { m_position.x * cs->get_scale() + cs->get_origin_x(),
-			m_position.y * cs->get_scale() + cs->get_origin_y(),
-			m_mapping.w * cs->get_scale(),
-			m_mapping.h * cs->get_scale() };
-	}
+    m_scale = cs->get_scale();
+    m_dimensions_scaled = { m_position.x * cs->get_scale() + cs->get_origin_x(),
+        m_position.y * cs->get_scale() + cs->get_origin_y(),
+        m_mapping.w * cs->get_scale(),
+        m_mapping.h * cs->get_scale() };
 	return &m_dimensions_scaled;
 }
 
@@ -147,6 +143,7 @@ void Element::set_pos(int x, int y)
 {
 	m_position.x = x;
 	m_position.y = y;
+    m_scale = 0; /* Forces a rescale at next draw */
 }
 
 SDL_Rect Element::element_read_mapping(ccl_config * file, std::string id, SDL_Point * default_dim)
@@ -159,7 +156,7 @@ SDL_Rect Element::element_read_mapping(ccl_config * file, std::string id, SDL_Po
 		result.w = default_dim->x;
 
 	if ((result.h = file->get_int(id + CFG_HEIGHT)) == 0)
-		result.w = default_dim->y;
+		result.h = default_dim->y;
 	return result;
 }
 

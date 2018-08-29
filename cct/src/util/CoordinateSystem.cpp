@@ -1,4 +1,12 @@
+/**
+ * Created by universal on 30.05.2018.
+ * This file is part of reloded which is licensed
+ * under the MOZILLA PUBLIC LICENSE 2.0 - mozilla.org/en-US/MPL/2.0/
+ * github.com/univrsal/input-overlay
+ */
+
 #include "CoordinateSystem.hpp"
+
 bool CoordinateSystem::handle_events(SDL_Event * e)
 {
     bool was_handled = false;
@@ -68,7 +76,6 @@ bool CoordinateSystem::handle_events(SDL_Event * e)
         }
         else if (m_sizing && (e->motion.state & SDL_BUTTON_LMASK))
         {
-
             switch (m_size_mode)
             {
             case SIZE_RIGHT:

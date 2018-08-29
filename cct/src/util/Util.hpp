@@ -5,8 +5,7 @@
  * github.com/univrsal/input-overlay
  */
 
-#ifndef UTIL_H
-#define UTIL_H
+#pragma once
 #include <SDL.h>
 
 #define UTIL_MAX(a,b)               (((a) > (b)) ? (a) : (b))
@@ -14,5 +13,3 @@
 #define UTIL_CLAMP(lower, x, upper) (UTIL_MIN(upper, UTIL_MAX(x, lower)))
 
 SDL_bool util_move_element(int * x, int * y, SDL_Keycode key);
-
-#endif /* UTIL_H */

@@ -221,6 +221,7 @@ void Tool::handle_input()
     while (SDL_PollEvent(&m_event) != 0)
     {
         m_helper->handle_events(&m_event);
+
         if (m_event.type == SDL_QUIT)
         {
             m_run_flag = false;
