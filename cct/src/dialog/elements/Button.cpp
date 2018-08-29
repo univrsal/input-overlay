@@ -45,14 +45,7 @@ void Button::refresh(void)
     else
     {
         m_localized_text = get_helper()->loc(m_unlocalized_text.c_str());
-        if (get_helper()->localization()->is_roman())
-        {
-            m_font = FONT_ROBOTO_SMALL;
-        }
-        else
-        {
-            m_font = FONT_WSTRING;
-        }
+        m_font = get_helper()->localization()->get_font();
     }
     resize();
 }

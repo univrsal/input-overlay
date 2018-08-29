@@ -1,24 +1,30 @@
 #include "Notifier.hpp"
 
+void Notifier::resize(void)
+{
+    m_dim.x = m_helper->util_window_size()->x / 2 - m_dim.w / 2;
+}
+
 void Notifier::add_msg(uint8_t type, std::string msg)
 {
-#if _DEBUG
-    printf("[Notifier] %s]: %s\n", type == MESSAGE_INFO ? " [INFO" : "[ERROR", msg.c_str());
-#endif
     if (!msg.empty() && (m_last_message.empty() || m_last_message.compare(msg.c_str()) != 0))
     {
         m_last_message = msg;
         Message * m = new Message(type, msg, m_helper);
         m_messages.emplace_back(m);
-        m_dim.y += m->m_dim.h + 8;
+        m_dim.h += m->m_dim.h + LINE_SPACE;
 
-        if (m->m_dim.w > m_dim.x)
-            m_dim.x = m->m_dim.w + 20;
+        if (m->m_dim.w > m_dim.w)
+            m_dim.w = m->m_dim.w + 20;
     }
+#ifdef _DEBUG
     else
     {
         printf("Notifier error: Duplicate message or empty message\n");
     }
+    printf("[Notifier] %s]: %s\n", type == MESSAGE_INFO ? " [INFO" : "[ERROR", msg.c_str());
+#endif
+    resize();
 }
 
 void Notifier::draw(void)
@@ -26,18 +32,9 @@ void Notifier::draw(void)
     if (m_messages.empty())
         return;
 
-    SDL_Point dim = { 0, 0 };
-    SDL_Point * w = m_helper->util_window_size();
-
-    SDL_Rect message_box;
-    message_box.w = m_dim.x;
-    message_box.h = m_dim.y;
-    message_box.x = w->x / 2 - message_box.w / 2;
-    message_box.y = 20;
-
-    m_helper->util_fill_rect_shadow(&message_box, m_helper->palette()->gray());
+    m_helper->util_fill_rect_shadow(&m_dim, m_helper->palette()->gray());
     uint8_t index = 0;
-    int y_pos = 4;
+    int y_pos = LINE_SPACE;
     std::vector<uint8_t> overdue;
 
     for (auto const &msg : m_messages)
@@ -55,11 +52,11 @@ void Notifier::draw(void)
             {
                 if (!line.get()->empty())
                 {
-                    m_helper->util_text(line.get(), message_box.x + 10,
-                        message_box.y + y_pos,
-                        c);
+                    m_helper->util_text(line.get(), m_dim.x + 10,
+                        m_dim.y + y_pos,
+                        c, m_helper->localization()->get_font());
                 }
-                y_pos += LINE_SPACE + m_helper->util_default_text_height();
+                y_pos += LINE_SPACE + m_helper->util_font_height(m_helper->localization()->get_font());
             }
         }
         index++;
@@ -77,13 +74,14 @@ void Notifier::draw(void)
         {
             m_last_message.clear();
         }
-        m_dim.y -= m_helper->util_default_text_height() + 8
+        m_dim.h -= m_helper->util_default_text_height() + LINE_SPACE
             * m_messages.at(*i)->m_message_lines.size();
         m_messages.erase(m_messages.begin() + *i);
     }
 
     if (m_messages.empty())
     {
-        m_dim.x = 0;
+        m_dim.w = 0;
+        m_dim.h = LINE_SPACE;
     }
 }

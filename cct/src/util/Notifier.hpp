@@ -8,6 +8,7 @@
 #pragma once
 
 #include "../util/SDL_Helper.hpp"
+#include "../util/Localization.hpp"
 #include <vector>
 #include <memory>
 #include <algorithm>
@@ -24,7 +25,7 @@ struct Message
 public:
 	Message(uint8_t type, std::string msg, SDL_Helper * h)
 	{
-		h->format_text(&msg, m_message_lines, m_dim);
+		h->format_text(&msg, m_message_lines, m_dim, h->localization()->get_font());
 		m_type = type;
 		m_time_stamp = SDL_GetTicks();
 	}
@@ -49,7 +50,7 @@ public:
 	{
 		m_messages = std::vector<std::unique_ptr<Message>>();
 		m_helper = h;
-		m_dim = { 0, 0 };
+		m_dim = { 0, 20, 0, LINE_SPACE };
 	}
 
 	~Notifier()
@@ -59,6 +60,8 @@ public:
 		m_dim = { 0, 0 };
 	}
 
+    void resize(void);
+
 	void add_msg(uint8_t type, std::string msg);
 
 	void draw(void);
@@ -66,5 +69,5 @@ private:
 	std::string m_last_message = "";
 	std::vector<std::unique_ptr<Message>> m_messages;
 	SDL_Helper * m_helper;
-	SDL_Point m_dim;
+	SDL_Rect m_dim;
 };

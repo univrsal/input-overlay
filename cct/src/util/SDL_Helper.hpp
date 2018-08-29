@@ -34,7 +34,7 @@ extern "C" {
 #define CURSOR_I_BEAM   4
 #define CURSOR_SPECIAL  5 /* The element will handle the cursor */
 
-#define LINE_SPACE      2
+#define LINE_SPACE      4
 
 class Palette;
 

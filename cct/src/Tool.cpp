@@ -220,6 +220,7 @@ void Tool::handle_input()
 {
     while (SDL_PollEvent(&m_event) != 0)
     {
+        m_helper->handle_events(&m_event);
         if (m_event.type == SDL_QUIT)
         {
             m_run_flag = false;
@@ -241,8 +242,13 @@ void Tool::handle_input()
             if (m_event.cdevice.which >= 0 && m_helper->handle_controller_disconnect(m_event.cdevice.which))
                 m_notify->add_msg(MESSAGE_INFO, m_helper->loc(LANG_MSG_GAMEPAD_DISCONNECTED));
         }
-
-        m_helper->handle_events(&m_event);
+        else if (m_event.type == SDL_WINDOWEVENT)
+        {
+            if (m_event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED)
+            {
+                m_notify->resize();
+            }
+        }
 
         switch (m_state)
         {

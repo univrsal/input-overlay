@@ -7,6 +7,7 @@
 
 #include "Element.hpp"
 #include "ElementTexture.hpp"
+#include "ElementButton.hpp"
 #include "../dialog/DialogNewElement.hpp"
 #include "../dialog/DialogElementSettings.hpp"
 #include "../util/SDL_Helper.hpp"
@@ -23,7 +24,7 @@ Element * Element::read_from_file(ccl_config * file, std::string id, ElementType
 	case TEXTURE:
 		return ElementTexture::read_from_file(file, id, default_dim);
 	case BUTTON:
-
+        //return ElementButton::read_from_file(file, id, default_dim);
 		break;
 	case MOUSE_SCROLLWHEEL:
 		break;

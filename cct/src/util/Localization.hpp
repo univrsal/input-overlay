@@ -43,7 +43,7 @@ public:
     bool is_roman(void); /* True if selected language uses roman alphabet */
 
     /* Return required font for current language */
-    uint8_t get_font(void) { return is_roman() ? FONT_ROBOTO_SMALL : FONT_WSTRING; }
+    inline uint8_t get_font(void) { return is_roman() ? FONT_ROBOTO_SMALL : FONT_WSTRING; }
 private:
     void scan_lang_folder(void);
     void load_default_language(void);

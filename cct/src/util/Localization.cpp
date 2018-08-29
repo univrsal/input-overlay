@@ -192,7 +192,6 @@ void Localization::load_default_language(void)
         }
     }
 
-
     if (!flag)
     {
         printf("Loading of English translation failed!\n");
