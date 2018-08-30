@@ -96,15 +96,20 @@
 #define LANG_LABEL_HEIGHT               "label_height"
 #define LANG_LABEL_X                    "label_x"
 #define LANG_LABEL_Y                    "label_y"
+#define LANG_LABEL_Z_LEVEL              "label_z_level"
 #define LANG_LABEL_U                    "label_u"
 #define LANG_LABEL_V                    "label_v"
+#define LANG_LEFT                       "left"
+#define LANG_RIGHT                      "right"
 
 /* New Element Dialog */
 #define LANG_LABEL_TEXTURE_SELECTION    "label_texture_selection"
 #define LANG_LABEL_KEY_CODE             "label_keycode"
 #define LANG_LABEL_ELEMENT_ID           "label_element_id"
 #define LANG_CHECKBOX_RECORD_KEYBIND    "checkbox_record_keybind"
-#define LANG_LABEL_Z_LEVEL              "label_z_level"
+#define LANG_LABEL_STICK_SIDE           "label_stick_side"
+#define LANG_LABEL_STICK_RADIUS         "label_stick_radius"
+
 
 /* Selected element settings */
 #define LANG_BUTTON_ADD_ELEMENT         "button_add_element"

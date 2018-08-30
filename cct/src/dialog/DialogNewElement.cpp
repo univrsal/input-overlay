@@ -39,10 +39,15 @@ void DialogNewElement::init()
     add_element_id();
     add_z_level();
 
+    if (m_type == ANALOG_STICK)
+        add_analog_stick();
+    else if (m_type == BUTTON)
+        add_keycode_elements();
+
     switch (m_type)
     {
+    case ANALOG_STICK:
     case BUTTON:
-        add_keycode_elements();
     case TEXTURE:
         add(m_selector = new AtlasSelector(m_id++, get_left() + 270,
             get_top() + 30, m_dimensions.w - 278, m_dimensions.h - 38, m_tool->get_atlas(), this));
@@ -162,6 +167,28 @@ uint8_t DialogNewElement::get_z_level(void)
     return atoi(m_z_level->get_text()->c_str());
 }
 
+AnalogStick DialogNewElement::get_stick(void)
+{
+    if (m_stick_side)
+    {
+        switch (m_stick_side->get_selected())
+        {
+        case STICK_RIGHT:
+            return STICK_RIGHT;
+        default:
+            return STICK_LEFT;
+        }
+    }
+    return STICK_LEFT;
+}
+
+uint8_t DialogNewElement::get_radius(void)
+{
+    if (m_radius)
+        return atoi(m_radius->c_str());
+    return 0;
+}
+
 const std::string * DialogNewElement::get_id(void)
 {
     return m_element_id->get_text();
@@ -178,7 +205,6 @@ void DialogNewElement::set_default_dim(int w, int h)
 
 void DialogNewElement::add_selection_elements(void)
 {
-    uint16_t panel_w = 254;
 
     m_selection = { 0, 0, 0, 0 };
 
@@ -209,7 +235,6 @@ void DialogNewElement::add_selection_elements(void)
 
 void DialogNewElement::add_keycode_elements(void)
 {
-    uint16_t panel_w = 254;
 
     if (m_element_y == 0)
         m_element_y = 30;
@@ -225,8 +250,6 @@ void DialogNewElement::add_keycode_elements(void)
 
 void DialogNewElement::add_element_id(void)
 {
-    uint16_t panel_w = 254;
-
     if (m_element_y == 0)
         m_element_y = 30;
     add(new Label(m_id++, 9, m_element_y, LANG_LABEL_ELEMENT_ID, this));
@@ -238,13 +261,28 @@ void DialogNewElement::add_element_id(void)
 
 void DialogNewElement::add_z_level(void)
 {
-    uint16_t panel_w = 254;
-
     if (m_element_y == 0)
         m_element_y = 30;
     add(new Label(m_id++, 9, m_element_y, LANG_LABEL_Z_LEVEL, this));
     m_element_y += 25;
     add(m_z_level = new Textbox(m_id++, 8, m_element_y, panel_w, 20, "0", this));
+    m_z_level->set_flags(TEXTBOX_NUMERIC);
+    m_element_y += 40;
+}
+
+void DialogNewElement::add_analog_stick(void)
+{
+    if (m_element_y == 0)
+        m_element_y = 30;
+    add(new Label(m_id++, 9, m_element_y, LANG_LABEL_STICK_SIDE, this));
+    m_element_y += 25;
+    add(m_stick_side = new Combobox(m_id++, 8, m_element_y, panel_w, 20, this));
+    m_stick_side->add_item(m_helper->loc(LANG_LEFT));
+    m_stick_side->add_item(m_helper->loc(LANG_RIGHT));
+    m_element_y += 25;
+    add(new Label(m_id++, 9, m_element_y, LANG_LABEL_STICK_RADIUS, this));
+    m_element_y += 25;
+    add(m_radius = new Textbox(m_id++, 8, m_element_y, panel_w, 20, "0", this));
     m_z_level->set_flags(TEXTBOX_NUMERIC);
     m_element_y += 40;
 }

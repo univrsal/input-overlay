@@ -65,6 +65,6 @@ void ElementTexture::update_settings(DialogElementSettings * dialog)
 
 ElementTexture * ElementTexture::read_from_file(ccl_config * file, std::string id, SDL_Point * default_dim)
 {
-    return new ElementTexture(id, Element::element_read_position(file, id),
-        Element::element_read_mapping(file, id, default_dim), Element::element_read_layer(file, id));
+    return new ElementTexture(id, Element::read_position(file, id),
+        Element::read_mapping(file, id, default_dim), Element::read_layer(file, id));
 }

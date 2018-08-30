@@ -16,6 +16,7 @@
 #include "dialog/DialogNewElement.hpp"
 #include "dialog/DialogElementType.hpp"
 #include "element/ElementTexture.hpp"
+#include "element/ElementAnalogStick.hpp"
 
 Tool::Tool(SDL_Helper * helper)
 {
@@ -151,6 +152,8 @@ void Tool::action_performed(uint8_t type)
         case MOUSE_MOVEMENT:
             break;
         case ANALOG_STICK:
+            e = new ElementAnalogStick(*d->get_id(), SDL_Point{ 0, 0 },
+                d->get_selection(), d->get_stick(), d->get_radius(), d->get_z_level());
             break;
         }
 

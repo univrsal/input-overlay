@@ -8,6 +8,7 @@
 #include "Element.hpp"
 #include "ElementTexture.hpp"
 #include "ElementButton.hpp"
+#include "ElementButton.hpp"
 #include "../dialog/DialogNewElement.hpp"
 #include "../dialog/DialogElementSettings.hpp"
 #include "../util/SDL_Helper.hpp"
@@ -25,8 +26,8 @@ Element * Element::read_from_file(ccl_config * file, std::string id, ElementType
 		return ElementTexture::read_from_file(file, id, default_dim);
 	case BUTTON:
         return ElementButton::read_from_file(file, id, default_dim);
-		break;
 	case MOUSE_SCROLLWHEEL:
+        return ElementButton::read_from_file(file, id, default_dim);
 		break;
 	case MOUSE_MOVEMENT:
 		break;
@@ -146,7 +147,7 @@ void Element::set_pos(int x, int y)
     m_scale = 0; /* Forces a rescale at next draw */
 }
 
-SDL_Rect Element::element_read_mapping(ccl_config * file, std::string id, SDL_Point * default_dim)
+SDL_Rect Element::read_mapping(ccl_config * file, std::string id, SDL_Point * default_dim)
 {
 	SDL_Rect result;
 	result.x = file->get_int(id + CFG_U);
@@ -160,12 +161,12 @@ SDL_Rect Element::element_read_mapping(ccl_config * file, std::string id, SDL_Po
 	return result;
 }
 
-SDL_Point Element::element_read_position(ccl_config * file, std::string id)
+SDL_Point Element::read_position(ccl_config * file, std::string id)
 {
 	return { file->get_int(id + CFG_X_POS), file->get_int(id + CFG_Y_POS) };
 }
 
-uint8_t Element::element_read_layer(ccl_config * file, std::string id)
+uint8_t Element::read_layer(ccl_config * file, std::string id)
 {
 	return file->get_int(id + CFG_Z_LEVEL);
 }

@@ -13,6 +13,7 @@
 #include "elements/Textbox.hpp"
 #include "elements/AtlasSelector.hpp"
 #include "elements/Checkbox.hpp"
+#include "elements/Combobox.hpp"
 #include "../Config.hpp"
 #include "../Tool.hpp"
 #include "../util/SDL_Helper.hpp"
@@ -62,6 +63,10 @@ public:
 
     uint8_t get_z_level(void);
 
+    AnalogStick get_stick(void);
+
+    uint8_t get_radius(void);
+
     const std::string * get_id(void);
 
     void set_default_dim(int w, int h);
@@ -78,13 +83,20 @@ private:
     /* Adds layering elements */
     void add_z_level(void);
 
-    /* Y position of the lowest gui element */
-    uint16_t m_element_y = 0;
+    /* Adds analog stick elements */
+    void add_analog_stick(void);
+
+   
+    uint16_t m_element_y = 0;  /* Y position of the lowest gui element */
+    static const uint16_t panel_w = 254;
     uint16_t m_id = 1;
 
     AtlasSelector * m_selector = nullptr;
     Tool * m_tool = nullptr;
     ElementType m_type;
+
+    Textbox * m_radius = nullptr;
+    Combobox * m_stick_side = nullptr;
 
     Textbox * m_w = nullptr;
     Textbox * m_h = nullptr;

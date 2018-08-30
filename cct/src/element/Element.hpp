@@ -81,10 +81,10 @@ public:
 protected:
     Element(ElementType t, std::string id, SDL_Point pos, uint8_t z);
 
-    static SDL_Rect element_read_mapping(ccl_config * file, std::string id, SDL_Point * default_dim);
-    static SDL_Point element_read_position(ccl_config * file, std::string id);
-    static uint8_t element_read_layer(ccl_config * file, std::string id);
-
+    static SDL_Rect read_mapping(ccl_config * file, std::string id, SDL_Point * default_dim);
+    static SDL_Point read_position(ccl_config * file, std::string id);
+    static uint8_t read_layer(ccl_config * file, std::string id);
+ 
     ElementType m_type;
     SDL_Point m_position; /* Final position in overlay */
     SDL_Rect m_mapping; /* Texture mappings */
