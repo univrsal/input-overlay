@@ -481,7 +481,7 @@ bool mode_changed(obs_properties_t * props, obs_property_t * p, obs_data_t * s)
 
 obs_properties_t * get_properties_for_history(void * data)
 {
-    InputHistorySource *s = reinterpret_cast<InputHistorySource*>(data);
+    auto *s = reinterpret_cast<InputHistorySource*>(data);
 
     obs_properties_t * props = obs_properties_create();
 
@@ -490,7 +490,7 @@ obs_properties_t * get_properties_for_history(void * data)
     obs_property_list_add_int(mode_list, T_OVERLAY_MODE_TEXT, 0);
     obs_property_list_add_int(mode_list, T_OVERLAY_MODE_ICON, 1);
     obs_property_set_modified_callback(mode_list, mode_changed);
-
+    blog(LOG_INFO, "ADDED HISTORY MODE LIST");
     // Key name file
     std::string filter_img = util_file_filter(T_FILTER_IMAGE_FILES, "*.jpg *.png *.bmp");
     std::string filter_text = util_file_filter(T_FILTER_TEXT_FILES, "*.ini");

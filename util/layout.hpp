@@ -16,19 +16,19 @@
  */
 
 struct InputKey {
-    uint16_t m_key_code;
+    uint16_t m_key_code = 0x0;
     bool m_pressed = false;
-    uint16_t texture_u, texture_v;
-    uint16_t w, h;
+    uint16_t texture_u = 0x0, texture_v = 0x0;
+    uint16_t w = 0x0, h = 0x0;
 
-    uint16_t x_offset; // used to center buttons that span over multiple columns
-    uint16_t row, column; // On screen location (in pixels for mouse/controller layouts)
+    uint16_t x_offset = 0x0; // used to center buttons that span over multiple columns
+    uint16_t row = 0x0, column = 0x0; // On screen location (in pixels for mouse/controller layouts)
 };
 
 struct OverlayLayout {
     LayoutType m_type;
     uint8_t m_key_count;
-    uint16_t m_key_space_v, m_key_space_h;
+    int16_t m_key_space_v, m_key_space_h;
     uint16_t m_btn_w, m_btn_h;
     uint16_t m_w, m_h;
     uint16_t m_rows, m_cols;

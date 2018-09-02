@@ -384,6 +384,7 @@ void InputSource::load_layout()
         }
         else if (m_layout.m_type == TYPE_CONTROLLER)
         {
+	   
             m_layout.m_w = (uint16_t) cfg->get_int("pad_w");
             m_layout.m_h = (uint16_t) cfg->get_int("pad_h");
             m_layout.m_track_radius = (uint16_t) cfg->get_int("pad_analog_radius");
@@ -510,9 +511,9 @@ void InputSource::load_layout()
             keys[PAD_DPAD_RIGHT].column = (uint16_t) cfg->get_int("pad_dpad_right_x");
             keys[PAD_DPAD_RIGHT].row = (uint16_t) cfg->get_int("pad_dpad_right_y");
 
-            for (int i = 0; i < PAD_ICON_COUNT; i++)
+            for (auto & key : keys)
             {
-                m_layout.m_keys.emplace_back(keys[i]);
+                m_layout.m_keys.emplace_back(key);
             }
         }
 
@@ -535,19 +536,22 @@ void InputSource::load_layout()
             m_layout.m_is_loaded = false;
         }
     }
-
-    blog(LOG_INFO, "------ input-overlay DEBUG");
-    for (int i = 0; i < m_layout.m_key_count; i++)
+    if (cfg->get_bool("debug"))
     {
-        blog(LOG_INFO, "KEY ID: %02d, CODE: %#04X, X: %05d, Y: %05d, U: %05d, V: %05d, W: %05d, H: %05d, X_OFF: %05d",
-            i, m_layout.m_keys[i].m_key_code,
-            m_layout.m_keys[i].column, m_layout.m_keys[i].row,
-            m_layout.m_keys[i].texture_u, m_layout.m_keys[i].texture_v,
-            m_layout.m_keys[i].w, m_layout.m_keys[i].h,
-            m_layout.m_keys[i].x_offset);
+	    blog(LOG_INFO, "------ input-overlay DEBUG");
+	    cfg->dump_structure();
+	    for (int i = 0; i < m_layout.m_key_count; i++)
+	    {
+		    blog(LOG_INFO, "KEY ID: %02d, CODE: %#04X, X: %05d, Y: %05d, U: %05d, V: %05d, W: %05d, H: %05d, X_OFF: %05d",
+			    i, m_layout.m_keys[i].m_key_code,
+			    m_layout.m_keys[i].column, m_layout.m_keys[i].row,
+			    m_layout.m_keys[i].texture_u, m_layout.m_keys[i].texture_v,
+			    m_layout.m_keys[i].w, m_layout.m_keys[i].h,
+			    m_layout.m_keys[i].x_offset);
+	    }
+	    blog(LOG_INFO, "------");
     }
-    blog(LOG_INFO, "------");
-  
+
     delete cfg;
 }
 
