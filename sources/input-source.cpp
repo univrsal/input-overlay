@@ -262,8 +262,8 @@ void InputSource::load_layout()
             m_layout.m_cols = (uint16_t) cfg->get_int("key_cols");
             m_layout.m_btn_w = (uint16_t) cfg->get_int("key_abs_w");
             m_layout.m_btn_h = (uint16_t) cfg->get_int("key_abs_h");
-            m_layout.m_key_space_v = (uint16_t) cfg->get_int("key_space_v");
-            m_layout.m_key_space_h = (uint16_t) cfg->get_int("key_space_h");
+            m_layout.m_key_space_v = (int16_t) cfg->get_int("key_space_v");
+            m_layout.m_key_space_h = (int16_t) cfg->get_int("key_space_h");
             m_layout.texture_v_space = (uint16_t)cfg->get_int("texture_v_space");
             
             key_order = cfg->get_string("key_order");
@@ -298,10 +298,10 @@ void InputSource::load_layout()
                 k.row = util_read_int(key_row);
                 k.column = util_read_int(key_col);
 
-                if (tempw > 1)
+                if (tempw > 1 && m_layout.m_key_space_h > 0)
                 {
                     k.x_offset = (uint16_t)
-                            ((m_layout.m_btn_w * tempw + m_layout.m_key_space_h * (tempw - 1)) / 2 - k.w / 2);
+                            ((k.w + m_layout.m_key_space_h * (tempw - 1)) / 2 - k.w / 2);
                     index += tempw;
                 }
                 else
