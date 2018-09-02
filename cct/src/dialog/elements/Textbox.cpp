@@ -32,6 +32,27 @@ void Textbox::close(void)
 void Textbox::draw_foreground(void)
 {
     GuiElement::draw_foreground();
+}
+
+void Textbox::draw_background(void)
+{
+    get_helper()->util_fill_rect(get_dimensions(), get_helper()->palette()->gray());
+    if (m_focused)
+    {
+        get_helper()->util_draw_rect(get_dimensions(), get_helper()->palette()->light_gray());
+    }
+    else
+    {
+        if (m_alert)
+        {
+            get_helper()->util_draw_rect(get_dimensions(), get_helper()->palette()->red());
+        }
+        else
+        {
+            get_helper()->util_draw_rect(get_dimensions(), get_helper()->palette()->dark_gray());
+        }
+    }
+
     int cursor_pos = get_left() + 2;
 
     if (!m_cut_text.empty())
@@ -53,26 +74,6 @@ void Textbox::draw_foreground(void)
     {
         SDL_Rect temp = { cursor_pos, get_top() + 2, 2, get_dimensions()->h - 4 };
         get_helper()->util_fill_rect(&temp, get_helper()->palette()->white());
-    }
-}
-
-void Textbox::draw_background(void)
-{
-    get_helper()->util_fill_rect(get_dimensions(), get_helper()->palette()->gray());
-    if (m_focused)
-    {
-        get_helper()->util_draw_rect(get_dimensions(), get_helper()->palette()->light_gray());
-    }
-    else
-    {
-        if (m_alert)
-        {
-            get_helper()->util_draw_rect(get_dimensions(), get_helper()->palette()->red());
-        }
-        else
-        {
-            get_helper()->util_draw_rect(get_dimensions(), get_helper()->palette()->dark_gray());
-        }
     }
 }
 

@@ -32,18 +32,6 @@ void Combobox::draw_background(void)
     if (m_focused)
     {
         get_helper()->util_draw_rect(get_dimensions(), get_helper()->palette()->light_gray());
-
-        if (m_list_open)
-        {
-            SDL_Rect temp = { get_left(), get_bottom() - 1, get_width(),
-                ((int)m_items.size()) * m_item_v_space + ITEM_V_SPACE };
-            get_helper()->util_fill_rect(&temp, get_helper()->palette()->gray());
-            get_helper()->util_draw_rect(&temp, get_helper()->palette()->light_gray());
-
-            temp.y = get_bottom() + ITEM_V_SPACE + m_hovered_id * m_item_v_space;
-            temp.h = get_helper()->util_font_height(FONT_WSTRING);
-            get_helper()->util_fill_rect(&temp, get_helper()->palette()->light_gray());
-        }
     }
     else
     {
@@ -62,6 +50,15 @@ void Combobox::draw_foreground(void)
     if (m_list_open)
     {
         uint16_t y = get_bottom() + ITEM_V_SPACE;
+        SDL_Rect temp = { get_left(), get_bottom() - 1, get_width(),
+            ((int)m_items.size()) * m_item_v_space + ITEM_V_SPACE };
+
+        get_helper()->util_fill_rect(&temp, get_helper()->palette()->gray());
+        get_helper()->util_draw_rect(&temp, get_helper()->palette()->light_gray());
+
+        temp.y = get_bottom() + ITEM_V_SPACE + m_hovered_id * m_item_v_space;
+        temp.h = get_helper()->util_font_height(FONT_WSTRING);
+        get_helper()->util_fill_rect(&temp, get_helper()->palette()->light_gray());
 
         for (auto const& element : m_items)
         {
@@ -90,13 +87,13 @@ bool Combobox::handle_events(SDL_Event * event, bool was_handled)
         /* Handle focus */
         if (event->button.button == SDL_BUTTON_LEFT)
         {
+            m_focused = is_mouse_over(event->button.x, event->button.y);
             if (is_mouse_over_list(event->button.x, event->button.y))
             {
                 select_item(m_hovered_id);
                 handled = true;
             }
                 
-            m_focused = is_mouse_over(event->button.x, event->button.y);
             if (m_focused)
             {
                 handled = true;
@@ -123,7 +120,7 @@ bool Combobox::handle_events(SDL_Event * event, bool was_handled)
 
             // Move mouse to item position (Little gimmick, but I like the feature)
             mouse_pos.y = get_bottom() + m_hovered_id * m_item_v_space + ITEM_V_SPACE * 1.5;
-            SDL_WarpMouseInWindow(NULL, mouse_pos.x, mouse_pos.y);
+            SDL_WarpMouseInWindow(nullptr, mouse_pos.x, mouse_pos.y);
         }
     }
     else if (m_list_open && event->type == SDL_MOUSEMOTION)
@@ -154,6 +151,7 @@ bool Combobox::handle_events(SDL_Event * event, bool was_handled)
                 cycle_down(!m_list_open);
         }
     }
+
     return handled;
 }
 

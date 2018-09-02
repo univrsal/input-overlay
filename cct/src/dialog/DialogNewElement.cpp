@@ -74,10 +74,13 @@ void DialogNewElement::action_performed(int8_t action_id)
         m_tool->queue_dialog_close();
         break;
     default:
-        if (m_read_keybind->get_state())
-            m_keycode->set_flags(TEXTBOX_HEX | TEXTBOX_KEYBIND);
-        else
-            m_keycode->set_flags(TEXTBOX_HEX);
+        if (m_read_keybind)
+        {
+            if (m_read_keybind->get_state())
+                m_keycode->set_flags(TEXTBOX_HEX | TEXTBOX_KEYBIND);
+            else
+                m_keycode->set_flags(TEXTBOX_HEX);
+        }
     }
 }
 
@@ -198,9 +201,12 @@ void DialogNewElement::set_default_dim(int w, int h)
 {
     m_selection.w = w;
     m_selection.h = h;
-
     m_selection.x = 1;
     m_selection.y = 1;
+    m_w->set_text(std::to_string(w));
+    m_h->set_text(std::to_string(h));
+    m_u->set_text(std::to_string(1));
+    m_v->set_text(std::to_string(1));
 }
 
 void DialogNewElement::add_selection_elements(void)
@@ -235,7 +241,6 @@ void DialogNewElement::add_selection_elements(void)
 
 void DialogNewElement::add_keycode_elements(void)
 {
-
     if (m_element_y == 0)
         m_element_y = 30;
     add(new Label(m_id++, 8, m_element_y, LANG_LABEL_KEY_CODE, this));

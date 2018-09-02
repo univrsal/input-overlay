@@ -21,8 +21,6 @@ void DialogElementType::init()
     Dialog::init();
     add(new Label(1, 8, 32, LANG_LABEL_SELECT_ELEMENT_TYPE, this));
     
-    add(new Button(ACTION_OK, 8, m_dimensions.h - 32, LANG_BUTTON_OK, this));
-    add(new Button(ACTION_CANCEL, 124, m_dimensions.h - 32, LANG_BUTTON_CANCEL, this));
     add(m_type = new Combobox(2, 8, 52, m_dimensions.w - 16, 20, this));
     
     /* Populate combobox with element types */
@@ -34,6 +32,9 @@ void DialogElementType::init()
     m_type->add_item(LANG_ELEMENT_TRIGGER);
     m_type->add_item(LANG_ELEMENT_TEXT);
     m_type->add_item(LANG_ELEMENT_DPAD_STICK);
+
+    add(new Button(ACTION_OK, 8, m_dimensions.h - 32, LANG_BUTTON_OK, this));
+    add(new Button(ACTION_CANCEL, 124, m_dimensions.h - 32, LANG_BUTTON_CANCEL, this));
 
     set_flags(DIALOG_CENTERED | DIALOG_TOP_MOST);
 }

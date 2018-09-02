@@ -103,7 +103,7 @@ bool Button::handle_events(SDL_Event *event, bool was_handled)
         }
         else if (event->type == SDL_MOUSEBUTTONUP && event->button.button == SDL_BUTTON_LEFT)
         {
-            if (m_hovered)
+            if (m_hovered && m_pressed)
             {
                 get_parent()->action_performed(m_element_id);
                 handled = true;
