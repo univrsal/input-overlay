@@ -258,12 +258,12 @@ void InputSource::load_layout()
         m_layout.m_key_count = (uint8_t) cfg->get_int("key_count");
 
         if (m_layout.m_type == TYPE_KEYBOARD) {
-            m_layout.m_rows = (uint8_t) cfg->get_int("key_rows");
-            m_layout.m_cols = (uint8_t) cfg->get_int("key_cols");
-            m_layout.m_btn_w = (uint8_t) cfg->get_int("key_abs_w");
-            m_layout.m_btn_h = (uint8_t) cfg->get_int("key_abs_h");
-            m_layout.m_key_space_v = (uint8_t) cfg->get_int("key_space_v");
-            m_layout.m_key_space_h = (uint8_t) cfg->get_int("key_space_h");
+            m_layout.m_rows = (uint16_t) cfg->get_int("key_rows");
+            m_layout.m_cols = (uint16_t) cfg->get_int("key_cols");
+            m_layout.m_btn_w = (uint16_t) cfg->get_int("key_abs_w");
+            m_layout.m_btn_h = (uint16_t) cfg->get_int("key_abs_h");
+            m_layout.m_key_space_v = (uint16_t) cfg->get_int("key_space_v");
+            m_layout.m_key_space_h = (uint16_t) cfg->get_int("key_space_h");
             m_layout.texture_v_space = (uint16_t)cfg->get_int("texture_v_space");
             
             key_order = cfg->get_string("key_order");

@@ -28,10 +28,10 @@ struct InputKey {
 struct OverlayLayout {
     LayoutType m_type;
     uint8_t m_key_count;
-    int8_t m_key_space_v, m_key_space_h;
-    uint8_t m_btn_w, m_btn_h;
+    uint16_t m_key_space_v, m_key_space_h;
+    uint16_t m_btn_w, m_btn_h;
     uint16_t m_w, m_h;
-    uint8_t m_rows, m_cols;
+    uint16_t m_rows, m_cols;
     uint16_t texture_v_space;
     bool m_is_loaded = false;
     bool m_mouse_movement = false;
