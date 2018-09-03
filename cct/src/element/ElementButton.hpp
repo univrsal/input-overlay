@@ -25,8 +25,8 @@ public:
 
     void handle_event(SDL_Event * event, SDL_Helper * helper) override;
 
-    int get_vc() override { return 0; }
-
+    int get_vc() override { return m_keycode; }
+  
     static ElementButton * read_from_file(ccl_config * file, std::string id, SDL_Point * default_dim);
 private:
     uint16_t m_keycode = 0;

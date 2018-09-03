@@ -16,16 +16,37 @@ ElementAnalogStick::ElementAnalogStick(std::string id, SDL_Point pos, SDL_Rect m
 
 SDL_Rect * ElementAnalogStick::get_abs_dim(CoordinateSystem * cs)
 {
-    Element::get_abs_dim(cs);
+    m_static_scaled = *Element::get_abs_dim(cs);
 
-    m_dimensions_scaled.x += m_x_axis * m_radius;
-    m_dimensions_scaled.y += m_y_axis * m_radius;
+    m_dimensions_scaled.x += m_x_axis * m_radius * cs->get_scale();
+    m_dimensions_scaled.y += m_y_axis * m_radius * cs->get_scale();
     return &m_dimensions_scaled;
 }
 
 void ElementAnalogStick::draw(Texture * atlas, CoordinateSystem * cs, bool selected, bool alpha)
 {
-        ElementTexture::draw(atlas, cs, selected, alpha);
+    get_abs_dim(cs);
+    if (m_pressed)
+    {
+        SDL_Rect temp = m_mapping;
+        temp.y += temp.h + CFG_INNER_BORDER;
+        atlas->draw(cs->get_helper()->renderer(), &m_dimensions_scaled, &temp, alpha ? 60 : 255);
+    }
+    else
+    {
+        atlas->draw(cs->get_helper()->renderer(), &m_dimensions_scaled, &m_mapping, alpha ? 60 : 255);
+    }
+
+    if (selected)
+    {
+        cs->get_helper()->util_draw_rect(&m_static_scaled, cs->get_helper()->palette()->red());
+    }
+
+    if (m_movement_reset.started() && m_movement_reset.get_time() >= STICK_RESET)
+    {
+        m_movement_reset.stop();
+        m_x_axis = 0.f, m_y_axis = 0.f;
+    }
 }
 
 void ElementAnalogStick::write_to_file(ccl_config * cfg, SDL_Point * default_dim)
@@ -38,6 +59,8 @@ void ElementAnalogStick::write_to_file(ccl_config * cfg, SDL_Point * default_dim
 void ElementAnalogStick::update_settings(DialogNewElement * dialog)
 {
         ElementTexture::update_settings(dialog);
+        m_radius = dialog->get_radius();
+        m_stick = dialog->get_stick();
 }
 
 void ElementAnalogStick::update_settings(DialogElementSettings * dialog)
@@ -47,27 +70,54 @@ void ElementAnalogStick::update_settings(DialogElementSettings * dialog)
 
 void ElementAnalogStick::handle_event(SDL_Event * event, SDL_Helper * helper)
 {
-    if (event->type == SDL_JOYAXISMOTION && SDL_abs(event->caxis.value) >= STICK_DEAD_ZONE)
+    if (event->type == SDL_CONTROLLERAXISMOTION && SDL_abs(event->caxis.value) >= STICK_DEAD_ZONE)
     {
         if (m_stick == STICK_LEFT)
         {
-            if (event->caxis.type == SDL_CONTROLLER_AXIS_LEFTY)
+            if (event->caxis.axis == SDL_CONTROLLER_AXIS_LEFTX)
+            {
                 m_x_axis = ((float)event->caxis.value) / STICK_MAX_AMPLITUDE;
-            else if (event->caxis.type == SDL_CONTROLLER_AXIS_LEFTY)
+                m_movement_reset.start();
+            }
+            else if (event->caxis.axis == SDL_CONTROLLER_AXIS_LEFTY)
+            {
                 m_y_axis = ((float)event->caxis.value) / STICK_MAX_AMPLITUDE;
+                m_movement_reset.start();
+            }
         }
-        else if (m_stick == STICK_RIGHT)
+        else
         {
-            if (event->caxis.type == SDL_CONTROLLER_AXIS_RIGHTY)
+            if (event->caxis.axis == SDL_CONTROLLER_AXIS_RIGHTX)
+            {
                 m_x_axis = ((float)event->caxis.value) / STICK_MAX_AMPLITUDE;
-            else if (event->caxis.type == SDL_CONTROLLER_AXIS_RIGHTY)
+                m_movement_reset.start();
+            }
+            else if (event->caxis.axis == SDL_CONTROLLER_AXIS_RIGHTY)
+            {
                 m_y_axis = ((float)event->caxis.value) / STICK_MAX_AMPLITUDE;
+                m_movement_reset.start();
+            }
+        }
+        
+#if _DEBUG
+        printf("STICK: %i, SDL_EVENT: axis: %i, value: %i\n", m_stick, event->caxis.axis, event->caxis.value);
+        printf("X_AXIS : %.2f, Y_AXIS: %.2f\n", m_x_axis, m_y_axis);
+#endif
+    }
+    else if (event->type == SDL_CONTROLLERBUTTONDOWN
+        || event->type == SDL_CONTROLLERBUTTONUP)
+    {
+        if (m_stick == STICK_LEFT)
+        {
+            if (event->cbutton.button == SDL_CONTROLLER_BUTTON_LEFTSTICK)
+                m_pressed = event->cbutton.state == SDL_PRESSED;
+        }
+        else
+        {
+            if (event->cbutton.button == SDL_CONTROLLER_BUTTON_RIGHTSTICK)
+                m_pressed = event->cbutton.state == SDL_PRESSED;
         }
     }
-
-#ifdef _DEBUG
-    printf("X_AXIS : %.2f, Y_AXIS: %.2f\n", m_x_axis, m_y_axis);
-#endif
 }
 
 ElementAnalogStick * ElementAnalogStick::read_from_file(ccl_config * file, std::string id, SDL_Point * default_dim)

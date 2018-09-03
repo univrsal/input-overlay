@@ -8,7 +8,7 @@
 #include "Element.hpp"
 #include "ElementTexture.hpp"
 #include "ElementButton.hpp"
-#include "ElementButton.hpp"
+#include "ElementAnalogStick.hpp"
 #include "../dialog/DialogNewElement.hpp"
 #include "../dialog/DialogElementSettings.hpp"
 #include "../util/SDL_Helper.hpp"
@@ -32,6 +32,7 @@ Element * Element::read_from_file(ccl_config * file, std::string id, ElementType
 	case MOUSE_MOVEMENT:
 		break;
 	case ANALOG_STICK:
+        return ElementAnalogStick::read_from_file(file, id, default_dim);
 		break;
 	case TRIGGER:
 		break;

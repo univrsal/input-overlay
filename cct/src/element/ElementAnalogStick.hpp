@@ -7,7 +7,9 @@
 
 #pragma once
 
+#define STICK_RESET 500
 #include "ElementTexture.hpp"
+#include "../util/Util.hpp"
 
 class ElementAnalogStick
     : public ElementTexture
@@ -29,11 +31,16 @@ public:
 
     AnalogStick get_stick(void) { return m_stick; }
 
+    uint8_t get_radius(void) { return m_radius; }
+
     static ElementAnalogStick * read_from_file(ccl_config * file, std::string id, SDL_Point * default_dim);
 private:
+    SDL_Rect m_static_scaled; /* Position without input movement for display */
     AnalogStick m_stick;
     bool m_pressed = false;
     float m_x_axis = 0;
     float m_y_axis = 0;
     uint8_t m_radius = 10;
+
+    Timer m_movement_reset;
 };

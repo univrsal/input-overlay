@@ -1,5 +1,6 @@
 #include "DialogNewElement.hpp"
 #include "../Config.hpp"
+#include "../element/ElementAnalogStick.hpp"
 
 void DialogNewElement::close(void)
 {
@@ -16,6 +17,8 @@ void DialogNewElement::load_from_element(Element * e)
         m_w->set_text(std::to_string(e->get_w()));
         m_h->set_text(std::to_string(e->get_h()));
 
+        m_z_level->set_text(std::to_string(e->get_z_level()));
+
         m_element_id->set_text(*e->get_id());
 
         if (m_keycode)
@@ -27,6 +30,18 @@ void DialogNewElement::load_from_element(Element * e)
         m_selection.h = e->get_h();
 
         m_modify_mode = true;
+
+        /* Specific handling */
+        ElementAnalogStick * stick = nullptr;
+
+        switch (e->get_type())
+        {
+        case ANALOG_STICK:
+            stick = reinterpret_cast<ElementAnalogStick*>(e);
+            m_stick_side->select_item(stick->get_stick());
+            m_radius->set_text(std::to_string(stick->get_radius()));
+            break;
+        }
     }
 }
 
@@ -282,8 +297,8 @@ void DialogNewElement::add_analog_stick(void)
     add(new Label(m_id++, 9, m_element_y, LANG_LABEL_STICK_SIDE, this));
     m_element_y += 25;
     add(m_stick_side = new Combobox(m_id++, 8, m_element_y, panel_w, 20, this));
-    m_stick_side->add_item(m_helper->loc(LANG_LEFT));
-    m_stick_side->add_item(m_helper->loc(LANG_RIGHT));
+    m_stick_side->add_item(LANG_LEFT);
+    m_stick_side->add_item(LANG_RIGHT);
     m_element_y += 25;
     add(new Label(m_id++, 9, m_element_y, LANG_LABEL_STICK_RADIUS, this));
     m_element_y += 25;
