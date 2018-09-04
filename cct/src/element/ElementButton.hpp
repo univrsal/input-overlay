@@ -13,7 +13,10 @@ class ElementButton
     : public ElementTexture
 {
 public:
+    ElementButton() : ElementTexture() { /* NO-OP */};
     ElementButton(std::string id, SDL_Point pos, SDL_Rect mapping, uint16_t vc, uint8_t z);
+
+    ElementError is_valid(Notifier * n, SDL_Helper * h) override;
 
     void draw(Texture * atlas, CoordinateSystem * cs, bool selected, bool alpha) override;
 

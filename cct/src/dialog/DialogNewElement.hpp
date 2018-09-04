@@ -71,6 +71,8 @@ public:
 
     void set_default_dim(int w, int h);
 private:
+    void handle_error(ElementError e);
+
     /* Adds default elements*/
     void add_selection_elements(void);
 

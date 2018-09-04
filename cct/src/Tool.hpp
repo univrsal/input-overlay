@@ -9,6 +9,7 @@
 
 #include <SDL.h>
 #include "../../io-obs/util/layout_constants.hpp"
+#include "element/Element.hpp"
 
 class Dialog;
 class Notifier;
@@ -66,6 +67,8 @@ public:
 
     void queue_dialog_open(DialogID id);
     void queue_dialog_close(void);
+
+    ElementError verify_element(DialogNewElement * d);
 private:
     void add_element(Element * e);
 

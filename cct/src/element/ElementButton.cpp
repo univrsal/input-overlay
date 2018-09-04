@@ -6,6 +6,7 @@
  */
 
 #include "ElementButton.hpp"
+#include "../util/Notifier.hpp"
 #include "../util/SDL_Helper.hpp"
 #include "../util/Texture.hpp"
 #include "../util/CoordinateSystem.hpp"
@@ -18,6 +19,17 @@ ElementButton::ElementButton(std::string id, SDL_Point pos, SDL_Rect mapping, ui
 {
     m_keycode = vc;
 }
+
+ ElementError ElementButton::is_valid(Notifier * n, SDL_Helper * h)
+ {
+     ElementError result = ElementTexture::is_valid(n, h);
+     if (result == ElementError::VALID && m_keycode == 0x0)
+     {
+         n->add_msg(MESSAGE_ERROR, h->loc(LANG_ERROR_KEYCODE_INVALID));
+         result = ElementError::KEYCODE_INVALID;
+     }
+     return result;
+ }
 
 void ElementButton::draw(Texture * atlas, CoordinateSystem * cs, bool selected, bool alpha)
 {

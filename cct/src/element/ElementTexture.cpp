@@ -10,6 +10,7 @@
 #include "../dialog/DialogElementSettings.hpp"
 #include "../util/CoordinateSystem.hpp"
 #include "../util/Texture.hpp"
+#include "../util/Notifier.hpp"
 #include "../../../ccl/ccl.hpp"
 
 ElementTexture::ElementTexture(std::string id, SDL_Point pos, SDL_Rect mapping, uint8_t z)
@@ -22,6 +23,17 @@ ElementTexture::ElementTexture(ElementType t, std::string id, SDL_Point pos, SDL
     : Element(t, id, pos, z)
 {
     m_mapping = mapping;
+}
+
+ElementError ElementTexture::is_valid(Notifier * n, SDL_Helper * h)
+{
+    ElementError result = Element::is_valid(n, h);
+    if (result == ElementError::VALID && SDL_RectEmpty(&m_mapping))
+    {
+        n->add_msg(MESSAGE_ERROR, h->loc(LANG_ERROR_SELECTION_EMTPY));
+        result = ElementError::MAPPING_EMPTY;
+    }
+    return result;
 }
 
 void ElementTexture::draw(Texture * atlas, CoordinateSystem * cs, bool selected, bool alpha)

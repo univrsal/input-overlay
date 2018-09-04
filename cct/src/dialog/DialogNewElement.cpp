@@ -77,13 +77,22 @@ void DialogNewElement::init()
 
 void DialogNewElement::action_performed(int8_t action_id)
 {
+    ElementError error;
     switch (action_id)
     {
     case ACTION_OK:
-        if (m_modify_mode)
-            m_tool->action_performed(TOOL_ACTION_MOD_ELEMENT_APPLY);
+        error = m_tool->verify_element(this);
+        if (error == ElementError::VALID)
+        {
+            if (m_modify_mode)
+                m_tool->action_performed(TOOL_ACTION_MOD_ELEMENT_APPLY);
+            else
+                m_tool->action_performed(TOOL_ACTION_NEW_ELEMENT_ADD);
+        }
         else
-            m_tool->action_performed(TOOL_ACTION_NEW_ELEMENT_ADD);
+        {
+            handle_error(error);
+        }
         break;
     case ACTION_CANCEL:
         m_tool->queue_dialog_close();
@@ -222,6 +231,29 @@ void DialogNewElement::set_default_dim(int w, int h)
     m_h->set_text(std::to_string(h));
     m_u->set_text(std::to_string(1));
     m_v->set_text(std::to_string(1));
+}
+
+void DialogNewElement::handle_error(ElementError e)
+{
+    switch (e)
+    {
+    case ID_EMPTY:
+    case ID_NOT_UNIQUE:
+        m_element_id->set_alert(true);
+        break;
+    case MAPPING_EMPTY:
+        m_u->set_alert(true);
+        m_v->set_alert(true);
+        m_w->set_alert(true);
+        m_h->set_alert(true);
+        break;
+    case KEYCODE_INVALID:
+        m_keycode->set_alert(true);
+        break;
+    case STICK_RADIUS:
+        m_radius->set_alert(true);
+        break;
+    }
 }
 
 void DialogNewElement::add_selection_elements(void)

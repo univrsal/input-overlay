@@ -15,6 +15,8 @@ class ElementAnalogStick
     : public ElementTexture
 {
 public:
+    ElementAnalogStick() : ElementTexture() { /* NO-OP */ };
+
     ElementAnalogStick(std::string id, SDL_Point pos, SDL_Rect mapping, AnalogStick side, uint8_t radius, uint8_t z);
 
     virtual SDL_Rect * get_abs_dim(CoordinateSystem * cs) override;

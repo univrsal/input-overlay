@@ -44,6 +44,42 @@ Element * Element::read_from_file(ccl_config * file, std::string id, ElementType
 	return nullptr;
 }
 
+ Element * Element::from_dialog(DialogNewElement * dialog)
+ {
+     Element * e;
+     switch (dialog->get_type())
+     {
+     case BUTTON:
+         e = new ElementButton();
+         break;
+     case TEXTURE:
+         e = new ElementTexture();
+         break;
+     case TRIGGER:
+         break;
+     case TEXT:
+         break;
+     case MOUSE_SCROLLWHEEL:
+         break;
+     case DPAD_STICK:
+         break;
+     case MOUSE_MOVEMENT:
+         break;
+     case ANALOG_STICK:
+         e = new ElementAnalogStick();
+         break;
+     default:
+         e = nullptr;
+     }
+
+     if (e)
+     {
+         e->m_type = dialog->get_type();
+         e->update_settings(dialog);
+     }
+     return e;
+ }
+
 bool Element::valid_type(int t)
 {
 	switch (t)
@@ -59,6 +95,14 @@ bool Element::valid_type(int t)
 			return true;
 	}
 	return false;
+}
+
+Element::Element()
+{
+    m_id = "";
+    m_type = INVALID;
+    m_position = { 0, 0 };
+    m_mapping = { 0, 0, 0, 0 };
 }
 
 Element::Element(ElementType t, std::string id, SDL_Point pos, uint8_t z)
@@ -111,26 +155,20 @@ void Element::update_settings(DialogElementSettings * dialog)
 	set_pos(dialog->get_x(), dialog->get_y());
 }
 
-bool Element::is_valid(Notifier * n, SDL_Helper * h)
+ElementError Element::is_valid(Notifier * n, SDL_Helper * h)
 {
-	bool result = true;
-
-	if (SDL_RectEmpty(&m_mapping))
-	{
-		n->add_msg(MESSAGE_ERROR, h->loc(LANG_ERROR_SELECTION_EMTPY));
-		result = false;
-	}
+    ElementError result = ElementError::VALID;
 
 	if (m_id.empty())
 	{
 		n->add_msg(MESSAGE_ERROR, h->loc(LANG_ERROR_ID_EMPTY));
-		result = false;
+		result = ElementError::ID_EMPTY;
 	}
 
 	if (m_type == ElementType::INVALID)
 	{
 		n->add_msg(MESSAGE_ERROR, h->loc(LANG_ERROR_TYPE_INVALID));
-		result = false;
+		result = ElementError::TYPE_INVALID;
 	}
 	return result;
 }

@@ -11,6 +11,18 @@
 #include <string>
 #include <SDL.h>
 
+enum ElementError
+{
+    VALID,
+    ID_NOT_UNIQUE,
+    ID_EMPTY,
+    TYPE_INVALID,
+    MAPPING_EMPTY,
+    KEYCODE_INVALID,
+    STICK_RADIUS
+};
+
+
 class SDL_Helper;
 
 class Notifier;
@@ -40,7 +52,7 @@ public:
 
     virtual void update_settings(DialogElementSettings * dialog);
 
-    virtual bool is_valid(Notifier * n, SDL_Helper * h);
+    virtual ElementError is_valid(Notifier * n, SDL_Helper * h);
 
     void set_mapping(SDL_Rect r);
 
@@ -74,11 +86,16 @@ public:
 
     virtual void handle_event(SDL_Event * event, SDL_Helper * helper) = 0;
 
+    /* Creates empty element and load settings from config */
     static Element * read_from_file(ccl_config * file, std::string id, ElementType t, SDL_Point * default_dim);
+
+    /* Creates empty element and loads settings from dialog */
+    static Element * from_dialog(DialogNewElement * dialog);
 
     static bool valid_type(int t);
 
 protected:
+    Element(); /* Used for creation over dialogs */
     Element(ElementType t, std::string id, SDL_Point pos, uint8_t z);
 
     static SDL_Rect read_mapping(ccl_config * file, std::string id, SDL_Point * default_dim);

@@ -13,7 +13,10 @@ class ElementTexture
     : public Element
 {
 public:
+    ElementTexture() : Element() { /* NO-OP */ };
     ElementTexture(std::string id, SDL_Point pos, SDL_Rect mapping, uint8_t z);
+
+    ElementError is_valid(Notifier * n, SDL_Helper * h) override;
 
     void draw(Texture * atlas, CoordinateSystem * cs, bool selected, bool alpha) override;
 

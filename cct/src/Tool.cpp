@@ -111,9 +111,7 @@ void Tool::action_performed(uint8_t type)
             s->get_config_path(), s->get_default_dim(), s->get_rulers(), m_helper, m_element_settings);
 
         if (s->should_load_cfg())
-        {
             m_config->read_config(m_notify);
-        }
         m_element_settings->init();
 
         m_queue_close = true;
@@ -131,31 +129,7 @@ void Tool::action_performed(uint8_t type)
         break;
     case TOOL_ACTION_NEW_ELEMENT_ADD:
         d = reinterpret_cast<DialogNewElement*>(m_toplevel);
-
-        switch (d->get_type())
-        {
-        case BUTTON:
-            
-            break;
-        case TEXTURE:
-            e = new ElementTexture(*d->get_id(), SDL_Point{ 0, 0 },
-                d->get_selection(), d->get_z_level());
-            break;
-        case TRIGGER:
-            break;
-        case TEXT:
-            break;
-        case MOUSE_SCROLLWHEEL:
-            break;
-        case DPAD_STICK:
-            break;
-        case MOUSE_MOVEMENT:
-            break;
-        case ANALOG_STICK:
-            e = new ElementAnalogStick(*d->get_id(), SDL_Point{ 0, 0 },
-                d->get_selection(), d->get_stick(), d->get_radius(), d->get_z_level());
-            break;
-        }
+        e = Element::from_dialog(d);
 
         if (e)
             add_element(e);
@@ -164,7 +138,6 @@ void Tool::action_performed(uint8_t type)
         break;
     case TOOL_ACTION_SAVE_CONFIG:
         m_config->write_config(m_notify);
-        break;
     }
 }
 
@@ -189,25 +162,28 @@ void Tool::queue_dialog_close(void)
     m_state = IN_BUILD;
 }
 
-void Tool::add_element(Element * e)
+ElementError Tool::verify_element(DialogNewElement * d)
 {
-    bool can_add = true;
     for (auto const &element : m_config->m_elements)
     {
-        if (element->get_id()->compare(e->get_id()->c_str()) == 0)
+        if (element->get_id()->compare(d->get_id()->c_str()) == 0)
         {
-            can_add = false;
             m_notify->add_msg(MESSAGE_ERROR, m_helper->loc(LANG_ERROR_ID_NOT_UNIQUE));
-            break;
+            return ElementError::ID_NOT_UNIQUE;
         }
     }
 
-    can_add = e->is_valid(m_notify, m_helper);
+    Element * e = Element::from_dialog(d);
+    ElementError error = e->is_valid(m_notify, m_helper);
+    delete e;
+    return error;
+}
 
-    if (can_add)
-    {
+void Tool::add_element(Element * e)
+{
+    /* Sanitizing is done in verify_element */
+    if (e)
         m_config->m_elements.emplace_back(e);
-    }
 }
 
 void Tool::close_toplevel(void)
