@@ -26,18 +26,16 @@ Tool::Tool(SDL_Helper * helper)
 
 Tool::~Tool()
 {
+    close_toplevel();
     m_helper = nullptr;
 
     if (m_config)
         delete m_config;
-    close_toplevel();
-    m_config = nullptr;
-
     if (m_notify)
-    {
         delete m_notify;
-        m_notify = nullptr;
-    }
+
+    m_notify = nullptr;
+    m_config = nullptr;
 }
 
 void Tool::program_loop()
