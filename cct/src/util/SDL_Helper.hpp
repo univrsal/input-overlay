@@ -129,6 +129,11 @@ public:
 
     bool handle_controller_disconnect(uint8_t id);
     bool handle_controller_connect(uint8_t id);
+
+    void start_frame(void);
+    void end_frame(void);
+    void cap_frame(void);
+    float util_get_fps(void);
 private:
     TTF_Font * get_font(uint8_t type)
     {
@@ -176,6 +181,12 @@ private:
     SDL_Cursor * m_arrow = nullptr;
 
     std::vector<SDL_GameController*> m_controllers;
+
+    /* Frame timing */
+    Timer m_frame_timer;
+    Timer m_frame_cap_timer;
+    float m_fps = 0.f;
+    uint32_t m_counted_frames = 0;
 };
 
 template<typename ...Args>

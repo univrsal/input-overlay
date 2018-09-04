@@ -45,40 +45,48 @@ void Tool::program_loop()
     m_toplevel = new DialogSetup(m_helper, m_notify, this);
     m_toplevel->init();
     m_helper->set_runflag(&m_run_flag);
+   
     while (m_run_flag)
     {
-        handle_input();
-        m_helper->clear();
-
-        // Drawing
-        switch (m_state)
+        m_helper->start_frame();
         {
-        case IN_SETUP:
-            m_toplevel->draw_background();
-            m_toplevel->draw_foreground();
-            break;
-        case IN_BUILD:
-            m_config->draw_elements();
-            m_element_settings->draw_background();
-            m_element_settings->draw_foreground();
-            break;
-        case IN_ELEMENT_TYPE:
-        case IN_NEW_ELEMENT:
-        case IN_HELP:
-            m_config->draw_elements();
-            m_element_settings->draw_background();
-            m_element_settings->draw_foreground();
+            handle_input();
+            m_helper->clear();
 
-            if (m_toplevel)
+            // Drawing
+            switch (m_state)
             {
+            case IN_SETUP:
                 m_toplevel->draw_background();
                 m_toplevel->draw_foreground();
-            }
-            break;
-        }
+                break;
+            case IN_BUILD:
+                m_config->draw_elements();
+                m_element_settings->draw_background();
+                m_element_settings->draw_foreground();
+                break;
+            case IN_ELEMENT_TYPE:
+            case IN_NEW_ELEMENT:
+            case IN_HELP:
+                m_config->draw_elements();
+                m_element_settings->draw_background();
+                m_element_settings->draw_foreground();
 
-        m_notify->draw(); /* Notifications have top priority */
-        m_helper->repaint();
+                if (m_toplevel)
+                {
+                    m_toplevel->draw_background();
+                    m_toplevel->draw_foreground();
+                }
+                break;
+            }
+
+            m_notify->draw(); /* Notifications have top priority */
+            m_helper->repaint();
+        }
+        SDL_SetWindowTitle(m_helper->window(),
+            m_helper->format("io-cct | %.2f fps", m_helper->util_get_fps()).c_str());
+        m_helper->end_frame();
+        m_helper->cap_frame();
     }
 }
 

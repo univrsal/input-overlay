@@ -22,6 +22,7 @@ public:
     void start(void)
     {
         m_start_ticks = SDL_GetTicks();
+        m_end_ticks = 0;
         m_started = true;
     }
 

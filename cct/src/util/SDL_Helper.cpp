@@ -118,6 +118,8 @@ bool SDL_Helper::init()
         }
     }
 
+    m_frame_timer.start();
+
     m_palette = new Palette();
     return m_init_success;
 }
@@ -471,6 +473,33 @@ bool SDL_Helper::handle_controller_connect(uint8_t id)
     return flag;
 }
 
+void SDL_Helper::start_frame(void)
+{
+    m_frame_cap_timer.start();
+}
+
+void SDL_Helper::end_frame(void)
+{
+    m_fps = m_counted_frames / (m_frame_timer.get_time() / 1000.f);
+    m_counted_frames++;
+    if(m_counted_frames + 1 >= UINT16_MAX)
+    {
+        m_counted_frames = 0;
+        m_frame_timer.start();
+    }
+}
+
+void SDL_Helper::cap_frame(void)
+{
+    if (m_frame_cap_timer.get_delta() < SDL_WINDOW_TPF)
+        SDL_Delay(SDL_WINDOW_TPF - m_frame_cap_timer.get_time());
+}
+
+float SDL_Helper::util_get_fps(void)
+{
+    return m_fps;
+}
+
 std::wstring SDL_Helper::util_utf8_to_wstring(const std::string& str)
 {
 #ifdef WINDOWS
@@ -478,8 +507,8 @@ std::wstring SDL_Helper::util_utf8_to_wstring(const std::string& str)
     return conv.from_bytes(str);
 #else
     /* Conversion taken from
-         * https://www.linuxquestions.org/questions/programming-9/wstring-utf8-conversion-in-pure-c-701084/
-         **/
+     * https://www.linuxquestions.org/questions/programming-9/wstring-utf8-conversion-in-pure-c-701084/
+     **/
     std::wstring dest = L"";
     wchar_t w = 0;
     int bytes = 0;
