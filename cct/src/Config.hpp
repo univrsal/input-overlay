@@ -47,7 +47,11 @@ public:
 
     SDL_Point get_default_dim(void);
 
-    void queue_delete(uint16_t id) { m_element_to_delete = id; }
+    void queue_delete(uint16_t id)
+    {
+        if (!m_elements.empty())
+            m_element_to_delete = id;
+    }
 
     std::vector<std::unique_ptr<Element>> m_elements;
 
@@ -63,7 +67,7 @@ private:
     inline bool is_rect_in_rect(const SDL_Rect * a, const SDL_Rect * b);
 
     int16_t m_element_to_delete = -1;
-    uint16_t m_selected_id = 0;
+    int16_t m_selected_id = -1;
     Element * m_selected = nullptr;
 
     CoordinateSystem m_cs;

@@ -208,9 +208,7 @@ void Tool::handle_input()
         else if (m_helper->is_ctrl_down() && m_event.type == SDL_KEYDOWN)
         {
             if (m_event.key.keysym.sym == SDLK_s) // CTRL + S
-            {
                 action_performed(TOOL_ACTION_SAVE_CONFIG);
-            }
         }
         else if (m_event.type == SDL_JOYDEVICEADDED)
         {
@@ -225,9 +223,7 @@ void Tool::handle_input()
         else if (m_event.type == SDL_WINDOWEVENT)
         {
             if (m_event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED)
-            {
                 m_notify->resize();
-            }
         }
 
         switch (m_state)

@@ -77,7 +77,7 @@ void DialogElementSettings::action_performed(int8_t action_id)
             m_tool->get_selected()->update_settings(this);
         break;
     case ACTION_DEL_ELEMENT:
-        if (m_tool->get_selected())
+        if (m_tool->get_selected() && m_tool->get_selected_id() >= 0)
         {
             m_tool->delete_element(m_tool->get_selected_id());
         }

@@ -26,6 +26,7 @@ if(MSVC)
 	find_path(SDL2IMAGE_INCLUDE_DIRS SDL_image.h)
 	find_library(SDL2IMAGE_LIBRARIES SDL2_image)
 else()
+	set(CMAKE_C_FLAGS_DEBUG "-D_DEBUG")
 	SET(GCC_FLAGS "-fpermissive")
 	INCLUDE(FindPkgConfig)
 

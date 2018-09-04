@@ -101,7 +101,13 @@ void Config::draw_elements(void)
         if (m_element_to_delete >= 0 && m_element_to_delete < m_elements.size())
         {
             m_elements.erase(m_elements.begin() + m_element_to_delete);
+            if (m_element_to_delete == m_selected_id)
+            {
+                m_selected = nullptr;
+                m_selected_id = -1;
+            }
             m_element_to_delete = -1;
+            
         }
     }
     m_cs.end_draw();
@@ -125,6 +131,7 @@ void Config::handle_events(SDL_Event * e)
             {
                 int i = 0;
                 int highest_layer = 0;
+                m_selected_id = -1;
 
                 for (auto const &elem : m_elements)
                 {
@@ -134,6 +141,7 @@ void Config::handle_events(SDL_Event * e)
                         {
                             highest_layer = elem->get_z_level();
                             m_selected = m_elements[i].get();
+                            m_selected_id = i;
                         }
                         m_in_single_selection = true;
                     }
