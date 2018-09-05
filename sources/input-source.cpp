@@ -132,6 +132,8 @@ inline void InputSource::Render(gs_effect_t *effect)
                 y = m_layout.m_btn_h * k->row + (m_layout.m_key_space_v * k->row);
                 draw_key(effect, k, x, y);
             }
+
+	    
         }
         else if (m_layout.m_type == TYPE_MOUSE)
         {
@@ -291,8 +293,8 @@ void InputSource::load_layout()
                 k.texture_v = (uint16_t) (v_cord - 1);
                 tempw = util_read_int(key_width);
                 temph = util_read_int(key_height);
-                k.w = tempw * m_layout.m_btn_w;
-                k.h = temph * m_layout.m_btn_h;
+		k.w = tempw * m_layout.m_btn_w + m_layout.m_key_space_h * (tempw - 1);
+                k.h = temph * m_layout.m_btn_h + m_layout.m_key_space_v * (temph - 1);
                 k.m_key_code = util_read_hex(key_order);
                 k.m_pressed = false;
                 k.row = util_read_int(key_row);
@@ -302,6 +304,7 @@ void InputSource::load_layout()
                 {
                     k.x_offset = (uint16_t)
                             ((k.w + m_layout.m_key_space_h * (tempw - 1)) / 2 - k.w / 2);
+		    k.w -= k.x_offset;
                     index += tempw;
                 }
                 else
@@ -311,12 +314,12 @@ void InputSource::load_layout()
                 }
 
                 m_layout.m_keys.emplace_back(k);
-                u_cord += k.w + 3;
+                u_cord += tempw * m_layout.m_btn_w + (tempw * 3);
             }
 
             m_layout.m_h = m_layout.m_rows * m_layout.m_btn_h + m_layout.m_key_space_v * m_layout.m_rows;
             m_layout.m_w = (m_layout.m_cols * m_layout.m_btn_w + m_layout.m_key_space_h *
-                                                                                    (m_layout.m_cols - 1));
+		(m_layout.m_cols - 1));
         }
         else if (m_layout.m_type == TYPE_MOUSE)
         {
@@ -536,7 +539,10 @@ void InputSource::load_layout()
             m_layout.m_is_loaded = false;
         }
     }
+
+#ifndef _DEBUG
     if (cfg->get_bool("debug"))
+#endif
     {
 	    blog(LOG_INFO, "------ input-overlay DEBUG");
 	    cfg->dump_structure();
