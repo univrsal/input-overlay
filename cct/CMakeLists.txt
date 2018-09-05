@@ -39,57 +39,58 @@ set(APP_ICON_RC "${CMAKE_CURRENT_SOURCE_DIR}/res/icon.ico")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GCC_FLAGS}")
 
 set(io-cct_SOURCES
-	main.cpp
-	src/util/Constants.hpp
-	src/util/FontHelper.cpp
-	src/util/FontHelper.hpp
-	src/util/Palette.cpp
-	src/util/Palette.hpp
-	src/util/SDL_Helper.cpp
-	src/util/SDL_Helper.hpp
-	src/util/Texture.cpp
-	src/util/Texture.hpp
-	src/dialog/Dialog.hpp
-	src/dialog/Dialog.cpp
-	src/dialog/elements/GuiElement.cpp
-	src/dialog/elements/GuiElement.hpp
-	src/dialog/elements/Label.cpp
-	src/dialog/elements/Label.hpp
-	src/dialog/elements/AtlasSelector.cpp
-	src/dialog/elements/AtlasSelector.hpp
-	src/Tool.cpp
-	src/Tool.hpp
-	src/dialog/DialogSetup.cpp
-	src/dialog/DialogSetup.hpp
-	src/dialog/elements/Textbox.cpp
-	src/dialog/elements/Textbox.hpp
-	src/dialog/elements/Button.cpp
-	src/dialog/elements/Button.hpp
-	src/dialog/elements/Checkbox.cpp
-	src/dialog/elements/Checkbox.hpp
-	src/dialog/elements/Combobox.cpp
-	src/dialog/elements/Combobox.hpp
-	src/Config.cpp
-	src/Config.hpp
-	src/dialog/DialogElementSettings.cpp
-	src/dialog/DialogElementSettings.hpp
-	../ccl/ccl.cpp
-	../ccl/ccl.hpp
-	../libuiohook/include/uiohook.h
-	src/dialog/DialogHelp.cpp
-	src/dialog/DialogHelp.hpp
-	src/dialog/DialogNewElement.cpp
-	src/dialog/DialogNewElement.hpp
-	src/dialog/DialogElementType.cpp
-	src/dialog/DialogElementType.hpp
-	src/util/Util.cpp
-	src/util/Util.hpp
-	src/util/CoordinateSystem.cpp
-	src/util/CoordinateSystem.hpp
-	src/util/Notifier.cpp
-	src/util/Notifier.hpp
-	src/util/Localization.cpp
-	src/util/Localization.hpp
+    ../ccl/ccl.cpp
+    ../ccl/ccl.hpp
+    ../libuiohook/include/uiohook.h
+    ../io-obs/util/layout_constants.hpp
+    main.cpp
+    src/Tool.cpp
+    src/Tool.hpp
+    src/Config.cpp
+    src/Config.hpp
+    src/util/Constants.hpp
+    src/util/FontHelper.cpp
+    src/util/FontHelper.hpp
+    src/util/Palette.cpp
+    src/util/Palette.hpp
+    src/util/SDL_Helper.cpp
+    src/util/SDL_Helper.hpp
+    src/util/Texture.cpp
+    src/util/Texture.hpp
+    src/util/Util.cpp
+    src/util/Util.hpp
+    src/util/CoordinateSystem.cpp
+    src/util/CoordinateSystem.hpp
+    src/util/Notifier.cpp
+    src/util/Notifier.hpp
+    src/util/Localization.cpp
+    src/util/Localization.hpp
+    src/dialog/Dialog.hpp
+    src/dialog/Dialog.cpp
+    src/dialog/DialogSetup.cpp
+    src/dialog/DialogSetup.hpp
+    src/dialog/DialogHelp.cpp
+    src/dialog/DialogHelp.hpp
+    src/dialog/DialogNewElement.cpp
+    src/dialog/DialogNewElement.hpp
+    src/dialog/DialogElementType.cpp
+    src/dialog/DialogElementType.hpp
+    src/dialog/DialogElementSettings.cpp
+    src/dialog/DialogElementSettings.hpp
+    src/dialog/elements/GuiElement.cpp
+    src/dialog/elements/GuiElement.hpp
+    src/dialog/elements/Label.cpp
+    src/dialog/elements/Label.hpp
+    src/dialog/elements/AtlasSelector.cpp
+    src/dialog/elements/AtlasSelector.hpp
+    src/dialog/elements/Textbox.cpp
+    src/dialog/elements/Textbox.hpp
+    src/dialog/elements/Button.cpp
+    src/dialog/elements/Button.hpp
+    src/dialog/elements/Checkbox.cpp
+    src/dialog/elements/Checkbox.hpp
+    src/dialog/elements/Combobox.cpp
+    src/dialog/elements/Combobox.hpp
 	src/element/Element.cpp
 	src/element/Element.hpp
 	src/element/ElementTexture.cpp
@@ -102,6 +103,8 @@ set(io-cct_SOURCES
 	src/element/ElementAnalogStick.hpp
 	src/element/ElementScrollWheel.cpp
 	src/element/ElementScrollWheel.hpp
+    src/element/ElementMouseMovement.cpp
+    src/element/ElementMouseMovement.hpp
 	)
 
 add_executable(io-cct ${io-cct_SOURCES})
