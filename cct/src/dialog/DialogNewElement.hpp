@@ -65,6 +65,8 @@ public:
 
     AnalogStick get_stick(void);
 
+    MouseMovementType get_mouse_type(void);
+
     uint8_t get_radius(void);
 
     const std::string * get_id(void);
@@ -85,11 +87,12 @@ private:
     /* Adds layering elements */
     void add_z_level(void);
 
-    /* Adds analog stick elements */
-    void add_analog_stick(void);
+    /* Adds analog stick or mouse movement elements*/
+    void add_mouse_or_analog_stick(const char * label, const char * item_a, const char * item_b);
 
     /* Adds informational label */
     void add_info(const char * unlocalized_text);
+
 
     /* Tracks whether or not the element name was changed*/
     std::string m_initial_name;
@@ -103,7 +106,8 @@ private:
     ElementType m_type;
 
     Textbox * m_radius = nullptr;
-    Combobox * m_stick_side = nullptr;
+    /* Used for mouse movement type and analog stick side*/
+    Combobox * m_binary_choice = nullptr;
 
     Textbox * m_w = nullptr;
     Textbox * m_h = nullptr;

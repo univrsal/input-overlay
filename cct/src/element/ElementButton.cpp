@@ -24,13 +24,13 @@ ElementButton::ElementButton(std::string id, SDL_Point pos, SDL_Rect mapping, ui
 
  ElementError ElementButton::is_valid(Notifier * n, SDL_Helper * h)
  {
-     ElementError result = ElementTexture::is_valid(n, h);
-     if (result == ElementError::VALID && m_keycode == 0x0)
+     ElementError error = ElementTexture::is_valid(n, h);
+     if (error == ElementError::VALID && m_keycode == 0x0)
      {
          n->add_msg(MESSAGE_ERROR, h->loc(LANG_ERROR_KEYCODE_INVALID));
-         result = ElementError::KEYCODE_INVALID;
+         error = ElementError::KEYCODE_INVALID;
      }
-     return result;
+     return error;
  }
 
 void ElementButton::draw(Texture * atlas, CoordinateSystem * cs, bool selected, bool alpha)

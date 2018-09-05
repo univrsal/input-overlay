@@ -1,5 +1,13 @@
+/**
+ * Created by universal on 27.08.2018.
+ * This file is part of input-overlay which is licensed
+ * under the MOZILLA PUBLIC LICENSE 2.0 - mozilla.org/en-US/MPL/2.0/
+ * github.com/univrsal/input-overlay
+ */
+
 #include "ElementAnalogStick.hpp"
 #include "../util/SDL_Helper.hpp"
+#include "../util/Notifier.hpp"
 #include "../util/Texture.hpp"
 #include "../util/CoordinateSystem.hpp"
 #include "../dialog/DialogNewElement.hpp"
@@ -16,11 +24,23 @@ ElementAnalogStick::ElementAnalogStick(std::string id, SDL_Point pos, SDL_Rect m
 
 SDL_Rect * ElementAnalogStick::get_abs_dim(CoordinateSystem * cs)
 {
-    m_static_scaled = *Element::get_abs_dim(cs);
+    m_static_scaled = * Element::get_abs_dim(cs);
 
     m_dimensions_scaled.x += m_x_axis * m_radius * cs->get_scale();
     m_dimensions_scaled.y += m_y_axis * m_radius * cs->get_scale();
     return &m_dimensions_scaled;
+}
+
+ElementError ElementAnalogStick::is_valid(Notifier * n, SDL_Helper * h)
+{
+    ElementError error = ElementTexture::is_valid(n, h);
+
+    if (error == ElementError::VALID && m_radius == 0)
+    {
+        n->add_msg(MESSAGE_ERROR, h->loc(LANG_ERROR_RADIUS_INVALID));
+        error = ElementError::STICK_RADIUS;
+    }
+    return error;
 }
 
 void ElementAnalogStick::draw(Texture * atlas, CoordinateSystem * cs, bool selected, bool alpha)
@@ -122,15 +142,10 @@ void ElementAnalogStick::handle_event(SDL_Event * event, SDL_Helper * helper)
 
 ElementAnalogStick * ElementAnalogStick::read_from_file(ccl_config * file, std::string id, SDL_Point * default_dim)
 {
-    AnalogStick s;
-    switch (file->get_int(id + CFG_STICK_SIDE))
-    {
-    case STICK_RIGHT:
-        s = STICK_RIGHT;
-        break;
-    default:
-        s = STICK_LEFT;
-    }
+    AnalogStick s = AnalogStick::STICK_LEFT;
+    if (file->get_int(id + CFG_STICK_SIDE) != 0)
+        s = AnalogStick::STICK_RIGHT;
+
     return new ElementAnalogStick(id, Element::read_position(file, id),
         Element::read_mapping(file, id, default_dim), s,
         file->get_int(id + CFG_STICK_RADIUS), Element::read_layer(file, id));

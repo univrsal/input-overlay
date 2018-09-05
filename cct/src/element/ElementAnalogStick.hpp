@@ -8,6 +8,7 @@
 #pragma once
 
 #define STICK_RESET 500
+
 #include "ElementTexture.hpp"
 #include "../util/Util.hpp"
 
@@ -21,6 +22,8 @@ public:
 
     SDL_Rect * get_abs_dim(CoordinateSystem * cs) override;
 
+    ElementError is_valid(Notifier * n, SDL_Helper * h) override;
+
     void draw(Texture * atlas, CoordinateSystem * cs, bool selected, bool alpha) override;
 
     void write_to_file(ccl_config * cfg, SDL_Point * default_dim) override;
@@ -33,7 +36,7 @@ public:
 
     AnalogStick get_stick(void) { return m_stick; }
 
-    uint8_t get_radius(void) { return m_radius; }
+    uint16_t get_radius(void) { return m_radius; }
 
     static ElementAnalogStick * read_from_file(ccl_config * file, std::string id, SDL_Point * default_dim);
 private:
@@ -42,7 +45,7 @@ private:
     bool m_pressed = false;
     float m_x_axis = 0;
     float m_y_axis = 0;
-    uint8_t m_radius = 10;
+    uint16_t m_radius = 0;
 
     Timer m_movement_reset;
 };

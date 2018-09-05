@@ -21,9 +21,9 @@ enum ElementError
     TYPE_INVALID,
     MAPPING_EMPTY,
     KEYCODE_INVALID,
-    STICK_RADIUS
+    STICK_RADIUS,
+    MOUSE_RADIUS
 };
-
 
 class SDL_Helper;
 

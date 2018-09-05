@@ -72,6 +72,7 @@
 /* Errors */
 #define LANG_ERROR_ID_NOT_UNIQUE        "error_id_not_unique"
 #define LANG_ERROR_KEYCODE_INVALID      "error_keycode_invalid"
+#define LANG_ERROR_RADIUS_INVALID       "error_radius_invalid"
 #define LANG_ERROR_SELECTION_EMTPY      "error_selection_empty"
 #define LANG_ERROR_INVALID_TEXTURE_PATH "error_invalid_texture_path"
 #define LANG_ERROR_INVALID_CONFIG_PATH  "error_invalid_config_path"
@@ -108,8 +109,11 @@
 #define LANG_LABEL_ELEMENT_ID           "label_element_id"
 #define LANG_CHECKBOX_RECORD_KEYBIND    "checkbox_record_keybind"
 #define LANG_LABEL_STICK_SIDE           "label_stick_side"
-#define LANG_LABEL_STICK_RADIUS         "label_stick_radius"
+#define LANG_LABEL_MOUSE_TYPE           "label_mouse_type"
 #define LANG_LABEL_WHEEL_INFO           "label_wheel_info"
+#define LANG_LABEL_MOVEMENT_RADIUS      "label_movement_radius"
+#define LANG_ITEM_MOUSE_TYPE_ARROW      "item_mouse_type_arrow"
+#define LANG_ITEM_MOUSE_TYPE_DOT        "item_mouse_type_dot"
 
 /* Selected element settings */
 #define LANG_BUTTON_ADD_ELEMENT         "button_add_element"

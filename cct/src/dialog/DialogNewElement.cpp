@@ -1,6 +1,7 @@
 #include "DialogNewElement.hpp"
 #include "../Config.hpp"
 #include "../element/ElementAnalogStick.hpp"
+#include "../element/ElementMouseMovement.hpp"
 
 void DialogNewElement::close(void)
 {
@@ -34,13 +35,19 @@ void DialogNewElement::load_from_element(Element * e)
 
         /* Specific handling */
         ElementAnalogStick * stick = nullptr;
+        ElementMouseMovement * mouse = nullptr;
 
         switch (e->get_type())
         {
         case ANALOG_STICK:
             stick = reinterpret_cast<ElementAnalogStick*>(e);
-            m_stick_side->select_item(stick->get_stick());
+            m_binary_choice->select_item(stick->get_stick());
             m_radius->set_text(std::to_string(stick->get_radius()));
+            break;
+        case MOUSE_MOVEMENT:
+            mouse = reinterpret_cast<ElementMouseMovement*>(e);
+            m_binary_choice->select_item(mouse->get_mouse_type());
+            m_radius->set_text(std::to_string(mouse->get_radius()));
             break;
         }
     }
@@ -56,11 +63,14 @@ void DialogNewElement::init()
     add_z_level();
 
     if (m_type == ANALOG_STICK)
-        add_analog_stick();
+        add_mouse_or_analog_stick(LANG_LABEL_STICK_SIDE, LANG_LEFT, LANG_RIGHT);
     else if (m_type == BUTTON)
         add_keycode_elements();
     else if (m_type == MOUSE_SCROLLWHEEL)
         add_info(LANG_LABEL_WHEEL_INFO);
+    else if (m_type == MOUSE_MOVEMENT)
+        add_mouse_or_analog_stick(LANG_LABEL_MOUSE_TYPE,
+            LANG_ITEM_MOUSE_TYPE_DOT, LANG_ITEM_MOUSE_TYPE_ARROW);
 
     switch (m_type)
     {
@@ -68,6 +78,8 @@ void DialogNewElement::init()
     case BUTTON:
     case TEXTURE:
     case MOUSE_SCROLLWHEEL:
+    case MOUSE_MOVEMENT:
+    case TRIGGER:
         add(m_selector = new AtlasSelector(m_id++, get_left() + 270,
             get_top() + 30, m_dimensions.w - 278, m_dimensions.h - 38, m_tool->get_atlas(), this));
         m_selector->set_selection(&m_selection);
@@ -187,9 +199,9 @@ uint8_t DialogNewElement::get_z_level(void)
 
 AnalogStick DialogNewElement::get_stick(void)
 {
-    if (m_stick_side)
+    if (m_binary_choice)
     {
-        switch (m_stick_side->get_selected())
+        switch (m_binary_choice->get_selected())
         {
         case STICK_RIGHT:
             return STICK_RIGHT;
@@ -198,6 +210,21 @@ AnalogStick DialogNewElement::get_stick(void)
         }
     }
     return STICK_LEFT;
+}
+
+MouseMovementType DialogNewElement::get_mouse_type(void)
+{
+    if (m_binary_choice)
+    {
+        switch (m_binary_choice->get_selected())
+        {
+        case MouseMovementType::DOT:
+            return MouseMovementType::DOT;
+        default:
+            return MouseMovementType::ARROW;
+        }
+    }
+    return MouseMovementType::DOT;
 }
 
 uint8_t DialogNewElement::get_radius(void)
@@ -313,17 +340,18 @@ void DialogNewElement::add_z_level(void)
     m_element_y += 40;
 }
 
-void DialogNewElement::add_analog_stick(void)
+void DialogNewElement::add_mouse_or_analog_stick(const char * label,
+    const char * item_a, const char * item_b)
 {
     if (m_element_y == 0)
         m_element_y = 30;
-    add(new Label(m_id++, 9, m_element_y, LANG_LABEL_STICK_SIDE, this));
+    add(new Label(m_id++, 9, m_element_y, label, this));
     m_element_y += 25;
-    add(m_stick_side = new Combobox(m_id++, 8, m_element_y, panel_w, 20, this));
-    m_stick_side->add_item(LANG_LEFT);
-    m_stick_side->add_item(LANG_RIGHT);
+    add(m_binary_choice = new Combobox(m_id++, 8, m_element_y, panel_w, 20, this));
+    m_binary_choice->add_item(item_a);
+    m_binary_choice->add_item(item_b);
     m_element_y += 25;
-    add(new Label(m_id++, 9, m_element_y, LANG_LABEL_STICK_RADIUS, this));
+    add(new Label(m_id++, 9, m_element_y, LANG_LABEL_MOVEMENT_RADIUS, this));
     m_element_y += 25;
     add(m_radius = new Textbox(m_id++, 8, m_element_y, panel_w, 20, "0", this));
     m_z_level->set_flags(TEXTBOX_NUMERIC);
