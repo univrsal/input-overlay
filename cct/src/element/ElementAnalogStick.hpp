@@ -19,7 +19,7 @@ public:
 
     ElementAnalogStick(std::string id, SDL_Point pos, SDL_Rect mapping, AnalogStick side, uint8_t radius, uint8_t z);
 
-    virtual SDL_Rect * get_abs_dim(CoordinateSystem * cs) override;
+    SDL_Rect * get_abs_dim(CoordinateSystem * cs) override;
 
     void draw(Texture * atlas, CoordinateSystem * cs, bool selected, bool alpha) override;
 

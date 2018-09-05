@@ -32,6 +32,7 @@ public:
   
     static ElementButton * read_from_file(ccl_config * file, std::string id, SDL_Point * default_dim);
 private:
+    SDL_Rect m_pressed_mapping;
     uint16_t m_keycode = 0;
     bool m_pressed = false;
 };

@@ -11,6 +11,8 @@
 #include <string>
 #include <SDL.h>
 
+#define ELEMENT_HIDE_ALPHA  60
+
 enum ElementError
 {
     VALID,

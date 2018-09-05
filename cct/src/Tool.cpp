@@ -83,8 +83,10 @@ void Tool::program_loop()
             m_notify->draw(); /* Notifications have top priority */
             m_helper->repaint();
         }
+#ifdef _DEBUG
         SDL_SetWindowTitle(m_helper->window(),
             m_helper->format("io-cct | %.2f fps", m_helper->util_get_fps()).c_str());
+#endif
         m_helper->end_frame();
         m_helper->cap_frame();
     }

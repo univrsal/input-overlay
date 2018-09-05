@@ -9,6 +9,7 @@
 #include "ElementTexture.hpp"
 #include "ElementButton.hpp"
 #include "ElementAnalogStick.hpp"
+#include "ElementScrollWheel.hpp"
 #include "../dialog/DialogNewElement.hpp"
 #include "../dialog/DialogElementSettings.hpp"
 #include "../util/SDL_Helper.hpp"
@@ -27,7 +28,7 @@ Element * Element::read_from_file(ccl_config * file, std::string id, ElementType
 	case BUTTON:
         return ElementButton::read_from_file(file, id, default_dim);
 	case MOUSE_SCROLLWHEEL:
-        return ElementButton::read_from_file(file, id, default_dim);
+        return ElementScrollWheel::read_from_file(file, id, default_dim);
 		break;
 	case MOUSE_MOVEMENT:
 		break;
@@ -60,6 +61,7 @@ Element * Element::read_from_file(ccl_config * file, std::string id, ElementType
      case TEXT:
          break;
      case MOUSE_SCROLLWHEEL:
+         e = new ElementScrollWheel();
          break;
      case DPAD_STICK:
          break;

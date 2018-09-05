@@ -58,12 +58,15 @@ void DialogNewElement::init()
         add_analog_stick();
     else if (m_type == BUTTON)
         add_keycode_elements();
+    else if (m_type == MOUSE_SCROLLWHEEL)
+        add_info(LANG_LABEL_WHEEL_INFO);
 
     switch (m_type)
     {
     case ANALOG_STICK:
     case BUTTON:
     case TEXTURE:
+    case MOUSE_SCROLLWHEEL:
         add(m_selector = new AtlasSelector(m_id++, get_left() + 270,
             get_top() + 30, m_dimensions.w - 278, m_dimensions.h - 38, m_tool->get_atlas(), this));
         m_selector->set_selection(&m_selection);
@@ -111,27 +114,11 @@ void DialogNewElement::action_performed(int8_t action_id)
 void DialogNewElement::draw_background(void)
 {
     Dialog::draw_background();
-    switch (m_type)
-    {
-    case TEXTURE:
-    case BUTTON:
-    case MOUSE_MOVEMENT:
-
-        break;
-    }
 }
 
 void DialogNewElement::draw_foreground(void)
 {
     Dialog::draw_foreground();
-    switch (m_type)
-    {
-    case TEXTURE:
-    case BUTTON:
-    case MOUSE_MOVEMENT:
-    case ANALOG_STICK:
-        break;
-    }
 }
 
 bool DialogNewElement::handle_events(SDL_Event * event)
@@ -146,6 +133,7 @@ bool DialogNewElement::handle_events(SDL_Event * event)
     case BUTTON:
     case MOUSE_MOVEMENT:
     case ANALOG_STICK:
+    case MOUSE_SCROLLWHEEL:
         if (event->type == SDL_WINDOWEVENT)
         {
             if (event->window.event == SDL_WINDOWEVENT_SIZE_CHANGED)
@@ -337,4 +325,13 @@ void DialogNewElement::add_analog_stick(void)
     add(m_radius = new Textbox(m_id++, 8, m_element_y, panel_w, 20, "0", this));
     m_z_level->set_flags(TEXTBOX_NUMERIC);
     m_element_y += 40;
+}
+
+void DialogNewElement::add_info(const char * unlocalized_text)
+{
+    if (m_element_y == 0)
+        m_element_y = 30;
+    Label * l = new Label(m_id++, 9, m_element_y, unlocalized_text, this);
+    add(l);
+    m_element_y += 15 + l->get_height();
 }

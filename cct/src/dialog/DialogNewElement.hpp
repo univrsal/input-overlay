@@ -88,7 +88,9 @@ private:
     /* Adds analog stick elements */
     void add_analog_stick(void);
 
-   
+    /* Adds informational label */
+    void add_info(const char * unlocalized_text);
+
     uint16_t m_element_y = 0;  /* Y position of the lowest gui element */
     static const uint16_t panel_w = 254;
     uint16_t m_id = 1;

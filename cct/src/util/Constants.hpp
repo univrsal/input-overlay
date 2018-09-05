@@ -109,7 +109,7 @@
 #define LANG_CHECKBOX_RECORD_KEYBIND    "checkbox_record_keybind"
 #define LANG_LABEL_STICK_SIDE           "label_stick_side"
 #define LANG_LABEL_STICK_RADIUS         "label_stick_radius"
-
+#define LANG_LABEL_WHEEL_INFO           "label_wheel_info"
 
 /* Selected element settings */
 #define LANG_BUTTON_ADD_ELEMENT         "button_add_element"
