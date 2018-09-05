@@ -20,6 +20,7 @@ void DialogNewElement::load_from_element(Element * e)
         m_z_level->set_text(std::to_string(e->get_z_level()));
 
         m_element_id->set_text(*e->get_id());
+        m_initial_name = *e->get_id();
 
         if (m_keycode)
             m_keycode->set_hex_int(e->get_vc());
@@ -81,10 +82,12 @@ void DialogNewElement::init()
 void DialogNewElement::action_performed(int8_t action_id)
 {
     ElementError error;
+    bool name_unmodified = m_initial_name.compare(m_element_id->c_str()) == 0;
+
     switch (action_id)
     {
     case ACTION_OK:
-        error = m_tool->verify_element(this);
+        error = m_tool->verify_element(this, m_modify_mode && name_unmodified);
         if (error == ElementError::VALID)
         {
             if (m_modify_mode)

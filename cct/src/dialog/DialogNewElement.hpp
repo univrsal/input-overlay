@@ -91,6 +91,9 @@ private:
     /* Adds informational label */
     void add_info(const char * unlocalized_text);
 
+    /* Tracks whether or not the element name was changed*/
+    std::string m_initial_name;
+
     uint16_t m_element_y = 0;  /* Y position of the lowest gui element */
     static const uint16_t panel_w = 254;
     uint16_t m_id = 1;

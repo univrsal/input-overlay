@@ -68,7 +68,7 @@ public:
     void queue_dialog_open(DialogID id);
     void queue_dialog_close(void);
 
-    ElementError verify_element(DialogNewElement * d);
+    ElementError verify_element(DialogNewElement * d, bool modify_mode);
 private:
     void add_element(Element * e);
 

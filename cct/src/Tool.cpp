@@ -170,16 +170,21 @@ void Tool::queue_dialog_close(void)
     m_state = IN_BUILD;
 }
 
-ElementError Tool::verify_element(DialogNewElement * d)
+ElementError Tool::verify_element(DialogNewElement * d, bool modify_mode)
 {
-    for (auto const &element : m_config->m_elements)
-    {
-        if (element->get_id()->compare(d->get_id()->c_str()) == 0)
+    /*
+        Only check uniqueness if the element is newly added or
+        it's id was modified
+    */
+    if (!modify_mode)
+        for (auto const &element : m_config->m_elements)
         {
-            m_notify->add_msg(MESSAGE_ERROR, m_helper->loc(LANG_ERROR_ID_NOT_UNIQUE));
-            return ElementError::ID_NOT_UNIQUE;
+            if (element->get_id()->compare(d->get_id()->c_str()) == 0)
+            {
+                m_notify->add_msg(MESSAGE_ERROR, m_helper->loc(LANG_ERROR_ID_NOT_UNIQUE));
+                return ElementError::ID_NOT_UNIQUE;
+            }
         }
-    }
 
     Element * e = Element::from_dialog(d);
     ElementError error = e->is_valid(m_notify, m_helper);
