@@ -91,21 +91,23 @@ set(io-cct_SOURCES
     src/dialog/elements/Checkbox.hpp
     src/dialog/elements/Combobox.cpp
     src/dialog/elements/Combobox.hpp
-	src/element/Element.cpp
-	src/element/Element.hpp
-	src/element/ElementTexture.cpp
-	src/element/ElementTexture.hpp
-	src/element/ElementText.cpp
-	src/element/ElementText.hpp
-	src/element/ElementButton.cpp
-	src/element/ElementButton.hpp
-	src/element/ElementAnalogStick.cpp
-	src/element/ElementAnalogStick.hpp
-	src/element/ElementScrollWheel.cpp
-	src/element/ElementScrollWheel.hpp
+    src/element/Element.cpp
+    src/element/Element.hpp
+    src/element/ElementTexture.cpp
+    src/element/ElementTexture.hpp
+    src/element/ElementText.cpp
+    src/element/ElementText.hpp
+    src/element/ElementButton.cpp
+    src/element/ElementButton.hpp
+    src/element/ElementAnalogStick.cpp
+    src/element/ElementAnalogStick.hpp
+    src/element/ElementScrollWheel.cpp
+    src/element/ElementScrollWheel.hpp
     src/element/ElementMouseMovement.cpp
     src/element/ElementMouseMovement.hpp
-	)
+	src/element/ElementTrigger.cpp
+    src/element/ElementTrigger.hpp
+    )
 
 add_executable(io-cct ${io-cct_SOURCES})
 
