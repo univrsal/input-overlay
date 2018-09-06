@@ -1,80 +1,167 @@
 /**
- * Created by universal on 27.08.2018.
+ * Created by universal on 06.09.2018.
  * This file is part of input-overlay which is licensed
  * under the MOZILLA PUBLIC LICENSE 2.0 - mozilla.org/en-US/MPL/2.0/
  * github.com/univrsal/input-overlay
  */
 
-#include "ElementTexture.hpp"
+#include "ElementTrigger.hpp"
 #include "../dialog/DialogNewElement.hpp"
 #include "../dialog/DialogElementSettings.hpp"
 #include "../util/CoordinateSystem.hpp"
 #include "../util/Texture.hpp"
-#include "../util/Notifier.hpp"
 #include "../../../ccl/ccl.hpp"
 
-ElementTexture::ElementTexture(std::string id, SDL_Point pos, SDL_Rect mapping, uint8_t z)
-    : Element(ElementType::TEXTURE, id, pos, z)
+ElementTrigger::ElementTrigger(std::string id, SDL_Point pos, SDL_Rect mapping,
+    ElementSide s, TriggerDirection d, uint8_t z)
+    : ElementTexture(ElementType::TRIGGER, id, pos, mapping, z)
 {
-    m_mapping = mapping;
+    m_pressed_mapping = m_mapping;
+    m_pressed_mapping.y += m_mapping.h + CFG_INNER_BORDER;
+    m_direction = d;
+    m_side = s;
 }
 
-ElementTexture::ElementTexture(ElementType t, std::string id, SDL_Point pos, SDL_Rect mapping, uint8_t z)
-    : Element(t, id, pos, z)
+ElementTrigger::ElementTrigger(std::string id, SDL_Point pos, SDL_Rect mapping,
+    ElementSide s, uint8_t z)
+    : ElementTexture(ElementType::TRIGGER, id, pos, mapping, z)
 {
-    m_mapping = mapping;
+    m_pressed_mapping = m_mapping;
+    m_pressed_mapping.y += m_mapping.h + CFG_INNER_BORDER;
+    m_side = s;
+    m_button_mode = true;
 }
 
-ElementError ElementTexture::is_valid(Notifier * n, SDL_Helper * h)
-{
-    ElementError result = Element::is_valid(n, h);
-    if (result == ElementError::VALID && SDL_RectEmpty(&m_mapping))
-    {
-        n->add_msg(MESSAGE_ERROR, h->loc(LANG_ERROR_SELECTION_EMTPY));
-        result = ElementError::MAPPING_EMPTY;
-    }
-    return result;
-}
-
-void ElementTexture::draw(Texture * atlas, CoordinateSystem * cs, bool selected, bool alpha)
+void ElementTrigger::draw(Texture * atlas, CoordinateSystem * cs, bool selected, bool alpha)
 {
     get_abs_dim(cs);
-    atlas->draw(cs->get_helper()->renderer(), &m_dimensions_scaled, &m_mapping, alpha ? ELEMENT_HIDE_ALPHA : 255);
 
+    if (m_button_mode && m_progress >= .2f)
+    {
+        atlas->draw(cs->get_helper()->renderer(), &m_dimensions_scaled,
+            &m_pressed_mapping, alpha ? ELEMENT_HIDE_ALPHA : 255);
+    }
+    else if (!m_button_mode && m_progress <= 0.f)
+    {
+        atlas->draw(cs->get_helper()->renderer(), &m_dimensions_scaled,
+            &m_mapping, alpha ? ELEMENT_HIDE_ALPHA : 255);
+        SDL_Rect temp = m_pressed_mapping;
+        calculate_mappings(temp, m_dimensions_scaled, cs);
+        atlas->draw(cs->get_helper()->renderer(), &m_dimensions_scaled,
+            &temp, alpha ? ELEMENT_HIDE_ALPHA : 255);
+    }
+    else
+    {
+        atlas->draw(cs->get_helper()->renderer(), &m_dimensions_scaled,
+            &m_mapping, alpha ? ELEMENT_HIDE_ALPHA : 255);
+    }
+    
     if (selected)
         cs->get_helper()->util_draw_rect(&m_dimensions_scaled, cs->get_helper()->palette()->red());
 }
 
-void ElementTexture::write_to_file(ccl_config * cfg, SDL_Point * default_dim)
+void ElementTrigger::write_to_file(ccl_config * cfg, SDL_Point * default_dim)
 {
-    Element::write_to_file(cfg, default_dim);
-    std::string comment = "Texture position of " + m_id;
-    cfg->add_int(m_id + CFG_U, "", m_mapping.x, true);
-    cfg->add_int(m_id + CFG_V, comment, m_mapping.y, true);
-
-    comment = "Width and height of " + m_id;
-
-    if (m_mapping.w != default_dim->x)
-        cfg->add_int(m_id + CFG_WIDTH, "", m_mapping.w, true);
-
-    if (m_mapping.h != default_dim->y)
-        cfg->add_int(m_id + CFG_HEIGHT, comment, m_mapping.h, true);
+    ElementTexture::write_to_file(cfg, default_dim);
+    std::string comment;
+    if (m_button_mode)
+    {
+        comment = "Trigger mode of " + m_id;
+        cfg->add_bool(m_id + CFG_TRIGGER_MODE, comment, true, true);
+    }
+    else
+    {
+        comment = "Trigger side of " + m_id;
+        cfg->add_int(m_id + CFG_SIDE, comment, (int)m_side, true);
+        comment = "Trigger side of " + m_id;
+        cfg->add_int(m_id + CFG_DIRECTION, comment, (int)m_direction, true);
+        comment = "Trigger mode of " + m_id;
+        cfg->add_bool(m_id + CFG_TRIGGER_MODE, comment, false, true);
+    }
 }
 
-void ElementTexture::update_settings(DialogNewElement * dialog)
+void ElementTrigger::update_settings(DialogNewElement * dialog)
 {
-    Element::update_settings(dialog);
-    set_mapping(dialog->get_selection());
+    ElementTexture::update_settings(dialog);
+    m_pressed_mapping = m_mapping;
+    m_pressed_mapping.y += m_mapping.h + CFG_INNER_BORDER;
+    m_button_mode = dialog->get_trigger_mode();
+    m_side = dialog->get_side();
 }
 
-void ElementTexture::update_settings(DialogElementSettings * dialog)
+void ElementTrigger::update_settings(DialogElementSettings * dialog)
 {
-    Element::update_settings(dialog);
-    set_mapping(dialog->get_mapping());
+    ElementTexture::update_settings(dialog);
+    m_pressed_mapping = m_mapping;
+    m_pressed_mapping.y += m_mapping.h + CFG_INNER_BORDER;
 }
 
-ElementTexture * ElementTexture::read_from_file(ccl_config * file, std::string id, SDL_Point * default_dim)
+void ElementTrigger::handle_event(SDL_Event * event, SDL_Helper * helper)
 {
-    return new ElementTexture(id, Element::read_position(file, id),
-        Element::read_mapping(file, id, default_dim), Element::read_layer(file, id));
+    if (event->type == SDL_CONTROLLERAXISMOTION)
+    {
+        if (m_side == SIDE_LEFT && event->caxis.axis == SDL_CONTROLLER_AXIS_TRIGGERLEFT
+            || m_side == SIDE_RIGHT && event->caxis.axis == SDL_CONTROLLER_AXIS_TRIGGERRIGHT)
+        {
+            m_progress = ((float)event->caxis.value) / AXIS_MAX_AMPLITUDE;
+            printf("Progress: %.2f\n", m_progress);
+        }
+    }
+}
+
+ElementTrigger * ElementTrigger::read_from_file(ccl_config * file, std::string id, SDL_Point * default_dim)
+{
+    bool button_mode = file->get_bool(id + CFG_TRIGGER_MODE);
+    ElementSide s = Element::read_side(file, id);
+
+    if (button_mode)
+    {
+        return new ElementTrigger(id, Element::read_position(file, id),
+            Element::read_mapping(file, id, default_dim), s, Element::read_layer(file, id));
+    }
+    else
+    {
+        TriggerDirection d;
+        switch (file->get_int(id + CFG_DIRECTION))
+        {
+        case UP:
+            d = UP;
+            break;
+        case DOWN:
+            d =  DOWN;
+            break;
+        case RIGHT:
+            d = RIGHT;
+            break;
+        default:
+        case LEFT:
+            d =  LEFT;
+        }
+        return new ElementTrigger(id, Element::read_position(file, id),
+            Element::read_mapping(file, id, default_dim), s, d, Element::read_layer(file, id));
+    }
+
+}
+
+void ElementTrigger::calculate_mappings(SDL_Rect & pressed, SDL_Rect & absolute, CoordinateSystem * cs)
+{
+    switch (m_direction)
+    {
+    case UP:
+        pressed.h = m_mapping.h * m_progress;
+        pressed.y = m_mapping.y + (m_mapping.h - pressed.h);
+        absolute.y += (m_mapping.h - pressed.h) * cs->get_scale();
+        break;
+    case DOWN:
+        pressed.h = m_mapping.h * m_progress;
+        break;
+    case LEFT:
+        pressed.w = m_mapping.w * m_progress;
+        pressed.x = m_mapping.x + (m_mapping.w - pressed.w);
+        absolute.x += (m_mapping.w - pressed.w) * cs->get_scale();
+        break;
+    case RIGHT:
+        pressed.w = m_mapping.w * m_progress;
+        break;
+    }
 }

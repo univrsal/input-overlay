@@ -102,6 +102,8 @@
 #define LANG_LABEL_V                    "label_v"
 #define LANG_LEFT                       "left"
 #define LANG_RIGHT                      "right"
+#define LANG_UP                         "up"
+#define LANG_DOWN                       "down"
 
 /* New Element Dialog */
 #define LANG_LABEL_TEXTURE_SELECTION    "label_texture_selection"
@@ -114,6 +116,9 @@
 #define LANG_LABEL_MOVEMENT_RADIUS      "label_movement_radius"
 #define LANG_ITEM_MOUSE_TYPE_ARROW      "item_mouse_type_arrow"
 #define LANG_ITEM_MOUSE_TYPE_DOT        "item_mouse_type_dot"
+#define LANG_LABEL_TRIGGER_DIRECTION    "label_trigger_direction"
+#define LANG_LABEL_TRIGGER_SIDE         "label_trigger_side"
+#define LANG_CHECKBOX_TRIGGER_BUTON     "checkbox_trigger_button"
 
 /* Selected element settings */
 #define LANG_BUTTON_ADD_ELEMENT         "button_add_element"

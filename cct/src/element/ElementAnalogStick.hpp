@@ -18,7 +18,7 @@ class ElementAnalogStick
 public:
     ElementAnalogStick() : ElementTexture() { /* NO-OP */ };
 
-    ElementAnalogStick(std::string id, SDL_Point pos, SDL_Rect mapping, AnalogStick side, uint8_t radius, uint8_t z);
+    ElementAnalogStick(std::string id, SDL_Point pos, SDL_Rect mapping, ElementSide side, uint8_t radius, uint8_t z);
 
     SDL_Rect * get_abs_dim(CoordinateSystem * cs) override;
 
@@ -34,14 +34,14 @@ public:
 
     void handle_event(SDL_Event * event, SDL_Helper * helper) override;
 
-    AnalogStick get_stick(void) { return m_stick; }
+    ElementSide get_stick(void) { return m_stick; }
 
     uint16_t get_radius(void) { return m_radius; }
 
     static ElementAnalogStick * read_from_file(ccl_config * file, std::string id, SDL_Point * default_dim);
 private:
     SDL_Rect m_static_scaled; /* Position without input movement for display */
-    AnalogStick m_stick;
+    ElementSide m_stick;
     bool m_pressed = false;
     float m_x_axis = 0;
     float m_y_axis = 0;

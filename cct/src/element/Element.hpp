@@ -103,7 +103,8 @@ protected:
     static SDL_Rect read_mapping(ccl_config * file, std::string id, SDL_Point * default_dim);
     static SDL_Point read_position(ccl_config * file, std::string id);
     static uint8_t read_layer(ccl_config * file, std::string id);
- 
+    static ElementSide read_side(ccl_config * file, std::string id);
+
     ElementType m_type;
     SDL_Point m_position; /* Final position in overlay */
     SDL_Rect m_mapping; /* Texture mappings */

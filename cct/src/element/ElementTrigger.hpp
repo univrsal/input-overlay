@@ -1,5 +1,5 @@
 /**
- * Created by universal on 27.08.2018.
+ * Created by universal on 06.09.2018.
  * This file is part of input-overlay which is licensed
  * under the MOZILLA PUBLIC LICENSE 2.0 - mozilla.org/en-US/MPL/2.0/
  * github.com/univrsal/input-overlay
@@ -7,16 +7,18 @@
 
 #pragma once
 
-#include "Element.hpp"
+#include "ElementTexture.hpp"
 
-class ElementTexture
-    : public Element
+class ElementTrigger
+    : public ElementTexture
 {
 public:
-    ElementTexture() : Element() { /* NO-OP */ };
-    ElementTexture(std::string id, SDL_Point pos, SDL_Rect mapping, uint8_t z);
+    ElementTrigger() : ElementTexture() { /* NO-OP */ };
+    ElementTrigger(std::string id, SDL_Point pos, SDL_Rect mapping,
+        ElementSide s, TriggerDirection d, uint8_t z);
 
-    ElementError is_valid(Notifier * n, SDL_Helper * h) override;
+    ElementTrigger(std::string id, SDL_Point pos, SDL_Rect mapping,
+        ElementSide s, uint8_t z);
 
     void draw(Texture * atlas, CoordinateSystem * cs, bool selected, bool alpha) override;
 
@@ -24,13 +26,24 @@ public:
 
     void update_settings(DialogNewElement * dialog) override;
 
-    void update_settings(DialogElementSettings * dialog) override;
+    void ElementTrigger::update_settings(DialogElementSettings * dialog) override;
 
-    void handle_event(SDL_Event * event, SDL_Helper * helper) override { /* NO-OP */ };
+    void handle_event(SDL_Event * event, SDL_Helper * helper) override;
 
-    static ElementTexture * read_from_file(ccl_config * file, std::string id, SDL_Point * default_dim);
+    static ElementTrigger * read_from_file(ccl_config * file, std::string id, SDL_Point * default_dim);
 
-protected:
-    ElementTexture(ElementType t, std::string id, SDL_Point pos, SDL_Rect mapping, uint8_t z);
-   
+    ElementSide get_side(void) { return m_side; }
+
+    TriggerDirection get_direction(void) { return m_direction; }
+
+    bool get_mode(void) { return m_button_mode; }
+private:
+    void calculate_mappings(SDL_Rect & pressed, SDL_Rect & absolute, CoordinateSystem * cs);
+
+    SDL_Rect m_pressed_mapping;
+
+    float m_progress = 0;
+    ElementSide m_side;
+    TriggerDirection m_direction;
+    bool m_button_mode = false;
 };

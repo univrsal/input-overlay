@@ -15,7 +15,7 @@
 #include "../../../ccl/ccl.hpp"
 
 ElementAnalogStick::ElementAnalogStick(std::string id, SDL_Point pos, SDL_Rect mapping,
-    AnalogStick side, uint8_t radius, uint8_t z)
+    ElementSide side, uint8_t radius, uint8_t z)
     : ElementTexture(ElementType::ANALOG_STICK, id, pos, mapping, z)
 {
     m_stick = side;
@@ -73,14 +73,14 @@ void ElementAnalogStick::write_to_file(ccl_config * cfg, SDL_Point * default_dim
 {
     ElementTexture::write_to_file(cfg, default_dim);
     std::string comment = "Analog stick side of " + m_id;
-    cfg->add_int(m_id + CFG_STICK_SIDE, comment, (int) m_stick, true);
+    cfg->add_int(m_id + CFG_SIDE, comment, (int) m_stick, true);
 }
 
 void ElementAnalogStick::update_settings(DialogNewElement * dialog)
 {
         ElementTexture::update_settings(dialog);
         m_radius = dialog->get_radius();
-        m_stick = dialog->get_stick();
+        m_stick = dialog->get_side();
 }
 
 void ElementAnalogStick::update_settings(DialogElementSettings * dialog)
@@ -92,16 +92,16 @@ void ElementAnalogStick::handle_event(SDL_Event * event, SDL_Helper * helper)
 {
     if (event->type == SDL_CONTROLLERAXISMOTION && SDL_abs(event->caxis.value) >= STICK_DEAD_ZONE)
     {
-        if (m_stick == STICK_LEFT)
+        if (m_stick == SIDE_LEFT)
         {
             if (event->caxis.axis == SDL_CONTROLLER_AXIS_LEFTX)
             {
-                m_x_axis = ((float)event->caxis.value) / STICK_MAX_AMPLITUDE;
+                m_x_axis = ((float)event->caxis.value) / AXIS_MAX_AMPLITUDE;
                 m_movement_reset.start();
             }
             else if (event->caxis.axis == SDL_CONTROLLER_AXIS_LEFTY)
             {
-                m_y_axis = ((float)event->caxis.value) / STICK_MAX_AMPLITUDE;
+                m_y_axis = ((float)event->caxis.value) / AXIS_MAX_AMPLITUDE;
                 m_movement_reset.start();
             }
         }
@@ -109,12 +109,12 @@ void ElementAnalogStick::handle_event(SDL_Event * event, SDL_Helper * helper)
         {
             if (event->caxis.axis == SDL_CONTROLLER_AXIS_RIGHTX)
             {
-                m_x_axis = ((float)event->caxis.value) / STICK_MAX_AMPLITUDE;
+                m_x_axis = ((float)event->caxis.value) / AXIS_MAX_AMPLITUDE;
                 m_movement_reset.start();
             }
             else if (event->caxis.axis == SDL_CONTROLLER_AXIS_RIGHTY)
             {
-                m_y_axis = ((float)event->caxis.value) / STICK_MAX_AMPLITUDE;
+                m_y_axis = ((float)event->caxis.value) / AXIS_MAX_AMPLITUDE;
                 m_movement_reset.start();
             }
         }
@@ -127,7 +127,7 @@ void ElementAnalogStick::handle_event(SDL_Event * event, SDL_Helper * helper)
     else if (event->type == SDL_CONTROLLERBUTTONDOWN
         || event->type == SDL_CONTROLLERBUTTONUP)
     {
-        if (m_stick == STICK_LEFT)
+        if (m_stick == SIDE_LEFT)
         {
             if (event->cbutton.button == SDL_CONTROLLER_BUTTON_LEFTSTICK)
                 m_pressed = event->cbutton.state == SDL_PRESSED;
@@ -142,9 +142,7 @@ void ElementAnalogStick::handle_event(SDL_Event * event, SDL_Helper * helper)
 
 ElementAnalogStick * ElementAnalogStick::read_from_file(ccl_config * file, std::string id, SDL_Point * default_dim)
 {
-    AnalogStick s = AnalogStick::STICK_LEFT;
-    if (file->get_int(id + CFG_STICK_SIDE) != 0)
-        s = AnalogStick::STICK_RIGHT;
+    ElementSide s = Element::read_side(file, id);
 
     return new ElementAnalogStick(id, Element::read_position(file, id),
         Element::read_mapping(file, id, default_dim), s,

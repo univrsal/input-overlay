@@ -2,6 +2,7 @@
 #include "../Config.hpp"
 #include "../element/ElementAnalogStick.hpp"
 #include "../element/ElementMouseMovement.hpp"
+#include "../element/ElementTrigger.hpp"
 
 void DialogNewElement::close(void)
 {
@@ -36,6 +37,7 @@ void DialogNewElement::load_from_element(Element * e)
         /* Specific handling */
         ElementAnalogStick * stick = nullptr;
         ElementMouseMovement * mouse = nullptr;
+        ElementTrigger * trigger = nullptr;
 
         switch (e->get_type())
         {
@@ -48,6 +50,11 @@ void DialogNewElement::load_from_element(Element * e)
             mouse = reinterpret_cast<ElementMouseMovement*>(e);
             m_binary_choice->select_item(mouse->get_mouse_type());
             m_radius->set_text(std::to_string(mouse->get_radius()));
+        case TRIGGER:
+            trigger = reinterpret_cast<ElementTrigger*>(e);
+            m_binary_choice->select_item(trigger->get_side());
+            m_direction->select_item(trigger->get_direction());
+            m_trigger_mode->select_state(trigger->get_mode());
             break;
         }
     }
@@ -71,6 +78,8 @@ void DialogNewElement::init()
     else if (m_type == MOUSE_MOVEMENT)
         add_mouse_or_analog_stick(LANG_LABEL_MOUSE_TYPE,
             LANG_ITEM_MOUSE_TYPE_DOT, LANG_ITEM_MOUSE_TYPE_ARROW);
+    else if (m_type == TRIGGER)
+        add_trigger();
 
     switch (m_type)
     {
@@ -197,19 +206,19 @@ uint8_t DialogNewElement::get_z_level(void)
     return atoi(m_z_level->get_text()->c_str());
 }
 
-AnalogStick DialogNewElement::get_stick(void)
+ElementSide DialogNewElement::get_side(void)
 {
     if (m_binary_choice)
     {
         switch (m_binary_choice->get_selected())
         {
-        case STICK_RIGHT:
-            return STICK_RIGHT;
+        case SIDE_RIGHT:
+            return SIDE_RIGHT;
         default:
-            return STICK_LEFT;
+            return SIDE_LEFT;
         }
     }
-    return STICK_LEFT;
+    return SIDE_LEFT;
 }
 
 MouseMovementType DialogNewElement::get_mouse_type(void)
@@ -366,4 +375,29 @@ void DialogNewElement::add_info(const char * unlocalized_text)
     Label * l = new Label(m_id++, 9, m_element_y, unlocalized_text, this);
     add(l);
     m_element_y += 15 + l->get_height();
+}
+
+void DialogNewElement::add_trigger(void)
+{
+
+    if (m_element_y == 0)
+        m_element_y = 30;
+    add(new Label(m_id++, 9, m_element_y, LANG_LABEL_TRIGGER_SIDE, this));
+    m_element_y += 25;
+    add(m_binary_choice = new Combobox(m_id++, 8, m_element_y, panel_w, 20, this));
+    m_binary_choice->add_item(LANG_LEFT);
+    m_binary_choice->add_item(LANG_RIGHT);
+    m_element_y += 25;
+
+    add(new Label(m_id++, 9, m_element_y, LANG_LABEL_TRIGGER_DIRECTION, this));
+    m_element_y += 25;
+    add(m_direction = new Combobox(m_id++, 8, m_element_y, panel_w, 20, this));
+    m_direction->add_item(LANG_UP);
+    m_direction->add_item(LANG_DOWN);
+    m_direction->add_item(LANG_LEFT);
+    m_direction->add_item(LANG_RIGHT);
+    m_element_y += 25;
+
+    add(m_trigger_mode = new Checkbox(m_id++, 8, m_element_y, LANG_CHECKBOX_TRIGGER_BUTON, this));
+    m_element_y += 40;
 }

@@ -11,6 +11,7 @@
 #include "ElementAnalogStick.hpp"
 #include "ElementScrollWheel.hpp"
 #include "ElementMouseMovement.hpp"
+#include "ElementTrigger.hpp"
 #include "../dialog/DialogNewElement.hpp"
 #include "../dialog/DialogElementSettings.hpp"
 #include "../util/SDL_Helper.hpp"
@@ -35,7 +36,7 @@ Element * Element::read_from_file(ccl_config * file, std::string id, ElementType
 	case ANALOG_STICK:
         return ElementAnalogStick::read_from_file(file, id, default_dim);
 	case TRIGGER:
-		break;
+        return ElementTrigger::read_from_file(file, id, default_dim);
 	case TEXT:
 		break;
 	case DPAD_STICK:
@@ -56,6 +57,7 @@ Element * Element::read_from_file(ccl_config * file, std::string id, ElementType
          e = new ElementTexture();
          break;
      case TRIGGER:
+         e = new ElementTrigger();
          break;
      case TEXT:
          break;
@@ -210,4 +212,12 @@ SDL_Point Element::read_position(ccl_config * file, std::string id)
 uint8_t Element::read_layer(ccl_config * file, std::string id)
 {
 	return file->get_int(id + CFG_Z_LEVEL);
+}
+
+ElementSide Element::read_side(ccl_config * file, std::string id)
+{
+    ElementSide s = ElementSide::SIDE_LEFT;
+    if (file->get_int(id + CFG_SIDE) != 0)
+        s = ElementSide::SIDE_RIGHT;
+    return s;
 }

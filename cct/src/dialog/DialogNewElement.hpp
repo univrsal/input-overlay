@@ -63,7 +63,7 @@ public:
 
     uint8_t get_z_level(void);
 
-    AnalogStick get_stick(void);
+    ElementSide get_side(void);
 
     MouseMovementType get_mouse_type(void);
 
@@ -72,6 +72,9 @@ public:
     const std::string * get_id(void);
 
     void set_default_dim(int w, int h);
+
+    bool get_trigger_mode(void) { return m_trigger_mode ? m_trigger_mode->get_state() : false; }
+
 private:
     void handle_error(ElementError e);
 
@@ -93,6 +96,8 @@ private:
     /* Adds informational label */
     void add_info(const char * unlocalized_text);
 
+    /* Adds game pad trigger elements */
+    void add_trigger(void);
 
     /* Tracks whether or not the element name was changed*/
     std::string m_initial_name;
@@ -109,6 +114,8 @@ private:
     /* Used for mouse movement type and analog stick side*/
     Combobox * m_binary_choice = nullptr;
 
+    Combobox * m_direction = nullptr;
+
     Textbox * m_w = nullptr;
     Textbox * m_h = nullptr;
     Textbox * m_u = nullptr;
@@ -122,6 +129,7 @@ private:
     Button * m_cancel = nullptr;
 
     Checkbox * m_read_keybind = nullptr;
+    Checkbox * m_trigger_mode = nullptr;
 
     /* UV mapping */
     SDL_Rect m_selection;
