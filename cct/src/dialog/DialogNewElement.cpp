@@ -355,6 +355,7 @@ void DialogNewElement::add_mouse_or_analog_stick(const char * label,
     m_element_y += 25;
     add(m_radius = new Textbox(m_id++, 8, m_element_y, panel_w, 20, "0", this));
     m_z_level->set_flags(TEXTBOX_NUMERIC);
+    m_radius->set_flags(TEXTBOX_NUMERIC);
     m_element_y += 40;
 }
 
