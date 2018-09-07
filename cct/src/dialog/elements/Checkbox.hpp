@@ -34,6 +34,8 @@ public:
     bool handle_events(SDL_Event * event, bool was_handled) override;
 
     bool get_state(void) { return m_state; }
+
+    void set_checked(bool state);
 private:
     bool m_focused = false;
     bool m_state = false;

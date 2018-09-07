@@ -41,13 +41,14 @@ void ElementTrigger::draw(Texture * atlas, CoordinateSystem * cs, bool selected,
         atlas->draw(cs->get_helper()->renderer(), &m_dimensions_scaled,
             &m_pressed_mapping, alpha ? ELEMENT_HIDE_ALPHA : 255);
     }
-    else if (!m_button_mode && m_progress <= 0.f)
+    else if (!m_button_mode && m_progress > 0.f)
     {
         atlas->draw(cs->get_helper()->renderer(), &m_dimensions_scaled,
             &m_mapping, alpha ? ELEMENT_HIDE_ALPHA : 255);
         SDL_Rect temp = m_pressed_mapping;
-        calculate_mappings(temp, m_dimensions_scaled, cs);
-        atlas->draw(cs->get_helper()->renderer(), &m_dimensions_scaled,
+        SDL_Rect temp2 = m_dimensions_scaled;
+        calculate_mappings(&temp, &temp2);
+        atlas->draw(cs->get_helper()->renderer(), &temp2,
             &temp, alpha ? ELEMENT_HIDE_ALPHA : 255);
     }
     else
@@ -87,6 +88,7 @@ void ElementTrigger::update_settings(DialogNewElement * dialog)
     m_pressed_mapping.y += m_mapping.h + CFG_INNER_BORDER;
     m_button_mode = dialog->get_trigger_mode();
     m_side = dialog->get_side();
+    m_direction = dialog->get_direction();
 }
 
 void ElementTrigger::update_settings(DialogElementSettings * dialog)
@@ -104,7 +106,6 @@ void ElementTrigger::handle_event(SDL_Event * event, SDL_Helper * helper)
             || m_side == SIDE_RIGHT && event->caxis.axis == SDL_CONTROLLER_AXIS_TRIGGERRIGHT)
         {
             m_progress = ((float)event->caxis.value) / AXIS_MAX_AMPLITUDE;
-            printf("Progress: %.2f\n", m_progress);
         }
     }
 }
@@ -143,25 +144,29 @@ ElementTrigger * ElementTrigger::read_from_file(ccl_config * file, std::string i
 
 }
 
-void ElementTrigger::calculate_mappings(SDL_Rect & pressed, SDL_Rect & absolute, CoordinateSystem * cs)
+void ElementTrigger::calculate_mappings(SDL_Rect * pressed, SDL_Rect * absolute)
 {
     switch (m_direction)
     {
     case UP:
-        pressed.h = m_mapping.h * m_progress;
-        pressed.y = m_mapping.y + (m_mapping.h - pressed.h);
-        absolute.y += (m_mapping.h - pressed.h) * cs->get_scale();
+        pressed->h = m_mapping.h * m_progress;
+        pressed->y = m_pressed_mapping.y + (m_mapping.h - pressed->h);
+        absolute->y += (m_mapping.h - pressed->h) * m_scale;
+        absolute->h = pressed->h * m_scale;
         break;
     case DOWN:
-        pressed.h = m_mapping.h * m_progress;
+        pressed->h = m_mapping.h * m_progress;
+        absolute->h = pressed->h * m_scale;
         break;
     case LEFT:
-        pressed.w = m_mapping.w * m_progress;
-        pressed.x = m_mapping.x + (m_mapping.w - pressed.w);
-        absolute.x += (m_mapping.w - pressed.w) * cs->get_scale();
+        pressed->w = m_mapping.w * m_progress;
+        pressed->x = m_mapping.x + (m_mapping.w - pressed->w);
+        absolute->x += (m_mapping.w - pressed->w) * m_scale;
+        absolute->w = pressed->w * m_scale;
         break;
     case RIGHT:
-        pressed.w = m_mapping.w * m_progress;
+        pressed->w = m_mapping.w * m_progress;
+        absolute->w = pressed->w * m_scale;
         break;
     }
 }

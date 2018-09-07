@@ -106,3 +106,8 @@ bool Checkbox::handle_events(SDL_Event * event, bool was_handled)
     }
     return handled;
 }
+
+void Checkbox::set_checked(bool state)
+{
+    m_state = state;
+}

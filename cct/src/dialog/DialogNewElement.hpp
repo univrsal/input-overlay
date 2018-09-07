@@ -65,6 +65,8 @@ public:
 
     ElementSide get_side(void);
 
+    TriggerDirection get_direction(void);
+
     MouseMovementType get_mouse_type(void);
 
     uint8_t get_radius(void);

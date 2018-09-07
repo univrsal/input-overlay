@@ -38,10 +38,10 @@ public:
 
     bool get_mode(void) { return m_button_mode; }
 private:
-    void calculate_mappings(SDL_Rect & pressed, SDL_Rect & absolute, CoordinateSystem * cs);
+    void calculate_mappings(SDL_Rect * pressed, SDL_Rect * absolute);
 
     SDL_Rect m_pressed_mapping;
-
+    
     float m_progress = 0;
     ElementSide m_side;
     TriggerDirection m_direction;

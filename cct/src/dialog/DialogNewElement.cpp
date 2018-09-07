@@ -54,7 +54,7 @@ void DialogNewElement::load_from_element(Element * e)
             trigger = reinterpret_cast<ElementTrigger*>(e);
             m_binary_choice->select_item(trigger->get_side());
             m_direction->select_item(trigger->get_direction());
-            m_trigger_mode->select_state(trigger->get_mode());
+            m_trigger_mode->set_checked(trigger->get_mode());
             break;
         }
     }
@@ -219,6 +219,26 @@ ElementSide DialogNewElement::get_side(void)
         }
     }
     return SIDE_LEFT;
+}
+
+TriggerDirection DialogNewElement::get_direction(void)
+{
+    if (m_direction)
+    {
+        switch (m_direction->get_selected())
+        {
+        default:
+        case UP:
+            return UP;
+        case DOWN:
+            return DOWN;
+        case LEFT:
+            return LEFT;
+        case RIGHT:
+            return RIGHT;
+        }
+    }
+    return UP;
 }
 
 MouseMovementType DialogNewElement::get_mouse_type(void)
