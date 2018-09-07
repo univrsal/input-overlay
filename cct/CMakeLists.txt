@@ -107,6 +107,8 @@ set(io-cct_SOURCES
     src/element/ElementMouseMovement.hpp
 	src/element/ElementTrigger.cpp
     src/element/ElementTrigger.hpp
+    src/element/ElementGamepadID.cpp
+    src/element/ElementGamepadID.hpp
     )
 
 add_executable(io-cct ${io-cct_SOURCES})
