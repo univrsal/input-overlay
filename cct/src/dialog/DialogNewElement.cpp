@@ -364,7 +364,7 @@ void DialogNewElement::add_z_level(void)
         m_element_y = 30;
     add(new Label(m_id++, 9, m_element_y, LANG_LABEL_Z_LEVEL, this));
     m_element_y += 25;
-    add(m_z_level = new Textbox(m_id++, 8, m_element_y, panel_w, 20, "0", this));
+    add(m_z_level = new Textbox(m_id++, 8, m_element_y, panel_w, 20, "1", this));
     m_z_level->set_flags(TEXTBOX_NUMERIC);
     m_element_y += 40;
 }

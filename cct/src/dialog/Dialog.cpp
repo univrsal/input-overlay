@@ -70,16 +70,28 @@ void Dialog::draw_background(void)
 
     for (auto const &element : m_screen_elements)
     {
+        if (m_focused_element
+            && element->get_id() == m_focused_element->get_id())
+            continue;
         element->draw_background();
     }
+
+    if (m_focused_element) /* Focused element has top priority */
+        m_focused_element->draw_background();
 }
 
 void Dialog::draw_foreground(void)
 {
     for (auto const &element : m_screen_elements)
     {
+        if (m_focused_element
+            && element->get_id() == m_focused_element->get_id())
+            continue;
         element->draw_foreground();
     }
+    
+    if (m_focused_element) /* Focused element has top priority */
+        m_focused_element->draw_foreground();
 }
 
 void Dialog::close(void)
@@ -187,26 +199,41 @@ bool Dialog::handle_events(SDL_Event * event)
                 e->select_state(false);
             }
 
-            m_selected_element += m_helper->is_shift_down() ? -1 : 1;
+            m_focused_element_id += m_helper->is_shift_down() ? -1 : 1;
 
-            if (m_selected_element < 0)
-                m_selected_element = (int16_t) m_tab_items.size() - 1;
-            else if (m_selected_element > (int16_t) m_tab_items.size() - 1)
-                m_selected_element = 0;
+            if (m_focused_element_id < 0)
+                m_focused_element_id = (int16_t) m_tab_items.size() - 1;
+            else if (m_focused_element_id > (int16_t) m_tab_items.size() - 1)
+                m_focused_element_id = 0;
 
-            m_tab_items[m_selected_element]->select_state(true);
+            m_tab_items[m_focused_element_id]->select_state(true);
+            change_focus(m_tab_items[m_focused_element_id]->get_id());
         }
     }
 
     bool cursor_handled = false;
     bool element_handled = false;
 
+    if (m_focused_element)
+    {
+        if (m_focused_element->handle_events(event, element_handled))
+            element_handled = true;
+
+        if (!cursor_handled && m_focused_element->is_mouse_over(event->button.x, event->button.y))
+        {
+            cursor_handled = true;
+            m_helper->set_cursor(m_focused_element->get_cursor());
+        }
+    }
+
     for (auto const& element : m_screen_elements)
     {
+        if (m_focused_element
+            && element->get_id() == m_focused_element->get_id())
+            continue;
+
         if (element->handle_events(event, element_handled))
-        {
             element_handled = true;
-        }
 
         if (!cursor_handled && m_helper->util_is_in_rect(element->get_dimensions(), event->button.x, event->button.y))
         {
@@ -226,15 +253,11 @@ void Dialog::action_performed(int8_t action_id)
     {
     case ACTION_FOCUSED:
         if (m_flags & DIALOG_TEXTINPUT)
-        {
             SDL_StartTextInput();
-        }
         break;
     case ACTION_UNFOCUSED:
         if (m_flags & DIALOG_TEXTINPUT)
-        {
             SDL_StopTextInput();
-        }
         break;
     }
 }
@@ -256,6 +279,21 @@ void Dialog::reload_lang(void)
     for (auto const& element : m_screen_elements)
     {
         element->refresh();
+    }
+}
+
+void Dialog::change_focus(int8_t id)
+{
+    int index = 0;
+    for (GuiElement * e : m_tab_items)
+    {
+        if (e->get_id() == id)
+        {
+            m_focused_element_id = index;
+            m_focused_element = e;
+            break;
+        }
+        index++;
     }
 }
 

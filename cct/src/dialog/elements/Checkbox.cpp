@@ -93,6 +93,7 @@ bool Checkbox::handle_events(SDL_Event * event, bool was_handled)
         {
             handled = true;
             m_state = !m_state;
+            m_parent_dialog->change_focus(m_element_id);
             get_parent()->action_performed(get_id());
         }
     }

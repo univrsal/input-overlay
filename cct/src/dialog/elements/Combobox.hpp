@@ -53,6 +53,8 @@ public:
 
     bool is_mouse_over_list(const int & x, const int & y);
 
+    bool is_mouse_over(const int &x, const int &y) override;
+
     void cycle_up(bool select);
 
     void cycle_down(bool select);

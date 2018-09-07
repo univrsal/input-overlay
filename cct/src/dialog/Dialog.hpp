@@ -22,10 +22,10 @@
 
 #define FLUID_BORDER     32
 
-#define ACTION_FOCUSED -1
-#define ACTION_UNFOCUSED -2
-#define ACTION_OK -3
-#define ACTION_CANCEL -4
+#define ACTION_FOCUSED          -1
+#define ACTION_UNFOCUSED        -2
+#define ACTION_OK               -3
+#define ACTION_CANCEL           -4
 
 class SDL_Helper;
 
@@ -57,6 +57,8 @@ public:
 
     void reload_lang(void);
 
+    void change_focus(int8_t id);
+
     const SDL_Point position(void);
 
     SDL_Helper * helper(void);
@@ -69,11 +71,15 @@ public:
 
     int get_bottom(void);
 protected:
+    /* Tab handling */
+    GuiElement * m_focused_element = nullptr;
+    int8_t m_focused_element_id = 0;
+
     std::vector<std::unique_ptr<GuiElement>> m_screen_elements;
     std::vector<GuiElement*> m_tab_items;
     std::string m_title;
 
-    int16_t m_selected_element = 0;
+
     int m_offset_x, m_offset_y;
     bool m_is_dragging = false;
     uint16_t m_flags = 0x0000;

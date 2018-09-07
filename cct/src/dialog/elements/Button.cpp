@@ -98,6 +98,7 @@ bool Button::handle_events(SDL_Event *event, bool was_handled)
             if (m_hovered)
             {
                 m_pressed = true;
+                m_parent_dialog->change_focus(m_element_id);
                 handled = true;
             }
         }

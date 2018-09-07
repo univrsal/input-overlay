@@ -98,6 +98,7 @@ bool Combobox::handle_events(SDL_Event * event, bool was_handled)
             {
                 handled = true;
                 m_list_open = !m_list_open;
+                m_parent_dialog->change_focus(m_element_id);
                 m_hovered_id = 0;
             }
             else
@@ -106,7 +107,7 @@ bool Combobox::handle_events(SDL_Event * event, bool was_handled)
             }
         }
     }
-    else if (m_list_open && event->type == SDL_MOUSEWHEEL)
+    else if ((m_list_open || m_focused) && event->type == SDL_MOUSEWHEEL)
     {
         
         SDL_Point mouse_pos = { 0, 0 };
@@ -118,9 +119,12 @@ bool Combobox::handle_events(SDL_Event * event, bool was_handled)
             else
                 cycle_down(false);
 
-            // Move mouse to item position (Little gimmick, but I like the feature)
-            mouse_pos.y = get_bottom() + m_hovered_id * m_item_v_space + ITEM_V_SPACE * 1.5;
-            SDL_WarpMouseInWindow(nullptr, mouse_pos.x, mouse_pos.y);
+            if (m_list_open)
+            {
+                // Move mouse to item position (Little gimmick, but I like the feature)
+                mouse_pos.y = get_bottom() + m_hovered_id * m_item_v_space + ITEM_V_SPACE * 1.5;
+                SDL_WarpMouseInWindow(nullptr, mouse_pos.x, mouse_pos.y);
+            }
         }
     }
     else if (m_list_open && event->type == SDL_MOUSEMOTION)
@@ -158,6 +162,11 @@ bool Combobox::handle_events(SDL_Event * event, bool was_handled)
 bool Combobox::is_mouse_over_list(const int & x, const int & y)
 {
     return m_list_open && get_helper()->util_is_in_rect(&m_item_box, x, y);
+}
+
+bool Combobox::is_mouse_over(const int &x, const int &y)
+{
+    return GuiElement::is_mouse_over(x, y) || is_mouse_over_list(x, y);
 }
 
 void Combobox::cycle_up(bool select)

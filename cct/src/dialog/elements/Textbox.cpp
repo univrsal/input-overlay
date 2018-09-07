@@ -83,7 +83,7 @@ bool Textbox::handle_events(SDL_Event * event, bool was_handled)
     if (event->type == SDL_MOUSEBUTTONDOWN)
     {
         /* Handle focus */
-        if (event->button.button == SDL_BUTTON_LEFT)
+        if (!was_handled && event->button.button == SDL_BUTTON_LEFT)
         {
             m_focused = is_mouse_over(event->button.x, event->button.y);
             if (m_focused)
@@ -91,6 +91,7 @@ bool Textbox::handle_events(SDL_Event * event, bool was_handled)
                 m_alert = false;
                 SDL_SetTextInputRect(get_dimensions());
                 handled = true;
+                m_parent_dialog->change_focus(m_element_id);
             }
             else if (m_flags & TEXTBOX_NUMERIC)
             {
