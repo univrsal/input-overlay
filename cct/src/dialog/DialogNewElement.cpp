@@ -80,6 +80,8 @@ void DialogNewElement::init()
             LANG_ITEM_MOUSE_TYPE_DOT, LANG_ITEM_MOUSE_TYPE_ARROW);
     else if (m_type == TRIGGER)
         add_trigger();
+    else if (m_type == GAMEPAD_ID)
+        add_info(LANG_LABEL_GAMEPAD_ID_INFO);
 
     switch (m_type)
     {
@@ -89,6 +91,7 @@ void DialogNewElement::init()
     case MOUSE_SCROLLWHEEL:
     case MOUSE_MOVEMENT:
     case TRIGGER:
+    case GAMEPAD_ID:
         add(m_selector = new AtlasSelector(m_id++, get_left() + 270,
             get_top() + 30, m_dimensions.w - 278, m_dimensions.h - 38, m_tool->get_atlas(), this));
         m_selector->set_selection(&m_selection);

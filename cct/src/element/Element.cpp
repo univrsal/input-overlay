@@ -12,6 +12,7 @@
 #include "ElementScrollWheel.hpp"
 #include "ElementMouseMovement.hpp"
 #include "ElementTrigger.hpp"
+#include "ElementGamepadID.hpp"
 #include "../dialog/DialogNewElement.hpp"
 #include "../dialog/DialogElementSettings.hpp"
 #include "../util/SDL_Helper.hpp"
@@ -41,6 +42,9 @@ Element * Element::read_from_file(ccl_config * file, std::string id, ElementType
 		break;
 	case DPAD_STICK:
 		break;
+    case GAMEPAD_ID:
+        return ElementGamepadID::read_from_file(file, id, default_dim);
+        break;
 	}
 	return nullptr;
 }
@@ -72,6 +76,9 @@ Element * Element::read_from_file(ccl_config * file, std::string id, ElementType
      case ANALOG_STICK:
          e = new ElementAnalogStick();
          break;
+     case GAMEPAD_ID:
+         e = new ElementGamepadID();
+         break;
      default:
          e = nullptr;
      }
@@ -96,6 +103,7 @@ bool Element::valid_type(int t)
 		case ElementType::TEXT:
 		case ElementType::TEXTURE:
 		case ElementType::TRIGGER:
+        case ElementType::GAMEPAD_ID:
 			return true;
 	}
 	return false;

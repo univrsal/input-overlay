@@ -30,6 +30,7 @@ void DialogElementType::init()
     m_type->add_item(LANG_ELEMENT_MOUSE_MOVEMENT);
     m_type->add_item(LANG_ELEMENT_ANALOG_STICK);
     m_type->add_item(LANG_ELEMENT_TRIGGER);
+    m_type->add_item(LANG_ELEMENT_GAMEPAD_ID);
     m_type->add_item(LANG_ELEMENT_TEXT);
     m_type->add_item(LANG_ELEMENT_DPAD_STICK);
 

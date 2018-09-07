@@ -119,6 +119,7 @@
 #define LANG_LABEL_TRIGGER_DIRECTION    "label_trigger_direction"
 #define LANG_LABEL_TRIGGER_SIDE         "label_trigger_side"
 #define LANG_CHECKBOX_TRIGGER_BUTON     "checkbox_trigger_button"
+#define LANG_LABEL_GAMEPAD_ID_INFO      "label_gamepad_id_info"
 
 /* Selected element settings */
 #define LANG_BUTTON_ADD_ELEMENT         "button_add_element"
@@ -140,3 +141,4 @@
 #define LANG_ELEMENT_TRIGGER            "element_trigger"
 #define LANG_ELEMENT_TEXT               "element_text"
 #define LANG_ELEMENT_DPAD_STICK         "element_dpad_stick"
+#define LANG_ELEMENT_GAMEPAD_ID         "element_gamepad_id"
