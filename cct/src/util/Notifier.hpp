@@ -62,7 +62,7 @@ public:
 
     void resize(void);
 
-	void add_msg(uint8_t type, std::string msg);
+	void add_msg(uint8_t type, const std::string& msg);
 
 	void draw(void);
 private:

@@ -20,7 +20,7 @@ public:
 
     void handle_event(SDL_Event * event, SDL_Helper * helper) override;
 
-    static ElementGamepadID * read_from_file(ccl_config * file, std::string id, SDL_Point * default_dim);
+    static ElementGamepadID * read_from_file(ccl_config * file, const std::string& id, SDL_Point * default_dim);
 
 private:
     uint8_t m_last_gamepad_id = 0;

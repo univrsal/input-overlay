@@ -8,6 +8,7 @@
 #pragma once
 
 #include <stdlib.h>
+#include <utility>
 #include "Dialog.hpp"
 #include "elements/Button.hpp"
 #include "elements/Textbox.hpp"
@@ -35,7 +36,7 @@ class DialogNewElement : public Dialog
 {
 public:
     DialogNewElement(SDL_Helper * sdl, std::string title, Tool * tool, ElementType type)
-        : Dialog(sdl, SDL_Point {}, title)
+        : Dialog(sdl, SDL_Point {}, std::move(title))
     {
         m_tool = tool;
         m_type = type;

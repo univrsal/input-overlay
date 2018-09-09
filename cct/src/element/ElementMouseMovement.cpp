@@ -6,6 +6,7 @@
  */
 
 #include "ElementMouseMovement.hpp"
+#include <utility>
 #include "../util/Notifier.hpp"
 #include "../util/SDL_Helper.hpp"
 #include "../dialog/DialogNewElement.hpp"
@@ -14,7 +15,7 @@
 
 ElementMouseMovement::ElementMouseMovement(std::string id, SDL_Point pos,
     SDL_Rect mapping, MouseMovementType type, uint16_t radius, uint8_t z)
-    : ElementTexture(ElementType::MOUSE_MOVEMENT, id, pos, mapping, z)
+    : ElementTexture(ElementType::MOUSE_MOVEMENT, std::move(id), pos, mapping, z)
 {
     m_radius = radius;
     m_type;
@@ -58,7 +59,7 @@ uint16_t ElementMouseMovement::get_radius(void)
 }
 
 ElementMouseMovement * ElementMouseMovement::
-    read_from_file(ccl_config * file, std::string id, SDL_Point * default_dim)
+    read_from_file(ccl_config * file, const std::string& id, SDL_Point * default_dim)
 {
     MouseMovementType mmt = MouseMovementType::DOT;
     if (file->get_int(id + CFG_MOUSE_TYPE) != 0)

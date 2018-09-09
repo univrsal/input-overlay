@@ -9,6 +9,7 @@
 
 #include "../../../io-obs/util/layout_constants.hpp"
 #include <string>
+#include <utility>
 #include <SDL.h>
 
 #define ELEMENT_HIDE_ALPHA  60
@@ -60,7 +61,7 @@ public:
 
     void set_pos(int x, int y);
 
-    void set_id(std::string id) { m_id = id;}
+    void set_id(std::string id) { m_id = std::move(id);}
 
     void set_z_level(uint8_t z) { m_z_level = z; }
 
@@ -89,7 +90,7 @@ public:
     virtual void handle_event(SDL_Event * event, SDL_Helper * helper) = 0;
 
     /* Creates empty element and load settings from config */
-    static Element * read_from_file(ccl_config * file, std::string id, ElementType t, SDL_Point * default_dim);
+    static Element * read_from_file(ccl_config * file, const std::string& id, ElementType t, SDL_Point * default_dim);
 
     /* Creates empty element and loads settings from dialog */
     static Element * from_dialog(DialogNewElement * dialog);
@@ -100,10 +101,10 @@ protected:
     Element(); /* Used for creation over dialogs */
     Element(ElementType t, std::string id, SDL_Point pos, uint8_t z);
 
-    static SDL_Rect read_mapping(ccl_config * file, std::string id, SDL_Point * default_dim);
-    static SDL_Point read_position(ccl_config * file, std::string id);
-    static uint8_t read_layer(ccl_config * file, std::string id);
-    static ElementSide read_side(ccl_config * file, std::string id);
+    static SDL_Rect read_mapping(ccl_config * file, const std::string& id, SDL_Point * default_dim);
+    static SDL_Point read_position(ccl_config * file, const std::string& id);
+    static uint8_t read_layer(ccl_config * file, const std::string& id);
+    static ElementSide read_side(ccl_config * file, const std::string& id);
 
     ElementType m_type;
     SDL_Point m_position; /* Final position in overlay */

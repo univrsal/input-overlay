@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <utility>
 #include <vector>
 #include <string>
 #include <memory.h>
@@ -22,8 +23,8 @@ struct LangFile
 public:
     LangFile(std::string name, std::string lang)
     {
-        file_name = name;
-        language = lang;
+        file_name = std::move(name);
+        language = std::move(lang);
     }
     std::string file_name;
     std::string language;

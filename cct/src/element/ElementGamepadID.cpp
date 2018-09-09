@@ -6,6 +6,7 @@
  */
 
 #include "ElementGamepadID.hpp"
+#include <utility>
 #include "../dialog/DialogNewElement.hpp"
 #include "../dialog/DialogElementSettings.hpp"
 #include "../util/CoordinateSystem.hpp"
@@ -13,7 +14,7 @@
 #include "../../../ccl/ccl.hpp"
 
 ElementGamepadID::ElementGamepadID(std::string id, SDL_Point pos, SDL_Rect mapping, uint8_t z)
-    : ElementTexture(ElementType::GAMEPAD_ID, id, pos, mapping, z)
+    : ElementTexture(ElementType::GAMEPAD_ID, std::move(id), pos, mapping, z)
 { /* NO-OP */ }
 
 void ElementGamepadID::draw(Texture * atlas, CoordinateSystem * cs, bool selected, bool alpha)
@@ -42,7 +43,7 @@ void ElementGamepadID::handle_event(SDL_Event * event, SDL_Helper * helper)
     m_last_gamepad_id = UTIL_CLAMP(0, m_last_gamepad_id, 4);
 }
 
-ElementGamepadID * ElementGamepadID::read_from_file(ccl_config * file, std::string id, SDL_Point * default_dim)
+ElementGamepadID * ElementGamepadID::read_from_file(ccl_config * file, const std::string& id, SDL_Point * default_dim)
 {
     return new ElementGamepadID(id, Element::read_position(file, id),
         Element::read_mapping(file, id, default_dim), Element::read_layer(file, id));

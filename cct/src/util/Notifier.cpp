@@ -5,7 +5,7 @@ void Notifier::resize(void)
     m_dim.x = m_helper->util_window_size()->x / 2 - m_dim.w / 2;
 }
 
-void Notifier::add_msg(uint8_t type, std::string msg)
+void Notifier::add_msg(uint8_t type, const std::string& msg)
 {
     if (!msg.empty() && (m_last_message.empty() || m_last_message.compare(msg.c_str()) != 0))
     {

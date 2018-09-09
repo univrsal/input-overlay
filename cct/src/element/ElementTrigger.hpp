@@ -30,7 +30,7 @@ public:
 
     void handle_event(SDL_Event * event, SDL_Helper * helper) override;
 
-    static ElementTrigger * read_from_file(ccl_config * file, std::string id, SDL_Point * default_dim);
+    static ElementTrigger * read_from_file(ccl_config * file, const std::string& id, SDL_Point * default_dim);
 
     ElementSide get_side(void) { return m_side; }
 

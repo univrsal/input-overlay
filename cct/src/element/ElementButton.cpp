@@ -6,6 +6,7 @@
  */
 
 #include "ElementButton.hpp"
+#include <utility>
 #include "../util/Notifier.hpp"
 #include "../util/SDL_Helper.hpp"
 #include "../util/Texture.hpp"
@@ -15,7 +16,7 @@
 #include "../../../ccl/ccl.hpp"
 
 ElementButton::ElementButton(std::string id, SDL_Point pos, SDL_Rect mapping, uint16_t vc, uint8_t z)
-    : ElementTexture(ElementType::BUTTON, id, pos, mapping, z)
+    : ElementTexture(ElementType::BUTTON, std::move(id), pos, mapping, z)
 {
     m_keycode = vc;
     m_pressed_mapping = m_mapping;
@@ -92,7 +93,7 @@ void ElementButton::handle_event(SDL_Event * event, SDL_Helper * helper)
     }
 }
 
-ElementButton * ElementButton::read_from_file(ccl_config * file, std::string id, SDL_Point * default_dim)
+ElementButton * ElementButton::read_from_file(ccl_config * file, const std::string& id, SDL_Point * default_dim)
 {
     return new ElementButton(id, Element::read_position(file, id),
         Element::read_mapping(file, id, default_dim), file->get_int(id + CFG_KEY_CODE),

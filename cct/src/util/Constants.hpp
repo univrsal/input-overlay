@@ -11,7 +11,7 @@
 #define SDL_WINDOW_W                    1280
 #define SDL_WINDOW_H                    720
 #define SDL_WINDOW_FPS                  60
-#define SDL_WINDOW_TPF                  1000 / SDL_WINDOW_FPS
+#define SDL_WINDOW_TPF                  (1000 / SDL_WINDOW_FPS)
 #define SDL_WINDOW_TITLE                "io-cct"
 
 /* Resources */

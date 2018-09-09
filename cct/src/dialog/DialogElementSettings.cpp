@@ -1,4 +1,5 @@
 #include "DialogElementSettings.hpp"
+#include <utility>
 #include "../Config.hpp"
 
 void DialogElementSettings::init()
@@ -138,7 +139,7 @@ void DialogElementSettings::set_uv(int u, int v)
 
 void DialogElementSettings::set_id(std::string id)
 {
-    m_element_id->set_text(id);
+    m_element_id->set_text(std::move(id));
 }
 
 void DialogElementSettings::set_vc(uint16_t vc)

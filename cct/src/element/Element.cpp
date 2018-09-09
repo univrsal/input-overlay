@@ -6,6 +6,7 @@
  */
 
 #include "Element.hpp"
+#include <utility>
 #include "ElementTexture.hpp"
 #include "ElementButton.hpp"
 #include "ElementAnalogStick.hpp"
@@ -22,7 +23,7 @@
 #include "../util/SDL_Helper.hpp"
 #include "../../../ccl/ccl.hpp"
 
-Element * Element::read_from_file(ccl_config * file, std::string id, ElementType t, SDL_Point * default_dim)
+Element * Element::read_from_file(ccl_config * file, const std::string& id, ElementType t, SDL_Point * default_dim)
 {
 	switch (t)
 	{
@@ -122,7 +123,7 @@ Element::Element(ElementType t, std::string id, SDL_Point pos, uint8_t z)
 		m_type = t;
 		m_position.x = pos.x;
 		m_position.y = pos.y;
-		m_id = id;
+		m_id = std::move(id);
 		m_z_level = z;
 }
 
@@ -198,7 +199,7 @@ void Element::set_pos(int x, int y)
     m_scale = 0; /* Forces a rescale at next draw */
 }
 
-SDL_Rect Element::read_mapping(ccl_config * file, std::string id, SDL_Point * default_dim)
+SDL_Rect Element::read_mapping(ccl_config * file, const std::string& id, SDL_Point * default_dim)
 {
 	SDL_Rect result;
 	result.x = file->get_int(id + CFG_U);
@@ -212,20 +213,20 @@ SDL_Rect Element::read_mapping(ccl_config * file, std::string id, SDL_Point * de
 	return result;
 }
 
-SDL_Point Element::read_position(ccl_config * file, std::string id)
+SDL_Point Element::read_position(ccl_config * file, const std::string& id)
 {
 	return { file->get_int(id + CFG_X_POS), file->get_int(id + CFG_Y_POS) };
 }
 
-uint8_t Element::read_layer(ccl_config * file, std::string id)
+uint8_t Element::read_layer(ccl_config * file, const std::string& id)
 {
 	return file->get_int(id + CFG_Z_LEVEL);
 }
 
-ElementSide Element::read_side(ccl_config * file, std::string id)
+ElementSide Element::read_side(ccl_config * file, const std::string& id)
 {
-    ElementSide s = ElementSide::SIDE_LEFT;
+    auto s = SIDE_LEFT;
     if (file->get_int(id + CFG_SIDE) != 0)
-        s = ElementSide::SIDE_RIGHT;
+        s = SIDE_RIGHT;
     return s;
 }

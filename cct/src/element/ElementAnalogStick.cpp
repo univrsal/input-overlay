@@ -6,6 +6,7 @@
  */
 
 #include "ElementAnalogStick.hpp"
+#include <utility>
 #include "../util/SDL_Helper.hpp"
 #include "../util/Notifier.hpp"
 #include "../util/Texture.hpp"
@@ -16,7 +17,7 @@
 
 ElementAnalogStick::ElementAnalogStick(std::string id, SDL_Point pos, SDL_Rect mapping,
     ElementSide side, uint8_t radius, uint8_t z)
-    : ElementTexture(ElementType::ANALOG_STICK, id, pos, mapping, z)
+    : ElementTexture(ElementType::ANALOG_STICK, std::move(id), pos, mapping, z)
 {
     m_stick = side;
     m_radius = radius;
@@ -140,7 +141,7 @@ void ElementAnalogStick::handle_event(SDL_Event * event, SDL_Helper * helper)
     }
 }
 
-ElementAnalogStick * ElementAnalogStick::read_from_file(ccl_config * file, std::string id, SDL_Point * default_dim)
+ElementAnalogStick * ElementAnalogStick::read_from_file(ccl_config * file, const std::string& id, SDL_Point * default_dim)
 {
     ElementSide s = Element::read_side(file, id);
 

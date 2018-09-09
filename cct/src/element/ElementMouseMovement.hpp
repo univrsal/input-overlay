@@ -25,7 +25,7 @@ public:
 
     MouseMovementType get_mouse_type(void);
 
-    static ElementMouseMovement * read_from_file(ccl_config * file, std::string id, SDL_Point * default_dim);
+    static ElementMouseMovement * read_from_file(ccl_config * file, const std::string& id, SDL_Point * default_dim);
     uint16_t get_radius(void);
 private:
     MouseMovementType m_type;

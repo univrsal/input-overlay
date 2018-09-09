@@ -6,6 +6,7 @@
  */
 
 #include "ElementTrigger.hpp"
+#include <utility>
 #include "../dialog/DialogNewElement.hpp"
 #include "../dialog/DialogElementSettings.hpp"
 #include "../util/CoordinateSystem.hpp"
@@ -14,7 +15,7 @@
 
 ElementTrigger::ElementTrigger(std::string id, SDL_Point pos, SDL_Rect mapping,
     ElementSide s, TriggerDirection d, uint8_t z)
-    : ElementTexture(ElementType::TRIGGER, id, pos, mapping, z)
+    : ElementTexture(ElementType::TRIGGER, std::move(id), pos, mapping, z)
 {
     m_pressed_mapping = m_mapping;
     m_pressed_mapping.y += m_mapping.h + CFG_INNER_BORDER;
@@ -24,7 +25,7 @@ ElementTrigger::ElementTrigger(std::string id, SDL_Point pos, SDL_Rect mapping,
 
 ElementTrigger::ElementTrigger(std::string id, SDL_Point pos, SDL_Rect mapping,
     ElementSide s, uint8_t z)
-    : ElementTexture(ElementType::TRIGGER, id, pos, mapping, z)
+    : ElementTexture(ElementType::TRIGGER, std::move(id), pos, mapping, z)
 {
     m_pressed_mapping = m_mapping;
     m_pressed_mapping.y += m_mapping.h + CFG_INNER_BORDER;
@@ -110,7 +111,7 @@ void ElementTrigger::handle_event(SDL_Event * event, SDL_Helper * helper)
     }
 }
 
-ElementTrigger * ElementTrigger::read_from_file(ccl_config * file, std::string id, SDL_Point * default_dim)
+ElementTrigger * ElementTrigger::read_from_file(ccl_config * file, const std::string& id, SDL_Point * default_dim)
 {
     bool button_mode = file->get_bool(id + CFG_TRIGGER_MODE);
     ElementSide s = Element::read_side(file, id);

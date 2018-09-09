@@ -6,11 +6,12 @@
  */
 
 #include "ElementScrollWheel.hpp"
+#include <utility>
 #include "../util/Texture.hpp"
 #include "../util/CoordinateSystem.hpp"
 
 ElementScrollWheel::ElementScrollWheel(std::string id, SDL_Point pos, SDL_Rect mapping, uint8_t z)
-    : ElementTexture(ElementType::MOUSE_SCROLLWHEEL, id, pos, mapping, z)
+    : ElementTexture(ElementType::MOUSE_SCROLLWHEEL, std::move(id), pos, mapping, z)
 {
     refresh_mappings();
 }
@@ -91,7 +92,7 @@ void ElementScrollWheel::update_settings(DialogElementSettings * dialog)
     refresh_mappings();
 }
 
-ElementScrollWheel * ElementScrollWheel::read_from_file(ccl_config * file, std::string id, SDL_Point * default_dim)
+ElementScrollWheel * ElementScrollWheel::read_from_file(ccl_config * file, const std::string& id, SDL_Point * default_dim)
 {
     return new ElementScrollWheel(id, Element::read_position(file, id),
         Element::read_mapping(file, id, default_dim), Element::read_layer(file, id));

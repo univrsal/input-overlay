@@ -6,6 +6,7 @@
  */
 
 #include "ElementTexture.hpp"
+#include <utility>
 #include "../dialog/DialogNewElement.hpp"
 #include "../dialog/DialogElementSettings.hpp"
 #include "../util/CoordinateSystem.hpp"
@@ -14,13 +15,13 @@
 #include "../../../ccl/ccl.hpp"
 
 ElementTexture::ElementTexture(std::string id, SDL_Point pos, SDL_Rect mapping, uint8_t z)
-    : Element(ElementType::TEXTURE, id, pos, z)
+    : Element(ElementType::TEXTURE, std::move(id), pos, z)
 {
     m_mapping = mapping;
 }
 
 ElementTexture::ElementTexture(ElementType t, std::string id, SDL_Point pos, SDL_Rect mapping, uint8_t z)
-    : Element(t, id, pos, z)
+    : Element(t, std::move(id), pos, z)
 {
     m_mapping = mapping;
 }
@@ -73,7 +74,7 @@ void ElementTexture::update_settings(DialogElementSettings * dialog)
     set_mapping(dialog->get_mapping());
 }
 
-ElementTexture * ElementTexture::read_from_file(ccl_config * file, std::string id, SDL_Point * default_dim)
+ElementTexture * ElementTexture::read_from_file(ccl_config * file, const std::string& id, SDL_Point * default_dim)
 {
     return new ElementTexture(id, Element::read_position(file, id),
         Element::read_mapping(file, id, default_dim), Element::read_layer(file, id));

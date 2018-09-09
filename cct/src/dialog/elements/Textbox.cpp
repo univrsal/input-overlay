@@ -6,6 +6,7 @@
  */
 
 #include "Textbox.hpp"
+#include <utility>
 #include "../../util/SDL_Helper.hpp"
 
 class SDL_Helper;
@@ -14,7 +15,7 @@ Textbox::Textbox(int8_t id, int x, int y, int w, int h, std::string text, Dialog
 {
     SDL_Rect temp = { x, y, w, h };
     init(parent, temp, id);
-    set_text(text);
+    set_text(std::move(text));
 }
 
 Textbox::~Textbox()
@@ -197,7 +198,7 @@ void Textbox::select_state(bool state)
 
 void Textbox::set_text(std::string s)
 {
-    m_text = s;
+    m_text = std::move(s);
     if (m_flags & TEXTBOX_NUMERIC || m_flags & TEXTBOX_HEX)
     {
         m_text = m_text.substr(0, 6); /* 5 digits is more than enough */
@@ -222,7 +223,7 @@ void Textbox::set_hex_int(uint16_t i)
     set_text(stream.str());
 }
 
-void Textbox::append_text(std::string s)
+void Textbox::append_text(const std::string& s)
 {
     set_text(m_text + s);
 }

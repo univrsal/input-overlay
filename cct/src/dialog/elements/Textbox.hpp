@@ -51,7 +51,7 @@ public:
 
     void set_hex_int(uint16_t i);
 
-    void append_text(std::string s);
+    void append_text(const std::string& s);
 
     const std::string * get_text(void);
 

@@ -34,7 +34,7 @@ public:
 
     void update_settings(DialogElementSettings * dialog) override;
 
-    static ElementScrollWheel * read_from_file(ccl_config * file, std::string id, SDL_Point * default_dim);
+    static ElementScrollWheel * read_from_file(ccl_config * file, const std::string& id, SDL_Point * default_dim);
 private:
     SDL_Rect m_mapping_pressed, m_mapping_down, m_mapping_up;
     Timer m_wheel_reset;

@@ -38,7 +38,7 @@ public:
 
     uint16_t get_radius(void) { return m_radius; }
 
-    static ElementAnalogStick * read_from_file(ccl_config * file, std::string id, SDL_Point * default_dim);
+    static ElementAnalogStick * read_from_file(ccl_config * file, const std::string& id, SDL_Point * default_dim);
 private:
     SDL_Rect m_static_scaled; /* Position without input movement for display */
     ElementSide m_stick;

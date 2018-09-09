@@ -48,7 +48,7 @@ void DialogElementType::action_performed(int8_t action_id)
         m_tool->queue_dialog_close();
         break;
     case ACTION_OK:
-        m_tool->set_new_element_type((ElementType) m_type->get_selected());
+        m_tool->set_new_element_type(static_cast<ElementType>(m_type->get_selected()));
         m_tool->queue_dialog_open(DialogID::NEW_ELEMENT);
         break;
     }

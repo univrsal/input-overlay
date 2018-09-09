@@ -1,4 +1,6 @@
 #include "Dialog.hpp"
+#include <utility>
+
 /**
  * Created by univrsal on 23.05.2018.
  * This file is part of input-overlay which is licensed
@@ -10,7 +12,7 @@ Dialog::Dialog(SDL_Helper * sdl, SDL_Rect size, std::string title)
 {
     m_helper = sdl;
     m_dimensions = size;
-    m_title = title;
+    m_title = std::move(title);
     m_title_bar = { m_dimensions.x + 5, m_dimensions.y + 5, m_dimensions.w - 10, 20 };
 }
 
@@ -20,7 +22,7 @@ Dialog::Dialog(SDL_Helper * sdl, SDL_Point size, std::string title)
     SDL_Rect temp = { (*window_size).x / 2 - size.x / 2, (*window_size).y / 2 - size.y / 2, size.x, size.y };
     m_helper = sdl;
     m_dimensions = temp;
-    m_title = title;
+    m_title = std::move(title);
     m_title_bar = { m_dimensions.x + 5, m_dimensions.y + 5, m_dimensions.w - 10, 20 };
 }
 
