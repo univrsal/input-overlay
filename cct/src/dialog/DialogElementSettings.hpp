@@ -29,8 +29,8 @@ class Element;
 class DialogElementSettings : public Dialog
 {
 public:
-    DialogElementSettings(SDL_Helper * sdl, Tool * tool)
-        : Dialog(sdl, SDL_Rect { 1030, 200, 240, 400 }, LANG_DIALOG_ELEMENT_SETTINGS)
+    DialogElementSettings(SDL_Helper* sdl, Tool* tool)
+        : Dialog(sdl, SDL_Rect{1030, 200, 240, 400}, LANG_DIALOG_ELEMENT_SETTINGS)
     {
         m_tool = tool;
     };
@@ -45,33 +45,33 @@ public:
     void set_id(std::string id) const;
     void set_vc(uint16_t vc) const;
     void set_z_level(uint8_t z) const;
-    void select_element(Element * e);
+    void select_element(Element* e) const;
 
-    int get_x(void) const { return atoi(m_element_x->c_str()); }
-    int get_y(void) const { return atoi(m_element_y->c_str()); }
-    int get_z(void) const { return atoi(m_element_z_level->c_str()); }
-    int get_u(void) const { return atoi(m_element_u->c_str()); }
-    int get_v(void) const { return atoi(m_element_v->c_str()); }
-    int get_w(void) const { return atoi(m_element_width->c_str()); }
-    int get_h(void) const { return atoi(m_element_height->c_str()); }
-    uint16_t get_vc(void) const { return atoi(m_element_vc->c_str()); }
-    SDL_Rect get_mapping(void) const { return { get_u(), get_v(), get_w(), get_h() }; }
+    int get_x() const { return atoi(m_element_x->c_str()); }
+    int get_y() const { return atoi(m_element_y->c_str()); }
+    int get_z() const { return atoi(m_element_z_level->c_str()); }
+    int get_u() const { return atoi(m_element_u->c_str()); }
+    int get_v() const { return atoi(m_element_v->c_str()); }
+    int get_w() const { return atoi(m_element_width->c_str()); }
+    int get_h() const { return atoi(m_element_height->c_str()); }
+    uint16_t get_vc() const { return atoi(m_element_vc->c_str()); }
+    SDL_Rect get_mapping() const { return {get_u(), get_v(), get_w(), get_h()}; }
 
-    const std::string * get_id(void) const { return m_element_id->get_text(); }
+    const std::string* get_id() const { return m_element_id->get_text(); }
 
-    void alert_element_id(void) const { m_element_id->set_alert(true); }
+    void alert_element_id() const { m_element_id->set_alert(true); }
 private:
     bool m_finished = false;
 
-    Textbox * m_element_id = nullptr;
-    Textbox * m_element_vc = nullptr;
-    Textbox * m_element_width = nullptr;
-    Textbox * m_element_height = nullptr;
-    Textbox * m_element_x = nullptr;
-    Textbox * m_element_y = nullptr;
-    Textbox * m_element_u = nullptr;
-    Textbox * m_element_v = nullptr;
-    Textbox * m_element_z_level = nullptr;
+    Textbox* m_element_id = nullptr;
+    Textbox* m_element_vc = nullptr;
+    Textbox* m_element_width = nullptr;
+    Textbox* m_element_height = nullptr;
+    Textbox* m_element_x = nullptr;
+    Textbox* m_element_y = nullptr;
+    Textbox* m_element_u = nullptr;
+    Textbox* m_element_v = nullptr;
+    Textbox* m_element_z_level = nullptr;
 
-    Tool * m_tool = nullptr;
+    Tool* m_tool = nullptr;
 };

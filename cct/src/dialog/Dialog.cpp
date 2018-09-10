@@ -8,34 +8,34 @@
  * github.com/univrsal/input-overlay
  */
 
-Dialog::Dialog(SDL_Helper * sdl, SDL_Rect size, std::string title)
+Dialog::Dialog(SDL_Helper* sdl, const SDL_Rect size, std::string title): m_offset_x(0)
 {
     m_helper = sdl;
     m_dimensions = size;
     m_title = std::move(title);
-    m_title_bar = { m_dimensions.x + 5, m_dimensions.y + 5, m_dimensions.w - 10, 20 };
+    m_title_bar = {m_dimensions.x + 5, m_dimensions.y + 5, m_dimensions.w - 10, 20};
 }
 
-Dialog::Dialog(SDL_Helper * sdl, SDL_Point size, std::string title)
+Dialog::Dialog(SDL_Helper* sdl, const SDL_Point size, std::string title): m_offset_x(0)
 {
-    SDL_Point * window_size = sdl->util_window_size();
-    SDL_Rect temp = { (*window_size).x / 2 - size.x / 2, (*window_size).y / 2 - size.y / 2, size.x, size.y };
+    const auto window_size = sdl->util_window_size();
+    const SDL_Rect temp = {(*window_size).x / 2 - size.x / 2, (*window_size).y / 2 - size.y / 2, size.x, size.y};
     m_helper = sdl;
     m_dimensions = temp;
     m_title = std::move(title);
-    m_title_bar = { m_dimensions.x + 5, m_dimensions.y + 5, m_dimensions.w - 10, 20 };
+    m_title_bar = {m_dimensions.x + 5, m_dimensions.y + 5, m_dimensions.w - 10, 20};
 }
 
 Dialog::~Dialog()
 {
-    close();
+    Dialog::close();
 }
 
 void Dialog::init()
 {
     add(new Label(0, 8, 6, m_title.c_str(), this));
 
-    SDL_Point * temp = m_helper->util_window_size();
+    const auto temp = m_helper->util_window_size();
 
     if (m_flags & DIALOG_FLUID)
     {
@@ -50,16 +50,16 @@ void Dialog::init()
         m_dimensions.x = temp->x / 2 - m_dimensions.w / 2;
         m_dimensions.y = temp->y / 2 - m_dimensions.h / 2;
     }
-    m_title_bar = { m_dimensions.x + 5, m_dimensions.y + 5, m_dimensions.w - 10, 20 };
+    m_title_bar = {m_dimensions.x + 5, m_dimensions.y + 5, m_dimensions.w - 10, 20};
 }
 
-void Dialog::draw_background(void)
+void Dialog::draw_background()
 {
     if (m_flags & DIALOG_TOP_MOST)
-    /* Tint background in gray */
+        /* Tint background in gray */
     {
-        SDL_Point * s = m_helper->util_window_size();
-        SDL_Rect temp = { 0, 0, s->x, s->y };
+        const auto s = m_helper->util_window_size();
+        SDL_Rect temp = {0, 0, s->x, s->y};
         m_helper->util_fill_rect(&temp, m_helper->palette()->dark_gray(), 200);
     }
 
@@ -70,7 +70,7 @@ void Dialog::draw_background(void)
     // Dialog title bar
     m_helper->util_fill_rect(&m_title_bar, m_helper->palette()->light_gray());
 
-    for (auto const &element : m_screen_elements)
+    for (auto const& element : m_screen_elements)
     {
         if (m_focused_element
             && element->get_id() == m_focused_element->get_id())
@@ -82,29 +82,29 @@ void Dialog::draw_background(void)
         m_focused_element->draw_background();
 }
 
-void Dialog::draw_foreground(void)
+void Dialog::draw_foreground()
 {
-    for (auto const &element : m_screen_elements)
+    for (auto const& element : m_screen_elements)
     {
         if (m_focused_element
             && element->get_id() == m_focused_element->get_id())
             continue;
         element->draw_foreground();
     }
-    
+
     if (m_focused_element) /* Focused element has top priority */
         m_focused_element->draw_foreground();
 }
 
-void Dialog::close(void)
+void Dialog::close()
 {
     m_tab_items.clear();
     m_screen_elements.clear();
 }
 
-bool Dialog::handle_events(SDL_Event * event)
+bool Dialog::handle_events(SDL_Event* event)
 {
-    bool was_handled = false;
+    auto was_handled = false;
 
     if (m_flags & DIALOG_DRAGGABLE)
     {
@@ -112,7 +112,7 @@ bool Dialog::handle_events(SDL_Event * event)
         {
             if (event->button.button == SDL_BUTTON_LEFT)
             {
-                if (m_helper->util_is_in_rect(&m_title_bar, event->button.x, event->button.y))
+                if (SDL_Helper::util_is_in_rect(&m_title_bar, event->button.x, event->button.y))
                 {
                     m_is_dragging = true;
                     m_offset_x = event->button.x - m_title_bar.x;
@@ -120,7 +120,7 @@ bool Dialog::handle_events(SDL_Event * event)
                     was_handled = true;
                 }
 
-                if (m_helper->util_is_in_rect(&m_dimensions, event->button.x, event->button.y))
+                if (SDL_Helper::util_is_in_rect(&m_dimensions, event->button.x, event->button.y))
                 {
                     action_performed(ACTION_FOCUSED);
                     was_handled = true;
@@ -140,7 +140,7 @@ bool Dialog::handle_events(SDL_Event * event)
             {
                 m_dimensions.x = event->button.x - m_offset_x;
                 m_dimensions.y = event->button.y - m_offset_y;
-                m_title_bar = { m_dimensions.x + 5, m_dimensions.y + 5, m_dimensions.w - 10, 20 };
+                m_title_bar = {m_dimensions.x + 5, m_dimensions.y + 5, m_dimensions.w - 10, 20};
                 was_handled = true;
             }
         }
@@ -163,7 +163,7 @@ bool Dialog::handle_events(SDL_Event * event)
                 the main window after resizing
             */
 
-            SDL_Point * temp = m_helper->util_window_size();
+            const auto temp = m_helper->util_window_size();
 
             if (temp->x < get_right())
             {
@@ -189,7 +189,7 @@ bool Dialog::handle_events(SDL_Event * event)
                 m_dimensions.y = temp->y / 2 - m_dimensions.h / 2;
             }
 
-            m_title_bar = { m_dimensions.x + 5, m_dimensions.y + 5, m_dimensions.w - 10, 20 };
+            m_title_bar = {m_dimensions.x + 5, m_dimensions.y + 5, m_dimensions.w - 10, 20};
         }
     }
     else if (event->type == SDL_KEYDOWN)
@@ -204,8 +204,8 @@ bool Dialog::handle_events(SDL_Event * event)
             m_focused_element_id += m_helper->is_shift_down() ? -1 : 1;
 
             if (m_focused_element_id < 0)
-                m_focused_element_id = (int16_t) m_tab_items.size() - 1;
-            else if (m_focused_element_id > (int16_t) m_tab_items.size() - 1)
+                m_focused_element_id = static_cast<int16_t>(m_tab_items.size()) - 1;
+            else if (m_focused_element_id > static_cast<int16_t>(m_tab_items.size()) - 1)
                 m_focused_element_id = 0;
 
             m_tab_items[m_focused_element_id]->select_state(true);
@@ -213,8 +213,8 @@ bool Dialog::handle_events(SDL_Event * event)
         }
     }
 
-    bool cursor_handled = false;
-    bool element_handled = false;
+    auto cursor_handled = false;
+    auto element_handled = false;
 
     if (m_focused_element)
     {
@@ -237,7 +237,7 @@ bool Dialog::handle_events(SDL_Event * event)
         if (element->handle_events(event, element_handled))
             element_handled = true;
 
-        if (!cursor_handled && m_helper->util_is_in_rect(element->get_dimensions(), event->button.x, event->button.y))
+        if (!cursor_handled && SDL_Helper::util_is_in_rect(element->get_dimensions(), event->button.x, event->button.y))
         {
             cursor_handled = true;
             m_helper->set_cursor(element->get_cursor());
@@ -249,7 +249,7 @@ bool Dialog::handle_events(SDL_Event * event)
     return was_handled || element_handled;
 }
 
-void Dialog::action_performed(int8_t action_id)
+void Dialog::action_performed(const int8_t action_id)
 {
     switch (action_id)
     {
@@ -261,22 +261,23 @@ void Dialog::action_performed(int8_t action_id)
         if (m_flags & DIALOG_TEXTINPUT)
             SDL_StopTextInput();
         break;
+    default: ;
     }
 }
 
-void Dialog::add(GuiElement * e)
+void Dialog::add(GuiElement* e)
 {
     m_screen_elements.emplace_back(e);
     if (e->can_select())
         m_tab_items.emplace_back(e);
 }
 
-void Dialog::set_flags(uint16_t flags)
+void Dialog::set_flags(const uint16_t flags)
 {
     m_flags = flags;
 }
 
-void Dialog::reload_lang(void)
+void Dialog::reload_lang()
 {
     for (auto const& element : m_screen_elements)
     {
@@ -284,10 +285,10 @@ void Dialog::reload_lang(void)
     }
 }
 
-void Dialog::change_focus(int8_t id)
+void Dialog::change_focus(const int8_t id)
 {
-    int index = 0;
-    for (GuiElement * e : m_tab_items)
+    auto index = 0;
+    for (auto e : m_tab_items)
     {
         if (e->get_id() == id)
         {
@@ -299,32 +300,32 @@ void Dialog::change_focus(int8_t id)
     }
 }
 
-const SDL_Point Dialog::position(void) const
+SDL_Point Dialog::position() const
 {
-    return SDL_Point { m_dimensions.x, m_dimensions.y };
+    return SDL_Point{m_dimensions.x, m_dimensions.y};
 }
 
-SDL_Helper * Dialog::helper(void) const
+SDL_Helper* Dialog::helper() const
 {
     return m_helper;
 }
 
-int Dialog::get_left(void) const
+int Dialog::get_left() const
 {
     return m_dimensions.x;
 }
 
-int Dialog::get_top(void) const
+int Dialog::get_top() const
 {
     return m_dimensions.y;
 }
 
-int Dialog::get_right(void) const
+int Dialog::get_right() const
 {
     return m_dimensions.x + m_dimensions.y;
 }
 
-int Dialog::get_bottom(void) const
+int Dialog::get_bottom() const
 {
     return m_dimensions.y + m_dimensions.h;
 }

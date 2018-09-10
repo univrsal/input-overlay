@@ -15,15 +15,15 @@
 #include "../dialog/DialogElementSettings.hpp"
 #include "../../../ccl/ccl.hpp"
 
-ElementAnalogStick::ElementAnalogStick(std::string id, SDL_Point pos, SDL_Rect mapping,
-    ElementSide side, uint8_t radius, uint8_t z)
-    : ElementTexture(ElementType::ANALOG_STICK, std::move(id), pos, mapping, z)
+ElementAnalogStick::ElementAnalogStick(std::string id, const SDL_Point pos, const SDL_Rect mapping,
+                                       const ElementSide side, const uint8_t radius, const uint8_t z)
+    : ElementTexture(ANALOG_STICK, std::move(id), pos, mapping, z), m_static_scaled()
 {
     m_stick = side;
     m_radius = radius;
 }
 
-SDL_Rect * ElementAnalogStick::get_abs_dim(CoordinateSystem * cs)
+SDL_Rect* ElementAnalogStick::get_abs_dim(CoordinateSystem* cs)
 {
     m_static_scaled = * Element::get_abs_dim(cs);
 
@@ -32,24 +32,24 @@ SDL_Rect * ElementAnalogStick::get_abs_dim(CoordinateSystem * cs)
     return &m_dimensions_scaled;
 }
 
-ElementError ElementAnalogStick::is_valid(Notifier * n, SDL_Helper * h)
+ElementError ElementAnalogStick::is_valid(Notifier* n, SDL_Helper* h)
 {
     ElementError error = ElementTexture::is_valid(n, h);
 
-    if (error == ElementError::VALID && m_radius == 0)
+    if (error == VALID && m_radius == 0)
     {
         n->add_msg(MESSAGE_ERROR, h->loc(LANG_ERROR_RADIUS_INVALID));
-        error = ElementError::STICK_RADIUS;
+        error = STICK_RADIUS;
     }
     return error;
 }
 
-void ElementAnalogStick::draw(Texture * atlas, CoordinateSystem * cs, bool selected, bool alpha)
+void ElementAnalogStick::draw(Texture* atlas, CoordinateSystem* cs, const bool selected, const bool alpha)
 {
     get_abs_dim(cs);
     if (m_pressed)
     {
-        SDL_Rect temp = m_mapping;
+        auto temp = m_mapping;
         temp.y += temp.h + CFG_INNER_BORDER;
         atlas->draw(cs->get_helper()->renderer(), &m_dimensions_scaled, &temp, alpha ? ELEMENT_HIDE_ALPHA : 255);
     }
@@ -70,26 +70,26 @@ void ElementAnalogStick::draw(Texture * atlas, CoordinateSystem * cs, bool selec
     }
 }
 
-void ElementAnalogStick::write_to_file(ccl_config * cfg, SDL_Point * default_dim)
+void ElementAnalogStick::write_to_file(ccl_config* cfg, SDL_Point* default_dim)
 {
     ElementTexture::write_to_file(cfg, default_dim);
-    std::string comment = "Analog stick side of " + m_id;
-    cfg->add_int(m_id + CFG_SIDE, comment, (int) m_stick, true);
+    const auto comment = "Analog stick side of " + m_id;
+    cfg->add_int(m_id + CFG_SIDE, comment, static_cast<int>(m_stick), true);
 }
 
-void ElementAnalogStick::update_settings(DialogNewElement * dialog)
+void ElementAnalogStick::update_settings(DialogNewElement* dialog)
 {
-        ElementTexture::update_settings(dialog);
-        m_radius = dialog->get_radius();
-        m_stick = dialog->get_side();
+    ElementTexture::update_settings(dialog);
+    m_radius = dialog->get_radius();
+    m_stick = dialog->get_side();
 }
 
-void ElementAnalogStick::update_settings(DialogElementSettings * dialog)
+void ElementAnalogStick::update_settings(DialogElementSettings* dialog)
 {
     ElementTexture::update_settings(dialog);
 }
 
-void ElementAnalogStick::handle_event(SDL_Event * event, SDL_Helper * helper)
+void ElementAnalogStick::handle_event(SDL_Event* event, SDL_Helper* helper)
 {
     if (event->type == SDL_CONTROLLERAXISMOTION && SDL_abs(event->caxis.value) >= STICK_DEAD_ZONE)
     {
@@ -102,7 +102,7 @@ void ElementAnalogStick::handle_event(SDL_Event * event, SDL_Helper * helper)
             }
             else if (event->caxis.axis == SDL_CONTROLLER_AXIS_LEFTY)
             {
-                m_y_axis = ((float)event->caxis.value) / AXIS_MAX_AMPLITUDE;
+                m_y_axis = static_cast<float>(event->caxis.value) / AXIS_MAX_AMPLITUDE;
                 m_movement_reset.start();
             }
         }
@@ -110,16 +110,16 @@ void ElementAnalogStick::handle_event(SDL_Event * event, SDL_Helper * helper)
         {
             if (event->caxis.axis == SDL_CONTROLLER_AXIS_RIGHTX)
             {
-                m_x_axis = ((float)event->caxis.value) / AXIS_MAX_AMPLITUDE;
+                m_x_axis = static_cast<float>(event->caxis.value) / AXIS_MAX_AMPLITUDE;
                 m_movement_reset.start();
             }
             else if (event->caxis.axis == SDL_CONTROLLER_AXIS_RIGHTY)
             {
-                m_y_axis = ((float)event->caxis.value) / AXIS_MAX_AMPLITUDE;
+                m_y_axis = static_cast<float>(event->caxis.value) / AXIS_MAX_AMPLITUDE;
                 m_movement_reset.start();
             }
         }
-        
+
 #if _DEBUG
         printf("STICK: %i, SDL_EVENT: axis: %i, value: %i\n", m_stick, event->caxis.axis, event->caxis.value);
         printf("X_AXIS : %.2f, Y_AXIS: %.2f\n", m_x_axis, m_y_axis);
@@ -141,11 +141,11 @@ void ElementAnalogStick::handle_event(SDL_Event * event, SDL_Helper * helper)
     }
 }
 
-ElementAnalogStick * ElementAnalogStick::read_from_file(ccl_config * file, const std::string& id, SDL_Point * default_dim)
+ElementAnalogStick* ElementAnalogStick::read_from_file(ccl_config* file, const std::string& id, SDL_Point* default_dim)
 {
-    ElementSide s = Element::read_side(file, id);
+    const auto s = read_side(file, id);
 
-    return new ElementAnalogStick(id, Element::read_position(file, id),
-        Element::read_mapping(file, id, default_dim), s,
-        file->get_int(id + CFG_STICK_RADIUS), Element::read_layer(file, id));
+    return new ElementAnalogStick(id, read_position(file, id),
+                                  read_mapping(file, id, default_dim), s,
+                                  file->get_int(id + CFG_STICK_RADIUS), read_layer(file, id));
 }

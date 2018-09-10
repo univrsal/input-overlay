@@ -12,11 +12,11 @@
 #include "../util/Localization.hpp"
 
 #if _DEBUG
-#define TEXTURE_PATH "D:\\Projects\\prog\\cpp\\input-overlay-releases\\build\\v4.6-pre\\presets\\\wasd-full\\wasd.png"
-#define CONFIG_PATH "C:\\Users\\user\\Desktop\\test.ini"
+#define TEXTURE_PATH    "D:\\Projects\\prog\\cpp\\input-overlay-releases\\build\\v4.6-pre\\presets\\wasd-full\\wasd.png"
+#define CONFIG_PATH     "C:\\Users\\user\\Desktop\\test.ini"
 #else
-#define TEXTURE_PATH ""
-#define CONFIG_PATH ""
+#define TEXTURE_PATH    ""
+#define CONFIG_PATH     ""
 #endif
 
 void DialogSetup::init()
@@ -64,7 +64,7 @@ void DialogSetup::init()
 
     add(m_lang_box = new Combobox(id++, m_dimensions.w - 148, m_dimensions.h - 28, 140, 20, this, ELEMENT_UNLOCALIZED));
 
-    const std::vector<std::unique_ptr<LangFile>> * files = m_helper->localization()->get_languages();
+    const auto files = m_helper->localization()->get_languages();
 
     for (auto const& f : *files)
     {
@@ -76,18 +76,18 @@ void DialogSetup::init()
     set_flags(DIALOG_CENTERED | DIALOG_TEXTINPUT);
 }
 
-void DialogSetup::draw_background(void)
+void DialogSetup::draw_background()
 {
     Dialog::draw_background();
 }
 
-void DialogSetup::action_performed(int8_t action_id)
+void DialogSetup::action_performed(const int8_t action_id)
 {
     Dialog::action_performed(action_id);
 
-    bool valid_texture = false;
-    bool empty_config = false;
-    ccl_config * cfg = nullptr;
+    auto valid_texture = false;
+    auto empty_config = false;
+    ccl_config* cfg = nullptr;
 
     switch (action_id)
     {
@@ -123,10 +123,10 @@ void DialogSetup::action_performed(int8_t action_id)
         cfg = new ccl_config(*m_config_path->get_text(), "");
         if (!cfg->is_empty())
         {
-            ccl_data * def_w = cfg->get_node(CFG_DEFAULT_WIDTH, true);
-            ccl_data * def_h = cfg->get_node(CFG_DEFAULT_HEIGHT, true);
-            ccl_data * space_h = cfg->get_node(CFG_H_SPACE, true);
-            ccl_data * space_v = cfg->get_node(CFG_V_SPACE, true);
+            const auto def_w = cfg->get_node(CFG_DEFAULT_WIDTH, true);
+            const auto def_h = cfg->get_node(CFG_DEFAULT_HEIGHT, true);
+            const auto space_h = cfg->get_node(CFG_H_SPACE, true);
+            const auto space_v = cfg->get_node(CFG_V_SPACE, true);
 
             if (def_w)
                 m_def_w->set_text(def_w->get_value());
@@ -142,6 +142,7 @@ void DialogSetup::action_performed(int8_t action_id)
         m_helper->localization()->load_lang_by_id(m_lang_box->get_selected());
         reload_lang();
         break;
+    default: ;
     }
 
     if (cfg)
@@ -151,29 +152,33 @@ void DialogSetup::action_performed(int8_t action_id)
     }
 }
 
-const char * DialogSetup::get_config_path(void) const
+const char* DialogSetup::get_config_path() const
 {
     return m_config_path->get_text()->c_str();
 }
 
-const char * DialogSetup::get_texture_path(void) const
+const char* DialogSetup::get_texture_path() const
 {
     return m_texture_path->get_text()->c_str();
 }
 
 SDL_Point DialogSetup::get_rulers() const
 {
-    return SDL_Point{ std::stoi(m_h_space->get_text()->c_str()),
-        std::stoi(m_v_space->get_text()->c_str()) };
+    return SDL_Point{
+        std::stoi(m_h_space->get_text()->c_str()),
+        std::stoi(m_v_space->get_text()->c_str())
+    };
 }
 
 SDL_Point DialogSetup::get_default_dim() const
 {
-    return SDL_Point { std::stoi(m_def_w->get_text()->c_str()),
-        std::stoi(m_def_h->get_text()->c_str()) };
+    return SDL_Point{
+        std::stoi(m_def_w->get_text()->c_str()),
+        std::stoi(m_def_h->get_text()->c_str())
+    };
 }
 
-bool DialogSetup::should_load_cfg(void) const
+bool DialogSetup::should_load_cfg() const
 {
     return m_load_cfg;
 }

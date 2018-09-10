@@ -11,31 +11,31 @@
 
 class SDL_Helper;
 
-Textbox::Textbox(int8_t id, int x, int y, int w, int h, std::string text, Dialog *parent)
+Textbox::Textbox(const int8_t id, const int x, const int y, const int w, const int h, std::string text, Dialog* parent)
 {
-    SDL_Rect temp = { x, y, w, h };
-    init(parent, temp, id);
+    const SDL_Rect temp = {x, y, w, h};
+    GuiElement::init(parent, temp, id);
     set_text(std::move(text));
 }
 
 Textbox::~Textbox()
 {
-    close();
+    Textbox::close();
 }
 
-void Textbox::close(void)
+void Textbox::close()
 {
     GuiElement::close();
     m_cut_text.clear();
     m_focused = false;
 }
 
-void Textbox::draw_foreground(void)
+void Textbox::draw_foreground()
 {
     GuiElement::draw_foreground();
 }
 
-void Textbox::draw_background(void)
+void Textbox::draw_background()
 {
     get_helper()->util_fill_rect(get_dimensions(), get_helper()->palette()->gray());
     if (m_focused)
@@ -54,31 +54,30 @@ void Textbox::draw_background(void)
         }
     }
 
-    int cursor_pos = get_left() + 2;
+    auto cursor_pos = get_left() + 2;
 
     if (!m_cut_text.empty())
     {
         get_helper()->util_text(&m_cut_text, cursor_pos, get_top() + 2,
-            get_helper()->palette()->white(), FONT_WSTRING);
+                                get_helper()->palette()->white(), FONT_WSTRING);
         cursor_pos += get_helper()->util_text_dim(&m_cut_text, FONT_WSTRING).w;
-
     }
 
     if (!m_composition.empty())
     {
         get_helper()->util_text(&m_composition, 2 + cursor_pos, get_top() + 2,
-            get_helper()->palette()->blue(), FONT_WSTRING);
+                                get_helper()->palette()->blue(), FONT_WSTRING);
         cursor_pos += get_helper()->util_text_dim(&m_composition, FONT_WSTRING).w;
     }
 
     if (m_focused)
     {
-        SDL_Rect temp = { cursor_pos, get_top() + 2, 2, get_dimensions()->h - 4 };
+        SDL_Rect temp = {cursor_pos, get_top() + 2, 2, get_dimensions()->h - 4};
         get_helper()->util_fill_rect(&temp, get_helper()->palette()->white());
     }
 }
 
-bool Textbox::handle_events(SDL_Event * event, bool was_handled)
+bool Textbox::handle_events(SDL_Event* event, const bool was_handled)
 {
     bool handled = false;
     if (event->type == SDL_MOUSEBUTTONDOWN)
@@ -115,11 +114,11 @@ bool Textbox::handle_events(SDL_Event * event, bool was_handled)
                 if (event->key.keysym.sym == SDLK_v && get_helper()->is_ctrl_down()
                     && SDL_HasClipboardText())
                 {
-                    std::string temp = std::string(SDL_GetClipboardText());
-                    bool a = !(m_flags & TEXTBOX_NUMERIC) || is_numeric(temp);
-                    bool b = !(m_flags & TEXTBOX_HEX) || is_hex(temp);
-                    bool c = !(m_flags & TEXTBOX_NO_SPACE) || is_spacefree(temp);
-                    bool d = !(m_flags & TEXTBOX_ALPHA_NUMERIC) || is_alpha_numeric(temp);
+                    const auto temp = std::string(SDL_GetClipboardText());
+                    const auto a = !(m_flags & TEXTBOX_NUMERIC) || is_numeric(temp);
+                    const auto b = !(m_flags & TEXTBOX_HEX) || is_hex(temp);
+                    const auto c = !(m_flags & TEXTBOX_NO_SPACE) || is_space_free(temp);
+                    const auto d = !(m_flags & TEXTBOX_ALPHA_NUMERIC) || is_alpha_numeric(temp);
 
                     if (a && b && c && d)
                     {
@@ -127,7 +126,7 @@ bool Textbox::handle_events(SDL_Event * event, bool was_handled)
                     }
                     handled = true;
                 }
-                /* Deleting */
+                    /* Deleting */
                 else if (event->key.keysym.sym == SDLK_BACKSPACE)
                 {
                     if (!m_text.empty() && m_composition.empty())
@@ -137,7 +136,7 @@ bool Textbox::handle_events(SDL_Event * event, bool was_handled)
                     }
                     handled = true;
                 }
-                /* IME input accepted -> clear composition */
+                    /* IME input accepted -> clear composition */
                 else if (event->key.keysym.sym == SDLK_RETURN)
                 {
                     m_composition.clear();
@@ -150,15 +149,14 @@ bool Textbox::handle_events(SDL_Event * event, bool was_handled)
             if ((m_flags & TEXTBOX_KEYBIND))
                 set_hex_int(get_helper()->sdl_key_to_vc(TO_PAD_MASK(event->cbutton.button)));
         }
-        /* Added IME input to text */
+            /* Added IME input to text */
         else if (event->type == SDL_TEXTINPUT && !(m_flags & TEXTBOX_KEYBIND))
         {
-
-            std::string temp = m_text + std::string(event->text.text);
-            bool a = !(m_flags & TEXTBOX_NUMERIC) || is_numeric(temp);
-            bool b = !(m_flags & TEXTBOX_HEX) || is_hex(temp);
-            bool c = !(m_flags & TEXTBOX_NO_SPACE) || is_spacefree(temp);
-            bool d = !(m_flags & TEXTBOX_ALPHA_NUMERIC) || is_alpha_numeric(temp);
+            const auto temp = m_text + std::string(event->text.text);
+            const auto a = !(m_flags & TEXTBOX_NUMERIC) || is_numeric(temp);
+            const auto b = !(m_flags & TEXTBOX_HEX) || is_hex(temp);
+            const auto c = !(m_flags & TEXTBOX_NO_SPACE) || is_space_free(temp);
+            const auto d = !(m_flags & TEXTBOX_ALPHA_NUMERIC) || is_alpha_numeric(temp);
 
             if (a && b && c && d)
             {
@@ -166,7 +164,7 @@ bool Textbox::handle_events(SDL_Event * event, bool was_handled)
             }
             handled = true;
         }
-        /* IME composition changed */
+            /* IME composition changed */
         else if (event->type == SDL_TEXTEDITING && !(m_flags & TEXTBOX_KEYBIND))
         {
             m_composition = event->edit.text;
@@ -174,7 +172,7 @@ bool Textbox::handle_events(SDL_Event * event, bool was_handled)
         }
         else if (m_flags & TEXTBOX_DROP_FILE && event->type == SDL_DROPFILE)
         {
-            char * dropped_file = event->drop.file;
+            const auto dropped_file = event->drop.file;
             if (dropped_file)
                 set_text(std::string(dropped_file));
             SDL_free(dropped_file);
@@ -184,12 +182,12 @@ bool Textbox::handle_events(SDL_Event * event, bool was_handled)
     return handled;
 }
 
-bool Textbox::can_select(void)
+bool Textbox::can_select()
 {
     return true;
 }
 
-void Textbox::select_state(bool state)
+void Textbox::select_state(const bool state)
 {
     m_focused = state;
     if (!state)
@@ -214,7 +212,7 @@ void Textbox::set_text(std::string s)
     get_helper()->util_cut_string(m_cut_text.append(m_composition), get_dimensions()->w - m_cut_off, false);
 }
 
-void Textbox::set_hex_int(uint16_t i)
+void Textbox::set_hex_int(const uint16_t i)
 {
     std::stringstream stream;
     stream << "0x"
@@ -228,12 +226,12 @@ void Textbox::append_text(const std::string& s)
     set_text(m_text + s);
 }
 
-uint8_t Textbox::get_cursor(void)
+uint8_t Textbox::get_cursor()
 {
     return CURSOR_I_BEAM;
 }
 
-const std::string * Textbox::get_text()
+const std::string* Textbox::get_text()
 {
     if (m_flags & TEXTBOX_NUMERIC && m_text.empty())
         set_text("0");
@@ -242,15 +240,15 @@ const std::string * Textbox::get_text()
     return &m_text;
 }
 
-const char * Textbox::c_str(void)
+const char* Textbox::c_str()
 {
     return get_text()->c_str();
 }
 
-inline bool Textbox::is_numeric(const std::string & s) const
+inline bool Textbox::is_numeric(const std::string& s)
 {
-    int index = 0;
-    for (char i : s)
+    auto index = 0;
+    for (auto i : s)
     {
         if (index == 0 && i == '-') continue;
         if (!(i >= '0' && i <= '9')) return false;
@@ -259,36 +257,36 @@ inline bool Textbox::is_numeric(const std::string & s) const
     return true;
 }
 
-inline bool Textbox::is_alpha_numeric(const std::string & s) const
+inline bool Textbox::is_alpha_numeric(const std::string& s)
 {
-    const char * c = s.c_str();
+    const auto c = s.c_str();
     return c[strspn(c, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_-.:;,0123456789")] == 0;
 }
 
-inline bool Textbox::is_spacefree(const std::string & s) const
+inline bool Textbox::is_space_free(const std::string& s)
 {
     return s.find(' ') == std::string::npos;
 }
 
-bool Textbox::is_hex(const std::string& s) const
+bool Textbox::is_hex(const std::string& s)
 {
-    const char * c = s.c_str();
+    const auto c = s.c_str();
     return c[strspn(c, "0123456789xabcdefABCDEF")] == 0;
 }
 
-void Textbox::pop_back(std::string& s) const
+void Textbox::pop_back(std::string& s)
 {
-    std::wstring convert = get_helper()->util_utf8_to_wstring(s);
+    auto convert = SDL_Helper::util_utf8_to_wstring(s);
     convert.pop_back();
-    s = get_helper()->util_wstring_to_utf8(convert);
+    s = SDL_Helper::util_wstring_to_utf8(convert);
 }
 
-void Textbox::set_alert(bool state)
+void Textbox::set_alert(const bool state)
 {
     m_alert = state;
 }
 
-void Textbox::set_cutoff(uint8_t c)
+void Textbox::set_cutoff(const uint8_t c)
 {
     m_cut_off = c;
 }

@@ -16,37 +16,37 @@ public:
 
     ~Palette();
 
-    SDL_Color * get_bg(void);
-    SDL_Color * get_fg(void);
-    SDL_Color * get_accent(void);
-    SDL_Color * get_tooltip_body(void);
-    SDL_Color * white(void);
-    SDL_Color * black(void);
-    SDL_Color * gray(void);
-    SDL_Color * dark_gray(void);
-    SDL_Color * light_gray(void);
-    SDL_Color * blue(void);
-    SDL_Color * red(void);
-    SDL_Color * green(void);
-    SDL_Color * orange(void);
+    SDL_Color* get_bg();
+    SDL_Color* get_fg();
+    SDL_Color* get_accent();
+    SDL_Color* get_tooltip_body();
+    SDL_Color* white();
+    SDL_Color* black();
+    SDL_Color* gray();
+    SDL_Color* dark_gray();
+    SDL_Color* light_gray();
+    SDL_Color* blue();
+    SDL_Color* red();
+    SDL_Color* green();
+    SDL_Color* orange();
 
 private:
-    SDL_Color m_background;
-    SDL_Color m_foreground;
-    SDL_Color m_accent;
+    SDL_Color m_background{};
+    SDL_Color m_foreground{};
+    SDL_Color m_accent{};
 
-    SDL_Color m_orange;
+    SDL_Color m_orange{};
 
-    SDL_Color m_white;
-    SDL_Color m_black;
-    SDL_Color m_light_gray;
+    SDL_Color m_white{};
+    SDL_Color m_black{};
+    SDL_Color m_light_gray{};
 
-    SDL_Color m_gray;
-    SDL_Color m_dark_gray;
+    SDL_Color m_gray{};
+    SDL_Color m_dark_gray{};
 
-    SDL_Color m_blue;
-    SDL_Color m_red;
-    SDL_Color m_green;
+    SDL_Color m_blue{};
+    SDL_Color m_red{};
+    SDL_Color m_green{};
 
-    SDL_Color m_tooltip_body;
+    SDL_Color m_tooltip_body{};
 };

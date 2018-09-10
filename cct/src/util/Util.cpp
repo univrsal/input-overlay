@@ -1,6 +1,6 @@
 #include "Util.hpp"
 
-SDL_bool util_move_element(int * x, int * y, SDL_Keycode key)
+SDL_bool util_move_element(int* x, int* y, const SDL_Keycode key)
 {
     switch (key)
     {
@@ -20,6 +20,7 @@ SDL_bool util_move_element(int * x, int * y, SDL_Keycode key)
         *x = UTIL_MAX(0, *x - 1);
         return SDL_TRUE;
         break;
+    default: ;
     }
     return SDL_FALSE;
 }

@@ -6,3 +6,19 @@
  */
 
 #pragma once
+#include "Element.hpp"
+
+class ElementText
+    : Element
+{
+public:
+    ElementText()
+    {
+        /* NO-OP */
+    };
+
+    ElementText(ElementType t, std::string id, SDL_Point pos, std::string text, uint8_t z);
+
+private:
+    std::string m_text;
+};

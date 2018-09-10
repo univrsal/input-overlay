@@ -14,30 +14,30 @@
 #include "../util/Notifier.hpp"
 #include "../../../ccl/ccl.hpp"
 
-ElementTexture::ElementTexture(std::string id, SDL_Point pos, SDL_Rect mapping, uint8_t z)
-    : Element(ElementType::TEXTURE, std::move(id), pos, z)
+ElementTexture::ElementTexture(std::string id, const SDL_Point pos, const SDL_Rect mapping, const uint8_t z)
+    : Element(TEXTURE, std::move(id), pos, z)
 {
     m_mapping = mapping;
 }
 
-ElementTexture::ElementTexture(ElementType t, std::string id, SDL_Point pos, SDL_Rect mapping, uint8_t z)
+ElementTexture::ElementTexture(const ElementType t, std::string id, const SDL_Point pos, const SDL_Rect mapping, const uint8_t z)
     : Element(t, std::move(id), pos, z)
 {
     m_mapping = mapping;
 }
 
-ElementError ElementTexture::is_valid(Notifier * n, SDL_Helper * h)
+ElementError ElementTexture::is_valid(Notifier* n, SDL_Helper* h)
 {
     ElementError result = Element::is_valid(n, h);
-    if (result == ElementError::VALID && SDL_RectEmpty(&m_mapping))
+    if (result == VALID && SDL_RectEmpty(&m_mapping))
     {
         n->add_msg(MESSAGE_ERROR, h->loc(LANG_ERROR_SELECTION_EMTPY));
-        result = ElementError::MAPPING_EMPTY;
+        result = MAPPING_EMPTY;
     }
     return result;
 }
 
-void ElementTexture::draw(Texture * atlas, CoordinateSystem * cs, bool selected, bool alpha)
+void ElementTexture::draw(Texture* atlas, CoordinateSystem* cs, const bool selected, const bool alpha)
 {
     get_abs_dim(cs);
     atlas->draw(cs->get_helper()->renderer(), &m_dimensions_scaled, &m_mapping, alpha ? ELEMENT_HIDE_ALPHA : 255);
@@ -46,7 +46,7 @@ void ElementTexture::draw(Texture * atlas, CoordinateSystem * cs, bool selected,
         cs->get_helper()->util_draw_rect(&m_dimensions_scaled, cs->get_helper()->palette()->red());
 }
 
-void ElementTexture::write_to_file(ccl_config * cfg, SDL_Point * default_dim)
+void ElementTexture::write_to_file(ccl_config* cfg, SDL_Point* default_dim)
 {
     Element::write_to_file(cfg, default_dim);
     std::string comment = "Texture position of " + m_id;
@@ -62,20 +62,20 @@ void ElementTexture::write_to_file(ccl_config * cfg, SDL_Point * default_dim)
         cfg->add_int(m_id + CFG_HEIGHT, comment, m_mapping.h, true);
 }
 
-void ElementTexture::update_settings(DialogNewElement * dialog)
+void ElementTexture::update_settings(DialogNewElement* dialog)
 {
     Element::update_settings(dialog);
     set_mapping(dialog->get_selection());
 }
 
-void ElementTexture::update_settings(DialogElementSettings * dialog)
+void ElementTexture::update_settings(DialogElementSettings* dialog)
 {
     Element::update_settings(dialog);
     set_mapping(dialog->get_mapping());
 }
 
-ElementTexture * ElementTexture::read_from_file(ccl_config * file, const std::string& id, SDL_Point * default_dim)
+ElementTexture* ElementTexture::read_from_file(ccl_config* file, const std::string& id, SDL_Point* default_dim)
 {
-    return new ElementTexture(id, Element::read_position(file, id),
-        Element::read_mapping(file, id, default_dim), Element::read_layer(file, id));
+    return new ElementTexture(id, read_position(file, id),
+                              read_mapping(file, id, default_dim), read_layer(file, id));
 }

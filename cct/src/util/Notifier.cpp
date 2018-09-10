@@ -1,16 +1,16 @@
 #include "Notifier.hpp"
 
-void Notifier::resize(void)
+void Notifier::resize()
 {
     m_dim.x = m_helper->util_window_size()->x / 2 - m_dim.w / 2;
 }
 
-void Notifier::add_msg(uint8_t type, const std::string& msg)
+void Notifier::add_msg(const uint8_t type, const std::string& msg)
 {
     if (!msg.empty() && (m_last_message.empty() || m_last_message.compare(msg.c_str()) != 0))
     {
         m_last_message = msg;
-        Message * m = new Message(type, msg, m_helper);
+        Message* m = new Message(type, msg, m_helper);
         m_messages.emplace_back(m);
         m_dim.h += m->m_dim.h + LINE_SPACE;
 
@@ -27,17 +27,17 @@ void Notifier::add_msg(uint8_t type, const std::string& msg)
     resize();
 }
 
-void Notifier::draw(void)
+void Notifier::draw()
 {
     if (m_messages.empty())
         return;
 
     m_helper->util_fill_rect_shadow(&m_dim, m_helper->palette()->gray());
     uint8_t index = 0;
-    int y_pos = LINE_SPACE;
+    auto y_pos = LINE_SPACE;
     std::vector<uint8_t> overdue;
 
-    for (auto const &msg : m_messages)
+    for (auto const& msg : m_messages)
     {
         if (SDL_GetTicks() - msg->m_time_stamp > (MESSAGE_TIMEOUT * msg->m_message_lines.size()))
         {
@@ -45,16 +45,17 @@ void Notifier::draw(void)
         }
         else
         {
-            SDL_Color * c = msg->m_type == MESSAGE_ERROR ? m_helper->palette()->red()
-                : m_helper->palette()->white();
+            const auto c = msg->m_type == MESSAGE_ERROR
+                               ? m_helper->palette()->red()
+                               : m_helper->palette()->white();
 
-            for (auto const &line : msg->m_message_lines)
+            for (auto const& line : msg->m_message_lines)
             {
-                if (!line.get()->empty())
+                if (!line->empty())
                 {
                     m_helper->util_text(line.get(), m_dim.x + 10,
-                        m_dim.y + y_pos,
-                        c, m_helper->localization()->get_font());
+                                        m_dim.y + y_pos,
+                                        c, m_helper->localization()->get_font());
                 }
                 y_pos += LINE_SPACE + m_helper->util_font_height(m_helper->localization()->get_font());
             }
@@ -65,7 +66,7 @@ void Notifier::draw(void)
     /* Remove old messages */
     std::sort(overdue.begin(), overdue.end());
 #ifdef WINDOWS
-    for (auto &i = overdue.rbegin(); i != overdue.rend(); ++i)
+    for (auto& i = overdue.rbegin(); i != overdue.rend(); ++i)
 #else
     for (auto i = overdue.rbegin(); i != overdue.rend(); ++i)
 #endif

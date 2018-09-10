@@ -8,26 +8,26 @@
 #include "Combobox.hpp"
 #include "../../util/Localization.hpp"
 
-Combobox::Combobox(int8_t id, int x, int y, int w, int h, Dialog * parent, uint16_t flags)
+Combobox::Combobox(int8_t id, int x, int y, int w, int h, Dialog* parent, uint16_t flags)
 {
-    SDL_Rect temp = { x, y, w, h };
+    SDL_Rect temp = {x, y, w, h};
     m_flags = flags;
-    init(parent, temp, id);
+    GuiElement::init(parent, temp, id);
     m_item_v_space = get_helper()->util_font_height(FONT_WSTRING) + ITEM_V_SPACE;
 }
 
-void Combobox::close(void)
+void Combobox::close()
 {
     m_items.clear();
 }
 
 static std::string ARROW_DOWN = "▼";
 
-void Combobox::draw_background(void)
+void Combobox::draw_background()
 {
     get_helper()->util_fill_rect(get_dimensions(), get_helper()->palette()->gray());
     get_helper()->util_text(&ARROW_DOWN, get_right() - 18,
-        get_top() + 2, get_helper()->palette()->white(), FONT_WSTRING);
+                            get_top() + 2, get_helper()->palette()->white(), FONT_WSTRING);
 
     if (m_focused)
     {
@@ -39,19 +39,24 @@ void Combobox::draw_background(void)
     }
 }
 
-void Combobox::draw_foreground(void)
+void Combobox::draw_foreground()
 {
     GuiElement::draw_foreground();
 
     if (!m_items.empty() && m_selected_id >= 0 && m_selected_id < m_items.size())
-        get_helper()->util_text(&m_items[m_selected_id], get_left() + 2, get_top() + 2, get_helper()->palette()->white(),
-        m_flags & ELEMENT_UNLOCALIZED ? FONT_WSTRING : get_helper()->localization()->get_font());
+        get_helper()->util_text(&m_items[m_selected_id], get_left() + 2, get_top() + 2,
+                                get_helper()->palette()->white(),
+                                m_flags & ELEMENT_UNLOCALIZED
+                                    ? FONT_WSTRING
+                                    : get_helper()->localization()->get_font());
 
     if (m_list_open)
     {
         uint16_t y = get_bottom() + ITEM_V_SPACE;
-        SDL_Rect temp = { get_left(), get_bottom() - 1, get_width(),
-            ((int)m_items.size()) * m_item_v_space + ITEM_V_SPACE };
+        SDL_Rect temp = {
+            get_left(), get_bottom() - 1, get_width(),
+            ((int)m_items.size()) * m_item_v_space + ITEM_V_SPACE
+        };
 
         get_helper()->util_fill_rect(&temp, get_helper()->palette()->gray());
         get_helper()->util_draw_rect(&temp, get_helper()->palette()->light_gray());
@@ -63,13 +68,15 @@ void Combobox::draw_foreground(void)
         for (auto const& element : m_items)
         {
             get_helper()->util_text(&element, get_left() + 2, y, get_helper()->palette()->white(),
-                m_flags & ELEMENT_UNLOCALIZED ? FONT_WSTRING : get_helper()->localization()->get_font());
+                                    m_flags & ELEMENT_UNLOCALIZED
+                                        ? FONT_WSTRING
+                                        : get_helper()->localization()->get_font());
             y += m_item_v_space;
         }
     }
 }
 
-bool Combobox::can_select(void)
+bool Combobox::can_select()
 {
     return true;
 }
@@ -79,7 +86,7 @@ void Combobox::select_state(bool state)
     m_focused = state;
 }
 
-bool Combobox::handle_events(SDL_Event * event, bool was_handled)
+bool Combobox::handle_events(SDL_Event* event, bool was_handled)
 {
     bool handled = false;
     if (event->type == SDL_MOUSEBUTTONDOWN && !was_handled)
@@ -93,7 +100,7 @@ bool Combobox::handle_events(SDL_Event * event, bool was_handled)
                 select_item(m_hovered_id);
                 handled = true;
             }
-                
+
             if (m_focused)
             {
                 handled = true;
@@ -109,8 +116,7 @@ bool Combobox::handle_events(SDL_Event * event, bool was_handled)
     }
     else if ((m_list_open || m_focused) && event->type == SDL_MOUSEWHEEL)
     {
-        
-        SDL_Point mouse_pos = { 0, 0 };
+        SDL_Point mouse_pos = {0, 0};
         SDL_GetMouseState(&mouse_pos.x, &mouse_pos.y);
         if (mouse_pos.x >= get_left() && mouse_pos.x <= get_right())
         {
@@ -121,7 +127,7 @@ bool Combobox::handle_events(SDL_Event * event, bool was_handled)
 
             if (m_list_open)
             {
-                // Move mouse to item position (Little gimmick, but I like the feature)
+                /* Move mouse to item position (Little gimmick, but I like the feature) */
                 mouse_pos.y = get_bottom() + m_hovered_id * m_item_v_space + ITEM_V_SPACE * 1.5;
                 SDL_WarpMouseInWindow(nullptr, mouse_pos.x, mouse_pos.y);
             }
@@ -129,8 +135,8 @@ bool Combobox::handle_events(SDL_Event * event, bool was_handled)
     }
     else if (m_list_open && event->type == SDL_MOUSEMOTION)
     {
-        int m_x = event->button.x - get_left();
-        int m_y = event->button.y - get_bottom();
+        const auto m_x = event->button.x - get_left();
+        const auto m_y = event->button.y - get_bottom();
 
         if (m_x >= 0 && m_x <= m_dimensions.w && m_y >= 0)
         {
@@ -159,17 +165,17 @@ bool Combobox::handle_events(SDL_Event * event, bool was_handled)
     return handled;
 }
 
-bool Combobox::is_mouse_over_list(const int & x, const int & y) const
+bool Combobox::is_mouse_over_list(const int& x, const int& y) const
 {
-    return m_list_open && get_helper()->util_is_in_rect(&m_item_box, x, y);
+    return m_list_open && SDL_Helper::util_is_in_rect(&m_item_box, x, y);
 }
 
-bool Combobox::is_mouse_over(const int &x, const int &y)
+bool Combobox::is_mouse_over(const int& x, const int& y)
 {
     return GuiElement::is_mouse_over(x, y) || is_mouse_over_list(x, y);
 }
 
-void Combobox::cycle_up(bool select)
+void Combobox::cycle_up(const bool select)
 {
     if (m_hovered_id - 1 < 0)
         m_hovered_id = m_items.size() - 1;
@@ -179,7 +185,7 @@ void Combobox::cycle_up(bool select)
         select_item(m_hovered_id);
 }
 
-void Combobox::cycle_down(bool select)
+void Combobox::cycle_down(const bool select)
 {
     if (m_hovered_id + 1 >= m_items.size())
         m_hovered_id = 0;

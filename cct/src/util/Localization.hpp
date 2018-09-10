@@ -26,6 +26,7 @@ public:
         file_name = std::move(name);
         language = std::move(lang);
     }
+
     std::string file_name;
     std::string language;
 };
@@ -33,21 +34,21 @@ public:
 class Localization
 {
 public:
-    Localization(const char * lang_folder, SDL_Helper * h);
+    Localization(const char* lang_folder, SDL_Helper* helper);
 
     void load_lang_by_id(uint8_t id);
-    const std::vector<std::unique_ptr<LangFile>> * get_languages(void) const { return &m_langfiles; }
+    const std::vector<std::unique_ptr<LangFile>>* get_languages() const { return &m_langfiles; }
 
-    std::string localize(const char * id) const;
-    uint8_t get_english_id(void) const { return m_english_id; }
+    std::string localize(const char* id) const;
+    uint8_t get_english_id() const { return m_english_id; }
 
-    bool is_roman(void) const; /* True if selected language uses roman alphabet */
+    bool is_roman() const; /* True if selected language uses roman alphabet */
 
     /* Return required font for current language */
-    inline uint8_t get_font(void) { return is_roman() ? FONT_ROBOTO_SMALL : FONT_WSTRING; }
+    uint8_t get_font() const { return is_roman() ? FONT_ROBOTO_SMALL : FONT_WSTRING; }
 private:
-    void scan_lang_folder(void);
-    void load_default_language(void);
+    void scan_lang_folder();
+    void load_default_language();
 
     bool m_valid = false;
     bool m_roman = true;
@@ -57,7 +58,7 @@ private:
     std::string m_lang_folder;
     std::vector<std::unique_ptr<LangFile>> m_langfiles;
 
-    SDL_Helper * m_helper = nullptr;
+    SDL_Helper* m_helper = nullptr;
 
     std::unique_ptr<ccl_config> m_english;
     std::unique_ptr<ccl_config> m_current;

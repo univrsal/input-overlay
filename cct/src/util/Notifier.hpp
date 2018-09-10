@@ -23,51 +23,51 @@ class SDL_Helper;
 struct Message
 {
 public:
-	Message(uint8_t type, std::string msg, SDL_Helper * h)
-	{
-		h->format_text(&msg, m_message_lines, m_dim, h->localization()->get_font());
-		m_type = type;
-		m_time_stamp = SDL_GetTicks();
-	}
+    Message(uint8_t type, std::string msg, SDL_Helper* h)
+    {
+        h->format_text(&msg, m_message_lines, m_dim, h->localization()->get_font());
+        m_type = type;
+        m_time_stamp = SDL_GetTicks();
+    }
 
-	~Message()
-	{
-		m_message_lines.clear();
-		m_type = 0;
-		m_time_stamp = 0;
-	}
+    ~Message()
+    {
+        m_message_lines.clear();
+        m_type = 0;
+        m_time_stamp = 0;
+    }
 
-	std::vector<std::unique_ptr<std::string>> m_message_lines;
-	SDL_Rect m_dim;
-	uint8_t m_type;
-	uint32_t m_time_stamp;
+    std::vector<std::unique_ptr<std::string>> m_message_lines;
+    SDL_Rect m_dim;
+    uint8_t m_type;
+    uint32_t m_time_stamp;
 };
 
 class Notifier
 {
 public:
-	Notifier(SDL_Helper * h)
-	{
-		m_messages = std::vector<std::unique_ptr<Message>>();
-		m_helper = h;
-		m_dim = { 0, 20, 0, LINE_SPACE };
-	}
+    Notifier(SDL_Helper* h)
+    {
+        m_messages = std::vector<std::unique_ptr<Message>>();
+        m_helper = h;
+        m_dim = {0, 20, 0, LINE_SPACE};
+    }
 
-	~Notifier()
-	{
-		m_messages.clear();
-		m_helper = nullptr;
-		m_dim = { 0, 0 };
-	}
+    ~Notifier()
+    {
+        m_messages.clear();
+        m_helper = nullptr;
+        m_dim = {0, 0};
+    }
 
-    void resize(void);
+    void resize();
 
-	void add_msg(uint8_t type, const std::string& msg);
+    void add_msg(uint8_t type, const std::string& msg);
 
-	void draw(void);
+    void draw();
 private:
-	std::string m_last_message = "";
-	std::vector<std::unique_ptr<Message>> m_messages;
-	SDL_Helper * m_helper;
-	SDL_Rect m_dim;
+    std::string m_last_message = "";
+    std::vector<std::unique_ptr<Message>> m_messages;
+    SDL_Helper* m_helper;
+    SDL_Rect m_dim;
 };

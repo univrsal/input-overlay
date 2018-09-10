@@ -15,26 +15,26 @@
 #include "../dialog/DialogElementSettings.hpp"
 #include "../../../ccl/ccl.hpp"
 
-ElementButton::ElementButton(std::string id, SDL_Point pos, SDL_Rect mapping, uint16_t vc, uint8_t z)
-    : ElementTexture(ElementType::BUTTON, std::move(id), pos, mapping, z)
+ElementButton::ElementButton(std::string id, const SDL_Point pos, const SDL_Rect mapping, const uint16_t vc, const uint8_t z)
+    : ElementTexture(BUTTON, std::move(id), pos, mapping, z)
 {
     m_keycode = vc;
     m_pressed_mapping = m_mapping;
     m_pressed_mapping.y += m_mapping.h + CFG_INNER_BORDER;
 }
 
- ElementError ElementButton::is_valid(Notifier * n, SDL_Helper * h)
- {
-     ElementError error = ElementTexture::is_valid(n, h);
-     if (error == ElementError::VALID && m_keycode == 0x0)
-     {
-         n->add_msg(MESSAGE_ERROR, h->loc(LANG_ERROR_KEYCODE_INVALID));
-         error = ElementError::KEYCODE_INVALID;
-     }
-     return error;
- }
+ElementError ElementButton::is_valid(Notifier* n, SDL_Helper* h)
+{
+    auto error = ElementTexture::is_valid(n, h);
+    if (error == VALID && m_keycode == 0x0)
+    {
+        n->add_msg(MESSAGE_ERROR, h->loc(LANG_ERROR_KEYCODE_INVALID));
+        error = KEYCODE_INVALID;
+    }
+    return error;
+}
 
-void ElementButton::draw(Texture * atlas, CoordinateSystem * cs, bool selected, bool alpha)
+void ElementButton::draw(Texture* atlas, CoordinateSystem* cs, const bool selected, const bool alpha)
 {
     get_abs_dim(cs);
     if (m_pressed)
@@ -46,22 +46,14 @@ void ElementButton::draw(Texture * atlas, CoordinateSystem * cs, bool selected, 
         cs->get_helper()->util_draw_rect(&m_dimensions_scaled, cs->get_helper()->palette()->red());
 }
 
-void ElementButton::write_to_file(ccl_config * cfg, SDL_Point * default_dim)
+void ElementButton::write_to_file(ccl_config* cfg, SDL_Point* default_dim)
 {
-       ElementTexture::write_to_file(cfg, default_dim);
-       std::string comment = "Key code of " + m_id;
-       cfg->add_int(m_id + CFG_KEY_CODE, comment, m_keycode, true);
+    ElementTexture::write_to_file(cfg, default_dim);
+    const auto comment = "Key code of " + m_id;
+    cfg->add_int(m_id + CFG_KEY_CODE, comment, m_keycode, true);
 }
 
-void ElementButton::update_settings(DialogNewElement * dialog)
-{
-    ElementTexture::update_settings(dialog);
-    m_pressed_mapping = m_mapping;
-    m_pressed_mapping.y += m_mapping.h + CFG_INNER_BORDER;
-    m_keycode = dialog->get_vc();
-}
-
-void ElementButton::update_settings(DialogElementSettings * dialog)
+void ElementButton::update_settings(DialogNewElement* dialog)
 {
     ElementTexture::update_settings(dialog);
     m_pressed_mapping = m_mapping;
@@ -69,7 +61,15 @@ void ElementButton::update_settings(DialogElementSettings * dialog)
     m_keycode = dialog->get_vc();
 }
 
-void ElementButton::handle_event(SDL_Event * event, SDL_Helper * helper)
+void ElementButton::update_settings(DialogElementSettings* dialog)
+{
+    ElementTexture::update_settings(dialog);
+    m_pressed_mapping = m_mapping;
+    m_pressed_mapping.y += m_mapping.h + CFG_INNER_BORDER;
+    m_keycode = dialog->get_vc();
+}
+
+void ElementButton::handle_event(SDL_Event* event, SDL_Helper* helper)
 {
     if (event->type == SDL_KEYDOWN)
     {
@@ -93,9 +93,9 @@ void ElementButton::handle_event(SDL_Event * event, SDL_Helper * helper)
     }
 }
 
-ElementButton * ElementButton::read_from_file(ccl_config * file, const std::string& id, SDL_Point * default_dim)
+ElementButton* ElementButton::read_from_file(ccl_config* file, const std::string& id, SDL_Point* default_dim)
 {
-    return new ElementButton(id, Element::read_position(file, id),
-        Element::read_mapping(file, id, default_dim), file->get_int(id + CFG_KEY_CODE),
-        Element::read_layer(file, id));
+    return new ElementButton(id, read_position(file, id),
+                             read_mapping(file, id, default_dim), file->get_int(id + CFG_KEY_CODE),
+                             read_layer(file, id));
 }

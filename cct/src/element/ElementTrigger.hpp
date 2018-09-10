@@ -13,35 +13,39 @@ class ElementTrigger
     : public ElementTexture
 {
 public:
-    ElementTrigger() : ElementTexture() { /* NO-OP */ };
+    ElementTrigger() :
+        ElementTexture(), m_side(), m_direction()
+    {
+        /* NO-OP */
+    };
     ElementTrigger(std::string id, SDL_Point pos, SDL_Rect mapping,
-        ElementSide s, TriggerDirection d, uint8_t z);
+                   ElementSide s, TriggerDirection d, uint8_t z);
 
     ElementTrigger(std::string id, SDL_Point pos, SDL_Rect mapping,
-        ElementSide s, uint8_t z);
+                   ElementSide s, uint8_t z);
 
-    void draw(Texture * atlas, CoordinateSystem * cs, bool selected, bool alpha) override;
+    void draw(Texture* atlas, CoordinateSystem* cs, bool selected, bool alpha) override;
 
-    void write_to_file(ccl_config * cfg, SDL_Point * default_dim) override;
+    void write_to_file(ccl_config* cfg, SDL_Point* default_dim) override;
 
-    void update_settings(DialogNewElement * dialog) override;
+    void update_settings(DialogNewElement* dialog) override;
 
-    void ElementTrigger::update_settings(DialogElementSettings * dialog) override;
+    void ElementTrigger::update_settings(DialogElementSettings* dialog) override;
 
-    void handle_event(SDL_Event * event, SDL_Helper * helper) override;
+    void handle_event(SDL_Event* event, SDL_Helper* helper) override;
 
-    static ElementTrigger * read_from_file(ccl_config * file, const std::string& id, SDL_Point * default_dim);
+    static ElementTrigger* read_from_file(ccl_config* file, const std::string& id, SDL_Point* default_dim);
 
-    ElementSide get_side(void) const { return m_side; }
+    ElementSide get_side() const { return m_side; }
 
-    TriggerDirection get_direction(void) const { return m_direction; }
+    TriggerDirection get_direction() const { return m_direction; }
 
-    bool get_mode(void) const { return m_button_mode; }
+    bool get_mode() const { return m_button_mode; }
 private:
-    void calculate_mappings(SDL_Rect * pressed, SDL_Rect * absolute) const;
+    void calculate_mappings(SDL_Rect* pressed, SDL_Rect* absolute) const;
 
-    SDL_Rect m_pressed_mapping;
-    
+    SDL_Rect m_pressed_mapping = {};
+
     float m_progress = 0;
     ElementSide m_side;
     TriggerDirection m_direction;

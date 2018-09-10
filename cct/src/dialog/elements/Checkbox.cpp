@@ -7,10 +7,10 @@
 
 #include "Checkbox.hpp"
 
-Checkbox::Checkbox(int8_t id, int x, int y, const char * text, Dialog * parent)
+Checkbox::Checkbox(const int8_t id, const int x, const int y, const char* text, Dialog* parent)
 {
-    SDL_Rect temp = { x, y, 0, 0 };
-    m_checkbox = { x, y, CHECKBOX_SIZE, CHECKBOX_SIZE };
+    SDL_Rect temp = {x, y, 0, 0};
+    m_checkbox = {x, y, CHECKBOX_SIZE, CHECKBOX_SIZE};
 
     m_label = new Label(id, x + CHECKBOX_SIZE + 5, y, text, parent);
 
@@ -22,15 +22,15 @@ Checkbox::Checkbox(int8_t id, int x, int y, const char * text, Dialog * parent)
     else
     {
         m_label->set_pos(x + CHECKBOX_SIZE + 5,
-            y + CHECKBOX_SIZE / 2 - m_label->get_height() / 2);
+                         y + CHECKBOX_SIZE / 2 - m_label->get_height() / 2);
         temp.h = CHECKBOX_SIZE;
     }
 
     temp.w = m_label->get_width() + CHECKBOX_SIZE + 5;
-    init(parent, temp, id);
+    GuiElement::init(parent, temp, id);
 }
 
-Checkbox::Checkbox(int8_t id, int x, int y, const char * text, Dialog * parent, bool state)
+Checkbox::Checkbox(const int8_t id, const int x, const int y, const char* text, Dialog* parent, const bool state)
     : Checkbox(id, x, y, text, parent)
 {
     m_state = state;
@@ -38,55 +38,55 @@ Checkbox::Checkbox(int8_t id, int x, int y, const char * text, Dialog * parent, 
 
 Checkbox::~Checkbox()
 {
-    close();
+    Checkbox::close();
 }
 
-void Checkbox::close(void)
+void Checkbox::close()
 {
     if (m_label)
         delete m_label;
     m_label = nullptr;
 }
 
-bool Checkbox::can_select(void)
+bool Checkbox::can_select()
 {
     return true;
 }
 
-void Checkbox::select_state(bool state)
+void Checkbox::select_state(const bool state)
 {
     m_focused = state;
 }
 
-void Checkbox::draw_background(void)
+void Checkbox::draw_background()
 {
     m_label->draw_background();
 
     get_helper()->util_fill_rect(get_left(), get_top()
-        + m_checkbox.y, CHECKBOX_SIZE, CHECKBOX_SIZE, get_helper()->palette()->dark_gray());
+                                 + m_checkbox.y, CHECKBOX_SIZE, CHECKBOX_SIZE, get_helper()->palette()->dark_gray());
     get_helper()->util_draw_rect(get_left(), get_top()
-        + m_checkbox.y, CHECKBOX_SIZE, CHECKBOX_SIZE, get_helper()->palette()->light_gray());
+                                 + m_checkbox.y, CHECKBOX_SIZE, CHECKBOX_SIZE, get_helper()->palette()->light_gray());
     if (m_focused)
     {
         get_helper()->util_draw_rect(get_left() - 2, get_top() - 2,
-            get_width() + 4, get_height() + 4, get_helper()->palette()->light_gray());
+                                     get_width() + 4, get_height() + 4, get_helper()->palette()->light_gray());
     }
 }
 
-void Checkbox::draw_foreground(void)
+void Checkbox::draw_foreground()
 {
     GuiElement::draw_foreground();
     m_label->draw_foreground();
     if (m_state)
     {
-	get_helper()->util_fill_rect(get_left() + 4, get_top() + m_checkbox.y + 4,
-            CHECKBOX_SIZE - 8, CHECKBOX_SIZE - 8, get_helper()->palette()->green());
+        get_helper()->util_fill_rect(get_left() + 4, get_top() + m_checkbox.y + 4,
+                                     CHECKBOX_SIZE - 8, CHECKBOX_SIZE - 8, get_helper()->palette()->green());
     }
 }
 
-bool Checkbox::handle_events(SDL_Event * event, bool was_handled)
+bool Checkbox::handle_events(SDL_Event* event, bool was_handled)
 {
-    bool handled = false;
+    auto handled = false;
     if (event->type == SDL_MOUSEBUTTONDOWN)
     {
         if (event->button.button == SDL_BUTTON_LEFT && is_mouse_over(event->button.x, event->button.y))
@@ -108,7 +108,7 @@ bool Checkbox::handle_events(SDL_Event * event, bool was_handled)
     return handled;
 }
 
-void Checkbox::set_checked(bool state)
+void Checkbox::set_checked(const bool state)
 {
     m_state = state;
 }

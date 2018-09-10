@@ -10,8 +10,8 @@
 #include "elements/Button.hpp"
 #include "../Tool.hpp"
 
-DialogElementType::DialogElementType(SDL_Helper * sdl, Tool * tool)
-    : Dialog(sdl, SDL_Point { 350, 120 }, LANG_DIALOG_ELEMENT_TYPE)
+DialogElementType::DialogElementType(SDL_Helper* sdl, Tool* tool)
+    : Dialog(sdl, SDL_Point{350, 120}, LANG_DIALOG_ELEMENT_TYPE)
 {
     m_tool = tool;
 }
@@ -20,9 +20,9 @@ void DialogElementType::init()
 {
     Dialog::init();
     add(new Label(1, 8, 32, LANG_LABEL_SELECT_ELEMENT_TYPE, this));
-    
+
     add(m_type = new Combobox(2, 8, 52, m_dimensions.w - 16, 20, this));
-    
+
     /* Populate combobox with element types */
     m_type->add_item(LANG_ELEMENT_TEXTURE);
     m_type->add_item(LANG_ELEMENT_BUTTON);
@@ -40,7 +40,7 @@ void DialogElementType::init()
     set_flags(DIALOG_CENTERED | DIALOG_TOP_MOST);
 }
 
-void DialogElementType::action_performed(int8_t action_id)
+void DialogElementType::action_performed(const int8_t action_id)
 {
     switch (action_id)
     {
@@ -49,7 +49,8 @@ void DialogElementType::action_performed(int8_t action_id)
         break;
     case ACTION_OK:
         m_tool->set_new_element_type(static_cast<ElementType>(m_type->get_selected()));
-        m_tool->queue_dialog_open(DialogID::NEW_ELEMENT);
+        m_tool->queue_dialog_open(NEW_ELEMENT);
         break;
+    default: ;
     }
 }

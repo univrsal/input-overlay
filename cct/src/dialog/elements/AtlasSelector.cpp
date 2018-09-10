@@ -1,18 +1,18 @@
 #include "AtlasSelector.hpp"
 
-AtlasSelector::AtlasSelector(int8_t id, int x, int y, int w, int h, Texture * t, Dialog * parent)
+AtlasSelector::AtlasSelector(const int8_t id, const int x, const int y, const int w, const int h, Texture* t, Dialog* parent)
 {
-    SDL_Rect temp = { x, y, w, h };
-    init(parent, temp, id);
+    const SDL_Rect temp = {x, y, w, h};
+    AtlasSelector::init(parent, temp, id);
     m_atlas = t;
 }
 
 AtlasSelector::~AtlasSelector()
 {
-    close();
+    AtlasSelector::close();
 }
 
-void AtlasSelector::close(void)
+void AtlasSelector::close()
 {
     GuiElement::close();
     if (m_cs)
@@ -20,15 +20,15 @@ void AtlasSelector::close(void)
     m_cs = nullptr;
 }
 
-void AtlasSelector::init(Dialog *parent, SDL_Rect dim, int8_t id)
+void AtlasSelector::init(Dialog* parent, SDL_Rect dim, int8_t id)
 {
     GuiElement::init(parent, dim, id);
-    m_cs = new CoordinateSystem(SDL_Point { 90, 90 }, m_dimensions, get_helper());
+    m_cs = new CoordinateSystem(SDL_Point{90, 90}, m_dimensions, get_helper());
     m_cs->enable_border();
     m_cs->enable_crosshair();
 }
 
-void AtlasSelector::draw_foreground(void)
+void AtlasSelector::draw_foreground()
 {
     GuiElement::draw_foreground();
 
@@ -49,12 +49,12 @@ void AtlasSelector::draw_foreground(void)
     m_cs->draw_selection();
 }
 
-void AtlasSelector::draw_background(void)
+void AtlasSelector::draw_background()
 {
     m_cs->draw_background();
 }
 
-bool AtlasSelector::handle_events(SDL_Event * event, bool was_handled)
+bool AtlasSelector::handle_events(SDL_Event* event, bool was_handled)
 {
     bool handled = false;
 
@@ -64,10 +64,11 @@ bool AtlasSelector::handle_events(SDL_Event * event, bool was_handled)
     return handled;
 }
 
-uint8_t AtlasSelector::get_cursor(void)
+uint8_t AtlasSelector::get_cursor()
 {
     return CURSOR_SPECIAL;
 }
+
 void AtlasSelector::resize()
 {
     m_cs->set_pos(m_dimensions.x, m_dimensions.y);

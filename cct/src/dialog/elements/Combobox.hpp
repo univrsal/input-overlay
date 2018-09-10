@@ -18,13 +18,13 @@ class Combobox :
     public GuiElement
 {
 public:
-    Combobox(int8_t id, int x, int y, int w, int h, Dialog * parent, uint16_t flags = 0x0);
+    Combobox(int8_t id, int x, int y, int w, int h, Dialog* parent, uint16_t flags = 0x0);
 
-    void close(void) override;
+    void close() override;
 
-    void draw_background(void) override;
+    void draw_background() override;
 
-    void draw_foreground(void) override;
+    void draw_foreground() override;
 
     void add_item(std::string item)
     {
@@ -33,27 +33,29 @@ public:
         else
             m_items.emplace_back(get_helper()->loc(item.c_str()));
 
-        m_item_box = { get_left(), get_bottom() - 1, get_width(),
-            (int) (m_items.size() * m_item_v_space + ITEM_V_SPACE) };
+        m_item_box = {
+            get_left(), get_bottom() - 1, get_width(),
+            static_cast<int>(m_items.size() * m_item_v_space + ITEM_V_SPACE)
+        };
     };
 
-    uint8_t get_selected(void) const { return m_selected_id; }
+    uint8_t get_selected() const { return m_selected_id; }
 
-    void select_item(uint8_t id)
+    void select_item(const uint8_t id)
     {
         m_selected_id = UTIL_CLAMP(0, id, m_items.size() - 1);
         m_parent_dialog->action_performed(ACTION_COMBO_ITEM_SELECTED);
     }
 
-    bool can_select(void) override;
+    bool can_select() override;
 
     void select_state(bool state) override;
 
-    bool handle_events(SDL_Event * event, bool was_handled) override;
+    bool handle_events(SDL_Event* event, bool was_handled) override;
 
-    bool is_mouse_over_list(const int & x, const int & y) const;
+    bool is_mouse_over_list(const int& x, const int& y) const;
 
-    bool is_mouse_over(const int &x, const int &y) override;
+    bool is_mouse_over(const int& x, const int& y) override;
 
     void cycle_up(bool select);
 

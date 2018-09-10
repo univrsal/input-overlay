@@ -7,7 +7,6 @@
 
 #pragma once
 
-#include <stdlib.h>
 #include <utility>
 #include "Dialog.hpp"
 #include "elements/Button.hpp"
@@ -15,12 +14,8 @@
 #include "elements/AtlasSelector.hpp"
 #include "elements/Checkbox.hpp"
 #include "elements/Combobox.hpp"
-#include "../Config.hpp"
 #include "../Tool.hpp"
 #include "../util/SDL_Helper.hpp"
-#include "../util/Texture.hpp"
-#include "../util/CoordinateSystem.hpp"
-#include "../util/Constants.hpp"
 
 class SDL_Helper;
 
@@ -35,104 +30,104 @@ enum ElementType;
 class DialogNewElement : public Dialog
 {
 public:
-    DialogNewElement(SDL_Helper * sdl, std::string title, Tool * tool, ElementType type)
-        : Dialog(sdl, SDL_Point {}, std::move(title))
+    DialogNewElement(SDL_Helper* sdl, std::string title, Tool* tool, ElementType type)
+        : Dialog(sdl, SDL_Point{}, std::move(title))
     {
         m_tool = tool;
         m_type = type;
     }
 
-    void close(void) override;
+    void close() override;
 
     void init() override;
 
     void action_performed(int8_t action_id) override;
 
-    void draw_background(void) override;
+    void draw_background() override;
 
-    void draw_foreground(void) override;
+    void draw_foreground() override;
 
-    bool handle_events(SDL_Event * event) override;
+    bool handle_events(SDL_Event* event) override;
 
-    void load_from_element(Element * e);
+    void load_from_element(Element* e);
 
-    ElementType get_type(void) const;
+    ElementType get_type() const;
 
-    SDL_Rect get_selection(void) const;
+    SDL_Rect get_selection() const;
 
-    uint16_t get_vc(void) const;
+    uint16_t get_vc() const;
 
-    uint8_t get_z_level(void) const;
+    uint8_t get_z_level() const;
 
-    ElementSide get_side(void) const;
+    ElementSide get_side() const;
 
-    TriggerDirection get_direction(void) const;
+    TriggerDirection get_direction() const;
 
-    MouseMovementType get_mouse_type(void) const;
+    MouseMovementType get_mouse_type() const;
 
-    uint8_t get_radius(void) const;
+    uint8_t get_radius() const;
 
-    const std::string * get_id(void) const;
+    const std::string* get_id() const;
 
     void set_default_dim(int w, int h);
 
-    bool get_trigger_mode(void) const { return m_trigger_mode ? m_trigger_mode->get_state() : false; }
+    bool get_trigger_mode() const { return m_trigger_mode ? m_trigger_mode->get_state() : false; }
 
 private:
     void handle_error(ElementError e) const;
 
     /* Adds default elements*/
-    void add_selection_elements(void);
+    void add_selection_elements();
 
     /* Adds key code elements */
-    void add_keycode_elements(void);
+    void add_keycode_elements();
 
     /* Adds text box for element id*/
-    void add_element_id(void);
+    void add_element_id();
 
     /* Adds layering elements */
-    void add_z_level(void);
+    void add_z_level();
 
     /* Adds analog stick or mouse movement elements*/
-    void add_mouse_or_analog_stick(const char * label, const char * item_a, const char * item_b);
+    void add_mouse_or_analog_stick(const char* label, const char* item_a, const char* item_b);
 
     /* Adds informational label */
-    void add_info(const char * unlocalized_text);
+    void add_info(const char* unlocalized_text);
 
     /* Adds game pad trigger elements */
-    void add_trigger(void);
+    void add_trigger();
 
     /* Tracks whether or not the element name was changed*/
     std::string m_initial_name;
 
-    uint16_t m_element_y = 0;  /* Y position of the lowest gui element */
+    uint16_t m_element_y = 0; /* Y position of the lowest gui element */
     static const uint16_t panel_w = 254;
     uint16_t m_id = 1;
 
-    AtlasSelector * m_selector = nullptr;
-    Tool * m_tool = nullptr;
+    AtlasSelector* m_selector = nullptr;
+    Tool* m_tool = nullptr;
     ElementType m_type;
 
-    Textbox * m_radius = nullptr;
+    Textbox* m_radius = nullptr;
     /* Used for mouse movement type and analog stick side*/
-    Combobox * m_binary_choice = nullptr;
+    Combobox* m_binary_choice = nullptr;
 
-    Combobox * m_direction = nullptr;
+    Combobox* m_direction = nullptr;
 
-    Textbox * m_w = nullptr;
-    Textbox * m_h = nullptr;
-    Textbox * m_u = nullptr;
-    Textbox * m_v = nullptr;
+    Textbox* m_w = nullptr;
+    Textbox* m_h = nullptr;
+    Textbox* m_u = nullptr;
+    Textbox* m_v = nullptr;
 
-    Textbox * m_element_id = nullptr;
-    Textbox * m_keycode = nullptr;
-    Textbox * m_z_level = nullptr;
+    Textbox* m_element_id = nullptr;
+    Textbox* m_keycode = nullptr;
+    Textbox* m_z_level = nullptr;
 
-    Button * m_ok = nullptr;
-    Button * m_cancel = nullptr;
+    Button* m_ok = nullptr;
+    Button* m_cancel = nullptr;
 
-    Checkbox * m_read_keybind = nullptr;
-    Checkbox * m_trigger_mode = nullptr;
+    Checkbox* m_read_keybind = nullptr;
+    Checkbox* m_trigger_mode = nullptr;
 
     /* UV mapping */
     SDL_Rect m_selection;

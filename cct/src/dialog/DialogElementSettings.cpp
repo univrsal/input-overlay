@@ -69,7 +69,7 @@ void DialogElementSettings::init()
     set_flags(DIALOG_DRAGGABLE | DIALOG_TEXTINPUT);
 }
 
-void DialogElementSettings::action_performed(int8_t action_id)
+void DialogElementSettings::action_performed(const int8_t action_id)
 {
     switch (action_id)
     {
@@ -84,21 +84,22 @@ void DialogElementSettings::action_performed(int8_t action_id)
         }
         break;
     case ACTION_MOD_ELEMENT:
-        m_tool->queue_dialog_open(DialogID::MOD_ELEMENT);
+        m_tool->queue_dialog_open(MOD_ELEMENT);
         break;
     case ACTION_HELP_BUTTON:
-        m_tool->queue_dialog_open(DialogID::HELP);
+        m_tool->queue_dialog_open(HELP);
         break;
     case ACTION_NEW_ELEMENT:
-        m_tool->queue_dialog_open(DialogID::SELECECT_TYPE);
+        m_tool->queue_dialog_open(SELECECT_TYPE);
         break;
     case ACTION_SAVE_CONFIG:
         m_tool->action_performed(TOOL_ACTION_SAVE_CONFIG);
         break;
+    default: ;
     }
 }
 
-void DialogElementSettings::set_wh(int w, int h) const
+void DialogElementSettings::set_wh(const int w, const int h) const
 {
     if (w >= 0)
     {
@@ -111,7 +112,7 @@ void DialogElementSettings::set_wh(int w, int h) const
     }
 }
 
-void DialogElementSettings::set_xy(int x, int y) const
+void DialogElementSettings::set_xy(const int x, const int y) const
 {
     if (x >= 0)
     {
@@ -124,7 +125,7 @@ void DialogElementSettings::set_xy(int x, int y) const
     }
 }
 
-void DialogElementSettings::set_uv(int u, int v) const
+void DialogElementSettings::set_uv(const int u, const int v) const
 {
     if (u >= 0)
     {
@@ -142,17 +143,17 @@ void DialogElementSettings::set_id(std::string id) const
     m_element_id->set_text(std::move(id));
 }
 
-void DialogElementSettings::set_vc(uint16_t vc) const
+void DialogElementSettings::set_vc(const uint16_t vc) const
 {
     m_element_vc->set_hex_int(vc);
 }
 
-void DialogElementSettings::set_z_level(uint8_t z) const
+void DialogElementSettings::set_z_level(const uint8_t z) const
 {
     m_element_z_level->set_text(std::to_string(z));
 }
 
-void DialogElementSettings::select_element(Element * e)
+void DialogElementSettings::select_element(Element* e) const
 {
     if (e)
     {

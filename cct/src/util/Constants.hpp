@@ -7,7 +7,7 @@
 
 #pragma once
 
- /* SDL_Helper constants */
+/* SDL_Helper constants */
 #define SDL_WINDOW_W                    1280
 #define SDL_WINDOW_H                    720
 #define SDL_WINDOW_FPS                  60

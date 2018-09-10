@@ -11,34 +11,35 @@
 #include "../Dialog.hpp"
 
 #define CHECKBOX_SIZE 17
+
 class Checkbox :
     public GuiElement
 {
 public:
 
-    Checkbox(int8_t id, int x, int y, const char * text, Dialog * parent);
-    Checkbox(int8_t id, int x, int y, const char * text, Dialog * parent, bool state);
+    Checkbox(int8_t id, int x, int y, const char* text, Dialog* parent);
+    Checkbox(int8_t id, int x, int y, const char* text, Dialog* parent, bool state);
 
     ~Checkbox();
 
-    void close(void) override;
+    void close() override;
 
-    bool can_select(void) override;
+    bool can_select() override;
 
     void select_state(bool state) override;
 
-    void draw_background(void) override;
+    void draw_background() override;
 
-    void draw_foreground(void) override;
+    void draw_foreground() override;
 
-    bool handle_events(SDL_Event * event, bool was_handled) override;
+    bool handle_events(SDL_Event* event, bool was_handled) override;
 
-    bool get_state(void) const { return m_state; }
+    bool get_state() const { return m_state; }
 
     void set_checked(bool state);
 private:
     bool m_focused = false;
     bool m_state = false;
-    Label * m_label = nullptr;
+    Label* m_label = nullptr;
     SDL_Rect m_checkbox;
 };

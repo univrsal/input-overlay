@@ -21,7 +21,7 @@
 #include "Localization.hpp"
 #endif
 
-Localization::Localization(const char * lang_folder, SDL_Helper * helper)
+Localization::Localization(const char* lang_folder, SDL_Helper* helper)
 {
     m_lang_folder = lang_folder;
     m_helper = helper;
@@ -48,7 +48,7 @@ void Localization::load_lang_by_id(uint8_t id)
             return; /* English is always loaded */
         }
 
-        LangFile * lang = m_langfiles[id].get();
+        LangFile* lang = m_langfiles[id].get();
         if (lang)
         {
             m_current.reset();
@@ -63,7 +63,7 @@ void Localization::load_lang_by_id(uint8_t id)
     }
 }
 
-std::string Localization::localize(const char * id) const
+std::string Localization::localize(const char* id) const
 {
     std::string value = "";
     if (m_valid)
@@ -88,33 +88,29 @@ std::string Localization::localize(const char * id) const
     return value;
 }
 
-bool Localization::is_roman(void) const
+bool Localization::is_roman() const
 {
     return m_roman;
 }
 
-void Localization::scan_lang_folder(void)
+void Localization::scan_lang_folder()
 {
-    ccl_config * lang = nullptr;
+    ccl_config* lang = nullptr;
     std::string file_name;
 #ifdef _WIN32
-    /* Iterating over items in folder on Win32
-     * and filtering only *.ini files
-     */
-    HANDLE hFind;
     WIN32_FIND_DATA data;
-    std::string path = m_lang_folder;
+    auto path = m_lang_folder;
 
     path.append("/*.ini");
-    hFind = FindFirstFile(path.c_str(), &data);
-    
-    if (hFind != INVALID_HANDLE_VALUE)
+    const auto h_find = FindFirstFile(path.c_str(), &data);
+
+    if (h_find != INVALID_HANDLE_VALUE)
     {
         do
         {
             if (!(GetFileAttributes(data.cFileName) & FILE_ATTRIBUTE_DIRECTORY));
             {
-                file_name =  std::string(data.cFileName);
+                file_name = std::string(data.cFileName);
 
 #else
     /* Iterating over items in folder on linux
@@ -139,16 +135,16 @@ void Localization::scan_lang_folder(void)
                     && S_ISREG(path_stat.st_mode))
             {
 #endif
-                /* After filtering on windows and linux store file anme 
+                /* After filtering on windows and linux store file name 
                  * in file_name
                  */
                 lang = new ccl_config(m_lang_folder + "/" + file_name, "");
-                ccl_data * node = nullptr;
+                ccl_data* node = nullptr;
 
                 if (lang && (node = lang->get_node(LANG_ID)))
                 {
                     m_valid = true;
-                    if (file_name.compare("en_US.ini") == 0)
+                    if (file_name == "en_US.ini")
                         m_english_id = m_langfiles.size();
                     m_langfiles.emplace_back(new LangFile(file_name, node->get_value()));
                 }
@@ -161,8 +157,9 @@ void Localization::scan_lang_folder(void)
                 lang = nullptr;
             }
 #ifdef _WIN32
-        } while (FindNextFile(hFind, &data));
-        FindClose(hFind);
+        }
+        while (FindNextFile(h_find, &data));
+        FindClose(h_find);
 #else
         }
         closedir(dir);
@@ -174,7 +171,7 @@ void Localization::scan_lang_folder(void)
     }
 }
 
-void Localization::load_default_language(void)
+void Localization::load_default_language()
 {
     bool flag = true;
 

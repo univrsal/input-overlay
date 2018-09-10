@@ -184,7 +184,7 @@ void SDL_Helper::util_set_color(const SDL_Color* color) const
         util_set_color(color->r, color->g, color->b, color->a);
 }
 
-void SDL_Helper::util_draw_line(const int x1, const int y1, const int x2, const int y2, const SDL_Color* color) const
+void SDL_Helper::util_draw_line(int x1, int y1, int x2, int y2, const SDL_Color* color) const
 {
     util_set_color(color);
     SDL_RenderDrawLine(m_sdl_renderer, x1, y1, x2, y2);
@@ -202,7 +202,7 @@ void SDL_Helper::util_draw_rect(const SDL_Rect* rect, const SDL_Color* color) co
     SDL_RenderDrawRect(m_sdl_renderer, rect);
 }
 
-void SDL_Helper::util_draw_rect(const int x, const int y, const int w, const int h, const SDL_Color* color) const
+void SDL_Helper::util_draw_rect(int x, int y, int w, int h, const SDL_Color* color) const
 {
     SDL_Rect temp_rect = {x, y, w, h};
     util_set_color(color);
@@ -215,21 +215,21 @@ void SDL_Helper::util_fill_rect(const SDL_Rect* rect, const SDL_Color* color) co
     SDL_RenderFillRect(m_sdl_renderer, rect);
 }
 
-void SDL_Helper::util_fill_rect_shadow(const SDL_Rect* rect, const SDL_Color* color, const int8_t offset) const
+void SDL_Helper::util_fill_rect_shadow(const SDL_Rect* rect, const SDL_Color* color, int8_t offset) const
 {
     SDL_Rect temp_rect = {rect->x + offset, rect->y + offset, rect->w, rect->h};
     util_fill_rect(&temp_rect, m_palette->black());
     util_fill_rect(rect, color);
 }
 
-void SDL_Helper::util_fill_rect(const int x, const int y, const int w, const int h, const SDL_Color* color) const
+void SDL_Helper::util_fill_rect(int x, int y, int w, int h, const SDL_Color* color) const
 {
     util_set_color(color);
     SDL_Rect temp_rect = SDL_Rect{x, y, w, h};
     SDL_RenderFillRect(m_sdl_renderer, &temp_rect);
 }
 
-void SDL_Helper::util_fill_rect(const SDL_Rect* rect, const SDL_Color* color, const uint8_t alpha) const
+void SDL_Helper::util_fill_rect(const SDL_Rect* rect, const SDL_Color* color, uint8_t alpha) const
 {
     SDL_Color temp;
     temp.a = alpha;
@@ -239,31 +239,31 @@ void SDL_Helper::util_fill_rect(const SDL_Rect* rect, const SDL_Color* color, co
     util_fill_rect(rect, &temp);
 }
 
-bool SDL_Helper::util_is_in_rect(const SDL_Rect* rect, const int x, const int y)
+bool SDL_Helper::util_is_in_rect(const SDL_Rect* rect, int x, int y) const
 {
     return x >= rect->x && x <= (rect->x + rect->w) && y >= rect->y && y <= (rect->y + rect->h);
 }
 
-void SDL_Helper::util_text(const std::string* text, int x, int y, const SDL_Color* color, const uint8_t font) const
+void SDL_Helper::util_text(const std::string* text, int x, int y, const SDL_Color* color, uint8_t font) const
 {
-    const auto ttf_font = get_font(font);
+    TTF_Font* ttf_font = get_font(font);
     if (color == nullptr)
         m_font_helper->draw(text, x, y, ttf_font, m_palette->white());
     else
         m_font_helper->draw(text, x, y, ttf_font, color);
 }
 
-void SDL_Helper::util_text_rot(const std::string* text, const int x, const int y, const SDL_Color* color, double angle,
-                               const uint8_t font) const
+void SDL_Helper::util_text_rot(const std::string* text, int x, int y, const SDL_Color* color, double angle,
+                               uint8_t font) const
 {
-    auto ttf_font = get_font(font);
+    TTF_Font* ttf_font = get_font(font);
     if (color == nullptr)
         m_font_helper->draw_rot(text, x, y, ttf_font, m_palette->white(), angle);
     else
         m_font_helper->draw_rot(text, x, y, ttf_font, color, angle);
 }
 
-SDL_Rect SDL_Helper::util_text_dim(const std::string* text, const uint8_t font) const
+SDL_Rect SDL_Helper::util_text_dim(const std::string* text, uint8_t font) const
 {
     return m_font_helper->get_text_dimension(get_font(font), text);
 }
@@ -273,10 +273,10 @@ SDL_Point* SDL_Helper::util_window_size()
     return &m_window_size;
 }
 
-void SDL_Helper::util_cut_string(std::string& s, const int max_width, const bool front) const
+void SDL_Helper::util_cut_string(std::string& s, int max_width, bool front) const
 {
-    auto w = util_text_dim(&s).w;
-    auto was_cut = false;
+    int w = util_text_dim(&s).w;
+    bool was_cut = false;
     while (w > max_width)
     {
         if (front)
@@ -299,16 +299,16 @@ void SDL_Helper::util_cut_string(std::string& s, const int max_width, const bool
 bool SDL_Helper::util_check_texture_path(const char* path) const
 {
     Texture temp;
-    const auto flag = temp.load(path, m_sdl_renderer);
+    bool flag = temp.load(path, m_sdl_renderer);
     temp.free();
     return flag;
 }
 
 void SDL_Helper::init_controllers()
 {
-    for (auto i = 0; i < SDL_NumJoysticks(); i++)
+    for (int i = 0; i < SDL_NumJoysticks(); i++)
     {
-        auto c = SDL_GameControllerOpen(i);
+        SDL_GameController* c = SDL_GameControllerOpen(i);
         if (c)
         {
             m_controllers.emplace_back(c);
@@ -320,7 +320,7 @@ void SDL_Helper::init_controllers()
     }
 }
 
-void SDL_Helper::set_cursor(const uint8_t type) const
+void SDL_Helper::set_cursor(uint8_t type) const
 {
     if (m_have_cursors)
     {
@@ -361,7 +361,7 @@ void SDL_Helper::exit_loop() const
     *m_runflag = false;
 }
 
-void SDL_Helper::set_run_flag(bool* flag)
+void SDL_Helper::set_runflag(bool* flag)
 {
     m_runflag = flag;
 }
@@ -401,7 +401,7 @@ void SDL_Helper::handle_events(SDL_Event* event)
     }
 }
 
-uint8_t SDL_Helper::util_font_height(const uint8_t font) const
+uint8_t SDL_Helper::util_font_height(uint8_t font) const
 {
     switch (font)
     {
@@ -415,9 +415,9 @@ uint8_t SDL_Helper::util_font_height(const uint8_t font) const
     }
 }
 
-bool SDL_Helper::handle_controller_disconnect(const uint8_t id)
+bool SDL_Helper::handle_controller_disconnect(uint8_t id)
 {
-    auto flag = false;
+    bool flag = false;
     if (id < m_controllers.size())
     {
         if (m_controllers[id])
@@ -436,10 +436,10 @@ bool SDL_Helper::handle_controller_disconnect(const uint8_t id)
     return flag;
 }
 
-bool SDL_Helper::handle_controller_connect(const uint8_t id)
+bool SDL_Helper::handle_controller_connect(uint8_t id)
 {
     SDL_GameController* c;
-    auto flag = false;
+    bool flag = false;
     if (id < m_controllers.size())
     {
         if (!m_controllers[id])
@@ -499,7 +499,7 @@ float SDL_Helper::util_get_fps() const
     return m_fps;
 }
 
-std::wstring SDL_Helper::util_utf8_to_wstring(const std::string& str)
+std::wstring SDL_Helper::util_utf8_to_wstring(const std::string& str) const
 {
 #ifdef WINDOWS
     std::wstring_convert<std::codecvt_utf8<wchar_t>> conv;
@@ -569,7 +569,7 @@ std::wstring SDL_Helper::util_utf8_to_wstring(const std::string& str)
 #endif
 }
 
-std::string SDL_Helper::util_wstring_to_utf8(const std::wstring& str)
+std::string SDL_Helper::util_wstring_to_utf8(const std::wstring& str) const
 {
 #ifdef WINDOWS
     std::wstring_convert<std::codecvt_utf8<wchar_t>> conv;
@@ -614,11 +614,11 @@ std::string SDL_Helper::util_wstring_to_utf8(const std::wstring& str)
 }
 
 void SDL_Helper::format_text(const std::string* s, std::vector<std::unique_ptr<std::string>>& out, SDL_Rect& dim,
-                             const uint8_t font) const
+                             uint8_t font) const
 {
     if (!s || s->empty())
         return;
-    const auto height = util_font_height(font);
+    uint8_t height = util_font_height(font);
 
     SDL_Rect temp = {};
     if (s->find(new_line) == std::string::npos)
@@ -630,8 +630,8 @@ void SDL_Helper::format_text(const std::string* s, std::vector<std::unique_ptr<s
         return;
     }
 
-    auto width = 0;
-    auto lines = 1;
+    int width = 0;
+    int lines = 1;
 
     auto start = 0U;
     auto end = s->find(new_line);
@@ -749,7 +749,7 @@ static uint32_t KEY_MAP[][2]
 };
 #define KEY_MAP_SIZE 132
 
-uint32_t SDL_Helper::vc_to_sdl_key(const uint16_t key)
+uint32_t SDL_Helper::vc_to_sdl_key(uint16_t key) const
 {
     for (auto& i : KEY_MAP)
     {
@@ -759,7 +759,7 @@ uint32_t SDL_Helper::vc_to_sdl_key(const uint16_t key)
     return SDLK_UNKNOWN;
 }
 
-uint16_t SDL_Helper::sdl_key_to_vc(const uint32_t key)
+uint16_t SDL_Helper::sdl_key_to_vc(uint32_t key) const
 {
     for (auto& i : KEY_MAP)
     {

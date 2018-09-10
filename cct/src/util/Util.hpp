@@ -17,31 +17,31 @@
 #define UTIL_MIN(a,b)               (((a) < (b)) ? (a) : (b))
 #define UTIL_CLAMP(lower, x, upper) (UTIL_MIN(upper, UTIL_MAX(x, lower)))
 
-SDL_bool util_move_element(int * x, int * y, SDL_Keycode key);
+SDL_bool util_move_element(int* x, int* y, SDL_Keycode key);
 
 class Timer
 {
 public:
     Timer() { start(); };
 
-    void start(void)
+    void start()
     {
         m_start_ticks = SDL_GetTicks();
         m_end_ticks = 0;
         m_started = true;
     }
 
-    void stop(void)
+    void stop()
     {
         m_end_ticks = SDL_GetTicks();
         m_started = true;
     }
 
-    bool started(void) const { return m_started; }
+    bool started() const { return m_started; }
 
-    uint32_t get_delta(void) const { return m_end_ticks - m_start_ticks; }
+    uint32_t get_delta() const { return m_end_ticks - m_start_ticks; }
 
-    uint32_t get_time(void) const { return SDL_GetTicks() - m_start_ticks; }
+    uint32_t get_time() const { return SDL_GetTicks() - m_start_ticks; }
 private:
     uint32_t m_start_ticks = 0;
     uint32_t m_end_ticks = 0;

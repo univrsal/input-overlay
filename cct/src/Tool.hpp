@@ -48,47 +48,47 @@ class Tool
 {
 public:
     Tool() { m_helper = nullptr; }
-    Tool(SDL_Helper * helper);
+    Tool(SDL_Helper* helper);
     ~Tool();
 
     void program_loop();
 
-    Element * get_selected(void) const;
+    Element* get_selected() const;
 
-    uint16_t get_selected_id(void) const;
+    uint16_t get_selected_id() const;
 
     void action_performed(uint8_t type);
 
-    Texture * get_atlas(void) const;
+    Texture* get_atlas() const;
 
     void delete_element(uint16_t id) const;
 
     void set_new_element_type(ElementType type) { m_new_element_type = type; }
 
     void queue_dialog_open(DialogID id);
-    void queue_dialog_close(void);
+    void queue_dialog_close();
 
-    ElementError verify_element(DialogNewElement * d, bool modify_mode) const;
+    ElementError verify_element(DialogNewElement* d, bool modify_mode) const;
 private:
-    void add_element(Element * e) const;
+    void add_element(Element* e) const;
 
-    void close_toplevel(void);
+    void close_top_level();
     void handle_input();
     bool m_run_flag = true;
 
     bool m_queue_close = false; /* True when top level dialog should be closed */
-    DialogID m_queued_dialog = DialogID::NONE;
+    DialogID m_queued_dialog = NONE;
 
     /* Stores the type, which the user selected for the next element */
-    ElementType m_new_element_type = ElementType::INVALID;
-    
+    ElementType m_new_element_type = INVALID;
+
     SDL_Event m_event;
-    SDL_Helper * m_helper;
+    SDL_Helper* m_helper;
 
-    Config * m_config = nullptr;
+    Config* m_config = nullptr;
 
-    DialogElementSettings * m_element_settings = nullptr;
-    Dialog * m_toplevel = nullptr;
-    Notifier * m_notify = nullptr;
+    DialogElementSettings* m_element_settings = nullptr;
+    Dialog* m_toplevel = nullptr;
+    Notifier* m_notify = nullptr;
     ToolState m_state;
 };

@@ -749,7 +749,7 @@ static uint32_t KEY_MAP[][2]
 };
 #define KEY_MAP_SIZE 132
 
-uint32_t SDL_Helper::vc_to_sdl_key(const uint16_t key)
+uint32_t SDL_Helper::vc_to_sdl_key(uint16_t key) const
 {
     for (auto& i : KEY_MAP)
     {
@@ -759,7 +759,7 @@ uint32_t SDL_Helper::vc_to_sdl_key(const uint16_t key)
     return SDLK_UNKNOWN;
 }
 
-uint16_t SDL_Helper::sdl_key_to_vc(const uint32_t key)
+uint16_t SDL_Helper::sdl_key_to_vc(uint32_t key) const
 {
     for (auto& i : KEY_MAP)
     {

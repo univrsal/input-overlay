@@ -17,27 +17,27 @@ class Dialog;
 class Button : public GuiElement
 {
 public:
-    Button(int8_t id, int x, int y, const char *text, Dialog *parent);
+    Button(int8_t id, int x, int y, const char* text, Dialog* parent);
 
-    Button(int8_t id, int x, int y, int w, const char *text, Dialog *parent);
+    Button(int8_t id, int x, int y, int w, const char* text, Dialog* parent);
 
     ~Button();
 
-    bool can_select(void) override;
+    bool can_select() override;
 
     void select_state(bool state) override;
 
-    void draw_background(void) override;
+    void draw_background() override;
 
-    void draw_foreground(void) override;
+    void draw_foreground() override;
 
-    bool handle_events(SDL_Event *event, bool was_handled) override;
+    bool handle_events(SDL_Event* event, bool was_handled) override;
 
-    void close(void) override;
+    void close() override;
 
-    void resize(void) override;
+    void resize() override;
 
-    void refresh(void) override;
+    void refresh() override;
 
 protected:
     bool m_pressed = false;

@@ -15,13 +15,13 @@ GuiElement::~GuiElement()
     m_parent_dialog = nullptr;
 }
 
-void GuiElement::close(void)
+void GuiElement::close()
 {
     m_element_id = 0;
-    m_dimensions = { 0, 0, 0, 0 };
+    m_dimensions = {0, 0, 0, 0};
 }
 
-bool GuiElement::can_select(void)
+bool GuiElement::can_select()
 {
     return false;
 }
@@ -31,27 +31,27 @@ void GuiElement::select_state(bool state)
     // NO-OP
 }
 
-void GuiElement::resize(void)
+void GuiElement::resize()
 {
     //NO-OP
 }
 
-void GuiElement::refresh(void)
+void GuiElement::refresh()
 {
     /* NO OP */
 }
 
-Dialog *GuiElement::get_parent() const
+Dialog* GuiElement::get_parent() const
 {
     return m_parent_dialog;
 }
 
-SDL_Helper * GuiElement::get_helper() const
+SDL_Helper* GuiElement::get_helper() const
 {
     return get_parent()->helper();
 }
 
-SDL_Rect * GuiElement::get_dimensions()
+SDL_Rect* GuiElement::get_dimensions()
 {
     m_dimensions.x = get_left();
     m_dimensions.y = get_top();
@@ -63,7 +63,7 @@ int8_t GuiElement::get_id() const
     return m_element_id;
 }
 
-void GuiElement::init(Dialog *parent, SDL_Rect dim, int8_t id)
+void GuiElement::init(Dialog* parent, const SDL_Rect dim, const int8_t id)
 {
     m_parent_dialog = parent;
     m_dimensions = dim;
@@ -74,12 +74,12 @@ void GuiElement::init(Dialog *parent, SDL_Rect dim, int8_t id)
     m_element_id = id;
 }
 
-bool GuiElement::is_mouse_over(const int & x, const int & y)
+bool GuiElement::is_mouse_over(const int& x, const int& y)
 {
-    return get_helper()->util_is_in_rect(get_dimensions(), x, y);
+    return SDL_Helper::util_is_in_rect(get_dimensions(), x, y);
 }
 
-void GuiElement::set_pos(int x, int y)
+void GuiElement::set_pos(const int x, const int y)
 {
     m_dimensions.x = m_parent_dialog->position().x + x;
     m_dimensions.y = m_parent_dialog->position().y + y;
@@ -88,12 +88,12 @@ void GuiElement::set_pos(int x, int y)
     resize();
 }
 
-uint8_t GuiElement::get_cursor(void)
+uint8_t GuiElement::get_cursor()
 {
     return CURSOR_ARROW;
 }
 
-void GuiElement::set_flags(uint8_t flags)
+void GuiElement::set_flags(const uint8_t flags)
 {
     m_flags = flags;
 }
@@ -113,22 +113,22 @@ int GuiElement::get_top() const
     return m_flags & ELEMENT_ABSOLUTE_POSITION ? m_position.y : m_position.y + get_parent()->position().y;
 }
 
-int GuiElement::get_bottom()
+int GuiElement::get_bottom() const
 {
     return get_top() + m_dimensions.h;
 }
 
-int GuiElement::get_width(void) const
+int GuiElement::get_width() const
 {
     return m_dimensions.w;
 }
 
-int GuiElement::get_height(void) const
+int GuiElement::get_height() const
 {
     return m_dimensions.h;
 }
 
-void GuiElement::draw_foreground(void)
+void GuiElement::draw_foreground()
 {
 #if _DEBUG
 #if DEBUG_DRAW_OUTLINE
@@ -139,7 +139,7 @@ void GuiElement::draw_foreground(void)
 #endif
 }
 
-void GuiElement::set_dim(SDL_Rect r)
+void GuiElement::set_dim(const SDL_Rect r)
 {
     m_dimensions = r;
     resize();
