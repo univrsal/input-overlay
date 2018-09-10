@@ -272,6 +272,12 @@ void Dialog::add(GuiElement* e)
         m_tab_items.emplace_back(e);
 }
 
+void Dialog::set_dimension(const uint16_t w, const uint16_t h)
+{
+    m_dimensions.w = w;
+    m_dimensions.h = h;
+}
+
 void Dialog::set_flags(const uint16_t flags)
 {
     m_flags = flags;

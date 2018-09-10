@@ -37,8 +37,6 @@ public:
         m_type = type;
     }
 
-    void close() override;
-
     void init() override;
 
     void action_performed(int8_t action_id) override;
@@ -73,6 +71,9 @@ public:
 
     bool get_trigger_mode() const { return m_trigger_mode ? m_trigger_mode->get_state() : false; }
 
+    const std::string* get_text() const;
+
+    bool get_text_reset() const;
 private:
     void handle_error(ElementError e) const;
 
@@ -96,6 +97,9 @@ private:
 
     /* Adds game pad trigger elements */
     void add_trigger();
+
+    /* Adds text elements*/
+    void add_text();
 
     /* Tracks whether or not the element name was changed*/
     std::string m_initial_name;
@@ -122,17 +126,17 @@ private:
     Textbox* m_element_id = nullptr;
     Textbox* m_keycode = nullptr;
     Textbox* m_z_level = nullptr;
+    Textbox* m_text = nullptr;
 
     Button* m_ok = nullptr;
     Button* m_cancel = nullptr;
 
     Checkbox* m_read_keybind = nullptr;
     Checkbox* m_trigger_mode = nullptr;
+    Checkbox* m_text_reset = nullptr;
 
     /* UV mapping */
     SDL_Rect m_selection;
-
-    SDL_Point m_default_dim;
 
     bool m_modify_mode = false;
 };

@@ -356,7 +356,7 @@ void CoordinateSystem::draw_selection() const
     /* Draw selection separate, since it needs to be topmost */
     if (!SDL_RectEmpty(m_selection))
     {
-        SDL_Rect temp = *m_selection;
+        auto temp = *m_selection;
         temp.x = temp.x * m_scale_f + get_origin_x();
         temp.y = temp.y * m_scale_f + get_origin_y();
         temp.w = temp.w * m_scale_f;

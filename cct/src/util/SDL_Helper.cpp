@@ -253,6 +253,16 @@ void SDL_Helper::util_text(const std::string* text, int x, int y, const SDL_Colo
         m_font_helper->draw(text, x, y, ttf_font, color);
 }
 
+void SDL_Helper::util_text(const std::string* text, const int x, const int y, const SDL_Color* color, const uint8_t font,
+                           const uint8_t scale) const
+{
+    const auto ttf_font = get_font(font);
+    if (color == nullptr)
+        m_font_helper->draw(text, x, y, ttf_font, m_palette->white(), scale);
+    else
+        m_font_helper->draw(text, x, y, ttf_font, color, scale);
+}
+
 void SDL_Helper::util_text_rot(const std::string* text, const int x, const int y, const SDL_Color* color, double angle,
                                const uint8_t font) const
 {

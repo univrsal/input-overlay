@@ -14,21 +14,21 @@
 #include "../util/Notifier.hpp"
 #include "../../../ccl/ccl.hpp"
 
-ElementTexture::ElementTexture(std::string id, const SDL_Point pos, const SDL_Rect mapping, const uint8_t z)
-    : Element(TEXTURE, std::move(id), pos, z)
+ElementTexture::ElementTexture(const std::string& id, const SDL_Point pos, const SDL_Rect mapping, const uint8_t z)
+    : Element(TEXTURE, id, pos, z)
 {
     m_mapping = mapping;
 }
 
-ElementTexture::ElementTexture(const ElementType t, std::string id, const SDL_Point pos, const SDL_Rect mapping, const uint8_t z)
-    : Element(t, std::move(id), pos, z)
+ElementTexture::ElementTexture(const ElementType t, const std::string& id, const SDL_Point pos, const SDL_Rect mapping, const uint8_t z)
+    : Element(t, id, pos, z)
 {
     m_mapping = mapping;
 }
 
 ElementError ElementTexture::is_valid(Notifier* n, SDL_Helper* h)
 {
-    ElementError result = Element::is_valid(n, h);
+    auto result = Element::is_valid(n, h);
     if (result == VALID && SDL_RectEmpty(&m_mapping))
     {
         n->add_msg(MESSAGE_ERROR, h->loc(LANG_ERROR_SELECTION_EMTPY));

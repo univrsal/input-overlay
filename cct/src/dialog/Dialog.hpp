@@ -53,6 +53,8 @@ public:
 
     void add(GuiElement* e);
 
+    void set_dimension(uint16_t w, uint16_t h);
+
     void set_flags(uint16_t flags);
 
     void reload_lang();

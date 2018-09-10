@@ -36,11 +36,11 @@ public:
 
     void set_mode(int m);
 
-    void draw(const std::string* text, int x, int y, TTF_Font* font, const SDL_Color* fg, const SDL_Color* bg) const;
+    void draw(const std::string* text, int x, int y, TTF_Font* font, const SDL_Color* fg, const SDL_Color* bg, uint8_t scale = 1) const;
 
-    void draw(const std::string* text, int x, int y, TTF_Font* font, const SDL_Color* fg);
+    void draw(const std::string* text, int x, int y, TTF_Font* font, const SDL_Color* fg, uint8_t scale = 1);
 
-    void draw(const std::string* text, int x, int y, TTF_Font* font) const;
+    void draw(const std::string* text, int x, int y, TTF_Font* font, uint8_t scale = 1) const;
 
     void draw_rot(const std::string* text, int x, int y, TTF_Font* font, const SDL_Color* fg, double angle) const;
 

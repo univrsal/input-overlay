@@ -7,6 +7,7 @@
 
 #pragma once
 #include <SDL.h>
+#include <string>
 
 #define SDL_PAD_MASK        0x00FF0000 /* SDL uses 32bit integer for */
 #define SDL_MOUSE_MASK      0x00FE0000 /* codes so there's plenty of space */
@@ -47,3 +48,9 @@ private:
     uint32_t m_end_ticks = 0;
     bool m_started = false;
 };
+
+namespace util
+{
+    extern void replace(std::string& str, const char* find, const char* replace);
+}
+

@@ -120,6 +120,8 @@
 #define LANG_LABEL_TRIGGER_SIDE         "label_trigger_side"
 #define LANG_CHECKBOX_TRIGGER_BUTON     "checkbox_trigger_button"
 #define LANG_LABEL_GAMEPAD_ID_INFO      "label_gamepad_id_info"
+#define LANG_LABEL_TEXT_FORMAT_INFO     "label_text_format_info"
+#define LANG_CHECKBOX_RESET_TEXT        "checkbox_reset_text"
 
 /* Selected element settings */
 #define LANG_BUTTON_ADD_ELEMENT         "button_add_element"

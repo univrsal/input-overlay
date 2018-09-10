@@ -19,7 +19,7 @@ FontHelper::~FontHelper()
 }
 
 void FontHelper::draw(const std::string* text, const int x, const int y, TTF_Font* font, const SDL_Color* fg,
-                      const SDL_Color* bg) const
+                      const SDL_Color* bg, uint8_t scale) const
 {
     SDL_Surface* surface = nullptr;
     SDL_Texture* texture = nullptr;
@@ -41,7 +41,7 @@ void FontHelper::draw(const std::string* text, const int x, const int y, TTF_Fon
 
         if (texture)
         {
-            SDL_Rect dest = {x, y, surface->w, surface->h};
+            SDL_Rect dest = {x, y, surface->w * scale, surface->h * scale };
             SDL_RenderCopy(m_helper->renderer(), texture, nullptr, &dest);
             SDL_DestroyTexture(texture);
             SDL_FreeSurface(surface);
@@ -62,9 +62,9 @@ void FontHelper::set_mode(const int m)
     m_mode = m;
 }
 
-void FontHelper::draw(const std::string* text, const int x, const int y, TTF_Font* font) const
+void FontHelper::draw(const std::string* text, const int x, const int y, TTF_Font* font, uint8_t scale) const
 {
-    draw(text, x, y, font, m_helper->palette()->black(), m_helper->palette()->white());
+    draw(text, x, y, font, m_helper->palette()->black(), m_helper->palette()->white(), scale);
 }
 
 void FontHelper::draw_rot(const std::string* text, const int x, const int y, TTF_Font* font, const SDL_Color* fg,
@@ -123,8 +123,9 @@ SDL_Rect FontHelper::get_text_dimension(TTF_Font* font, const std::string* text)
     return dest;
 }
 
-void FontHelper::draw(const std::string* text, const int x, const int y, TTF_Font* font, const SDL_Color* fg)
+void FontHelper::draw(const std::string* text, const int x, const int y,
+                      TTF_Font* font, const SDL_Color* fg, uint8_t scale)
 {
     set_mode(FONT_BLENDED);
-    draw(text, x, y, font, fg, nullptr);
+    draw(text, x, y, font, fg, nullptr, scale);
 }

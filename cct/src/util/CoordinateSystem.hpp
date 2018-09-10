@@ -34,7 +34,7 @@ public:
         };
     }
 
-    CoordinateSystem(SDL_Point origin, SDL_Rect size, SDL_Helper* h)
+    CoordinateSystem(const SDL_Point origin, const SDL_Rect size, SDL_Helper* h)
     {
         m_helper = h;
         m_origin.x = origin.x + size.x;
@@ -62,13 +62,13 @@ public:
 
     void set_pos(int x, int y);
 
-    void set_grid_space(SDL_Point p)
+    void set_grid_space(const SDL_Point p)
     {
         m_grid_spacing = p;
         m_has_custom_grid = true;
     }
 
-    void set_ruler_offset(SDL_Point p)
+    void set_ruler_offset(const SDL_Point p)
     {
         m_ruler_offset = p;
         m_has_rulers = true;
@@ -131,19 +131,19 @@ private:
         return a >= min * m_scale_f + o && a <= max * m_scale_f + o;
     }
 
-    int m_scale_f; /* Multiplier for zooming */
+    int m_scale_f = 1; /* Multiplier for zooming */
     uint8_t m_size_mode = SIZE_NONE;
 
-    SDL_Rect m_dimensions; /* Complete size of the system */
-    SDL_Rect m_system_area; /* Area minus axes and scale text */
+    SDL_Rect m_dimensions = {}; /* Complete size of the system */
+    SDL_Rect m_system_area = {}; /* Area minus axes and scale text */
     SDL_Rect* m_selection = nullptr; /* For atlas selector */
 
-    SDL_Point m_selection_a;
-    SDL_Point m_origin_anchor; /* Constant position of the origin */
-    SDL_Point m_origin; /* Origin after zooming and moving */
-    SDL_Point m_drag_offset;
-    SDL_Point m_grid_spacing;
-    SDL_Point m_ruler_offset;
+    SDL_Point m_selection_a = {};
+    SDL_Point m_origin_anchor = {}; /* Constant position of the origin */
+    SDL_Point m_origin = {}; /* Origin after zooming and moving */
+    SDL_Point m_drag_offset = {};
+    SDL_Point m_grid_spacing = {};
+    SDL_Point m_ruler_offset = {};
 
     SDL_Helper* m_helper = nullptr;
 

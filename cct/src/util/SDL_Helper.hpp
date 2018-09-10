@@ -73,6 +73,8 @@ public:
 
     void util_text(const std::string* text, int x, int y, const SDL_Color* color,
                    uint8_t font = FONT_ROBOTO_SMALL) const;
+    void util_text(const std::string* text, int x, int y, const SDL_Color* color,
+                   uint8_t font, uint8_t scale) const;
     void util_text_rot(const std::string* text, int x, int y, const SDL_Color* color, double angle,
                        uint8_t font = FONT_ROBOTO_SMALL) const;
     SDL_Rect util_text_dim(const std::string* text, uint8_t font = FONT_ROBOTO_SMALL) const;

@@ -3,20 +3,20 @@
 #include "../element/ElementAnalogStick.hpp"
 #include "../element/ElementMouseMovement.hpp"
 #include "../element/ElementTrigger.hpp"
-
-void DialogNewElement::close()
-{
-}
+#include "../element/ElementText.hpp"
 
 void DialogNewElement::load_from_element(Element* e)
 {
     if (e)
     {
-        m_u->set_text(std::to_string(e->get_u()));
-        m_v->set_text(std::to_string(e->get_v()));
+        if (m_u && m_v && m_w && m_h)
+        {
+            m_u->set_text(std::to_string(e->get_u()));
+            m_v->set_text(std::to_string(e->get_v()));
 
-        m_w->set_text(std::to_string(e->get_w()));
-        m_h->set_text(std::to_string(e->get_h()));
+            m_w->set_text(std::to_string(e->get_w()));
+            m_h->set_text(std::to_string(e->get_h()));
+        }
 
         m_z_level->set_text(std::to_string(e->get_z_level()));
 
@@ -37,6 +37,7 @@ void DialogNewElement::load_from_element(Element* e)
         ElementAnalogStick* stick = nullptr;
         ElementMouseMovement* mouse = nullptr;
         ElementTrigger* trigger = nullptr;
+        ElementText* text = nullptr;
 
         switch (e->get_type())
         {
@@ -55,6 +56,11 @@ void DialogNewElement::load_from_element(Element* e)
             m_direction->select_item(trigger->get_direction());
             m_trigger_mode->set_checked(trigger->get_mode());
             break;
+        case TEXT:
+            text = reinterpret_cast<ElementText*>(e);
+            m_text->set_text(text->get_text());
+            m_text_reset->set_checked(text->get_reset());
+            break;
         default: ;
         }
     }
@@ -62,9 +68,18 @@ void DialogNewElement::load_from_element(Element* e)
 
 void DialogNewElement::init()
 {
-    set_flags(DIALOG_TOP_MOST | DIALOG_FLUID);
+    if (m_type == TEXT)
+    {
+        set_dimension(panel_w + 16, 550);
+        set_flags(DIALOG_TOP_MOST | DIALOG_CENTERED);
+    }
+    else
+    {
+        set_flags(DIALOG_TOP_MOST | DIALOG_FLUID);
+    }
+
     Dialog::init();
-    m_element_y = get_top() + 30;
+    m_element_y = 30;
 
     add_element_id();
     add_z_level();
@@ -82,6 +97,8 @@ void DialogNewElement::init()
         add_trigger();
     else if (m_type == GAMEPAD_ID)
         add_info(LANG_LABEL_GAMEPAD_ID_INFO);
+    else if (m_type)
+        add_text();
 
     switch (m_type)
     {
@@ -288,10 +305,29 @@ void DialogNewElement::set_default_dim(int w, int h)
     m_selection.h = h;
     m_selection.x = 1;
     m_selection.y = 1;
-    m_w->set_text(std::to_string(w));
-    m_h->set_text(std::to_string(h));
-    m_u->set_text(std::to_string(1));
-    m_v->set_text(std::to_string(1));
+
+    if (m_w && m_h && m_u && m_v)
+    {
+        m_w->set_text(std::to_string(w));
+        m_h->set_text(std::to_string(h));
+        m_u->set_text(std::to_string(1));
+        m_v->set_text(std::to_string(1));
+
+    }
+}
+
+const std::string* DialogNewElement::get_text() const
+{
+    if (m_text)
+        return m_text->get_text();
+    return nullptr;
+}
+
+bool DialogNewElement::get_text_reset() const
+{
+    if (m_text_reset)
+        return m_text_reset->get_state();
+    return false;
 }
 
 void DialogNewElement::handle_error(ElementError e) const
@@ -313,6 +349,9 @@ void DialogNewElement::handle_error(ElementError e) const
         break;
     case STICK_RADIUS:
         m_radius->set_alert(true);
+        break;
+    case TEXT_EMPTY:
+        m_text->set_alert(true);
         break;
     default: ;
     }
@@ -436,5 +475,16 @@ void DialogNewElement::add_trigger()
     m_element_y += 25;
 
     add(m_trigger_mode = new Checkbox(m_id++, 8, m_element_y, LANG_CHECKBOX_TRIGGER_BUTON, this));
+    m_element_y += 40;
+}
+
+void DialogNewElement::add_text()
+{
+    if (m_element_y == 0)
+        m_element_y = 30;
+    add_info(LANG_LABEL_TEXT_FORMAT_INFO);
+    add(m_text = new Textbox(m_id++, 8, m_element_y, panel_w, 20, "", this));
+    m_element_y += 25;
+    add(m_text_reset = new Checkbox(m_id++, 8, m_element_y, LANG_CHECKBOX_RESET_TEXT, this));
     m_element_y += 40;
 }

@@ -41,7 +41,7 @@ Element* Element::read_from_file(ccl_config* file, const std::string& id, const 
     case TRIGGER:
         return ElementTrigger::read_from_file(file, id, default_dim);
     case TEXT:
-        break;
+        return ElementText::read_from_file(file, id, default_dim);
     case DPAD_STICK:
         break;
     case GAMEPAD_ID:
@@ -66,7 +66,7 @@ Element* Element::from_dialog(DialogNewElement* dialog)
         e = new ElementTrigger();
         break;
     case TEXT:
-        
+        e = new ElementText();
         break;
     case MOUSE_SCROLLWHEEL:
         e = new ElementScrollWheel();
