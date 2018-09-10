@@ -33,7 +33,7 @@ public:
 
     bool handle_events(SDL_Event * event, bool was_handled) override;
 
-    bool get_state(void) { return m_state; }
+    bool get_state(void) const { return m_state; }
 
     void set_checked(bool state);
 private:

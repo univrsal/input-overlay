@@ -36,12 +36,12 @@ public:
     Localization(const char * lang_folder, SDL_Helper * h);
 
     void load_lang_by_id(uint8_t id);
-    const std::vector<std::unique_ptr<LangFile>> * get_languages(void) { return &m_langfiles; }
+    const std::vector<std::unique_ptr<LangFile>> * get_languages(void) const { return &m_langfiles; }
 
-    std::string localize(const char * id);
-    uint8_t get_english_id(void) { return m_english_id; }
+    std::string localize(const char * id) const;
+    uint8_t get_english_id(void) const { return m_english_id; }
 
-    bool is_roman(void); /* True if selected language uses roman alphabet */
+    bool is_roman(void) const; /* True if selected language uses roman alphabet */
 
     /* Return required font for current language */
     inline uint8_t get_font(void) { return is_roman() ? FONT_ROBOTO_SMALL : FONT_WSTRING; }

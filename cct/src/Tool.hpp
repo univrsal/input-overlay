@@ -53,24 +53,24 @@ public:
 
     void program_loop();
 
-    Element * get_selected(void);
+    Element * get_selected(void) const;
 
-    uint16_t get_selected_id(void);
+    uint16_t get_selected_id(void) const;
 
     void action_performed(uint8_t type);
 
-    Texture * get_atlas(void);
+    Texture * get_atlas(void) const;
 
-    void delete_element(uint16_t id);
+    void delete_element(uint16_t id) const;
 
     void set_new_element_type(ElementType type) { m_new_element_type = type; }
 
     void queue_dialog_open(DialogID id);
     void queue_dialog_close(void);
 
-    ElementError verify_element(DialogNewElement * d, bool modify_mode);
+    ElementError verify_element(DialogNewElement * d, bool modify_mode) const;
 private:
-    void add_element(Element * e);
+    void add_element(Element * e) const;
 
     void close_toplevel(void);
     void handle_input();

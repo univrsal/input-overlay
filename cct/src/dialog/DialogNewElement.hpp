@@ -56,30 +56,30 @@ public:
 
     void load_from_element(Element * e);
 
-    ElementType get_type(void);
+    ElementType get_type(void) const;
 
-    SDL_Rect get_selection(void);
+    SDL_Rect get_selection(void) const;
 
-    uint16_t get_vc(void);
+    uint16_t get_vc(void) const;
 
-    uint8_t get_z_level(void);
+    uint8_t get_z_level(void) const;
 
-    ElementSide get_side(void);
+    ElementSide get_side(void) const;
 
-    TriggerDirection get_direction(void);
+    TriggerDirection get_direction(void) const;
 
-    MouseMovementType get_mouse_type(void);
+    MouseMovementType get_mouse_type(void) const;
 
-    uint8_t get_radius(void);
+    uint8_t get_radius(void) const;
 
-    const std::string * get_id(void);
+    const std::string * get_id(void) const;
 
     void set_default_dim(int w, int h);
 
-    bool get_trigger_mode(void) { return m_trigger_mode ? m_trigger_mode->get_state() : false; }
+    bool get_trigger_mode(void) const { return m_trigger_mode ? m_trigger_mode->get_state() : false; }
 
 private:
-    void handle_error(ElementError e);
+    void handle_error(ElementError e) const;
 
     /* Adds default elements*/
     void add_selection_elements(void);

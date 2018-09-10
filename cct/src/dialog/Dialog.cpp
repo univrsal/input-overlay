@@ -299,32 +299,32 @@ void Dialog::change_focus(int8_t id)
     }
 }
 
-const SDL_Point Dialog::position(void)
+const SDL_Point Dialog::position(void) const
 {
     return SDL_Point { m_dimensions.x, m_dimensions.y };
 }
 
-SDL_Helper * Dialog::helper(void)
+SDL_Helper * Dialog::helper(void) const
 {
     return m_helper;
 }
 
-int Dialog::get_left(void)
+int Dialog::get_left(void) const
 {
     return m_dimensions.x;
 }
 
-int Dialog::get_top(void)
+int Dialog::get_top(void) const
 {
     return m_dimensions.y;
 }
 
-int Dialog::get_right(void)
+int Dialog::get_right(void) const
 {
     return m_dimensions.x + m_dimensions.y;
 }
 
-int Dialog::get_bottom(void)
+int Dialog::get_bottom(void) const
 {
     return m_dimensions.y + m_dimensions.h;
 }

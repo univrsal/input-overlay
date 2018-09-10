@@ -162,23 +162,23 @@ void SDL_Helper::close()
     m_arrow = nullptr;
 }
 
-void SDL_Helper::clear()
+void SDL_Helper::clear() const
 {
     util_set_color(m_palette->dark_gray());
     SDL_RenderClear(m_sdl_renderer);
 }
 
-void SDL_Helper::repaint()
+void SDL_Helper::repaint() const
 {
     SDL_RenderPresent(m_sdl_renderer);
 }
 
-void SDL_Helper::util_set_color(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+void SDL_Helper::util_set_color(uint8_t r, uint8_t g, uint8_t b, uint8_t a) const
 {
     SDL_SetRenderDrawColor(m_sdl_renderer, r, g, b, a);
 }
 
-void SDL_Helper::util_set_color(const SDL_Color * color)
+void SDL_Helper::util_set_color(const SDL_Color * color) const
 {
     if (color == nullptr)
         util_set_color(m_palette->white()->r, m_palette->white()->g, m_palette->white()->b, m_palette->white()->a);
@@ -186,52 +186,52 @@ void SDL_Helper::util_set_color(const SDL_Color * color)
         util_set_color(color->r, color->g, color->b, color->a);
 }
 
-void SDL_Helper::util_draw_line(int x1, int y1, int x2, int y2, const SDL_Color * color)
+void SDL_Helper::util_draw_line(int x1, int y1, int x2, int y2, const SDL_Color * color) const
 {
     util_set_color(color);
     SDL_RenderDrawLine(m_sdl_renderer, x1, y1, x2, y2);
 }
 
-void SDL_Helper::util_draw_line(const SDL_Point & p1, const SDL_Point & p2, const SDL_Color * color)
+void SDL_Helper::util_draw_line(const SDL_Point & p1, const SDL_Point & p2, const SDL_Color * color) const
 {
     util_set_color(color);
     SDL_RenderDrawLine(m_sdl_renderer, p1.x, p1.y, p2.x, p2.y);
 }
 
-void SDL_Helper::util_draw_rect(const SDL_Rect * rect, const SDL_Color * color)
+void SDL_Helper::util_draw_rect(const SDL_Rect * rect, const SDL_Color * color) const
 {
     util_set_color(color);
     SDL_RenderDrawRect(m_sdl_renderer, rect);
 }
 
-void SDL_Helper::util_draw_rect(int x, int y, int w, int h, const SDL_Color * color)
+void SDL_Helper::util_draw_rect(int x, int y, int w, int h, const SDL_Color * color) const
 {
     SDL_Rect temp_rect = { x, y, w, h };
     util_set_color(color);
     SDL_RenderDrawRect(m_sdl_renderer, &temp_rect);
 }
 
-void SDL_Helper::util_fill_rect(const SDL_Rect * rect, const SDL_Color * color)
+void SDL_Helper::util_fill_rect(const SDL_Rect * rect, const SDL_Color * color) const
 {
     util_set_color(color);
     SDL_RenderFillRect(m_sdl_renderer, rect);
 }
 
-void SDL_Helper::util_fill_rect_shadow(const SDL_Rect * rect, const SDL_Color * color, int8_t offset)
+void SDL_Helper::util_fill_rect_shadow(const SDL_Rect * rect, const SDL_Color * color, int8_t offset) const
 {
     SDL_Rect temp_rect = { rect->x + offset, rect->y + offset, rect->w, rect->h };
     util_fill_rect(&temp_rect, m_palette->black());
     util_fill_rect(rect, color);
 }
 
-void SDL_Helper::util_fill_rect(int x, int y, int w, int h, const SDL_Color * color)
+void SDL_Helper::util_fill_rect(int x, int y, int w, int h, const SDL_Color * color) const
 {
     util_set_color(color);
     SDL_Rect temp_rect = SDL_Rect { x, y, w, h };
     SDL_RenderFillRect(m_sdl_renderer, &temp_rect);
 }
 
-void SDL_Helper::util_fill_rect(const SDL_Rect * rect, const SDL_Color * color, uint8_t alpha)
+void SDL_Helper::util_fill_rect(const SDL_Rect * rect, const SDL_Color * color, uint8_t alpha) const
 {
     SDL_Color temp;
     temp.a = alpha;
@@ -241,12 +241,12 @@ void SDL_Helper::util_fill_rect(const SDL_Rect * rect, const SDL_Color * color, 
     util_fill_rect(rect, &temp);
 }
 
-bool SDL_Helper::util_is_in_rect(const SDL_Rect * rect, int x, int y)
+bool SDL_Helper::util_is_in_rect(const SDL_Rect * rect, int x, int y) const
 {
     return x >= rect->x && x <= (rect->x + rect->w) && y >= rect->y && y <= (rect->y + rect->h);
 }
 
-void SDL_Helper::util_text(const std::string * text, int x, int y, const SDL_Color * color, uint8_t font)
+void SDL_Helper::util_text(const std::string * text, int x, int y, const SDL_Color * color, uint8_t font) const
 {
     TTF_Font * ttf_font = get_font(font);
     if (color == nullptr)
@@ -255,7 +255,7 @@ void SDL_Helper::util_text(const std::string * text, int x, int y, const SDL_Col
         m_font_helper->draw(text, x, y, ttf_font, color);
 }
 
-void SDL_Helper::util_text_rot(const std::string * text, int x, int y, const SDL_Color * color, double angle, uint8_t font)
+void SDL_Helper::util_text_rot(const std::string * text, int x, int y, const SDL_Color * color, double angle, uint8_t font) const
 {
     TTF_Font * ttf_font = get_font(font);
     if (color == nullptr)
@@ -264,7 +264,7 @@ void SDL_Helper::util_text_rot(const std::string * text, int x, int y, const SDL
         m_font_helper->draw_rot(text, x, y, ttf_font, color, angle);
 }
 
-SDL_Rect SDL_Helper::util_text_dim(const std::string * text, uint8_t font)
+SDL_Rect SDL_Helper::util_text_dim(const std::string * text, uint8_t font) const
 {
     return m_font_helper->get_text_dimension(get_font(font), text);
 }
@@ -274,7 +274,7 @@ SDL_Point * SDL_Helper::util_window_size(void)
     return &m_window_size;
 }
 
-void SDL_Helper::util_cut_string(std::string & s, int max_width, bool front)
+void SDL_Helper::util_cut_string(std::string & s, int max_width, bool front) const
 {
     int w = util_text_dim(&s).w;
     bool was_cut = false;
@@ -297,7 +297,7 @@ void SDL_Helper::util_cut_string(std::string & s, int max_width, bool front)
     }
 }
 
-bool SDL_Helper::util_check_texture_path(const char * path)
+bool SDL_Helper::util_check_texture_path(const char * path) const
 {
     Texture temp;
     bool flag = temp.load(path, m_sdl_renderer);
@@ -321,7 +321,7 @@ void SDL_Helper::init_controllers(void)
     }
 }
 
-void SDL_Helper::set_cursor(uint8_t type)
+void SDL_Helper::set_cursor(uint8_t type) const
 {
     if (m_have_cursors)
     {
@@ -347,17 +347,17 @@ void SDL_Helper::set_cursor(uint8_t type)
     }
 }
 
-bool SDL_Helper::is_ctrl_down(void)
+bool SDL_Helper::is_ctrl_down(void) const
 {
     return m_ctrl_down;
 }
 
-bool SDL_Helper::is_shift_down(void)
+bool SDL_Helper::is_shift_down(void) const
 {
     return m_shift_down;
 }
 
-void SDL_Helper::exit_loop(void)
+void SDL_Helper::exit_loop(void) const
 {
     *m_runflag = false;
 }
@@ -402,7 +402,7 @@ void SDL_Helper::handle_events(SDL_Event * event)
     }
 }
 
-uint8_t SDL_Helper::util_font_height(uint8_t font)
+uint8_t SDL_Helper::util_font_height(uint8_t font) const
 {
     switch (font)
     {
@@ -489,18 +489,18 @@ void SDL_Helper::end_frame(void)
     }
 }
 
-void SDL_Helper::cap_frame(void)
+void SDL_Helper::cap_frame(void) const
 {
     if (m_frame_cap_timer.get_delta() < SDL_WINDOW_TPF)
         SDL_Delay(SDL_WINDOW_TPF - m_frame_cap_timer.get_time());
 }
 
-float SDL_Helper::util_get_fps(void)
+float SDL_Helper::util_get_fps(void) const
 {
     return m_fps;
 }
 
-std::wstring SDL_Helper::util_utf8_to_wstring(const std::string& str)
+std::wstring SDL_Helper::util_utf8_to_wstring(const std::string& str) const
 {
 #ifdef WINDOWS
     std::wstring_convert<std::codecvt_utf8<wchar_t>> conv;
@@ -570,7 +570,7 @@ std::wstring SDL_Helper::util_utf8_to_wstring(const std::string& str)
 #endif
 }
 
-std::string SDL_Helper::util_wstring_to_utf8(const std::wstring& str)
+std::string SDL_Helper::util_wstring_to_utf8(const std::wstring& str) const
 {
 #ifdef WINDOWS
     std::wstring_convert<std::codecvt_utf8<wchar_t>> conv;
@@ -614,7 +614,7 @@ std::string SDL_Helper::util_wstring_to_utf8(const std::wstring& str)
 #endif
 }
 
-void SDL_Helper::format_text(const std::string * s, std::vector<std::unique_ptr<std::string>> & out, SDL_Rect & dim, uint8_t font)
+void SDL_Helper::format_text(const std::string * s, std::vector<std::unique_ptr<std::string>> & out, SDL_Rect & dim, uint8_t font) const
 {
     if (!s || s->empty())
         return;
@@ -662,7 +662,7 @@ void SDL_Helper::format_text(const std::string * s, std::vector<std::unique_ptr<
     dim.w = width;
 }
 
-std::string SDL_Helper::loc(const char * id)
+std::string SDL_Helper::loc(const char * id) const
 {
     if (m_localization)
         return m_localization->localize(id);
@@ -730,7 +730,7 @@ static uint32_t KEY_MAP[][2]
 };
 #define KEY_MAP_SIZE 132
 
-uint32_t SDL_Helper::vc_to_sdl_key(uint16_t key)
+uint32_t SDL_Helper::vc_to_sdl_key(uint16_t key) const
 {
     for (auto & i : KEY_MAP)
     {
@@ -740,7 +740,7 @@ uint32_t SDL_Helper::vc_to_sdl_key(uint16_t key)
     return SDLK_UNKNOWN;
 }
 
-uint16_t SDL_Helper::sdl_key_to_vc(uint32_t key)
+uint16_t SDL_Helper::sdl_key_to_vc(uint32_t key) const
 {
     for (auto & i : KEY_MAP)
     {

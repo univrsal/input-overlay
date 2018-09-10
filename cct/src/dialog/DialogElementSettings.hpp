@@ -39,27 +39,27 @@ public:
 
     void action_performed(int8_t action_id) override;
 
-    void set_wh(int w, int h);
-    void set_xy(int x, int y);
-    void set_uv(int u, int v);
-    void set_id(std::string id);
-    void set_vc(uint16_t vc);
-    void set_z_level(uint8_t z);
+    void set_wh(int w, int h) const;
+    void set_xy(int x, int y) const;
+    void set_uv(int u, int v) const;
+    void set_id(std::string id) const;
+    void set_vc(uint16_t vc) const;
+    void set_z_level(uint8_t z) const;
     void select_element(Element * e);
 
-    int get_x(void) { return atoi(m_element_x->c_str()); }
-    int get_y(void) { return atoi(m_element_y->c_str()); }
-    int get_z(void) { return atoi(m_element_z_level->c_str()); }
-    int get_u(void) { return atoi(m_element_u->c_str()); }
-    int get_v(void) { return atoi(m_element_v->c_str()); }
-    int get_w(void) { return atoi(m_element_width->c_str()); }
-    int get_h(void) { return atoi(m_element_height->c_str()); }
-    uint16_t get_vc(void) { return atoi(m_element_vc->c_str()); }
-    SDL_Rect get_mapping(void) { return { get_u(), get_v(), get_w(), get_h() }; }
+    int get_x(void) const { return atoi(m_element_x->c_str()); }
+    int get_y(void) const { return atoi(m_element_y->c_str()); }
+    int get_z(void) const { return atoi(m_element_z_level->c_str()); }
+    int get_u(void) const { return atoi(m_element_u->c_str()); }
+    int get_v(void) const { return atoi(m_element_v->c_str()); }
+    int get_w(void) const { return atoi(m_element_width->c_str()); }
+    int get_h(void) const { return atoi(m_element_height->c_str()); }
+    uint16_t get_vc(void) const { return atoi(m_element_vc->c_str()); }
+    SDL_Rect get_mapping(void) const { return { get_u(), get_v(), get_w(), get_h() }; }
 
-    const std::string * get_id(void) { return m_element_id->get_text(); }
+    const std::string * get_id(void) const { return m_element_id->get_text(); }
 
-    void alert_element_id(void) { m_element_id->set_alert(true); }
+    void alert_element_id(void) const { m_element_id->set_alert(true); }
 private:
     bool m_finished = false;
 

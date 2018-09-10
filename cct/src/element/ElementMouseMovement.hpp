@@ -23,10 +23,10 @@ public:
 
     void update_settings(DialogNewElement * dialog) override;
 
-    MouseMovementType get_mouse_type(void);
+    MouseMovementType get_mouse_type(void) const;
 
     static ElementMouseMovement * read_from_file(ccl_config * file, const std::string& id, SDL_Point * default_dim);
-    uint16_t get_radius(void);
+    uint16_t get_radius(void) const;
 private:
     MouseMovementType m_type;
     uint16_t m_radius = 0;

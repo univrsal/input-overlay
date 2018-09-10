@@ -63,7 +63,7 @@ void Localization::load_lang_by_id(uint8_t id)
     }
 }
 
-std::string Localization::localize(const char * id)
+std::string Localization::localize(const char * id) const
 {
     std::string value = "";
     if (m_valid)
@@ -88,7 +88,7 @@ std::string Localization::localize(const char * id)
     return value;
 }
 
-bool Localization::is_roman(void)
+bool Localization::is_roman(void) const
 {
     return m_roman;
 }

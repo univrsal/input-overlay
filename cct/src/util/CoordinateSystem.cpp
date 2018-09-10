@@ -307,7 +307,7 @@ void CoordinateSystem::draw_foreground(void)
         m_helper->util_draw_rect(&m_dimensions, m_helper->palette()->white());
 }
 
-void CoordinateSystem::draw_background(void)
+void CoordinateSystem::draw_background(void) const
 {
     m_helper->util_fill_rect(&m_dimensions, m_helper->palette()->dark_gray());
 }
@@ -328,18 +328,18 @@ void CoordinateSystem::set_pos(int x, int y)
         m_dimensions.w - m_origin_anchor.x, m_dimensions.h - m_origin_anchor.y };
 }
 
-int CoordinateSystem::adjust(int i)
+int CoordinateSystem::adjust(int i) const
 {
     return ceil(i / m_scale_f) * m_scale_f;
 }
 
-void CoordinateSystem::translate(int& x, int& y)
+void CoordinateSystem::translate(int& x, int& y) const
 {
     x -= m_dimensions.x + m_origin_anchor.x;
     y -= m_dimensions.y + m_origin_anchor.y;
 }
 
-void CoordinateSystem::draw_selection(void)
+void CoordinateSystem::draw_selection(void) const
 {
     /* Draw selection separate, since it needs to be topmost */
     if (!SDL_RectEmpty(m_selection))
@@ -358,7 +358,7 @@ void CoordinateSystem::draw_selection(void)
     }
 }
 
-void CoordinateSystem::draw_rulers(void)
+void CoordinateSystem::draw_rulers(void) const
 {
     if (!SDL_RectEmpty(m_selection))
     {

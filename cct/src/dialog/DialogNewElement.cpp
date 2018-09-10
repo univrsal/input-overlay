@@ -56,6 +56,7 @@ void DialogNewElement::load_from_element(Element * e)
             m_direction->select_item(trigger->get_direction());
             m_trigger_mode->set_checked(trigger->get_mode());
             break;
+        default: ;
         }
     }
 }
@@ -97,16 +98,20 @@ void DialogNewElement::init()
         m_selector->set_selection(&m_selection);
         add_selection_elements();
         break;
+    case INVALID: break;
+    case TEXT: break;
+    case DPAD_STICK: break;
+    default: ;
     }
 
     add(m_ok = new Button(ACTION_OK, 8, m_dimensions.h - 32, LANG_BUTTON_OK, this));
     add(m_cancel = new Button(ACTION_CANCEL, 124, m_dimensions.h - 32, LANG_BUTTON_CANCEL, this));
 }
 
-void DialogNewElement::action_performed(int8_t action_id)
+void DialogNewElement::action_performed(const int8_t action_id)
 {
     ElementError error;
-    bool name_unmodified = m_initial_name.compare(m_element_id->c_str()) == 0;
+    const auto name_unmodified = m_initial_name == m_element_id->c_str();
 
     switch (action_id)
     {
@@ -150,7 +155,7 @@ void DialogNewElement::draw_foreground(void)
 
 bool DialogNewElement::handle_events(SDL_Event * event)
 {
-    bool was_handled = false;
+    auto was_handled = false;
     if (Dialog::handle_events(event))
         was_handled = true;
 
@@ -161,12 +166,16 @@ bool DialogNewElement::handle_events(SDL_Event * event)
     case MOUSE_MOVEMENT:
     case ANALOG_STICK:
     case MOUSE_SCROLLWHEEL:
+    case GAMEPAD_ID:
+    case TRIGGER:
         if (event->type == SDL_WINDOWEVENT)
         {
             if (event->window.event == SDL_WINDOWEVENT_SIZE_CHANGED)
             {
-                SDL_Rect t = { get_left() + 270,
-                    get_top() + 30, m_dimensions.w - 278, m_dimensions.h - 38 };
+                const struct SDL_Rect t = {
+                    get_left() + 270,
+                    get_top() + 30, m_dimensions.w - 278, m_dimensions.h - 38
+                };
                 m_selector->set_dim(t);
                 m_ok->set_pos(8, m_dimensions.h - 32);
                 m_cancel->set_pos(124, m_dimensions.h - 32);
@@ -177,39 +186,41 @@ bool DialogNewElement::handle_events(SDL_Event * event)
         m_u->set_text(std::to_string(m_selection.x));
         m_v->set_text(std::to_string(m_selection.y));
         break;
+    default: ;
     }
 
     return was_handled;
 }
 
-ElementType DialogNewElement::get_type(void)
+ElementType DialogNewElement::get_type(void) const
 {
     return m_type;
 }
 
-SDL_Rect DialogNewElement::get_selection(void)
+SDL_Rect DialogNewElement::get_selection(void) const
 {
     return m_selection;
 }
 
-uint16_t DialogNewElement::get_vc(void)
+uint16_t DialogNewElement::get_vc(void) const
 {
     uint16_t t = 0x0;
 
     if (m_keycode)
     {
-        t = (uint16_t) strtoul(m_keycode->get_text()->c_str(), nullptr, 16);
+        t = static_cast<uint16_t>(strtoul(m_keycode->get_text()->c_str(),
+                nullptr, 16));
     }
 
     return t;
 }
 
-uint8_t DialogNewElement::get_z_level(void)
+uint8_t DialogNewElement::get_z_level(void) const
 {
-    return atoi(m_z_level->get_text()->c_str());
+    return SDL_strtol(m_z_level->get_text()->c_str(), nullptr, 10);
 }
 
-ElementSide DialogNewElement::get_side(void)
+ElementSide DialogNewElement::get_side(void) const
 {
     if (m_binary_choice)
     {
@@ -224,7 +235,7 @@ ElementSide DialogNewElement::get_side(void)
     return SIDE_LEFT;
 }
 
-TriggerDirection DialogNewElement::get_direction(void)
+TriggerDirection DialogNewElement::get_direction(void) const
 {
     if (m_direction)
     {
@@ -244,29 +255,29 @@ TriggerDirection DialogNewElement::get_direction(void)
     return UP;
 }
 
-MouseMovementType DialogNewElement::get_mouse_type(void)
+MouseMovementType DialogNewElement::get_mouse_type(void) const
 {
     if (m_binary_choice)
     {
         switch (m_binary_choice->get_selected())
         {
-        case MouseMovementType::DOT:
-            return MouseMovementType::DOT;
+        case DOT:
+            return DOT;
         default:
-            return MouseMovementType::ARROW;
+            return ARROW;
         }
     }
-    return MouseMovementType::DOT;
+    return DOT;
 }
 
-uint8_t DialogNewElement::get_radius(void)
+uint8_t DialogNewElement::get_radius(void) const
 {
     if (m_radius)
-        return atoi(m_radius->c_str());
+        return SDL_strtol(m_radius->c_str(), nullptr, 10);
     return 0;
 }
 
-const std::string * DialogNewElement::get_id(void)
+const std::string * DialogNewElement::get_id(void) const
 {
     return m_element_id->get_text();
 }
@@ -283,7 +294,7 @@ void DialogNewElement::set_default_dim(int w, int h)
     m_v->set_text(std::to_string(1));
 }
 
-void DialogNewElement::handle_error(ElementError e)
+void DialogNewElement::handle_error(ElementError e) const
 {
     switch (e)
     {
@@ -303,6 +314,7 @@ void DialogNewElement::handle_error(ElementError e)
     case STICK_RADIUS:
         m_radius->set_alert(true);
         break;
+    default: ;
     }
 }
 
@@ -395,7 +407,7 @@ void DialogNewElement::add_info(const char * unlocalized_text)
 {
     if (m_element_y == 0)
         m_element_y = 30;
-    Label * l = new Label(m_id++, 9, m_element_y, unlocalized_text, this);
+    auto * l = new Label(m_id++, 9, m_element_y, unlocalized_text, this);
     add(l);
     m_element_y += 15 + l->get_height();
 }

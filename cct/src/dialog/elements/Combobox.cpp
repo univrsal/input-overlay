@@ -159,7 +159,7 @@ bool Combobox::handle_events(SDL_Event * event, bool was_handled)
     return handled;
 }
 
-bool Combobox::is_mouse_over_list(const int & x, const int & y)
+bool Combobox::is_mouse_over_list(const int & x, const int & y) const
 {
     return m_list_open && get_helper()->util_is_in_rect(&m_item_box, x, y);
 }

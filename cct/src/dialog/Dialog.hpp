@@ -59,17 +59,17 @@ public:
 
     void change_focus(int8_t id);
 
-    const SDL_Point position(void);
+    const SDL_Point position(void) const;
 
-    SDL_Helper * helper(void);
+    SDL_Helper * helper(void) const;
 
-    int get_left(void);
+    int get_left(void) const;
 
-    int get_top(void);
+    int get_top(void) const;
 
-    int get_right(void);
+    int get_right(void) const;
 
-    int get_bottom(void);
+    int get_bottom(void) const;
 protected:
     /* Tab handling */
     GuiElement * m_focused_element = nullptr;

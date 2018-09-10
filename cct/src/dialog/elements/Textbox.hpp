@@ -61,19 +61,19 @@ public:
 
     void set_cutoff(uint8_t c);
 private:
-    inline bool is_numeric(const std::string& s);
+    inline bool is_numeric(const std::string& s) const;
 
-    inline bool is_alpha_numeric(const std::string& s);
+    inline bool is_alpha_numeric(const std::string& s) const;
 
-    inline bool is_spacefree(const std::string& s);
+    inline bool is_spacefree(const std::string& s) const;
 
-    inline bool is_hex(const std::string& s);
+    inline bool is_hex(const std::string& s) const;
 
     /*
         Properly deletes last character in
         unicode utf8 strings
     */
-    void pop_back(std::string& s);
+    void pop_back(std::string& s) const;
 
     std::string m_text;
     std::string m_composition;

@@ -52,7 +52,7 @@ public:
 
     void draw_foreground(void);
 
-    void draw_background(void);
+    void draw_background(void) const;
 
     void set_dimensions(SDL_Rect r);
 
@@ -62,58 +62,58 @@ public:
 
     void set_ruler_offset(SDL_Point p) { m_ruler_offset = p; m_has_rulers = true; }
     /* Adjusts to pixel raster */
-    int adjust(int i);
+    int adjust(int i) const;
 
     /* X position of Origin anchor */
-    int get_origin_left(void) { return m_dimensions.x + m_origin_anchor.x; }
+    int get_origin_left(void) const { return m_dimensions.x + m_origin_anchor.x; }
 
     /* Y position of Origin anchor */
-    int get_origin_top(void) { return m_dimensions.y + m_origin_anchor.y; }
+    int get_origin_top(void) const { return m_dimensions.y + m_origin_anchor.y; }
 
     SDL_Point * get_origin(void) { return &m_origin; }
 
-    int get_bottom(void) { return m_dimensions.y + m_dimensions.h; }
-    int get_right(void) { return m_dimensions.x + m_dimensions.w; }
+    int get_bottom(void) const { return m_dimensions.y + m_dimensions.h; }
+    int get_right(void) const { return m_dimensions.x + m_dimensions.w; }
 
-    int get_left(void) { return m_dimensions.x; }
-    int get_top(void) { return m_dimensions.y; }
+    int get_left(void) const { return m_dimensions.x; }
+    int get_top(void) const { return m_dimensions.y; }
 
-    int get_width(void) { return m_dimensions.w; }
-    int get_height(void) { return m_dimensions.h; }
+    int get_width(void) const { return m_dimensions.w; }
+    int get_height(void) const { return m_dimensions.h; }
 
     /* Returns origin adjusted to viewport */
-    int get_origin_x() { return m_origin.x - get_left() - m_origin_anchor.x; }
+    int get_origin_x() const { return m_origin.x - get_left() - m_origin_anchor.x; }
     /* Returns origin adjusted to viewport */
-    int get_origin_y() { return m_origin.y - get_top() - m_origin_anchor.y; }
+    int get_origin_y() const { return m_origin.y - get_top() - m_origin_anchor.y; }
 
-    int get_scale(void) { return m_scale_f; }
+    int get_scale(void) const { return m_scale_f; }
 
-    SDL_Rect get_dimensions(void) { return m_dimensions; }
-    SDL_Helper * get_helper(void) { return m_helper; }
-    const SDL_Rect * get_system_area(void) { return &m_system_area; }
+    SDL_Rect get_dimensions(void) const { return m_dimensions; }
+    SDL_Helper * get_helper(void) const { return m_helper; }
+    const SDL_Rect * get_system_area(void) const { return &m_system_area; }
 
     void set_selection(SDL_Rect * r) { m_selection = r; }
 
     /* Prepares the viewport to fit inside the coordinate system area */
-    void begin_draw(void) { SDL_RenderSetViewport(m_helper->renderer(), &m_system_area); }
+    void begin_draw(void) const { SDL_RenderSetViewport(m_helper->renderer(), &m_system_area); }
     /* Resets the viewport */
-    void end_draw(void) { SDL_RenderSetViewport(m_helper->renderer(), nullptr); }
+    void end_draw(void) const { SDL_RenderSetViewport(m_helper->renderer(), nullptr); }
 
     /* Translates any point to the viewport*/
-    void translate(int& x, int& y);
+    void translate(int& x, int& y) const;
 
-    void draw_selection(void);
+    void draw_selection(void) const;
 private:
 
-    void draw_rulers(void);
+    void draw_rulers(void) const;
     void mouse_state(SDL_Event * event);
 
-    inline bool in_range(int a, int b, int range)
+    inline bool in_range(int a, int b, int range) const
     {
         return a <= b + range && a >= b - range;
     }
 
-    inline bool in_between(int a, int min, int max, int o)
+    inline bool in_between(int a, int min, int max, int o) const
     {
         return a >= min * m_scale_f + o && a <= max * m_scale_f + o;
     }

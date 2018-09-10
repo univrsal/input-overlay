@@ -145,7 +145,7 @@ ElementTrigger * ElementTrigger::read_from_file(ccl_config * file, const std::st
 
 }
 
-void ElementTrigger::calculate_mappings(SDL_Rect * pressed, SDL_Rect * absolute)
+void ElementTrigger::calculate_mappings(SDL_Rect * pressed, SDL_Rect * absolute) const
 {
     switch (m_direction)
     {

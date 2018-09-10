@@ -37,7 +37,7 @@ public:
             (int) (m_items.size() * m_item_v_space + ITEM_V_SPACE) };
     };
 
-    uint8_t get_selected(void) { return m_selected_id; }
+    uint8_t get_selected(void) const { return m_selected_id; }
 
     void select_item(uint8_t id)
     {
@@ -51,7 +51,7 @@ public:
 
     bool handle_events(SDL_Event * event, bool was_handled) override;
 
-    bool is_mouse_over_list(const int & x, const int & y);
+    bool is_mouse_over_list(const int & x, const int & y) const;
 
     bool is_mouse_over(const int &x, const int &y) override;
 

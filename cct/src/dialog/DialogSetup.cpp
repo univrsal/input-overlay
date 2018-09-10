@@ -151,29 +151,29 @@ void DialogSetup::action_performed(int8_t action_id)
     }
 }
 
-const char * DialogSetup::get_config_path(void)
+const char * DialogSetup::get_config_path(void) const
 {
     return m_config_path->get_text()->c_str();
 }
 
-const char * DialogSetup::get_texture_path(void)
+const char * DialogSetup::get_texture_path(void) const
 {
     return m_texture_path->get_text()->c_str();
 }
 
-SDL_Point DialogSetup::get_rulers()
+SDL_Point DialogSetup::get_rulers() const
 {
     return SDL_Point{ std::stoi(m_h_space->get_text()->c_str()),
         std::stoi(m_v_space->get_text()->c_str()) };
 }
 
-SDL_Point DialogSetup::get_default_dim()
+SDL_Point DialogSetup::get_default_dim() const
 {
     return SDL_Point { std::stoi(m_def_w->get_text()->c_str()),
         std::stoi(m_def_h->get_text()->c_str()) };
 }
 
-bool DialogSetup::should_load_cfg(void)
+bool DialogSetup::should_load_cfg(void) const
 {
     return m_load_cfg;
 }

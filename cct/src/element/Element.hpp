@@ -65,25 +65,25 @@ public:
 
     void set_z_level(uint8_t z) { m_z_level = z; }
 
-    uint8_t get_z_level(void) { return m_z_level; }
+    uint8_t get_z_level(void) const { return m_z_level; }
 
     std::string * get_id(void) { return &m_id; }
 
-    int get_x() { return m_position.x; }
+    int get_x() const { return m_position.x; }
 
-    int get_y() { return m_position.y; }
+    int get_y() const { return m_position.y; }
 
-    int get_w() { return m_mapping.w; }
+    int get_w() const { return m_mapping.w; }
 
-    int get_h() { return m_mapping.h; }
+    int get_h() const { return m_mapping.h; }
 
-    int get_u() { return m_mapping.x; } 
+    int get_u() const { return m_mapping.x; } 
 
-    int get_v() { return m_mapping.y; }  
+    int get_v() const { return m_mapping.y; }  
 
     virtual int get_vc() { return 0; }
 
-    ElementType get_type(void) { return m_type; }
+    ElementType get_type(void) const { return m_type; }
 
     SDL_Rect * get_mapping(void) { return &m_mapping; }
 

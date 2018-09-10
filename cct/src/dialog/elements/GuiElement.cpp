@@ -41,12 +41,12 @@ void GuiElement::refresh(void)
     /* NO OP */
 }
 
-Dialog *GuiElement::get_parent()
+Dialog *GuiElement::get_parent() const
 {
     return m_parent_dialog;
 }
 
-SDL_Helper * GuiElement::get_helper()
+SDL_Helper * GuiElement::get_helper() const
 {
     return get_parent()->helper();
 }
@@ -58,7 +58,7 @@ SDL_Rect * GuiElement::get_dimensions()
     return &m_dimensions;
 }
 
-int8_t GuiElement::get_id()
+int8_t GuiElement::get_id() const
 {
     return m_element_id;
 }
@@ -98,17 +98,17 @@ void GuiElement::set_flags(uint8_t flags)
     m_flags = flags;
 }
 
-int GuiElement::get_left()
+int GuiElement::get_left() const
 {
     return m_flags & ELEMENT_ABSOLUTE_POSITION ? m_position.x : m_position.x + get_parent()->position().x;
 }
 
-int GuiElement::get_right()
+int GuiElement::get_right() const
 {
     return get_left() + m_dimensions.w;
 }
 
-int GuiElement::get_top()
+int GuiElement::get_top() const
 {
     return m_flags & ELEMENT_ABSOLUTE_POSITION ? m_position.y : m_position.y + get_parent()->position().y;
 }
@@ -118,12 +118,12 @@ int GuiElement::get_bottom()
     return get_top() + m_dimensions.h;
 }
 
-int GuiElement::get_width(void)
+int GuiElement::get_width(void) const
 {
     return m_dimensions.w;
 }
 
-int GuiElement::get_height(void)
+int GuiElement::get_height(void) const
 {
     return m_dimensions.h;
 }

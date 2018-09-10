@@ -48,12 +48,12 @@ void ElementMouseMovement::update_settings(DialogNewElement * dialog)
     m_type = dialog->get_mouse_type();
 }
 
-MouseMovementType ElementMouseMovement::get_mouse_type(void)
+MouseMovementType ElementMouseMovement::get_mouse_type(void) const
 {
     return m_type;
 }
 
-uint16_t ElementMouseMovement::get_radius(void)
+uint16_t ElementMouseMovement::get_radius(void) const
 {
     return m_radius;
 }

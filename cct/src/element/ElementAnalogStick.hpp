@@ -34,9 +34,9 @@ public:
 
     void handle_event(SDL_Event * event, SDL_Helper * helper) override;
 
-    ElementSide get_stick(void) { return m_stick; }
+    ElementSide get_stick(void) const { return m_stick; }
 
-    uint16_t get_radius(void) { return m_radius; }
+    uint16_t get_radius(void) const { return m_radius; }
 
     static ElementAnalogStick * read_from_file(ccl_config * file, const std::string& id, SDL_Point * default_dim);
 private:

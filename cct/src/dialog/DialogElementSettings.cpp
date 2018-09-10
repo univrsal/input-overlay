@@ -98,7 +98,7 @@ void DialogElementSettings::action_performed(int8_t action_id)
     }
 }
 
-void DialogElementSettings::set_wh(int w, int h)
+void DialogElementSettings::set_wh(int w, int h) const
 {
     if (w >= 0)
     {
@@ -111,7 +111,7 @@ void DialogElementSettings::set_wh(int w, int h)
     }
 }
 
-void DialogElementSettings::set_xy(int x, int y)
+void DialogElementSettings::set_xy(int x, int y) const
 {
     if (x >= 0)
     {
@@ -124,7 +124,7 @@ void DialogElementSettings::set_xy(int x, int y)
     }
 }
 
-void DialogElementSettings::set_uv(int u, int v)
+void DialogElementSettings::set_uv(int u, int v) const
 {
     if (u >= 0)
     {
@@ -137,17 +137,17 @@ void DialogElementSettings::set_uv(int u, int v)
     }
 }
 
-void DialogElementSettings::set_id(std::string id)
+void DialogElementSettings::set_id(std::string id) const
 {
     m_element_id->set_text(std::move(id));
 }
 
-void DialogElementSettings::set_vc(uint16_t vc)
+void DialogElementSettings::set_vc(uint16_t vc) const
 {
     m_element_vc->set_hex_int(vc);
 }
 
-void DialogElementSettings::set_z_level(uint8_t z)
+void DialogElementSettings::set_z_level(uint8_t z) const
 {
     m_element_z_level->set_text(std::to_string(z));
 }

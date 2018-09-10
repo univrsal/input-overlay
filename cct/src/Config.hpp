@@ -43,9 +43,9 @@ public:
     void write_config(Notifier * n);
     void read_config(Notifier * n);
 
-    Texture * get_texture(void);
+    Texture * get_texture(void) const;
 
-    SDL_Point get_default_dim(void);
+    SDL_Point get_default_dim(void) const;
 
     void queue_delete(uint16_t id)
     {
@@ -55,8 +55,8 @@ public:
 
     std::vector<std::unique_ptr<Element>> m_elements;
 
-    Element * selected() { return m_selected; }
-    uint16_t selecte_id() { return m_selected_id; }
+    Element * selected() const { return m_selected; }
+    uint16_t selecte_id() const { return m_selected_id; }
 
     void reset_selection(void);
 private:
@@ -64,7 +64,7 @@ private:
     void move_elements(int new_x, int new_y);
     inline void move_element(int mouse_x, int mouse_y);
 
-    inline bool is_rect_in_rect(const SDL_Rect * a, const SDL_Rect * b);
+    inline bool is_rect_in_rect(const SDL_Rect * a, const SDL_Rect * b) const;
 
     int16_t m_element_to_delete = -1;
     int16_t m_selected_id = -1;

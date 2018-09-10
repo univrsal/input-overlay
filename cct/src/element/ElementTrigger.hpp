@@ -32,13 +32,13 @@ public:
 
     static ElementTrigger * read_from_file(ccl_config * file, const std::string& id, SDL_Point * default_dim);
 
-    ElementSide get_side(void) { return m_side; }
+    ElementSide get_side(void) const { return m_side; }
 
-    TriggerDirection get_direction(void) { return m_direction; }
+    TriggerDirection get_direction(void) const { return m_direction; }
 
-    bool get_mode(void) { return m_button_mode; }
+    bool get_mode(void) const { return m_button_mode; }
 private:
-    void calculate_mappings(SDL_Rect * pressed, SDL_Rect * absolute);
+    void calculate_mappings(SDL_Rect * pressed, SDL_Rect * absolute) const;
 
     SDL_Rect m_pressed_mapping;
     

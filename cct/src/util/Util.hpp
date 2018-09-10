@@ -37,11 +37,11 @@ public:
         m_started = true;
     }
 
-    bool started(void) { return m_started; }
+    bool started(void) const { return m_started; }
 
-    uint32_t get_delta(void) { return m_end_ticks - m_start_ticks; }
+    uint32_t get_delta(void) const { return m_end_ticks - m_start_ticks; }
 
-    uint32_t get_time(void) { return SDL_GetTicks() - m_start_ticks; }
+    uint32_t get_time(void) const { return SDL_GetTicks() - m_start_ticks; }
 private:
     uint32_t m_start_ticks = 0;
     uint32_t m_end_ticks = 0;

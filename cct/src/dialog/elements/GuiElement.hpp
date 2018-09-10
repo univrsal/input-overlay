@@ -45,31 +45,31 @@ public:
 
     virtual uint8_t get_cursor(void);
 
-    Dialog * get_parent(void);
+    Dialog * get_parent(void) const;
 
-    SDL_Helper * get_helper();
+    SDL_Helper * get_helper() const;
 
     SDL_Rect * get_dimensions(void);
 
     void set_dim(SDL_Rect r);
 
-    int8_t get_id(void);
+    int8_t get_id(void) const;
 
     void init(Dialog *parent, SDL_Rect dim, int8_t id);
 
     void set_flags(uint8_t flags);
 
-    int get_left(void);
+    int get_left(void) const;
 
-    int get_top(void);
+    int get_top(void) const;
 
-    int get_right(void);
+    int get_right(void) const;
 
     int get_bottom(void);
 
-    int get_width(void);
+    int get_width(void) const;
 
-    int get_height(void);
+    int get_height(void) const;
 protected:
     Dialog * m_parent_dialog;
     SDL_Rect m_dimensions; /* Width/Height and absolute position */

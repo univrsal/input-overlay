@@ -39,7 +39,7 @@ public:
 
     uint8_t get_cursor(void) override;
 
-    void set_selection(SDL_Rect * r) { m_cs->set_selection(r); }
+    void set_selection(SDL_Rect * r) const { m_cs->set_selection(r); }
 private:
     void resize() override;
 

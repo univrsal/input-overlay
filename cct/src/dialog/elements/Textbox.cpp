@@ -247,7 +247,7 @@ const char * Textbox::c_str(void)
     return get_text()->c_str();
 }
 
-inline bool Textbox::is_numeric(const std::string & s)
+inline bool Textbox::is_numeric(const std::string & s) const
 {
     int index = 0;
     for (char i : s)
@@ -259,24 +259,24 @@ inline bool Textbox::is_numeric(const std::string & s)
     return true;
 }
 
-inline bool Textbox::is_alpha_numeric(const std::string & s)
+inline bool Textbox::is_alpha_numeric(const std::string & s) const
 {
     const char * c = s.c_str();
     return c[strspn(c, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_-.:;,0123456789")] == 0;
 }
 
-inline bool Textbox::is_spacefree(const std::string & s)
+inline bool Textbox::is_spacefree(const std::string & s) const
 {
     return s.find(' ') == std::string::npos;
 }
 
-bool Textbox::is_hex(const std::string& s)
+bool Textbox::is_hex(const std::string& s) const
 {
     const char * c = s.c_str();
     return c[strspn(c, "0123456789xabcdefABCDEF")] == 0;
 }
 
-void Textbox::pop_back(std::string& s)
+void Textbox::pop_back(std::string& s) const
 {
     std::wstring convert = get_helper()->util_utf8_to_wstring(s);
     convert.pop_back();

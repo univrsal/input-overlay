@@ -36,13 +36,13 @@ public:
     
     void action_performed(int8_t action_id) override;
 
-    SDL_Point get_default_dim();
+    SDL_Point get_default_dim() const;
 
-    bool should_load_cfg(void);
+    bool should_load_cfg(void) const;
 
-    const char * get_config_path(void);
+    const char * get_config_path(void) const;
 
-    const char * get_texture_path(void);
+    const char * get_texture_path(void) const;
 private:
     Notifier * m_notifier = nullptr;
 
@@ -58,5 +58,5 @@ private:
 
     Tool * m_tool = nullptr;
 public:
-    SDL_Point get_rulers();
+    SDL_Point get_rulers() const;
 };

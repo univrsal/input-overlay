@@ -92,14 +92,14 @@ void Tool::program_loop()
     }
 }
 
-Element * Tool::get_selected(void)
+Element * Tool::get_selected(void) const
 {
     if (m_config)
         return m_config->selected();
     return nullptr;
 }
 
-uint16_t Tool::get_selected_id(void)
+uint16_t Tool::get_selected_id(void) const
 {
     return m_config->selecte_id();
 }
@@ -149,12 +149,12 @@ void Tool::action_performed(uint8_t type)
     }
 }
 
-Texture * Tool::get_atlas(void)
+Texture * Tool::get_atlas(void) const
 {
     return m_config->get_texture();
 }
 
-void Tool::delete_element(uint16_t id)
+void Tool::delete_element(uint16_t id) const
 {
     m_config->queue_delete(id);
 }
@@ -170,7 +170,7 @@ void Tool::queue_dialog_close(void)
     m_state = IN_BUILD;
 }
 
-ElementError Tool::verify_element(DialogNewElement * d, bool modify_mode)
+ElementError Tool::verify_element(DialogNewElement * d, bool modify_mode) const
 {
     /*
         Only check uniqueness if the element is newly added or
@@ -192,7 +192,7 @@ ElementError Tool::verify_element(DialogNewElement * d, bool modify_mode)
     return error;
 }
 
-void Tool::add_element(Element * e)
+void Tool::add_element(Element * e) const
 {
     /* Sanitizing is done in verify_element */
     if (e)

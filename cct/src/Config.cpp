@@ -381,12 +381,12 @@ void Config::read_config(Notifier * n)
     }
 }
 
-Texture * Config::get_texture(void)
+Texture * Config::get_texture(void) const
 {
     return m_atlas;
 }
 
-SDL_Point Config::get_default_dim(void)
+SDL_Point Config::get_default_dim(void) const
 {
     return m_default_dim;
 }
@@ -448,7 +448,7 @@ inline void Config::move_element(int mouse_x, int mouse_y)
     m_settings->set_xy(x, y);
 }
 
-inline bool Config::is_rect_in_rect(const SDL_Rect * a, const SDL_Rect * b)
+inline bool Config::is_rect_in_rect(const SDL_Rect * a, const SDL_Rect * b) const
 {
     return a->x >= b->x && a->x + a->w <= b->x + b->w
         && a->y >= b->y && a->y + a->h <= b->y + b->h;
