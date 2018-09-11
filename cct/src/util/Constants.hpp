@@ -122,6 +122,7 @@
 #define LANG_LABEL_GAMEPAD_ID_INFO      "label_gamepad_id_info"
 #define LANG_LABEL_TEXT_FORMAT_INFO     "label_text_format_info"
 #define LANG_CHECKBOX_RESET_TEXT        "checkbox_reset_text"
+#define LANG_LABEL_DPAD_INFO            "label_dpad_info"
 
 /* Selected element settings */
 #define LANG_BUTTON_ADD_ELEMENT         "button_add_element"

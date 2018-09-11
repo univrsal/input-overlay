@@ -49,7 +49,7 @@ void ElementScrollWheel::handle_event(SDL_Event* event, SDL_Helper* helper)
 {
     if (event->type == SDL_MOUSEWHEEL)
     {
-        if (event->wheel.y > 0) /* UP */
+        if (event->wheel.y > 0) /* TRIGGER_UP */
         {
             m_up = true;
             m_down = false;

@@ -14,6 +14,7 @@
 #include "ElementMouseMovement.hpp"
 #include "ElementTrigger.hpp"
 #include "ElementGamepadID.hpp"
+#include "ElementDPad.hpp"
 #include "../dialog/DialogNewElement.hpp"
 #include "../dialog/DialogElementSettings.hpp"
 #include "../util/SDL_Helper.hpp"
@@ -43,7 +44,7 @@ Element* Element::read_from_file(ccl_config* file, const std::string& id, const 
     case TEXT:
         return ElementText::read_from_file(file, id, default_dim);
     case DPAD_STICK:
-        break;
+        return ElementDPad::read_from_file(file, id, default_dim);
     case GAMEPAD_ID:
         return ElementGamepadID::read_from_file(file, id, default_dim);
     default: ;
@@ -72,6 +73,7 @@ Element* Element::from_dialog(DialogNewElement* dialog)
         e = new ElementScrollWheel();
         break;
     case DPAD_STICK:
+        e = new ElementDPad();
         break;
     case MOUSE_MOVEMENT:
         e = new ElementMouseMovement();
@@ -81,7 +83,7 @@ Element* Element::from_dialog(DialogNewElement* dialog)
         break;
     case GAMEPAD_ID:
         e = new ElementGamepadID();
-        break;
+        break;     
     default: ;
     }
 

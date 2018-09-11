@@ -106,7 +106,7 @@ void ElementText::handle_event(SDL_Event * event, SDL_Helper * helper)
     }
     else if (event->type == SDL_MOUSEWHEEL)
     {
-        if (event->wheel.y > 0) /* UP */
+        if (event->wheel.y > 0) /* TRIGGER_UP */
         {
             if (m_scroll_amount < 0)
                 m_scroll_amount = 0;

@@ -97,8 +97,10 @@ void DialogNewElement::init()
         add_trigger();
     else if (m_type == GAMEPAD_ID)
         add_info(LANG_LABEL_GAMEPAD_ID_INFO);
-    else if (m_type)
+    else if (m_type == TEXT)
         add_text();
+    else if (m_type == DPAD_STICK)
+        add_info(LANG_LABEL_DPAD_INFO);
 
     switch (m_type)
     {
@@ -109,15 +111,15 @@ void DialogNewElement::init()
     case MOUSE_MOVEMENT:
     case TRIGGER:
     case GAMEPAD_ID:
+    case DPAD_STICK:
         add(m_selector = new AtlasSelector(m_id++, get_left() + 270,
                                            get_top() + 30, m_dimensions.w - 278, m_dimensions.h - 38,
                                            m_tool->get_atlas(), this));
         m_selector->set_selection(&m_selection);
         add_selection_elements();
         break;
-    case INVALID: break;
-    case TEXT: break;
-    case DPAD_STICK: break;
+    case INVALID:
+    case TEXT: 
     default: ;
     }
 
@@ -185,6 +187,7 @@ bool DialogNewElement::handle_events(SDL_Event* event)
     case MOUSE_SCROLLWHEEL:
     case GAMEPAD_ID:
     case TRIGGER:
+    case DPAD_STICK:
         if (event->type == SDL_WINDOWEVENT)
         {
             if (event->window.event == SDL_WINDOWEVENT_SIZE_CHANGED)
@@ -259,17 +262,17 @@ TriggerDirection DialogNewElement::get_direction() const
         switch (m_direction->get_selected())
         {
         default:
-        case UP:
-            return UP;
-        case DOWN:
-            return DOWN;
-        case LEFT:
-            return LEFT;
-        case RIGHT:
-            return RIGHT;
+        case TRIGGER_UP:
+            return TRIGGER_UP;
+        case TRIGGER_DOWN:
+            return TRIGGER_DOWN;
+        case TRIGGER_LEFT:
+            return TRIGGER_LEFT;
+        case TRIGGER_RIGHT:
+            return TRIGGER_RIGHT;
         }
     }
-    return UP;
+    return TRIGGER_UP;
 }
 
 MouseMovementType DialogNewElement::get_mouse_type() const

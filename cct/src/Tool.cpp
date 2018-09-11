@@ -181,7 +181,7 @@ ElementError Tool::verify_element(DialogNewElement* d, const bool modify_mode) c
     if (!modify_mode)
         for (auto const& element : m_config->m_elements)
         {
-            if (*element->get_id() == d->get_id()->c_str())
+            if (*element->get_id() == *d->get_id())
             {
                 m_notify->add_msg(MESSAGE_ERROR, m_helper->loc(LANG_ERROR_ID_NOT_UNIQUE));
                 return ID_NOT_UNIQUE;

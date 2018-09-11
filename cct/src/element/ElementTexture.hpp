@@ -13,7 +13,7 @@ class ElementTexture
     : public Element
 {
 public:
-    ElementTexture() : Element()
+    ElementTexture()
     {
         /* NO-OP */
     };

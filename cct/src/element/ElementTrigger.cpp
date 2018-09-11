@@ -124,18 +124,18 @@ ElementTrigger* ElementTrigger::read_from_file(ccl_config* file, const std::stri
     TriggerDirection d;
     switch (file->get_int(id + CFG_DIRECTION))
     {
-    case UP:
-        d = UP;
+    case TRIGGER_UP:
+        d = TRIGGER_UP;
         break;
-    case DOWN:
-        d = DOWN;
+    case TRIGGER_DOWN:
+        d = TRIGGER_DOWN;
         break;
-    case RIGHT:
-        d = RIGHT;
+    case TRIGGER_RIGHT:
+        d = TRIGGER_RIGHT;
         break;
     default:
-    case LEFT:
-        d = LEFT;
+    case TRIGGER_LEFT:
+        d = TRIGGER_LEFT;
     }
     return new ElementTrigger(id, read_position(file, id),
                               read_mapping(file, id, default_dim), s, d, read_layer(file, id));
@@ -145,23 +145,23 @@ void ElementTrigger::calculate_mappings(SDL_Rect* pressed, SDL_Rect* absolute) c
 {
     switch (m_direction)
     {
-    case UP:
+    case TRIGGER_UP:
         pressed->h = m_mapping.h * m_progress;
         pressed->y = m_pressed_mapping.y + (m_mapping.h - pressed->h);
         absolute->y += (m_mapping.h - pressed->h) * m_scale;
         absolute->h = pressed->h * m_scale;
         break;
-    case DOWN:
+    case TRIGGER_DOWN:
         pressed->h = m_mapping.h * m_progress;
         absolute->h = pressed->h * m_scale;
         break;
-    case LEFT:
+    case TRIGGER_LEFT:
         pressed->w = m_mapping.w * m_progress;
         pressed->x = m_mapping.x + (m_mapping.w - pressed->w);
         absolute->x += (m_mapping.w - pressed->w) * m_scale;
         absolute->w = pressed->w * m_scale;
         break;
-    case RIGHT:
+    case TRIGGER_RIGHT:
         pressed->w = m_mapping.w * m_progress;
         absolute->w = pressed->w * m_scale;
         break;

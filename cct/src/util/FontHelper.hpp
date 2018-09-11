@@ -5,6 +5,8 @@
  * github.com/univrsal/input-overlay
  */
 
+#pragma once
+
 #define FONT_SOLID          0
 #define FONT_SHADED         1
 #define FONT_BLENDED        2
@@ -16,9 +18,6 @@
 #define FONT_ROBOTO_SMALL   0
 #define FONT_ROBOTO_LARGE   1
 #define FONT_WSTRING        2
-
-#ifndef RELODED_FONT_H
-#define RELODED_FONT_H
 
 #include <SDL_ttf.h>
 #include <string>
@@ -50,6 +49,3 @@ private:
     SDL_Helper* m_helper;
     uint8_t m_mode;
 };
-
-
-#endif //RELODED_FONT_H

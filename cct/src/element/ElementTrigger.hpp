@@ -30,7 +30,7 @@ public:
 
     void update_settings(DialogNewElement* dialog) override;
 
-    void ElementTrigger::update_settings(DialogElementSettings* dialog) override;
+    void update_settings(DialogElementSettings* dialog) override;
 
     void handle_event(SDL_Event* event, SDL_Helper* helper) override;
 

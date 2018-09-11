@@ -73,22 +73,22 @@ void ElementButton::handle_event(SDL_Event* event, SDL_Helper* helper)
 {
     if (event->type == SDL_KEYDOWN)
     {
-        if (helper->sdl_key_to_vc(event->key.keysym.sym) == m_keycode)
+        if (SDL_Helper::sdl_key_to_vc(event->key.keysym.sym) == m_keycode)
             m_pressed = true;
     }
     else if (event->type == SDL_KEYUP)
     {
-        if (helper->sdl_key_to_vc(event->key.keysym.sym) == m_keycode)
+        if (SDL_Helper::sdl_key_to_vc(event->key.keysym.sym) == m_keycode)
             m_pressed = false;
     }
     else if (event->type == SDL_CONTROLLERBUTTONDOWN)
     {
-        if (helper->sdl_key_to_vc(TO_PAD_MASK(event->cbutton.button)) == m_keycode)
+        if (SDL_Helper::sdl_key_to_vc(TO_PAD_MASK(event->cbutton.button)) == m_keycode)
             m_pressed = true;
     }
     else if (event->type == SDL_CONTROLLERBUTTONUP)
     {
-        if (helper->sdl_key_to_vc(TO_PAD_MASK(event->cbutton.button)) == m_keycode)
+        if (SDL_Helper::sdl_key_to_vc(TO_PAD_MASK(event->cbutton.button)) == m_keycode)
             m_pressed = false;
     }
 }

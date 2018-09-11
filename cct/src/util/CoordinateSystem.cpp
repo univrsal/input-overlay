@@ -112,7 +112,7 @@ bool CoordinateSystem::handle_events(SDL_Event* e)
     }
     else if (e->type == SDL_MOUSEWHEEL)
     {
-        if (e->wheel.y > 0) /* UP */
+        if (e->wheel.y > 0) /* TRIGGER_UP */
         {
             m_scale_f = UTIL_MIN(++m_scale_f, 8);
         }

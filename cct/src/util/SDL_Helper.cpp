@@ -244,7 +244,7 @@ bool SDL_Helper::util_is_in_rect(const SDL_Rect* rect, const int x, const int y)
     return x >= rect->x && x <= (rect->x + rect->w) && y >= rect->y && y <= (rect->y + rect->h);
 }
 
-void SDL_Helper::util_text(const std::string* text, int x, int y, const SDL_Color* color, const uint8_t font) const
+void SDL_Helper::util_text(const std::string* text, const int x, const int y, const SDL_Color* color, const uint8_t font) const
 {
     const auto ttf_font = get_font(font);
     if (color == nullptr)
@@ -263,10 +263,10 @@ void SDL_Helper::util_text(const std::string* text, const int x, const int y, co
         m_font_helper->draw(text, x, y, ttf_font, color, scale);
 }
 
-void SDL_Helper::util_text_rot(const std::string* text, const int x, const int y, const SDL_Color* color, double angle,
+void SDL_Helper::util_text_rot(const std::string* text, const int x, const int y, const SDL_Color* color, const double angle,
                                const uint8_t font) const
 {
-    auto ttf_font = get_font(font);
+    const auto ttf_font = get_font(font);
     if (color == nullptr)
         m_font_helper->draw_rot(text, x, y, ttf_font, m_palette->white(), angle);
     else
