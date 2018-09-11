@@ -56,6 +56,19 @@
 #define TEXT_FORMAT_MOUSE_X_FLAG    1 << 4
 #define TEXT_FORMAT_MOUSE_Y_FLAG    1 << 5
 
+enum DPadDirection
+{
+    DPAD_CENTER,
+    DPAD_LEFT,
+    DPAD_RIGHT,
+    DPAD_UP,
+    DPAD_DOWN,
+    DPAD_TOP_LEFT,
+    DPAD_TOP_RIGHT,
+    DPAD_BOTTOM_LEFT,
+    DPAD_BOTTOM_RIGHT
+};
+
 enum MouseMovementType
 {
     DOT,
@@ -70,10 +83,10 @@ enum ElementSide
 
 enum TriggerDirection
 {
-    UP,
-    DOWN,
-    LEFT,
-    RIGHT
+    TRIGGER_UP,
+    TRIGGER_DOWN,
+    TRIGGER_LEFT,
+    TRIGGER_RIGHT
 };
 
 enum ElementType
