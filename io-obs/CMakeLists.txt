@@ -30,9 +30,19 @@ set(input-overlay_SOURCES
 	hook/gamepad-hook.hpp
 	util/util.cpp
 	util/util.hpp
-	util/layout.cpp
-	util/layout.hpp
+	util/overlay.cpp
+	util/overlay.hpp
 	util/layout_constants.hpp
+    util/element/element.cpp
+    util/element/element.hpp
+    util/element/element_texture.cpp
+    util/element/element_texture.hpp
+    util/element/element_button.cpp
+    util/element/element_button.hpp
+    util/element/element_mouse_wheel.cpp
+    util/element/element_mouse_wheel.hpp
+    util/element/element_data_holder.cpp
+    util/element/element_data_holder.hpp
 	../ccl/ccl.cpp
 	../ccl/ccl.hpp)
 

@@ -1,11 +1,11 @@
-#include "gamepad-hook.hpp"
-
 /**
  * This file is part of input-overlay
  * which is licensed under the MPL 2.0 license
  * See LICENSE or mozilla.org/en-US/MPL/2.0/
  * github.com/univrsal/input-overlay
  */
+
+#include "gamepad-hook.hpp"
 
 bool gamepad_hook_state = false;
 GamepadState pad_states[PAD_COUNT];
@@ -14,9 +14,9 @@ GamepadState pad_states[PAD_COUNT];
 static pthread_t game_pad_hook_thread;
 #endif
 
-void start_pad_hook(void)
+void start_pad_hook()
 {
-	init_pad_devices();
+    init_pad_devices();
 
 #ifdef LINUX
 	pthread_create(&game_pad_hook_thread, NULL, hook_method, NULL);
@@ -24,7 +24,7 @@ void start_pad_hook(void)
 #endif
 }
 
-void init_pad_devices(void)
+void init_pad_devices()
 {
 #ifdef LINUX
 	pad_states[0].init(0);
@@ -34,7 +34,7 @@ void init_pad_devices(void)
 #endif
 }
 
-void end_pad_hook(void)
+void end_pad_hook()
 {
 #ifdef LINUX
 	pthread_cancel(game_pad_hook_thread);
@@ -48,35 +48,33 @@ void end_pad_hook(void)
 }
 
 #ifdef HAVE_XINPUT
-void update_gamepads(void)
+void update_gamepads()
 {
-	for (int i = 0; i < PAD_COUNT; i++)
-	{
-		//pad_states[i].put_in_vc();
-	}
+    for (int i = 0; i < PAD_COUNT; i++)
+    {
+        //pad_states[i].put_in_vc();
+    }
 }
 #endif
 
 float get_stick_value_x(uint8_t pad_id, bool left)
 {
-	if (pad_id < 0 || pad_id >= PAD_COUNT)
-		return 0.f;
+    if (pad_id < 0 || pad_id >= PAD_COUNT)
+        return 0.f;
 
-	if (left)
-		return pad_states[pad_id].l_x;
-	else
-		return pad_states[pad_id].r_x;
+    if (left)
+        return pad_states[pad_id].l_x;
+    return pad_states[pad_id].r_x;
 }
 
 float get_stick_value_y(uint8_t pad_id, bool left)
 {
-	if (pad_id < 0 || pad_id >= PAD_COUNT)
-		return 0.f;
+    if (pad_id < 0 || pad_id >= PAD_COUNT)
+        return 0.f;
 
-	if (left)
-		return pad_states[pad_id].l_y;
-	else
-		return pad_states[pad_id].r_y;
+    if (left)
+        return pad_states[pad_id].l_y;
+    return pad_states[pad_id].r_y;
 }
 
 /* Linux background process for game pads */

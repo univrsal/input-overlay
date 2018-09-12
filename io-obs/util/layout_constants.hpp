@@ -1,13 +1,15 @@
 /**
- * Created by univrsal on 06.07.2018.
- * This file is part of input-overlay which is licensed
- * under the MOZILLA PUBLIC LICENSE 2.0 - mozilla.org/en-US/MPL/2.0/
+ * This file is part of input-overlay
+ * which is licensed under the MPL 2.0 license
+ * See LICENSE or mozilla.org/en-US/MPL/2.0/
  * github.com/univrsal/input-overlay
  */
+
 #pragma once
 
+/* Prevent cropped textures from overlapping */
 #define CFG_INNER_BORDER    3
-#define CFG_OUTTER_BORDER   1
+#define CFG_OUTER_BORDER   1
 
 #define CFG_DEFAULT_WIDTH   "default_width"
 #define CFG_DEFAULT_HEIGHT  "default_height"
@@ -40,6 +42,7 @@
 /* Misc */
 #define AXIS_MAX_AMPLITUDE 32767
 #define STICK_DEAD_ZONE     100
+#define SCROLL_TIMEOUT      50 /* ms after last scroll message until reset */
 
 /* Text element formatting */
 #define TEXT_FORMAT_WHEEL_AMOUNT    "%w"
@@ -87,6 +90,27 @@ enum TriggerDirection
     TRIGGER_DOWN,
     TRIGGER_LEFT,
     TRIGGER_RIGHT
+};
+
+enum icon_direction
+{
+    DIR_DOWN,
+    DIR_UP,
+    DIR_LEFT,
+    DIR_RIGHT
+};
+
+enum ButtonState
+{
+    STATE_PRESSED,
+    STATE_RELEASED
+};
+
+enum WheelDirection
+{
+    WHEEL_DIR_UP = -1,
+    WHEEL_DIR_NONE = 0,
+    WHEEL_DIR_DOWN = 1
 };
 
 enum ElementType

@@ -1,6 +1,3 @@
-#ifndef UTIL_HPP
-#define UTIL_HPP
-
 /**
  * This file is part of input-overlay
  * which is licenced under the
@@ -9,9 +6,7 @@
  * github.com/univrsal/input-overlay
  */
 
-#ifndef NULL
-#define NULL 0
-#endif // !NULL
+#pragma once
 
 #ifndef CCT
 
@@ -22,8 +17,7 @@
 #else
 #define LINUX
 #endif
-#endif // WINDOWS / LINUX
-
+#endif /* WINDOWS / LINUX */
 
 
 #ifdef LINUX
@@ -39,7 +33,7 @@
 #include <random>
 #endif
 
-#endif // CCT
+#endif /* CCT */
 
 
 #ifndef M_PI
@@ -55,7 +49,7 @@
 #define warning(format, ...) blog(LOG_WARNING, "[%s] " format, \
 		obs_source_get_name(m_source), ##__VA_ARGS__)
 
-// Lang Input Overlay
+/* Lang Input Overlay */
 #define S_OVERLAY_FILE              "overlay_image"
 #define S_LAYOUT_FILE               "layout_file"
 #define S_IS_CONTROLLER             "is_controller"
@@ -86,7 +80,7 @@
 #define T_MONITOR_H_CENTER          T_("Monitor.CenterX")
 #define T_MONITOR_V_CENTER          T_("Monitor.CenterY")
 
-// Lang Input History
+/* Lang Input History */
 #define S_OVERLAY_HISTORY_SIZE          "history_size"
 #define S_OVERLAY_FIX_CUTTING           "fix_cutting"
 #define S_OVERLAY_INCLUDE_MOUSE	        "include_mouse"
@@ -164,13 +158,13 @@
 #define VC_NONE               0xFFFF
 
 #define VC_MOUSE_MASK         0xED00
-#define VC_MOUSE_WHEEL	      0xED10
 #define VC_MOUSE_WHEEL_UP     0xED11
 #define VC_MOUSE_WHEEL_DOWN   0xED12
+#define VC_MOUSE_WHEEL	      0xED13
 
 #define VC_MOUSE_BUTTON1      (MOUSE_BUTTON1 | VC_MOUSE_MASK)
 #define VC_MOUSE_BUTTON2      (MOUSE_BUTTON2 | VC_MOUSE_MASK)
-#define VC_MOUSE_BUTTON3      (MOUSE_BUTTON3 | VC_MOUSE_MASK)
+#define VC_MOUSE_BUTTON3      VC_MOUSE_WHEEL
 #define VC_MOUSE_BUTTON4      (MOUSE_BUTTON4 | VC_MOUSE_MASK)
 #define VC_MOUSE_BUTTON5      (MOUSE_BUTTON5 | VC_MOUSE_MASK)
 
@@ -178,7 +172,7 @@
 #define CHAR_BACK           0x8
 #define CHAR_ENTER          0xD
 
-// Gamepad constants
+/* Gamepad constants */
 #define VC_PAD_MASK           0xEC00
 #define PAD_TO_VC(a)          (a | VC_PAD_MASK)
 #define PAD_COUNT 4
@@ -210,14 +204,14 @@
 #define PAD_LT              15
 #define PAD_RT              16
 
-// Get default key names from a libuiohook keycode
-const char * key_to_text(int key_code);
+/* Get default key names from a libuiohook keycode */
+const char* key_to_text(int key_code);
 
-// Creates string for obs to use as accepted files for a file dialog
-std::string util_file_filter(const char * display, const char * formats);
+/* Creates string for obs to use as accepted files for a file dialog */
+std::string util_file_filter(const char* display, const char* formats);
 
-// Changes slashes in path to fit Unix formatting
-void util_format_path(std::string & path);
+/* Changes slashes in path to fit Unix formatting */
+void util_format_path(std::string& path);
 
 void util_enable_mask(uint16_t& masks, uint16_t mask);
 void util_disable_mask(uint16_t& masks, uint16_t mask);
@@ -226,7 +220,5 @@ void util_set_mask(uint16_t& masks, uint16_t mask, bool state);
 uint16_t util_mouse_to_vc(int m);
 
 #ifdef DEBUG
-uint16_t random_vc(void);
-#endif
-
+uint16_t random_vc();
 #endif

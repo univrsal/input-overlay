@@ -7,6 +7,8 @@
 
 #include "Textbox.hpp"
 #include <utility>
+#include <iomanip>
+#include <sstream>
 #include "../../util/SDL_Helper.hpp"
 
 class SDL_Helper;
@@ -106,7 +108,7 @@ bool Textbox::handle_events(SDL_Event* event, const bool was_handled)
         {
             if ((m_flags & TEXTBOX_KEYBIND))
             {
-                set_hex_int(get_helper()->sdl_key_to_vc(event->key.keysym.sym));
+                set_hex_int(SDL_Helper::sdl_key_to_vc(event->key.keysym.sym));
             }
             else
             {

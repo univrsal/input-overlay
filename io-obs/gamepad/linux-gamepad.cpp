@@ -1,14 +1,14 @@
 #if 0
-#include "linux-gamepad.hpp"
-
-#ifdef LINUX
-
 /**
  * This file is part of input-overlay
  * which is licensed under the MPL 2.0 license
  * See LICENSE or mozilla.org/en-US/MPL/2.0/
  * github.com/univrsal/input-overlay
  */
+
+#include "linux-gamepad.hpp"
+
+#ifdef LINUX
 
 void LinuxGamepad::update(uint8_t id, uint16_t r_dz, uint16_t l_dz)
 {
@@ -29,4 +29,4 @@ void LinuxGamepad::check_keys()
 		SYNC_STATE(i);
 }
 #endif
-#endif 
+#endif

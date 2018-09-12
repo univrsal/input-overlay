@@ -1,6 +1,12 @@
 #if 0
-#ifndef LINUX_GAMEPAD_HPP
-#define LINUX_GAMEPAD_HPP
+/**
+ * This file is part of input-overlay
+ * which is licensed under the MPL 2.0 license
+ * See LICENSE or mozilla.org/en-US/MPL/2.0/
+ * github.com/univrsal/input-overlay
+ */
+
+#pragma once
 
 #ifdef LINUX
 #include <unistd.h>
@@ -13,13 +19,6 @@
 #include "../util/layout.hpp"
 
 #include "../hook/gamepad-hook.hpp"
-
-/**
- * This file is part of input-overlay
- * which is licensed under the MPL 2.0 license
- * See LICENSE or mozilla.org/en-US/MPL/2.0/
- * github.com/univrsal/input-overlay
- */
 
 struct LinuxGamepad
 {
@@ -64,6 +63,5 @@ private:
 
 	GamepadState * m_state;
 };
-#endif
 #endif
 #endif

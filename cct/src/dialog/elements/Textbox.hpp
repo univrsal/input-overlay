@@ -10,8 +10,6 @@
 #include "./GuiElement.hpp"
 #include "../Dialog.hpp"
 #include <string>
-#include <iomanip>
-#include <sstream>
 
 #define TEXTBOX_NUMERIC 1 << 0
 #define TEXTBOX_HEX 1 << 1

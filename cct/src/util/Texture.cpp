@@ -12,7 +12,6 @@ Texture::Texture()
     m_sdl_texture = nullptr;
 }
 
-
 Texture::Texture(const char* path, SDL_Renderer* renderer)
 {
     m_sdl_texture = nullptr;
@@ -40,7 +39,7 @@ bool Texture::load(const char* path, SDL_Renderer* renderer)
     if (renderer == nullptr)
         return false;
 
-    SDL_Surface* surface = IMG_Load(path);
+    const auto surface = IMG_Load(path);
 
     if (surface == nullptr)
     {
@@ -137,7 +136,8 @@ void Texture::draw(SDL_Renderer* renderer, const SDL_Point* p) const
     SDL_RenderCopy(renderer, m_sdl_texture, nullptr, &temp_rect);
 }
 
-void Texture::draw(SDL_Renderer* renderer, const SDL_Point* p, const int scaled_offset_x, const int scaled_offset_y) const
+void Texture::draw(SDL_Renderer* renderer, const SDL_Point* p,
+    const int scaled_offset_x, const int scaled_offset_y) const
 {
     SDL_Rect temp_rect = {p->x, p->y, m_dimensions.w, m_dimensions.h};
 
