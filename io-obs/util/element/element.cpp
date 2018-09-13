@@ -23,8 +23,8 @@ void element::read_size(ccl_config* cfg, const std::string& id)
 
 void element::read_pos(ccl_config* cfg, const std::string& id)
 {
-    m_pos.x = cfg->get_int(id + CFG_X_POS);
-    m_pos.y = cfg->get_int(id + CFG_Y_POS);
+    m_pos.x = cfg->get_int(id + CFG_X_POS) - CFG_OUTER_BORDER;
+    m_pos.y = cfg->get_int(id + CFG_Y_POS) - CFG_OUTER_BORDER;
 }
 
 void element::read_uv(ccl_config* cfg, const std::string& id)

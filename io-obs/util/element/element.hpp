@@ -33,10 +33,9 @@ public:
     virtual bool is_presistent() { return false; }
 
     /* used if is persistent */
-    virtual void merge(element_data* other) {}
+    virtual void merge(element_data* other) { /* NO-OP */}
 protected:
     ElementType m_type;
-
 };
 
 class element

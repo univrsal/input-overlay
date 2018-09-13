@@ -260,6 +260,7 @@ namespace hook
             break;
         case EVENT_MOUSE_WHEEL:
             last_wheel = event->time;
+            blog(LOG_INFO, "NEW WHEEL at %i", event->time);
             if (event->data.wheel.rotation >= WHEEL_DOWN)
                 dir = WHEEL_DIR_DOWN;
             else

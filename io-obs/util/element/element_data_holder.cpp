@@ -26,7 +26,6 @@ void element_data_holder::add_data(const uint16_t keycode, element_data* data)
         if (m_data[keycode]->is_presistent())
         {
             m_data[keycode]->merge(data);
-            delete data;
         }
         else
         {

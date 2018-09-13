@@ -18,8 +18,8 @@ void element_texture::load(ccl_config* cfg, const std::string& id)
 
 void element_texture::draw(gs_effect_t* effect, gs_image_file_t* image, element_data* data)
 {
-    gs_effect_set_texture(gs_effect_get_param_by_name(effect, "image"), image->texture);
     gs_matrix_push();
+    gs_effect_set_texture(gs_effect_get_param_by_name(effect, "image"), image->texture);
     gs_matrix_translate3f(m_pos.x, m_pos.y, 1.f);
 
     gs_draw_sprite_subregion(image->texture, 0, m_mapping.x, m_mapping.y,
@@ -30,8 +30,8 @@ void element_texture::draw(gs_effect_t* effect, gs_image_file_t* image, element_
 
 void element_texture::draw(gs_effect_t* effect, gs_image_file_t* image, const gs_rect* rect) const
 {
-    gs_effect_set_texture(gs_effect_get_param_by_name(effect, "image"), image->texture);
     gs_matrix_push();
+    gs_effect_set_texture(gs_effect_get_param_by_name(effect, "image"), image->texture);
     gs_matrix_translate3f(m_pos.x, m_pos.y, 1.f);
     gs_draw_sprite_subregion(image->texture, 0, rect->x, rect->y, rect->cx, rect->cy);
     gs_matrix_pop();

@@ -13,7 +13,7 @@ void element_button::load(ccl_config* cfg, const std::string& id)
     element_texture::load(cfg, id);
     m_keycode = cfg->get_int(id + CFG_KEY_CODE);
     m_pressed = m_mapping;
-    m_pressed.y = m_mapping.cy + CFG_INNER_BORDER;
+    m_pressed.y = m_mapping.y + m_mapping.cy + CFG_OUTER_BORDER;
 }
 
 void element_button::draw(gs_effect_t* effect, gs_image_file_t* image, element_data* data)
