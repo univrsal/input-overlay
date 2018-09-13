@@ -8,6 +8,11 @@
 #include "element_data_holder.hpp"
 
 
+element_data_holder::element_data_holder()
+{
+    m_data = std::map<uint16_t, std::unique_ptr<element_data>>();
+}
+
 element_data_holder::~element_data_holder()
 {
     m_data.clear();

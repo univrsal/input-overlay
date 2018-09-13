@@ -19,14 +19,16 @@ extern "C" {
 }
 
 #include "../../ccl/ccl.hpp"
-#include "../hook/hook-helper.hpp"
+#include "../hook/hook_helper.hpp"
 
 //namespace Data {
 
 class overlay
 {
 public:
-    overlay();
+    overlay() = default;
+
+    ~overlay();
 
     overlay(const std::string& ini, const std::string& texture);
 
@@ -51,6 +53,7 @@ private:
     bool load_cfg(const std::string& path);
     bool load_texture(const std::string& path);
     void unload_texture() const;
+    void unload_elements();
     void load_element(ccl_config* cfg, const std::string& id);
 
     gs_image_file_t* m_image = nullptr;

@@ -14,9 +14,9 @@
 
 //namespace Layout {
 
-overlay::overlay()
+overlay::~overlay()
 {
-    /* NO-OP*/
+    unload();
 }
 
 overlay::overlay(const std::string& ini, const std::string& texture)
@@ -35,7 +35,7 @@ bool overlay::load(const std::string& cfg_path, const std::string& texture_path)
 void overlay::unload()
 {
     unload_texture();
-    m_elements.clear();
+    unload_elements();
 }
 
 bool overlay::load_cfg(const std::string& path)
@@ -77,7 +77,6 @@ bool overlay::load_cfg(const std::string& path)
 
 bool overlay::load_texture(const std::string& path)
 {
-    unload_texture();
     auto flag = true;
     if (!path.empty())
     {
@@ -106,6 +105,11 @@ void overlay::unload_texture() const
     obs_enter_graphics();
     gs_image_file_free(m_image);
     obs_leave_graphics();
+}
+
+void overlay::unload_elements()
+{
+    m_elements.clear();
 }
 
 void overlay::draw(gs_effect_t* effect)

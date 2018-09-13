@@ -12,6 +12,7 @@
 class element_data_holder
 {
 public:
+    element_data_holder();
     ~element_data_holder();
 
     void add_data(uint16_t keycode, element_data* data);

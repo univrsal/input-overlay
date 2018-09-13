@@ -10,9 +10,9 @@
 #include "element.hpp"
 #include "element_texture.hpp"
 
-#define WHEEL_MIDDLE  0
-#define WHEEL_UP      1
-#define WHEEL_DOWN    2
+#define WHEEL_MAP_MIDDLE  0
+#define WHEEL_MAP_UP      1
+#define WHEEL_MAP_DOWN    2
 
 enum wheel_data_type
 {

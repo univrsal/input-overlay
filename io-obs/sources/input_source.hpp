@@ -56,7 +56,7 @@ namespace sources
 
         inline void update(obs_data_t* settings);
         inline void tick(float seconds);
-        inline void render(gs_effect_t* effect);
+        inline void render(gs_effect_t* effect) const;
     };
 
     static bool is_controller_changed(obs_properties_t* props, obs_property_t* p, obs_data_t* s);

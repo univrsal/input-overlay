@@ -9,7 +9,7 @@
 
 /* Prevent cropped textures from overlapping */
 #define CFG_INNER_BORDER    3
-#define CFG_OUTER_BORDER   1
+#define CFG_OUTER_BORDER    1
 
 #define CFG_DEFAULT_WIDTH   "default_width"
 #define CFG_DEFAULT_HEIGHT  "default_height"
@@ -40,9 +40,9 @@
 #define CFG_TEXT_RESET      "_reset_text"
 
 /* Misc */
-#define AXIS_MAX_AMPLITUDE 32767
+#define AXIS_MAX_AMPLITUDE  32767
 #define STICK_DEAD_ZONE     100
-#define SCROLL_TIMEOUT      50 /* ms after last scroll message until reset */
+#define SCROLL_TIMEOUT      (120 * 1000 * 1000) /* ns after last scroll message until reset */
 
 /* Text element formatting */
 #define TEXT_FORMAT_WHEEL_AMOUNT    "%w"

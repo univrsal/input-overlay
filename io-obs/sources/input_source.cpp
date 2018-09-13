@@ -8,9 +8,12 @@
 #include "input_source.hpp"
 #include "../hook/hook_helper.hpp"
 #include "../hook/gamepad_hook.hpp"
+#include "../util/element/element_data_holder.hpp"
 #include "../util/util.hpp"
 #include "../../ccl/ccl.hpp"
 #include <clocale>
+#include "../util/element/element_button.hpp"
+#include "../util/element/element_mouse_wheel.hpp"
 
 namespace sources
 {
@@ -61,7 +64,7 @@ namespace sources
 #endif
     }
 
-    inline void input_source::render(gs_effect_t* effect)
+    inline void input_source::render(gs_effect_t* effect) const
     {
         if (!m_overlay->get_texture() || !m_overlay->get_texture()->texture)
             return;
@@ -84,6 +87,7 @@ namespace sources
 
         m_overlay->unload();
         m_overlay->load(m_layout_file, m_image_file);
+
     }
 
     bool is_controller_changed(obs_properties_t* props, obs_property_t* p, obs_data_t* s)

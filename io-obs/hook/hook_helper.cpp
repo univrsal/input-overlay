@@ -6,6 +6,7 @@
  */
 
 #include <cstdarg>
+#include <util/platform.h>
 #include "hook_helper.hpp"
 #include "../util/overlay.hpp"
 #include "../util/element/element_data_holder.hpp"
@@ -20,8 +21,8 @@ namespace hook
         https://github.com/kwhat/libuiohook/blob/master/src/demo_hook_async.c
     */
 
-    uint64_t last_wheel = 0;
-    element_data_holder* input_data = nullptr;
+    uint64_t last_wheel = 0; /* System time at last scroll event */
+    element_data_holder* input_data = nullptr; /* Data for local input events */
     wint_t last_character;
     int16_t mouse_x, mouse_y, mouse_x_smooth, mouse_y_smooth, mouse_last_x, mouse_last_y;
     bool hook_initialized = false;
@@ -144,7 +145,7 @@ namespace hook
     void start_hook()
     {
         input_data = new element_data_holder();
-        return;
+        //return;
 #ifdef _DEBUG
         blog(LOG_INFO, "libuiohook init start... Dataholder@0x%X\n", (int)input_data);
 #endif
@@ -223,15 +224,6 @@ namespace hook
         if (d)
             wheel = reinterpret_cast<element_data_wheel*>(d);
 
-        if (last_wheel != 0 && event->time - last_wheel >= SCROLL_TIMEOUT)
-        {
-            if (wheel)
-            {
-                wheel->set_dir(WHEEL_DIR_NONE);
-                last_wheel = 0;
-            }
-        }
-
         switch (event->type)
         {
         case EVENT_KEY_PRESSED:
@@ -260,7 +252,7 @@ namespace hook
                                      new element_data_button(STATE_RELEASED));
             break;
         case EVENT_MOUSE_WHEEL:
-            last_wheel = event->time;
+            last_wheel = os_gettime_ns();
             blog(LOG_INFO, "NEW WHEEL at %i", event->time);
             if (event->data.wheel.rotation >= WHEEL_DOWN)
                 dir = WHEEL_DIR_DOWN;
