@@ -23,7 +23,7 @@ void element_texture::draw(gs_effect_t* effect, gs_image_file_t* image, element_
     gs_matrix_translate3f(m_pos.x, m_pos.y, 1.f);
 
     gs_draw_sprite_subregion(image->texture, 0, m_mapping.x, m_mapping.y,
-        m_mapping.cx, m_mapping.cy);
+                             m_mapping.cx, m_mapping.cy);
 
     gs_matrix_pop();
 }

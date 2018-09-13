@@ -30,6 +30,7 @@ public:
         m_dir = dir;
         m_amount = amount;
     }
+
     element_data_wheel(const ButtonState state)
         : element_data(MOUSE_SCROLLWHEEL)
     {

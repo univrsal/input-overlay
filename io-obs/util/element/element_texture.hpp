@@ -21,6 +21,7 @@ public:
     {
         /* NO-OP */
     }
+
     void load(ccl_config* cfg, const std::string& id) override;
     void draw(gs_effect_t* effect, gs_image_file_t* image, element_data* data) override;
     void draw(gs_effect_t* effect, gs_image_file_t* image, const gs_rect* rect) const;

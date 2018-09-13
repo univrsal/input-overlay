@@ -235,28 +235,28 @@ namespace hook
         {
         case EVENT_KEY_PRESSED:
             input_data->add_data(event->data.keyboard.keycode,
-                new element_data_button(STATE_PRESSED));
+                                 new element_data_button(STATE_PRESSED));
             break;
         case EVENT_KEY_RELEASED:
             input_data->remove_data(event->data.keyboard.keycode);
             break;
         case EVENT_MOUSE_PRESSED:
             if (event->data.mouse.button == MOUSE_BUTTON3)
-            /* Special case :/ */
+                /* Special case :/ */
                 input_data->add_data(util_mouse_to_vc(event->data.mouse.button),
-                    new element_data_wheel(STATE_PRESSED));
+                                     new element_data_wheel(STATE_PRESSED));
             else
                 input_data->add_data(util_mouse_to_vc(event->data.mouse.button),
-                    new element_data_button(STATE_PRESSED));
+                                     new element_data_button(STATE_PRESSED));
             break;
         case EVENT_MOUSE_RELEASED:
             if (event->data.mouse.button == MOUSE_BUTTON3)
                 /* Special case :/ */
                 input_data->add_data(VC_MOUSE_WHEEL,
-                    new element_data_wheel(STATE_RELEASED));
+                                     new element_data_wheel(STATE_RELEASED));
             else
                 input_data->add_data(VC_MOUSE_WHEEL,
-                    new element_data_button(STATE_RELEASED));
+                                     new element_data_button(STATE_RELEASED));
             break;
         case EVENT_MOUSE_WHEEL:
             last_wheel = event->time;

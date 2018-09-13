@@ -597,7 +597,7 @@ namespace sources
         const auto s = reinterpret_cast<input_history_source*>(data);
         const auto props = obs_properties_create();
         const auto mode_list = obs_properties_add_list(props, S_OVERLAY_MODE,
-                                                            T_OVERLAY_MODE, OBS_COMBO_TYPE_LIST, OBS_COMBO_FORMAT_INT);
+                                                       T_OVERLAY_MODE, OBS_COMBO_TYPE_LIST, OBS_COMBO_FORMAT_INT);
         obs_property_list_add_int(mode_list, T_OVERLAY_MODE_TEXT, 0);
         obs_property_list_add_int(mode_list, T_OVERLAY_MODE_ICON, 1);
         obs_property_set_modified_callback(mode_list, mode_changed);
@@ -657,8 +657,8 @@ namespace sources
 
         /* Other */
         const auto icon_dir_list = obs_properties_add_list(props, S_OVERLAY_DIRECTION,
-                                                                T_OVERLAY_DIRECTION, OBS_COMBO_TYPE_LIST,
-                                                                OBS_COMBO_FORMAT_INT);
+                                                           T_OVERLAY_DIRECTION, OBS_COMBO_TYPE_LIST,
+                                                           OBS_COMBO_FORMAT_INT);
 
         const auto include_pad = obs_properties_add_bool(props, S_OVERLAY_INCLUDE_PAD, T_OVERLAY_INCLUDE_PAD);
 
