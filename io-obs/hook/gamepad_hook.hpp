@@ -7,17 +7,16 @@
 
 #pragma once
 
-
 #include "../util/util.hpp"
-#include "hook-helper.hpp"
+#include "hook_helper.hpp"
+
+/* Linux implementation */
+#ifdef LINUX
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string>
 #include <malloc.h>
-
-/* Linux implementation */
-
-#ifdef LINUX
 
 extern bool gamepad_hook_state;
 

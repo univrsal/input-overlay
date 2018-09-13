@@ -6,7 +6,7 @@
  * github.com/univrsal/input-overlay
  */
 
-#include "linux-gamepad.hpp"
+#include "linux_gamepad.hpp"
 
 #ifdef LINUX
 

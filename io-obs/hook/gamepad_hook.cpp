@@ -5,7 +5,7 @@
  * github.com/univrsal/input-overlay
  */
 
-#include "gamepad-hook.hpp"
+#include "gamepad_hook.hpp"
 
 bool gamepad_hook_state = false;
 GamepadState pad_states[PAD_COUNT];

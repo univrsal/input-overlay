@@ -8,7 +8,7 @@
 
 #include <iomanip>
 #include <sstream>
-#include "input-history.hpp"
+#include "input_history.hpp"
 #include "../util/element/element_data_holder.hpp"
 #include "../util/element/element_button.hpp"
 #include "../util/element/element_mouse_wheel.hpp"

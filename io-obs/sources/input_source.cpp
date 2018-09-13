@@ -5,7 +5,12 @@
  * github.com/univrsal/input-overlay
  */
 
-#include "input-source.hpp"
+#include "input_source.hpp"
+#include "../hook/hook_helper.hpp"
+#include "../hook/gamepad_hook.hpp"
+#include "../util/util.hpp"
+#include "../../ccl/ccl.hpp"
+#include <clocale>
 
 namespace sources
 {

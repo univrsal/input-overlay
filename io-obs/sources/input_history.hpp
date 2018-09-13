@@ -9,12 +9,12 @@
 
 #include <obs-module.h>
 #include <map>
-#include "input-source.hpp"
+#include "input_source.hpp"
 #include "../../ccl/ccl.hpp"
 #include "../util/util.hpp"
 #include "../util/layout_constants.hpp"
-#include "../hook/gamepad-hook.hpp"
-#include "../hook/hook-helper.hpp"
+#include "../hook/gamepad_hook.hpp"
+#include "../hook/hook_helper.hpp"
 
 extern "C" {
 #include <graphics/image-file.h>

@@ -9,23 +9,14 @@
 
 #include <obs-module.h>
 #include <string>
-#include <algorithm>
-#include <clocale>
 #include <locale>
 #include <uiohook.h>
 #include <list>
-
-#include "../../ccl/ccl.hpp"
 #include "../util/overlay.hpp"
-#include "../util/util.hpp"
-
 extern "C" {
 #include <graphics/image-file.h>
 }
 
-#include "../hook/hook-helper.hpp"
-
-#include "../hook/gamepad-hook.hpp"
 
 namespace sources
 {
@@ -38,7 +29,7 @@ namespace sources
 
         /* Settings value */
         bool m_is_controller = false;
-        uint16_t m_l_dz = 0, m_r_dz = 0; /* Analog stick deadzones */
+        uint16_t m_l_dz = 0, m_r_dz = 0; /* Analog stick dead zones */
         uint8_t m_pad_id = 0;
         bool m_monitor_use_center = false;
         int32_t m_monitor_h = 0, m_monitor_v = 0;
@@ -47,19 +38,16 @@ namespace sources
         std::string m_layout_file;
 
         float m_old_angle = 0.f; /* For drawing the mouse arrow*/
-        std::unique_ptr<overlay> m_overlay;
+        std::unique_ptr<overlay> m_overlay{};
 
-        input_source(obs_source_t* source_, obs_data_t* settings) :
-            m_source(source_)
+        input_source(obs_source_t* source, obs_data_t* settings) :
+            m_source(source)
         {
             m_overlay = std::make_unique<overlay>();
             obs_source_update(m_source, settings);
         }
 
-        ~input_source()
-        {
-        }
-
+        ~input_source() = default;
 
         void load_overlay() const;
 
@@ -74,7 +62,7 @@ namespace sources
 
     static bool use_monitor_center_changed(obs_properties_t* props, obs_property_t* p, obs_data_t* s);
 
-    // For registering
+    /* For registering */
     static obs_properties_t* get_properties_for_overlay(void* data);
 
     void register_overlay_source();
