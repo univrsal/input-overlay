@@ -105,7 +105,7 @@ set(io-cct_SOURCES
     src/element/ElementScrollWheel.hpp
     src/element/ElementMouseMovement.cpp
     src/element/ElementMouseMovement.hpp
-	src/element/ElementTrigger.cpp
+    src/element/ElementTrigger.cpp
     src/element/ElementTrigger.hpp
     src/element/ElementGamepadID.cpp
     src/element/ElementGamepadID.hpp
