@@ -47,7 +47,10 @@ namespace sources
             obs_source_update(m_source, settings);
         }
 
-        ~input_source() = default;
+        ~input_source()
+        {
+            m_overlay.reset(nullptr);
+        };
 
         void load_overlay() const;
 

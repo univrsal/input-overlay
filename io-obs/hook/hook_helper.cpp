@@ -6,7 +6,7 @@
  */
 
 #include <cstdarg>
-#include "hook-helper.hpp"
+#include "hook_helper.hpp"
 #include "../util/overlay.hpp"
 #include "../util/element/element_data_holder.hpp"
 #include "../util/element/element_mouse_wheel.hpp"
@@ -144,6 +144,7 @@ namespace hook
     void start_hook()
     {
         input_data = new element_data_holder();
+        return;
 #ifdef _DEBUG
         blog(LOG_INFO, "libuiohook init start... Dataholder@0x%X\n", (int)input_data);
 #endif
