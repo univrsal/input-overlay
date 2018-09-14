@@ -42,7 +42,8 @@
 /* Misc */
 #define AXIS_MAX_AMPLITUDE  32767
 #define STICK_DEAD_ZONE     100
-#define SCROLL_TIMEOUT      (120 * 1000 * 1000) /* ns after last scroll message until reset */
+/* ns after last scroll message until reset */
+#define SCROLL_TIMEOUT      (120 * 1000 * 1000)
 
 /* Text element formatting */
 #define TEXT_FORMAT_WHEEL_AMOUNT    "%w"

@@ -147,7 +147,7 @@ namespace hook
         input_data = new element_data_holder();
         //return;
 #ifdef _DEBUG
-        blog(LOG_INFO, "libuiohook init start... Dataholder@0x%X\n", (int)input_data);
+        blog(LOG_INFO, "libuiohook init start... Dataholder@0x%X\n", reinterpret_cast<int>(input_data));
 #endif
 #ifdef _WIN32
         hook_running_mutex = CreateMutex(nullptr, FALSE, TEXT("hook_running_mutex"));
@@ -243,6 +243,7 @@ namespace hook
                                      new element_data_button(STATE_PRESSED));
             break;
         case EVENT_MOUSE_RELEASED:
+            blog(LOG_INFO, "MOUSE: %i\n", event->data.mouse.button);
             if (event->data.mouse.button == MOUSE_BUTTON3)
                 /* Special case :/ */
                 input_data->add_data(VC_MOUSE_WHEEL,
@@ -253,7 +254,6 @@ namespace hook
             break;
         case EVENT_MOUSE_WHEEL:
             last_wheel = os_gettime_ns();
-            blog(LOG_INFO, "NEW WHEEL at %i", event->time);
             if (event->data.wheel.rotation >= WHEEL_DOWN)
                 dir = WHEEL_DIR_DOWN;
             else

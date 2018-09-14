@@ -58,7 +58,7 @@ bool overlay::load_cfg(const std::string& path)
         while (!element_id.empty())
         {
             load_element(cfg, element_id);
-            element_id = cfg->get_string(element_id + CFG_NEXT_ID);
+            element_id = cfg->get_string(element_id + CFG_NEXT_ID, true);
         }
     }
 

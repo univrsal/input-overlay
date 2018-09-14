@@ -4,35 +4,35 @@ find_path(UIOHOOK_INCLUDE_DIR uiohook.h)
 find_library(UIOHOOK_LIBRARY uiohook)
 
 if(MSVC)
-	set(input-overlay_PLATFORM_DEPS
-		w32-pthreads
-		XInput9_1_0)
-	add_definitions(-DHAVE_XINPUT=1)
+    set(input-overlay_PLATFORM_DEPS
+        w32-pthreads
+        XInput9_1_0)
+    add_definitions(-DHAVE_XINPUT=1)
 endif()
 
 if(UNIX)
-	add_definitions(-DLINUX_INPUT=1)
+    add_definitions(-DLINUX_INPUT=1)
 endif()
 
 set(input-overlay_SOURCES
-	input-overlay.cpp
-	sources/input-source.cpp
-	sources/input-source.hpp
-	sources/input-history.cpp
-	sources/input-history.hpp
-	gamepad/linux-gamepad.cpp
-	gamepad/linux-gamepad.hpp
-	gamepad/windows-gamepad.cpp
-	gamepad/windows-gamepad.hpp
-	hook/hook-helper.cpp
-	hook/hook-helper.hpp
-	hook/gamepad-hook.cpp
-	hook/gamepad-hook.hpp
-	util/util.cpp
-	util/util.hpp
-	util/overlay.cpp
-	util/overlay.hpp
-	util/layout_constants.hpp
+    input-overlay.cpp
+    sources/input-source.cpp
+    sources/input-source.hpp
+    sources/input-history.cpp
+    sources/input-history.hpp
+    gamepad/linux-gamepad.cpp
+    gamepad/linux-gamepad.hpp
+    gamepad/windows-gamepad.cpp
+    gamepad/windows-gamepad.hpp
+    hook/hook-helper.cpp
+    hook/hook-helper.hpp
+    hook/gamepad-hook.cpp
+    hook/gamepad-hook.hpp
+    util/util.cpp
+    util/util.hpp
+    util/overlay.cpp
+    util/overlay.hpp
+    util/layout_constants.hpp
     util/element/element.cpp
     util/element/element.hpp
     util/element/element_texture.cpp
@@ -43,17 +43,17 @@ set(input-overlay_SOURCES
     util/element/element_mouse_wheel.hpp
     util/element/element_data_holder.cpp
     util/element/element_data_holder.hpp
-	../ccl/ccl.cpp
-	../ccl/ccl.hpp)
+    ../ccl/ccl.cpp
+    ../ccl/ccl.hpp)
 
 include_directories(${UIOHOOK_INCLUDE_DIR})
 
 add_library(input-overlay MODULE
-	${input-overlay_SOURCES})
+    ${input-overlay_SOURCES})
 
 target_link_libraries(input-overlay
-	libobs
-	${input-overlay_PLATFORM_DEPS}
-	${UIOHOOK_LIBRARY})
+    libobs
+    ${input-overlay_PLATFORM_DEPS}
+    ${UIOHOOK_LIBRARY})
 
 install_obs_plugin_with_data(input-overlay data)
