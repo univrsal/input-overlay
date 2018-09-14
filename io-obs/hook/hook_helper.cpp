@@ -243,7 +243,6 @@ namespace hook
                                      new element_data_button(STATE_PRESSED));
             break;
         case EVENT_MOUSE_RELEASED:
-            blog(LOG_INFO, "MOUSE: %i\n", event->data.mouse.button);
             if (event->data.mouse.button == MOUSE_BUTTON3)
                 /* Special case :/ */
                 input_data->add_data(VC_MOUSE_WHEEL,
