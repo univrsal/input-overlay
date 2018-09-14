@@ -14,7 +14,7 @@
 #include "../../../ccl/ccl.hpp"
 
 ElementTrigger::ElementTrigger(std::string id, const SDL_Point pos, const SDL_Rect mapping,
-                               const ElementSide s, const TriggerDirection d, const uint8_t z)
+                               const element_side s, const trigger_direction d, const uint8_t z)
     : ElementTexture(TRIGGER, std::move(id), pos, mapping, z)
 {
     m_pressed_mapping = m_mapping;
@@ -24,7 +24,7 @@ ElementTrigger::ElementTrigger(std::string id, const SDL_Point pos, const SDL_Re
 }
 
 ElementTrigger::ElementTrigger(std::string id, const SDL_Point pos, const SDL_Rect mapping,
-                               const ElementSide s, const uint8_t z)
+                               const element_side s, const uint8_t z)
     : ElementTexture(TRIGGER, std::move(id), pos, mapping, z), m_direction()
 {
     m_pressed_mapping = m_mapping;
@@ -121,7 +121,7 @@ ElementTrigger* ElementTrigger::read_from_file(ccl_config* file, const std::stri
         return new ElementTrigger(id, read_position(file, id),
                                   read_mapping(file, id, default_dim), s, read_layer(file, id));
     }
-    TriggerDirection d;
+    trigger_direction d;
     switch (file->get_int(id + CFG_DIRECTION))
     {
     case TRIGGER_UP:

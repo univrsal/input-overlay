@@ -84,14 +84,14 @@ public:
 
     virtual int get_vc() { return 0; }
 
-    ElementType get_type() const { return m_type; }
+    element_type get_type() const { return m_type; }
 
     SDL_Rect* get_mapping() { return &m_mapping; }
 
     virtual void handle_event(SDL_Event* event, SDL_Helper* helper) = 0;
 
     /* Creates empty element and load settings from config */
-    static Element* read_from_file(ccl_config* file, const std::string& id, ElementType t, SDL_Point* default_dim);
+    static Element* read_from_file(ccl_config* file, const std::string& id, element_type t, SDL_Point* default_dim);
 
     /* Creates empty element and loads settings from dialog */
     static Element* from_dialog(DialogNewElement* dialog);
@@ -100,14 +100,14 @@ public:
 
 protected:
     Element(); /* Used for creation over dialogs */
-    Element(ElementType t, std::string id, SDL_Point pos, uint8_t z);
+    Element(element_type t, std::string id, SDL_Point pos, uint8_t z);
 
     static SDL_Rect read_mapping(ccl_config* file, const std::string& id, SDL_Point* default_dim);
     static SDL_Point read_position(ccl_config* file, const std::string& id);
     static uint8_t read_layer(ccl_config* file, const std::string& id);
-    static ElementSide read_side(ccl_config* file, const std::string& id);
+    static element_side read_side(ccl_config* file, const std::string& id);
 
-    ElementType m_type;
+    element_type m_type;
     SDL_Point m_position{}; /* Final position in overlay */
     SDL_Rect m_mapping{}; /* Texture mappings */
     SDL_Rect m_dimensions_scaled{};

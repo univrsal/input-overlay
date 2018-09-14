@@ -16,7 +16,7 @@
 #include "../../../ccl/ccl.hpp"
 
 ElementAnalogStick::ElementAnalogStick(std::string id, const SDL_Point pos, const SDL_Rect mapping,
-                                       const ElementSide side, const uint8_t radius, const uint8_t z)
+                                       const element_side side, const uint8_t radius, const uint8_t z)
     : ElementTexture(ANALOG_STICK, std::move(id), pos, mapping, z), m_static_scaled()
 {
     m_stick = side;

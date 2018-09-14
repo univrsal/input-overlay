@@ -10,10 +10,10 @@
 #include "../layout_constants.hpp"
 #include "element_texture.hpp"
 
-class element_data_button : public element_data
+class element_data_analog_stick : public element_data
 {
 public:
-    element_data_button(const button_state state)
+    element_data_analog_stick(const button_state state)
         : element_data(BUTTON)
     {
         m_state = state;
@@ -29,14 +29,15 @@ private:
 };
 
 
-class element_button : public element_texture
+class element_analog_stick : public element_texture
 {
 public:
-    element_button() : element_texture(BUTTON)
+    element_analog_stick() : element_texture(BUTTON)
     {
     };
     void load(ccl_config* cfg, const std::string& id) override;
     void draw(gs_effect_t* effect, gs_image_file_t* image, element_data* data) override;
 private:
     gs_rect m_pressed;
+    element_side m_side;
 };

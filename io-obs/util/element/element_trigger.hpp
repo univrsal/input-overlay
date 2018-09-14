@@ -13,19 +13,19 @@
 class element_data_button : public element_data
 {
 public:
-    element_data_button(const button_state state)
+    element_data_button(const ButtonState state)
         : element_data(BUTTON)
     {
         m_state = state;
     }
 
-    button_state get_state() const
+    ButtonState get_state() const
     {
         return m_state;
     }
 
 private:
-    button_state m_state;
+    ButtonState m_state;
 };
 
 

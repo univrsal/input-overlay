@@ -63,7 +63,7 @@ public:
 
     void delete_element(uint16_t id) const;
 
-    void set_new_element_type(ElementType type) { m_new_element_type = type; }
+    void set_new_element_type(element_type type) { m_new_element_type = type; }
 
     void queue_dialog_open(DialogID id);
     void queue_dialog_close();
@@ -80,7 +80,7 @@ private:
     DialogID m_queued_dialog = NONE;
 
     /* Stores the type, which the user selected for the next element */
-    ElementType m_new_element_type = INVALID;
+    element_type m_new_element_type = INVALID;
 
     SDL_Event m_event;
     SDL_Helper* m_helper;

@@ -20,7 +20,7 @@ ElementTexture::ElementTexture(const std::string& id, const SDL_Point pos, const
     m_mapping = mapping;
 }
 
-ElementTexture::ElementTexture(const ElementType t, const std::string& id, const SDL_Point pos, const SDL_Rect mapping, const uint8_t z)
+ElementTexture::ElementTexture(const element_type t, const std::string& id, const SDL_Point pos, const SDL_Rect mapping, const uint8_t z)
     : Element(t, id, pos, z)
 {
     m_mapping = mapping;

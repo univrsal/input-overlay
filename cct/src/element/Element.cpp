@@ -25,7 +25,7 @@
 #include "../../../ccl/ccl.hpp"
 #include "ElementText.hpp"
 
-Element* Element::read_from_file(ccl_config* file, const std::string& id, const ElementType t, SDL_Point* default_dim)
+Element* Element::read_from_file(ccl_config* file, const std::string& id, const element_type t, SDL_Point* default_dim)
 {
     switch (t)
     {
@@ -123,7 +123,7 @@ Element::Element()
     m_dimensions_scaled = {};
 }
 
-Element::Element(const ElementType t, std::string id, const SDL_Point pos, const uint8_t z)
+Element::Element(const element_type t, std::string id, const SDL_Point pos, const uint8_t z)
 {
     m_mapping = {};
     m_dimensions_scaled = {};
@@ -231,7 +231,7 @@ uint8_t Element::read_layer(ccl_config* file, const std::string& id)
     return file->get_int(id + CFG_Z_LEVEL);
 }
 
-ElementSide Element::read_side(ccl_config* file, const std::string& id)
+element_side Element::read_side(ccl_config* file, const std::string& id)
 {
     auto s = SIDE_LEFT;
     if (file->get_int(id + CFG_SIDE) != 0)

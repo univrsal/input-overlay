@@ -25,12 +25,12 @@ class Tool;
 
 class Element;
 
-enum ElementType;
+enum element_type;
 
 class DialogNewElement : public Dialog
 {
 public:
-    DialogNewElement(SDL_Helper* sdl, std::string title, Tool* tool, ElementType type)
+    DialogNewElement(SDL_Helper* sdl, std::string title, Tool* tool, element_type type)
         : Dialog(sdl, SDL_Point{}, std::move(title))
     {
         m_tool = tool;
@@ -49,7 +49,7 @@ public:
 
     void load_from_element(Element* e);
 
-    ElementType get_type() const;
+    element_type get_type() const;
 
     SDL_Rect get_selection() const;
 
@@ -57,11 +57,11 @@ public:
 
     uint8_t get_z_level() const;
 
-    ElementSide get_side() const;
+    element_side get_side() const;
 
-    TriggerDirection get_direction() const;
+    trigger_direction get_direction() const;
 
-    MouseMovementType get_mouse_type() const;
+    mouse_movement_type get_mouse_type() const;
 
     uint8_t get_radius() const;
 
@@ -110,7 +110,7 @@ private:
 
     AtlasSelector* m_selector = nullptr;
     Tool* m_tool = nullptr;
-    ElementType m_type;
+    element_type m_type;
 
     Textbox* m_radius = nullptr;
     /* Used for mouse movement type and analog stick side*/

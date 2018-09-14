@@ -19,10 +19,10 @@ public:
         /* NO-OP */
     };
     ElementTrigger(std::string id, SDL_Point pos, SDL_Rect mapping,
-                   ElementSide s, TriggerDirection d, uint8_t z);
+                   element_side s, trigger_direction d, uint8_t z);
 
     ElementTrigger(std::string id, SDL_Point pos, SDL_Rect mapping,
-                   ElementSide s, uint8_t z);
+                   element_side s, uint8_t z);
 
     void draw(Texture* atlas, CoordinateSystem* cs, bool selected, bool alpha) override;
 
@@ -36,9 +36,9 @@ public:
 
     static ElementTrigger* read_from_file(ccl_config* file, const std::string& id, SDL_Point* default_dim);
 
-    ElementSide get_side() const { return m_side; }
+    element_side get_side() const { return m_side; }
 
-    TriggerDirection get_direction() const { return m_direction; }
+    trigger_direction get_direction() const { return m_direction; }
 
     bool get_mode() const { return m_button_mode; }
 private:
@@ -47,7 +47,7 @@ private:
     SDL_Rect m_pressed_mapping = {};
 
     float m_progress = 0;
-    ElementSide m_side;
-    TriggerDirection m_direction;
+    element_side m_side;
+    trigger_direction m_direction;
     bool m_button_mode = false;
 };

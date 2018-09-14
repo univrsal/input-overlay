@@ -14,7 +14,7 @@
 #include "../../../ccl/ccl.hpp"
 
 ElementMouseMovement::ElementMouseMovement(std::string id, const SDL_Point pos,
-                                           const SDL_Rect mapping, MouseMovementType type, const uint16_t radius, const uint8_t z)
+                                           const SDL_Rect mapping, mouse_movement_type type, const uint16_t radius, const uint8_t z)
     : ElementTexture(MOUSE_MOVEMENT, std::move(id), pos, mapping, z), m_type()
 {
     m_radius = radius;
@@ -47,7 +47,7 @@ void ElementMouseMovement::update_settings(DialogNewElement* dialog)
     m_type = dialog->get_mouse_type();
 }
 
-MouseMovementType ElementMouseMovement::get_mouse_type() const
+mouse_movement_type ElementMouseMovement::get_mouse_type() const
 {
     return m_type;
 }
@@ -60,7 +60,7 @@ uint16_t ElementMouseMovement::get_radius() const
 ElementMouseMovement* ElementMouseMovement::
 read_from_file(ccl_config* file, const std::string& id, SDL_Point* default_dim)
 {
-    MouseMovementType mmt = DOT;
+    mouse_movement_type mmt = DOT;
     if (file->get_int(id + CFG_MOUSE_TYPE) != 0)
         mmt = ARROW;
 

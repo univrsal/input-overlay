@@ -18,7 +18,7 @@ public:
         /* NO-OP */
     };
 
-    ElementMouseMovement(std::string id, SDL_Point pos, SDL_Rect mapping, MouseMovementType type, uint16_t radius,
+    ElementMouseMovement(std::string id, SDL_Point pos, SDL_Rect mapping, mouse_movement_type type, uint16_t radius,
                          uint8_t z);
 
     ElementError is_valid(Notifier* n, SDL_Helper* h) override;
@@ -27,11 +27,11 @@ public:
 
     void update_settings(DialogNewElement* dialog) override;
 
-    MouseMovementType get_mouse_type() const;
+    mouse_movement_type get_mouse_type() const;
 
     static ElementMouseMovement* read_from_file(ccl_config* file, const std::string& id, SDL_Point* default_dim);
     uint16_t get_radius() const;
 private:
-    MouseMovementType m_type;
+    mouse_movement_type m_type;
     uint16_t m_radius = 0;
 };

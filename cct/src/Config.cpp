@@ -358,7 +358,7 @@ void Config::read_config(Notifier* n)
         }
 
         auto e = Element::read_from_file(&cfg, element_id,
-                                             static_cast<ElementType>(type), &m_default_dim);
+                                             static_cast<element_type>(type), &m_default_dim);
         if (e)
             m_elements.emplace_back(e);
         else

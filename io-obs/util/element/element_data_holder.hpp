@@ -20,8 +20,14 @@ public:
     void remove_data(uint16_t keycode);
     element_data* get_by_code(uint16_t keycode);
 
-    bool is_empty() const;
+    void add_gamepad_data(uint8_t gamepad, uint16_t keycode, element_data* data);
+    bool gamepad_data_exists(uint8_t gamepad, uint16_t keycode);
+    void remove_gamepad_data(uint8_t gamepad, uint16_t keycode);
+    element_data* get_by_gamepad(uint8_t gamepad, uint16_t keycode);
 
+    bool is_empty() const;
     bool m_map_cleared = false;
+private:
     std::map<uint16_t, std::unique_ptr<element_data>> m_data;
+    std::map<uint8_t, std::unique_ptr<element_data>> m_gamepad_data[4];
 };

@@ -22,7 +22,7 @@ public:
         /* NO-OP */
     }
 
-    ElementAnalogStick(std::string id, SDL_Point pos, SDL_Rect mapping, ElementSide side, uint8_t radius, uint8_t z);
+    ElementAnalogStick(std::string id, SDL_Point pos, SDL_Rect mapping, element_side side, uint8_t radius, uint8_t z);
 
     SDL_Rect* get_abs_dim(CoordinateSystem* cs) override;
 
@@ -38,14 +38,14 @@ public:
 
     void handle_event(SDL_Event* event, SDL_Helper* helper) override;
 
-    ElementSide get_stick() const { return m_stick; }
+    element_side get_stick() const { return m_stick; }
 
     uint16_t get_radius() const { return m_radius; }
 
     static ElementAnalogStick* read_from_file(ccl_config* file, const std::string& id, SDL_Point* default_dim);
 private:
     SDL_Rect m_static_scaled; /* Position without input movement for display */
-    ElementSide m_stick;
+    element_side m_stick;
     bool m_pressed = false;
     float m_x_axis = 0;
     float m_y_axis = 0;

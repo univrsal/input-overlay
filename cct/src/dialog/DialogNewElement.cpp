@@ -212,7 +212,7 @@ bool DialogNewElement::handle_events(SDL_Event* event)
     return was_handled;
 }
 
-ElementType DialogNewElement::get_type() const
+element_type DialogNewElement::get_type() const
 {
     return m_type;
 }
@@ -240,7 +240,7 @@ uint8_t DialogNewElement::get_z_level() const
     return SDL_strtol(m_z_level->get_text()->c_str(), nullptr, 10);
 }
 
-ElementSide DialogNewElement::get_side() const
+element_side DialogNewElement::get_side() const
 {
     if (m_binary_choice)
     {
@@ -255,7 +255,7 @@ ElementSide DialogNewElement::get_side() const
     return SIDE_LEFT;
 }
 
-TriggerDirection DialogNewElement::get_direction() const
+trigger_direction DialogNewElement::get_direction() const
 {
     if (m_direction)
     {
@@ -275,7 +275,7 @@ TriggerDirection DialogNewElement::get_direction() const
     return TRIGGER_UP;
 }
 
-MouseMovementType DialogNewElement::get_mouse_type() const
+mouse_movement_type DialogNewElement::get_mouse_type() const
 {
     if (m_binary_choice)
     {

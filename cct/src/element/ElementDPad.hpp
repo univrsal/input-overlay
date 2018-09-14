@@ -28,6 +28,6 @@ public:
     static ElementDPad* read_from_file(ccl_config* file, const std::string& id, SDL_Point* default_dim);
 
 private:
-    DPadDirection m_dir = DPAD_CENTER;
+    dpad_direction m_dir = DPAD_CENTER;
     int8_t m_last_button = SDL_CONTROLLER_BUTTON_INVALID;
 };
