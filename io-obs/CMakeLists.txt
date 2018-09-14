@@ -15,19 +15,19 @@ if(UNIX)
 endif()
 
 set(input-overlay_SOURCES
-    input-overlay.cpp
-    sources/input-source.cpp
-    sources/input-source.hpp
-    sources/input-history.cpp
-    sources/input-history.hpp
-    gamepad/linux-gamepad.cpp
-    gamepad/linux-gamepad.hpp
-    gamepad/windows-gamepad.cpp
-    gamepad/windows-gamepad.hpp
-    hook/hook-helper.cpp
-    hook/hook-helper.hpp
-    hook/gamepad-hook.cpp
-    hook/gamepad-hook.hpp
+    input_overlay.cpp
+    sources/input_source.cpp
+    sources/input_source.hpp
+    sources/input_history.cpp
+    sources/input_history.hpp
+    gamepad/linux_gamepad.cpp
+    gamepad/linux_gamepad.hpp
+    gamepad/windows_gamepad.cpp
+    gamepad/windows_gamepad.hpp
+    hook/hook_helper.cpp
+    hook/hook_helper.hpp
+    hook/gamepad_hook.cpp
+    hook/gamepad_hook.hpp
     util/util.cpp
     util/util.hpp
     util/overlay.cpp
