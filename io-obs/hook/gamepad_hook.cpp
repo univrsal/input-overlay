@@ -6,107 +6,70 @@
  */
 
 #include "gamepad_hook.hpp"
+#include "hook_helper.hpp"
+#include "../util/element/element_data_holder.hpp"
+#include "../util/element/element_button.hpp"
+
+namespace gamepad
+{
 
 bool gamepad_hook_state = false;
 GamepadState pad_states[PAD_COUNT];
 
-#ifdef LINUX
+#ifdef WINDOWS
+
+#else
 static pthread_t game_pad_hook_thread;
 #endif
 
 void start_pad_hook()
 {
     init_pad_devices();
+#ifdef WINDOWS
 
-#ifdef LINUX
+#else
 	pthread_create(&game_pad_hook_thread, NULL, hook_method, NULL);
-	gamepad_hook_state = true;
 #endif
+    gamepad_hook_state = true;
 }
 
 void init_pad_devices()
 {
-#ifdef LINUX
-	pad_states[0].init(0);
-	pad_states[1].init(1);
-	pad_states[2].init(2);
-	pad_states[3].init(3);
-#endif
+    uint8_t id = 0;
+    for (auto& state : pad_states)
+        state.init(id++);
 }
 
 void end_pad_hook()
 {
-#ifdef LINUX
+#ifdef WINDOWS
+
+#else
 	pthread_cancel(game_pad_hook_thread);
-
-
-	pad_states[0].unload();
-	pad_states[1].unload();
-	pad_states[2].unload();
-	pad_states[3].unload();
 #endif
+    for (auto& state : pad_states)
+        state.unload();
 }
 
-#ifdef HAVE_XINPUT
-void update_gamepads()
-{
-    for (int i = 0; i < PAD_COUNT; i++)
-    {
-        //pad_states[i].put_in_vc();
-    }
-}
-#endif
-
-float get_stick_value_x(uint8_t pad_id, bool left)
-{
-    if (pad_id < 0 || pad_id >= PAD_COUNT)
-        return 0.f;
-
-    if (left)
-        return pad_states[pad_id].l_x;
-    return pad_states[pad_id].r_x;
-}
-
-float get_stick_value_y(uint8_t pad_id, bool left)
-{
-    if (pad_id < 0 || pad_id >= PAD_COUNT)
-        return 0.f;
-
-    if (left)
-        return pad_states[pad_id].l_y;
-    return pad_states[pad_id].r_y;
-}
-
-/* Linux background process for game pads */
-#ifdef LINUX
-
-#define ID_TYPE         6
-#define ID_BUTTON       1
-#define ID_STATE_1      4
-#define ID_STATE_2      5
-#define ID_KEY_CODE     7
-#define ID_PRESSED      1
-
-#define ID_L_ANALOG_X   0
-#define ID_L_ANALOG_Y   1
-#define ID_L_TRIGGER    2
-#define ID_R_ANALOG_X   3
-#define ID_R_ANALOG_Y   4
-#define ID_R_TRIGGER    5
-
-#define STICK_MAX_VAL   127
-
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wmissing-noreturn"
+/* Background process for quering game pads */
 void * hook_method(void *)
 {
 	while (true)
 	{
-		for (int i = 0; i < PAD_COUNT; i++)
+		for (auto& pad : pad_states)
 		{
-			if (!pad_states[i].valid())
+			if (!pad.valid())
 				continue;
 
+#ifdef WINDOWS
+            for (auto& const button : pad_keys)
+            {
+                
+                ButtonState state = X_PRESSED(button) ? STATE_PRESSED : STATE_RELEASED;
+                hook::input_data->add_gamepad_data(pad.get_id(), PAD_TO_VC(button),
+                    new element_data_button(state));
+            }
+#else
 			unsigned char m_packet[8];
 			fread(m_packet, sizeof(char) * 8, 1, pad_states[i].dev());
 
@@ -176,7 +139,9 @@ void * hook_method(void *)
 			}
 		}
 	}
-	return NULL;
+#endif /* LINUX */
+
+	return nullptr;
 }
-#pragma clang diagnostic pop
-#endif // LINUX
+
+}
