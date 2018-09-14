@@ -41,6 +41,10 @@ set(input-overlay_SOURCES
     util/element/element_button.hpp
     util/element/element_mouse_wheel.cpp
     util/element/element_mouse_wheel.hpp
+    util/element/element_trigger.cpp
+    util/element/element_trigger.hpp
+    util/element/element_analog_stick.cpp
+    util/element/element_analog_stick.hpp
     util/element/element_data_holder.cpp
     util/element/element_data_holder.hpp
     ../ccl/ccl.cpp
