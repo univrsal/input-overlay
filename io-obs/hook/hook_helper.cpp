@@ -236,7 +236,7 @@ namespace hook
         case EVENT_MOUSE_PRESSED:
             if (event->data.mouse.button == MOUSE_BUTTON3)
                 /* Special case :/ */
-                input_data->add_data(util_mouse_to_vc(event->data.mouse.button),
+                input_data->add_data(VC_MOUSE_WHEEL,
                                      new element_data_wheel(STATE_PRESSED));
             else
                 input_data->add_data(util_mouse_to_vc(event->data.mouse.button),
@@ -249,7 +249,7 @@ namespace hook
                 input_data->add_data(VC_MOUSE_WHEEL,
                                      new element_data_wheel(STATE_RELEASED));
             else
-                input_data->add_data(VC_MOUSE_WHEEL,
+                input_data->add_data(util_mouse_to_vc(event->data.mouse.button),
                                      new element_data_button(STATE_RELEASED));
             break;
         case EVENT_MOUSE_WHEEL:

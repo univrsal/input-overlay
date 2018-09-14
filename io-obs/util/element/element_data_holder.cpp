@@ -31,11 +31,17 @@ void element_data_holder::add_data(const uint16_t keycode, element_data* data)
         if (m_data[keycode]->is_presistent())
         {
             m_data[keycode]->merge(data);
+#ifdef _DEBUG
+            blog(LOG_INFO, "Merged keycode 0x%X", keycode);
+#endif    
         }
         else
         {
             remove_data(keycode);
             m_data[keycode] = std::unique_ptr<element_data>(data);
+#ifdef _DEBUG
+            blog(LOG_INFO, "Replaced keycode 0x%X", keycode);
+#endif    
         }
     }
     else
@@ -58,7 +64,7 @@ void element_data_holder::remove_data(const uint16_t keycode)
         m_data[keycode].reset(nullptr);
         m_data.erase(keycode);
 #ifdef _DEBUG
-        blog(LOG_INFO, "REMOVED keycode 0x%X, size: %i\n", keycode, m_data.size());
+        blog(LOG_INFO, "REMOVED keycode 0x%X, size: %i", keycode, m_data.size());
 #endif
     }
 }

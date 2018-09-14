@@ -66,6 +66,9 @@ void element_data_wheel::merge(element_data* other)
         switch (other_wheel->m_data_type)
         {
         case BUTTON_STATE:
+#ifdef _DEBUG
+            blog(LOG_INFO, "Merged button state: %i old, %i new\n", m_middle_button, other_wheel->get_state());
+#endif
             m_middle_button = other_wheel->get_state();
             break;
         case WHEEL_STATE:

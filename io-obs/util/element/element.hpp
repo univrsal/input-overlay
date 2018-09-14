@@ -36,7 +36,7 @@ public:
     virtual void merge(element_data* other)
     {
         /* NO-OP */
-    }
+    }  
 
 protected:
     ElementType m_type;
