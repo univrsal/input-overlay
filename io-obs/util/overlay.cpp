@@ -19,16 +19,19 @@ overlay::~overlay()
     unload();
 }
 
-overlay::overlay(const std::string& ini, const std::string& texture)
+overlay::overlay(std::string* ini, std::string* texture, uint32_t * cx, uint32_t * cy)
 {
-    load_texture(texture);
-    load_cfg(ini);
+    m_layout_file = ini;
+    m_image_file = texture;
+    m_w = cx;
+    m_h = cy;
+    m_is_loaded = load();
 }
 
-bool overlay::load(const std::string& cfg_path, const std::string& texture_path)
+bool overlay::load()
 {
     unload();
-    m_is_loaded = load_texture(texture_path) && load_cfg(cfg_path);
+    m_is_loaded = load_texture() && load_cfg();
     return m_is_loaded;
 }
 
@@ -38,20 +41,20 @@ void overlay::unload()
     unload_elements();
 }
 
-bool overlay::load_cfg(const std::string& path)
+bool overlay::load_cfg()
 {
-    if (path.empty())
+    if (m_layout_file && m_layout_file->empty())
         return false;
-    auto cfg = new ccl_config(path, "");
+    auto cfg = new ccl_config(*m_layout_file, "");
     auto flag = true;
 
     if (!cfg->has_fatal_errors())
     {
-        m_default_element_h = cfg->get_int(CFG_DEFAULT_HEIGHT);
-        m_default_element_w = cfg->get_int(CFG_DEFAULT_WIDTH);
+        m_default_size.x = static_cast<float>(cfg->get_int(CFG_DEFAULT_HEIGHT));
+        m_default_size.y = static_cast<float>(cfg->get_int(CFG_DEFAULT_WIDTH));
 
-        m_w = cfg->get_int(CFG_TOTAL_WIDTH);
-        m_h = cfg->get_int(CFG_TOTAL_HEIGHT);
+        *m_w = static_cast<uint32_t>(cfg->get_int(CFG_TOTAL_WIDTH));
+        *m_h = static_cast<uint32_t>(cfg->get_int(CFG_TOTAL_HEIGHT));
 
         auto element_id = cfg->get_string(CFG_FIRST_ID);
 
@@ -71,21 +74,20 @@ bool overlay::load_cfg(const std::string& path)
         }
     }
     delete cfg;
-    cfg = nullptr;
     return flag;
 }
 
-bool overlay::load_texture(const std::string& path)
+bool overlay::load_texture()
 {
     auto flag = true;
-    if (!path.empty())
+    if (m_image_file && !m_image_file->empty())
     {
         if (m_image == nullptr)
         {
             m_image = new gs_image_file_t();
         }
 
-        gs_image_file_init(m_image, path.c_str());
+        gs_image_file_init(m_image, m_image_file->c_str());
 
         obs_enter_graphics();
         gs_image_file_init_texture(m_image);
@@ -93,8 +95,13 @@ bool overlay::load_texture(const std::string& path)
 
         if (!m_image->loaded)
         {
-            blog(LOG_WARNING, "Error: failed to load texture %s", path.c_str());
+            blog(LOG_WARNING, "Error: failed to load texture %s", m_image_file->c_str());
             flag = false;
+        }
+        else
+        {
+            *m_w = m_image->cx;
+            *m_h = m_image->cy;
         }
     }
     return flag;
@@ -154,6 +161,11 @@ void overlay::load_element(ccl_config* cfg, const std::string& id)
         blog(LOG_WARNING, "Added overlay element:\n Type: %i\n ID: %s\n ", new_element->get_type(), id.c_str());
 #endif
     }
+}
+
+void overlay::update_settings(obs_data_t* settings)
+{
+
 }
 
 //};

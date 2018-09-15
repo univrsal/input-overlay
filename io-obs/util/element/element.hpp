@@ -57,7 +57,7 @@ public:
         m_type = type;
     }
 
-    virtual void load(ccl_config* cfg, const std::string& id) = 0;
+    virtual void load(ccl_config* cfg, const std::string& id, const vec2* default_size) = 0;
 
     virtual void draw(gs_effect_t* effect, gs_image_file_t* m_image, element_data* data) = 0;
 

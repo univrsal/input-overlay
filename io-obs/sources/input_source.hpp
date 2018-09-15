@@ -11,7 +11,6 @@
 #include <string>
 #include <locale>
 #include <uiohook.h>
-#include <list>
 #include "../util/overlay.hpp"
 #include "input_source_settings.hpp"
 extern "C" {
@@ -25,15 +24,16 @@ namespace sources
     {
     public:
         obs_source_t* m_source = nullptr;
-        float m_old_angle = 0.f; /* For drawing the mouse arrow*/
+
         std::unique_ptr<overlay> m_overlay{};
-        std::unique_ptr<settings::overlay_settings> m_settings{};
+
+        std::string m_image_file;
+        std::string m_layout_file;
 
         input_source(obs_source_t* source, obs_data_t* settings) :
             m_source(source)
         {
             m_overlay = std::make_unique<overlay>();
-            m_settings = std::make_unique<settings::overlay_settings>();
             obs_source_update(m_source, settings);
         }
 

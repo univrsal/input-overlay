@@ -14,6 +14,18 @@ if(UNIX)
     add_definitions(-DLINUX_INPUT=1)
 endif()
 
+macro(use_cxx14)
+    if (CMAKE_VERSION VERSION_LESS "3.1")
+        if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+            set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++14")
+        endif ()
+    else ()
+        set (CMAKE_CXX_STANDARD 14)
+    endif ()
+endmacro(use_cxx14)
+
+use_cxx14()
+
 set(input-overlay_SOURCES
     input_overlay.cpp
     sources/input_source.cpp

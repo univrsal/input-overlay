@@ -19,42 +19,8 @@ namespace sources
 {
     inline void input_source::update(obs_data_t* settings)
     {
-        m_is_controller = obs_data_get_bool(settings, S_IS_CONTROLLER);
 
-        if (m_is_controller)
-        {
-            m_pad_id = static_cast<uint8_t>(obs_data_get_int(settings, S_CONTROLLER_ID));
-            m_l_dz = static_cast<uint16_t>(obs_data_get_int(settings, S_CONTROLLER_L_DEAD_ZONE));
-            m_r_dz = static_cast<uint16_t>(obs_data_get_int(settings, S_CONTROLLER_R_DEAD_ZONE));
-        }
-
-        //m_layout.m_max_mouse_movement = (uint16_t)obs_data_get_int(settings, S_MOUSE_SENS);
-
-        m_image_file = obs_data_get_string(settings, S_OVERLAY_FILE);
-        m_layout_file = obs_data_get_string(settings, S_LAYOUT_FILE);
-
-        m_monitor_use_center = obs_data_get_bool(settings, S_MONITOR_USE_CENTER);
-        m_mouse_dead_zone = static_cast<uint8_t>(obs_data_get_int(settings, S_MOUSE_DEAD_ZONE));
-
-        if (m_monitor_use_center)
-        {
-            m_monitor_h = static_cast<uint32_t>(obs_data_get_int(settings, S_MONITOR_H_CENTER));
-            m_monitor_v = static_cast<uint32_t>(obs_data_get_int(settings, S_MONITOR_V_CENTER));
-        }
-
-        m_overlay->load(m_layout_file, m_image_file);
-
-        if ((m_layout_file.empty() || !m_overlay->is_loaded())
-            && m_overlay->get_texture() && m_overlay->get_texture()->texture)
-        {
-            cx = m_overlay->get_texture()->cx;
-            cy = m_overlay->get_texture()->cy;
-        }
-        else
-        {
-            cx = m_overlay->get_width();
-            cy = m_overlay->get_height();
-        }
+        load_overlay();
     }
 
     inline void input_source::tick(float seconds)
@@ -80,7 +46,7 @@ namespace sources
 
     void input_source::load_overlay() const
     {
-        if (m_layout_file.empty() || m_image_file.empty())
+        if (m_layout_file.empty())
             return;
 
         m_overlay->unload();

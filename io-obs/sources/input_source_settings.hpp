@@ -9,11 +9,16 @@
 
 #include <obs-module.h>
 #include <string>
+#include "input_source.hpp"
 
 namespace settings
 {
     class overlay_settings
     {
+    public:
+        void update(obs_data_t* settings);
+
+        bool invalid_paths();
 
     private:
         bool m_has_mouse = false;
@@ -28,6 +33,4 @@ namespace settings
         std::string m_image_file;
         std::string m_layout_file;
     };
-
-    
 }
