@@ -103,9 +103,7 @@ static uint16_t pad_keys[] =
     XINPUT_GAMEPAD_LEFT_SHOULDER,
     XINPUT_GAMEPAD_RIGHT_SHOULDER,
     XINPUT_GAMEPAD_START,
-    XINPUT_GAMEPAD_BACK,
-    XINPUT_GAMEPAD_LEFT_THUMB,
-    XINPUT_GAMEPAD_RIGHT_THUMB
+    XINPUT_GAMEPAD_BACK
 };
 
 struct GamepadState
@@ -179,7 +177,7 @@ struct GamepadState
                     r_y = fmaxf(-1, (float)m_xinput.Gamepad.sThumbRY / STICK_MAX_VAL);
                 else
                     r_y = 0.f;
-                    */
+        */
     }
 
 private:

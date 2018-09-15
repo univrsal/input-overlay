@@ -5,11 +5,12 @@
  * github.com/univrsal/input-overlay
  */
 
+#include <util/platform.h>
 #include "gamepad_hook.hpp"
 #include "hook_helper.hpp"
 #include "../util/element/element_data_holder.hpp"
 #include "../util/element/element_button.hpp"
-
+#include "../util/element/element_analog_stick.hpp"
 namespace gamepad
 {
 
@@ -65,10 +66,22 @@ void * hook_method(void *)
             for (auto& const button : pad_keys)
             {
                 
-                ButtonState state = X_PRESSED(button) ? STATE_PRESSED : STATE_RELEASED;
+                button_state state = X_PRESSED(button) ? STATE_PRESSED : STATE_RELEASED;
                 hook::input_data->add_gamepad_data(pad.get_id(), PAD_TO_VC(button),
                     new element_data_button(state));
             }
+
+            /* Analog sticks */
+            hook::input_data->add_gamepad_data(pad.get_id(), VC_STICK_DATA,
+                new element_data_analog_stick(
+                    X_PRESSED(XINPUT_GAMEPAD_LEFT_THUMB) ? STATE_PRESSED : STATE_RELEASED,
+                    ((float)pad.get_xinput()->Gamepad.sThumbLX) / STICK_MAX_VAL,
+                    ((float)pad.get_xinput()->Gamepad.sThumbLY) / STICK_MAX_VAL,
+                    ((float)pad.get_xinput()->Gamepad.sThumbRX) / STICK_MAX_VAL,
+                    ((float)pad.get_xinput()->Gamepad.sThumbRY) / STICK_MAX_VAL
+                ));
+            /* Trigger buttons */
+
 #else
 			unsigned char m_packet[8];
 			fread(m_packet, sizeof(char) * 8, 1, pad_states[i].dev());
@@ -137,10 +150,12 @@ void * hook_method(void *)
 					break;
 				}
 			}
-		}
-	}
+		
+	
 #endif /* LINUX */
-
+        }
+        os_sleep_ms(100);
+    }
 	return nullptr;
 }
 

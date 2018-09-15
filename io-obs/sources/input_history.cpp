@@ -324,10 +324,7 @@ namespace sources
 
         if (GET_MASK(MASK_INCLUDE_PAD))
         {
-#ifdef HAVE_XINPUT
-            update_gamepads();
-#endif
-            // other stuff
+            /* TODO: incomplete? */
         }
 
         if (GET_MASK(MASK_COMMAND_MODE) && m_command_handler)

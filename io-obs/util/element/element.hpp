@@ -19,12 +19,12 @@ class ccl_config;
 class element_data
 {
 public:
-    element_data(const ElementType type)
+    element_data(const element_type type)
     {
         m_type = type;
     }
 
-    ElementType get_type() const
+    element_type get_type() const
     {
         return m_type;
     }
@@ -39,7 +39,7 @@ public:
     }  
 
 protected:
-    ElementType m_type;
+    element_type m_type;
 };
 
 class element
@@ -52,7 +52,7 @@ public:
         m_type = INVALID;
     }
 
-    element(const ElementType type)
+    element(const element_type type)
     {
         m_type = type;
     }
@@ -61,7 +61,7 @@ public:
 
     virtual void draw(gs_effect_t* effect, gs_image_file_t* m_image, element_data* data) = 0;
 
-    ElementType get_type() const
+    element_type get_type() const
     {
         return m_type;
     }
@@ -81,6 +81,6 @@ protected:
     vec2 m_pos = {};
     gs_rect m_mapping = {};
 
-    ElementType m_type = INVALID;
-    uint16_t m_keycode = 0x0;
+    element_type m_type = INVALID;
+    uint16_t m_keycode = VC_NONE;
 };

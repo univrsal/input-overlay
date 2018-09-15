@@ -18,10 +18,10 @@ public:
     {
         /* NO-OP */
     };
-    ElementTrigger(std::string id, SDL_Point pos, SDL_Rect mapping,
+    ElementTrigger(const std::string& id, SDL_Point pos, SDL_Rect mapping,
                    element_side s, trigger_direction d, uint8_t z);
 
-    ElementTrigger(std::string id, SDL_Point pos, SDL_Rect mapping,
+    ElementTrigger(const std::string& id, SDL_Point pos, SDL_Rect mapping,
                    element_side s, uint8_t z);
 
     void draw(Texture* atlas, CoordinateSystem* cs, bool selected, bool alpha) override;

@@ -13,6 +13,7 @@
 #include <uiohook.h>
 #include <list>
 #include "../util/overlay.hpp"
+#include "input_source_settings.hpp"
 extern "C" {
 #include <graphics/image-file.h>
 }
@@ -24,26 +25,15 @@ namespace sources
     {
     public:
         obs_source_t* m_source = nullptr;
-        uint32_t cx = 0;
-        uint32_t cy = 0;
-
-        /* Settings value */
-        bool m_is_controller = false;
-        uint16_t m_l_dz = 0, m_r_dz = 0; /* Analog stick dead zones */
-        uint8_t m_pad_id = 0;
-        bool m_monitor_use_center = false;
-        int32_t m_monitor_h = 0, m_monitor_v = 0;
-        uint8_t m_mouse_dead_zone = 0;
-        std::string m_image_file;
-        std::string m_layout_file;
-
         float m_old_angle = 0.f; /* For drawing the mouse arrow*/
         std::unique_ptr<overlay> m_overlay{};
+        std::unique_ptr<settings::overlay_settings> m_settings{};
 
         input_source(obs_source_t* source, obs_data_t* settings) :
             m_source(source)
         {
             m_overlay = std::make_unique<overlay>();
+            m_settings = std::make_unique<settings::overlay_settings>();
             obs_source_update(m_source, settings);
         }
 

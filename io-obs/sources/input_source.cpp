@@ -59,9 +59,7 @@ namespace sources
 
     inline void input_source::tick(float seconds)
     {
-#ifdef HAVE_XINPUT
-        update_gamepads(); /* Part of gamepad-hook */
-#endif
+        /* NO-OP */
     }
 
     inline void input_source::render(gs_effect_t* effect) const
@@ -184,11 +182,10 @@ namespace sources
         obs_properties_add_int(props, S_CONTROLLER_ID, T_CONTROLLER_ID, 0, 3, 1);
 
 #if HAVE_XINPUT /* Linux only allows values 0 - 127 */
-#define PAD_STICK_MAX_VAL 32767
         obs_properties_add_int_slider(props, S_CONTROLLER_L_DEAD_ZONE,
-                                      T_CONROLLER_L_DEADZONE, 1, PAD_STICK_MAX_VAL - 1, 1);
+                                      T_CONROLLER_L_DEADZONE, 1, STICK_MAX_VAL - 1, 1);
         obs_properties_add_int_slider(props, S_CONTROLLER_R_DEAD_ZONE,
-                                      T_CONROLLER_R_DEADZONE, 1, PAD_STICK_MAX_VAL - 1, 1);
+                                      T_CONROLLER_R_DEADZONE, 1, STICK_MAX_VAL - 1, 1);
 #endif
         return props;
     }

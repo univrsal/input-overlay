@@ -23,7 +23,7 @@ enum wheel_data_type
 class element_data_wheel : public element_data
 {
 public:
-    element_data_wheel(const WheelDirection dir, const int amount)
+    element_data_wheel(const wheel_direction dir, const int amount)
         : element_data(MOUSE_SCROLLWHEEL)
     {
         m_data_type = WHEEL_STATE;
@@ -31,7 +31,7 @@ public:
         m_amount = amount;
     }
 
-    element_data_wheel(const ButtonState state)
+    element_data_wheel(const button_state state)
         : element_data(MOUSE_SCROLLWHEEL)
     {
         m_data_type = BUTTON_STATE;
@@ -43,17 +43,17 @@ public:
         return m_amount;
     }
 
-    WheelDirection get_dir() const
+    wheel_direction get_dir() const
     {
         return m_dir;
     }
 
-    void set_dir(const WheelDirection dir)
+    void set_dir(const wheel_direction dir)
     {
         m_dir = dir;
     }
 
-    ButtonState get_state() const
+    button_state get_state() const
     {
         return m_middle_button;
     }
@@ -63,8 +63,8 @@ public:
     void merge(element_data* other) override;
 private:
     wheel_data_type m_data_type;
-    ButtonState m_middle_button = STATE_RELEASED;
-    WheelDirection m_dir;
+    button_state m_middle_button = STATE_RELEASED;
+    wheel_direction m_dir;
     int m_amount = 0;
 };
 

@@ -13,9 +13,9 @@
 #include "../util/Texture.hpp"
 #include "../../../ccl/ccl.hpp"
 
-ElementTrigger::ElementTrigger(std::string id, const SDL_Point pos, const SDL_Rect mapping,
+ElementTrigger::ElementTrigger(const std::string& id, const SDL_Point pos, const SDL_Rect mapping,
                                const element_side s, const trigger_direction d, const uint8_t z)
-    : ElementTexture(TRIGGER, std::move(id), pos, mapping, z)
+    : ElementTexture(TRIGGER, id, pos, mapping, z)
 {
     m_pressed_mapping = m_mapping;
     m_pressed_mapping.y += m_mapping.h + CFG_INNER_BORDER;
@@ -23,9 +23,9 @@ ElementTrigger::ElementTrigger(std::string id, const SDL_Point pos, const SDL_Re
     m_side = s;
 }
 
-ElementTrigger::ElementTrigger(std::string id, const SDL_Point pos, const SDL_Rect mapping,
+ElementTrigger::ElementTrigger(const std::string& id, const SDL_Point pos, const SDL_Rect mapping,
                                const element_side s, const uint8_t z)
-    : ElementTexture(TRIGGER, std::move(id), pos, mapping, z), m_direction()
+    : ElementTexture(TRIGGER, id, pos, mapping, z), m_direction()
 {
     m_pressed_mapping = m_mapping;
     m_pressed_mapping.y += m_mapping.h + CFG_INNER_BORDER;
@@ -46,8 +46,8 @@ void ElementTrigger::draw(Texture* atlas, CoordinateSystem* cs, const bool selec
     {
         atlas->draw(cs->get_helper()->renderer(), &m_dimensions_scaled,
                     &m_mapping, alpha ? ELEMENT_HIDE_ALPHA : 255);
-        SDL_Rect temp = m_pressed_mapping;
-        SDL_Rect temp2 = m_dimensions_scaled;
+        auto temp = m_pressed_mapping;
+        auto temp2 = m_dimensions_scaled;
         calculate_mappings(&temp, &temp2);
         atlas->draw(cs->get_helper()->renderer(), &temp2,
                     &temp, alpha ? ELEMENT_HIDE_ALPHA : 255);
@@ -58,6 +58,7 @@ void ElementTrigger::draw(Texture* atlas, CoordinateSystem* cs, const bool selec
                     &m_mapping, alpha ? ELEMENT_HIDE_ALPHA : 255);
     }
 
+    
     if (selected)
         cs->get_helper()->util_draw_rect(&m_dimensions_scaled, cs->get_helper()->palette()->red());
 }
@@ -65,20 +66,15 @@ void ElementTrigger::draw(Texture* atlas, CoordinateSystem* cs, const bool selec
 void ElementTrigger::write_to_file(ccl_config* cfg, SDL_Point* default_dim)
 {
     ElementTexture::write_to_file(cfg, default_dim);
-    std::string comment;
-    if (m_button_mode)
+    auto comment = "Trigger mode of " + m_id;
+    cfg->add_bool(m_id + CFG_TRIGGER_MODE, comment, m_button_mode, true);
+    comment = "Trigger side of " + m_id;
+    cfg->add_int(m_id + CFG_SIDE, comment, static_cast<int>(m_side), true);
+    
+    if (!m_button_mode)
     {
-        comment = "Trigger mode of " + m_id;
-        cfg->add_bool(m_id + CFG_TRIGGER_MODE, comment, true, true);
-    }
-    else
-    {
-        comment = "Trigger side of " + m_id;
-        cfg->add_int(m_id + CFG_SIDE, comment, static_cast<int>(m_side), true);
         comment = "Trigger side of " + m_id;
         cfg->add_int(m_id + CFG_DIRECTION, comment, static_cast<int>(m_direction), true);
-        comment = "Trigger mode of " + m_id;
-        cfg->add_bool(m_id + CFG_TRIGGER_MODE, comment, false, true);
     }
 }
 

@@ -143,7 +143,6 @@
 #define T_OVERLAY_OUTLINE_SIZE          T_("Overlay.Outline.Size")
 #define T_OVERLAY_OUTLINE_COLOR         T_("Overlay.Outline.Color")
 #define T_OVERLAY_OUTLINE_OPACITY       T_("Overlay.Outline.Opacity")
-#define T_OVERLAY_INTERVAL              T_("Overlay.Update.Interval")
 #define T_OVERLAY_ENABLE_REPEAT_KEYS    T_("Overlay.Enable.RepeatKeys")
 #define T_OVERLAY_ENABLE_AUTO_CLEAR     T_("Overlay.Enable.AutoClear")
 #define T_OVERLAY_AUTO_CLEAR_INTERVAL   T_("Overlay.AutoClear.Interval")
@@ -172,8 +171,11 @@
 #define CHAR_ENTER          0xD
 
 /* Gamepad constants */
-#define VC_PAD_MASK           0xEC00
-#define PAD_TO_VC(a)          (a | VC_PAD_MASK)
+#define VC_PAD_MASK         0xEC00
+#define VC_STICK_DATA       0xEC30
+#define VC_TRIGGER_DATA     0xEC31
+
+#define PAD_TO_VC(a)        (a | VC_PAD_MASK)
 #define PAD_COUNT 4
 
 #define PAD_ICON_COUNT      22

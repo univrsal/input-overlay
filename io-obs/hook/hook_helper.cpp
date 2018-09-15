@@ -216,7 +216,7 @@ namespace hook
     {
         element_data* d = nullptr;
         element_data_wheel* wheel = nullptr;
-        WheelDirection dir;
+        wheel_direction dir;
         auto new_amount = 0;
 
         if (input_data) d = input_data->get_by_code(VC_MOUSE_WHEEL);

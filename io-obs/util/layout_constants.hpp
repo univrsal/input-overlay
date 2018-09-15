@@ -60,7 +60,7 @@
 #define TEXT_FORMAT_MOUSE_X_FLAG    1 << 4
 #define TEXT_FORMAT_MOUSE_Y_FLAG    1 << 5
 
-enum DPadDirection
+enum dpad_direction
 {
     DPAD_CENTER,
     DPAD_LEFT,
@@ -73,19 +73,19 @@ enum DPadDirection
     DPAD_BOTTOM_RIGHT
 };
 
-enum MouseMovementType
+enum mouse_movement_type
 {
     DOT,
     ARROW
 };
 
-enum ElementSide
+enum element_side
 {
     SIDE_LEFT,
     SIDE_RIGHT
 };
 
-enum TriggerDirection
+enum trigger_direction
 {
     TRIGGER_UP,
     TRIGGER_DOWN,
@@ -101,20 +101,20 @@ enum icon_direction
     DIR_RIGHT
 };
 
-enum ButtonState
+enum button_state
 {
     STATE_PRESSED,
     STATE_RELEASED
 };
 
-enum WheelDirection
+enum wheel_direction
 {
     WHEEL_DIR_UP = -1,
     WHEEL_DIR_NONE = 0,
     WHEEL_DIR_DOWN = 1
 };
 
-enum ElementType
+enum element_type
 {
     INVALID = -1,
     TEXTURE,

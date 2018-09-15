@@ -18,6 +18,9 @@ set(input-overlay_SOURCES
     input_overlay.cpp
     sources/input_source.cpp
     sources/input_source.hpp
+    sources/input_source.cpp
+    sources/input_source_settings.cpp
+    sources/input_source_settings.hpp
     sources/input_history.cpp
     sources/input_history.hpp
     gamepad/linux_gamepad.cpp

@@ -44,7 +44,8 @@ void element_data_holder::add_data(const uint16_t keycode, element_data* data)
             m_data[keycode]->merge(data);
 #ifdef _DEBUG
             blog(LOG_INFO, "Merged keycode 0x%X", keycode);
-#endif    
+#endif
+            delete data; /* Existing data was used -> delete other one */
         }
         else
         {
@@ -70,7 +71,8 @@ void element_data_holder::add_gamepad_data(uint8_t gamepad, uint16_t keycode, el
             m_gamepad_data[gamepad][keycode]->merge(data);
 #ifdef _DEBUG
             blog(LOG_INFO, "Merged keycode 0x%X", keycode);
-#endif    
+#endif
+            delete data; /* Existing data was used -> delete other one */
         }
         else
         {

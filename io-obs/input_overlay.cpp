@@ -26,7 +26,7 @@ bool obs_module_load()
     sources::register_overlay_source();
     hook::start_hook();
 
-    start_pad_hook();
+    gamepad::start_pad_hook();
 
     return true;
 }
@@ -36,8 +36,6 @@ void obs_module_unload()
     if (hook::hook_initialized)
         hook::end_hook();
 
-#ifdef LINUX
-	if (gamepad_hook_state)
-		end_pad_hook();
-#endif
+	if (gamepad::gamepad_hook_state)
+		gamepad::end_pad_hook();
 }

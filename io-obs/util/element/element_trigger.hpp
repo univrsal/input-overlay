@@ -10,33 +10,72 @@
 #include "../layout_constants.hpp"
 #include "element_texture.hpp"
 
-class element_data_button : public element_data
+enum trigger_data_type
 {
-public:
-    element_data_button(const ButtonState state)
-        : element_data(BUTTON)
-    {
-        m_state = state;
-    }
-
-    ButtonState get_state() const
-    {
-        return m_state;
-    }
-
-private:
-    ButtonState m_state;
+    BOTH,
+    LEFT,
+    RIGHT
 };
 
-
-class element_button : public element_texture
+class element_data_trigger : public element_data
 {
 public:
-    element_button() : element_texture(BUTTON)
+    /*
+        Separate constructors are used on linux
+        because the values can't be queried together
+    */
+    element_data_trigger(const float left)
+        : element_data(TRIGGER)
+    {
+        m_left_trigger = left;
+        m_data_type = LEFT;
+    }
+
+    element_data_trigger(const float right)
+        : element_data(TRIGGER)
+    {
+        m_right_trigger = right;
+        m_data_type = RIGHT;
+    }
+
+    element_data_trigger(const float left, const float right)
+        : element_data(TRIGGER)
+    {
+        m_left_trigger = left;
+        m_right_trigger = right;
+        m_data_type = BOTH;
+    }
+
+    float get_left()
+    {
+        return m_left_trigger;
+    }
+
+    float get_right()
+    {
+        return m_right_trigger;
+    }
+
+    bool is_presistent() override { return true; }
+
+    void merge(element_data* other) override;
+
+private:
+    trigger_data_type m_data_type;
+    float m_left_trigger = 0.f, m_right_trigger = 0.f;
+};
+
+class element_trigger : public element_texture
+{
+public:
+    element_trigger() : element_texture(BUTTON)
     {
     };
     void load(ccl_config* cfg, const std::string& id) override;
     void draw(gs_effect_t* effect, gs_image_file_t* image, element_data* data) override;
 private:
     gs_rect m_pressed;
+    element_side m_side;
+    trigger_direction m_direction;
+    bool m_button_mode = false;
 };
