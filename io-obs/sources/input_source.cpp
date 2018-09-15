@@ -19,8 +19,9 @@ namespace sources
 {
     inline void input_source::update(obs_data_t* settings)
     {
-
-        load_overlay();
+        m_image_file = obs_data_get_string(settings, S_OVERLAY_FILE);
+        m_layout_file = obs_data_get_string(settings, S_LAYOUT_FILE);
+        m_overlay->load();
     }
 
     inline void input_source::tick(float seconds)
@@ -35,7 +36,8 @@ namespace sources
 
         if (m_layout_file.empty() || !m_overlay->is_loaded())
         {
-            gs_effect_set_texture(gs_effect_get_param_by_name(effect, "image"), m_overlay->get_texture()->texture);
+            gs_effect_set_texture(gs_effect_get_param_by_name(effect, "image"),
+                                  m_overlay->get_texture()->texture);
             gs_draw_sprite(m_overlay->get_texture()->texture, 0, cx, cy);
         }
         else
@@ -44,23 +46,15 @@ namespace sources
         }
     }
 
-    void input_source::load_overlay() const
-    {
-        if (m_layout_file.empty())
-            return;
-
-        m_overlay->unload();
-        m_overlay->load(m_layout_file, m_image_file);
-
-    }
-
-    bool is_controller_changed(obs_properties_t* props, obs_property_t* p, obs_data_t* s)
+    bool is_controller_changed(obs_properties_t* props, obs_data_t* s)
     {
         const auto is_gamepad = obs_data_get_bool(s, S_IS_CONTROLLER);
 
         const auto id = obs_properties_get(props, S_CONTROLLER_ID);
-        const auto l_deadzone = obs_properties_get(props, S_CONTROLLER_L_DEAD_ZONE);
-        const auto r_deadzone = obs_properties_get(props, S_CONTROLLER_R_DEAD_ZONE);
+        const auto l_deadzone = obs_properties_get(
+            props, S_CONTROLLER_L_DEAD_ZONE);
+        const auto r_deadzone = obs_properties_get(
+            props, S_CONTROLLER_R_DEAD_ZONE);
 
         obs_property_set_visible(id, is_gamepad);
         obs_property_set_visible(l_deadzone, is_gamepad);
@@ -69,7 +63,7 @@ namespace sources
         return true;
     }
 
-    bool is_mouse_changed(obs_properties_t* props, obs_property_t* p, obs_data_t* s)
+    bool is_mouse_changed(obs_properties_t* props, obs_data_t* s)
     {
         const auto is_mouse = obs_data_get_bool(s, S_IS_MOUSE);
 
@@ -88,7 +82,8 @@ namespace sources
         return true;
     }
 
-    bool use_monitor_center_changed(obs_properties_t* props, obs_property_t* p, obs_data_t* s)
+    bool use_monitor_center_changed(obs_properties_t* props, obs_property_t* p,
+                                    obs_data_t* s)
     {
         const auto use_center = obs_data_get_bool(s, S_MONITOR_USE_CENTER);
         obs_property_set_visible(GET_PROPS(S_MONITOR_H_CENTER), use_center);
@@ -105,7 +100,8 @@ namespace sources
 
         std::string img_path;
         std::string layout_path;
-        auto filter_img = util_file_filter(T_FILTER_IMAGE_FILES, "*.jpg *.png *.bmp");
+        auto filter_img = util_file_filter(
+            T_FILTER_IMAGE_FILES, "*.jpg *.png *.bmp");
         auto filter_text = util_file_filter(T_FILTER_TEXT_FILES, "*.ini");
 
         if (s)
@@ -122,36 +118,40 @@ namespace sources
             }
         }
 
-        obs_properties_add_path(props, S_OVERLAY_FILE, T_OVERLAY_FILE, OBS_PATH_FILE,
+        obs_properties_add_path(props, S_OVERLAY_FILE, T_OVERLAY_FILE,
+                                OBS_PATH_FILE,
                                 filter_img.c_str(), img_path.c_str());
 
-        obs_properties_add_path(props, S_LAYOUT_FILE, T_LAYOUT_FILE, OBS_PATH_FILE,
+        obs_properties_add_path(props, S_LAYOUT_FILE, T_LAYOUT_FILE,
+                                OBS_PATH_FILE,
                                 filter_text.c_str(), layout_path.c_str());
 
         /* Mouse stuff */
-        auto is_Mouse = obs_properties_add_bool(props, S_IS_MOUSE, T_IS_MOUSE);
-        obs_property_set_modified_callback(is_Mouse, is_mouse_changed);
+        obs_properties_add_int_slider(props, S_MOUSE_SENS, T_MOUSE_SENS, 1, 500,
+                                      1);
 
-        obs_properties_add_int_slider(props, S_MOUSE_SENS, T_MOUSE_SENS, 1, 500, 1);
+        auto use_center = obs_properties_add_bool(
+            props, S_MONITOR_USE_CENTER, T_MONITOR_USE_CENTER);
+        obs_property_set_modified_callback(use_center,
+                                           use_monitor_center_changed);
 
-        auto use_center = obs_properties_add_bool(props, S_MONITOR_USE_CENTER, T_MONITOR_USE_CENTER);
-        obs_property_set_modified_callback(use_center, use_monitor_center_changed);
-
-        obs_properties_add_int(props, S_MONITOR_H_CENTER, T_MONITOR_H_CENTER, -9999, 9999, 1);
-        obs_properties_add_int(props, S_MONITOR_V_CENTER, T_MONITOR_V_CENTER, -9999, 9999, 1);
-        obs_properties_add_int_slider(props, S_MOUSE_DEAD_ZONE, T_MOUSE_DEAD_ZONE, 0, 50, 1);
+        obs_properties_add_int(props, S_MONITOR_H_CENTER, T_MONITOR_H_CENTER,
+                               -9999, 9999, 1);
+        obs_properties_add_int(props, S_MONITOR_V_CENTER, T_MONITOR_V_CENTER,
+                               -9999, 9999, 1);
+        obs_properties_add_int_slider(props, S_MOUSE_DEAD_ZONE, T_MOUSE_DEAD_ZONE,
+                                      0, 50, 1);
 
         /* Gamepad stuff */
-
-        auto is_controller = obs_properties_add_bool(props, S_IS_CONTROLLER, T_IS_CONTROLLER);
-        obs_property_set_modified_callback(is_controller, is_controller_changed);
         obs_properties_add_int(props, S_CONTROLLER_ID, T_CONTROLLER_ID, 0, 3, 1);
 
 #if HAVE_XINPUT /* Linux only allows values 0 - 127 */
         obs_properties_add_int_slider(props, S_CONTROLLER_L_DEAD_ZONE,
-                                      T_CONROLLER_L_DEADZONE, 1, STICK_MAX_VAL - 1, 1);
+                                      T_CONROLLER_L_DEADZONE, 1,
+                                      STICK_MAX_VAL - 1, 1);
         obs_properties_add_int_slider(props, S_CONTROLLER_R_DEAD_ZONE,
-                                      T_CONROLLER_R_DEADZONE, 1, STICK_MAX_VAL - 1, 1);
+                                      T_CONROLLER_R_DEADZONE, 1,
+                                      STICK_MAX_VAL - 1, 1);
 #endif
         return props;
     }
@@ -170,9 +170,18 @@ namespace sources
         {
             return (void*)new input_source(source, settings);
         };
-        si.destroy = [](void* data) { delete reinterpret_cast<input_source*>(data); };
-        si.get_width = [](void* data) { return reinterpret_cast<input_source*>(data)->cx; };
-        si.get_height = [](void* data) { return reinterpret_cast<input_source*>(data)->cy; };
+        si.destroy = [](void* data)
+        {
+            delete reinterpret_cast<input_source*>(data);
+        };
+        si.get_width = [](void* data)
+        {
+            return reinterpret_cast<input_source*>(data)->cx;
+        };
+        si.get_height = [](void* data)
+        {
+            return reinterpret_cast<input_source*>(data)->cy;
+        };
 
         si.get_defaults = [](obs_data_t* settings)
         {

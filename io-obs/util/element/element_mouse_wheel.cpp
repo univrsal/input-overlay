@@ -10,9 +10,10 @@
 #include "../../hook/hook_helper.hpp"
 #include <util/platform.h>
 
-void element_wheel::load(ccl_config* cfg, const std::string& id)
+void element_wheel::load(ccl_config* cfg, const std::string& id,
+                         const vec2* default_size)
 {
-    element_texture::load(cfg, id);
+    element_texture::load(cfg, id, default_size);
     m_keycode = VC_MOUSE_WHEEL;
     auto i = 1;
     for (auto& map : m_mappings)
@@ -23,7 +24,8 @@ void element_wheel::load(ccl_config* cfg, const std::string& id)
     }
 }
 
-void element_wheel::draw(gs_effect_t* effect, gs_image_file_t* image, element_data* data)
+void element_wheel::draw(gs_effect_t* effect, gs_image_file_t* image,
+                         element_data* data)
 {
     if (data)
     {
@@ -44,7 +46,8 @@ void element_wheel::draw(gs_effect_t* effect, gs_image_file_t* image, element_da
         case WHEEL_DIR_NONE: ;
         }
 
-        if (hook::last_wheel != 0 && os_gettime_ns() - hook::last_wheel >= SCROLL_TIMEOUT)
+        if (hook::last_wheel != 0 && os_gettime_ns() - hook::last_wheel >=
+            SCROLL_TIMEOUT)
         {
             if (wheel)
             {
@@ -67,7 +70,8 @@ void element_data_wheel::merge(element_data* other)
         {
         case BUTTON_STATE:
 #ifdef _DEBUG
-            blog(LOG_INFO, "Merged button state: %i old, %i new\n", m_middle_button, other_wheel->get_state());
+            blog(LOG_INFO, "Merged button state: %i old, %i new\n",
+                 m_middle_button, other_wheel->get_state());
 #endif
             m_middle_button = other_wheel->get_state();
             break;

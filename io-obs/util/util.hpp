@@ -13,21 +13,17 @@
 #ifndef WINDOWS
 #ifdef _WIN32
 #define WINDOWS
-#include <windows.h>
 #else
 #define LINUX
 #endif
 #endif /* WINDOWS / LINUX */
 
-
 #ifdef LINUX
 #include <math.h>
 #endif
 
-#include <uiohook.h>
 #include <string>
 #include <obs-module.h>
-#include <algorithm>
 
 #ifdef DEBUG
 #include <random>
@@ -143,6 +139,7 @@
 #define T_OVERLAY_OUTLINE_SIZE          T_("Overlay.Outline.Size")
 #define T_OVERLAY_OUTLINE_COLOR         T_("Overlay.Outline.Color")
 #define T_OVERLAY_OUTLINE_OPACITY       T_("Overlay.Outline.Opacity")
+#define T_OVERLAY_INTERVAL              T_("Overlay.Update.Interval")
 #define T_OVERLAY_ENABLE_REPEAT_KEYS    T_("Overlay.Enable.RepeatKeys")
 #define T_OVERLAY_ENABLE_AUTO_CLEAR     T_("Overlay.Enable.AutoClear")
 #define T_OVERLAY_AUTO_CLEAR_INTERVAL   T_("Overlay.AutoClear.Interval")

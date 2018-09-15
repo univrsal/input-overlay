@@ -9,26 +9,29 @@
 #include "../../ccl/ccl.hpp"
 #include "../util.hpp"
 
-void element_analog_stick::load(ccl_config* cfg, const std::string& id)
+void element_analog_stick::load(ccl_config* cfg, const std::string& id,
+                                const vec2* default_size)
 {
-    element_texture::load(cfg, id);
-    m_side = (element_side) cfg->get_int(id + CFG_SIDE);
+    element_texture::load(cfg, id, default_size);
+    m_side = static_cast<element_side>(cfg->get_int(id + CFG_SIDE));
     m_radius = cfg->get_int(id + CFG_STICK_RADIUS);
     m_keycode = VC_STICK_DATA;
     m_pressed = m_mapping;
     m_pressed.y = m_mapping.y + m_mapping.cy + CFG_OUTER_BORDER;
 }
 
-void element_analog_stick::draw(gs_effect_t* effect, gs_image_file_t* image, element_data* data)
+void element_analog_stick::draw(gs_effect_t* effect, gs_image_file_t* image,
+                                element_data* data)
 {
-    element_data_analog_stick* stick = reinterpret_cast<element_data_analog_stick*>(data);
-    gs_rect * temp = stick->pressed() ? &m_pressed : &m_mapping;
-    vec2 pos = m_pos;
+    const auto stick = reinterpret_cast<element_data_analog_stick*>(data);
+    const auto temp = stick->pressed() ? &m_pressed : &m_mapping;
+    auto pos = m_pos;
     calc_position(&pos, stick);
     element_texture::draw(effect, image, temp, &pos);
 }
 
-void element_analog_stick::calc_position(vec2 * v, element_data_analog_stick* d)
+void element_analog_stick::calc_position(
+    vec2* v, element_data_analog_stick* d) const
 {
     switch (m_side)
     {
@@ -44,11 +47,11 @@ void element_analog_stick::calc_position(vec2 * v, element_data_analog_stick* d)
     }
 }
 
-void element_data_analog_stick::merge(element_data * other)
+void element_data_analog_stick::merge(element_data* other)
 {
     if (other && other->get_type() == m_type)
     {
-        element_data_analog_stick* other_stick
+        const auto other_stick
             = reinterpret_cast<element_data_analog_stick*>(other);
 
         switch (other_stick->m_data_type)

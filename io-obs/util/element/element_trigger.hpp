@@ -12,9 +12,9 @@
 
 enum trigger_data_type
 {
-    BOTH,
-    LEFT,
-    RIGHT
+    T_DATA_BOTH,
+    T_DATA_LEFT,
+    T_DATA_RIGHT
 };
 
 class element_data_trigger : public element_data
@@ -24,18 +24,14 @@ public:
         Separate constructors are used on linux
         because the values can't be queried together
     */
-    element_data_trigger(const float left)
+    element_data_trigger(const trigger_data_type side, const float val)
         : element_data(TRIGGER)
     {
-        m_left_trigger = left;
-        m_data_type = LEFT;
-    }
-
-    element_data_trigger(const float right)
-        : element_data(TRIGGER)
-    {
-        m_right_trigger = right;
-        m_data_type = RIGHT;
+        if (side == T_DATA_LEFT)
+            m_left_trigger = val;
+        else
+            m_left_trigger = val;
+        m_data_type = side;
     }
 
     element_data_trigger(const float left, const float right)
@@ -43,15 +39,15 @@ public:
     {
         m_left_trigger = left;
         m_right_trigger = right;
-        m_data_type = BOTH;
+        m_data_type = T_DATA_BOTH;
     }
 
-    float get_left()
+    float get_left() const
     {
         return m_left_trigger;
     }
 
-    float get_right()
+    float get_right() const
     {
         return m_right_trigger;
     }
@@ -71,9 +67,12 @@ public:
     element_trigger() : element_texture(BUTTON)
     {
     };
-    void load(ccl_config* cfg, const std::string& id) override;
-    void draw(gs_effect_t* effect, gs_image_file_t* image, element_data* data) override;
+    void load(ccl_config* cfg, const std::string& id,
+              const vec2* default_size) override;
+    void draw(gs_effect_t* effect, gs_image_file_t* image,
+              element_data* data) override;
 private:
+    void calculate_mapping(gs_rect* pressed, vec2* pos, float progress) const;
     gs_rect m_pressed;
     element_side m_side;
     trigger_direction m_direction;

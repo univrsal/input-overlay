@@ -24,7 +24,8 @@ namespace hook
     uint64_t last_wheel = 0; /* System time at last scroll event */
     element_data_holder* input_data = nullptr; /* Data for local input events */
     wint_t last_character;
-    int16_t mouse_x, mouse_y, mouse_x_smooth, mouse_y_smooth, mouse_last_x, mouse_last_y;
+    int16_t mouse_x, mouse_y, mouse_x_smooth, mouse_y_smooth, mouse_last_x,
+            mouse_last_y;
     bool hook_initialized = false;
 
 #ifdef WINDOWS
@@ -147,12 +148,16 @@ namespace hook
         input_data = new element_data_holder();
         //return;
 #ifdef _DEBUG
-        blog(LOG_INFO, "libuiohook init start... Dataholder@0x%X\n", reinterpret_cast<int>(input_data));
+        blog(LOG_INFO, "libuiohook init start... Dataholder@0x%X\n",
+             reinterpret_cast<int>(input_data));
 #endif
 #ifdef _WIN32
-        hook_running_mutex = CreateMutex(nullptr, FALSE, TEXT("hook_running_mutex"));
-        hook_control_mutex = CreateMutex(nullptr, FALSE, TEXT("hook_control_mutex"));
-        hook_control_cond = CreateEvent(nullptr, TRUE, FALSE, TEXT("hook_control_cond"));
+        hook_running_mutex = CreateMutex(nullptr, FALSE,
+                                         TEXT("hook_running_mutex"));
+        hook_control_mutex = CreateMutex(nullptr, FALSE,
+                                         TEXT("hook_control_mutex"));
+        hook_control_cond = CreateEvent(nullptr, TRUE, FALSE,
+                                        TEXT("hook_control_cond"));
 #else
 		pthread_mutex_init(&hook_running_mutex, NULL);
 		pthread_mutex_init(&hook_control_mutex, NULL);
@@ -173,41 +178,63 @@ namespace hook
             hook_initialized = true;
             break;
         case UIOHOOK_ERROR_OUT_OF_MEMORY:
-            blog(LOG_ERROR, "[input-overlay] Failed to allocate memory. (%#X)\n", status);
+            blog(LOG_ERROR, "[input-overlay] Failed to allocate memory. (%#X)\n",
+                 status);
             break;
         case UIOHOOK_ERROR_X_OPEN_DISPLAY:
-            blog(LOG_ERROR, "[input-overlay] Failed to open X11 display. (%#X)\n", status);
+            blog(LOG_ERROR, "[input-overlay] Failed to open X11 display. (%#X)\n",
+                 status);
             break;
         case UIOHOOK_ERROR_X_RECORD_NOT_FOUND:
-            blog(LOG_ERROR, "[input-overlay] Unable to locate XRecord extension. (%#X)\n", status);
+            blog(LOG_ERROR,
+                 "[input-overlay] Unable to locate XRecord extension. (%#X)\n",
+                 status);
             break;
         case UIOHOOK_ERROR_X_RECORD_ALLOC_RANGE:
-            blog(LOG_ERROR, "[input-overlay] Unable to allocate XRecord range. (%#X)\n", status);
+            blog(LOG_ERROR,
+                 "[input-overlay] Unable to allocate XRecord range. (%#X)\n",
+                 status);
             break;
         case UIOHOOK_ERROR_X_RECORD_CREATE_CONTEXT:
-            blog(LOG_ERROR, "[input-overlay] Unable to allocate XRecord context. (%#X)\n", status);
+            blog(LOG_ERROR,
+                 "[input-overlay] Unable to allocate XRecord context. (%#X)\n",
+                 status);
             break;
         case UIOHOOK_ERROR_X_RECORD_ENABLE_CONTEXT:
-            blog(LOG_ERROR, "[input-overlay] Failed to enable XRecord context. (%#X)\n", status);
+            blog(LOG_ERROR,
+                 "[input-overlay] Failed to enable XRecord context. (%#X)\n",
+                 status);
             break;
         case UIOHOOK_ERROR_SET_WINDOWS_HOOK_EX:
-            blog(LOG_ERROR, "[input-overlay] Failed to register low level windows hook. (%#X)\n", status);
+            blog(LOG_ERROR,
+                 "[input-overlay] Failed to register low level windows hook. (%#X)\n",
+                 status);
             break;
         case UIOHOOK_ERROR_CREATE_EVENT_PORT:
-            blog(LOG_ERROR, "[input-overlay] Failed to create apple event port. (%#X)\n", status);
+            blog(LOG_ERROR,
+                 "[input-overlay] Failed to create apple event port. (%#X)\n",
+                 status);
             break;
         case UIOHOOK_ERROR_CREATE_RUN_LOOP_SOURCE:
-            blog(LOG_ERROR, "[input-overlay] Failed to create apple run loop source. (%#X)\n", status);
+            blog(LOG_ERROR,
+                 "[input-overlay] Failed to create apple run loop source. (%#X)\n",
+                 status);
             break;
         case UIOHOOK_ERROR_GET_RUNLOOP:
-            blog(LOG_ERROR, "[input-overlay] Failed to acquire apple run loop. (%#X)\n", status);
+            blog(LOG_ERROR,
+                 "[input-overlay] Failed to acquire apple run loop. (%#X)\n",
+                 status);
             break;
         case UIOHOOK_ERROR_CREATE_OBSERVER:
-            blog(LOG_ERROR, "[input-overlay] Failed to create apple run loop observer. (%#X)\n", status);
+            blog(LOG_ERROR,
+                 "[input-overlay] Failed to create apple run loop observer. (%#X)\n",
+                 status);
             break;
         case UIOHOOK_FAILURE:
         default:
-            blog(LOG_ERROR, "[input-overlay] An unknown hook error occurred. (%#X)\n", status);
+            blog(LOG_ERROR,
+                 "[input-overlay] An unknown hook error occurred. (%#X)\n",
+                 status);
             break;
         }
     }
@@ -270,7 +297,8 @@ namespace hook
                 new_amount = event->data.wheel.rotation;
             }
 
-            input_data->add_data(VC_MOUSE_WHEEL, new element_data_wheel(dir, new_amount));
+            input_data->add_data(
+                VC_MOUSE_WHEEL, new element_data_wheel(dir, new_amount));
             break;
         case EVENT_KEY_TYPED:
             last_character = event->data.keyboard.keychar;
@@ -281,8 +309,10 @@ namespace hook
             mouse_last_y = mouse_y;
             mouse_x = event->data.mouse.x;
             mouse_y = event->data.mouse.y;
-            mouse_x_smooth = static_cast<uint16_t>((mouse_last_x * 4 + mouse_x + 4) / 5);
-            mouse_y_smooth = static_cast<uint16_t>((mouse_last_y * 4 + mouse_y + 4) / 5);
+            mouse_x_smooth = static_cast<uint16_t>((mouse_last_x * 4 + mouse_x + 4
+            ) / 5);
+            mouse_y_smooth = static_cast<uint16_t>((mouse_last_y * 4 + mouse_y + 4
+            ) / 5);
             break;
         default: ;
         }
@@ -315,7 +345,9 @@ namespace hook
 #if defined(WINDOWS)
         DWORD hook_thread_id;
         DWORD* hook_thread_status = (DWORD*)malloc(sizeof(DWORD));
-        hook_thread = CreateThread(nullptr, 0, (LPTHREAD_START_ROUTINE)hook_thread_proc, hook_thread_status, 0,
+        hook_thread = CreateThread(nullptr, 0,
+                                   (LPTHREAD_START_ROUTINE)hook_thread_proc,
+                                   hook_thread_status, 0,
                                    &hook_thread_id);
         if (hook_thread != INVALID_HANDLE_VALUE)
         {
@@ -326,11 +358,13 @@ namespace hook
 #endif
 #if defined(WINDOWS)
             /* Attempt to set the thread priority to time critical. */
-            if (SetThreadPriority(hook_thread, THREAD_PRIORITY_TIME_CRITICAL) == 0)
+            if (SetThreadPriority(hook_thread, THREAD_PRIORITY_TIME_CRITICAL) == 0
+            )
             {
                 blog(LOG_WARNING,
                      "[input-overlay] %s [%u]: Could not set thread priority %li for hook thread %#p! (%#lX)\n",
-                     __FUNCTION__, __LINE__, (long)THREAD_PRIORITY_TIME_CRITICAL, hook_thread,
+                     __FUNCTION__, __LINE__, (long)THREAD_PRIORITY_TIME_CRITICAL,
+                     hook_thread,
                      (unsigned long)GetLastError());
             }
 #elif (defined(__APPLE__) && defined(__MACH__)) || _POSIX_C_SOURCE >= 200112L

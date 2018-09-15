@@ -27,7 +27,7 @@ public:
 
     bool is_empty() const;
     bool m_map_cleared = false;
-private:
+
     std::map<uint16_t, std::unique_ptr<element_data>> m_data;
     std::map<uint8_t, std::unique_ptr<element_data>> m_gamepad_data[4];
 };

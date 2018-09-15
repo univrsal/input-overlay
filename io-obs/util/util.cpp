@@ -1,4 +1,5 @@
 #include "util.hpp"
+#include <uiohook.h>
 
 /**
  * This file is part of input-overlay
@@ -333,6 +334,7 @@ uint16_t util_mouse_to_vc(const int m)
 #ifdef DEBUG
 uint16_t random_vc()
 {
-    return static_cast<uint16_t>(VC_1) + (rand() % static_cast<int>(VC_0 - VC_1 + 1));
+    return static_cast<uint16_t>(VC_1) + (rand() % static_cast<int>(VC_0 - VC_1 +
+        1));
 }
 #endif

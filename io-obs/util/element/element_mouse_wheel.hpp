@@ -76,8 +76,10 @@ public:
         /* NO-OP */
     };
 
-    void load(ccl_config* cfg, const std::string& id) override;
-    void draw(gs_effect_t* effect, gs_image_file_t* image, element_data* data) override;
+    void load(ccl_config* cfg, const std::string& id,
+              const vec2* default_size) override;
+    void draw(gs_effect_t* effect, gs_image_file_t* image,
+              element_data* data) override;
 private:
     /* Middle, Up, Down */
     gs_rect m_mappings[3];

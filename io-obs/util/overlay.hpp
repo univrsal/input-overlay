@@ -19,7 +19,6 @@ extern "C" {
 #include <graphics/image-file.h>
 }
 
-#include "../../ccl/ccl.hpp"
 #include "../hook/hook_helper.hpp"
 
 //namespace Data {
@@ -31,7 +30,8 @@ public:
 
     ~overlay();
 
-    overlay(std::string* texture, std::string* config, uint32_t * cx, uint32_t * cy);
+    overlay(std::string* texture, std::string* config, uint32_t* cx,
+            uint32_t* cy);
 
     bool load();
 
@@ -60,7 +60,7 @@ private:
 
     gs_image_file_t* m_image = nullptr;
 
-    uint32_t * m_w{}, * m_h{};
+    uint32_t *m_w{}, *m_h{};
     vec2 m_default_size{};
 
     std::string* m_image_file;

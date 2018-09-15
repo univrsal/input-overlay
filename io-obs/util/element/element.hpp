@@ -9,6 +9,7 @@
 #include "../layout_constants.hpp"
 #include <string>
 #include "graphics/vec2.h"
+#include "../util.hpp"
 
 extern "C" {
 #include <graphics/image-file.h>
@@ -36,7 +37,7 @@ public:
     virtual void merge(element_data* other)
     {
         /* NO-OP */
-    }  
+    }
 
 protected:
     element_type m_type;
@@ -57,9 +58,11 @@ public:
         m_type = type;
     }
 
-    virtual void load(ccl_config* cfg, const std::string& id, const vec2* default_size) = 0;
+    virtual void load(ccl_config* cfg, const std::string& id,
+                      const vec2* default_size) = 0;
 
-    virtual void draw(gs_effect_t* effect, gs_image_file_t* m_image, element_data* data) = 0;
+    virtual void draw(gs_effect_t* effect, gs_image_file_t* m_image,
+                      element_data* data) = 0;
 
     element_type get_type() const
     {
@@ -72,7 +75,8 @@ public:
     }
 
 protected:
-    void read_size(ccl_config* cfg, const std::string& id);
+    void read_size(ccl_config* cfg, const std::string& id,
+                   const vec2* default_dim);
 
     void read_pos(ccl_config* cfg, const std::string& id);
 

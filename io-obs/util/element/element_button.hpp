@@ -32,11 +32,14 @@ private:
 class element_button : public element_texture
 {
 public:
-    element_button() : element_texture(BUTTON)
+    element_button() : element_texture(BUTTON), m_pressed()
     {
-    };
-    void load(ccl_config* cfg, const std::string& id) override;
-    void draw(gs_effect_t* effect, gs_image_file_t* image, element_data* data) override;
+    }
+
+    void load(ccl_config* cfg, const std::string& id,
+              const vec2* default_size) override;
+    void draw(gs_effect_t* effect, gs_image_file_t* image,
+              element_data* data) override;
 private:
     gs_rect m_pressed;
 };

@@ -9,28 +9,34 @@
 #include "element_texture.hpp"
 #include "../../ccl/ccl.hpp"
 
-void element_texture::load(ccl_config* cfg, const std::string& id)
+void element_texture::load(ccl_config* cfg, const std::string& id,
+                           const vec2* default_size)
 {
     read_pos(cfg, id);
     read_uv(cfg, id);
-    read_size(cfg, id);
+    read_size(cfg, id, default_size);
 }
 
-void element_texture::draw(gs_effect_t* effect, gs_image_file_t* image, element_data* data)
+void element_texture::draw(gs_effect_t* effect, gs_image_file_t* image,
+                           element_data* data)
 {
     draw(effect, image, &m_mapping, &m_pos);
 }
 
-void element_texture::draw(gs_effect_t* effect, gs_image_file_t* image, const gs_rect* rect) const
+void element_texture::draw(gs_effect_t* effect, gs_image_file_t* image,
+                           const gs_rect* rect) const
 {
     draw(effect, image, rect, &m_pos);
 }
 
-void element_texture::draw(gs_effect_t * effect, gs_image_file_t * image, const gs_rect * rect, const vec2 * pos) const
+void element_texture::draw(gs_effect_t* effect, gs_image_file_t* image,
+                           const gs_rect* rect, const vec2* pos)
 {
     gs_matrix_push();
-    gs_effect_set_texture(gs_effect_get_param_by_name(effect, "image"), image->texture);
+    gs_effect_set_texture(gs_effect_get_param_by_name(effect, "image"),
+                          image->texture);
     gs_matrix_translate3f(pos->x, pos->y, 1.f);
-    gs_draw_sprite_subregion(image->texture, 0, rect->x, rect->y, rect->cx, rect->cy);
+    gs_draw_sprite_subregion(image->texture, 0, rect->x, rect->y, rect->cx,
+                             rect->cy);
     gs_matrix_pop();
 }

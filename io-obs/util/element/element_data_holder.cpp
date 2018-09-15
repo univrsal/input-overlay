@@ -21,11 +21,11 @@ element_data_holder::~element_data_holder()
 
 bool element_data_holder::is_empty() const
 {
-    bool flag = true;
+    auto flag = true;
 
-    for (auto pad : m_gamepad_data)
+    for (const auto& pad : m_gamepad_data)
     {
-        if (pad.empty)
+        if (pad.empty())
         {
             flag = false;
             break;
@@ -53,7 +53,7 @@ void element_data_holder::add_data(const uint16_t keycode, element_data* data)
             m_data[keycode] = std::unique_ptr<element_data>(data);
 #ifdef _DEBUG
             blog(LOG_INFO, "Replaced keycode 0x%X", keycode);
-#endif    
+#endif
         }
     }
     else
@@ -62,7 +62,9 @@ void element_data_holder::add_data(const uint16_t keycode, element_data* data)
     }
 }
 
-void element_data_holder::add_gamepad_data(uint8_t gamepad, uint16_t keycode, element_data * data)
+void element_data_holder::add_gamepad_data(const uint8_t gamepad,
+                                           const uint16_t keycode,
+                                           element_data* data)
 {
     if (gamepad_data_exists(gamepad, keycode))
     {
@@ -77,10 +79,11 @@ void element_data_holder::add_gamepad_data(uint8_t gamepad, uint16_t keycode, el
         else
         {
             remove_gamepad_data(gamepad, keycode);
-            m_gamepad_data[gamepad][keycode] = std::unique_ptr<element_data>(data);
+            m_gamepad_data[gamepad][keycode] = std::unique_ptr<element_data
+            >(data);
 #ifdef _DEBUG
             blog(LOG_INFO, "Replaced keycode 0x%X", keycode);
-#endif    
+#endif
         }
     }
     else
@@ -89,14 +92,16 @@ void element_data_holder::add_gamepad_data(uint8_t gamepad, uint16_t keycode, el
     }
 }
 
-bool element_data_holder::gamepad_data_exists(uint8_t gamepad, uint16_t keycode)
+bool element_data_holder::gamepad_data_exists(const uint8_t gamepad,
+                                              const uint16_t keycode)
 {
     if (is_empty())
         return false;
     return m_gamepad_data[gamepad][keycode] != nullptr;
 }
 
-void element_data_holder::remove_gamepad_data(uint8_t gamepad, uint16_t keycode)
+void element_data_holder::remove_gamepad_data(const uint8_t gamepad,
+                                              const uint16_t keycode)
 {
     if (gamepad_data_exists(gamepad, keycode))
     {
@@ -108,7 +113,8 @@ void element_data_holder::remove_gamepad_data(uint8_t gamepad, uint16_t keycode)
     }
 }
 
-element_data * element_data_holder::get_by_gamepad(uint8_t gamepad, uint16_t keycode)
+element_data* element_data_holder::get_by_gamepad(
+    const uint8_t gamepad, const uint16_t keycode)
 {
     return m_gamepad_data[gamepad][keycode].get();
 }
@@ -134,5 +140,7 @@ void element_data_holder::remove_data(const uint16_t keycode)
 
 element_data* element_data_holder::get_by_code(const uint16_t keycode)
 {
+    if (m_data.empty())
+        return nullptr;
     return m_data[keycode].get();
 }

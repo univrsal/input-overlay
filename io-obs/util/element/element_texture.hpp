@@ -22,9 +22,12 @@ public:
         /* NO-OP */
     }
 
-    void load(ccl_config* cfg, const std::string& id) override;
-    void draw(gs_effect_t* effect, gs_image_file_t* image, element_data* data) override;
-    void draw(gs_effect_t* effect, gs_image_file_t* image, const gs_rect* rect) const;
-    void draw(gs_effect_t* effect, gs_image_file_t* image, const gs_rect* rect, const vec2* pos) const;
-
+    void load(ccl_config* cfg, const std::string& id,
+              const vec2* default_size) override;
+    void draw(gs_effect_t* effect, gs_image_file_t* image,
+              element_data* data) override;
+    void draw(gs_effect_t* effect, gs_image_file_t* image,
+              const gs_rect* rect) const;
+    static void draw(gs_effect_t* effect, gs_image_file_t* image,
+                     const gs_rect* rect, const vec2* pos);
 };

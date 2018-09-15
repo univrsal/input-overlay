@@ -12,10 +12,9 @@
 
 namespace gamepad
 {
+    extern bool gamepad_hook_state;
 
-extern bool gamepad_hook_state;
-
-/* Linux implementation */
+    /* Linux implementation */
 #ifdef LINUX
 #define ID_TYPE         6
 #define ID_BUTTON       1
@@ -80,7 +79,7 @@ private:
 };
 #endif
 
-/* Windows implementation */
+    /* Windows implementation */
 #ifdef HAVE_XINPUT
 
 #include <Xinput.h>
@@ -90,113 +89,112 @@ private:
 #define X_PRESSED(b)        ((pad.get_xinput()->Gamepad.wButtons & b) != 0)
 #define STICK_MAX_VAL       32767
 
-static uint16_t pad_keys[] =
-{
-    XINPUT_GAMEPAD_A,
-    XINPUT_GAMEPAD_B,
-    XINPUT_GAMEPAD_X,
-    XINPUT_GAMEPAD_Y,
-    XINPUT_GAMEPAD_DPAD_DOWN,
-    XINPUT_GAMEPAD_DPAD_UP,
-    XINPUT_GAMEPAD_DPAD_LEFT,
-    XINPUT_GAMEPAD_DPAD_RIGHT,
-    XINPUT_GAMEPAD_LEFT_SHOULDER,
-    XINPUT_GAMEPAD_RIGHT_SHOULDER,
-    XINPUT_GAMEPAD_START,
-    XINPUT_GAMEPAD_BACK
-};
-
-struct GamepadState
-{
-    ~GamepadState()
+    static uint16_t pad_keys[] =
     {
-        unload();
-    }
+        XINPUT_GAMEPAD_A,
+        XINPUT_GAMEPAD_B,
+        XINPUT_GAMEPAD_X,
+        XINPUT_GAMEPAD_Y,
+        XINPUT_GAMEPAD_DPAD_DOWN,
+        XINPUT_GAMEPAD_DPAD_UP,
+        XINPUT_GAMEPAD_DPAD_LEFT,
+        XINPUT_GAMEPAD_DPAD_RIGHT,
+        XINPUT_GAMEPAD_LEFT_SHOULDER,
+        XINPUT_GAMEPAD_RIGHT_SHOULDER,
+        XINPUT_GAMEPAD_START,
+        XINPUT_GAMEPAD_BACK
+    };
 
-    void unload()
+    struct GamepadState
     {
-        ZeroMemory(&m_xinput, sizeof(XINPUT_STATE));
-    }
-
-    void load()
-    {
-        unload();
-        if (XInputGetState(m_pad_id, &m_xinput) == ERROR_SUCCESS)
+        ~GamepadState()
         {
-            m_valid = true;
+            unload();
         }
-        else
+
+        void unload()
         {
-            m_valid = false;
+            ZeroMemory(&m_xinput, sizeof(XINPUT_STATE));
         }
-    }
 
-    bool valid() { return m_valid; }
+        void load()
+        {
+            unload();
+            if (XInputGetState(m_pad_id, &m_xinput) == ERROR_SUCCESS)
+            {
+                m_valid = true;
+            }
+            else
+            {
+                m_valid = false;
+            }
+        }
 
-    void init(uint8_t pad_id)
-    {
-        m_pad_id = pad_id;
-        load();
-    }
+        bool valid() const { return m_valid; }
 
-    uint8_t get_id()
-    {
-        return m_pad_id;
-    }
+        void init(const uint8_t pad_id)
+        {
+            m_pad_id = pad_id;
+            load();
+        }
 
-    XINPUT_STATE * get_xinput()
-    {
-        return &m_xinput;
-    }
+        uint8_t get_id() const
+        {
+            return m_pad_id;
+        }
 
-    /* Windows specific stuff */
+        XINPUT_STATE* get_xinput()
+        {
+            return &m_xinput;
+        }
 
-    // Writes all pressed buttons into the global
-    // array
-    void put_in_vc(uint16_t l_dz, uint16_t r_dz)
-    {
-        /*
-                util_set_pad_state(PAD_LT, m_pad_id, m_xinput.Gamepad.bLeftTrigger > 20);
-                util_set_pad_state(PAD_RT, m_pad_id, m_xinput.Gamepad.bRightTrigger > 20);
-                if (!DEAD_ZONE(m_xinput.Gamepad.sThumbLX, l_dz))
-                    l_x = fmaxf(-1, (float)m_xinput.Gamepad.sThumbLX / STICK_MAX_VAL);
-                else
-                    l_x = 0.f;
-        
-                if (!DEAD_ZONE(m_xinput.Gamepad.sThumbLY, l_dz))
-                    l_y = fmaxf(-1, (float)m_xinput.Gamepad.sThumbLY / STICK_MAX_VAL);
-                else
-                    l_y = 0.f;
-        
-                if (!DEAD_ZONE(m_xinput.Gamepad.sThumbRX, r_dz))
-                    r_x = fmaxf(-1, (float)m_xinput.Gamepad.sThumbRX / STICK_MAX_VAL);
-                else
-                    r_x = 0.f;
-        
-                if (!DEAD_ZONE(m_xinput.Gamepad.sThumbRY, r_dz))
-                    r_y = fmaxf(-1, (float)m_xinput.Gamepad.sThumbRY / STICK_MAX_VAL);
-                else
-                    r_y = 0.f;
-        */
-    }
+        /* Windows specific stuff */
 
-private:
-    XINPUT_STATE m_xinput;
-    bool m_valid = false;
-    int8_t m_pad_id = -1;
-};
+        // Writes all pressed buttons into the global
+        // array
+        static void put_in_vc(uint16_t l_dz, uint16_t r_dz)
+        {
+            /*
+                    util_set_pad_state(PAD_LT, m_pad_id, m_xinput.Gamepad.bLeftTrigger > 20);
+                    util_set_pad_state(PAD_RT, m_pad_id, m_xinput.Gamepad.bRightTrigger > 20);
+                    if (!DEAD_ZONE(m_xinput.Gamepad.sThumbLX, l_dz))
+                        l_x = fmaxf(-1, (float)m_xinput.Gamepad.sThumbLX / STICK_MAX_VAL);
+                    else
+                        l_x = 0.f;
+            
+                    if (!DEAD_ZONE(m_xinput.Gamepad.sThumbLY, l_dz))
+                        l_y = fmaxf(-1, (float)m_xinput.Gamepad.sThumbLY / STICK_MAX_VAL);
+                    else
+                        l_y = 0.f;
+            
+                    if (!DEAD_ZONE(m_xinput.Gamepad.sThumbRX, r_dz))
+                        r_x = fmaxf(-1, (float)m_xinput.Gamepad.sThumbRX / STICK_MAX_VAL);
+                    else
+                        r_x = 0.f;
+            
+                    if (!DEAD_ZONE(m_xinput.Gamepad.sThumbRY, r_dz))
+                        r_y = fmaxf(-1, (float)m_xinput.Gamepad.sThumbRY / STICK_MAX_VAL);
+                    else
+                        r_y = 0.f;
+            */
+        }
+
+    private:
+        XINPUT_STATE m_xinput;
+        bool m_valid = false;
+        int8_t m_pad_id = -1;
+    };
 
 #endif // HAVE_XINPUT
 
-/* Four structs containing info to query gamepads */
-extern GamepadState pad_states[PAD_COUNT];
+    /* Four structs containing info to query gamepads */
+    extern GamepadState pad_states[PAD_COUNT];
 
-void start_pad_hook();
+    void start_pad_hook();
 
-void* hook_method(void *);
+    void* hook_method(void*);
 
-void end_pad_hook();
+    void end_pad_hook();
 
-void init_pad_devices();
-
+    void init_pad_devices();
 }

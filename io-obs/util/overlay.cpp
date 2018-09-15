@@ -5,6 +5,7 @@
  * github.com/univrsal/input-overlay
  */
 
+#include "../../ccl/ccl.hpp"
 #include "overlay.hpp"
 #include "layout_constants.hpp"
 #include "element/element_button.hpp"
@@ -19,7 +20,8 @@ overlay::~overlay()
     unload();
 }
 
-overlay::overlay(std::string* ini, std::string* texture, uint32_t * cx, uint32_t * cy)
+overlay::overlay(std::string* ini, std::string* texture, uint32_t* cx,
+                 uint32_t* cy)
 {
     m_layout_file = ini;
     m_image_file = texture;
@@ -50,8 +52,10 @@ bool overlay::load_cfg()
 
     if (!cfg->has_fatal_errors())
     {
-        m_default_size.x = static_cast<float>(cfg->get_int(CFG_DEFAULT_HEIGHT));
-        m_default_size.y = static_cast<float>(cfg->get_int(CFG_DEFAULT_WIDTH));
+        m_default_size.x = static_cast<float>(cfg->get_int(CFG_DEFAULT_WIDTH)
+            + CFG_OUTER_BORDER * 2);
+        m_default_size.y = static_cast<float>(cfg->get_int(CFG_DEFAULT_HEIGHT)
+            + CFG_OUTER_BORDER * 2);
 
         *m_w = static_cast<uint32_t>(cfg->get_int(CFG_TOTAL_WIDTH));
         *m_h = static_cast<uint32_t>(cfg->get_int(CFG_TOTAL_HEIGHT));
@@ -95,7 +99,8 @@ bool overlay::load_texture()
 
         if (!m_image->loaded)
         {
-            blog(LOG_WARNING, "Error: failed to load texture %s", m_image_file->c_str());
+            blog(LOG_WARNING, "Error: failed to load texture %s",
+                 m_image_file->c_str());
             flag = false;
         }
         else
@@ -155,17 +160,13 @@ void overlay::load_element(ccl_config* cfg, const std::string& id)
 
     if (new_element)
     {
-        new_element->load(cfg, id);
+        new_element->load(cfg, id, &m_default_size);
         m_elements.emplace_back(new_element);
 #ifdef _DEBUG
-        blog(LOG_WARNING, "Added overlay element:\n Type: %i\n ID: %s\n ", new_element->get_type(), id.c_str());
+        blog(LOG_WARNING, "Added overlay element:\n Type: %i\n ID: %s\n ",
+             new_element->get_type(), id.c_str());
 #endif
     }
-}
-
-void overlay::update_settings(obs_data_t* settings)
-{
-
 }
 
 //};

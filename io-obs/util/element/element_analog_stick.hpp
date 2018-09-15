@@ -32,20 +32,21 @@ public:
     }
 
     element_data_analog_stick(const float l_x, const float l_y,
-        const float r_x, const float r_y)
+                              const float r_x, const float r_y)
         : element_data(BUTTON)
     {
-        m_left_stick = { l_x, r_x };
-        m_right_stick = { r_x, r_y };
+        m_left_stick = {l_x, r_x};
+        m_right_stick = {r_x, r_y};
         m_data_type = STICK_STATE;
     }
 
-    element_data_analog_stick(const button_state state, const float l_x, const float l_y,
-        const float r_x, const float r_y)
+    element_data_analog_stick(const button_state state, const float l_x,
+                              const float l_y,
+                              const float r_x, const float r_y)
         : element_data(BUTTON)
     {
-        m_left_stick = { l_x, r_x };
-        m_right_stick = { r_x, r_y };
+        m_left_stick = {l_x, r_x};
+        m_right_stick = {r_x, r_y};
         m_state = state;
         m_data_type = BOTH;
     }
@@ -55,12 +56,12 @@ public:
         return m_state == STATE_PRESSED;
     }
 
-    const vec2 * get_left_stick()
+    const vec2* get_left_stick() const
     {
         return &m_left_stick;
     }
 
-    const vec2 * get_right_stick()
+    const vec2* get_right_stick() const
     {
         return &m_right_stick;
     }
@@ -81,10 +82,12 @@ public:
     element_analog_stick() : element_texture(BUTTON)
     {
     };
-    void load(ccl_config* cfg, const std::string& id) override;
-    void draw(gs_effect_t* effect, gs_image_file_t* image, element_data* data) override;
+    void load(ccl_config* cfg, const std::string& id,
+              const vec2* default_size) override;
+    void draw(gs_effect_t* effect, gs_image_file_t* image,
+              element_data* data) override;
 private:
-    void calc_position(vec2* r, element_data_analog_stick* d);
+    void calc_position(vec2* v, element_data_analog_stick* d) const;
     gs_rect m_pressed;
     element_side m_side;
     uint8_t m_radius = 0;

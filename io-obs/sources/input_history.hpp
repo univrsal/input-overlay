@@ -149,7 +149,8 @@ namespace sources
     {
         ~key_icons();
 
-        void load_from_file(const std::string& img_path, const std::string& cfg_path);
+        void load_from_file(const std::string& img_path,
+                            const std::string& cfg_path);
         key_icon* get_icon_for_key(uint16_t vc);
 
         uint16_t get_w() const { return m_icon_w; }
@@ -228,7 +229,8 @@ namespace sources
         inline void unload_translation();
         inline void unload_command_handler();
 
-        key_bundle check_keys() const; /* Checks currently pressed keys and puts them in a bundle */
+        key_bundle check_keys() const;
+        /* Checks currently pressed keys and puts them in a bundle */
         void add_to_history(key_bundle b);
         void clear_history();
         void handle_text_history();
@@ -240,11 +242,14 @@ namespace sources
     };
 
     // Util for registering the source
-    static bool clear_history(obs_properties_t* props, obs_property_t* property, void* data);
+    static bool clear_history(obs_properties_t* props, obs_property_t* property,
+                              void* data);
 
-    static bool mode_changed(obs_properties_t* props, obs_property_t* p, obs_data_t* s);
+    static bool mode_changed(obs_properties_t* props, obs_property_t* p,
+                             obs_data_t* s);
 
-    static bool include_pad_changed(obs_properties* props, obs_property_t* p, obs_data_t* s);
+    static bool include_pad_changed(obs_properties* props, obs_property_t* p,
+                                    obs_data_t* s);
 
     static obs_properties_t* get_properties_for_history(void* data);
 

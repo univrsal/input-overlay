@@ -26,7 +26,8 @@ namespace hook
 
     extern uint64_t last_wheel;
     extern wint_t last_character;
-    extern int16_t mouse_x, mouse_y, mouse_x_smooth, mouse_y_smooth, mouse_last_x, mouse_last_y;
+    extern int16_t mouse_x, mouse_y, mouse_x_smooth, mouse_y_smooth, mouse_last_x,
+                   mouse_last_y;
     extern bool hook_initialized;
 
 

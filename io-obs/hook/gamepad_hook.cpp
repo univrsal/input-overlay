@@ -11,11 +11,12 @@
 #include "../util/element/element_data_holder.hpp"
 #include "../util/element/element_button.hpp"
 #include "../util/element/element_analog_stick.hpp"
+#include "../util/element/element_trigger.hpp"
+
 namespace gamepad
 {
-
-bool gamepad_hook_state = false;
-GamepadState pad_states[PAD_COUNT];
+    bool gamepad_hook_state = false;
+    GamepadState pad_states[PAD_COUNT];
 
 #ifdef WINDOWS
 
@@ -23,65 +24,80 @@ GamepadState pad_states[PAD_COUNT];
 static pthread_t game_pad_hook_thread;
 #endif
 
-void start_pad_hook()
-{
-    init_pad_devices();
+    void start_pad_hook()
+    {
+        init_pad_devices();
 #ifdef WINDOWS
 
 #else
 	pthread_create(&game_pad_hook_thread, NULL, hook_method, NULL);
 #endif
-    gamepad_hook_state = true;
-}
+        gamepad_hook_state = true;
+    }
 
-void init_pad_devices()
-{
-    uint8_t id = 0;
-    for (auto& state : pad_states)
-        state.init(id++);
-}
+    void init_pad_devices()
+    {
+        uint8_t id = 0;
+        for (auto& state : pad_states)
+            state.init(id++);
+    }
 
-void end_pad_hook()
-{
+    void end_pad_hook()
+    {
 #ifdef WINDOWS
 
 #else
 	pthread_cancel(game_pad_hook_thread);
 #endif
-    for (auto& state : pad_states)
-        state.unload();
-}
+        for (auto& state : pad_states)
+            state.unload();
+    }
 
-/* Background process for quering game pads */
-void * hook_method(void *)
-{
-	while (true)
-	{
-		for (auto& pad : pad_states)
-		{
-			if (!pad.valid())
-				continue;
+    /* Background process for quering game pads */
+    void* hook_method(void*)
+    {
+        while (true)
+        {
+            for (auto& pad : pad_states)
+            {
+                if (!pad.valid())
+                    continue;
 
 #ifdef WINDOWS
-            for (auto& const button : pad_keys)
-            {
-                
-                button_state state = X_PRESSED(button) ? STATE_PRESSED : STATE_RELEASED;
-                hook::input_data->add_gamepad_data(pad.get_id(), PAD_TO_VC(button),
-                    new element_data_button(state));
-            }
+                for (const auto& button : pad_keys)
+                {
+                    const auto state = X_PRESSED(button)
+                        ? STATE_PRESSED
+                        : STATE_RELEASED;
+                    hook::input_data->add_gamepad_data(
+                        pad.get_id(), PAD_TO_VC(button),
+                        new element_data_button(state));
+                }
 
-            /* Analog sticks */
-            hook::input_data->add_gamepad_data(pad.get_id(), VC_STICK_DATA,
-                new element_data_analog_stick(
-                    X_PRESSED(XINPUT_GAMEPAD_LEFT_THUMB) ? STATE_PRESSED : STATE_RELEASED,
-                    ((float)pad.get_xinput()->Gamepad.sThumbLX) / STICK_MAX_VAL,
-                    ((float)pad.get_xinput()->Gamepad.sThumbLY) / STICK_MAX_VAL,
-                    ((float)pad.get_xinput()->Gamepad.sThumbRX) / STICK_MAX_VAL,
-                    ((float)pad.get_xinput()->Gamepad.sThumbRY) / STICK_MAX_VAL
-                ));
-            /* Trigger buttons */
+                /* Analog sticks */
+                hook::input_data->add_gamepad_data(pad.get_id(), VC_STICK_DATA,
+                    new element_data_analog_stick(
+                        X_PRESSED(XINPUT_GAMEPAD_LEFT_THUMB)
+                        ? STATE_PRESSED
+                        : STATE_RELEASED,
+                        static_cast<float>(pad.get_xinput()->Gamepad.sThumbLX) /
+                        STICK_MAX_VAL,
+                        static_cast<float>(pad.get_xinput()->Gamepad.sThumbLY) /
+                        STICK_MAX_VAL,
+                        static_cast<float>(pad.get_xinput()->Gamepad.sThumbRX) /
+                        STICK_MAX_VAL,
+                        static_cast<float>(pad.get_xinput()->Gamepad.sThumbRY) /
+                        STICK_MAX_VAL
+                    ));
 
+                /* Trigger buttons */
+                hook::input_data->add_gamepad_data(pad.get_id(), VC_TRIGGER_DATA,
+                    new element_data_trigger(
+                        static_cast<float>(pad.get_xinput()->Gamepad.bLeftTrigger) /
+                        STICK_MAX_VAL,
+                        static_cast<float>(pad.get_xinput()->Gamepad.bRightTrigger) /
+                        STICK_MAX_VAL
+                    ));
 #else
 			unsigned char m_packet[8];
 			fread(m_packet, sizeof(char) * 8, 1, pad_states[i].dev());
@@ -153,10 +169,9 @@ void * hook_method(void *)
 		
 	
 #endif /* LINUX */
+            }
+            os_sleep_ms(100);
         }
-        os_sleep_ms(100);
+        return nullptr;
     }
-	return nullptr;
-}
-
 }
