@@ -15,6 +15,17 @@ extern "C" {
 #include <graphics/image-file.h>
 }
 
+/**
+ * Which data holder to read element
+ * data from
+ */
+enum data_source
+{
+    NONE = -1,
+    DEFAULT,
+    GAMEPAD
+};
+
 class ccl_config;
 
 class element_data
@@ -74,6 +85,7 @@ public:
         return m_keycode;
     }
 
+     virtual data_source get_source() { return DEFAULT; }
 protected:
     void read_size(ccl_config* cfg, const std::string& id,
                    const vec2* default_dim);

@@ -30,7 +30,6 @@ namespace hook
                    mouse_last_y;
     extern bool hook_initialized;
 
-
 #ifdef WINDOWS
     DWORD WINAPI hook_thread_proc(LPVOID arg);
 #else

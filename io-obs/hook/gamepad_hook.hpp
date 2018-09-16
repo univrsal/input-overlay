@@ -192,7 +192,12 @@ private:
 
     void start_pad_hook();
 
+#ifdef WINDOWS
+    DWORD WINAPI hook_method(const LPVOID arg);
+#else
     void* hook_method(void*);
+#endif
+    
 
     void end_pad_hook();
 

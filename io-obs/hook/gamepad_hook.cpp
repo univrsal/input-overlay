@@ -19,7 +19,7 @@ namespace gamepad
     GamepadState pad_states[PAD_COUNT];
 
 #ifdef WINDOWS
-
+static HANDLE hook_thread;
 #else
 static pthread_t game_pad_hook_thread;
 #endif
@@ -27,12 +27,14 @@ static pthread_t game_pad_hook_thread;
     void start_pad_hook()
     {
         init_pad_devices();
-#ifdef WINDOWS
 
+#ifdef WINDOWS
+        hook_thread = CreateThread(nullptr, 0, (LPTHREAD_START_ROUTINE) hook_method,
+            nullptr, 0, nullptr);
+        gamepad_hook_state = hook_thread;
 #else
-	pthread_create(&game_pad_hook_thread, NULL, hook_method, NULL);
+	    gamepad_hook_state = pthread_create(&game_pad_hook_thread, NULL, hook_method, NULL) == 0;
 #endif
-        gamepad_hook_state = true;
     }
 
     void init_pad_devices()
@@ -45,19 +47,25 @@ static pthread_t game_pad_hook_thread;
     void end_pad_hook()
     {
 #ifdef WINDOWS
-
+        CloseHandle(hook_thread);
 #else
-	pthread_cancel(game_pad_hook_thread);
+	    pthread_cancel(game_pad_hook_thread);
 #endif
         for (auto& state : pad_states)
             state.unload();
     }
 
     /* Background process for quering game pads */
+#ifdef WINDOWS
+     DWORD WINAPI hook_method(const LPVOID arg)
+#else
     void* hook_method(void*)
+#endif
     {
         while (true)
         {
+            if (!hook::input_data)
+                break;
             for (auto& pad : pad_states)
             {
                 if (!pad.valid())
@@ -94,9 +102,9 @@ static pthread_t game_pad_hook_thread;
                 hook::input_data->add_gamepad_data(pad.get_id(), VC_TRIGGER_DATA,
                     new element_data_trigger(
                         static_cast<float>(pad.get_xinput()->Gamepad.bLeftTrigger) /
-                        STICK_MAX_VAL,
+                        255,
                         static_cast<float>(pad.get_xinput()->Gamepad.bRightTrigger) /
-                        STICK_MAX_VAL
+                        255
                     ));
 #else
 			unsigned char m_packet[8];
@@ -172,6 +180,10 @@ static pthread_t game_pad_hook_thread;
             }
             os_sleep_ms(100);
         }
+#ifdef WINDOWS
+        return UIOHOOK_SUCCESS;
+#else
         return nullptr;
+#endif
     }
 }

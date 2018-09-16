@@ -40,6 +40,9 @@ public:
               const vec2* default_size) override;
     void draw(gs_effect_t* effect, gs_image_file_t* image,
               element_data* data) override;
+
+    data_source get_source() override { return is_gamepad ? GAMEPAD : DEFAULT; }
 private:
+    bool is_gamepad = false;
     gs_rect m_pressed;
 };

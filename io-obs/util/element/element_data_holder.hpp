@@ -29,5 +29,5 @@ public:
     bool m_map_cleared = false;
 
     std::map<uint16_t, std::unique_ptr<element_data>> m_data;
-    std::map<uint8_t, std::unique_ptr<element_data>> m_gamepad_data[4];
+    std::map<uint16_t, std::unique_ptr<element_data>> m_gamepad_data[4];
 };

@@ -12,6 +12,9 @@
 #include "element/element_data_holder.hpp"
 #include "element/element.hpp"
 #include "element/element_mouse_wheel.hpp"
+#include "element/element_trigger.hpp"
+#include "element/element_analog_stick.hpp"
+#include "../sources/input_source.hpp"
 
 //namespace Layout {
 
@@ -20,13 +23,9 @@ overlay::~overlay()
     unload();
 }
 
-overlay::overlay(std::string* ini, std::string* texture, uint32_t* cx,
-                 uint32_t* cy)
+overlay::overlay(sources::shared_settings* settings)
 {
-    m_layout_file = ini;
-    m_image_file = texture;
-    m_w = cx;
-    m_h = cy;
+    m_settings = settings;
     m_is_loaded = load();
 }
 
@@ -45,9 +44,10 @@ void overlay::unload()
 
 bool overlay::load_cfg()
 {
-    if (m_layout_file && m_layout_file->empty())
+    if (m_settings->layout_file.empty())
         return false;
-    auto cfg = new ccl_config(*m_layout_file, "");
+
+    auto cfg = new ccl_config(m_settings->layout_file, "");
     auto flag = true;
 
     if (!cfg->has_fatal_errors())
@@ -57,8 +57,8 @@ bool overlay::load_cfg()
         m_default_size.y = static_cast<float>(cfg->get_int(CFG_DEFAULT_HEIGHT)
             + CFG_OUTER_BORDER * 2);
 
-        *m_w = static_cast<uint32_t>(cfg->get_int(CFG_TOTAL_WIDTH));
-        *m_h = static_cast<uint32_t>(cfg->get_int(CFG_TOTAL_HEIGHT));
+        m_settings->cx = static_cast<uint32_t>(cfg->get_int(CFG_TOTAL_WIDTH));
+        m_settings->cy = static_cast<uint32_t>(cfg->get_int(CFG_TOTAL_HEIGHT));
 
         auto element_id = cfg->get_string(CFG_FIRST_ID);
 
@@ -84,14 +84,14 @@ bool overlay::load_cfg()
 bool overlay::load_texture()
 {
     auto flag = true;
-    if (m_image_file && !m_image_file->empty())
+    if (!m_settings->image_file.empty())
     {
         if (m_image == nullptr)
         {
             m_image = new gs_image_file_t();
         }
 
-        gs_image_file_init(m_image, m_image_file->c_str());
+        gs_image_file_init(m_image,  m_settings->image_file.c_str());
 
         obs_enter_graphics();
         gs_image_file_init_texture(m_image);
@@ -100,13 +100,13 @@ bool overlay::load_texture()
         if (!m_image->loaded)
         {
             blog(LOG_WARNING, "Error: failed to load texture %s",
-                 m_image_file->c_str());
+                 m_settings->image_file.c_str());
             flag = false;
         }
         else
         {
-            *m_w = m_image->cx;
-            *m_h = m_image->cy;
+            m_settings->cx = m_image->cx;
+            m_settings->cy = m_image->cy;
         }
     }
     return flag;
@@ -131,8 +131,13 @@ void overlay::draw(gs_effect_t* effect)
         for (auto const& element : m_elements)
         {
             element_data* data = nullptr;
-            if (element->get_type() != TEXTURE)
+            switch(element->get_source())
             {
+            case GAMEPAD:
+                data = hook::input_data->get_by_gamepad(m_settings->gamepad, element->get_keycode());
+                break;
+            case DEFAULT:
+            default:
                 data = hook::input_data->get_by_code(element->get_keycode());
             }
             element->draw(effect, m_image, data);
@@ -154,6 +159,12 @@ void overlay::load_element(ccl_config* cfg, const std::string& id)
         break;
     case MOUSE_SCROLLWHEEL:
         new_element = new element_wheel();
+        break;
+    case TRIGGER:
+        new_element = new element_trigger();
+        break;
+    case ANALOG_STICK:
+        new_element = new element_analog_stick();
         break;
     default: ;
     }

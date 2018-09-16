@@ -13,10 +13,6 @@
 #include "hook/hook_helper.hpp"
 #include "hook/gamepad_hook.hpp"
 
-#ifdef LINUX
-#include "hook/gamepad_hook.hpp"
-#endif
-
 OBS_DECLARE_MODULE()
 OBS_MODULE_USE_DEFAULT_LOCALE("input-overlay", "en-US")
 
@@ -33,9 +29,9 @@ bool obs_module_load()
 
 void obs_module_unload()
 {
-    if (hook::hook_initialized)
-        hook::end_hook();
-
     if (gamepad::gamepad_hook_state)
         gamepad::end_pad_hook();
+
+    if (hook::hook_initialized)
+        hook::end_hook();
 }

@@ -67,10 +67,15 @@ public:
     element_trigger() : element_texture(BUTTON)
     {
     };
+    
     void load(ccl_config* cfg, const std::string& id,
               const vec2* default_size) override;
+    
     void draw(gs_effect_t* effect, gs_image_file_t* image,
               element_data* data) override;
+    
+    data_source get_source() override { return GAMEPAD; }
+
 private:
     void calculate_mapping(gs_rect* pressed, vec2* pos, float progress) const;
     gs_rect m_pressed;

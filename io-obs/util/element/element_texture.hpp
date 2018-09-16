@@ -30,4 +30,6 @@ public:
               const gs_rect* rect) const;
     static void draw(gs_effect_t* effect, gs_image_file_t* image,
                      const gs_rect* rect, const vec2* pos);
+
+     data_source get_source() override { return DEFAULT; }
 };

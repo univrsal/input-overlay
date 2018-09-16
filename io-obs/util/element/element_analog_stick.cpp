@@ -61,7 +61,7 @@ void element_data_analog_stick::merge(element_data* other)
             m_right_stick = other_stick->m_right_stick;
             m_state = other_stick->m_state;
             break;
-        case BUTTON_STATE:
+        case PRESSED_STATE:
             m_state = other_stick->m_state;
             break;
         case STICK_STATE:

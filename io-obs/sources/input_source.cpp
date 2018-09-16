@@ -19,8 +19,8 @@ namespace sources
 {
     inline void input_source::update(obs_data_t* settings)
     {
-        m_image_file = obs_data_get_string(settings, S_OVERLAY_FILE);
-        m_layout_file = obs_data_get_string(settings, S_LAYOUT_FILE);
+        m_settings.image_file = obs_data_get_string(settings, S_OVERLAY_FILE);
+        m_settings.layout_file = obs_data_get_string(settings, S_LAYOUT_FILE);
         m_overlay->load();
     }
 
@@ -34,11 +34,11 @@ namespace sources
         if (!m_overlay->get_texture() || !m_overlay->get_texture()->texture)
             return;
 
-        if (m_layout_file.empty() || !m_overlay->is_loaded())
+        if (m_settings.layout_file.empty() || !m_overlay->is_loaded())
         {
             gs_effect_set_texture(gs_effect_get_param_by_name(effect, "image"),
                                   m_overlay->get_texture()->texture);
-            gs_draw_sprite(m_overlay->get_texture()->texture, 0, cx, cy);
+            gs_draw_sprite(m_overlay->get_texture()->texture, 0, m_settings.cx, m_settings.cy);
         }
         else
         {
@@ -106,14 +106,14 @@ namespace sources
 
         if (s)
         {
-            if (!s->m_image_file.empty())
+            if (!s->m_settings.image_file.empty())
             {
-                img_path = s->m_image_file;
+                img_path = s->m_settings.image_file;
                 util_format_path(img_path);
             }
-            if (!s->m_layout_file.empty())
+            if (!s->m_settings.layout_file.empty())
             {
-                layout_path = s->m_layout_file;
+                layout_path = s->m_settings.layout_file;
                 util_format_path(layout_path);
             }
         }
@@ -176,11 +176,11 @@ namespace sources
         };
         si.get_width = [](void* data)
         {
-            return reinterpret_cast<input_source*>(data)->cx;
+            return reinterpret_cast<input_source*>(data)->m_settings.cx;
         };
         si.get_height = [](void* data)
         {
-            return reinterpret_cast<input_source*>(data)->cy;
+            return reinterpret_cast<input_source*>(data)->m_settings.cy;
         };
 
         si.get_defaults = [](obs_data_t* settings)

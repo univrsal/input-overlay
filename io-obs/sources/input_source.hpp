@@ -9,7 +9,6 @@
 
 #include <obs-module.h>
 #include <string>
-#include <locale>
 #include <uiohook.h>
 #include "../util/overlay.hpp"
 
@@ -17,24 +16,29 @@ extern "C" {
 #include <graphics/image-file.h>
 }
 
-
 namespace sources
 {
+    struct shared_settings
+    {
+        std::string image_file;
+        std::string layout_file;
+        uint32_t cx = 0, cy = 0;
+        uint8_t gamepad = 0;
+        /* TODO: Mouse config etc.*/
+    };
+
     class input_source
     {
     public:
         obs_source_t* m_source = nullptr;
 
         std::unique_ptr<overlay> m_overlay{};
-        std::string m_image_file;
-        std::string m_layout_file;
-        uint32_t cx = 0, cy = 0;
+        shared_settings m_settings;
 
         input_source(obs_source_t* source, obs_data_t* settings) :
             m_source(source)
         {
-            m_overlay = std::make_unique<overlay>(&m_image_file,
-                                                  &m_layout_file, &cx, &cy);
+            m_overlay = std::make_unique<overlay>(&m_settings);
             obs_source_update(m_source, settings);
         }
 

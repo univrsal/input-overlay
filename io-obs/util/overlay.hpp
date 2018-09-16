@@ -21,6 +21,10 @@ extern "C" {
 
 #include "../hook/hook_helper.hpp"
 
+namespace sources
+{
+    struct shared_settings;
+}
 //namespace Data {
 
 class overlay
@@ -30,16 +34,13 @@ public:
 
     ~overlay();
 
-    overlay(std::string* texture, std::string* config, uint32_t* cx,
-            uint32_t* cy);
+    overlay(sources::shared_settings* settings);
 
     bool load();
 
     void unload();
 
     void draw(gs_effect_t* effect);
-
-    void update_settings(obs_data_t* settings);
 
     bool is_loaded() const
     {
@@ -60,11 +61,8 @@ private:
 
     gs_image_file_t* m_image = nullptr;
 
-    uint32_t *m_w{}, *m_h{};
+    sources::shared_settings* m_settings = nullptr;
     vec2 m_default_size{};
-
-    std::string* m_image_file;
-    std::string* m_layout_file;
 
     bool m_is_loaded = false;
     std::vector<std::unique_ptr<element>> m_elements;

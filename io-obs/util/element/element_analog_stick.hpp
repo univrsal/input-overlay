@@ -13,7 +13,7 @@
 enum stick_data_type
 {
     BOTH,
-    BUTTON_STATE,
+    PRESSED_STATE,
     STICK_STATE
 };
 
@@ -28,7 +28,7 @@ public:
         : element_data(BUTTON)
     {
         m_state = state;
-        m_data_type = BUTTON_STATE;
+        m_data_type = PRESSED_STATE;
     }
 
     element_data_analog_stick(const float l_x, const float l_y,
@@ -82,10 +82,14 @@ public:
     element_analog_stick() : element_texture(BUTTON)
     {
     };
+    
     void load(ccl_config* cfg, const std::string& id,
               const vec2* default_size) override;
+    
     void draw(gs_effect_t* effect, gs_image_file_t* image,
               element_data* data) override;
+
+    data_source get_source() override { return GAMEPAD; }
 private:
     void calc_position(vec2* v, element_data_analog_stick* d) const;
     gs_rect m_pressed;

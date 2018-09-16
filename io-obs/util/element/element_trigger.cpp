@@ -14,7 +14,7 @@ void element_trigger::load(ccl_config* cfg, const std::string& id, const vec2* d
     element_texture::load(cfg, id, default_size);
     m_button_mode = cfg->get_bool(id + CFG_TRIGGER_MODE);
     m_side = static_cast<element_side>(cfg->get_int(id + CFG_SIDE));
-
+    m_keycode = VC_TRIGGER_DATA;
     if (!m_button_mode)
     {
         m_direction = static_cast<trigger_direction>(cfg->get_int(

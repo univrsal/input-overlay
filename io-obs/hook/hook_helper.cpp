@@ -127,6 +127,7 @@ namespace hook
 
     void end_hook()
     {
+        
 #ifdef WINDOWS
         /* Create event handles for the thread hook. */
         CloseHandle(hook_thread);
@@ -140,13 +141,15 @@ namespace hook
 #endif
 
         delete input_data;
+        input_data = nullptr;
         hook_stop();
     }
 
     void start_hook()
     {
         input_data = new element_data_holder();
-        //return;
+        return;
+
 #ifdef _DEBUG
         blog(LOG_INFO, "libuiohook init start... Dataholder@0x%X\n",
              reinterpret_cast<int>(input_data));
