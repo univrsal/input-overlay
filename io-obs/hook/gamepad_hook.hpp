@@ -153,37 +153,6 @@ private:
             return &m_xinput;
         }
 
-        /* Windows specific stuff */
-
-        // Writes all left_pressed buttons into the global
-        // array
-        static void put_in_vc(uint16_t l_dz, uint16_t r_dz)
-        {
-            /*
-                    util_set_pad_state(PAD_LT, m_pad_id, m_xinput.Gamepad.bLeftTrigger > 20);
-                    util_set_pad_state(PAD_RT, m_pad_id, m_xinput.Gamepad.bRightTrigger > 20);
-                    if (!DEAD_ZONE(m_xinput.Gamepad.sThumbLX, l_dz))
-                        l_x = fmaxf(-1, (float)m_xinput.Gamepad.sThumbLX / STICK_MAX_VAL);
-                    else
-                        l_x = 0.f;
-            
-                    if (!DEAD_ZONE(m_xinput.Gamepad.sThumbLY, l_dz))
-                        l_y = fmaxf(-1, (float)m_xinput.Gamepad.sThumbLY / STICK_MAX_VAL);
-                    else
-                        l_y = 0.f;
-            
-                    if (!DEAD_ZONE(m_xinput.Gamepad.sThumbRX, r_dz))
-                        r_x = fmaxf(-1, (float)m_xinput.Gamepad.sThumbRX / STICK_MAX_VAL);
-                    else
-                        r_x = 0.f;
-            
-                    if (!DEAD_ZONE(m_xinput.Gamepad.sThumbRY, r_dz))
-                        r_y = fmaxf(-1, (float)m_xinput.Gamepad.sThumbRY / STICK_MAX_VAL);
-                    else
-                        r_y = 0.f;
-            */
-        }
-
     private:
         XINPUT_STATE m_xinput;
         bool m_valid = false;
@@ -202,8 +171,10 @@ private:
 #else
     void* hook_method(void*);
 #endif
-    
 
+#ifdef WINDOWS
+    static uint16_t xinput_to_vc(uint16_t code);
+#endif
     void end_pad_hook();
 
     void init_pad_devices();

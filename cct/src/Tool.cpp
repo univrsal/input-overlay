@@ -113,7 +113,7 @@ void Tool::action_performed(const uint8_t type)
     switch (type)
     {
     case TOOL_ACTION_SETUP_EXIT:
-        s = reinterpret_cast<DialogSetup*>(m_toplevel);
+        s = dynamic_cast<DialogSetup*>(m_toplevel);
         m_element_settings = new DialogElementSettings(m_helper, this);
         m_config = new Config(s->get_texture_path(),
                               s->get_config_path(), s->get_default_dim(), s->get_rulers(), m_helper,
@@ -129,7 +129,7 @@ void Tool::action_performed(const uint8_t type)
     case TOOL_ACTION_MOD_ELEMENT_APPLY:
         if (m_config->selected())
         {
-            d = reinterpret_cast<DialogNewElement*>(m_toplevel);
+            d = dynamic_cast<DialogNewElement*>(m_toplevel);
             m_config->selected()->update_settings(d);
             m_element_settings->select_element(m_config->selected()); /* Refresh Dialog*/
         }
@@ -137,7 +137,7 @@ void Tool::action_performed(const uint8_t type)
         m_state = IN_BUILD;
         break;
     case TOOL_ACTION_NEW_ELEMENT_ADD:
-        d = reinterpret_cast<DialogNewElement*>(m_toplevel);
+        d = dynamic_cast<DialogNewElement*>(m_toplevel);
         e = Element::from_dialog(d);
 
         if (e)
@@ -288,7 +288,7 @@ void Tool::handle_input()
             m_state = IN_NEW_ELEMENT;
             m_toplevel = new DialogNewElement(m_helper, LANG_DIALOG_NEW_ELEMENT, this, m_new_element_type);
             m_toplevel->init();
-            d = reinterpret_cast<DialogNewElement*>(m_toplevel);
+            d = dynamic_cast<DialogNewElement*>(m_toplevel);
             d->set_default_dim(m_config->get_default_dim().x, m_config->get_default_dim().y);
             break;
         case MOD_ELEMENT:
@@ -298,7 +298,7 @@ void Tool::handle_input()
                 m_toplevel = new DialogNewElement(m_helper, LANG_DIALOG_NEW_ELEMENT, this,
                                                   m_config->selected()->get_type());
                 m_toplevel->init();
-                d = reinterpret_cast<DialogNewElement*>(m_toplevel);
+                d = dynamic_cast<DialogNewElement*>(m_toplevel);
                 d->set_default_dim(m_config->get_default_dim().x, m_config->get_default_dim().y);
                 d->load_from_element(m_config->selected());
             }

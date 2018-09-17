@@ -29,7 +29,7 @@ static pthread_t game_pad_hook_thread;
         init_pad_devices();
 
 #ifdef WINDOWS
-        hook_thread = CreateThread(nullptr, 0, (LPTHREAD_START_ROUTINE) hook_method,
+        hook_thread = CreateThread(nullptr, 0, static_cast<LPTHREAD_START_ROUTINE>(hook_method),
             nullptr, 0, nullptr);
         gamepad_hook_state = hook_thread;
 #else
@@ -43,6 +43,28 @@ static pthread_t game_pad_hook_thread;
         for (auto& state : pad_states)
             state.init(id++);
     }
+
+#ifdef WINDOWS
+    uint16_t xinput_to_vc(const uint16_t code)
+    {
+        switch(code)
+        {
+        case XINPUT_GAMEPAD_A: return PAD_TO_VC(PAD_A);
+        case XINPUT_GAMEPAD_B: return PAD_TO_VC(PAD_B);
+        case XINPUT_GAMEPAD_X: return PAD_TO_VC(PAD_X);
+        case XINPUT_GAMEPAD_Y: return PAD_TO_VC(PAD_Y);
+        case XINPUT_GAMEPAD_DPAD_DOWN: return PAD_TO_VC(PAD_DPAD_DOWN);
+        case XINPUT_GAMEPAD_DPAD_UP: return PAD_TO_VC(PAD_DPAD_UP);
+        case XINPUT_GAMEPAD_DPAD_LEFT: return PAD_TO_VC(PAD_DPAD_LEFT);
+        case XINPUT_GAMEPAD_DPAD_RIGHT: return PAD_TO_VC(PAD_DPAD_RIGHT);
+        case XINPUT_GAMEPAD_LEFT_SHOULDER: return PAD_TO_VC(PAD_LB);
+        case XINPUT_GAMEPAD_RIGHT_SHOULDER: return PAD_TO_VC(PAD_RB);
+        case XINPUT_GAMEPAD_START: return PAD_TO_VC(PAD_START);
+        case XINPUT_GAMEPAD_BACK: return PAD_TO_VC(PAD_BACK);
+        default: return 0xFFFF;
+        }
+    }
+#endif
 
     void end_pad_hook()
     {
@@ -78,7 +100,7 @@ static pthread_t game_pad_hook_thread;
                         ? STATE_PRESSED
                         : STATE_RELEASED;
                     hook::input_data->add_gamepad_data(
-                        pad.get_id(), PAD_TO_VC(button),
+                        pad.get_id(), xinput_to_vc(button),
                         new element_data_button(state));
                 }
 

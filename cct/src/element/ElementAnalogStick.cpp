@@ -15,9 +15,9 @@
 #include "../dialog/DialogElementSettings.hpp"
 #include "../../../ccl/ccl.hpp"
 
-ElementAnalogStick::ElementAnalogStick(std::string id, const SDL_Point pos, const SDL_Rect mapping,
+ElementAnalogStick::ElementAnalogStick(const std::string id, const SDL_Point pos, const SDL_Rect mapping,
                                        const element_side side, const uint8_t radius, const uint8_t z)
-    : ElementTexture(ANALOG_STICK, std::move(id), pos, mapping, z), m_static_scaled()
+    : ElementTexture(ANALOG_STICK, id, pos, mapping, z), m_static_scaled()
 {
     m_stick = side;
     m_radius = radius;
@@ -34,7 +34,7 @@ SDL_Rect* ElementAnalogStick::get_abs_dim(CoordinateSystem* cs)
 
 ElementError ElementAnalogStick::is_valid(Notifier* n, SDL_Helper* h)
 {
-    ElementError error = ElementTexture::is_valid(n, h);
+    auto error = ElementTexture::is_valid(n, h);
 
     if (error == VALID && m_radius == 0)
     {
@@ -73,8 +73,10 @@ void ElementAnalogStick::draw(Texture* atlas, CoordinateSystem* cs, const bool s
 void ElementAnalogStick::write_to_file(ccl_config* cfg, SDL_Point* default_dim)
 {
     ElementTexture::write_to_file(cfg, default_dim);
-    const auto comment = "Analog stick side of " + m_id;
+    auto comment = "Analog stick side of " + m_id;
     cfg->add_int(m_id + CFG_SIDE, comment, static_cast<int>(m_stick), true);
+    comment = "Analog stick radius of " + m_id;
+    cfg->add_int(m_id + CFG_STICK_RADIUS, comment, static_cast<int>(m_radius), true);
 }
 
 void ElementAnalogStick::update_settings(DialogNewElement* dialog)

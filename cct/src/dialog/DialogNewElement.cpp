@@ -42,22 +42,22 @@ void DialogNewElement::load_from_element(Element* e)
         switch (e->get_type())
         {
         case ANALOG_STICK:
-            stick = reinterpret_cast<ElementAnalogStick*>(e);
+            stick = dynamic_cast<ElementAnalogStick*>(e);
             m_binary_choice->select_item(stick->get_stick());
             m_radius->set_text(std::to_string(stick->get_radius()));
             break;
         case MOUSE_MOVEMENT:
-            mouse = reinterpret_cast<ElementMouseMovement*>(e);
+            mouse = dynamic_cast<ElementMouseMovement*>(e);
             m_binary_choice->select_item(mouse->get_mouse_type());
             m_radius->set_text(std::to_string(mouse->get_radius()));
         case TRIGGER:
-            trigger = reinterpret_cast<ElementTrigger*>(e);
+            trigger = dynamic_cast<ElementTrigger*>(e);
             m_binary_choice->select_item(trigger->get_side());
             m_direction->select_item(trigger->get_direction());
             m_trigger_mode->set_checked(trigger->get_mode());
             break;
         case TEXT:
-            text = reinterpret_cast<ElementText*>(e);
+            text = dynamic_cast<ElementText*>(e);
             m_text->set_text(text->get_text());
             m_text_reset->set_checked(text->get_reset());
             break;
