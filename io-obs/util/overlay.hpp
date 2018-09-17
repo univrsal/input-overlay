@@ -57,7 +57,9 @@ private:
     bool load_texture();
     void unload_texture() const;
     void unload_elements();
-    void load_element(ccl_config* cfg, const std::string& id);
+    void load_element(ccl_config* cfg, const std::string& id, bool debug);
+
+    static const char* element_type_to_string(element_type t);
 
     gs_image_file_t* m_image = nullptr;
 

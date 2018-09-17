@@ -64,7 +64,7 @@ public:
                               const float r_x, const float r_y)
         : element_data(BUTTON)
     {
-        m_left_stick = {l_x, r_x};
+        m_left_stick = {l_x, l_y};
         m_right_stick = {r_x, r_y};
         m_left_state = left;
         m_right_state = right;

@@ -64,22 +64,25 @@ void element_data_wheel::merge(element_data* other)
 {
     if (other && other->get_type() == m_type)
     {
-        const auto other_wheel = reinterpret_cast<element_data_wheel*>(other);
-
-        switch (other_wheel->m_data_type)
+        const auto other_wheel = dynamic_cast<element_data_wheel*>(other);
+        if (other_wheel)
         {
-        case BUTTON_STATE:
+            switch (other_wheel->m_data_type)
+            {
+            case BUTTON_STATE:
 #ifdef _DEBUG
-            blog(LOG_INFO, "Merged button state: %i old, %i new\n",
-                 m_middle_button, other_wheel->get_state());
+                blog(LOG_INFO, "Merged button state: %i old, %i new\n",
+                     m_middle_button, other_wheel->get_state());
 #endif
-            m_middle_button = other_wheel->get_state();
-            break;
-        case WHEEL_STATE:
-            m_amount = other_wheel->get_amount();
-            m_dir = other_wheel->get_dir();
-            break;
-        default: ;
+                m_middle_button = other_wheel->get_state();
+                break;
+            case WHEEL_STATE:
+                m_amount = other_wheel->get_amount();
+                m_dir = other_wheel->get_dir();
+                break;
+            default: ;
+            }            
         }
+
     }
 }

@@ -61,19 +61,30 @@ bool overlay::load_cfg()
         m_settings->cy = static_cast<uint32_t>(cfg->get_int(CFG_TOTAL_HEIGHT));
 
         auto element_id = cfg->get_string(CFG_FIRST_ID);
+        const auto debug_mode = cfg->get_bool(CFG_DEBUG_FLAG, true);
+        
+#ifndef _DEBUG
+        if (debug_mode)
+        {
+#else
+        {
+#endif
+            blog(LOG_INFO, "[input-overlay] Started loading of %s", m_settings->layout_file.c_str());
+        }
 
         while (!element_id.empty())
         {
-            load_element(cfg, element_id);
+            load_element(cfg, element_id, debug_mode);
             element_id = cfg->get_string(element_id + CFG_NEXT_ID, true);
         }
     }
 
     if (cfg->has_errors())
     {
-        blog(LOG_WARNING, "[ccl] %s", cfg->get_error_message().c_str());
+        blog(LOG_WARNING, "[input-overlay] %s", cfg->get_error_message().c_str());
         if (cfg->has_fatal_errors())
         {
+            blog(LOG_WARNING, "Fatal errors occured while loading config file");
             flag = false;
         }
     }
@@ -99,7 +110,7 @@ bool overlay::load_texture()
 
         if (!m_image->loaded)
         {
-            blog(LOG_WARNING, "Error: failed to load texture %s",
+            blog(LOG_WARNING, "[input-overlay] Error: failed to load texture %s",
                  m_settings->image_file.c_str());
             flag = false;
         }
@@ -146,7 +157,7 @@ void overlay::draw(gs_effect_t* effect)
     }
 }
 
-void overlay::load_element(ccl_config* cfg, const std::string& id)
+void overlay::load_element(ccl_config* cfg, const std::string& id, bool debug)
 {
     const auto type = cfg->get_int(id + CFG_TYPE);
     element* new_element = nullptr;
@@ -174,10 +185,34 @@ void overlay::load_element(ccl_config* cfg, const std::string& id)
     {
         new_element->load(cfg, id, &m_default_size);
         m_elements.emplace_back(new_element);
-#ifdef _DEBUG
-        blog(LOG_WARNING, "Added overlay element:\n Type: %i\n ID: %s\n ",
-             new_element->get_type(), id.c_str());
+
+#ifndef _DEBUG
+        if (debug)
+        {
+#else
+        {
 #endif
+            blog(LOG_INFO, " Type: %14s ID: %s",
+                element_type_to_string(static_cast<element_type>(type)), id.c_str());
+        }
+    }
+}
+
+const char * overlay::element_type_to_string(element_type t)
+{
+    switch(t)
+    {
+    case TEXTURE: return "Texture";
+    case BUTTON: return "Button";
+    case ANALOG_STICK: return "Analog stick";
+    case MOUSE_SCROLLWHEEL: return "Scroll wheel";
+    case MOUSE_MOVEMENT: return "Mouse movement";
+    case TRIGGER: return "Trigger";
+    case GAMEPAD_ID: return "Gamepad ID";
+    case TEXT: return "Text";
+    case DPAD_STICK: return "DPad";
+    default:
+    case INVALID: return "Invalid";
     }
 }
 

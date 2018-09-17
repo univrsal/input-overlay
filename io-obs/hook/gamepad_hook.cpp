@@ -93,11 +93,11 @@ static pthread_t game_pad_hook_thread;
                         : STATE_RELEASED,
                         static_cast<float>(pad.get_xinput()->Gamepad.sThumbLX) /
                         STICK_MAX_VAL,
-                        static_cast<float>(pad.get_xinput()->Gamepad.sThumbLY) /
+                        static_cast<float>(-pad.get_xinput()->Gamepad.sThumbLY) /
                         STICK_MAX_VAL,
                         static_cast<float>(pad.get_xinput()->Gamepad.sThumbRX) /
                         STICK_MAX_VAL,
-                        static_cast<float>(pad.get_xinput()->Gamepad.sThumbRY) /
+                        static_cast<float>(-pad.get_xinput()->Gamepad.sThumbRY) /
                         STICK_MAX_VAL
                     ));
 

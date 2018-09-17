@@ -25,16 +25,19 @@ void element_analog_stick::draw(gs_effect_t* effect, gs_image_file_t* image,
 {
     if (data)
     {
-        const auto stick = reinterpret_cast<element_data_analog_stick*>(data);
-        auto pos = m_pos;
-        gs_rect* temp = nullptr;
+        const auto stick = dynamic_cast<element_data_analog_stick*>(data);
+        if (stick)
+        {
+            auto pos = m_pos;
+            gs_rect* temp = nullptr;
 
-        if (m_side == SIDE_LEFT)
-            temp = stick->left_pressed() ? &m_pressed : &m_mapping;
-        else
-            temp = stick->right_pressed() ? &m_pressed : &m_mapping;
-        calc_position(&pos, stick);
-        element_texture::draw(effect, image, temp, &pos);
+            if (m_side == SIDE_LEFT)
+                temp = stick->left_pressed() ? &m_pressed : &m_mapping;
+            else
+                temp = stick->right_pressed() ? &m_pressed : &m_mapping;
+            calc_position(&pos, stick);
+            element_texture::draw(effect, image, temp, &pos);           
+        }
     }
     else
     {
@@ -64,35 +67,38 @@ void element_data_analog_stick::merge(element_data* other)
     if (other && other->get_type() == m_type)
     {
         const auto other_stick
-            = reinterpret_cast<element_data_analog_stick*>(other);
-
-        switch (other_stick->m_data_type)
+            = dynamic_cast<element_data_analog_stick*>(other);
+        if (other_stick)
         {
-        case BOTH:
-            m_left_stick = other_stick->m_left_stick;
-            m_right_stick = other_stick->m_right_stick;
-            m_left_state = other_stick->m_left_state;
-            m_right_state = other_stick->m_right_state;
-            break;
-        case PRESSED_STATE_LEFT:
-            m_left_state = other_stick->m_left_state;
-            break;
-        case PRESSED_STATE_RIGHT:
-            m_right_state = other_stick->m_right_state;
-            break;
-        case STICK_STATE_LEFT_X:
-            m_left_stick.x = other_stick->m_left_stick.x;
-            break;
-        case STICK_STATE_LEFT_Y:
-            m_left_stick.y = other_stick->m_left_stick.y;
-            break;
-        case STICK_STATE_RIGHT_X:
-            m_right_stick.x = other_stick->m_right_stick.x;
-            break;
-        case STICK_STATE_RIGHT_Y:
-            m_right_stick.y = other_stick->m_right_stick.y;
-            break;
-        default: ;
+            switch (other_stick->m_data_type)
+            {
+            case BOTH:
+                m_left_stick = other_stick->m_left_stick;
+                m_right_stick = other_stick->m_right_stick;
+                m_left_state = other_stick->m_left_state;
+                m_right_state = other_stick->m_right_state;
+                break;
+            case PRESSED_STATE_LEFT:
+                m_left_state = other_stick->m_left_state;
+                break;
+            case PRESSED_STATE_RIGHT:
+                m_right_state = other_stick->m_right_state;
+                break;
+            case STICK_STATE_LEFT_X:
+                m_left_stick.x = other_stick->m_left_stick.x;
+                break;
+            case STICK_STATE_LEFT_Y:
+                m_left_stick.y = other_stick->m_left_stick.y;
+                break;
+            case STICK_STATE_RIGHT_X:
+                m_right_stick.x = other_stick->m_right_stick.x;
+                break;
+            case STICK_STATE_RIGHT_Y:
+                m_right_stick.y = other_stick->m_right_stick.y;
+                break;
+            default: ;
+            }            
         }
+
     }
 }

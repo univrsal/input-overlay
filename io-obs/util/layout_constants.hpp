@@ -11,6 +11,7 @@
 #define CFG_INNER_BORDER    3
 #define CFG_OUTER_BORDER    1
 
+#define CFG_DEBUG_FLAG      "debug"
 #define CFG_DEFAULT_WIDTH   "default_width"
 #define CFG_DEFAULT_HEIGHT  "default_height"
 #define CFG_H_SPACE         "space_h"
