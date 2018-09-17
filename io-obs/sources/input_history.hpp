@@ -230,7 +230,7 @@ namespace sources
         inline void unload_command_handler();
 
         key_bundle check_keys() const;
-        /* Checks currently pressed keys and puts them in a bundle */
+        /* Checks currently left_pressed keys and puts them in a bundle */
         void add_to_history(key_bundle b);
         void clear_history();
         void handle_text_history();

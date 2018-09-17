@@ -30,4 +30,11 @@ public:
 
     std::map<uint16_t, std::unique_ptr<element_data>> m_data;
     std::map<uint16_t, std::unique_ptr<element_data>> m_gamepad_data[4];
+
+private:
+    /* Prevent drawing thread from accessing data while
+     * hook threads write to it
+     */
+    bool m_data_locked = false;
+    bool m_gamepad_data_locked = false;
 };

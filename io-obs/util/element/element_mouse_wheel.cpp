@@ -29,31 +29,31 @@ void element_wheel::draw(gs_effect_t* effect, gs_image_file_t* image,
 {
     if (data)
     {
-        const auto wheel = reinterpret_cast<element_data_wheel*>(data);
+        const auto wheel = dynamic_cast<element_data_wheel*>(data);
 
-        if (wheel->get_state() == STATE_PRESSED)
-            element_texture::draw(effect, image, &m_mappings[WHEEL_MAP_MIDDLE]);
-
-        switch (wheel->get_dir())
+        if (wheel)
         {
-        case WHEEL_DIR_UP:
-            element_texture::draw(effect, image, &m_mappings[WHEEL_MAP_UP]);
-            break;
-        case WHEEL_DIR_DOWN:
-            element_texture::draw(effect, image, &m_mappings[WHEEL_MAP_DOWN]);
-            break;
-        default:
-        case WHEEL_DIR_NONE: ;
-        }
+            if (wheel->get_state() == STATE_PRESSED)
+                element_texture::draw(effect, image, &m_mappings[WHEEL_MAP_MIDDLE]);
 
-        if (hook::last_wheel != 0 && os_gettime_ns() - hook::last_wheel >=
-            SCROLL_TIMEOUT)
-        {
-            if (wheel)
+            switch (wheel->get_dir())
+            {
+            case WHEEL_DIR_UP:
+                element_texture::draw(effect, image, &m_mappings[WHEEL_MAP_UP]);
+                break;
+            case WHEEL_DIR_DOWN:
+                element_texture::draw(effect, image, &m_mappings[WHEEL_MAP_DOWN]);
+                break;
+            default:
+            case WHEEL_DIR_NONE: ;
+            }
+
+            if (hook::last_wheel != 0 && os_gettime_ns() - hook::last_wheel >=
+                SCROLL_TIMEOUT)
             {
                 wheel->set_dir(WHEEL_DIR_NONE);
                 hook::last_wheel = 0;
-            }
+            }          
         }
     }
 

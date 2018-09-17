@@ -37,6 +37,7 @@ bool element_data_holder::is_empty() const
 
 void element_data_holder::add_data(const uint16_t keycode, element_data* data)
 {
+    m_data_locked = true;
     if (data_exists(keycode))
     {
         if (m_data[keycode]->is_presistent())
@@ -55,12 +56,14 @@ void element_data_holder::add_data(const uint16_t keycode, element_data* data)
     {
         m_data[keycode] = std::unique_ptr<element_data>(data);
     }
+    m_data_locked = false;
 }
 
 void element_data_holder::add_gamepad_data(const uint8_t gamepad,
     const uint16_t keycode,
     element_data* data)
 {
+    m_gamepad_data_locked = true;
     if (gamepad_data_exists(gamepad, keycode))
     {
         if (data->get_type() == TRIGGER)
@@ -83,6 +86,7 @@ void element_data_holder::add_gamepad_data(const uint8_t gamepad,
     {
         m_gamepad_data[gamepad][keycode] = std::unique_ptr<element_data>(data);
     }
+    m_gamepad_data_locked = false;
 }
 
 bool element_data_holder::gamepad_data_exists(const uint8_t gamepad, const uint16_t keycode)
@@ -94,15 +98,19 @@ bool element_data_holder::gamepad_data_exists(const uint8_t gamepad, const uint1
 
 void element_data_holder::remove_gamepad_data(const uint8_t gamepad, const uint16_t keycode)
 {
+    m_gamepad_data_locked = true;
     if (gamepad_data_exists(gamepad, keycode))
     {
         m_gamepad_data[gamepad][keycode].reset(nullptr);
         m_gamepad_data[gamepad].erase(keycode);
     }
+    m_gamepad_data_locked = false;
 }
 
 element_data* element_data_holder::get_by_gamepad(const uint8_t gamepad, const uint16_t keycode)
 {
+    if (m_gamepad_data_locked)
+        return nullptr;
     return m_gamepad_data[gamepad][keycode].get();
 }
 
@@ -115,16 +123,18 @@ bool element_data_holder::data_exists(const uint16_t keycode)
 
 void element_data_holder::remove_data(const uint16_t keycode)
 {
+    m_data_locked = true;
     if (data_exists(keycode))
     {
         m_data[keycode].reset(nullptr);
         m_data.erase(keycode);
     }
+    m_data_locked = false;
 }
 
 element_data* element_data_holder::get_by_code(const uint16_t keycode)
 {
-    if (m_data.empty())
+    if (m_data_locked || m_data.empty())
         return nullptr;
     return m_data[keycode].get();
 }

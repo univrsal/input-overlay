@@ -137,8 +137,9 @@ void overlay::draw(gs_effect_t* effect)
                 data = hook::input_data->get_by_gamepad(m_settings->gamepad, element->get_keycode());
                 break;
             case DEFAULT:
-            default:
                 data = hook::input_data->get_by_code(element->get_keycode());
+                break;
+            default: ;
             }
             element->draw(effect, m_image, data);
         }

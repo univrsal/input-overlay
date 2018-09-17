@@ -26,37 +26,40 @@ void element_trigger::draw(gs_effect_t* effect, gs_image_file_t* image, element_
 {
     if (data)
     {
-        const auto trigger = reinterpret_cast<element_data_trigger*>(data);
+        const auto trigger = dynamic_cast<element_data_trigger*>(data);
         auto progress = 0.f;
-
-        switch(m_side)
+        if (trigger)
         {
-        case SIDE_LEFT:
-            progress = trigger->get_left();
-            break;
-        case SIDE_RIGHT:
-            progress = trigger->get_right();
-            break;
-        default: ;
-        }
-        
-        if (m_button_mode)
-        {
-            if(progress >= 0.1)
+            switch(m_side)
             {
-                element_texture::draw(effect, image, &m_pressed);
+            case SIDE_LEFT:
+                progress = trigger->get_left();
+                break;
+            case SIDE_RIGHT:
+                progress = trigger->get_right();
+                break;
+            default: ;
+            }
+            
+            if (m_button_mode)
+            {
+                if(progress >= 0.1)
+                {
+                    element_texture::draw(effect, image, &m_pressed);
+                }
+                else
+                {
+                    element_texture::draw(effect, image, &m_mapping);
+                }  
             }
             else
             {
-                element_texture::draw(effect, image, &m_mapping);
-            }  
-        }
-        else
-        {
-            auto crop = m_mapping;
-            auto new_pos = m_pos;
-            calculate_mapping(&crop, &new_pos, progress);
-            element_texture::draw(effect, image, &m_mapping, &new_pos);
+                auto crop = m_mapping;
+                auto new_pos = m_pos;
+                calculate_mapping(&crop, &new_pos, progress);
+                element_texture::draw(effect, image, &m_mapping); /* Draw unpressed first */
+                element_texture::draw(effect, image, &crop, &new_pos);
+            }        
         }
     }
     else

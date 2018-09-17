@@ -120,6 +120,11 @@ private:
         void load()
         {
             unload();
+            update();
+        }
+
+        void update()
+        {
             if (XInputGetState(m_pad_id, &m_xinput) == ERROR_SUCCESS)
             {
                 m_valid = true;
@@ -130,7 +135,7 @@ private:
             }
         }
 
-        bool valid() const { return m_valid; }
+        bool valid() { update(); return m_valid; }
 
         void init(const uint8_t pad_id)
         {
@@ -150,7 +155,7 @@ private:
 
         /* Windows specific stuff */
 
-        // Writes all pressed buttons into the global
+        // Writes all left_pressed buttons into the global
         // array
         static void put_in_vc(uint16_t l_dz, uint16_t r_dz)
         {

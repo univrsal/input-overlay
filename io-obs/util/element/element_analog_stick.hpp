@@ -13,10 +13,16 @@
 enum stick_data_type
 {
     BOTH,
-    PRESSED_STATE,
-    STICK_STATE
+    PRESSED_STATE_LEFT,
+    PRESSED_STATE_RIGHT,
+    STICK_STATE_LEFT_X,
+    STICK_STATE_LEFT_Y,
+    STICK_STATE_RIGHT_X,
+    STICK_STATE_RIGHT_Y
 };
 
+/* Contains data for both analog sticks
+ */
 class element_data_analog_stick : public element_data
 {
 public:
@@ -24,36 +30,55 @@ public:
         Separate constructors are used on linux
         because the values can't be queried together
     */
-    element_data_analog_stick(const button_state state)
+    element_data_analog_stick(const button_state state, const element_side side)
         : element_data(BUTTON)
     {
-        m_state = state;
-        m_data_type = PRESSED_STATE;
+        m_left_state = state;
+        m_data_type = side == SIDE_LEFT ? PRESSED_STATE_LEFT : PRESSED_STATE_RIGHT;
     }
 
-    element_data_analog_stick(const float l_x, const float l_y,
+    element_data_analog_stick(const float axis_value, const stick_data_type data_type)
+        : element_data(BUTTON)
+    {
+        switch(data_type)
+        {
+        case STICK_STATE_LEFT_X:
+             m_left_stick = { axis_value, -1};
+            break;
+        case STICK_STATE_LEFT_Y:
+            m_left_stick = { -1, axis_value};
+            break;
+        case STICK_STATE_RIGHT_X:
+             m_right_stick = { axis_value, -1};
+            break;
+        case STICK_STATE_RIGHT_Y:
+            m_right_stick = { -1, axis_value};
+            break;
+        default: ;
+        }
+        m_data_type = data_type;
+    }
+
+    element_data_analog_stick(const button_state left, const button_state right,
+                              const float l_x, const float l_y,
                               const float r_x, const float r_y)
         : element_data(BUTTON)
     {
         m_left_stick = {l_x, r_x};
         m_right_stick = {r_x, r_y};
-        m_data_type = STICK_STATE;
-    }
-
-    element_data_analog_stick(const button_state state, const float l_x,
-                              const float l_y,
-                              const float r_x, const float r_y)
-        : element_data(BUTTON)
-    {
-        m_left_stick = {l_x, r_x};
-        m_right_stick = {r_x, r_y};
-        m_state = state;
+        m_left_state = left;
+        m_right_state = right;
         m_data_type = BOTH;
     }
 
-    bool pressed() const
+    bool left_pressed() const
     {
-        return m_state == STATE_PRESSED;
+        return m_left_state == STATE_PRESSED;
+    }
+
+    bool right_pressed() const
+    {
+        return m_right_state == STATE_PRESSED;
     }
 
     const vec2* get_left_stick() const
@@ -73,7 +98,7 @@ public:
 private:
     vec2 m_left_stick, m_right_stick;
     stick_data_type m_data_type;
-    button_state m_state;
+    button_state m_left_state, m_right_state;
 };
 
 class element_analog_stick : public element_texture

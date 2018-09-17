@@ -70,7 +70,7 @@ static pthread_t game_pad_hook_thread;
             {
                 if (!pad.valid())
                     continue;
-
+                
 #ifdef WINDOWS
                 for (const auto& button : pad_keys)
                 {
@@ -86,6 +86,9 @@ static pthread_t game_pad_hook_thread;
                 hook::input_data->add_gamepad_data(pad.get_id(), VC_STICK_DATA,
                     new element_data_analog_stick(
                         X_PRESSED(XINPUT_GAMEPAD_LEFT_THUMB)
+                        ? STATE_PRESSED
+                        : STATE_RELEASED,
+                         X_PRESSED(XINPUT_GAMEPAD_RIGHT_THUMB)
                         ? STATE_PRESSED
                         : STATE_RELEASED,
                         static_cast<float>(pad.get_xinput()->Gamepad.sThumbLX) /
@@ -174,11 +177,10 @@ static pthread_t game_pad_hook_thread;
 					break;
 				}
 			}
-		
-	
+			
 #endif /* LINUX */
             }
-            os_sleep_ms(100);
+            os_sleep_ms(25);
         }
 #ifdef WINDOWS
         return UIOHOOK_SUCCESS;

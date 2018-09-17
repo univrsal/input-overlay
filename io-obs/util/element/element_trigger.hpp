@@ -12,11 +12,15 @@
 
 enum trigger_data_type
 {
+    T_DATA_NONE = -1,
     T_DATA_BOTH,
     T_DATA_LEFT,
     T_DATA_RIGHT
 };
 
+
+/* Contains data for both trigger buttons
+ */
 class element_data_trigger : public element_data
 {
 public:
@@ -57,7 +61,7 @@ public:
     void merge(element_data* other) override;
 
 private:
-    trigger_data_type m_data_type;
+    trigger_data_type m_data_type = T_DATA_NONE;
     float m_left_trigger = 0.f, m_right_trigger = 0.f;
 };
 
@@ -79,7 +83,7 @@ public:
 private:
     void calculate_mapping(gs_rect* pressed, vec2* pos, float progress) const;
     gs_rect m_pressed;
-    element_side m_side;
+    element_side m_side = SIDE_INVALID;
     trigger_direction m_direction;
     bool m_button_mode = false;
 };

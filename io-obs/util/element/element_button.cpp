@@ -21,10 +21,21 @@ void element_button::load(ccl_config* cfg, const std::string& id,
 void element_button::draw(gs_effect_t* effect, gs_image_file_t* image,
                           element_data* data)
 {
-    if (data && reinterpret_cast<element_data_button*>(data)->get_state() ==
-        STATE_PRESSED)
+    if (data)
     {
-        element_texture::draw(effect, image, &m_pressed);
+        const auto button = dynamic_cast<element_data_button*>(data);
+        if (button)
+        {
+            if(button->get_state() == STATE_PRESSED)
+            {
+                element_texture::draw(effect, image, &m_pressed);        
+            }
+            else
+            {
+                element_texture::draw(effect, image, nullptr);
+            }
+        }
+
     }
     else
     {

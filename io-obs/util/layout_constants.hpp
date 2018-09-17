@@ -81,6 +81,7 @@ enum mouse_movement_type
 
 enum element_side
 {
+    SIDE_INVALID = -1,
     SIDE_LEFT,
     SIDE_RIGHT
 };
