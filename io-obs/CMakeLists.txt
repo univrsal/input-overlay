@@ -33,10 +33,6 @@ set(input-overlay_SOURCES
     sources/input_source.cpp
     sources/input_history.cpp
     sources/input_history.hpp
-    gamepad/linux_gamepad.cpp
-    gamepad/linux_gamepad.hpp
-    gamepad/windows_gamepad.cpp
-    gamepad/windows_gamepad.hpp
     hook/hook_helper.cpp
     hook/hook_helper.hpp
     hook/gamepad_hook.cpp
