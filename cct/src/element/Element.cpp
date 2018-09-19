@@ -143,8 +143,7 @@ void Element::write_to_file(ccl_config* cfg, SDL_Point* default_dim)
     cfg->add_int(m_id + CFG_TYPE, comment, m_type, true);
 
     comment = "Position of " + m_id;
-    cfg->add_int(m_id + CFG_X_POS, "", m_position.x, true);
-    cfg->add_int(m_id + CFG_Y_POS, comment, m_position.y, true);
+    cfg->add_point(m_id + CFG_POS, comment, m_position.x, m_position.y, true);
 }
 
 SDL_Rect* Element::get_abs_dim(CoordinateSystem* cs)
@@ -209,21 +208,14 @@ void Element::set_pos(const int x, const int y)
 
 SDL_Rect Element::read_mapping(ccl_config* file, const std::string& id, SDL_Point* default_dim)
 {
-    SDL_Rect result;
-    result.x = file->get_int(id + CFG_U);
-    result.y = file->get_int(id + CFG_V);
-
-    if ((result.w = file->get_int(id + CFG_WIDTH)) == 0)
-        result.w = default_dim->x;
-
-    if ((result.h = file->get_int(id + CFG_HEIGHT)) == 0)
-        result.h = default_dim->y;
-    return result;
+    const auto temp = file->get_rect(id + CFG_MAPPING);
+    return SDL_Rect { temp.x, temp.y, temp.w, temp.h };
 }
 
 SDL_Point Element::read_position(ccl_config* file, const std::string& id)
 {
-    return {file->get_int(id + CFG_X_POS), file->get_int(id + CFG_Y_POS)};
+    const auto pos = file->get_point(id + CFG_POS);
+    return { pos.x, pos.y };
 }
 
 uint8_t Element::read_layer(ccl_config* file, const std::string& id)

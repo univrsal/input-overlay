@@ -148,10 +148,9 @@ namespace hook
     void start_hook()
     {
         input_data = new element_data_holder();
-        return;
 
 #ifdef _DEBUG
-        blog(LOG_INFO, "libuiohook init start... Dataholder@0x%X\n",
+        blog(LOG_INFO, "[input-overlay] libuiohook init start... Dataholder@0x%X\n",
              reinterpret_cast<int>(input_data));
 #endif
 #ifdef _WIN32

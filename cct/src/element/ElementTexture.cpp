@@ -49,17 +49,9 @@ void ElementTexture::draw(Texture* atlas, CoordinateSystem* cs, const bool selec
 void ElementTexture::write_to_file(ccl_config* cfg, SDL_Point* default_dim)
 {
     Element::write_to_file(cfg, default_dim);
-    std::string comment = "Texture position of " + m_id;
-    cfg->add_int(m_id + CFG_U, "", m_mapping.x, true);
-    cfg->add_int(m_id + CFG_V, comment, m_mapping.y, true);
-
-    comment = "Width and height of " + m_id;
-
-    if (m_mapping.w != default_dim->x)
-        cfg->add_int(m_id + CFG_WIDTH, "", m_mapping.w, true);
-
-    if (m_mapping.h != default_dim->y)
-        cfg->add_int(m_id + CFG_HEIGHT, comment, m_mapping.h, true);
+    const auto comment = "Mapping of " + m_id;
+    cfg->add_rect(m_id + CFG_MAPPING, comment, m_mapping.x,
+        m_mapping.y, m_mapping.w, m_mapping.h);
 }
 
 void ElementTexture::update_settings(DialogNewElement* dialog)

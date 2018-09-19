@@ -1,5 +1,6 @@
 #include "util.hpp"
 #include <uiohook.h>
+#include <algorithm>
 
 /**
  * This file is part of input-overlay

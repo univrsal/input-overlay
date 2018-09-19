@@ -20,6 +20,8 @@
 #define CFG_TOTAL_WIDTH     "overlay_width"
 #define CFG_TOTAL_HEIGHT    "overlay_height"
 
+#define CFG_POS             "_pos"
+#define CFG_MAPPING         "_mapping"
 #define CFG_X_POS           "_x_pos"
 #define CFG_Y_POS           "_y_pos"
 #define CFG_U               "_u"

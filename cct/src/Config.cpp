@@ -301,7 +301,7 @@ void Config::write_config(Notifier* n)
     cfg.add_int(CFG_TOTAL_WIDTH, "", width);
     cfg.add_int(CFG_TOTAL_HEIGHT, "Full overlay dimensions", height);
 
-    cfg.write();
+    cfg.write(false);
 
     const auto end = SDL_GetTicks();
 
