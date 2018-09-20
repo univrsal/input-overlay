@@ -121,11 +121,6 @@ void ElementAnalogStick::handle_event(SDL_Event* event, SDL_Helper* helper)
                 m_movement_reset.start();
             }
         }
-
-#if _DEBUG
-        printf("STICK: %i, SDL_EVENT: axis: %i, value: %i\n", m_stick, event->caxis.axis, event->caxis.value);
-        printf("X_AXIS : %.2f, Y_AXIS: %.2f\n", m_x_axis, m_y_axis);
-#endif
     }
     else if (event->type == SDL_CONTROLLERBUTTONDOWN
         || event->type == SDL_CONTROLLERBUTTONUP)

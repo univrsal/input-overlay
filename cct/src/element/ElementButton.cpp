@@ -71,26 +71,32 @@ void ElementButton::update_settings(DialogElementSettings* dialog)
 
 void ElementButton::handle_event(SDL_Event* event, SDL_Helper* helper)
 {
-    if (event->type == SDL_KEYDOWN)
+    uint32_t button = SDLK_UNKNOWN;
+    auto pressed = false;
+
+    switch(event->type)
+    /* Fallthrough intended */
     {
-        if (SDL_Helper::sdl_key_to_vc(event->key.keysym.sym) == m_keycode)
-            m_pressed = true;
+    case SDL_KEYDOWN:
+        pressed = true;
+    case SDL_KEYUP:
+        button = event->key.keysym.sym;
+        break;
+    case SDL_CONTROLLERBUTTONDOWN:
+        pressed = true;
+    case SDL_CONTROLLERBUTTONUP:
+        button = event->cbutton.button;
+        break;
+    case SDL_MOUSEBUTTONDOWN:
+        pressed = true;
+    case SDL_MOUSEBUTTONUP:
+        button = TO_MOUSE_MASK(event->button.button);
+        break;
+    default: ;
     }
-    else if (event->type == SDL_KEYUP)
-    {
-        if (SDL_Helper::sdl_key_to_vc(event->key.keysym.sym) == m_keycode)
-            m_pressed = false;
-    }
-    else if (event->type == SDL_CONTROLLERBUTTONDOWN)
-    {
-        if (SDL_Helper::sdl_key_to_vc(TO_PAD_MASK(event->cbutton.button)) == m_keycode)
-            m_pressed = true;
-    }
-    else if (event->type == SDL_CONTROLLERBUTTONUP)
-    {
-        if (SDL_Helper::sdl_key_to_vc(TO_PAD_MASK(event->cbutton.button)) == m_keycode)
-            m_pressed = false;
-    }
+
+    if (SDL_Helper::sdl_key_to_vc(button) == m_keycode)
+        m_pressed = pressed;
 }
 
 ElementButton* ElementButton::read_from_file(ccl_config* file, const std::string& id, SDL_Point* default_dim)
