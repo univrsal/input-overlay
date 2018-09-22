@@ -13,7 +13,7 @@ void element_button::load(ccl_config* cfg, const std::string& id)
     element_texture::load(cfg, id);
     m_keycode = cfg->get_int(id + CFG_KEY_CODE);
     m_pressed = m_mapping;
-    m_pressed.y = m_mapping.y + m_mapping.cy + CFG_OUTER_BORDER;
+    m_pressed.y = m_mapping.y + m_mapping.cy + CFG_INNER_BORDER;
     /* Checks whether first 8 bits are equal */
     is_gamepad = (m_keycode >> 8) == (VC_PAD_MASK >> 8);
 }

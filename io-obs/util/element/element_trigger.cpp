@@ -16,7 +16,7 @@ void element_trigger::load(ccl_config* cfg, const std::string& id)
     m_side = static_cast<element_side>(cfg->get_int(id + CFG_SIDE));
     m_keycode = VC_TRIGGER_DATA;
     m_pressed = m_mapping;
-    m_pressed.y = m_mapping.y + m_mapping.cy + CFG_OUTER_BORDER;
+    m_pressed.y = m_mapping.y + m_mapping.cy + CFG_INNER_BORDER;
     if (!m_button_mode)
     {
         m_direction = static_cast<trigger_direction>(cfg->get_int(

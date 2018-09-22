@@ -18,7 +18,7 @@ void element_wheel::load(ccl_config* cfg, const std::string& id)
     for (auto& map : m_mappings)
     {
         map = m_mapping;
-        map.x += i * (m_mapping.cx + CFG_OUTER_BORDER);
+        map.x += i * (m_mapping.cx + CFG_INNER_BORDER);
         i++;
     }
 }

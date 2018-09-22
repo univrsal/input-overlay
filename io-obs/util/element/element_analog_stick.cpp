@@ -16,7 +16,7 @@ void element_analog_stick::load(ccl_config* cfg, const std::string& id)
     m_radius = cfg->get_int(id + CFG_STICK_RADIUS);
     m_keycode = VC_STICK_DATA;
     m_pressed = m_mapping;
-    m_pressed.y = m_mapping.y + m_mapping.cy + CFG_OUTER_BORDER;
+    m_pressed.y = m_mapping.y + m_mapping.cy + CFG_INNER_BORDER;
 }
 
 void element_analog_stick::draw(gs_effect_t* effect, gs_image_file_t* image,
