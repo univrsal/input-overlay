@@ -24,7 +24,8 @@ void ElementGamepadID::draw(Texture* atlas, CoordinateSystem* cs, const bool sel
     get_abs_dim(cs);
     auto temp = m_mapping;
     temp.x += (temp.w + CFG_INNER_BORDER) * m_last_gamepad_id;
-    atlas->draw(cs->get_helper()->renderer(), &m_dimensions_scaled, &temp, alpha ? ELEMENT_HIDE_ALPHA : 255);
+    atlas->draw(cs->get_helper()->renderer(), &m_dimensions_scaled, &temp,
+        (alpha && !selected) ? ELEMENT_HIDE_ALPHA : 255);
 
     if (selected)
         cs->get_helper()->util_draw_rect(&m_dimensions_scaled, cs->get_helper()->palette()->red());

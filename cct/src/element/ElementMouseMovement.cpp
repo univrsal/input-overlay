@@ -13,9 +13,9 @@
 #include "../dialog/DialogElementSettings.hpp"
 #include "../../../ccl/ccl.hpp"
 
-ElementMouseMovement::ElementMouseMovement(std::string id, const SDL_Point pos,
+ElementMouseMovement::ElementMouseMovement(const std::string& id, const SDL_Point pos,
                                            const SDL_Rect mapping, mouse_movement_type type, const uint16_t radius, const uint8_t z)
-    : ElementTexture(MOUSE_MOVEMENT, std::move(id), pos, mapping, z), m_type()
+    : ElementTexture(MOUSE_MOVEMENT, id, pos, mapping, z), m_type()
 {
     m_radius = radius;
 }

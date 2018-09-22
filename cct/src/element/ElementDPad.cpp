@@ -17,13 +17,15 @@ void ElementDPad::draw(Texture* atlas, CoordinateSystem* cs, const bool selected
     get_abs_dim(cs);
     if (m_dir == DPAD_CENTER)
     {
-        atlas->draw(cs->get_helper()->renderer(), &m_dimensions_scaled, &m_mapping, alpha ? 60 : 255);
+        atlas->draw(cs->get_helper()->renderer(), &m_dimensions_scaled, &m_mapping,
+            (alpha && !selected) ? ELEMENT_HIDE_ALPHA : 255);
     }
     else
     {
         auto temp = m_mapping;
         temp.x += (CFG_INNER_BORDER + temp.w) * m_dir;
-        atlas->draw(cs->get_helper()->renderer(), &m_dimensions_scaled, &temp, alpha ? 60 : 255);
+        atlas->draw(cs->get_helper()->renderer(), &m_dimensions_scaled, &temp,
+            (alpha && !selected) ? ELEMENT_HIDE_ALPHA : 255);
     }
 
     if (selected)

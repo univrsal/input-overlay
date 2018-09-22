@@ -22,17 +22,18 @@ void ElementScrollWheel::draw(Texture* atlas, CoordinateSystem* cs, const bool s
 
     if (m_pressed)
         atlas->draw(cs->get_helper()->renderer(),
-                    &m_dimensions_scaled, &m_mapping_pressed, alpha ? ELEMENT_HIDE_ALPHA : 255);
+            &m_dimensions_scaled, &m_mapping_pressed, (alpha && !selected) ? ELEMENT_HIDE_ALPHA : 255);
 
     if (m_down)
         atlas->draw(cs->get_helper()->renderer(),
-                    &m_dimensions_scaled, &m_mapping_down, alpha ? ELEMENT_HIDE_ALPHA : 255);
+            &m_dimensions_scaled, &m_mapping_down, (alpha && !selected) ? ELEMENT_HIDE_ALPHA : 255);
 
     if (m_up)
         atlas->draw(cs->get_helper()->renderer(),
-                    &m_dimensions_scaled, &m_mapping_up, alpha ? ELEMENT_HIDE_ALPHA : 255);
+            &m_dimensions_scaled, &m_mapping_up, (alpha && !selected) ? ELEMENT_HIDE_ALPHA : 255);
 
-    atlas->draw(cs->get_helper()->renderer(), &m_dimensions_scaled, &m_mapping, alpha ? ELEMENT_HIDE_ALPHA : 255);
+    atlas->draw(cs->get_helper()->renderer(), &m_dimensions_scaled, &m_mapping,
+        (alpha && !selected) ? ELEMENT_HIDE_ALPHA : 255);
 
     if (selected)
         cs->get_helper()->util_draw_rect(&m_dimensions_scaled, cs->get_helper()->palette()->red());
@@ -95,5 +96,5 @@ void ElementScrollWheel::update_settings(DialogElementSettings* dialog)
 ElementScrollWheel* ElementScrollWheel::read_from_file(ccl_config* file, const std::string& id, SDL_Point* default_dim)
 {
     return new ElementScrollWheel(id, read_position(file, id),
-                                  read_mapping(file, id, default_dim), read_layer(file, id));
+        read_mapping(file, id, default_dim), read_layer(file, id));
 }

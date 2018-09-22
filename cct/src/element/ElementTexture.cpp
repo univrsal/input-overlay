@@ -40,7 +40,8 @@ ElementError ElementTexture::is_valid(Notifier* n, SDL_Helper* h)
 void ElementTexture::draw(Texture* atlas, CoordinateSystem* cs, const bool selected, const bool alpha)
 {
     get_abs_dim(cs);
-    atlas->draw(cs->get_helper()->renderer(), &m_dimensions_scaled, &m_mapping, alpha ? ELEMENT_HIDE_ALPHA : 255);
+    atlas->draw(cs->get_helper()->renderer(), &m_dimensions_scaled, &m_mapping,
+        (alpha && !selected) ? ELEMENT_HIDE_ALPHA : 255);
 
     if (selected)
         cs->get_helper()->util_draw_rect(&m_dimensions_scaled, cs->get_helper()->palette()->red());

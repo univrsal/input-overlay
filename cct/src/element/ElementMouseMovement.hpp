@@ -18,7 +18,7 @@ public:
         /* NO-OP */
     };
 
-    ElementMouseMovement(std::string id, SDL_Point pos, SDL_Rect mapping, mouse_movement_type type, uint16_t radius,
+    ElementMouseMovement(const std::string& id, SDL_Point pos, SDL_Rect mapping, mouse_movement_type type, uint16_t radius,
                          uint8_t z);
 
     ElementError is_valid(Notifier* n, SDL_Helper* h) override;

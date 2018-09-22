@@ -51,11 +51,13 @@ void ElementAnalogStick::draw(Texture* atlas, CoordinateSystem* cs, const bool s
     {
         auto temp = m_mapping;
         temp.y += temp.h + CFG_INNER_BORDER;
-        atlas->draw(cs->get_helper()->renderer(), &m_dimensions_scaled, &temp, alpha ? ELEMENT_HIDE_ALPHA : 255);
+        atlas->draw(cs->get_helper()->renderer(), &m_dimensions_scaled, &temp,
+            (alpha && !selected) ? ELEMENT_HIDE_ALPHA : 255);
     }
     else
     {
-        atlas->draw(cs->get_helper()->renderer(), &m_dimensions_scaled, &m_mapping, alpha ? ELEMENT_HIDE_ALPHA : 255);
+        atlas->draw(cs->get_helper()->renderer(), &m_dimensions_scaled, &m_mapping,
+            (alpha && !selected) ? ELEMENT_HIDE_ALPHA : 255);
     }
 
     if (selected)

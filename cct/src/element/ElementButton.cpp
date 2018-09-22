@@ -38,9 +38,11 @@ void ElementButton::draw(Texture* atlas, CoordinateSystem* cs, const bool select
 {
     get_abs_dim(cs);
     if (m_pressed)
-        atlas->draw(cs->get_helper()->renderer(), &m_dimensions_scaled, &m_pressed_mapping, alpha ? 60 : 255);
+        atlas->draw(cs->get_helper()->renderer(), &m_dimensions_scaled, &m_pressed_mapping,
+            (alpha && !selected) ? ELEMENT_HIDE_ALPHA : 255);
     else
-        atlas->draw(cs->get_helper()->renderer(), &m_dimensions_scaled, &m_mapping, alpha ? 60 : 255);
+        atlas->draw(cs->get_helper()->renderer(), &m_dimensions_scaled, &m_mapping,
+            (alpha && !selected) ? ELEMENT_HIDE_ALPHA : 255);
 
     if (selected)
         cs->get_helper()->util_draw_rect(&m_dimensions_scaled, cs->get_helper()->palette()->red());

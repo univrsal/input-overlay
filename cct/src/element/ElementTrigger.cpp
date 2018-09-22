@@ -45,17 +45,17 @@ void ElementTrigger::draw(Texture* atlas, CoordinateSystem* cs, const bool selec
     else if (!m_button_mode && m_progress > 0.f)
     {
         atlas->draw(cs->get_helper()->renderer(), &m_dimensions_scaled,
-                    &m_mapping, alpha ? ELEMENT_HIDE_ALPHA : 255);
+                    &m_mapping, (alpha && !selected) ? ELEMENT_HIDE_ALPHA : 255);
         auto temp = m_pressed_mapping;
         auto temp2 = m_dimensions_scaled;
         calculate_mappings(&temp, &temp2);
         atlas->draw(cs->get_helper()->renderer(), &temp2,
-                    &temp, alpha ? ELEMENT_HIDE_ALPHA : 255);
+                    &temp, (alpha && !selected) ? ELEMENT_HIDE_ALPHA : 255);
     }
     else
     {
         atlas->draw(cs->get_helper()->renderer(), &m_dimensions_scaled,
-                    &m_mapping, alpha ? ELEMENT_HIDE_ALPHA : 255);
+                    &m_mapping, (alpha && !selected) ? ELEMENT_HIDE_ALPHA : 255);
     }
 
     
