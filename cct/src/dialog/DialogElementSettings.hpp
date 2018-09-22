@@ -47,14 +47,14 @@ public:
     void set_z_level(uint8_t z) const;
     void select_element(Element* e) const;
 
-    int get_x() const { return atoi(m_element_x->c_str()); }
-    int get_y() const { return atoi(m_element_y->c_str()); }
-    int get_z() const { return atoi(m_element_z_level->c_str()); }
-    int get_u() const { return atoi(m_element_u->c_str()); }
-    int get_v() const { return atoi(m_element_v->c_str()); }
-    int get_w() const { return atoi(m_element_width->c_str()); }
-    int get_h() const { return atoi(m_element_height->c_str()); }
-    uint16_t get_vc() const { return atoi(m_element_vc->c_str()); }
+    int get_x() const { return SDL_atoi(m_element_x->c_str()); }
+    int get_y() const { return SDL_atoi(m_element_y->c_str()); }
+    int get_z() const { return SDL_atoi(m_element_z_level->c_str()); }
+    int get_u() const { return SDL_atoi(m_element_u->c_str()); }
+    int get_v() const { return SDL_atoi(m_element_v->c_str()); }
+    int get_w() const { return SDL_atoi(m_element_width->c_str()); }
+    int get_h() const { return SDL_atoi(m_element_height->c_str()); }
+    uint16_t get_vc() const { return SDL_strtol(m_element_vc->c_str(), nullptr, 16); }
     SDL_Rect get_mapping() const { return {get_u(), get_v(), get_w(), get_h()}; }
 
     const std::string* get_id() const { return m_element_id->get_text(); }
