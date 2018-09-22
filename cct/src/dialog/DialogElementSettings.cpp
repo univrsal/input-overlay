@@ -75,7 +75,12 @@ void DialogElementSettings::action_performed(const int8_t action_id)
     {
     case ACTION_OK:
         if (m_tool->get_selected())
-            m_tool->get_selected()->update_settings(this);
+        {
+            if (m_tool->element_id_unique(m_element_id->c_str()))
+                 m_tool->get_selected()->update_settings(this);
+            else
+                m_element_id->set_alert(true);
+        }
         break;
     case ACTION_DEL_ELEMENT:
         if (m_tool->get_selected() && m_tool->get_selected_id() >= 0)

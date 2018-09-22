@@ -66,7 +66,10 @@ public:
     void set_new_element_type(element_type type) { m_new_element_type = type; }
 
     void queue_dialog_open(DialogID id);
+
     void queue_dialog_close();
+
+    bool element_id_unique(const char* id) const;
 
     ElementError verify_element(DialogNewElement* d, bool modify_mode) const;
 private:

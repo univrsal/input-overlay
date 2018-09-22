@@ -172,6 +172,18 @@ void Tool::queue_dialog_close()
     m_state = IN_BUILD;
 }
 
+bool Tool::element_id_unique(const char* id) const
+{
+    for (auto const& element : m_config->m_elements)
+    {
+        if (*element->get_id() == id)
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
 ElementError Tool::verify_element(DialogNewElement* d, const bool modify_mode) const
 {
     /*
@@ -179,14 +191,13 @@ ElementError Tool::verify_element(DialogNewElement* d, const bool modify_mode) c
         it's id was modified
     */
     if (!modify_mode)
-        for (auto const& element : m_config->m_elements)
+    {
+        if (element_id_unique(d->get_id()->c_str()))
         {
-            if (*element->get_id() == *d->get_id())
-            {
-                m_notify->add_msg(MESSAGE_ERROR, m_helper->loc(LANG_ERROR_ID_NOT_UNIQUE));
-                return ID_NOT_UNIQUE;
-            }
+            m_notify->add_msg(MESSAGE_ERROR, m_helper->loc(LANG_ERROR_ID_NOT_UNIQUE));
+            return ID_NOT_UNIQUE;         
         }
+    }
 
     auto e = Element::from_dialog(d);
     const auto error = e->is_valid(m_notify, m_helper);
