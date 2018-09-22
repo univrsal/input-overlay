@@ -10,10 +10,9 @@
 #include "../../hook/hook_helper.hpp"
 #include <util/platform.h>
 
-void element_wheel::load(ccl_config* cfg, const std::string& id,
-                         const vec2* default_size)
+void element_wheel::load(ccl_config* cfg, const std::string& id)
 {
-    element_texture::load(cfg, id, default_size);
+    element_texture::load(cfg, id);
     m_keycode = VC_MOUSE_WHEEL;
     auto i = 1;
     for (auto& map : m_mappings)

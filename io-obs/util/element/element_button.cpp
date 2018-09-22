@@ -8,14 +8,14 @@
 #include "element_button.hpp"
 #include "../../ccl/ccl.hpp"
 
-void element_button::load(ccl_config* cfg, const std::string& id,
-                          const vec2* default_size)
+void element_button::load(ccl_config* cfg, const std::string& id)
 {
-    element_texture::load(cfg, id, default_size);
+    element_texture::load(cfg, id);
     m_keycode = cfg->get_int(id + CFG_KEY_CODE);
     m_pressed = m_mapping;
     m_pressed.y = m_mapping.y + m_mapping.cy + CFG_OUTER_BORDER;
-    is_gamepad = m_keycode & VC_PAD_MASK;
+    /* Checks whether first 8 bits are equal */
+    is_gamepad = (m_keycode >> 8) == (VC_PAD_MASK >> 8);
 }
 
 void element_button::draw(gs_effect_t* effect, gs_image_file_t* image,

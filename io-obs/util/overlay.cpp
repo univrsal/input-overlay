@@ -52,11 +52,6 @@ bool overlay::load_cfg()
 
     if (!cfg->has_fatal_errors())
     {
-        m_default_size.x = static_cast<float>(cfg->get_int(CFG_DEFAULT_WIDTH)
-            + CFG_OUTER_BORDER * 2);
-        m_default_size.y = static_cast<float>(cfg->get_int(CFG_DEFAULT_HEIGHT)
-            + CFG_OUTER_BORDER * 2);
-
         m_settings->cx = static_cast<uint32_t>(cfg->get_int(CFG_TOTAL_WIDTH));
         m_settings->cy = static_cast<uint32_t>(cfg->get_int(CFG_TOTAL_HEIGHT));
 
@@ -157,7 +152,7 @@ void overlay::draw(gs_effect_t* effect)
     }
 }
 
-void overlay::load_element(ccl_config* cfg, const std::string& id, bool debug)
+void overlay::load_element(ccl_config* cfg, const std::string& id, const bool debug)
 {
     const auto type = cfg->get_int(id + CFG_TYPE);
     element* new_element = nullptr;
@@ -183,7 +178,7 @@ void overlay::load_element(ccl_config* cfg, const std::string& id, bool debug)
 
     if (new_element)
     {
-        new_element->load(cfg, id, &m_default_size);
+        new_element->load(cfg, id);
         m_elements.emplace_back(new_element);
 
 #ifndef _DEBUG
@@ -192,13 +187,13 @@ void overlay::load_element(ccl_config* cfg, const std::string& id, bool debug)
 #else
         {
 #endif
-            blog(LOG_INFO, " Type: %14s ID: %s",
-                element_type_to_string(static_cast<element_type>(type)), id.c_str());
+            blog(LOG_INFO, " Type: %14s, KEYCODE: 0x%4X ID: %s",
+                element_type_to_string(static_cast<element_type>(type)), new_element->get_keycode() ,id.c_str());
         }
     }
 }
 
-const char * overlay::element_type_to_string(element_type t)
+const char * overlay::element_type_to_string(const element_type t)
 {
     switch(t)
     {

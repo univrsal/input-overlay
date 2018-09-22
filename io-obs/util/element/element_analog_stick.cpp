@@ -9,10 +9,9 @@
 #include "../../ccl/ccl.hpp"
 #include "../util.hpp"
 
-void element_analog_stick::load(ccl_config* cfg, const std::string& id,
-                                const vec2* default_size)
+void element_analog_stick::load(ccl_config* cfg, const std::string& id)
 {
-    element_texture::load(cfg, id, default_size);
+    element_texture::load(cfg, id);
     m_side = static_cast<element_side>(cfg->get_int(id + CFG_SIDE));
     m_radius = cfg->get_int(id + CFG_STICK_RADIUS);
     m_keycode = VC_STICK_DATA;

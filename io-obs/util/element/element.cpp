@@ -8,28 +8,18 @@
 #include "element.hpp"
 #include "../../ccl/ccl.hpp"
 
-void element::read_size(ccl_config* cfg, const std::string& id,
-                        const vec2* default_dim)
+void element::read_mapping(ccl_config* cfg, const std::string& id)
 {
-    if (cfg->node_exists(id + CFG_WIDTH, true))
-        m_mapping.cx = cfg->get_int(id + CFG_WIDTH) + CFG_OUTER_BORDER * 2;
-    else
-        m_mapping.cx = default_dim->x;
-
-    if (cfg->node_exists(id + CFG_HEIGHT, true))
-        m_mapping.cy = cfg->get_int(id + CFG_HEIGHT) + CFG_OUTER_BORDER * 2;
-    else
-        m_mapping.cy = default_dim->y;
+    const auto r = cfg->get_rect(id + CFG_MAPPING);
+    m_mapping.x = r.x;
+    m_mapping.y = r.y;
+    m_mapping.cx = r.w;
+    m_mapping.cy = r.h;
 }
 
 void element::read_pos(ccl_config* cfg, const std::string& id)
 {
-    m_pos.x = cfg->get_int(id + CFG_X_POS) - CFG_OUTER_BORDER;
-    m_pos.y = cfg->get_int(id + CFG_Y_POS) - CFG_OUTER_BORDER;
-}
-
-void element::read_uv(ccl_config* cfg, const std::string& id)
-{
-    m_mapping.x = cfg->get_int(id + CFG_U) - CFG_OUTER_BORDER;
-    m_mapping.y = cfg->get_int(id + CFG_V) - CFG_OUTER_BORDER;
+    const auto p = cfg->get_point(id + CFG_POS);
+    m_pos.x = p.x;
+    m_pos.y = p.y;
 }

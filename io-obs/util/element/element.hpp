@@ -69,8 +69,7 @@ public:
         m_type = type;
     }
 
-    virtual void load(ccl_config* cfg, const std::string& id,
-                      const vec2* default_size) = 0;
+    virtual void load(ccl_config* cfg, const std::string& id) = 0;
 
     virtual void draw(gs_effect_t* effect, gs_image_file_t* m_image,
                       element_data* data) = 0;
@@ -87,12 +86,9 @@ public:
 
      virtual data_source get_source() { return DEFAULT; }
 protected:
-    void read_size(ccl_config* cfg, const std::string& id,
-                   const vec2* default_dim);
+    void read_mapping(ccl_config* cfg, const std::string& id);
 
     void read_pos(ccl_config* cfg, const std::string& id);
-
-    void read_uv(ccl_config* cfg, const std::string& id);
 
     vec2 m_pos = {};
     gs_rect m_mapping = {};

@@ -17,6 +17,7 @@
 #define CFG_H_SPACE         "space_h"
 #define CFG_V_SPACE         "space_v"
 
+#define CFG_TOTAL_DIMENSION
 #define CFG_TOTAL_WIDTH     "overlay_width"
 #define CFG_TOTAL_HEIGHT    "overlay_height"
 

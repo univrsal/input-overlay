@@ -37,6 +37,7 @@ bool element_data_holder::is_empty() const
 
 void element_data_holder::add_data(const uint16_t keycode, element_data* data)
 {
+    blog(LOG_INFO, "Incoming: 0x%4X\n", keycode);
     m_data_locked = true;
     if (data_exists(keycode))
     {

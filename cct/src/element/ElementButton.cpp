@@ -85,7 +85,7 @@ void ElementButton::handle_event(SDL_Event* event, SDL_Helper* helper)
     case SDL_CONTROLLERBUTTONDOWN:
         pressed = true;
     case SDL_CONTROLLERBUTTONUP:
-        button = event->cbutton.button;
+        button = TO_PAD_MASK(event->cbutton.button);
         break;
     case SDL_MOUSEBUTTONDOWN:
         pressed = true;

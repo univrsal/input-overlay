@@ -9,9 +9,9 @@
 #include "element_trigger.hpp"
 #include "../util.hpp"
 
-void element_trigger::load(ccl_config* cfg, const std::string& id, const vec2* default_size)
+void element_trigger::load(ccl_config* cfg, const std::string& id)
 {
-    element_texture::load(cfg, id, default_size);
+    element_texture::load(cfg, id);
     m_button_mode = cfg->get_bool(id + CFG_TRIGGER_MODE);
     m_side = static_cast<element_side>(cfg->get_int(id + CFG_SIDE));
     m_keycode = VC_TRIGGER_DATA;

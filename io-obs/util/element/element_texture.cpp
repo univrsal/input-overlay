@@ -9,12 +9,10 @@
 #include "element_texture.hpp"
 #include "../../ccl/ccl.hpp"
 
-void element_texture::load(ccl_config* cfg, const std::string& id,
-                           const vec2* default_size)
+void element_texture::load(ccl_config* cfg, const std::string& id)
 {
     read_pos(cfg, id);
-    read_uv(cfg, id);
-    read_size(cfg, id, default_size);
+    read_mapping(cfg, id);
 }
 
 void element_texture::draw(gs_effect_t* effect, gs_image_file_t* image,

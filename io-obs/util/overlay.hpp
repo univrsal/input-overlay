@@ -64,7 +64,6 @@ private:
     gs_image_file_t* m_image = nullptr;
 
     sources::shared_settings* m_settings = nullptr;
-    vec2 m_default_size{};
 
     bool m_is_loaded = false;
     std::vector<std::unique_ptr<element>> m_elements;
