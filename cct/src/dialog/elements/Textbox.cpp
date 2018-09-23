@@ -81,7 +81,7 @@ void Textbox::draw_background()
 
 bool Textbox::handle_events(SDL_Event* event, const bool was_handled)
 {
-    bool handled = false;
+    auto handled = false;
     if (event->type == SDL_MOUSEBUTTONDOWN)
     {
         /* Handle focus */
@@ -181,6 +181,9 @@ bool Textbox::handle_events(SDL_Event* event, const bool was_handled)
             m_parent_dialog->action_performed(ACTION_FILE_DROPPED);
         }
     }
+
+    if (handled)
+        m_parent_dialog->action_performed(ACTION_TEXT_TYPED);
     return handled;
 }
 

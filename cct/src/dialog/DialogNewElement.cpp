@@ -151,6 +151,16 @@ void DialogNewElement::action_performed(const int8_t action_id)
     case ACTION_CANCEL:
         m_tool->queue_dialog_close();
         break;
+    case ACTION_TEXT_TYPED:
+        if (!m_selector->selection_changing() &&
+            m_u && m_v && m_w && m_h)
+        {
+            m_selection.x = SDL_strtol(m_u->c_str(), nullptr, 10);
+            m_selection.y = SDL_strtol(m_v->c_str(), nullptr, 10);
+            m_selection.w = SDL_strtol(m_w->c_str(), nullptr, 10);
+            m_selection.h = SDL_strtol(m_h->c_str(), nullptr, 10);
+        }
+        break;
     default:
         if (m_read_keybind)
         {
@@ -201,10 +211,15 @@ bool DialogNewElement::handle_events(SDL_Event* event)
                 m_cancel->set_pos(124, m_dimensions.h - 32);
             }
         }
-        m_h->set_text(std::to_string(m_selection.h));
-        m_w->set_text(std::to_string(m_selection.w));
-        m_u->set_text(std::to_string(m_selection.x));
-        m_v->set_text(std::to_string(m_selection.y));
+
+        if (!m_selector->selection_changing())
+        {
+            m_h->set_text(std::to_string(m_selection.h));
+            m_w->set_text(std::to_string(m_selection.w));
+            m_u->set_text(std::to_string(m_selection.x));
+            m_v->set_text(std::to_string(m_selection.y));   
+        }
+
         break;
     default: ;
     }

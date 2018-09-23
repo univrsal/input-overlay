@@ -8,9 +8,9 @@
 #include "Combobox.hpp"
 #include "../../util/Localization.hpp"
 
-Combobox::Combobox(int8_t id, int x, int y, int w, int h, Dialog* parent, uint16_t flags)
+Combobox::Combobox(const int8_t id, const int x, const int y, const int w, const int h, Dialog* parent, const uint16_t flags)
 {
-    SDL_Rect temp = {x, y, w, h};
+    const SDL_Rect temp = {x, y, w, h};
     m_flags = flags;
     GuiElement::init(parent, temp, id);
     m_item_v_space = get_helper()->util_font_height(FONT_WSTRING) + ITEM_V_SPACE;

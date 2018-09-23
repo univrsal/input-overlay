@@ -37,6 +37,8 @@ public:
 
     bool handle_events(SDL_Event* event, bool was_handled) override;
 
+    bool selection_changing() const { return m_cs->changing_selection(); }
+
     uint8_t get_cursor() override;
 
     void set_selection(SDL_Rect* r) const { m_cs->set_selection(r); }

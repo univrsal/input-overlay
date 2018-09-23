@@ -18,6 +18,22 @@ class Dialog;
 
 class SDL_Helper;
 
+enum actions
+{
+    ACTION_OK = -127,
+    ACTION_CANCEL,
+    ACTION_FOCUSED,
+    ACTION_UNFOCUSED,
+    ACTION_FILE_DROPPED,
+    ACTION_COMBO_ITEM_SELECTED,
+    ACTION_HELP_BUTTON,
+    ACTION_NEW_ELEMENT,
+    ACTION_SAVE_CONFIG,
+    ACTION_DEL_ELEMENT,
+    ACTION_MOD_ELEMENT,
+    ACTION_TEXT_TYPED
+};
+
 class GuiElement
 {
 public:

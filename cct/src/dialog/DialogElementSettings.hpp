@@ -14,12 +14,6 @@
 #include "./elements/Button.hpp"
 #include "../Tool.hpp"
 
-#define ACTION_HELP_BUTTON -10
-#define ACTION_NEW_ELEMENT -11
-#define ACTION_SAVE_CONFIG -12
-#define ACTION_DEL_ELEMENT -13
-#define ACTION_MOD_ELEMENT -14
-
 class SDL_Helper;
 
 class Tool;

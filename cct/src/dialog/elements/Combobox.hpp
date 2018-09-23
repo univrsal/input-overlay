@@ -12,8 +12,6 @@
 
 #define ITEM_V_SPACE 4
 
-#define ACTION_COMBO_ITEM_SELECTED -15
-
 class Combobox :
     public GuiElement
 {

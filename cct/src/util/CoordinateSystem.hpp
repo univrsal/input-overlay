@@ -25,9 +25,9 @@ public:
     CoordinateSystem()
     {
         m_scale_f = 1;
-        m_origin = {0, 0};
+        m_origin = { 0, 0 };
         m_origin_anchor = m_origin;
-        m_dimensions = {0, 0, 1280, 720};
+        m_dimensions = { 0, 0, 1280, 720 };
         m_system_area = {
             get_origin_left(), get_origin_top(),
             m_dimensions.w - m_origin_anchor.x, m_dimensions.h - m_origin_anchor.y
@@ -48,9 +48,13 @@ public:
         };
     }
 
-    void enable_border() { m_border = true; }
+    void enable_border() {
+        m_border = true;
+    }
 
-    void enable_crosshair() { m_crosshair = true; }
+    void enable_crosshair() {
+        m_crosshair = true;
+    }
 
     bool handle_events(SDL_Event* e);
 
@@ -78,44 +82,83 @@ public:
     int adjust(int i) const;
 
     /* X position of Origin anchor */
-    int get_origin_left() const { return m_dimensions.x + m_origin_anchor.x; }
+    int get_origin_left() const {
+        return m_dimensions.x + m_origin_anchor.x;
+    }
 
     /* Y position of Origin anchor */
-    int get_origin_top() const { return m_dimensions.y + m_origin_anchor.y; }
+    int get_origin_top() const {
+        return m_dimensions.y + m_origin_anchor.y;
+    }
 
-    SDL_Point* get_origin() { return &m_origin; }
+    SDL_Point* get_origin() {
+        return &m_origin;
+    }
 
-    int get_bottom() const { return m_dimensions.y + m_dimensions.h; }
-    int get_right() const { return m_dimensions.x + m_dimensions.w; }
+    int get_bottom() const {
+        return m_dimensions.y + m_dimensions.h;
+    }
+    int get_right() const {
+        return m_dimensions.x + m_dimensions.w;
+    }
 
-    int get_left() const { return m_dimensions.x; }
-    int get_top() const { return m_dimensions.y; }
+    int get_left() const {
+        return m_dimensions.x;
+    }
+    int get_top() const {
+        return m_dimensions.y;
+    }
 
-    int get_width() const { return m_dimensions.w; }
-    int get_height() const { return m_dimensions.h; }
+    int get_width() const {
+        return m_dimensions.w;
+    }
+    int get_height() const {
+        return m_dimensions.h;
+    }
 
     /* Returns origin adjusted to viewport */
-    int get_origin_x() const { return m_origin.x - get_left() - m_origin_anchor.x; }
+    int get_origin_x() const {
+        return m_origin.x - get_left() - m_origin_anchor.x;
+    }
     /* Returns origin adjusted to viewport */
-    int get_origin_y() const { return m_origin.y - get_top() - m_origin_anchor.y; }
+    int get_origin_y() const {
+        return m_origin.y - get_top() - m_origin_anchor.y;
+    }
 
-    int get_scale() const { return m_scale_f; }
+    int get_scale() const {
+        return m_scale_f;
+    }
 
-    SDL_Rect get_dimensions() const { return m_dimensions; }
-    SDL_Helper* get_helper() const { return m_helper; }
-    const SDL_Rect* get_system_area() const { return &m_system_area; }
+    SDL_Rect get_dimensions() const {
+        return m_dimensions;
+    }
+    SDL_Helper* get_helper() const {
+        return m_helper;
+    }
+    const SDL_Rect* get_system_area() const {
+        return &m_system_area;
+    }
 
-    void set_selection(SDL_Rect* r) { m_selection = r; }
+    void set_selection(SDL_Rect* r) {
+        m_selection = r;
+    }
 
     /* Prepares the viewport to fit inside the coordinate system area */
-    void begin_draw() const { SDL_RenderSetViewport(m_helper->renderer(), &m_system_area); }
+    void begin_draw() const {
+        SDL_RenderSetViewport(m_helper->renderer(), &m_system_area);
+    }
     /* Resets the viewport */
-    void end_draw() const { SDL_RenderSetViewport(m_helper->renderer(), nullptr); }
+    void end_draw() const {
+        SDL_RenderSetViewport(m_helper->renderer(), nullptr);
+    }
 
     /* Translates any point to the viewport*/
     void translate(int& x, int& y) const;
 
     void draw_selection() const;
+
+    bool changing_selection() const { return m_sizing || m_dragging || m_selecting; }
+
 private:
 
     void draw_rulers() const;

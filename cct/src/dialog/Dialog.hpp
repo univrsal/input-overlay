@@ -22,11 +22,6 @@
 
 #define FLUID_BORDER            32
 
-#define ACTION_FOCUSED          -1
-#define ACTION_UNFOCUSED        -2
-#define ACTION_OK               -3
-#define ACTION_CANCEL           -4
-
 class SDL_Helper;
 
 class GuiElement;
