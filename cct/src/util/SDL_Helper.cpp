@@ -409,6 +409,10 @@ void SDL_Helper::handle_events(SDL_Event* event)
             SDL_GetWindowSize(m_sdl_window, &m_window_size.x, &m_window_size.y);
         }
     }
+    else if (event->type == SDL_MOUSEMOTION)
+    {
+        m_mouse_pos = { event->motion.x, event->motion.y };
+    }
 }
 
 uint8_t SDL_Helper::util_font_height(const uint8_t font) const

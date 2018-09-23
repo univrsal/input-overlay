@@ -124,6 +124,7 @@ bool Button::handle_events(SDL_Event* event, bool was_handled)
         }
     }
 
+    /* Tab is handled regardless of whether event was handled by previous element */
     if (event->type == SDL_KEYDOWN
         && m_tab_focused && event->key.keysym.sym == SDLK_RETURN)
     {

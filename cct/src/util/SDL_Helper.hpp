@@ -80,6 +80,9 @@ public:
     SDL_Rect util_text_dim(const std::string* text, uint8_t font = FONT_ROBOTO_SMALL) const;
 
     SDL_Point* util_window_size();
+    const SDL_Point* util_mouse_pos() const { return &m_mouse_pos; }
+    int util_mouse_x() const { return m_mouse_pos.x; }
+    int util_mouse_y() const { return m_mouse_pos.y; }
 
     void util_cut_string(std::string& s, int max_width, bool front) const;
 
@@ -158,6 +161,7 @@ private:
 
 
     SDL_Point m_window_size = {};
+    SDL_Point m_mouse_pos = {};
     SDL_Renderer* m_sdl_renderer = nullptr;
     SDL_Window* m_sdl_window = nullptr;
 

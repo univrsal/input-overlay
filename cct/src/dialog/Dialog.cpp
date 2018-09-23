@@ -215,13 +215,14 @@ bool Dialog::handle_events(SDL_Event* event)
 
     auto cursor_handled = false;
     auto element_handled = false;
+    
 
     if (m_focused_element)
     {
         if (m_focused_element->handle_events(event, element_handled))
             element_handled = true;
 
-        if (!cursor_handled && m_focused_element->is_mouse_over(event->button.x, event->button.y))
+        if (m_focused_element->is_mouse_over())
         {
             cursor_handled = true;
             m_helper->set_cursor(m_focused_element->get_cursor());
@@ -237,7 +238,7 @@ bool Dialog::handle_events(SDL_Event* event)
         if (element->handle_events(event, element_handled))
             element_handled = true;
 
-        if (!cursor_handled && SDL_Helper::util_is_in_rect(element->get_dimensions(), event->button.x, event->button.y))
+        if (!cursor_handled && element->is_mouse_over())
         {
             cursor_handled = true;
             m_helper->set_cursor(element->get_cursor());

@@ -79,6 +79,15 @@ bool GuiElement::is_mouse_over(const int& x, const int& y)
     return SDL_Helper::util_is_in_rect(get_dimensions(), x, y);
 }
 
+bool GuiElement::is_mouse_over(const SDL_Point * p)
+{
+    if (p)
+        return GuiElement::is_mouse_over(p->x, p->y);
+
+    return GuiElement::is_mouse_over(
+            get_helper()->util_mouse_x(), get_helper()->util_mouse_y());
+}
+
 void GuiElement::set_pos(const int x, const int y)
 {
     m_dimensions.x = m_parent_dialog->position().x + x;
