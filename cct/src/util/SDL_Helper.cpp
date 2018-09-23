@@ -244,6 +244,11 @@ bool SDL_Helper::util_is_in_rect(const SDL_Rect* rect, const int x, const int y)
     return x >= rect->x && x <= (rect->x + rect->w) && y >= rect->y && y <= (rect->y + rect->h);
 }
 
+bool SDL_Helper::util_mouse_in_rect(const SDL_Rect * rect) const
+{
+    return SDL_PointInRect(&m_mouse_pos, rect);
+}
+
 void SDL_Helper::util_text(const std::string* text, const int x, const int y, const SDL_Color* color, const uint8_t font) const
 {
     const auto ttf_font = get_font(font);
@@ -352,6 +357,7 @@ void SDL_Helper::set_cursor(const uint8_t type) const
         case CURSOR_SIZE_V:
             SDL_SetCursor(m_size_v);
             break;
+        case CURSOR_SPECIAL: ;
         }
     }
 }

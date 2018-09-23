@@ -15,7 +15,7 @@ bool CoordinateSystem::handle_events(SDL_Event* e)
     {
         if (e->button.button == SDL_BUTTON_RIGHT)
         {
-            if (SDL_Helper::util_is_in_rect(&m_system_area, e->button.x, e->button.y))
+            if (m_helper->util_mouse_in_rect(&m_system_area))
             {
                 m_drag_offset = {
                     e->button.x - m_origin.x,
@@ -27,8 +27,7 @@ bool CoordinateSystem::handle_events(SDL_Event* e)
         }
         else if (e->button.button == SDL_BUTTON_LEFT && m_selection)
         {
-            if (SDL_Helper::util_is_in_rect(get_system_area(),
-                                          e->button.x, e->button.y))
+            if (m_helper->util_mouse_in_rect(&m_system_area))
             {
                 if (SDL_RectEmpty(m_selection))
                 {
@@ -122,8 +121,7 @@ bool CoordinateSystem::handle_events(SDL_Event* e)
         }
 
         m_origin.x = UTIL_MIN(m_origin.x, get_origin_left());
-        m_origin.y = UTIL_MIN(m_origin.y, get_origin_top());
-        was_handled = true;
+        m_origin.y = UTIL_MIN(m_origin.y, get_origin_top());;
 
         m_selecting = false;
         m_sizing = false;
@@ -140,29 +138,7 @@ bool CoordinateSystem::handle_events(SDL_Event* e)
         auto x = m_selection->x;
         auto y = m_selection->y;
 
-        auto moved = false;
-        switch (e->key.keysym.sym)
-        {
-        case SDLK_UP:
-            y = SDL_max(y - 1, 0);
-            moved = true;
-            break;
-        case SDLK_DOWN:
-            y++;
-            moved = true;
-            break;
-        case SDLK_RIGHT:
-            x++;
-            moved = true;
-            break;
-        case SDLK_LEFT:
-            x = SDL_max(0, x - 1);
-            moved = true;
-            break;
-        default: ;
-        }
-
-        if (moved)
+        if (util_move_element(&x, &y, e->key.keysym.sym))
         {
             m_selection->x = x;
             m_selection->y = y;
@@ -401,7 +377,7 @@ void CoordinateSystem::draw_rulers() const
   is close enough to either side of the selection.
   Same for up and down.
 */
-#define EXTENDED_BORDER 4
+#define EXTENDED_BORDER 8
 
 void CoordinateSystem::mouse_state(SDL_Event* event)
 {

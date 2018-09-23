@@ -29,7 +29,7 @@ public:
 
     void close() override;
 
-    void init(Dialog* parent, SDL_Rect dim, int8_t id);
+    void init(Dialog* parent, SDL_Rect dim, int8_t id) override;
 
     void draw_foreground() override;
 
@@ -44,5 +44,5 @@ private:
     void resize() override;
 
     Texture* m_atlas; /* Is loaded in Config, and will be deleted there */
-    CoordinateSystem* m_cs;
+    CoordinateSystem* m_cs{};
 };

@@ -70,6 +70,7 @@ public:
     void util_fill_rect(const SDL_Rect* rect, const SDL_Color* color, uint8_t alpha) const;
 
     static bool util_is_in_rect(const SDL_Rect* rect, int x, int y);
+    bool util_mouse_in_rect(const SDL_Rect* rect) const;
 
     void util_text(const std::string* text, int x, int y, const SDL_Color* color,
                    uint8_t font = FONT_ROBOTO_SMALL) const;
