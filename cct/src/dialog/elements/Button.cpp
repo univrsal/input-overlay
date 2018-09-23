@@ -123,7 +123,8 @@ bool Button::handle_events(SDL_Event* event, bool was_handled)
             }
         }
     }
-    else if (event->type == SDL_KEYDOWN
+
+    if (event->type == SDL_KEYDOWN
         && m_tab_focused && event->key.keysym.sym == SDLK_RETURN)
     {
         m_pressed = true;
