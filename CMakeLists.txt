@@ -6,7 +6,7 @@ find_library(UIOHOOK_LIBRARY uiohook)
 if(MSVC)
 	set(input-overlay_PLATFORM_DEPS
 		w32-pthreads
-		XInput)
+		XInput9_1_0)
 	add_definitions(-DHAVE_XINPUT=1)
 endif()
 
