@@ -16,6 +16,11 @@
 #include "element/element_analog_stick.hpp"
 #include "../sources/input_source.hpp"
 
+namespace sources
+{
+    struct shared_settings;
+}
+
 //namespace Layout {
 
 overlay::~overlay()
@@ -31,8 +36,21 @@ overlay::overlay(sources::shared_settings* settings)
 
 bool overlay::load()
 {
+    //m_settings = new_settings;
     unload();
-    m_is_loaded = load_texture() && load_cfg();
+    bool image_loaded = load_texture();
+    m_is_loaded = image_loaded && load_cfg();
+    
+    if (!m_is_loaded)
+    {
+        m_settings->gamepad = false;
+        if (!image_loaded)
+        {
+            m_settings->cx = 100; /* Default size */
+            m_settings->cy = 100;
+        }
+    }
+
     return m_is_loaded;
 }
 
@@ -40,11 +58,14 @@ void overlay::unload()
 {
     unload_texture();
     unload_elements();
+    m_settings->gamepad = false;
+    m_settings->cx = 100;
+    m_settings->cy = 100;
 }
 
 bool overlay::load_cfg()
 {
-    if (m_settings->layout_file.empty())
+    if (!m_settings || m_settings->layout_file.empty())
         return false;
 
     auto cfg = new ccl_config(m_settings->layout_file, "");
@@ -52,9 +73,9 @@ bool overlay::load_cfg()
 
     if (!cfg->has_fatal_errors())
     {
-        m_settings->cx = static_cast<uint32_t>(cfg->get_int(CFG_TOTAL_WIDTH));
-        m_settings->cy = static_cast<uint32_t>(cfg->get_int(CFG_TOTAL_HEIGHT));
-
+        m_settings->cx = cfg->get_int(CFG_TOTAL_WIDTH, true);
+        m_settings->cy = cfg->get_int(CFG_TOTAL_HEIGHT, true);
+        
         auto element_id = cfg->get_string(CFG_FIRST_ID);
         const auto debug_mode = cfg->get_bool(CFG_DEBUG_FLAG, true);
         
@@ -64,7 +85,8 @@ bool overlay::load_cfg()
 #else
         {
 #endif
-            blog(LOG_INFO, "[input-overlay] Started loading of %s", m_settings->layout_file.c_str());
+            blog(LOG_INFO, "[input-overlay] Started loading of %s",
+                m_settings->layout_file.c_str());
         }
 
         while (!element_id.empty())
@@ -89,32 +111,33 @@ bool overlay::load_cfg()
 
 bool overlay::load_texture()
 {
+    if (!m_settings || m_settings->image_file.empty())
+        return false;
+
     auto flag = true;
-    if (!m_settings->image_file.empty())
+
+    if (m_image == nullptr)
     {
-        if (m_image == nullptr)
-        {
-            m_image = new gs_image_file_t();
-        }
-
-        gs_image_file_init(m_image,  m_settings->image_file.c_str());
-
-        obs_enter_graphics();
-        gs_image_file_init_texture(m_image);
-        obs_leave_graphics();
-
-        if (!m_image->loaded)
-        {
-            blog(LOG_WARNING, "[input-overlay] Error: failed to load texture %s",
-                 m_settings->image_file.c_str());
-            flag = false;
-        }
-        else
-        {
-            m_settings->cx = m_image->cx;
-            m_settings->cy = m_image->cy;
-        }
+        m_image = new gs_image_file_t();
     }
+
+    gs_image_file_init(m_image, m_settings->image_file.c_str());
+
+    obs_enter_graphics();
+    gs_image_file_init_texture(m_image);
+    obs_leave_graphics();
+    
+    if (!m_image->loaded)
+    {
+        blog(LOG_WARNING, "[input-overlay] Error: failed to load texture %s", m_settings->image_file.c_str());
+        flag = false;
+    }
+    else
+    {
+        m_settings->cx = m_image->cx;
+        m_settings->cy = m_image->cy;
+    }
+    
     return flag;
 }
 
@@ -140,14 +163,15 @@ void overlay::draw(gs_effect_t* effect)
             switch(element->get_source())
             {
             case GAMEPAD:
-                data = hook::input_data->get_by_gamepad(m_settings->gamepad, element->get_keycode());
+                data = hook::input_data->get_by_gamepad(m_settings->gamepad
+                    , element->get_keycode());
                 break;
             case DEFAULT:
                 data = hook::input_data->get_by_code(element->get_keycode());
                 break;
             default: ;
             }
-            element->draw(effect, m_image, data);
+            element->draw(effect, m_image, data, m_settings);
         }
     }
 }

@@ -5,6 +5,7 @@
  * github.com/univrsal/input-overlay
  */
 
+#include "../../sources/input_source.hpp"
 #include "element_analog_stick.hpp"
 #include "../../ccl/ccl.hpp"
 #include "../util.hpp"
@@ -20,7 +21,7 @@ void element_analog_stick::load(ccl_config* cfg, const std::string& id)
 }
 
 void element_analog_stick::draw(gs_effect_t* effect, gs_image_file_t* image,
-                                element_data* data)
+                                element_data* data, sources::shared_settings* settings)
 {
     if (data)
     {

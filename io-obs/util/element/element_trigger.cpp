@@ -5,6 +5,7 @@
  * github.com/univrsal/input-overlay
  */
 
+#include "../../sources/input_source.hpp"
 #include "../../ccl/ccl.hpp"
 #include "element_trigger.hpp"
 #include "../util.hpp"
@@ -24,7 +25,8 @@ void element_trigger::load(ccl_config* cfg, const std::string& id)
     }
 }
 
-void element_trigger::draw(gs_effect_t* effect, gs_image_file_t* image, element_data* data)
+void element_trigger::draw(gs_effect_t* effect,
+    gs_image_file_t* image, element_data* data, sources::shared_settings* settings)
 {
     if (data)
     {

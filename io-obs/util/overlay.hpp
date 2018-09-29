@@ -12,19 +12,14 @@
 #endif
 #include <memory>
 #include <vector>
-#include <map>
 #include "element/element.hpp"
-
-extern "C" {
 #include <graphics/image-file.h>
-}
 
 #include "../hook/hook_helper.hpp"
 
-namespace sources
-{
-    struct shared_settings;
-}
+class ccl_config;
+
+typedef struct obs_data obs_data_t;
 //namespace Data {
 
 class overlay

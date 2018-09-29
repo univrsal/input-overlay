@@ -36,7 +36,7 @@
 #endif
 
 #define GET_PROPS(S)    (obs_properties_get(props, S))
-
+#define GET_BOOL(X)     (obs_data_get_bool(s, X))
 #define UTIL_MAX(a,b)               (((a) > (b)) ? (a) : (b))
 #define UTIL_MIN(a,b)               (((a) < (b)) ? (a) : (b))
 #define UTIL_CLAMP(lower, x, upper) (UTIL_MIN(upper, UTIL_MAX(x, lower)))
@@ -57,6 +57,14 @@
 #define S_MONITOR_USE_CENTER        "monitor_use_center"
 #define S_MONITOR_H_CENTER          "monitor_h_center"
 #define S_MONITOR_V_CENTER          "monitor_v_center"
+
+/* Misc settings, that are automatically set*/
+#define S_SOURCE_WIDTH              "source_cx"
+#define S_SOURCE_HEIGHT             "source_cy"
+#define S_HAS_GAMEPAD               "has_gamepad"
+#define S_HAS_LEFT_STICK            "has_left_stick"
+#define S_HAS_RIGHT_STICK           "has_right_stick"
+#define S_HAS_MOUSE_MOVEMENT        "has_movement"
 
 #define T_(v)                       obs_module_text(v)
 #define T_OVERLAY_FILE              T_("OverlayFile")
@@ -216,6 +224,8 @@ void util_disable_mask(uint16_t& masks, uint16_t mask);
 void util_set_mask(uint16_t& masks, uint16_t mask, bool state);
 
 uint16_t util_mouse_to_vc(int m);
+
+bool strempty(const char* str);
 
 #ifdef DEBUG
 uint16_t random_vc();

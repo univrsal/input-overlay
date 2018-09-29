@@ -37,7 +37,10 @@ bool element_data_holder::is_empty() const
 
 void element_data_holder::add_data(const uint16_t keycode, element_data* data)
 {
+#ifdef _DEBUG
     blog(LOG_INFO, "Incoming: 0x%4X\n", keycode);
+#endif
+
     m_data_locked = true;
     if (data_exists(keycode))
     {
@@ -67,10 +70,6 @@ void element_data_holder::add_gamepad_data(const uint8_t gamepad,
     m_gamepad_data_locked = true;
     if (gamepad_data_exists(gamepad, keycode))
     {
-        if (data->get_type() == TRIGGER)
-        {
-            int a = 0;
-        }
         if (m_gamepad_data[gamepad][keycode]->is_presistent())
         {
             m_gamepad_data[gamepad][keycode]->merge(data);
@@ -111,7 +110,12 @@ void element_data_holder::remove_gamepad_data(const uint8_t gamepad, const uint1
 element_data* element_data_holder::get_by_gamepad(const uint8_t gamepad, const uint16_t keycode)
 {
     if (m_gamepad_data_locked)
+    {
+#ifdef _DEBUG
+        blog(LOG_INFO, "Suppressed game pad access, data is locked");
+#endif
         return nullptr;
+    }
     return m_gamepad_data[gamepad][keycode].get();
 }
 
@@ -136,6 +140,11 @@ void element_data_holder::remove_data(const uint16_t keycode)
 element_data* element_data_holder::get_by_code(const uint16_t keycode)
 {
     if (m_data_locked || m_data.empty())
+    {
+#ifdef _DEBUG
+        blog(LOG_INFO, "Suppressed input access, data is locked");
+#endif
         return nullptr;
+    }
     return m_data[keycode].get();
 }

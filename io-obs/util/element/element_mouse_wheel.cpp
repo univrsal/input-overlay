@@ -5,6 +5,7 @@
  * github.com/univrsal/input-overlay
  */
 
+#include "../../sources/input_source.hpp"
 #include "element_mouse_wheel.hpp"
 #include "../util.hpp"
 #include "../../hook/hook_helper.hpp"
@@ -24,7 +25,7 @@ void element_wheel::load(ccl_config* cfg, const std::string& id)
 }
 
 void element_wheel::draw(gs_effect_t* effect, gs_image_file_t* image,
-                         element_data* data)
+                         element_data* data, sources::shared_settings* settings)
 {
     if (data)
     {
@@ -56,7 +57,7 @@ void element_wheel::draw(gs_effect_t* effect, gs_image_file_t* image,
         }
     }
 
-    element_texture::draw(effect, image, data);
+    element_texture::draw(effect, image, data, settings);
 }
 
 void element_data_wheel::merge(element_data* other)

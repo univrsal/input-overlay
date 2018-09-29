@@ -16,8 +16,11 @@ extern "C" {
 #include <graphics/image-file.h>
 }
 
+typedef struct obs_data obs_data_t;
+
 namespace sources
 {
+
     struct shared_settings
     {
         std::string image_file;
@@ -31,7 +34,7 @@ namespace sources
     {
     public:
         obs_source_t* m_source = nullptr;
-
+        uint32_t cx = 0, cy = 0;
         std::unique_ptr<overlay> m_overlay{};
         shared_settings m_settings;
 
@@ -40,6 +43,7 @@ namespace sources
         {
             m_overlay = std::make_unique<overlay>(&m_settings);
             obs_source_update(m_source, settings);
+
         }
 
         ~input_source() = default;
@@ -49,8 +53,7 @@ namespace sources
         inline void render(gs_effect_t* effect) const;
     };
 
-    static bool use_monitor_center_changed(obs_properties_t* props,
-                                           obs_property_t* p, obs_data_t* s);
+    static bool use_monitor_center_changed(obs_properties_t* props, obs_property_t* p, obs_data_t* s);
 
     /* For registering */
     static obs_properties_t* get_properties_for_overlay(void* data);

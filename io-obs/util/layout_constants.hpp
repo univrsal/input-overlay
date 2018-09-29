@@ -17,16 +17,16 @@
 #define CFG_H_SPACE         "space_h"
 #define CFG_V_SPACE         "space_v"
 
-#define CFG_TOTAL_DIMENSION
+#define CFG_LEFT_STICK      "left_stick"
+#define CFG_RIGHT_STICK     "right_stick"
+#define CFG_MOUSE_MOVEMENT  "mouse_movement"
+#define CFG_GAMEPAD         "gamepad"
+
 #define CFG_TOTAL_WIDTH     "overlay_width"
 #define CFG_TOTAL_HEIGHT    "overlay_height"
 
 #define CFG_POS             "_pos"
 #define CFG_MAPPING         "_mapping"
-#define CFG_X_POS           "_x_pos"
-#define CFG_Y_POS           "_y_pos"
-#define CFG_U               "_u"
-#define CFG_V               "_v"
 #define CFG_TYPE            "_type"
 #define CFG_KEY_CODE        "_code"
 #define CFG_WIDTH           "_width"

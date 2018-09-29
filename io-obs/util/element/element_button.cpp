@@ -5,6 +5,7 @@
  * github.com/univrsal/input-overlay
  */
 
+#include "../../sources/input_source.hpp"
 #include "element_button.hpp"
 #include "../../ccl/ccl.hpp"
 
@@ -19,7 +20,7 @@ void element_button::load(ccl_config* cfg, const std::string& id)
 }
 
 void element_button::draw(gs_effect_t* effect, gs_image_file_t* image,
-                          element_data* data)
+                          element_data* data, sources::shared_settings* settings)
 {
     if (data)
     {
@@ -35,7 +36,6 @@ void element_button::draw(gs_effect_t* effect, gs_image_file_t* image,
                 element_texture::draw(effect, image, nullptr);
             }
         }
-
     }
     else
     {

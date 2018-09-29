@@ -111,7 +111,7 @@ public:
     void load(ccl_config* cfg, const std::string& id) override;
     
     void draw(gs_effect_t* effect, gs_image_file_t* image,
-              element_data* data) override;
+              element_data* data, sources::shared_settings* settings) override;
 
     data_source get_source() override { return GAMEPAD; }
 private:

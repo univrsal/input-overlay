@@ -5,7 +5,7 @@
  * github.com/univrsal/input-overlay
  */
 
-
+#include "../../sources/input_source.hpp"
 #include "element_texture.hpp"
 #include "../../ccl/ccl.hpp"
 
@@ -16,7 +16,7 @@ void element_texture::load(ccl_config* cfg, const std::string& id)
 }
 
 void element_texture::draw(gs_effect_t* effect, gs_image_file_t* image,
-                           element_data* data)
+                           element_data* data, sources::shared_settings* settings)
 {
     draw(effect, image, &m_mapping, &m_pos);
 }
@@ -24,7 +24,7 @@ void element_texture::draw(gs_effect_t* effect, gs_image_file_t* image,
 void element_texture::draw(gs_effect_t* effect, gs_image_file_t* image,
                            const gs_rect* rect) const
 {
-    draw(effect, image, rect, &m_pos);
+    draw(effect, image, rect ? rect : &m_mapping, &m_pos);
 }
 
 void element_texture::draw(gs_effect_t* effect, gs_image_file_t* image,

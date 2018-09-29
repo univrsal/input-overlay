@@ -10,10 +10,8 @@
 #include <string>
 #include "graphics/vec2.h"
 #include "../util.hpp"
-
-extern "C" {
 #include <graphics/image-file.h>
-}
+
 
 /**
  * Which data holder to read element
@@ -25,6 +23,11 @@ enum data_source
     DEFAULT,
     GAMEPAD
 };
+
+namespace sources
+{
+    class shared_settings;
+}
 
 class ccl_config;
 
@@ -72,7 +75,7 @@ public:
     virtual void load(ccl_config* cfg, const std::string& id) = 0;
 
     virtual void draw(gs_effect_t* effect, gs_image_file_t* m_image,
-                      element_data* data) = 0;
+                      element_data* data, sources::shared_settings* settings) = 0;
 
     element_type get_type() const
     {
