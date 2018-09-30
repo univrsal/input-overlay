@@ -115,7 +115,7 @@ public:
 
     data_source get_source() override { return GAMEPAD; }
 private:
-    void calc_position(vec2* v, element_data_analog_stick* d) const;
+    void calc_position(vec2* v, element_data_analog_stick* d, sources::shared_settings* settings) const;
     gs_rect m_pressed;
     element_side m_side;
     uint8_t m_radius = 0;

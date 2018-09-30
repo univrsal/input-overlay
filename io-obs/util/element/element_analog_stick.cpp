@@ -35,7 +35,7 @@ void element_analog_stick::draw(gs_effect_t* effect, gs_image_file_t* image,
                 temp = stick->left_pressed() ? &m_pressed : &m_mapping;
             else
                 temp = stick->right_pressed() ? &m_pressed : &m_mapping;
-            calc_position(&pos, stick);
+            calc_position(&pos, stick, settings);
             element_texture::draw(effect, image, temp, &pos);           
         }
     }
@@ -46,17 +46,29 @@ void element_analog_stick::draw(gs_effect_t* effect, gs_image_file_t* image,
 }
 
 void element_analog_stick::calc_position(
-    vec2* v, element_data_analog_stick* d) const
+    vec2* v, element_data_analog_stick* d, sources::shared_settings* settings) const
 {
     switch (m_side)
     {
     case SIDE_LEFT:
-        v->x += d->get_left_stick()->x * m_radius;
-        v->y += d->get_left_stick()->y * m_radius;
+#if HAVE_XINPUT
+        if (!DEAD_ZONE(d->get_left_stick()->x, settings->left_dz))
+#endif
+            v->x += d->get_left_stick()->x * m_radius;
+#if HAVE_XINPUT
+        if (!DEAD_ZONE(d->get_left_stick()->y, settings->left_dz))
+#endif
+            v->y += d->get_left_stick()->y * m_radius;
         break;
     case SIDE_RIGHT:
-        v->x += d->get_right_stick()->x * m_radius;
-        v->y += d->get_right_stick()->y * m_radius;
+#if HAVE_XINPUT
+        if (!DEAD_ZONE(d->get_right_stick()->x, settings->right_dz))
+#endif
+            v->x += d->get_right_stick()->x * m_radius;
+#if HAVE_XINPUT
+        if (!DEAD_ZONE(d->get_right_stick()->y, settings->right_dz))
+#endif
+            v->y += d->get_right_stick()->y * m_radius;
         break;
     default: ;
     }

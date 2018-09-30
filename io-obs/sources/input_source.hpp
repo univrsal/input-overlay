@@ -20,13 +20,17 @@ typedef struct obs_data obs_data_t;
 
 namespace sources
 {
-
     struct shared_settings
     {
         std::string image_file;
         std::string layout_file;
         uint32_t cx = 0, cy = 0;
+        uint32_t monitor_w = 0, monitor_h = 0;
+        uint8_t mouse_deadzone = 0;
         uint8_t gamepad = 0;
+#ifdef HAVE_XINPUT
+        float left_dz = 0.f, right_dz = 0.f;
+#endif
         /* TODO: Mouse config etc.*/
     };
 

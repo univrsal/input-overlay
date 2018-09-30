@@ -15,6 +15,7 @@
 #include "element/element_trigger.hpp"
 #include "element/element_analog_stick.hpp"
 #include "../sources/input_source.hpp"
+#include "element/element_gamepad_id.hpp"
 
 namespace sources
 {
@@ -38,7 +39,7 @@ bool overlay::load()
 {
     //m_settings = new_settings;
     unload();
-    bool image_loaded = load_texture();
+    const auto image_loaded = load_texture();
     m_is_loaded = image_loaded && load_cfg();
     
     if (!m_is_loaded)
@@ -197,7 +198,13 @@ void overlay::load_element(ccl_config* cfg, const std::string& id, const bool de
     case ANALOG_STICK:
         new_element = new element_analog_stick();
         break;
-    default: ;
+    case GAMEPAD_ID:
+        new_element = new element_gamepad_id();
+        break;
+    default:
+        if (debug)
+            blog(LOG_INFO, "Invalid element type %i for %s",
+                type, id.c_str());
     }
 
     if (new_element)

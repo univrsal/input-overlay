@@ -113,13 +113,13 @@ static pthread_t game_pad_hook_thread;
                          X_PRESSED(XINPUT_GAMEPAD_RIGHT_THUMB)
                         ? STATE_PRESSED
                         : STATE_RELEASED,
-                        static_cast<float>(pad.get_xinput()->Gamepad.sThumbLX) /
+                        pad.get_xinput()->Gamepad.sThumbLX /
                         STICK_MAX_VAL,
-                        static_cast<float>(-pad.get_xinput()->Gamepad.sThumbLY) /
+                        -pad.get_xinput()->Gamepad.sThumbLY /
                         STICK_MAX_VAL,
-                        static_cast<float>(pad.get_xinput()->Gamepad.sThumbRX) /
+                        pad.get_xinput()->Gamepad.sThumbRX /
                         STICK_MAX_VAL,
-                        static_cast<float>(-pad.get_xinput()->Gamepad.sThumbRY) /
+                        -pad.get_xinput()->Gamepad.sThumbRY /
                         STICK_MAX_VAL
                     ));
 

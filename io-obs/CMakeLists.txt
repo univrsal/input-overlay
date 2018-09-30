@@ -54,6 +54,14 @@ set(input-overlay_SOURCES
     util/element/element_trigger.hpp
     util/element/element_analog_stick.cpp
     util/element/element_analog_stick.hpp
+    util/element/element_text.cpp
+    util/element/element_text.hpp
+    util/element/element_gamepad_id.cpp
+    util/element/element_gamepad_id.hpp
+    util/element/element_mouse_movement.cpp
+    util/element/element_mouse_movement.hpp
+    util/element/element_dpad.cpp
+    util/element/element_dpad.hpp
     util/element/element_data_holder.cpp
     util/element/element_data_holder.hpp
     ../ccl/ccl.cpp

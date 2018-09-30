@@ -30,7 +30,7 @@ namespace gamepad
 #define ID_R_ANALOG_Y   4
 #define ID_R_TRIGGER    5
 
-#define STICK_MAX_VAL   127
+#define STICK_MAX_VAL   127.f
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -85,9 +85,8 @@ private:
 #include <Xinput.h>
 #include <windows.h>
 
-#define DEAD_ZONE(x, dz)    ((x < dz) && (x > -dz))
 #define X_PRESSED(b)        ((pad.get_xinput()->Gamepad.wButtons & b) != 0)
-#define STICK_MAX_VAL       32767
+#define STICK_MAX_VAL       32767.f
 
     static uint16_t pad_keys[] =
     {

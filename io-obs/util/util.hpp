@@ -41,6 +41,8 @@
 #define UTIL_MIN(a,b)               (((a) < (b)) ? (a) : (b))
 #define UTIL_CLAMP(lower, x, upper) (UTIL_MIN(upper, UTIL_MAX(x, lower)))
 
+#define DEAD_ZONE(x, dz)    ((x < dz) && (x > -dz))
+
 #define warning(format, ...) blog(LOG_WARNING, "[%s] " format, \
 		obs_source_get_name(m_source), ##__VA_ARGS__)
 

@@ -21,7 +21,8 @@ enum data_source
 {
     NONE = -1,
     DEFAULT,
-    GAMEPAD
+    GAMEPAD,
+    MOUSE_POS
 };
 
 namespace sources
