@@ -79,6 +79,8 @@ public:
     void load(ccl_config* cfg, const std::string& id) override;
     void draw(gs_effect_t* effect, gs_image_file_t* image,
               element_data* data, sources::shared_settings* settings) override;
+    
+    virtual data_source get_source() { return DEFAULT; }
 private:
     /* Middle, Up, Down */
     gs_rect m_mappings[3];

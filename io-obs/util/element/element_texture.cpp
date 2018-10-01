@@ -7,7 +7,7 @@
 
 #include "../../sources/input_source.hpp"
 #include "element_texture.hpp"
-#include "../../ccl/ccl.hpp"
+#include "../../../ccl/ccl.hpp"
 
 void element_texture::load(ccl_config* cfg, const std::string& id)
 {

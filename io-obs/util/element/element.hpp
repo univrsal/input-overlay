@@ -88,7 +88,7 @@ public:
         return m_keycode;
     }
 
-     virtual data_source get_source() { return DEFAULT; }
+     virtual data_source get_source() { return NONE; }
 protected:
     void read_mapping(ccl_config* cfg, const std::string& id);
 

@@ -22,8 +22,10 @@ namespace sources
         m_overlay->load();
 
         m_settings.gamepad = obs_data_get_int(settings, S_CONTROLLER_ID);
+#ifdef HAVE_XINPUT
         m_settings.left_dz = obs_data_get_int(settings, S_CONTROLLER_L_DEAD_ZONE) / STICK_MAX_VAL;
         m_settings.right_dz = obs_data_get_int(settings, S_CONTROLLER_R_DEAD_ZONE) / STICK_MAX_VAL;
+#endif
     }
 
     inline void input_source::tick(float seconds)

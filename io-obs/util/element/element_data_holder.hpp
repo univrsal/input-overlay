@@ -8,6 +8,7 @@
 #pragma once
 #include "element.hpp"
 #include <map>
+#include <memory>
 
 class element_data_holder
 {

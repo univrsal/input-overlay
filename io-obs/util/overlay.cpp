@@ -44,7 +44,7 @@ bool overlay::load()
     
     if (!m_is_loaded)
     {
-        m_settings->gamepad = false;
+        m_settings->gamepad = 0;
         if (!image_loaded)
         {
             m_settings->cx = 100; /* Default size */
@@ -59,7 +59,7 @@ void overlay::unload()
 {
     unload_texture();
     unload_elements();
-    m_settings->gamepad = false;
+    m_settings->gamepad = 0;
     m_settings->cx = 100;
     m_settings->cy = 100;
 }

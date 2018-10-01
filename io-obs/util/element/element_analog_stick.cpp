@@ -7,7 +7,7 @@
 
 #include "../../sources/input_source.hpp"
 #include "element_analog_stick.hpp"
-#include "../../ccl/ccl.hpp"
+#include "../../../ccl/ccl.hpp"
 #include "../util.hpp"
 
 void element_analog_stick::load(ccl_config* cfg, const std::string& id)

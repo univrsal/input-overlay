@@ -112,7 +112,7 @@ namespace sources
         auto temp = key_bundle();
         if (!hook::input_data->is_empty() || GET_MASK(MASK_INCLUDE_PAD))
         {
-            for (auto& const data : hook::input_data->m_data)
+            for (const auto& data : hook::input_data->m_data)
             {
                 if (!GET_MASK(MASK_INCLUDE_PAD) && (data.first & VC_PAD_MASK))
                     continue;

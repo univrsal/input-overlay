@@ -34,7 +34,7 @@ public:
         if (side == T_DATA_LEFT)
             m_left_trigger = val;
         else
-            m_left_trigger = val;
+            m_right_trigger = val;
         m_data_type = side;
     }
 

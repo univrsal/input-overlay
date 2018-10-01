@@ -20,6 +20,14 @@
 
 #ifdef LINUX
 #include <math.h>
+
+#ifndef VC_KP_UP /* keypad arrows are undefined on linux */
+#define VC_KP_UP 0xEE48
+#define VC_KP_DOWN 0xEE4B
+#define VC_KP_LEFT 0xEE4D
+#define VC_KP_RIGHT 0xEE50
+#endif
+
 #endif
 
 #include <string>

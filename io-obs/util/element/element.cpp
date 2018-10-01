@@ -6,7 +6,7 @@
  */
 
 #include "element.hpp"
-#include "../../ccl/ccl.hpp"
+#include "../../../ccl/ccl.hpp"
 
 void element::read_mapping(ccl_config* cfg, const std::string& id)
 {

@@ -321,7 +321,7 @@ void util_set_mask(uint16_t& masks, const uint16_t mask, const bool state)
     }
 }
 
-uint16_t util_mouse_to_vc(const int m)
+uint16_t util_mouse_to_vc(int m)
 {
 #ifndef WINDOWS /* Linux mixes right mouse and middle mouse or is windows getting it wrong? */
 	if (m == 3)

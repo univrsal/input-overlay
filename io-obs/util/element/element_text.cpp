@@ -6,7 +6,7 @@
  */
 
 #include "../../sources/input_source.hpp"
-#include "../../ccl/ccl.hpp"
+#include "../../../ccl/ccl.hpp"
 #include "../util.hpp"
 #include "element_text.hpp"
 
