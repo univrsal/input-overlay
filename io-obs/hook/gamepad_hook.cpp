@@ -131,23 +131,37 @@ namespace gamepad {
                 fread(m_packet, sizeof(char) * 8, 1, pad.dev());
                 
                 if (m_packet[ID_TYPE] == ID_BUTTON) {
-                    hook::input_data->add_gamepad_data(pad.get_id(),
-                        PAD_TO_VC(m_packet[ID_KEY_CODE]),
-                        new element_data_button(
-                        m_packet[ID_STATE_1] == ID_PRESSED ?
-                        STATE_PRESSED : STATE_RELEASED
-                        ));
+                    switch(m_packet[ID_KEY_CODE])
+                    {
+                        case PAD_L_ANALOG:
+                            hook::input_data->add_gamepad_data(pad.get_id(), VC_STICK_DATA,
+                                new element_data_analog_stick(m_packet[ID_STATE_1] == ID_PRESSED ?
+                                STATE_PRESSED : STATE_RELEASED, SIDE_LEFT));
+                            break;
+                        case PAD_R_ANALOG:
+                            hook::input_data->add_gamepad_data(pad.get_id(), VC_STICK_DATA,
+                                new element_data_analog_stick(m_packet[ID_STATE_1] == ID_PRESSED ?
+                                STATE_PRESSED : STATE_RELEASED, SIDE_RIGHT));
+                            break;
+                        default:
+                            hook::input_data->add_gamepad_data(pad.get_id(),
+                                PAD_TO_VC(m_packet[ID_KEY_CODE]),
+                                new element_data_button(
+                                m_packet[ID_STATE_1] == ID_PRESSED ?
+                                STATE_PRESSED : STATE_RELEASED
+                                ));
+                    }
                 } else {
-                    float axis = 0.f;
+                    float axis;
                     switch (m_packet[ID_KEY_CODE]) {
                         case ID_L_TRIGGER:
                             hook::input_data->add_gamepad_data(pad.get_id(), VC_TRIGGER_DATA,
-                                new element_data_trigger(SIDE_LEFT,
+                                new element_data_trigger(T_DATA_LEFT,
                                     m_packet[ID_STATE_1] / 255.f));
                             break;
                         case ID_R_TRIGGER:
                             hook::input_data->add_gamepad_data(pad.get_id(), VC_TRIGGER_DATA,
-                                new element_data_trigger(SIDE_RIGHT,
+                                new element_data_trigger(T_DATA_RIGHT,
                                 m_packet[ID_STATE_1] / 255.f));
                             break;
                         case ID_R_ANALOG_X:
@@ -162,9 +176,9 @@ namespace gamepad {
                             break;
                         case ID_R_ANALOG_Y:
                             if (m_packet[ID_STATE_2] < 128)
-                                axis = -1.f * UTIL_CLAMP(-1.f, (m_packet[ID_STATE_2]) / STICK_MAX_VAL, 1.f);
+                                axis = UTIL_CLAMP(-1.f, (m_packet[ID_STATE_2]) / STICK_MAX_VAL, 1.f);
                             else
-                                axis = -1.f * UTIL_CLAMP(-1.f, (m_packet[ID_STATE_2] - 255) /
+                                axis = UTIL_CLAMP(-1.f, (m_packet[ID_STATE_2] - 255) /
                                 STICK_MAX_VAL, 1.f);
                             hook::input_data->add_gamepad_data(pad.get_id(), VC_STICK_DATA, new element_data_analog_stick(axis,
                                 STICK_STATE_RIGHT_Y));
@@ -180,14 +194,14 @@ namespace gamepad {
                             break;
                         case ID_L_ANALOG_Y:
                             if (m_packet[ID_STATE_2] < 128)
-                                axis =
-                                    -1.f * UTIL_CLAMP(-1.f, ((float) m_packet[ID_STATE_2]) / STICK_MAX_VAL, 1.f);
+                                axis = UTIL_CLAMP(-1.f, ((float) m_packet[ID_STATE_2]) / STICK_MAX_VAL, 1.f);
                             else
-                                axis = -1.f * UTIL_CLAMP(-1.f, ((float) m_packet[ID_STATE_2] - 255) / STICK_MAX_VAL, 1.f);
+                                axis = UTIL_CLAMP(-1.f, ((float) m_packet[ID_STATE_2] - 255) / STICK_MAX_VAL, 1.f);
         
                             hook::input_data->add_gamepad_data(pad.get_id(), VC_STICK_DATA, new element_data_analog_stick(axis,
-                                STICK_STATE_RIGHT_Y));
+                                STICK_STATE_LEFT_Y));
                             break;
+                        default: ;
                     }
                 }
 

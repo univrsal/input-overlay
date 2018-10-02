@@ -37,7 +37,7 @@ public:
             m_right_trigger = val;
         m_data_type = side;
     }
-
+    
     element_data_trigger(const float left, const float right)
         : element_data(TRIGGER)
     {

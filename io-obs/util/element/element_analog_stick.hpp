@@ -33,8 +33,16 @@ public:
     element_data_analog_stick(const button_state state, const element_side side)
         : element_data(BUTTON)
     {
-        m_left_state = state;
-        m_data_type = side == SIDE_LEFT ? PRESSED_STATE_LEFT : PRESSED_STATE_RIGHT;
+        if (side == SIDE_LEFT)
+        {
+            m_left_state = state;
+            m_data_type = PRESSED_STATE_LEFT;
+        }
+        else
+        {
+            m_right_state = state;
+            m_data_type = PRESSED_STATE_RIGHT;
+        }
     }
 
     element_data_analog_stick(const float axis_value, const stick_data_type data_type)
