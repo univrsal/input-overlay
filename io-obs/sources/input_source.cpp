@@ -85,6 +85,13 @@ namespace sources
 
         return true;
     }
+    
+    bool reload_pads(obs_properties_t* props, obs_property_t* property,
+        void* data)
+    {
+        gamepad::init_pad_devices();
+        return true;
+    }
 
     obs_properties_t* get_properties_for_overlay(void* data)
     {
@@ -134,6 +141,8 @@ namespace sources
         obs_property_set_visible(obs_properties_add_int_slider(props, S_CONTROLLER_R_DEAD_ZONE,
                                       T_CONROLLER_R_DEADZONE, 1,
                                       STICK_MAX_VAL - 1, 1), false);
+#else
+        obs_properties_add_button(props, S_RELOAD_PAD_DEVICES, T_RELOAD_PAD_DEVICES, reload_pads);
 #endif
         return props;
     }

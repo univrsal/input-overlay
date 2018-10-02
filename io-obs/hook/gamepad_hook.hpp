@@ -59,6 +59,10 @@ struct GamepadState
 			fread(tmp, sizeof(char) * 8 * 12, 1, m_device_file);
 			free(tmp);
 		}
+		
+#if 1
+		blog(LOG_INFO, "Gamepad %i present: %s", m_pad_id, m_device_file ? "true" : "false");
+#endif
 	}
 
 	bool valid() { return m_device_file != nullptr && m_pad_id >= 0; }
@@ -67,7 +71,7 @@ struct GamepadState
 	{
 	    m_pad_id = pad_id;
 		m_path.clear();
-		m_path.append("/dev/input/js");
+		m_path = "/dev/input/js";
 		m_path.append(std::to_string(pad_id));
 		load();
 	}

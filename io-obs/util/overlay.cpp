@@ -74,8 +74,8 @@ bool overlay::load_cfg()
 
     if (!cfg->has_fatal_errors())
     {
-        m_settings->cx = cfg->get_int(CFG_TOTAL_WIDTH, true);
-        m_settings->cy = cfg->get_int(CFG_TOTAL_HEIGHT, true);
+        m_settings->cx = static_cast<uint32_t>(cfg->get_int(CFG_TOTAL_WIDTH, true));
+        m_settings->cy = static_cast<uint32_t>(cfg->get_int(CFG_TOTAL_HEIGHT, true));
         
         auto element_id = cfg->get_string(CFG_FIRST_ID);
         const auto debug_mode = cfg->get_bool(CFG_DEBUG_FLAG, true);

@@ -31,7 +31,7 @@ namespace gamepad {
             nullptr, 0, nullptr);
         gamepad_hook_state = hook_thread;
 #else
-        gamepad_hook_state = pthread_create(&game_pad_hook_thread, NULL, hook_method, NULL) == 0;
+        gamepad_hook_state = pthread_create(&game_pad_hook_thread, nullptr, hook_method, nullptr) == 0;
 #endif
     }
     
@@ -193,7 +193,9 @@ namespace gamepad {
 
 #endif /* LINUX */
             }
+#ifdef  WINDOWS /* Delay on linux results in buffered input */
             os_sleep_ms(25);
+#endif
         }
 #ifdef WINDOWS
         return UIOHOOK_SUCCESS;

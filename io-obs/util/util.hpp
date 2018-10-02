@@ -57,24 +57,15 @@
 /* Lang Input Overlay */
 #define S_OVERLAY_FILE              "overlay_image"
 #define S_LAYOUT_FILE               "layout_file"
-#define S_IS_CONTROLLER             "is_controller"
 #define S_CONTROLLER_ID             "controller_id"
 #define S_CONTROLLER_L_DEAD_ZONE    "controller_l_deadzone"
 #define S_CONTROLLER_R_DEAD_ZONE    "controller_r_deadzone"
-#define S_IS_MOUSE                  "is_mouse"
 #define S_MOUSE_SENS                "mouse_sens"
 #define S_MOUSE_DEAD_ZONE           "mouse_deadzone"
 #define S_MONITOR_USE_CENTER        "monitor_use_center"
 #define S_MONITOR_H_CENTER          "monitor_h_center"
 #define S_MONITOR_V_CENTER          "monitor_v_center"
-
-/* Misc settings, that are automatically set*/
-#define S_SOURCE_WIDTH              "source_cx"
-#define S_SOURCE_HEIGHT             "source_cy"
-#define S_HAS_GAMEPAD               "has_gamepad"
-#define S_HAS_LEFT_STICK            "has_left_stick"
-#define S_HAS_RIGHT_STICK           "has_right_stick"
-#define S_HAS_MOUSE_MOVEMENT        "has_movement"
+#define S_RELOAD_PAD_DEVICES		"reload_pads"
 
 #define T_(v)                       obs_module_text(v)
 #define T_OVERLAY_FILE              T_("OverlayFile")
@@ -82,11 +73,10 @@
 #define T_FILTER_IMAGE_FILES        T_("Filter.ImageFiles")
 #define T_FILTER_TEXT_FILES         T_("Filter.TextFiles")
 #define T_FILTER_ALL_FILES          T_("Filter.AllFiles")
-#define T_IS_CONTROLLER             T_("Gamepad.IsGamepad")
+#define T_RELOAD_PAD_DEVICES		T_("Gamepad.Reload")
 #define T_CONTROLLER_ID             T_("GamepadId")
 #define T_CONROLLER_L_DEADZONE      T_("Gamepad.LeftDeadZone")
 #define T_CONROLLER_R_DEADZONE      T_("Gamepad.RightDeadZone")
-#define T_IS_MOUSE                  T_("Mouse.IsMouse")
 #define T_MOUSE_SENS                T_("Mouse.Sensitivity")
 #define T_MOUSE_DEAD_ZONE           T_("Mouse.Deadzone")
 #define T_MONITOR_USE_CENTER        T_("Mouse.UseCenter")
