@@ -7,7 +7,6 @@
 
 #include "SDL_Helper.hpp"
 #include "Localization.hpp"
-#include "Constants.hpp"
 
 SDL_Helper::SDL_Helper()
 {
@@ -323,7 +322,7 @@ void SDL_Helper::util_open_url(std::string url)
 #ifdef WINDOWS
         result = system(("start " + url).c_str());
 #else
-        result = system(("xdg-open " + url).c_str());
+    result = system(("xdg-open " + url + "& disown").c_str());
 #endif
     if (result < 0)
     {
@@ -455,9 +454,12 @@ uint8_t SDL_Helper::util_font_height(const uint8_t font) const
     }
 }
 
-bool SDL_Helper::handle_controller_disconnect(const uint8_t id)
-{
+bool SDL_Helper::handle_controller_disconnect(const int32_t id) {
+    printf("id: %i\n", id);
     auto flag = false;
+    if (id < 0)
+        return false; /* Negative IDs shouldn't happen, I think */
+
     if (id < m_controllers.size())
     {
         if (m_controllers[id])
@@ -476,10 +478,13 @@ bool SDL_Helper::handle_controller_disconnect(const uint8_t id)
     return flag;
 }
 
-bool SDL_Helper::handle_controller_connect(const uint8_t id)
+bool SDL_Helper::handle_controller_connect(const int32_t id)
 {
     SDL_GameController* c;
     auto flag = false;
+    if (id < 0)
+        return false; /* Negative IDs shouldn't happen, I think */
+
     if (id < m_controllers.size())
     {
         if (!m_controllers[id])
@@ -710,9 +715,7 @@ std::string SDL_Helper::loc(const char* id) const
     return std::string(id);
 }
 
-#include "../../../libuiohook/include/uiohook.h"
 #define CCT /* Prevents util.hpp from including external headers */
-#include "../../../io-obs/util/util.hpp"
 static uint32_t KEY_MAP[][2]
 {
     /* Alphabet */

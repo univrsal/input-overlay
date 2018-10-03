@@ -142,8 +142,9 @@ public:
 
     uint8_t util_font_height(uint8_t font) const;
 
-    bool handle_controller_disconnect(uint8_t id);
-    bool handle_controller_connect(uint8_t id);
+    bool handle_controller_disconnect(int32_t id);
+
+    bool handle_controller_connect(int32_t id);
 
     void start_frame();
     void end_frame();

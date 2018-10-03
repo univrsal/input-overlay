@@ -7,16 +7,12 @@
 
 #include "Tool.hpp"
 #include "Config.hpp"
-#include "util/Texture.hpp"
-#include "util/SDL_Helper.hpp"
 #include "util/Notifier.hpp"
 #include "dialog/DialogSetup.hpp"
 #include "dialog/DialogElementSettings.hpp"
 #include "dialog/DialogHelp.hpp"
 #include "dialog/DialogNewElement.hpp"
 #include "dialog/DialogElementType.hpp"
-#include "element/ElementTexture.hpp"
-#include "element/ElementAnalogStick.hpp"
 
 Tool::Tool(SDL_Helper* helper, const char* texture, const char* config) : m_event()
 {
@@ -237,15 +233,13 @@ void Tool::handle_input()
         {
             if (m_event.key.keysym.sym == SDLK_s) // CTRL + S
                 action_performed(TOOL_ACTION_SAVE_CONFIG);
-        }
-        else if (m_event.type == SDL_JOYDEVICEADDED)
+        } else if (m_event.type == SDL_CONTROLLERDEVICEADDED)
         {
-            if (m_event.cdevice.which >= 0 && m_helper->handle_controller_connect(m_event.cdevice.which))
+            if (m_helper->handle_controller_connect(m_event.cdevice.which))
                 m_notify->add_msg(MESSAGE_INFO, m_helper->loc(LANG_MSG_GAMEPAD_CONNECTED));
-        }
-        else if (m_event.type == SDL_JOYDEVICEREMOVED)
+        } else if (m_event.type == SDL_CONTROLLERDEVICEREMOVED)
         {
-            if (m_event.cdevice.which >= 0 && m_helper->handle_controller_disconnect(m_event.cdevice.which))
+            if (m_helper->handle_controller_disconnect(m_event.cdevice.which))
                 m_notify->add_msg(MESSAGE_INFO, m_helper->loc(LANG_MSG_GAMEPAD_DISCONNECTED));
         }
         else if (m_event.type == SDL_WINDOWEVENT)
