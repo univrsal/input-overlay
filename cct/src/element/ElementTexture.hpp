@@ -18,7 +18,7 @@ public:
         /* NO-OP */
     };
     ElementTexture(
-    const const std::string& id, SDL_Point pos, SDL_Rect mapping, uint8_t z);
+    const std::string& id, SDL_Point pos, SDL_Rect mapping, uint8_t z);
 
     ElementError is_valid(Notifier* n, SDL_Helper* h) override;
 

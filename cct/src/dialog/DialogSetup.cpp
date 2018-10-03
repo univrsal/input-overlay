@@ -15,8 +15,8 @@
 #define TEXTURE_PATH    "D:\\Projects\\prog\\cpp\\input-overlay-releases\\build\\v4.6-pre\\presets\\wasd-full\\wasd.png"
 #define CONFIG_PATH     "C:\\Users\\user\\Desktop\\test.ini"
 #else
-#define TEXTURE_PATH    ""
-#define CONFIG_PATH     ""
+#define TEXTURE_PATH    m_tool->get_texture_path()
+#define CONFIG_PATH     m_tool->get_config_path()
 #endif
 
 void DialogSetup::init()

@@ -18,10 +18,12 @@
 #include "element/ElementTexture.hpp"
 #include "element/ElementAnalogStick.hpp"
 
-Tool::Tool(SDL_Helper* helper): m_event()
+Tool::Tool(SDL_Helper* helper, const char* texture, const char* config) : m_event()
 {
     m_helper = helper;
     m_state = IN_SETUP;
+    m_texture_path = texture;
+    m_config_path = config;
 }
 
 Tool::~Tool()

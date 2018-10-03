@@ -330,7 +330,7 @@ void Config::read_config(Notifier* n)
         return;
     }
 
-    if (!cfg.node_exists(CFG_FIRST_ID, true))
+    if (!cfg.node_exists(CFG_FIRST_ID))
     {
         n->add_msg(MESSAGE_INFO, m_helper->loc(LANG_MSG_CONFIG_CORRUPT));
         return;

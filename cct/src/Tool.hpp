@@ -48,7 +48,7 @@ class Tool
 {
 public:
     Tool() { m_helper = nullptr; }
-    Tool(SDL_Helper* helper);
+    Tool(SDL_Helper* helper, const char* texture, const char* config);
     ~Tool();
 
     void program_loop();
@@ -72,6 +72,10 @@ public:
     bool element_id_unique(const char* id) const;
 
     ElementError verify_element(DialogNewElement* d, bool modify_mode) const;
+    
+    const char* get_texture_path() const { return m_texture_path; }
+
+    const char* get_config_path() const { return m_config_path; }
 private:
     void add_element(Element* e) const;
 
@@ -94,4 +98,7 @@ private:
     Dialog* m_toplevel = nullptr;
     Notifier* m_notify = nullptr;
     ToolState m_state;
+
+    const char* m_texture_path = "";
+    const char* m_config_path = "";
 };

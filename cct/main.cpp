@@ -21,7 +21,15 @@ int main(int argc, char **argv)
     }
     else
     {
-        tool = Tool(helper);
+	const char* texture = "";
+	const char* config = "";
+	if (argc > 2)
+	{
+	    texture = argv[1];
+	    config = argv[2];
+	}
+
+        tool = Tool(helper, texture, config);
         tool.program_loop();
     }
 
