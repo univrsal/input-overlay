@@ -91,10 +91,14 @@ public:
     uint8_t util_wstring_text_height() const { return m_wstring_font_height; }
     uint8_t util_large_text_height() const { return m_large_font_height; }
 
+    static void util_open_url(std::string ur);
+
     template <typename ... Args>
     static std::string format(const char* format, Args ... args);
 
     bool util_check_texture_path(const char* path) const;
+
+    bool util_is_windows() const { return m_windows; }
 
     static std::wstring util_utf8_to_wstring(const std::string& str);
     static std::string util_wstring_to_utf8(const std::wstring& str);
@@ -174,8 +178,9 @@ private:
     uint8_t m_large_font_height = 0;
     uint8_t m_wstring_font_height = 0;
 
-    bool m_init_success = true;
 
+    bool m_init_success = true;
+    bool m_windows = true;
     bool* m_runflag = nullptr;
 
     bool m_ctrl_down = false;
