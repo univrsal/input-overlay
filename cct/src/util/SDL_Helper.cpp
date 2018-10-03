@@ -54,6 +54,7 @@ bool SDL_Helper::init()
         const std::string windows = "Windows";
         if (windows != SDL_GetPlatform()) /* Windows gets the icon from the exe */
         {
+            m_windows = false;
             const auto ico_surface = IMG_Load(PATH_WINDOW_ICON);
 
             if (ico_surface)
@@ -308,6 +309,25 @@ void SDL_Helper::util_cut_string(std::string& s, const int max_width, const bool
             s.append("...");
         else
             s = "..." + s;
+    }
+}
+
+void SDL_Helper::util_open_url(std::string url)
+{
+    if (url.find("http://") != 0 && url.find("https://") != 0)
+    {
+        url = "https://" + url; /* Assume https ¯\_(ツ)_/¯ */
+    }
+
+    auto result = 0;
+#ifdef WINDOWS
+        result = system(("start " + url).c_str());
+#else
+        result = system(("xdg-open " + url).c_str());
+#endif
+    if (result < 0)
+    {
+        printf("Error while opening url(%s)\n", url.c_str());
     }
 }
 

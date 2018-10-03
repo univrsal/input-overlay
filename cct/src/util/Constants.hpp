@@ -133,6 +133,7 @@
 
 /* Help and about dialog*/
 #define LANG_LABEL_HELP_AND_ABOUT       "label_help_about"
+#define LANG_BUTTON_OPEN_URL            "button_open_url"
 
 /* Dialog element type */
 #define LANG_LABEL_SELECT_ELEMENT_TYPE  "label_element_type"

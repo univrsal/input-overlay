@@ -53,4 +53,3 @@ namespace util
 {
     extern void replace(std::string& str, const char* find, const char* replace);
 }
-
