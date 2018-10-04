@@ -52,62 +52,7 @@ void element_data_dpad::merge(element_data* other)
 #else
     if (d)
     {
-        switch (d->m_direction)
-        {
-        case DPAD_UP:
-            switch (m_direction)
-            {
-            case DPAD_LEFT:
-                m_direction = DPAD_TOP_LEFT;
-                break;
-            case DPAD_RIGHT:
-                m_direction = DPAD_TOP_RIGHT;
-                break;
-            default:
-                m_direction = DPAD_UP;
-            }
-            break;
-        case DPAD_DOWN:
-            switch (m_direction)
-            {
-            case DPAD_LEFT:
-                m_direction = DPAD_BOTTOM_LEFT;
-                break;
-            case DPAD_RIGHT:
-                m_direction = DPAD_BOTTOM_RIGHT;
-                break;
-            default:
-                m_direction = DPAD_DOWN;
-            }
-            break;
-        case DPAD_LEFT:
-            switch (m_direction)
-            {
-            case DPAD_UP:
-                m_direction = DPAD_TOP_LEFT;
-                break;
-            case DPAD_DOWN:
-                m_direction = DPAD_BOTTOM_LEFT;
-                break;
-            default:
-                m_direction = DPAD_LEFT;
-            }
-            break;
-        case DPAD_RIGHT:
-            switch (m_direction)
-            {
-            case DPAD_UP:
-                m_direction = DPAD_TOP_RIGHT;
-                break;
-            case DPAD_DOWN:
-                m_direction = DPAD_BOTTOM_RIGHT;
-                break;
-            default:
-                m_direction = DPAD_RIGHT;
-            }
-            break;
-        default: ;
-        }
+        m_direction = merge_directions(m_directions, d->m_direction);
     }
 #endif /* !WINDOWS*/
 }
