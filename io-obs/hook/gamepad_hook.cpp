@@ -12,6 +12,7 @@
 #include "../util/element/element_button.hpp"
 #include "../util/element/element_analog_stick.hpp"
 #include "../util/element/element_trigger.hpp"
+#include "../util/element/element_dpad.hpp"
 
 namespace gamepad {
     bool gamepad_hook_state = false;
@@ -89,6 +90,8 @@ namespace gamepad {
                     continue;
 
 #ifdef WINDOWS
+                dpad_direction dir[] = { DPAD_CENTER, DPAD_CENTER };
+
                 for (const auto& button : pad_keys)
                 {
                     const auto state = X_PRESSED(button)
@@ -97,7 +100,43 @@ namespace gamepad {
                     hook::input_data->add_gamepad_data(
                         pad.get_id(), xinput_to_vc(button),
                         new element_data_button(state));
+
+                    if (state == STATE_PRESSED)
+                    {
+                        switch(button)
+                        {
+                        case XINPUT_GAMEPAD_DPAD_UP:
+                            if (!dir[0])
+                                dir[0] = DPAD_UP;
+                            else
+                                dir[1] = DPAD_UP;
+                            break;                    
+                        case XINPUT_GAMEPAD_DPAD_DOWN:
+                            if (!dir[0])
+                                dir[0] = DPAD_DOWN;
+                            else
+                                dir[1] = DPAD_DOWN;
+                            break;                    
+                        case XINPUT_GAMEPAD_DPAD_LEFT:
+                            if (!dir[0])
+                                dir[0] = DPAD_LEFT;
+                            else
+                                dir[1] = DPAD_LEFT;
+                            break;
+                        case XINPUT_GAMEPAD_DPAD_RIGHT:
+                            if (!dir[0])
+                                dir[0] = DPAD_RIGHT;
+                            else
+                                dir[1] = DPAD_RIGHT;
+                            break;
+                        default: ;
+                        }   
+                    }
                 }
+
+                /* Dpad direction */
+                hook::input_data->add_gamepad_data(pad.get_id(), VC_DPAD_DATA,
+                    new element_data_dpad(dir[0], dir[1]));
 
                 /* Analog sticks */
                 hook::input_data->add_gamepad_data(pad.get_id(), VC_STICK_DATA,

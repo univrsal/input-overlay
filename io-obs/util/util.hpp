@@ -179,6 +179,7 @@
 #define VC_PAD_MASK         0xEC00
 #define VC_STICK_DATA       0xEC30
 #define VC_TRIGGER_DATA     0xEC31
+#define VC_DPAD_DATA        0xEC32
 
 #define PAD_TO_VC(a)        (a | VC_PAD_MASK)
 #define PAD_COUNT 4

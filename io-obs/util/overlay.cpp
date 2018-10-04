@@ -16,6 +16,7 @@
 #include "element/element_analog_stick.hpp"
 #include "../sources/input_source.hpp"
 #include "element/element_gamepad_id.hpp"
+#include "element/element_dpad.hpp"
 
 namespace sources
 {
@@ -200,6 +201,9 @@ void overlay::load_element(ccl_config* cfg, const std::string& id, const bool de
         break;
     case GAMEPAD_ID:
         new_element = new element_gamepad_id();
+        break;
+    case DPAD_STICK:
+        new_element = new element_dpad();
         break;
     default:
         if (debug)

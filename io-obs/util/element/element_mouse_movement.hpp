@@ -25,7 +25,7 @@ public:
 
     }
 
-    bool is_presistent() override { return true; }
+    bool is_persistent() override { return true; }
 
     void merge(element_data* other) override;
 

@@ -46,7 +46,7 @@ public:
     }
 
     /* true if data should not me removed */
-    virtual bool is_presistent() { return false; }
+    virtual bool is_persistent() { return false; }
 
     /* used if is persistent */
     virtual void merge(element_data* other)

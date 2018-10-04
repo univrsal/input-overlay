@@ -44,7 +44,7 @@ void element_data_holder::add_data(const uint16_t keycode, element_data* data)
     m_data_locked = true;
     if (data_exists(keycode))
     {
-        if (m_data[keycode]->is_presistent())
+        if (m_data[keycode]->is_persistent())
         {
             m_data[keycode]->merge(data);
             delete data; /* Existing data was used -> delete other one */
@@ -70,7 +70,7 @@ void element_data_holder::add_gamepad_data(const uint8_t gamepad,
     m_gamepad_data_locked = true;
     if (gamepad_data_exists(gamepad, keycode))
     {
-        if (m_gamepad_data[gamepad][keycode]->is_presistent())
+        if (m_gamepad_data[gamepad][keycode]->is_persistent())
         {
             m_gamepad_data[gamepad][keycode]->merge(data);
 
