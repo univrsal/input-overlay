@@ -17,10 +17,10 @@ public:
         Separate constructors are used on linux
         because the values can't be queried together
     */
-    element_data_dpad()
-        : element_data(TRIGGER)
+    element_data_dpad(dpad_direction d)
+        : element_data(DPAD_STICK)
     {
-
+        m_direction = d;
     }
 
     bool is_presistent() override { return true; }
@@ -28,7 +28,7 @@ public:
     void merge(element_data* other) override;
 
 private:
-
+    dpad_direction m_direction = DPAD_CENTER;
 };
 
 class element_dpad : public element_texture
