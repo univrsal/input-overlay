@@ -31,7 +31,7 @@ void obs_module_unload()
 {
     if (gamepad::gamepad_hook_state)
         gamepad::end_pad_hook();
-
+    
     if (hook::hook_initialized)
         hook::end_hook();
 }

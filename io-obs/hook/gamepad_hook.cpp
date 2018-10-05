@@ -16,6 +16,7 @@
 
 namespace gamepad {
     bool gamepad_hook_state = false;
+    bool gamepad_hook_run_flag = true;
     GamepadState pad_states[PAD_COUNT];
 
 #ifdef WINDOWS
@@ -68,12 +69,10 @@ namespace gamepad {
 #endif
     
     void end_pad_hook() {
-        for (auto &state : pad_states)
-            state.unload();
+        gamepad_hook_run_flag = false;
+
 #ifdef WINDOWS
         CloseHandle(hook_thread);
-#else
-        pthread_cancel(game_pad_hook_thread);
 #endif
     }
     
@@ -82,10 +81,10 @@ namespace gamepad {
     DWORD WINAPI hook_method(const LPVOID arg)
 #else
     
-    void *hook_method(void *)
+    void* hook_method(void *)
 #endif
     {
-        while (true) {
+        while (gamepad_hook_run_flag) {
             if (!hook::input_data)
                 break;
             for (auto &pad : pad_states) {
@@ -285,10 +284,13 @@ namespace gamepad {
             os_sleep_ms(25);
 #endif
         }
+    
+        for (auto &state : pad_states)
+            state.unload();
 #ifdef WINDOWS
         return UIOHOOK_SUCCESS;
 #else
-        return nullptr;
+        pthread_exit(nullptr);
 #endif
     }
 }

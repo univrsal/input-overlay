@@ -12,8 +12,6 @@
 
 namespace gamepad
 {
-    extern bool gamepad_hook_state;
-
     /* Linux implementation */
 #ifdef LINUX
 #define ID_TYPE         6
@@ -36,9 +34,8 @@ namespace gamepad
 #include <stdlib.h>
 #include <string>
 #include <malloc.h>
-#ifdef LINUX
 #include <unistd.h>
-#endif
+
 struct GamepadState
 {
 	~GamepadState()
@@ -48,6 +45,7 @@ struct GamepadState
 
 	void unload()
 	{
+	    return;
 		if (m_device_file)
 			fclose(m_device_file);
 		m_device_file = nullptr;
@@ -88,7 +86,7 @@ private:
 	std::string m_path;
 	int8_t m_pad_id = -1;
 };
-#endif
+#endif /* LINUX */
 
     /* Windows implementation */
 #ifdef HAVE_XINPUT
@@ -169,23 +167,26 @@ private:
         int8_t m_pad_id = -1;
     };
 
-#endif // HAVE_XINPUT
-
-    /* Four structs containing info to query gamepads */
-    extern GamepadState pad_states[PAD_COUNT];
-
+#endif /* HAVE_XINPUT */
+    
     void start_pad_hook();
 
 #ifdef WINDOWS
+    static uint16_t xinput_to_vc(uint16_t code);
+    
     DWORD WINAPI hook_method(const LPVOID arg);
 #else
     void* hook_method(void*);
 #endif
-
-#ifdef WINDOWS
-    static uint16_t xinput_to_vc(uint16_t code);
-#endif
+    
     void end_pad_hook();
 
     void init_pad_devices();
+    
+    /* Four structs containing info to query gamepads */
+    extern GamepadState pad_states[PAD_COUNT];
+    /* Init state of hook */
+    extern bool gamepad_hook_state;
+    /* False will end thread */
+    extern bool gamepad_hook_run_flag;
 }
