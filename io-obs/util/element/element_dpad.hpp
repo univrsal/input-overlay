@@ -40,6 +40,7 @@ public:
 
     dpad_direction get_direction() const { return m_direction; }
 
+    button_state get_state() { return m_state; }
 private:
     dpad_direction m_direction = DPAD_CENTER;
     button_state m_state = STATE_PRESSED;

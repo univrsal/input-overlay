@@ -27,7 +27,7 @@ void element_dpad::draw(gs_effect_t* effect,
     gs_image_file_t* image, element_data* data, sources::shared_settings* settings)
 {
     const auto d = dynamic_cast<element_data_dpad*>(data);
-
+    
     if (d && d->get_direction() != DPAD_CENTER)
     {
         /* Enum starts at one (Center doesn't count)*/
@@ -38,6 +38,7 @@ void element_dpad::draw(gs_effect_t* effect,
     {
         element_texture::draw(effect, image, nullptr);        
     }
+    UNUSED_PARAMETER(settings);
 }
 
 void element_data_dpad::merge(element_data* other)
@@ -52,7 +53,55 @@ void element_data_dpad::merge(element_data* other)
 #else
     if (d)
     {
-        m_direction = merge_directions(m_directions, d->m_direction);
+        if (d->get_state() == STATE_PRESSED)
+        {
+            m_direction = merge_directions(m_direction, d->m_direction);
+        }
+        else
+        {
+            if (m_direction == d->m_direction)
+            {
+                m_direction = DPAD_CENTER;
+            }
+            else {
+                switch (m_direction)
+                {
+                    case DPAD_TOP_LEFT:
+                        switch (d->m_direction)
+                        {
+                            case DPAD_LEFT: m_direction = DPAD_UP; break;
+                            case DPAD_UP: m_direction = DPAD_LEFT; break;
+                            default: ;
+                        }
+                        break;
+                    case DPAD_TOP_RIGHT:
+                        switch (d->m_direction)
+                        {
+                            case DPAD_UP: m_direction = DPAD_RIGHT; break;
+                            case DPAD_RIGHT: m_direction = DPAD_UP; break;
+                            default: ;
+                        }
+                        break;
+                    case DPAD_BOTTOM_LEFT:
+                        switch (d->m_direction)
+                        {
+                            case DPAD_LEFT: m_direction = DPAD_DOWN; break;
+                            case DPAD_DOWN: m_direction = DPAD_LEFT; break;
+                            default: ;
+                        }
+                        break;
+                    case DPAD_BOTTOM_RIGHT:
+                        switch (d->m_direction)
+                        {
+                            case DPAD_RIGHT: m_direction = DPAD_DOWN; break;
+                            case DPAD_DOWN: m_direction = DPAD_RIGHT; break;
+                            default: ;
+                        }
+                        break;
+                    default: ;
+                }
+            }
+        }
     }
 #endif /* !WINDOWS*/
 }

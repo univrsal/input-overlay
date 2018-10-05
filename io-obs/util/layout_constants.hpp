@@ -108,8 +108,8 @@ enum icon_direction
 
 enum button_state
 {
+    STATE_RELEASED,
     STATE_PRESSED,
-    STATE_RELEASED
 };
 
 enum wheel_direction

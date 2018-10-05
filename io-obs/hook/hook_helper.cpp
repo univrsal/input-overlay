@@ -127,7 +127,6 @@ namespace hook
 
     void end_hook()
     {
-        
 #ifdef WINDOWS
         /* Create event handles for the thread hook. */
         CloseHandle(hook_thread);
@@ -139,7 +138,6 @@ namespace hook
 		pthread_mutex_destroy(&hook_control_mutex);
 		pthread_cond_destroy(&hook_control_cond);
 #endif
-
         delete input_data;
         input_data = nullptr;
         hook_stop();
@@ -161,9 +159,9 @@ namespace hook
         hook_control_cond = CreateEvent(nullptr, TRUE, FALSE,
                                         TEXT("hook_control_cond"));
 #else
-		pthread_mutex_init(&hook_running_mutex, NULL);
-		pthread_mutex_init(&hook_control_mutex, NULL);
-		pthread_cond_init(&hook_control_cond, NULL);
+		pthread_mutex_init(&hook_running_mutex, nullptr);
+		pthread_mutex_init(&hook_control_mutex, nullptr);
+		pthread_cond_init(&hook_control_cond, nullptr);
 #endif
 
         /* Set the logger callback for library output. */

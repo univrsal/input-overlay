@@ -36,7 +36,9 @@ namespace gamepad
 #include <stdlib.h>
 #include <string>
 #include <malloc.h>
-
+#ifdef LINUX
+#include <unistd.h>
+#endif
 struct GamepadState
 {
 	~GamepadState()
@@ -48,6 +50,7 @@ struct GamepadState
 	{
 		if (m_device_file)
 			fclose(m_device_file);
+		m_device_file = nullptr;
 	}
 
 	void load()
@@ -60,7 +63,7 @@ struct GamepadState
 			free(tmp);
 		}
 		
-#if 1
+#if _DEBUG
 		blog(LOG_INFO, "Gamepad %i present: %s", m_pad_id, m_device_file ? "true" : "false");
 #endif
 	}
@@ -69,6 +72,7 @@ struct GamepadState
 
 	void init(uint8_t pad_id)
 	{
+	    unload();
 	    m_pad_id = pad_id;
 		m_path.clear();
 		m_path = "/dev/input/js";

@@ -715,7 +715,10 @@ std::string SDL_Helper::loc(const char* id) const
     return std::string(id);
 }
 
-#define CCT /* Prevents util.hpp from including external headers */
+
+#include "../../../libuiohook/include/uiohook.h"
+#include "../../../io-obs/util/util.hpp"
+
 static uint32_t KEY_MAP[][2]
 {
     /* Alphabet */
@@ -789,7 +792,6 @@ static uint32_t KEY_MAP[][2]
     {VC_MOUSE_BUTTON3, TO_MOUSE_MASK(SDL_BUTTON_MIDDLE)}, {VC_MOUSE_BUTTON4, TO_MOUSE_MASK(SDL_BUTTON_X1)},
     {VC_MOUSE_BUTTON5, TO_MOUSE_MASK(SDL_BUTTON_X2)}
 };
-#define KEY_MAP_SIZE 132
 
 uint32_t SDL_Helper::vc_to_sdl_key(const uint16_t key)
 {

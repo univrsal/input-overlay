@@ -7,6 +7,7 @@
 
 #pragma once
 
+#define CCT /* Prevent external headers from including obs headers */
 #include <SDL.h>
 #include <SDL_ttf.h>
 #include <SDL_image.h>

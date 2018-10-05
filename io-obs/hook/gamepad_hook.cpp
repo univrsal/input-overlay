@@ -37,9 +37,12 @@ namespace gamepad {
     }
     
     void init_pad_devices() {
+        
         uint8_t id = 0;
         for (auto &state : pad_states)
+        {
             state.init(id++);
+        }
     }
 
 #ifdef WINDOWS
@@ -65,13 +68,13 @@ namespace gamepad {
 #endif
     
     void end_pad_hook() {
+        for (auto &state : pad_states)
+            state.unload();
 #ifdef WINDOWS
         CloseHandle(hook_thread);
 #else
         pthread_cancel(game_pad_hook_thread);
 #endif
-        for (auto &state : pad_states)
-            state.unload();
     }
     
     /* Background process for quering game pads */
@@ -183,12 +186,44 @@ namespace gamepad {
                                 STATE_PRESSED : STATE_RELEASED, SIDE_RIGHT));
                             break;
                         default:
-                            hook::input_data->add_gamepad_data(pad.get_id(),
-                                PAD_TO_VC(m_packet[ID_KEY_CODE]),
-                                new element_data_button(
-                                m_packet[ID_STATE_1] == ID_PRESSED ?
-                                STATE_PRESSED : STATE_RELEASED
-                                ));
+                            switch(m_packet[ID_KEY_CODE])
+                            {
+                                case PAD_DPAD_DOWN:
+                                    hook::input_data->add_gamepad_data(pad.get_id(),
+                                        VC_DPAD_DATA, new element_data_dpad(
+                                            DPAD_DOWN, m_packet[ID_STATE_1] == ID_PRESSED ?
+                                                       STATE_PRESSED : STATE_RELEASED
+                                            ));
+                                break;
+                                case PAD_DPAD_UP:
+                                    hook::input_data->add_gamepad_data(pad.get_id(),
+                                                                       VC_DPAD_DATA, new element_data_dpad(
+                                            DPAD_UP, m_packet[ID_STATE_1] == ID_PRESSED ?
+                                                       STATE_PRESSED : STATE_RELEASED
+                                        ));
+                                    break;
+                                case PAD_DPAD_LEFT:
+                                    hook::input_data->add_gamepad_data(pad.get_id(),
+                                        VC_DPAD_DATA, new element_data_dpad(
+                                            DPAD_LEFT, m_packet[ID_STATE_1] == ID_PRESSED ?
+                                                       STATE_PRESSED : STATE_RELEASED
+                                        ));
+                                    break;
+                                case PAD_DPAD_RIGHT:
+                                    hook::input_data->add_gamepad_data(pad.get_id(),
+                                        VC_DPAD_DATA, new element_data_dpad(
+                                            DPAD_RIGHT, m_packet[ID_STATE_1] == ID_PRESSED ?
+                                                       STATE_PRESSED : STATE_RELEASED
+                                        ));
+                                    break;
+                                default:
+                                    hook::input_data->add_gamepad_data(pad.get_id(),
+                                        PAD_TO_VC(m_packet[ID_KEY_CODE]),
+                                        new element_data_button(
+                                        m_packet[ID_STATE_1] == ID_PRESSED ?
+                                        STATE_PRESSED : STATE_RELEASED
+                                        ));
+                            }
                     }
                 } else {
                     float axis;
