@@ -62,9 +62,9 @@ namespace sources
         obs_property_set_visible(GET_PROPS(S_CONTROLLER_R_DEAD_ZONE), flags & FLAG_RIGHT_STICK);
         obs_property_set_visible(GET_PROPS(S_CONTROLLER_ID), flags & FLAG_GAMEPAD
             || (flags & FLAG_LEFT_STICK || flags & FLAG_RIGHT_STICK));
-        obs_property_set_visible(GET_PROPS(S_MOUSE_SENS), flags && FLAG_MOUSE);
-        obs_property_set_visible(GET_PROPS(S_MONITOR_USE_CENTER), flags && FLAG_MOUSE);
-        obs_property_set_visible(GET_PROPS(S_MOUSE_DEAD_ZONE), flags && FLAG_MOUSE);
+        obs_property_set_visible(GET_PROPS(S_MOUSE_SENS), flags & FLAG_MOUSE);
+        obs_property_set_visible(GET_PROPS(S_MONITOR_USE_CENTER), flags & FLAG_MOUSE);
+        obs_property_set_visible(GET_PROPS(S_MOUSE_DEAD_ZONE), flags & FLAG_MOUSE);
 
         return true;
     }
