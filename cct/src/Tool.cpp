@@ -27,10 +27,9 @@ Tool::~Tool()
     close_top_level();
     m_helper = nullptr;
 
-    if (m_config)
-        delete m_config;
-    if (m_notify)
-        delete m_notify;
+
+    delete m_config;
+    delete m_notify;
 
     m_notify = nullptr;
     m_config = nullptr;
@@ -190,7 +189,7 @@ ElementError Tool::verify_element(DialogNewElement* d, const bool modify_mode) c
     */
     if (!modify_mode)
     {
-        if (element_id_unique(d->get_id()->c_str()))
+        if (!element_id_unique(d->get_id()->c_str()))
         {
             m_notify->add_msg(MESSAGE_ERROR, m_helper->loc(LANG_ERROR_ID_NOT_UNIQUE));
             return ID_NOT_UNIQUE;         

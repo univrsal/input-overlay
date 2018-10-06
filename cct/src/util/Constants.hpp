@@ -15,8 +15,7 @@
 #define SDL_WINDOW_TITLE                "io-cct"
 
 /* Resources */
-#define PATH_ROBOTO_FONT                "res/roboto-regular.ttf"
-#define PATH_UNICODE_FONT               "res/antique-maru.ttf"
+#define PATH_UNICODE_FONT               "res/unifont.ttf"
 #define PATH_TRANSLATIONS               "res/lang"
 #define PATH_WINDOW_ICON                "res/icon.png"
 

@@ -39,8 +39,7 @@ Config::Config(const char* texture, const char* config, const SDL_Point def_dim,
 
 Config::~Config()
 {
-    if (m_atlas)
-        delete m_atlas;
+    delete m_atlas;
     m_atlas = nullptr;
     m_helper = nullptr;
     m_settings = nullptr;

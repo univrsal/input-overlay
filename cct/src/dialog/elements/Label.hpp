@@ -39,12 +39,13 @@ public:
 
     void refresh() override;
 
-    void set_font(const uint8_t font) { m_font = UTIL_CLAMP(FONT_ROBOTO_SMALL, font, FONT_WSTRING); }
+    void set_font(const uint8_t font) { m_font = UTIL_CLAMP(FONT_WSTRING, font, FONT_WSTRING_LARGE); }
+
 private:
     std::string m_unlocalized_text;
     std::vector<std::unique_ptr<std::string>> m_lines;
 
     SDL_Color* m_color;
 
-    uint8_t m_font = FONT_ROBOTO_SMALL;
+    uint8_t m_font = FONT_WSTRING;
 };

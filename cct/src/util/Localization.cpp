@@ -44,17 +44,15 @@ void Localization::load_lang_by_id(uint8_t id)
         if (id == m_english_id)
         {
             m_current.reset();
-            m_roman = true;
             return; /* English is always loaded */
         }
 
-        LangFile* lang = m_langfiles[id].get();
+        const auto lang = m_langfiles[id].get();
         if (lang)
         {
             m_current.reset();
-            std::string path = PATH_TRANSLATIONS + std::string("/") + lang->file_name;
+            auto path = PATH_TRANSLATIONS + std::string("/") + lang->file_name;
             m_current = std::make_unique<ccl_config>(path, "");
-            m_roman = m_current->get_bool("roman_letters");
         }
         else
         {
@@ -86,11 +84,6 @@ std::string Localization::localize(const char* id) const
         value = std::string(id);
     }
     return value;
-}
-
-bool Localization::is_roman() const
-{
-    return m_roman;
 }
 
 void Localization::scan_lang_folder()
@@ -173,11 +166,11 @@ void Localization::scan_lang_folder()
 
 void Localization::load_default_language()
 {
-    bool flag = true;
+    auto flag = true;
 
     if (m_valid)
     {
-        std::string path = PATH_TRANSLATIONS + std::string("/en_US.ini");
+        auto path = PATH_TRANSLATIONS + std::string("/en_US.ini");
         m_english = std::make_unique<ccl_config>(path, "");
         if (!m_english->is_empty())
         {

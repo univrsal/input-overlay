@@ -47,5 +47,5 @@ protected:
     std::string m_localized_text;
     std::string m_unlocalized_text;
     SDL_Point m_text_pos;
-    uint8_t m_font = FONT_ROBOTO_SMALL;
+    uint8_t m_font = FONT_WSTRING;
 };

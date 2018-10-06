@@ -152,7 +152,7 @@ void DialogNewElement::action_performed(const int8_t action_id)
         m_tool->queue_dialog_close();
         break;
     case ACTION_TEXT_TYPED:
-        if (!m_selector->selection_changing() &&
+        if (m_selector && !m_selector->selection_changing() &&
             m_u && m_v && m_w && m_h)
         {
             m_selection.x = SDL_strtol(m_u->c_str(), nullptr, 10);

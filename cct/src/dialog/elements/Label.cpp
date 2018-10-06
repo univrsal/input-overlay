@@ -55,7 +55,7 @@ void Label::draw_background()
                                         get_top() + y,
                                         m_color, m_font);
             }
-            y += LINE_SPACE + get_helper()->util_font_height(m_font);
+            y += LINE_SPACE + get_helper()->util_default_text_height();
             i++;
         }
     }
@@ -93,6 +93,5 @@ void Label::refresh()
     else
     {
         set_text(get_helper()->loc(m_unlocalized_text.c_str()));
-        m_font = get_helper()->localization()->get_font();
     }
 }

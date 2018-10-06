@@ -8,21 +8,21 @@
  * github.com/univrsal/input-overlay
  */
 
-Dialog::Dialog(SDL_Helper* sdl, const SDL_Rect size, std::string title): m_offset_x(0)
+Dialog::Dialog(SDL_Helper* sdl, const SDL_Rect size, const std::string& title): m_offset_x(0)
 {
     m_helper = sdl;
     m_dimensions = size;
-    m_title = std::move(title);
+    m_title = title;
     m_title_bar = {m_dimensions.x + 5, m_dimensions.y + 5, m_dimensions.w - 10, 20};
 }
 
-Dialog::Dialog(SDL_Helper* sdl, const SDL_Point size, std::string title): m_offset_x(0)
+Dialog::Dialog(SDL_Helper* sdl, const SDL_Point size, const std::string& title): m_offset_x(0)
 {
     const auto window_size = sdl->util_window_size();
     const SDL_Rect temp = {(*window_size).x / 2 - size.x / 2, (*window_size).y / 2 - size.y / 2, size.x, size.y};
     m_helper = sdl;
     m_dimensions = temp;
-    m_title = std::move(title);
+    m_title = title;
     m_title_bar = {m_dimensions.x + 5, m_dimensions.y + 5, m_dimensions.w - 10, 20};
 }
 
@@ -277,6 +277,7 @@ void Dialog::set_dimension(const uint16_t w, const uint16_t h)
 {
     m_dimensions.w = w;
     m_dimensions.h = h;
+    m_title_bar = { m_dimensions.x + 5, m_dimensions.y + 5, m_dimensions.w - 10, 20 };
 }
 
 void Dialog::set_flags(const uint16_t flags)

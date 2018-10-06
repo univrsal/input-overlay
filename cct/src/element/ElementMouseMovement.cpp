@@ -34,7 +34,7 @@ ElementError ElementMouseMovement::is_valid(Notifier* n, SDL_Helper* h)
 void ElementMouseMovement::write_to_file(ccl_config* cfg, SDL_Point* default_dim)
 {
     ElementTexture::write_to_file(cfg, default_dim);
-    std::string comment = "Movement type of " + m_id;
+    auto comment = "Movement type of " + m_id;
     cfg->add_int(m_id + CFG_MOUSE_TYPE, comment, m_type, true);
     comment = "Movement radius of " + m_id;
     cfg->add_int(m_id + CFG_MOUSE_RADIUS, comment, m_radius, true);

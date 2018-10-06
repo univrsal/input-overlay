@@ -12,12 +12,11 @@
 #define FONT_BLENDED        2
 
 #define FONT_SMALL          10
-#define FONT_DEFAULT        15
+#define FONT_DEFAULT        16
 #define FONT_LARGE          18
 
-#define FONT_ROBOTO_SMALL   0
-#define FONT_ROBOTO_LARGE   1
-#define FONT_WSTRING        2
+#define FONT_WSTRING   0
+#define FONT_WSTRING_LARGE  1
 
 #include <SDL_ttf.h>
 #include <string>

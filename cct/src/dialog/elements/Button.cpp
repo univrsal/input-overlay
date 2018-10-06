@@ -44,7 +44,6 @@ void Button::refresh()
     else
     {
         m_localized_text = get_helper()->loc(m_unlocalized_text.c_str());
-        m_font = get_helper()->localization()->get_font();
     }
     resize();
 }

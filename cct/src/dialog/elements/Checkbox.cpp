@@ -43,8 +43,7 @@ Checkbox::~Checkbox()
 
 void Checkbox::close()
 {
-    if (m_label)
-        delete m_label;
+    delete m_label;
     m_label = nullptr;
 }
 
@@ -62,10 +61,11 @@ void Checkbox::draw_background()
 {
     m_label->draw_background();
 
-    get_helper()->util_fill_rect(get_left(), get_top()
-                                 + m_checkbox.y, CHECKBOX_SIZE, CHECKBOX_SIZE, get_helper()->palette()->dark_gray());
-    get_helper()->util_draw_rect(get_left(), get_top()
-                                 + m_checkbox.y, CHECKBOX_SIZE, CHECKBOX_SIZE, get_helper()->palette()->light_gray());
+
+    get_helper()->util_fill_rect(get_left(), m_parent_dialog->get_top()
+        + m_checkbox.y, CHECKBOX_SIZE, CHECKBOX_SIZE, get_helper()->palette()->dark_gray());
+    get_helper()->util_draw_rect(get_left(), m_parent_dialog->get_top()
+        + m_checkbox.y, CHECKBOX_SIZE, CHECKBOX_SIZE, get_helper()->palette()->light_gray());
     if (m_focused)
     {
         get_helper()->util_draw_rect(get_left() - 2, get_top() - 2,
@@ -79,7 +79,7 @@ void Checkbox::draw_foreground()
     m_label->draw_foreground();
     if (m_state)
     {
-        get_helper()->util_fill_rect(get_left() + 4, get_top() + m_checkbox.y + 4,
+        get_helper()->util_fill_rect(get_left() + 4, m_parent_dialog->get_top() + m_checkbox.y + 4,
                                      CHECKBOX_SIZE - 8, CHECKBOX_SIZE - 8, get_helper()->palette()->green());
     }
 }

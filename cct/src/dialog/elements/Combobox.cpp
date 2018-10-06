@@ -13,7 +13,7 @@ Combobox::Combobox(const int8_t id, const int x, const int y, const int w, const
     const SDL_Rect temp = {x, y, w, h};
     m_flags = flags;
     GuiElement::init(parent, temp, id);
-    m_item_v_space = get_helper()->util_font_height(FONT_WSTRING) + ITEM_V_SPACE;
+    m_item_v_space = get_helper()->util_default_text_height() + ITEM_V_SPACE;
 }
 
 void Combobox::close()
@@ -27,7 +27,7 @@ void Combobox::draw_background()
 {
     get_helper()->util_fill_rect(get_dimensions(), get_helper()->palette()->gray());
     get_helper()->util_text(&ARROW_DOWN, get_right() - 18,
-                            get_top() + 2, get_helper()->palette()->white(), FONT_WSTRING);
+                            get_top() + 2, get_helper()->palette()->white());
 
     if (m_focused)
     {
@@ -45,10 +45,7 @@ void Combobox::draw_foreground()
 
     if (!m_items.empty() && m_selected_id >= 0 && m_selected_id < m_items.size())
         get_helper()->util_text(&m_items[m_selected_id], get_left() + 2, get_top() + 2,
-                                get_helper()->palette()->white(),
-                                m_flags & ELEMENT_UNLOCALIZED
-                                    ? FONT_WSTRING
-                                    : get_helper()->localization()->get_font());
+                                get_helper()->palette()->white());
 
     if (m_list_open)
     {
@@ -62,15 +59,12 @@ void Combobox::draw_foreground()
         get_helper()->util_draw_rect(&temp, get_helper()->palette()->light_gray());
 
         temp.y = get_bottom() + ITEM_V_SPACE + m_hovered_id * m_item_v_space;
-        temp.h = get_helper()->util_font_height(FONT_WSTRING);
+        temp.h = get_helper()->util_default_text_height();
         get_helper()->util_fill_rect(&temp, get_helper()->palette()->light_gray());
 
         for (auto const& element : m_items)
         {
-            get_helper()->util_text(&element, get_left() + 2, y, get_helper()->palette()->white(),
-                                    m_flags & ELEMENT_UNLOCALIZED
-                                        ? FONT_WSTRING
-                                        : get_helper()->localization()->get_font());
+            get_helper()->util_text(&element, get_left() + 2, y, get_helper()->palette()->white());
             y += m_item_v_space;
         }
     }
@@ -81,14 +75,14 @@ bool Combobox::can_select()
     return true;
 }
 
-void Combobox::select_state(bool state)
+void Combobox::select_state(const bool state)
 {
     m_focused = state;
 }
 
-bool Combobox::handle_events(SDL_Event* event, bool was_handled)
+bool Combobox::handle_events(SDL_Event* event, const bool was_handled)
 {
-    bool handled = false;
+    auto handled = false;
     if (event->type == SDL_MOUSEBUTTONDOWN && !was_handled)
     {
         /* Handle focus */

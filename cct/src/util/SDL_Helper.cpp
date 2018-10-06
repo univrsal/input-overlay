@@ -23,7 +23,6 @@ SDL_Helper::~SDL_Helper()
     m_font_helper = nullptr;
     m_sdl_renderer = nullptr;
     m_sdl_window = nullptr;
-    m_default_font = nullptr;
     m_palette = nullptr;
 }
 
@@ -87,11 +86,10 @@ bool SDL_Helper::init()
     }
     else
     {
-        m_default_font = TTF_OpenFont(PATH_ROBOTO_FONT, FONT_DEFAULT);
-        m_large_font = TTF_OpenFont(PATH_ROBOTO_FONT, FONT_LARGE);
+        m_large_font = TTF_OpenFont(PATH_UNICODE_FONT, FONT_LARGE);
         m_wstring_font = TTF_OpenFont(PATH_UNICODE_FONT, FONT_DEFAULT);
 
-        if (!m_default_font || !m_wstring_font)
+        if (!m_wstring_font)
         {
             printf(SDL_FONT_LOADING_FAILED);
             m_init_success = false;
@@ -99,7 +97,6 @@ bool SDL_Helper::init()
         else
         {
             m_font_helper = new FontHelper(this);
-            m_default_font_height = TTF_FontHeight(m_default_font);
             m_large_font_height = TTF_FontHeight(m_large_font);
             m_wstring_font_height = TTF_FontHeight(m_wstring_font);
 
@@ -127,12 +124,12 @@ void SDL_Helper::close()
     SDL_DestroyRenderer(m_sdl_renderer);
     SDL_DestroyWindow(m_sdl_window);
 
-    if (m_default_font)
-        TTF_CloseFont(m_default_font);
     if (m_wstring_font)
         TTF_CloseFont(m_wstring_font);
+    if (m_large_font)
+        TTF_CloseFont(m_large_font);
 
-    m_default_font = nullptr;
+    m_large_font = nullptr;
     m_wstring_font = nullptr;
 
     TTF_Quit();
@@ -237,6 +234,11 @@ void SDL_Helper::util_fill_rect(const SDL_Rect* rect, const SDL_Color* color, co
     temp.g = color->g;
     temp.b = color->b;
     util_fill_rect(rect, &temp);
+}
+
+uint8_t SDL_Helper::util_default_text_height() const
+{
+    return m_wstring_font_height;
 }
 
 bool SDL_Helper::util_is_in_rect(const SDL_Rect* rect, const int x, const int y)
@@ -445,9 +447,7 @@ uint8_t SDL_Helper::util_font_height(const uint8_t font) const
     switch (font)
     {
     default:
-    case FONT_ROBOTO_SMALL:
-        return m_default_font_height;
-    case FONT_ROBOTO_LARGE:
+    case FONT_WSTRING_LARGE:
         return m_large_font_height;
     case FONT_WSTRING:
         return m_wstring_font_height;

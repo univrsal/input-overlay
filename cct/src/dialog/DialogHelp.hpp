@@ -21,7 +21,7 @@ class DialogHelp : public Dialog
 {
 public:
     DialogHelp(SDL_Helper* sdl, Tool* tool)
-        : Dialog(sdl, SDL_Point{360, 485}, LANG_DIALOG_HELP)
+        : Dialog(sdl, SDL_Point{380, 485}, LANG_DIALOG_HELP)
     {
         m_tool = tool;
     };

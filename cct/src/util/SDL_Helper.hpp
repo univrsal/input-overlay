@@ -74,12 +74,12 @@ public:
     bool util_mouse_in_rect(const SDL_Rect* rect) const;
 
     void util_text(const std::string* text, int x, int y, const SDL_Color* color,
-                   uint8_t font = FONT_ROBOTO_SMALL) const;
+                   uint8_t font = FONT_WSTRING) const;
     void util_text(const std::string* text, int x, int y, const SDL_Color* color,
                    uint8_t font, uint8_t scale) const;
     void util_text_rot(const std::string* text, int x, int y, const SDL_Color* color, double angle,
-                       uint8_t font = FONT_ROBOTO_SMALL) const;
-    SDL_Rect util_text_dim(const std::string* text, uint8_t font = FONT_ROBOTO_SMALL) const;
+                       uint8_t font = FONT_WSTRING) const;
+    SDL_Rect util_text_dim(const std::string* text, uint8_t font = FONT_WSTRING) const;
 
     SDL_Point* util_window_size();
     const SDL_Point* util_mouse_pos() const { return &m_mouse_pos; }
@@ -88,10 +88,10 @@ public:
 
     void util_cut_string(std::string& s, int max_width, bool front) const;
 
-    uint8_t util_default_text_height() const { return m_default_font_height; }
-    uint8_t util_wstring_text_height() const { return m_wstring_font_height; }
     uint8_t util_large_text_height() const { return m_large_font_height; }
-
+    uint8_t util_default_text_height() const;
+    uint8_t util_font_height(uint8_t font) const;
+    
     static void util_open_url(std::string ur);
 
     template <typename ... Args>
@@ -105,7 +105,7 @@ public:
     static std::string util_wstring_to_utf8(const std::wstring& str);
 
     void format_text(const std::string* s, std::vector<std::unique_ptr<std::string>>& out, SDL_Rect& dim,
-                     uint8_t font = FONT_ROBOTO_SMALL) const;
+                     uint8_t font = FONT_WSTRING) const;
 
     std::string loc(const char* id) const;
     template <typename ... Args>
@@ -141,8 +141,6 @@ public:
     void set_run_flag(bool* flag);
     void handle_events(SDL_Event* event);
 
-    uint8_t util_font_height(uint8_t font) const;
-
     bool handle_controller_disconnect(int32_t id);
 
     bool handle_controller_connect(int32_t id);
@@ -156,11 +154,9 @@ private:
     {
         switch (type)
         {
-        default:
-        case FONT_ROBOTO_SMALL:
-            return m_default_font;
-        case FONT_ROBOTO_LARGE:
+        case FONT_WSTRING_LARGE:
             return m_large_font;
+        default:
         case FONT_WSTRING:
             return m_wstring_font;
         }
@@ -172,14 +168,11 @@ private:
     SDL_Renderer* m_sdl_renderer = nullptr;
     SDL_Window* m_sdl_window = nullptr;
 
-    TTF_Font* m_default_font = nullptr;
     TTF_Font* m_large_font = nullptr;
     TTF_Font* m_wstring_font = nullptr;
 
-    uint8_t m_default_font_height = 0;
     uint8_t m_large_font_height = 0;
     uint8_t m_wstring_font_height = 0;
-
 
     bool m_init_success = true;
     bool m_windows = true;

@@ -29,8 +29,8 @@ class GuiElement;
 class Dialog
 {
 public:
-    Dialog(SDL_Helper* sdl, SDL_Rect size, std::string title);
-    Dialog(SDL_Helper* sdl, SDL_Point size, std::string title);
+    Dialog(SDL_Helper* sdl, SDL_Rect size, const std::string& title);
+    Dialog(SDL_Helper* sdl, SDL_Point size, const std::string& title);
 
     virtual ~Dialog();
 

@@ -54,10 +54,9 @@ void Notifier::draw()
                 if (!line->empty())
                 {
                     m_helper->util_text(line.get(), m_dim.x + 10,
-                                        m_dim.y + y_pos,
-                                        c, m_helper->localization()->get_font());
+                                        m_dim.y + y_pos, c);
                 }
-                y_pos += LINE_SPACE + m_helper->util_font_height(m_helper->localization()->get_font());
+                y_pos += LINE_SPACE + m_helper->util_default_text_height();
             }
         }
         index++;
