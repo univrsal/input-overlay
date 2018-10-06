@@ -133,7 +133,7 @@ Element::Element(const element_type t, std::string id, const SDL_Point pos, cons
     m_z_level = z;
 }
 
-void Element::write_to_file(ccl_config* cfg, SDL_Point* default_dim)
+void Element::write_to_file(ccl_config* cfg, SDL_Point* default_dim, uint8_t& layout_flags)
 {
     /* Write commonly shared values */
     auto comment = "Z position (Layer) of " + m_id;

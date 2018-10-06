@@ -55,23 +55,16 @@ namespace sources
     {
         std::string cfg = obs_data_get_string(s, S_LAYOUT_FILE);
         auto temp = ccl_config(cfg, "");
-        bool left_stick = false, right_stick = false,
-             gamepad = false, mouse_movement = false;
 
-        if (!temp.is_empty())
-        {
-            left_stick = temp.get_bool(CFG_LEFT_STICK);
-            right_stick = temp.get_bool(CFG_RIGHT_STICK);
-            gamepad = temp.get_bool(CFG_GAMEPAD);
-            mouse_movement = temp.get_bool(CFG_MOUSE_MOVEMENT);
-        }
+        const auto flags = temp.get_int(CFG_FLAGS, true);
 
-        obs_property_set_visible(GET_PROPS(S_CONTROLLER_L_DEAD_ZONE), left_stick);
-        obs_property_set_visible(GET_PROPS(S_CONTROLLER_R_DEAD_ZONE), right_stick);
-        obs_property_set_visible(GET_PROPS(S_CONTROLLER_ID), gamepad);
-        obs_property_set_visible(GET_PROPS(S_MOUSE_SENS), mouse_movement);
-        obs_property_set_visible(GET_PROPS(S_MONITOR_USE_CENTER), mouse_movement);
-        obs_property_set_visible(GET_PROPS(S_MOUSE_DEAD_ZONE), mouse_movement);
+        obs_property_set_visible(GET_PROPS(S_CONTROLLER_L_DEAD_ZONE), flags & FLAG_LEFT_STICK);
+        obs_property_set_visible(GET_PROPS(S_CONTROLLER_R_DEAD_ZONE), flags & FLAG_RIGHT_STICK);
+        obs_property_set_visible(GET_PROPS(S_CONTROLLER_ID), flags & FLAG_GAMEPAD
+            || (flags & FLAG_LEFT_STICK || flags & FLAG_RIGHT_STICK));
+        obs_property_set_visible(GET_PROPS(S_MOUSE_SENS), flags && FLAG_MOUSE);
+        obs_property_set_visible(GET_PROPS(S_MONITOR_USE_CENTER), flags && FLAG_MOUSE);
+        obs_property_set_visible(GET_PROPS(S_MOUSE_DEAD_ZONE), flags && FLAG_MOUSE);
 
         return true;
     }

@@ -31,13 +31,15 @@ ElementError ElementMouseMovement::is_valid(Notifier* n, SDL_Helper* h)
     return error;
 }
 
-void ElementMouseMovement::write_to_file(ccl_config* cfg, SDL_Point* default_dim)
+void ElementMouseMovement::write_to_file(ccl_config* cfg, SDL_Point* default_dim, uint8_t& layout_flags)
 {
-    ElementTexture::write_to_file(cfg, default_dim);
+    ElementTexture::write_to_file(cfg, default_dim, layout_flags);
     auto comment = "Movement type of " + m_id;
     cfg->add_int(m_id + CFG_MOUSE_TYPE, comment, m_type, true);
     comment = "Movement radius of " + m_id;
     cfg->add_int(m_id + CFG_MOUSE_RADIUS, comment, m_radius, true);
+
+    layout_flags |= FLAG_MOUSE;
 }
 
 void ElementMouseMovement::update_settings(DialogNewElement* dialog)

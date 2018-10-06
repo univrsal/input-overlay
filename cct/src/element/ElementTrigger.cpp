@@ -63,9 +63,9 @@ void ElementTrigger::draw(Texture* atlas, CoordinateSystem* cs, const bool selec
         cs->get_helper()->util_draw_rect(&m_dimensions_scaled, cs->get_helper()->palette()->red());
 }
 
-void ElementTrigger::write_to_file(ccl_config* cfg, SDL_Point* default_dim)
+void ElementTrigger::write_to_file(ccl_config* cfg, SDL_Point* default_dim, uint8_t& layout_flags)
 {
-    ElementTexture::write_to_file(cfg, default_dim);
+    ElementTexture::write_to_file(cfg, default_dim, layout_flags);
     auto comment = "Trigger mode of " + m_id;
     cfg->add_bool(m_id + CFG_TRIGGER_MODE, comment, m_button_mode, true);
     comment = "Trigger side of " + m_id;

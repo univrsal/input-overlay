@@ -64,16 +64,29 @@ set(input-overlay_SOURCES
     util/element/element_dpad.hpp
     util/element/element_data_holder.cpp
     util/element/element_data_holder.hpp
+    gui/settings.cpp
+    gui/settings.hpp
     ../ccl/ccl.cpp
     ../ccl/ccl.hpp)
 
-include_directories(${UIOHOOK_INCLUDE_DIR})
+find_package(LibObs REQUIRED)
+find_package(Qt5Core REQUIRED)
+find_package(Qt5WebSockets REQUIRED)
+find_package(Qt5Widgets REQUIRED)
+
+include_directories(
+    ${UIOHOOK_INCLUDE_DIR}
+    ../../../UI/obs-frontend-api
+    ${Qt5Core_INCLUDES}
+    ${Qt5Widgets_INCLUDES})
 
 add_library(input-overlay MODULE
     ${input-overlay_SOURCES})
 
 target_link_libraries(input-overlay
     libobs
+    Qt5::Core
+    Qt5::Widgets
     ${input-overlay_PLATFORM_DEPS}
     ${UIOHOOK_LIBRARY})
 

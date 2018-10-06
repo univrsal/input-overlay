@@ -80,7 +80,7 @@ bool overlay::load_cfg()
         
         auto element_id = cfg->get_string(CFG_FIRST_ID);
         const auto debug_mode = cfg->get_bool(CFG_DEBUG_FLAG, true);
-        
+
 #ifndef _DEBUG
         if (debug_mode)
         {

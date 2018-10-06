@@ -52,3 +52,8 @@ ElementGamepadID* ElementGamepadID::read_from_file(ccl_config* file, const std::
     return new ElementGamepadID(id, read_position(file, id),
                                 read_mapping(file, id, default_dim), read_layer(file, id));
 }
+
+void ElementGamepadID::write_to_file(ccl_config* cfg, SDL_Point* default_dim, uint8_t& layout_flags)
+{
+    layout_flags |= FLAG_GAMEPAD;
+}

@@ -14,9 +14,10 @@
 #include "../dialog/DialogNewElement.hpp"
 #include "../dialog/DialogElementSettings.hpp"
 #include "../../../ccl/ccl.hpp"
+#include "../../../io-obs/util/util.hpp"
 
-ElementButton::ElementButton(std::string id, const SDL_Point pos, const SDL_Rect mapping, const uint16_t vc, const uint8_t z)
-    : ElementTexture(BUTTON, std::move(id), pos, mapping, z)
+ElementButton::ElementButton(const const std::string& id, const SDL_Point pos, const SDL_Rect mapping, const uint16_t vc, const uint8_t z)
+    : ElementTexture(BUTTON, id, pos, mapping, z)
 {
     m_keycode = vc;
     m_pressed_mapping = m_mapping;
@@ -48,11 +49,14 @@ void ElementButton::draw(Texture* atlas, CoordinateSystem* cs, const bool select
         cs->get_helper()->util_draw_rect(&m_dimensions_scaled, cs->get_helper()->palette()->red());
 }
 
-void ElementButton::write_to_file(ccl_config* cfg, SDL_Point* default_dim)
+void ElementButton::write_to_file(ccl_config* cfg, SDL_Point* default_dim, uint8_t& layout_flags)
 {
-    ElementTexture::write_to_file(cfg, default_dim);
+    ElementTexture::write_to_file(cfg, default_dim, layout_flags);
     const auto comment = "Key code of " + m_id;
     cfg->add_int(m_id + CFG_KEY_CODE, comment, m_keycode, true);
+
+    if ((m_keycode >> 8) == (VC_PAD_MASK >> 8))
+        layout_flags |= FLAG_GAMEPAD;
 }
 
 void ElementButton::update_settings(DialogNewElement* dialog)

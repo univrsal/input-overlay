@@ -12,6 +12,7 @@
 #include "util/Constants.hpp"
 #include "util/Texture.hpp"
 #include "../../ccl/ccl.hpp"
+#include "element/ElementAnalogStick.hpp"
 
 #define X_AXIS 100
 #define Y_AXIS 100
@@ -280,12 +281,12 @@ void Config::write_config(Notifier* n)
     cfg.add_int(CFG_H_SPACE, "", m_offset.x);
     cfg.add_int(CFG_V_SPACE, "Element offset for visual help", m_offset.y);
 
-    auto height = 0, width = 0; /* The most bottom right element determines the width/height */
+    auto height = 0, width = 0, index = 0; /* The most bottom right element determines the width/height */
 
-    auto index = 0;
+    uint8_t flags = 0; /* Determines which properties to show in OBS */
     for (auto const& e : m_elements)
     {
-        e->write_to_file(&cfg, &m_default_dim);
+        e->write_to_file(&cfg, &m_default_dim, flags);
 
         width = UTIL_MAX(width, e->get_x() + e->get_w());
         height = UTIL_MAX(height, e->get_y() + e->get_h());
@@ -297,8 +298,11 @@ void Config::write_config(Notifier* n)
         }
         index++;
     }
+
     cfg.add_int(CFG_TOTAL_WIDTH, "", width);
     cfg.add_int(CFG_TOTAL_HEIGHT, "Full overlay dimensions", height);
+
+    cfg.add_int(CFG_FLAGS, "", flags);
 
     cfg.write(false);
 

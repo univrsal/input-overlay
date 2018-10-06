@@ -23,7 +23,7 @@ public:
 
     ElementError is_valid(Notifier* n, SDL_Helper* h) override;
 
-    void write_to_file(ccl_config* cfg, SDL_Point* default_dim) override;
+    void write_to_file(ccl_config* cfg, SDL_Point* default_dim, uint8_t& layout_flags) override;
 
     void update_settings(DialogNewElement* dialog) override;
 

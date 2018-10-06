@@ -18,13 +18,13 @@ public:
         /* NO-OP */
     }
 
-    ElementButton(std::string id, SDL_Point pos, SDL_Rect mapping, uint16_t vc, uint8_t z);
+    ElementButton(const std::string& id, SDL_Point pos, SDL_Rect mapping, uint16_t vc, uint8_t z);
 
     ElementError is_valid(Notifier* n, SDL_Helper* h) override;
 
     void draw(Texture* atlas, CoordinateSystem* cs, bool selected, bool alpha) override;
 
-    void write_to_file(ccl_config* cfg, SDL_Point* default_dim) override;
+    void write_to_file(ccl_config* cfg, SDL_Point* default_dim, uint8_t& layout_flags) override;
 
     void update_settings(DialogNewElement* dialog) override;
 

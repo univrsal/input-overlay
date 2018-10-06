@@ -17,10 +17,7 @@
 #define CFG_H_SPACE         "space_h"
 #define CFG_V_SPACE         "space_v"
 
-#define CFG_LEFT_STICK      "left_stick"
-#define CFG_RIGHT_STICK     "right_stick"
-#define CFG_MOUSE_MOVEMENT  "mouse_movement"
-#define CFG_GAMEPAD         "gamepad"
+#define CFG_FLAGS           "flags"
 
 #define CFG_TOTAL_WIDTH     "overlay_width"
 #define CFG_TOTAL_HEIGHT    "overlay_height"
@@ -63,6 +60,15 @@
 #define TEXT_FORMAT_MMB_FLAG        1 << 3
 #define TEXT_FORMAT_MOUSE_X_FLAG    1 << 4
 #define TEXT_FORMAT_MOUSE_Y_FLAG    1 << 5
+
+enum overlay_flags
+{
+    FLAG_LEFT_STICK = 1 << 0,
+    FLAG_RIGHT_STICK = 1 << 1,
+    FLAG_GAMEPAD  = 1 << 2,
+    FLAG_MOUSE  = 1 << 3,
+    FLAG_TEXT  = 1 << 4
+};
 
 enum dpad_direction
 {

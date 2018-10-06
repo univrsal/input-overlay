@@ -47,9 +47,9 @@ void ElementTexture::draw(Texture* atlas, CoordinateSystem* cs, const bool selec
         cs->get_helper()->util_draw_rect(&m_dimensions_scaled, cs->get_helper()->palette()->red());
 }
 
-void ElementTexture::write_to_file(ccl_config* cfg, SDL_Point* default_dim)
+void ElementTexture::write_to_file(ccl_config* cfg, SDL_Point* default_dim, uint8_t& layout_flags)
 {
-    Element::write_to_file(cfg, default_dim);
+    Element::write_to_file(cfg, default_dim, layout_flags);
     const auto comment = "Mapping of " + m_id;
     cfg->add_rect(m_id + CFG_MAPPING, comment, m_mapping.x,
         m_mapping.y, m_mapping.w, m_mapping.h);

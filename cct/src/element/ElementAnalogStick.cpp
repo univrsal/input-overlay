@@ -72,13 +72,15 @@ void ElementAnalogStick::draw(Texture* atlas, CoordinateSystem* cs, const bool s
     }
 }
 
-void ElementAnalogStick::write_to_file(ccl_config* cfg, SDL_Point* default_dim)
+void ElementAnalogStick::write_to_file(ccl_config* cfg, SDL_Point* default_dim, uint8_t& flags)
 {
-    ElementTexture::write_to_file(cfg, default_dim);
+    ElementTexture::write_to_file(cfg, default_dim, flags);
     auto comment = "Analog stick side of " + m_id;
     cfg->add_int(m_id + CFG_SIDE, comment, static_cast<int>(m_stick), true);
     comment = "Analog stick radius of " + m_id;
     cfg->add_int(m_id + CFG_STICK_RADIUS, comment, static_cast<int>(m_radius), true);
+
+    flags |= FLAG_GAMEPAD | (m_stick == SIDE_LEFT ? FLAG_LEFT_STICK : FLAG_RIGHT_STICK);
 }
 
 void ElementAnalogStick::update_settings(DialogNewElement* dialog)

@@ -48,7 +48,7 @@ class Element
 public:
     virtual void draw(Texture* atlas, CoordinateSystem* cs, bool selected, bool alpha) = 0;
 
-    virtual void write_to_file(ccl_config* cfg, SDL_Point* default_dim);
+    virtual void write_to_file(ccl_config* cfg, SDL_Point* default_dim, uint8_t& layout_flags);
 
     virtual SDL_Rect* get_abs_dim(CoordinateSystem* cs);
 

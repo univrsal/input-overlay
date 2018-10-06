@@ -30,7 +30,7 @@ public:
 
     void draw(Texture* atlas, CoordinateSystem* cs, bool selected, bool alpha) override;
 
-    void write_to_file(ccl_config* cfg, SDL_Point* default_dim) override;
+    void write_to_file(ccl_config* cfg, SDL_Point* default_dim, uint8_t& flags) override;
 
     void update_settings(DialogNewElement* dialog) override;
 

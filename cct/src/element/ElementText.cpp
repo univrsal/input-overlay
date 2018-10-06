@@ -53,9 +53,9 @@ void ElementText::draw(Texture * atlas, CoordinateSystem * cs, const bool select
         cs->get_helper()->util_draw_rect(&m_dimensions_scaled, cs->get_helper()->palette()->red());
 }
 
-void ElementText::write_to_file(ccl_config * cfg, SDL_Point * default_dim)
+void ElementText::write_to_file(ccl_config * cfg, SDL_Point * default_dim, uint8_t& layout_flags)
 {
-    Element::write_to_file(cfg, default_dim);
+    Element::write_to_file(cfg, default_dim, layout_flags);
 
     /* Save text and reset state */
     auto comment = "Unformatted text of " + m_id;
@@ -63,6 +63,8 @@ void ElementText::write_to_file(ccl_config * cfg, SDL_Point * default_dim)
 
     comment = "Whether to reset statistics for " + m_id;
     cfg->add_bool(m_id + CFG_TEXT_RESET, comment, m_reset, true);
+
+    layout_flags |= FLAG_TEXT;
 }
 
 void ElementText::update_settings(DialogNewElement * dialog)

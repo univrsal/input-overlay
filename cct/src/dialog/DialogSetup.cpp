@@ -25,11 +25,11 @@ void DialogSetup::init()
     int8_t id = 1;
 
     // info labels
-    std::string info = std::string(LABEL_BUILD);
+    auto info = std::string(LABEL_BUILD);
     info.append(std::to_string(BUILD_NUMBER));
 
-    add(new Label(id++, 8, 28, info.c_str(), FONT_WSTRING_LARGE, this, ELEMENT_UNLOCALIZED | ELEMENT_ABSOLUTE_POSITION));
-    add(new Label(id++, 8, 48, LANG_LABEL_INFO, this, ELEMENT_ABSOLUTE_POSITION));
+    add(new Label(id++, 8, 22, info.c_str(), FONT_WSTRING_LARGE, this, ELEMENT_UNLOCALIZED | ELEMENT_ABSOLUTE_POSITION));
+    add(new Label(id++, 8, 50, LANG_LABEL_INFO, this, ELEMENT_ABSOLUTE_POSITION));
 
     add(new Label(id++, 8, 35, LANG_LABEL_TEXTURE_PATH, this));
     add(m_texture_path = new Textbox(id++, 8, 55, m_dimensions.w - 16, 20, TEXTURE_PATH, this));

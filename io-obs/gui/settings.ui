@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>inptoverlayconfig</class>
+ <widget class="QDialog" name="inptoverlayconfig">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>300</width>
+    <height>450</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>300</width>
+    <height>450</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>300</width>
+    <height>450</height>
+   </size>
+  </property>
+  <property name="sizeIncrement">
+   <size>
+    <width>300</width>
+    <height>450</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog.InputOverlay.Title</string>
+  </property>
+  <widget class="QDialogButtonBox" name="button_box">
+   <property name="geometry">
+    <rect>
+     <x>140</x>
+     <y>420</y>
+     <width>156</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+     <horstretch>1</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="acceptDrops">
+    <bool>false</bool>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Horizontal</enum>
+   </property>
+   <property name="standardButtons">
+    <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+   </property>
+  </widget>
+  <widget class="QGroupBox" name="gb_startup">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>10</y>
+     <width>281</width>
+     <height>131</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Dialog.InputOverlay.LocalFeatures</string>
+   </property>
+   <widget class="QCheckBox" name="cb_iohook">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>40</y>
+      <width>194</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Dialog.InputOverlay.EnableUiohook</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="cb_gamepad_hook">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>60</y>
+      <width>225</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Dialog.InputOverlay.EnableGamepadHook</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="cb_enable_overlay">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>80</y>
+      <width>220</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Dialog.InputOverlay.EnableInputOverlay</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="cb_enable_history">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>100</y>
+      <width>216</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Dialog.InputOverlay.EnableInputHistory</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lbl_local_features">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>20</y>
+      <width>197</width>
+      <height>13</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Dialog.InputOverlay.LocalFeatures.Label</string>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QGroupBox" name="gb_remoteconnection">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>150</y>
+     <width>281</width>
+     <height>261</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Dialog.InputOverlay.RemoteConnection</string>
+   </property>
+   <widget class="QCheckBox" name="cb_enable_remote">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>20</y>
+      <width>247</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Dialog.InputOverlay.EnableRemoteConnection</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lbl_status">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>240</y>
+      <width>227</width>
+      <height>13</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Dialog.InputOverlay.RemoteConnection.Status</string>
+    </property>
+   </widget>
+   <widget class="QSpinBox" name="box_port">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>80</y>
+      <width>241</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="buttonSymbols">
+     <enum>QAbstractSpinBox::NoButtons</enum>
+    </property>
+    <property name="showGroupSeparator" stdset="0">
+     <bool>false</bool>
+    </property>
+    <property name="maximum">
+     <number>65535</number>
+    </property>
+    <property name="value">
+     <number>1608</number>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lbl_port">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>60</y>
+      <width>216</width>
+      <height>13</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Dialog.InputOverlay.RemoteConnection.Port</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="cb_log">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>40</y>
+      <width>256</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Dialog.InputOverlay.RemoteConnection.Logging</string>
+    </property>
+   </widget>
+   <widget class="QListWidget" name="box_connections">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>130</y>
+      <width>256</width>
+      <height>101</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lbl_connections">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>110</y>
+      <width>285</width>
+      <height>13</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Dialog.InputOverlay.RemoteConnection.Connections</string>
+    </property>
+   </widget>
+  </widget>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>button_box</sender>
+   <signal>accepted()</signal>
+   <receiver>inptoverlayconfig</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>248</x>
+     <y>254</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>157</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>button_box</sender>
+   <signal>rejected()</signal>
+   <receiver>inptoverlayconfig</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>316</x>
+     <y>260</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>286</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>
