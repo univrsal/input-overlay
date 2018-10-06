@@ -15,6 +15,11 @@ Always download the latest release and NOT the sourcecode!
 Any contribution is greatly appreciated.
 If you have questions on how to get started I'll try my best to help
 
+Thank you to the translators:
+- JellyBrick (Korean)
+- hyrious (Chinese)
+- rashid (Russian)
+
 ## Credits
 input-overlay depends on [libuiohook](https://github.com/kwhat/libuiohook) by [kwhat](https://github.com/kwhat) licenced under the [GNU General Public Licence v3.0](https://www.gnu.org/licenses/gpl-3.0.txt)
 
