@@ -53,7 +53,7 @@
 
 #define warning(format, ...) blog(LOG_WARNING, "[%s] " format, \
 		obs_source_get_name(m_source), ##__VA_ARGS__)
-
+		
 /* Lang Input Overlay */
 #define S_OVERLAY_FILE              "overlay_image"
 #define S_LAYOUT_FILE               "layout_file"
@@ -153,6 +153,8 @@
 #define T_OVERLAY_AUTO_CLEAR_INTERVAL   T_("Overlay.AutoClear.Interval")
 
 #define T_OVERLAY_COMMAND_MODE          T_("Overlay.Commandmode")
+
+#define T_MENU_OPEN_SETTINGS		T_("Menu.InputOverlay.OpenSettings")
 
 #define WHEEL_UP        -1
 #define WHEEL_DOWN      1

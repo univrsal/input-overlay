@@ -16,12 +16,12 @@
 #include "sources/input_history.hpp"
 #include "hook/hook_helper.hpp"
 #include "hook/gamepad_hook.hpp"
-#include "gui/settings.hpp"
+#include "gui/io_settings_dialog.hpp"
 
 OBS_DECLARE_MODULE()
 OBS_MODULE_USE_DEFAULT_LOCALE("input-overlay", "en-US")
 
-settings_dialog* dialog;
+io_settings_dialog* dialog;
 
 bool obs_module_load()
 {
@@ -30,21 +30,20 @@ bool obs_module_load()
      */
 
     auto menu_action = static_cast<QAction*>(obs_frontend_add_tools_menu_qaction(
-        obs_module_text("Menu.InputOverlay.OpenSettings")));
+        T_MENU_OPEN_SETTINGS));
     obs_frontend_push_ui_translation(obs_module_get_string);
     const auto main_window = static_cast<QMainWindow*>(obs_frontend_get_main_window());
-    dialog = new settings_dialog(main_window);
+    dialog = new io_settings_dialog(main_window);
     obs_frontend_pop_ui_translation();
 
     const auto menu_cb = [] {
-        dialog->ToggleShowHide();
+        dialog->toggleShowHide();
     };
     menu_action->connect(menu_action, &QAction::triggered, menu_cb);
 
     sources::register_history();
     sources::register_overlay_source();
     hook::start_hook();
-
     gamepad::start_pad_hook();
 
     return true;

@@ -215,14 +215,12 @@ namespace gamepad {
                                                        STATE_PRESSED : STATE_RELEASED
                                         ));
                                     break;
-                                default:
-                                    hook::input_data->add_gamepad_data(pad.get_id(),
-                                        PAD_TO_VC(m_packet[ID_KEY_CODE]),
-                                        new element_data_button(
-                                        m_packet[ID_STATE_1] == ID_PRESSED ?
-                                        STATE_PRESSED : STATE_RELEASED
-                                        ));
+                                default: ;
                             }
+                            hook::input_data->add_gamepad_data(pad.get_id(),
+                                PAD_TO_VC(m_packet[ID_KEY_CODE]),
+                                new element_data_button(m_packet[ID_STATE_1] == ID_PRESSED ?
+                                STATE_PRESSED : STATE_RELEASED));
                     }
                 } else {
                     float axis;

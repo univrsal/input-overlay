@@ -3,6 +3,10 @@ project(input-overlay)
 find_path(UIOHOOK_INCLUDE_DIR uiohook.h)
 find_library(UIOHOOK_LIBRARY uiohook)
 
+set(CMAKE_PREFIX_PATH "${QTDIR}")
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTOUIC ON)
+
 if(MSVC)
     set(input-overlay_PLATFORM_DEPS
         w32-pthreads
@@ -64,27 +68,29 @@ set(input-overlay_SOURCES
     util/element/element_dpad.hpp
     util/element/element_data_holder.cpp
     util/element/element_data_holder.hpp
-    gui/settings.cpp
-    gui/settings.hpp
+    gui/io_settings_dialog.cpp
+    gui/io_settings_dialog.hpp
+    gui/ui_settings_dialog.hpp
     ../ccl/ccl.cpp
     ../ccl/ccl.hpp)
 
 find_package(LibObs REQUIRED)
 find_package(Qt5Core REQUIRED)
-find_package(Qt5WebSockets REQUIRED)
 find_package(Qt5Widgets REQUIRED)
+
+add_library(input-overlay MODULE
+        ${input-overlay_SOURCES})
 
 include_directories(
     ${UIOHOOK_INCLUDE_DIR}
-    ../../../UI/obs-frontend-api
+    "../../../UI/obs-frontend-api"
+    ${LIB_OBS_INCLUDE_DIR}
     ${Qt5Core_INCLUDES}
     ${Qt5Widgets_INCLUDES})
 
-add_library(input-overlay MODULE
-    ${input-overlay_SOURCES})
-
 target_link_libraries(input-overlay
     libobs
+    obs-frontend-api
     Qt5::Core
     Qt5::Widgets
     ${input-overlay_PLATFORM_DEPS}
