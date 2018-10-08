@@ -332,11 +332,6 @@ uint16_t util_mouse_to_vc(int m)
     return static_cast<uint16_t>(VC_MOUSE_MASK | m);
 }
 
-bool strempty(const char * str)
-{
-    return !str || strlen(str) <= 0 || str[0] == '\0';
-}
-
 #ifdef DEBUG
 uint16_t random_vc()
 {

@@ -29,7 +29,7 @@ bool obs_module_load()
      * https://github.com/Palakis/obs-websocket/
      */
 
-    auto menu_action = static_cast<QAction*>(obs_frontend_add_tools_menu_qaction(
+    const auto menu_action = static_cast<QAction*>(obs_frontend_add_tools_menu_qaction(
         T_MENU_OPEN_SETTINGS));
     obs_frontend_push_ui_translation(obs_module_get_string);
     const auto main_window = static_cast<QMainWindow*>(obs_frontend_get_main_window());
@@ -39,7 +39,7 @@ bool obs_module_load()
     const auto menu_cb = [] {
         dialog->toggleShowHide();
     };
-    menu_action->connect(menu_action, &QAction::triggered, menu_cb);
+    QAction::connect(menu_action, &QAction::triggered, menu_cb);
 
     sources::register_history();
     sources::register_overlay_source();

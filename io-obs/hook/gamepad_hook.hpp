@@ -181,7 +181,7 @@ private:
     
     void end_pad_hook();
 
-    void init_pad_devices();
+    bool init_pad_devices();
     
     /* Four structs containing info to query gamepads */
     extern GamepadState pad_states[PAD_COUNT];

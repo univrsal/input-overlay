@@ -53,7 +53,7 @@ namespace sources
     bool path_changed(obs_properties_t* props, obs_property_t* p,
         obs_data_t* s)
     {
-        std::string cfg = obs_data_get_string(s, S_LAYOUT_FILE);
+        const std::string cfg = obs_data_get_string(s, S_LAYOUT_FILE);
         auto temp = ccl_config(cfg, "");
 
         const auto flags = temp.get_int(CFG_FLAGS, true);

@@ -25,8 +25,18 @@ namespace gamepad {
     static pthread_t game_pad_hook_thread;
 #endif
     
-    void start_pad_hook() {
-        init_pad_devices();
+    void start_pad_hook()
+    {
+        if (gamepad_hook_state)
+            return;
+#ifdef LINUX
+        /* Prevent the hook loop from running if there's no gamepads
+         * Prevents infinite loop
+         * Hook will be restarted, once users click "reload" button
+         * in source properties
+         */
+        gamepad_hook_state = gamepad_hook_run_flag = init_pad_devices();    
+#endif
 
 #ifdef WINDOWS
         hook_thread = CreateThread(nullptr, 0, static_cast<LPTHREAD_START_ROUTINE>(hook_method),
@@ -37,13 +47,18 @@ namespace gamepad {
 #endif
     }
     
-    void init_pad_devices() {
+    bool init_pad_devices()
+    {
         
         uint8_t id = 0;
+        auto flag = false;
         for (auto &state : pad_states)
         {
             state.init(id++);
+            if (state.valid())
+                flag = true;
         }
+        return flag;
     }
 
 #ifdef WINDOWS

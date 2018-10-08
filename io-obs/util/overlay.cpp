@@ -120,13 +120,13 @@ bool overlay::load_texture()
 
     if (m_image == nullptr)
     {
-        m_image = new gs_image_file_t();
+        //m_image = new gs_image_file_t();
     }
 
-    gs_image_file_init(m_image, m_settings->image_file.c_str());
+    //gs_image_file_init(m_image, m_settings->image_file.c_str());
 
     obs_enter_graphics();
-    gs_image_file_init_texture(m_image);
+    //gs_image_file_init_texture(m_image);
     obs_leave_graphics();
     
     if (!m_image->loaded)
@@ -146,7 +146,7 @@ bool overlay::load_texture()
 void overlay::unload_texture() const
 {
     obs_enter_graphics();
-    gs_image_file_free(m_image);
+    //gs_image_file_free(m_image);
     obs_leave_graphics();
 }
 

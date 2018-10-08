@@ -228,8 +228,6 @@ void util_set_mask(uint16_t& masks, uint16_t mask, bool state);
 
 uint16_t util_mouse_to_vc(int m);
 
-bool strempty(const char* str);
-
 #ifdef DEBUG
 uint16_t random_vc();
 #endif

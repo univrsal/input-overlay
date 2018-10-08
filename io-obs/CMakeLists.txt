@@ -3,14 +3,14 @@ project(input-overlay)
 find_path(UIOHOOK_INCLUDE_DIR uiohook.h)
 find_library(UIOHOOK_LIBRARY uiohook)
 
-set(CMAKE_PREFIX_PATH "${QTDIR}")
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTOUIC ON)
+set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
+set(CMAKE_AUTOMOC TRUE)
 
 if(MSVC)
     set(input-overlay_PLATFORM_DEPS
         w32-pthreads
         XInput9_1_0)
+
     add_definitions(-DHAVE_XINPUT=1)
 endif()
 
@@ -29,6 +29,13 @@ macro(use_cxx14)
 endmacro(use_cxx14)
 
 use_cxx14()
+
+#find_package(Qt5Core REQUIRED)
+find_package(Qt5Widgets REQUIRED)
+
+if(NOT Qt5Widgets_FOUND)
+    message(FATAL_ERROR "Failed to find Qt5")
+endif()
 
 set(input-overlay_SOURCES
     input_overlay.cpp
@@ -74,25 +81,25 @@ set(input-overlay_SOURCES
     ../ccl/ccl.cpp
     ../ccl/ccl.hpp)
 
-find_package(LibObs REQUIRED)
-find_package(Qt5Core REQUIRED)
-find_package(Qt5Widgets REQUIRED)
+set(input-overlay_UI
+    gui/io_settings_dialog.ui)
+
+qt5_wrap_ui(obs_UI_HEADERS ${obs_UI})
 
 add_library(input-overlay MODULE
         ${input-overlay_SOURCES})
 
 include_directories(
     ${UIOHOOK_INCLUDE_DIR}
+    SYSTEM "${CMAKE_SOURCE_DIR}/libobs"
     "../../../UI/obs-frontend-api"
-    ${LIB_OBS_INCLUDE_DIR}
     ${Qt5Core_INCLUDES}
     ${Qt5Widgets_INCLUDES})
 
 target_link_libraries(input-overlay
     libobs
-    obs-frontend-api
-    Qt5::Core
     Qt5::Widgets
+    obs-frontend-api
     ${input-overlay_PLATFORM_DEPS}
     ${UIOHOOK_LIBRARY})
 

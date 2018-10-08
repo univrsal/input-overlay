@@ -861,10 +861,10 @@ namespace sources
             return;
         m_icon_texture = new gs_image_file_t();
 
-        gs_image_file_init(m_icon_texture, img_path.c_str());
+        //gs_image_file_init(m_icon_texture, img_path.c_str());
 
         obs_enter_graphics();
-        gs_image_file_init_texture(m_icon_texture);
+        //gs_image_file_init_texture(m_icon_texture);
         obs_leave_graphics();
 
         auto cfg_loaded = false;
@@ -961,7 +961,7 @@ namespace sources
         if (m_icon_texture)
         {
             obs_enter_graphics();
-            gs_image_file_free(m_icon_texture);
+            ////gs_image_file_free(m_icon_texture);
             m_icon_texture = nullptr;
             obs_leave_graphics();
         }
