@@ -22,7 +22,6 @@ public:
     element_data_mouse_movement()
         : element_data(TRIGGER)
     {
-
     }
 
     bool is_persistent() override { return true; }
@@ -30,7 +29,6 @@ public:
     void merge(element_data* other) override;
 
 private:
-
 };
 
 class element_mouse_movement : public element_texture
@@ -39,12 +37,12 @@ public:
     element_mouse_movement() : element_texture(BUTTON)
     {
     };
-    
+
     void load(ccl_config* cfg, const std::string& id) override;
-    
+
     void draw(gs_effect_t* effect, gs_image_file_t* image,
-              element_data* data, sources::shared_settings* settings) override;
-    
+        element_data* data, sources::shared_settings* settings) override;
+
     data_source get_source() override { return MOUSE_POS; }
 
 private:

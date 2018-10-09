@@ -143,7 +143,11 @@ private:
             }
         }
 
-        bool valid() { update(); return m_valid; }
+        bool valid()
+        {
+            update();
+            return m_valid;
+        }
 
         void init(const uint8_t pad_id)
         {
@@ -168,21 +172,21 @@ private:
     };
 
 #endif /* HAVE_XINPUT */
-    
+
     void start_pad_hook();
 
 #ifdef WINDOWS
     static uint16_t xinput_to_vc(uint16_t code);
-    
-    DWORD WINAPI hook_method(const LPVOID arg);
+
+    DWORD WINAPI hook_method(LPVOID arg);
 #else
     void* hook_method(void*);
 #endif
-    
+
     void end_pad_hook();
 
     bool init_pad_devices();
-    
+
     /* Four structs containing info to query gamepads */
     extern GamepadState pad_states[PAD_COUNT];
     /* Init state of hook */

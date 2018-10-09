@@ -65,9 +65,9 @@ enum overlay_flags
 {
     FLAG_LEFT_STICK = 1 << 0,
     FLAG_RIGHT_STICK = 1 << 1,
-    FLAG_GAMEPAD  = 1 << 2,
-    FLAG_MOUSE  = 1 << 3,
-    FLAG_TEXT  = 1 << 4
+    FLAG_GAMEPAD = 1 << 2,
+    FLAG_MOUSE = 1 << 3,
+    FLAG_TEXT = 1 << 4
 };
 
 enum dpad_direction

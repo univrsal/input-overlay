@@ -48,19 +48,19 @@ public:
     element_data_analog_stick(const float axis_value, const stick_data_type data_type)
         : element_data(BUTTON)
     {
-        switch(data_type)
+        switch (data_type)
         {
         case STICK_STATE_LEFT_X:
-             m_left_stick = { axis_value, -1};
+            m_left_stick = {axis_value, -1};
             break;
         case STICK_STATE_LEFT_Y:
-            m_left_stick = { -1, axis_value};
+            m_left_stick = {-1, axis_value};
             break;
         case STICK_STATE_RIGHT_X:
-             m_right_stick = { axis_value, -1};
+            m_right_stick = {axis_value, -1};
             break;
         case STICK_STATE_RIGHT_Y:
-            m_right_stick = { -1, axis_value};
+            m_right_stick = {-1, axis_value};
             break;
         default: ;
         }
@@ -68,8 +68,8 @@ public:
     }
 
     element_data_analog_stick(const button_state left, const button_state right,
-                              const float l_x, const float l_y,
-                              const float r_x, const float r_y)
+        const float l_x, const float l_y,
+        const float r_x, const float r_y)
         : element_data(BUTTON)
     {
         m_left_stick = {l_x, l_y};
@@ -115,11 +115,11 @@ public:
     element_analog_stick() : element_texture(BUTTON)
     {
     };
-    
+
     void load(ccl_config* cfg, const std::string& id) override;
-    
+
     void draw(gs_effect_t* effect, gs_image_file_t* image,
-              element_data* data, sources::shared_settings* settings) override;
+        element_data* data, sources::shared_settings* settings) override;
 
     data_source get_source() override { return GAMEPAD; }
 private:

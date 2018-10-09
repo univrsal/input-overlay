@@ -34,7 +34,7 @@ void element_trigger::draw(gs_effect_t* effect,
         auto progress = 0.f;
         if (trigger)
         {
-            switch(m_side)
+            switch (m_side)
             {
             case SIDE_LEFT:
                 progress = trigger->get_left();
@@ -44,17 +44,17 @@ void element_trigger::draw(gs_effect_t* effect,
                 break;
             default: ;
             }
-            
+
             if (m_button_mode)
             {
-                if(progress >= 0.1)
+                if (progress >= 0.1)
                 {
                     element_texture::draw(effect, image, &m_pressed);
                 }
                 else
                 {
                     element_texture::draw(effect, image, &m_mapping);
-                }  
+                }
             }
             else
             {
@@ -63,16 +63,16 @@ void element_trigger::draw(gs_effect_t* effect,
                 calculate_mapping(&crop, &new_pos, progress);
                 element_texture::draw(effect, image, &m_mapping); /* Draw unpressed first */
                 element_texture::draw(effect, image, &crop, &new_pos);
-            }        
+            }
         }
     }
     else
     {
-         element_texture::draw(effect, image, nullptr);
+        element_texture::draw(effect, image, nullptr);
     }
 }
 
-void element_trigger::calculate_mapping(gs_rect * pressed, vec2 * pos, const float progress) const
+void element_trigger::calculate_mapping(gs_rect* pressed, vec2* pos, const float progress) const
 {
     switch (m_direction)
     {
@@ -117,7 +117,7 @@ void element_data_trigger::merge(element_data* other)
                 m_right_trigger = trigger->m_right_trigger;
                 break;
             default: ;
-            }         
+            }
         }
     }
 }
