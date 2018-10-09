@@ -7,9 +7,8 @@
 
 #include <obs-module.h>
 #include <obs-frontend-api.h>
-#include <QAction>
 #include <QMainWindow>
-#include <QTimer>
+#include <QAction>
 
 #include "util/util.hpp"
 #include "sources/input_source.hpp"
@@ -17,6 +16,7 @@
 #include "hook/hook_helper.hpp"
 #include "hook/gamepad_hook.hpp"
 #include "gui/io_settings_dialog.hpp"
+
 
 OBS_DECLARE_MODULE()
 OBS_MODULE_USE_DEFAULT_LOCALE("input-overlay", "en-US")

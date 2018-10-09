@@ -8,6 +8,9 @@
 #include "../../sources/input_source.hpp"
 #include "element_texture.hpp"
 #include "../../../ccl/ccl.hpp"
+extern "C" {
+#include <graphics/image-file.h>
+}
 
 void element_texture::load(ccl_config* cfg, const std::string& id)
 {

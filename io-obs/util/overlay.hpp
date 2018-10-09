@@ -13,13 +13,12 @@
 #include <memory>
 #include <vector>
 #include "element/element.hpp"
-#include <graphics/image-file.h>
 
 #include "../hook/hook_helper.hpp"
 
 class ccl_config;
 
-typedef struct obs_data obs_data_t;
+typedef struct gs_image_file gs_image_file_t;
 //namespace Data {
 
 class overlay

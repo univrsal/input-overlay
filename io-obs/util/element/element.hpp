@@ -10,8 +10,8 @@
 #include <string>
 #include "graphics/vec2.h"
 #include "../util.hpp"
-#include <graphics/image-file.h>
 
+typedef struct gs_image_file gs_image_file_t;
 
 /**
  * Which data holder to read element
