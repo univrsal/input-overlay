@@ -20,8 +20,9 @@ typedef struct obs_data obs_data_t;
 
 namespace sources
 {
-    struct shared_settings
+    class shared_settings
     {
+    public:
         std::string image_file;
         std::string layout_file;
         uint32_t cx = 0, cy = 0;

@@ -4,7 +4,8 @@ find_path(UIOHOOK_INCLUDE_DIR uiohook.h)
 find_library(UIOHOOK_LIBRARY uiohook)
 
 set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
-set(CMAKE_AUTOMOC TRUE)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTOUIC ON)
 
 if(MSVC)
     set(input-overlay_PLATFORM_DEPS
@@ -80,11 +81,6 @@ set(input-overlay_SOURCES
     gui/ui_settings_dialog.hpp
     ../ccl/ccl.cpp
     ../ccl/ccl.hpp)
-
-set(input-overlay_UI
-    gui/io_settings_dialog.ui)
-
-qt5_wrap_ui(obs_UI_HEADERS ${obs_UI})
 
 add_library(input-overlay MODULE
         ${input-overlay_SOURCES})

@@ -13,16 +13,13 @@
 void element_mouse_movement::load(ccl_config* cfg, const std::string& id)
 {
     element_texture::load(cfg, id);
-
 }
 
 void element_mouse_movement::draw(gs_effect_t* effect,
     gs_image_file_t* image, element_data* data, sources::shared_settings* settings)
 {
-
 }
 
 void element_data_mouse_movement::merge(element_data* other)
 {
-
 }

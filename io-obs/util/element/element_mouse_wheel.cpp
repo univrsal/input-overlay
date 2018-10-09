@@ -25,7 +25,7 @@ void element_wheel::load(ccl_config* cfg, const std::string& id)
 }
 
 void element_wheel::draw(gs_effect_t* effect, gs_image_file_t* image,
-                         element_data* data, sources::shared_settings* settings)
+    element_data* data, sources::shared_settings* settings)
 {
     if (data)
     {
@@ -53,7 +53,7 @@ void element_wheel::draw(gs_effect_t* effect, gs_image_file_t* image,
             {
                 wheel->set_dir(WHEEL_DIR_NONE);
                 hook::last_wheel = 0;
-            }          
+            }
         }
     }
 
@@ -72,7 +72,7 @@ void element_data_wheel::merge(element_data* other)
             case BUTTON_STATE:
 #ifdef _DEBUG
                 blog(LOG_INFO, "Merged button state: %i old, %i new\n",
-                     m_middle_button, other_wheel->get_state());
+                    m_middle_button, other_wheel->get_state());
 #endif
                 m_middle_button = other_wheel->get_state();
                 break;
@@ -81,8 +81,7 @@ void element_data_wheel::merge(element_data* other)
                 m_dir = other_wheel->get_dir();
                 break;
             default: ;
-            }            
+            }
         }
-
     }
 }

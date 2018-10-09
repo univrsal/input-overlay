@@ -14,7 +14,8 @@
 #include "../util/element/element_trigger.hpp"
 #include "../util/element/element_dpad.hpp"
 
-namespace gamepad {
+namespace gamepad
+{
     bool gamepad_hook_state = false;
     bool gamepad_hook_run_flag = true;
     GamepadState pad_states[PAD_COUNT];
@@ -24,7 +25,7 @@ namespace gamepad {
 #else
     static pthread_t game_pad_hook_thread;
 #endif
-    
+
     void start_pad_hook()
     {
         if (gamepad_hook_state)
@@ -46,13 +47,12 @@ namespace gamepad {
         gamepad_hook_state = pthread_create(&game_pad_hook_thread, nullptr, hook_method, nullptr) == 0;
 #endif
     }
-    
+
     bool init_pad_devices()
     {
-        
         uint8_t id = 0;
         auto flag = false;
-        for (auto &state : pad_states)
+        for (auto& state : pad_states)
         {
             state.init(id++);
             if (state.valid())
@@ -64,7 +64,7 @@ namespace gamepad {
 #ifdef WINDOWS
     uint16_t xinput_to_vc(const uint16_t code)
     {
-        switch(code)
+        switch (code)
         {
         case XINPUT_GAMEPAD_A: return PAD_TO_VC(PAD_A);
         case XINPUT_GAMEPAD_B: return PAD_TO_VC(PAD_B);
@@ -82,15 +82,16 @@ namespace gamepad {
         }
     }
 #endif
-    
-    void end_pad_hook() {
+
+    void end_pad_hook()
+    {
         gamepad_hook_run_flag = false;
 
 #ifdef WINDOWS
         CloseHandle(hook_thread);
 #endif
     }
-    
+
     /* Background process for quering game pads */
 #ifdef WINDOWS
     DWORD WINAPI hook_method(const LPVOID arg)
@@ -99,15 +100,17 @@ namespace gamepad {
     void* hook_method(void *)
 #endif
     {
-        while (gamepad_hook_run_flag) {
+        while (gamepad_hook_run_flag)
+        {
             if (!hook::input_data)
                 break;
-            for (auto &pad : pad_states) {
+            for (auto& pad : pad_states)
+            {
                 if (!pad.valid())
                     continue;
 
 #ifdef WINDOWS
-                dpad_direction dir[] = { DPAD_CENTER, DPAD_CENTER };
+                dpad_direction dir[] = {DPAD_CENTER, DPAD_CENTER};
 
                 for (const auto& button : pad_keys)
                 {
@@ -120,20 +123,20 @@ namespace gamepad {
 
                     if (state == STATE_PRESSED)
                     {
-                        switch(button)
+                        switch (button)
                         {
                         case XINPUT_GAMEPAD_DPAD_UP:
                             if (!dir[0])
                                 dir[0] = DPAD_UP;
                             else
                                 dir[1] = DPAD_UP;
-                            break;                    
+                            break;
                         case XINPUT_GAMEPAD_DPAD_DOWN:
                             if (!dir[0])
                                 dir[0] = DPAD_DOWN;
                             else
                                 dir[1] = DPAD_DOWN;
-                            break;                    
+                            break;
                         case XINPUT_GAMEPAD_DPAD_LEFT:
                             if (!dir[0])
                                 dir[0] = DPAD_LEFT;
@@ -147,7 +150,7 @@ namespace gamepad {
                                 dir[1] = DPAD_RIGHT;
                             break;
                         default: ;
-                        }   
+                        }
                     }
                 }
 
@@ -161,7 +164,7 @@ namespace gamepad {
                         X_PRESSED(XINPUT_GAMEPAD_LEFT_THUMB)
                         ? STATE_PRESSED
                         : STATE_RELEASED,
-                         X_PRESSED(XINPUT_GAMEPAD_RIGHT_THUMB)
+                        X_PRESSED(XINPUT_GAMEPAD_RIGHT_THUMB)
                         ? STATE_PRESSED
                         : STATE_RELEASED,
                         pad.get_xinput()->Gamepad.sThumbLX /
@@ -297,8 +300,8 @@ namespace gamepad {
             os_sleep_ms(25);
 #endif
         }
-    
-        for (auto &state : pad_states)
+
+        for (auto& state : pad_states)
             state.unload();
 #ifdef WINDOWS
         return UIOHOOK_SUCCESS;

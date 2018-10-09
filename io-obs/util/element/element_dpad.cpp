@@ -27,7 +27,7 @@ void element_dpad::draw(gs_effect_t* effect,
     gs_image_file_t* image, element_data* data, sources::shared_settings* settings)
 {
     const auto d = dynamic_cast<element_data_dpad*>(data);
-    
+
     if (d && d->get_direction() != DPAD_CENTER)
     {
         /* Enum starts at one (Center doesn't count)*/
@@ -36,14 +36,13 @@ void element_dpad::draw(gs_effect_t* effect,
     }
     else
     {
-        element_texture::draw(effect, image, nullptr);        
+        element_texture::draw(effect, image, nullptr);
     }
     UNUSED_PARAMETER(settings);
 }
 
 void element_data_dpad::merge(element_data* other)
 {
-
     const auto d = dynamic_cast<element_data_dpad*>(other);
 #ifdef WINDOWS
     if (d)
@@ -135,10 +134,10 @@ dpad_direction element_data_dpad::merge_directions(const dpad_direction a, const
         {
         case DPAD_UP:
             return DPAD_TOP_LEFT;
-            
+
         case DPAD_DOWN:
             return DPAD_BOTTOM_LEFT;
-            
+
         default:
             return DPAD_LEFT;
         }

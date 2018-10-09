@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>358</width>
-    <height>447</height>
+    <width>340</width>
+    <height>480</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -15,6 +15,12 @@
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>340</width>
+    <height>480</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>Dialog.InputOverlay.Title</string>
@@ -37,71 +43,43 @@
      <property name="title">
       <string>Dialog.InputOverlay.LocalFeatures</string>
      </property>
-     <widget class="QCheckBox" name="cb_enable_history">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>110</y>
-        <width>216</width>
-        <height>17</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Dialog.InputOverlay.EnableInputHistory</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="lbl_local_features">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>30</y>
-        <width>261</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Dialog.InputOverlay.LocalFeatures.Label</string>
-      </property>
-     </widget>
-     <widget class="QCheckBox" name="cb_gamepad_hook">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>70</y>
-        <width>225</width>
-        <height>17</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Dialog.InputOverlay.EnableGamepadHook</string>
-      </property>
-     </widget>
-     <widget class="QCheckBox" name="cb_iohook">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>50</y>
-        <width>194</width>
-        <height>17</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Dialog.InputOverlay.EnableUiohook</string>
-      </property>
-     </widget>
-     <widget class="QCheckBox" name="cb_enable_overlay">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>90</y>
-        <width>220</width>
-        <height>17</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Dialog.InputOverlay.EnableInputOverlay</string>
-      </property>
-     </widget>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <widget class="QLabel" name="lbl_local_features">
+        <property name="text">
+         <string>Dialog.InputOverlay.LocalFeatures.Label</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="cb_iohook">
+        <property name="text">
+         <string>Dialog.InputOverlay.EnableUiohook</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="cb_gamepad_hook">
+        <property name="text">
+         <string>Dialog.InputOverlay.EnableGamepadHook</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="cb_enable_overlay">
+        <property name="text">
+         <string>Dialog.InputOverlay.EnableInputOverlay</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="cb_enable_history">
+        <property name="text">
+         <string>Dialog.InputOverlay.EnableInputHistory</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </item>
    <item>

@@ -12,16 +12,13 @@
 
 void element_text::load(ccl_config* cfg, const std::string& id)
 {
-
 }
 
 void element_text::draw(gs_effect_t* effect,
     gs_image_file_t* image, element_data* data, sources::shared_settings* settings)
 {
-  
 }
 
 void element_data_text::merge(element_data* other)
 {
-
 }

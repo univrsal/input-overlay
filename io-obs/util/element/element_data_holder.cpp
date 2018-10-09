@@ -53,7 +53,6 @@ void element_data_holder::add_data(const uint16_t keycode, element_data* data)
         {
             remove_data(keycode);
             m_data[keycode] = std::unique_ptr<element_data>(data);
-
         }
     }
     else

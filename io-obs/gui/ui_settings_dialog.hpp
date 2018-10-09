@@ -25,25 +25,25 @@ QT_BEGIN_NAMESPACE
 class Ui_io_config_dialog
 {
 public:
-    QVBoxLayout *verticalLayout;
-    QGroupBox *gb_features;
-    QCheckBox *cb_enable_history;
-    QLabel *lbl_local_features;
-    QCheckBox *cb_gamepad_hook;
-    QCheckBox *cb_iohook;
-    QCheckBox *cb_enable_overlay;
-    QGroupBox *gb_remote;
-    QVBoxLayout *verticalLayout_3;
-    QCheckBox *cb_enable_remote;
-    QCheckBox *cb_log;
-    QLabel *lbl_port;
-    QSpinBox *box_port;
-    QLabel *lbl_status;
-    QLabel *lbl_connections;
-    QListWidget *box_connections;
-    QDialogButtonBox *button_box;
+    QVBoxLayout* verticalLayout;
+    QGroupBox* gb_features;
+    QCheckBox* cb_enable_history;
+    QLabel* lbl_local_features;
+    QCheckBox* cb_gamepad_hook;
+    QCheckBox* cb_iohook;
+    QCheckBox* cb_enable_overlay;
+    QGroupBox* gb_remote;
+    QVBoxLayout* verticalLayout_3;
+    QCheckBox* cb_enable_remote;
+    QCheckBox* cb_log;
+    QLabel* lbl_port;
+    QSpinBox* box_port;
+    QLabel* lbl_status;
+    QLabel* lbl_connections;
+    QListWidget* box_connections;
+    QDialogButtonBox* button_box;
 
-    void setupUi(QDialog *io_config_dialog)
+    void setupUi(QDialog* io_config_dialog)
     {
         if (io_config_dialog->objectName().isEmpty())
             io_config_dialog->setObjectName(QStringLiteral("io_config_dialog"));
@@ -143,7 +143,7 @@ public:
         button_box->setSizePolicy(sizePolicy3);
         button_box->setAcceptDrops(false);
         button_box->setOrientation(Qt::Horizontal);
-        button_box->setStandardButtons(QDialogButtonBox::Cancel|QDialogButtonBox::Ok);
+        button_box->setStandardButtons(QDialogButtonBox::Cancel | QDialogButtonBox::Ok);
 
         verticalLayout->addWidget(button_box);
 
@@ -155,27 +155,41 @@ public:
         QMetaObject::connectSlotsByName(io_config_dialog);
     } // setupUi
 
-    void retranslateUi(QDialog *io_config_dialog)
+    void retranslateUi(QDialog* io_config_dialog)
     {
-        io_config_dialog->setWindowTitle(QApplication::translate("io_config_dialog", "Dialog.InputOverlay.Title", nullptr));
-        gb_features->setTitle(QApplication::translate("io_config_dialog", "Dialog.InputOverlay.LocalFeatures", nullptr));
-        cb_enable_history->setText(QApplication::translate("io_config_dialog", "Dialog.InputOverlay.EnableInputHistory", nullptr));
-        lbl_local_features->setText(QApplication::translate("io_config_dialog", "Dialog.InputOverlay.LocalFeatures.Label", nullptr));
-        cb_gamepad_hook->setText(QApplication::translate("io_config_dialog", "Dialog.InputOverlay.EnableGamepadHook", nullptr));
+        io_config_dialog->setWindowTitle(QApplication::translate("io_config_dialog", "Dialog.InputOverlay.Title",
+            nullptr));
+        gb_features->setTitle(QApplication::translate("io_config_dialog", "Dialog.InputOverlay.LocalFeatures",
+            nullptr));
+        cb_enable_history->setText(QApplication::translate("io_config_dialog", "Dialog.InputOverlay.EnableInputHistory",
+            nullptr));
+        lbl_local_features->setText(QApplication::translate("io_config_dialog",
+            "Dialog.InputOverlay.LocalFeatures.Label", nullptr));
+        cb_gamepad_hook->setText(QApplication::translate("io_config_dialog", "Dialog.InputOverlay.EnableGamepadHook",
+            nullptr));
         cb_iohook->setText(QApplication::translate("io_config_dialog", "Dialog.InputOverlay.EnableUiohook", nullptr));
-        cb_enable_overlay->setText(QApplication::translate("io_config_dialog", "Dialog.InputOverlay.EnableInputOverlay", nullptr));
-        gb_remote->setTitle(QApplication::translate("io_config_dialog", "Dialog.InputOverlay.RemoteConnection", nullptr));
-        cb_enable_remote->setText(QApplication::translate("io_config_dialog", "Dialog.InputOverlay.EnableRemoteConnection", nullptr));
-        cb_log->setText(QApplication::translate("io_config_dialog", "Dialog.InputOverlay.RemoteConnection.Logging", nullptr));
-        lbl_port->setText(QApplication::translate("io_config_dialog", "Dialog.InputOverlay.RemoteConnection.Port", nullptr));
-        lbl_status->setText(QApplication::translate("io_config_dialog", "Dialog.InputOverlay.RemoteConnection.Status", nullptr));
-        lbl_connections->setText(QApplication::translate("io_config_dialog", "Dialog.InputOverlay.RemoteConnection.Connections", nullptr));
+        cb_enable_overlay->setText(QApplication::translate("io_config_dialog", "Dialog.InputOverlay.EnableInputOverlay",
+            nullptr));
+        gb_remote->setTitle(
+            QApplication::translate("io_config_dialog", "Dialog.InputOverlay.RemoteConnection", nullptr));
+        cb_enable_remote->setText(QApplication::translate("io_config_dialog",
+            "Dialog.InputOverlay.EnableRemoteConnection", nullptr));
+        cb_log->setText(QApplication::translate("io_config_dialog", "Dialog.InputOverlay.RemoteConnection.Logging",
+            nullptr));
+        lbl_port->setText(QApplication::translate("io_config_dialog", "Dialog.InputOverlay.RemoteConnection.Port",
+            nullptr));
+        lbl_status->setText(QApplication::translate("io_config_dialog", "Dialog.InputOverlay.RemoteConnection.Status",
+            nullptr));
+        lbl_connections->setText(QApplication::translate("io_config_dialog",
+            "Dialog.InputOverlay.RemoteConnection.Connections", nullptr));
     } // retranslateUi
-
 };
 
-namespace Ui {
-    class io_config_dialog: public Ui_io_config_dialog {};
+namespace Ui
+{
+    class io_config_dialog : public Ui_io_config_dialog
+    {
+    };
 } // namespace Ui
 
 QT_END_NAMESPACE

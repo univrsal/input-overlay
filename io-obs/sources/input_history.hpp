@@ -150,7 +150,7 @@ namespace sources
         ~key_icons();
 
         void load_from_file(const std::string& img_path,
-                            const std::string& cfg_path);
+            const std::string& cfg_path);
         key_icon* get_icon_for_key(uint16_t vc);
 
         uint16_t get_w() const { return m_icon_w; }
@@ -243,13 +243,13 @@ namespace sources
 
     // Util for registering the source
     static bool clear_history(obs_properties_t* props, obs_property_t* property,
-                              void* data);
+        void* data);
 
     static bool mode_changed(obs_properties_t* props, obs_property_t* p,
-                             obs_data_t* s);
+        obs_data_t* s);
 
     static bool include_pad_changed(obs_properties* props, obs_property_t* p,
-                                    obs_data_t* s);
+        obs_data_t* s);
 
     static obs_properties_t* get_properties_for_history(void* data);
 

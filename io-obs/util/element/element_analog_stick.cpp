@@ -21,7 +21,7 @@ void element_analog_stick::load(ccl_config* cfg, const std::string& id)
 }
 
 void element_analog_stick::draw(gs_effect_t* effect, gs_image_file_t* image,
-                                element_data* data, sources::shared_settings* settings)
+    element_data* data, sources::shared_settings* settings)
 {
     if (data)
     {
@@ -36,7 +36,7 @@ void element_analog_stick::draw(gs_effect_t* effect, gs_image_file_t* image,
             else
                 temp = stick->right_pressed() ? &m_pressed : &m_mapping;
             calc_position(&pos, stick, settings);
-            element_texture::draw(effect, image, temp, &pos);           
+            element_texture::draw(effect, image, temp, &pos);
         }
     }
     else
@@ -109,8 +109,7 @@ void element_data_analog_stick::merge(element_data* other)
                 m_right_stick.y = other_stick->m_right_stick.y;
                 break;
             default: ;
-            }            
+            }
         }
-
     }
 }
