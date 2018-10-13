@@ -8,7 +8,7 @@
 #include "../../sources/input_source.hpp"
 #include "../../../ccl/ccl.hpp"
 #include "element_mouse_movement.hpp"
-#include "../util.hpp"
+#include "util/layout_constants.hpp"
 
 void element_mouse_movement::load(ccl_config* cfg, const std::string& id)
 {
@@ -20,6 +20,21 @@ void element_mouse_movement::draw(gs_effect_t* effect,
 {
 }
 
+element_data_mouse_movement::element_data_mouse_movement()
+    : element_data(TRIGGER)
+{
+}
+
+bool element_data_mouse_movement::is_persistent()
+{
+    return true;
+}
+
 void element_data_mouse_movement::merge(element_data* other)
 {
 }
+
+element_mouse_movement::element_mouse_movement()
+    : element_texture(BUTTON)
+{
+};

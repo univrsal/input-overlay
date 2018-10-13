@@ -6,10 +6,9 @@
  */
 #pragma once
 
-#include "../layout_constants.hpp"
 #include <string>
 #include "graphics/vec2.h"
-#include "../util.hpp"
+#include "graphics/graphics.h"
 
 typedef struct gs_image_file gs_image_file_t;
 
@@ -32,18 +31,14 @@ namespace sources
 
 class ccl_config;
 
+enum element_type;
+
 class element_data
 {
 public:
-    element_data(const element_type type)
-    {
-        m_type = type;
-    }
+    element_data(element_type type);
 
-    element_type get_type() const
-    {
-        return m_type;
-    }
+    element_type get_type() const;
 
     /* true if data should not me removed */
     virtual bool is_persistent() { return false; }
@@ -63,32 +58,20 @@ class element
 public:
     virtual ~element() = default;
 
-    element()
-    {
-        m_type = INVALID;
-    }
+    element();
 
-    element(const element_type type)
-    {
-        m_type = type;
-    }
+    element(element_type type);
 
     virtual void load(ccl_config* cfg, const std::string& id) = 0;
 
     virtual void draw(gs_effect_t* effect, gs_image_file_t* m_image,
-                      element_data* data, sources::shared_settings* settings) = 0;
+        element_data* data, sources::shared_settings* settings) = 0;
 
-    element_type get_type() const
-    {
-        return m_type;
-    }
+    element_type get_type() const;
 
-    uint16_t get_keycode() const
-    {
-        return m_keycode;
-    }
+    uint16_t get_keycode() const;
 
-     virtual data_source get_source() { return NONE; }
+    virtual data_source get_source();
 protected:
     void read_mapping(ccl_config* cfg, const std::string& id);
 
@@ -97,6 +80,6 @@ protected:
     vec2 m_pos = {};
     gs_rect m_mapping = {};
 
-    element_type m_type = INVALID;
-    uint16_t m_keycode = VC_NONE;
+    element_type m_type;
+    uint16_t m_keycode;
 };

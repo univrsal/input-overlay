@@ -7,8 +7,16 @@
 
 #pragma once
 
-#include "../util/util.hpp"
-#include "hook_helper.hpp"
+#ifdef _WIN32
+#include "xinput_fix.hpp"
+#else
+#include <stdio.h>
+#include <stdlib.h>
+#include <string>
+#include <malloc.h>
+#include <unistd.h>
+#endif
+#include "util/util.hpp"
 
 namespace gamepad
 {
@@ -27,14 +35,6 @@ namespace gamepad
 #define ID_R_ANALOG_X   3
 #define ID_R_ANALOG_Y   4
 #define ID_R_TRIGGER    5
-
-#define STICK_MAX_VAL   127.f
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <string>
-#include <malloc.h>
-#include <unistd.h>
 
 struct GamepadState
 {
@@ -89,28 +89,22 @@ private:
 #endif /* LINUX */
 
     /* Windows implementation */
-#ifdef HAVE_XINPUT
+#ifdef _WIN32
 
-#include <Xinput.h>
-#include <windows.h>
-
-#define X_PRESSED(b)        ((pad.get_xinput()->Gamepad.wButtons & b) != 0)
-#define STICK_MAX_VAL       32767.f
-
-    static uint16_t pad_keys[] =
+    static xinput_fix::gamepad_codes pad_keys[] =
     {
-        XINPUT_GAMEPAD_A,
-        XINPUT_GAMEPAD_B,
-        XINPUT_GAMEPAD_X,
-        XINPUT_GAMEPAD_Y,
-        XINPUT_GAMEPAD_DPAD_DOWN,
-        XINPUT_GAMEPAD_DPAD_UP,
-        XINPUT_GAMEPAD_DPAD_LEFT,
-        XINPUT_GAMEPAD_DPAD_RIGHT,
-        XINPUT_GAMEPAD_LEFT_SHOULDER,
-        XINPUT_GAMEPAD_RIGHT_SHOULDER,
-        XINPUT_GAMEPAD_START,
-        XINPUT_GAMEPAD_BACK
+        xinput_fix::CODE_A,
+        xinput_fix::CODE_B,
+        xinput_fix::CODE_X,
+        xinput_fix::CODE_Y,
+        xinput_fix::CODE_DPAD_DOWN,
+        xinput_fix::CODE_DPAD_UP,
+        xinput_fix::CODE_DPAD_LEFT,
+        xinput_fix::CODE_DPAD_RIGHT,
+        xinput_fix::CODE_LEFT_SHOULDER,
+        xinput_fix::CODE_RIGHT_SHOULDER,
+        xinput_fix::CODE_START,
+        xinput_fix::CODE_BACK
     };
 
     struct GamepadState
@@ -122,7 +116,7 @@ private:
 
         void unload()
         {
-            ZeroMemory(&m_xinput, sizeof(XINPUT_STATE));
+            ZeroMemory(&m_xinput, sizeof(xinput_fix::gamepad));
         }
 
         void load()
@@ -133,7 +127,7 @@ private:
 
         void update()
         {
-            if (XInputGetState(m_pad_id, &m_xinput) == ERROR_SUCCESS)
+            if (xinput_fix::update(m_pad_id, &m_xinput) == ERROR_SUCCESS)
             {
                 m_valid = true;
             }
@@ -160,13 +154,13 @@ private:
             return m_pad_id;
         }
 
-        XINPUT_STATE* get_xinput()
+        xinput_fix::gamepad* get_xinput()
         {
             return &m_xinput;
         }
 
     private:
-        XINPUT_STATE m_xinput;
+        xinput_fix::gamepad m_xinput;
         bool m_valid = false;
         int8_t m_pad_id = -1;
     };
@@ -175,9 +169,7 @@ private:
 
     void start_pad_hook();
 
-#ifdef WINDOWS
-    static uint16_t xinput_to_vc(uint16_t code);
-
+#ifdef _WIN32
     DWORD WINAPI hook_method(LPVOID arg);
 #else
     void* hook_method(void*);

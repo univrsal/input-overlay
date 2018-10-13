@@ -19,6 +19,7 @@
 #endif /* WINDOWS / LINUX */
 
 #ifdef LINUX
+#define STICK_MAX_VAL   127.f
 #include <math.h>
 
 #ifndef VC_KP_UP /* keypad arrows are undefined on linux */
@@ -27,7 +28,9 @@
 #define VC_KP_LEFT 0xEE4D
 #define VC_KP_RIGHT 0xEE50
 #endif
-
+#else
+#define STICK_MAX_VAL       32767.f
+#define TRIGGER_MAX_VAL     128.f
 #endif
 
 #include <string>

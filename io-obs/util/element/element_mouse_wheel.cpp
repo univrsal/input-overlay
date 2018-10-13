@@ -10,6 +10,13 @@
 #include "../util.hpp"
 #include "../../hook/hook_helper.hpp"
 #include <util/platform.h>
+#include "util/layout_constants.hpp"
+
+element_wheel::element_wheel()
+    : element_texture(MOUSE_SCROLLWHEEL)
+{
+    /* NO-OP */
+};
 
 void element_wheel::load(ccl_config* cfg, const std::string& id)
 {
@@ -58,6 +65,51 @@ void element_wheel::draw(gs_effect_t* effect, gs_image_file_t* image,
     }
 
     element_texture::draw(effect, image, data, settings);
+}
+
+data_source element_wheel::get_source()
+{
+    return DEFAULT;
+}
+
+element_data_wheel::element_data_wheel(const wheel_direction dir, const int amount)
+    : element_data(MOUSE_SCROLLWHEEL)
+{
+    m_data_type = WHEEL_STATE;
+    m_dir = dir;
+    m_amount = amount;
+}
+
+element_data_wheel::element_data_wheel(const button_state state)
+    : element_data(MOUSE_SCROLLWHEEL)
+{
+    m_data_type = BUTTON_STATE;
+    m_middle_button = state;
+}
+
+int element_data_wheel::get_amount() const
+{
+    return m_amount;
+}
+
+wheel_direction element_data_wheel::get_dir() const
+{
+    return m_dir;
+}
+
+void element_data_wheel::set_dir(const wheel_direction dir)
+{
+    m_dir = dir;
+}
+
+button_state element_data_wheel::get_state() const
+{
+    return m_middle_button;
+}
+
+bool element_data_wheel::is_persistent()
+{
+    return true;
 }
 
 void element_data_wheel::merge(element_data* other)

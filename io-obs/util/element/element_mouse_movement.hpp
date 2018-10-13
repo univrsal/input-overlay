@@ -7,7 +7,6 @@
 
 #pragma once
 
-#include "../layout_constants.hpp"
 #include "element_texture.hpp"
 
 /* Contains data for both trigger buttons
@@ -19,12 +18,9 @@ public:
         Separate constructors are used on linux
         because the values can't be queried together
     */
-    element_data_mouse_movement()
-        : element_data(TRIGGER)
-    {
-    }
+    element_data_mouse_movement();
 
-    bool is_persistent() override { return true; }
+    bool is_persistent() override;
 
     void merge(element_data* other) override;
 
@@ -34,9 +30,7 @@ private:
 class element_mouse_movement : public element_texture
 {
 public:
-    element_mouse_movement() : element_texture(BUTTON)
-    {
-    };
+    element_mouse_movement();
 
     void load(ccl_config* cfg, const std::string& id) override;
 

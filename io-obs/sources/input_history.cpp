@@ -19,7 +19,7 @@ namespace sources
     {
 #ifdef WINDOWS
         m_text_source = obs_source_create("text_gdiplus\0", "history-text-source",
-                                          m_settings, nullptr);
+            m_settings, nullptr);
 #else
 		m_text_source = obs_source_create("text_ft2_source\0", "history-text-source", m_settings, NULL);
 #endif
@@ -197,7 +197,7 @@ namespace sources
         if (m_key_icons && m_key_icons->is_loaded())
         {
             gs_effect_set_texture(gs_effect_get_param_by_name(effect, "image"),
-                                  m_key_icons->get_texture()->texture);
+                m_key_icons->get_texture()->texture);
 
             int index = 0, index2 = 0;
             key_icon* icon = nullptr;
@@ -286,7 +286,7 @@ namespace sources
 
         m_update_interval = obs_data_get_int(settings, S_OVERLAY_INTERVAL);
         m_clear_interval = obs_data_get_int(settings,
-                                            S_OVERLAY_AUTO_CLEAR_INTERVAL);
+            S_OVERLAY_AUTO_CLEAR_INTERVAL);
 
         m_key_name_path = obs_data_get_string(settings, S_OVERLAY_KEY_NAME_PATH);
         m_key_icon_config_path = obs_data_get_string(
@@ -576,8 +576,8 @@ namespace sources
         if (m_index > MAX_SIMULTANEOUS_KEYS)
         {
             blog(LOG_WARNING,
-                 "[input-overlay] Input history source collected more than %i keys!\n",
-                 MAX_SIMULTANEOUS_KEYS);
+                "[input-overlay] Input history source collected more than %i keys!\n",
+                MAX_SIMULTANEOUS_KEYS);
             return;
         }
 
@@ -586,7 +586,7 @@ namespace sources
     }
 
     bool clear_history(obs_properties_t* props, obs_property_t* property,
-                       void* data)
+        void* data)
     {
         auto* source = reinterpret_cast<input_history_source*>(data);
         source->clear_history();
@@ -621,7 +621,7 @@ namespace sources
     }
 
     bool include_pad_changed(obs_properties* props, obs_property_t* p,
-                             obs_data_t* s)
+        obs_data_t* s)
     {
         const auto id = obs_properties_get(props, S_CONTROLLER_ID);
         obs_property_set_visible(id, obs_data_get_bool(s, S_OVERLAY_INCLUDE_PAD));
@@ -633,9 +633,9 @@ namespace sources
         const auto s = reinterpret_cast<input_history_source*>(data);
         const auto props = obs_properties_create();
         const auto mode_list = obs_properties_add_list(props, S_OVERLAY_MODE,
-                                                       T_OVERLAY_MODE,
-                                                       OBS_COMBO_TYPE_LIST,
-                                                       OBS_COMBO_FORMAT_INT);
+            T_OVERLAY_MODE,
+            OBS_COMBO_TYPE_LIST,
+            OBS_COMBO_FORMAT_INT);
         obs_property_list_add_int(mode_list, T_OVERLAY_MODE_TEXT, 0);
         obs_property_list_add_int(mode_list, T_OVERLAY_MODE_ICON, 1);
         obs_property_set_modified_callback(mode_list, mode_changed);
@@ -669,41 +669,41 @@ namespace sources
 
         /* Icon mode propterties */
         obs_properties_add_path(props, S_OVERLAY_KEY_ICON_PATH,
-                                T_OVERLAY_KEY_ICON_PATH, OBS_PATH_FILE,
-                                filter_img.c_str(), key_icon_path.c_str());
+            T_OVERLAY_KEY_ICON_PATH, OBS_PATH_FILE,
+            filter_img.c_str(), key_icon_path.c_str());
 
         obs_properties_add_path(props, S_OVERLAY_KEY_ICON_CONFIG_PATH,
-                                T_OVERLAY_KEY_ICON_CONFIG_PATH, OBS_PATH_FILE,
-                                filter_text.c_str(),
-                                key_icon_config_path.c_str());
+            T_OVERLAY_KEY_ICON_CONFIG_PATH, OBS_PATH_FILE,
+            filter_text.c_str(),
+            key_icon_config_path.c_str());
 
         obs_properties_add_int(props, S_OVERLAY_ICON_H_SPACE,
-                               T_OVERLAY_ICON_H_SPACE, -999, 999, 1);
+            T_OVERLAY_ICON_H_SPACE, -999, 999, 1);
         obs_properties_add_int(props, S_OVERLAY_ICON_V_SPACE,
-                               T_OVERLAY_ICON_V_SPACE, -999, 999, 1);
+            T_OVERLAY_ICON_V_SPACE, -999, 999, 1);
 
         /* Text mode properties*/
 
         obs_properties_add_path(props, S_OVERLAY_KEY_NAME_PATH,
-                                T_OVERLAY_KEY_NAME_PATH, OBS_PATH_FILE,
-                                filter_text.c_str(), key_names_path.c_str());
+            T_OVERLAY_KEY_NAME_PATH, OBS_PATH_FILE,
+            filter_text.c_str(), key_names_path.c_str());
         obs_properties_add_bool(props, S_OVERLAY_USE_FALLBACK_NAME,
-                                T_OVERLAY_USE_FALLBACK_NAMES);
+            T_OVERLAY_USE_FALLBACK_NAMES);
 
         /* Font */
         obs_properties_add_font(props, S_OVERLAY_FONT, T_OVERLAY_FONT);
         obs_properties_add_color(props, S_OVERLAY_FONT_COLOR,
-                                 T_OVERLAY_FONT_COLOR);
+            T_OVERLAY_FONT_COLOR);
         obs_properties_add_int_slider(props, S_OVERLAY_OPACITY, T_OVERLAY_OPACITY,
-                                      0, 100, 1);
+            0, 100, 1);
         obs_properties_add_bool(props, S_OVERLAY_OUTLINE, T_OVERLAY_OUTLINE);
 
         obs_properties_add_int(props, S_OVERLAY_OUTLINE_SIZE,
-                               T_OVERLAY_OUTLINE_SIZE, 1, 20, 1);
+            T_OVERLAY_OUTLINE_SIZE, 1, 20, 1);
         obs_properties_add_color(props, S_OVERLAY_OUTLINE_COLOR,
-                                 T_OVERLAY_OUTLINE_COLOR);
+            T_OVERLAY_OUTLINE_COLOR);
         obs_properties_add_int_slider(props, S_OVERLAY_OUTLINE_OPACITY,
-                                      T_OVERLAY_OUTLINE_OPACITY, 0, 100, 1);
+            T_OVERLAY_OUTLINE_OPACITY, 0, 100, 1);
 
         /* Other */
         const auto icon_dir_list = obs_properties_add_list(
@@ -720,29 +720,29 @@ namespace sources
         obs_property_list_add_int(icon_dir_list, T_OVERLAY_DIRECTION_RIGHT, 3);
 
         obs_properties_add_int(props, S_OVERLAY_HISTORY_SIZE,
-                               T_OVERLAY_HISTORY_SIZE, 1, MAX_HISTORY_SIZE, 1);
+            T_OVERLAY_HISTORY_SIZE, 1, MAX_HISTORY_SIZE, 1);
         obs_properties_add_bool(props, S_OVERLAY_FIX_CUTTING,
-                                T_OVERLAY_FIX_CUTTING);
+            T_OVERLAY_FIX_CUTTING);
         obs_properties_add_bool(props, S_OVERLAY_INCLUDE_MOUSE,
-                                T_OVERLAY_INCLUDE_MOUSE);
+            T_OVERLAY_INCLUDE_MOUSE);
 
         obs_property_set_modified_callback(include_pad, include_pad_changed);
         obs_properties_add_int(props, S_CONTROLLER_ID, T_CONTROLLER_ID, 0, 3, 1);
         obs_properties_add_int(props, S_OVERLAY_INTERVAL, T_OVERLAY_INTERVAL, 1,
-                               1000, 1);
+            1000, 1);
 
         obs_properties_add_bool(props, S_OVERLAY_ENABLE_REPEAT_KEYS,
-                                T_OVERLAY_ENABLE_REPEAT_KEYS);
+            T_OVERLAY_ENABLE_REPEAT_KEYS);
         obs_properties_add_bool(props, S_OVERLAY_ENABLE_AUTO_CLEAR,
-                                T_OVERLAY_ENABLE_AUTO_CLEAR);
+            T_OVERLAY_ENABLE_AUTO_CLEAR);
         obs_properties_add_int(props, S_OVERLAY_AUTO_CLEAR_INTERVAL,
-                               T_OVERLAY_AUTO_CLEAR_INTERVAL, 1, 30, 1);
+            T_OVERLAY_AUTO_CLEAR_INTERVAL, 1, 30, 1);
 
         /* Command mode */
         obs_properties_add_bool(props, S_OVERLAY_COMMAND_MODE,
-                                T_OVERLAY_COMMAND_MODE);
+            T_OVERLAY_COMMAND_MODE);
         obs_properties_add_button(props, S_OVERLAY_CLEAR_HISTORY,
-                                  T_OVERLAY_CLEAR_HISTORY, clear_history);
+            T_OVERLAY_CLEAR_HISTORY, clear_history);
         return props;
     }
 
@@ -854,7 +854,7 @@ namespace sources
     }
 
     void key_icons::load_from_file(const std::string& img_path,
-                                   const std::string& cfg_path)
+        const std::string& cfg_path)
     {
         m_loaded = false;
         if (img_path.empty() || cfg_path.empty())
@@ -902,7 +902,7 @@ namespace sources
             else
             {
                 blog(LOG_ERROR, "Loading key icons from %s failed. No ccl data!",
-                     cfg_path.c_str());
+                    cfg_path.c_str());
             }
         }
 
@@ -911,14 +911,14 @@ namespace sources
         if (!m_icon_texture->loaded)
         {
             blog(LOG_ERROR, "Error: Failed to load key icons from %s",
-                 img_path.c_str());
+                img_path.c_str());
             unload_texture();
         }
 
         if (!cfg_loaded)
         {
             blog(LOG_ERROR, "Error: Failed to load key icon config from %s",
-                 cfg_path.c_str());
+                cfg_path.c_str());
         }
 
         if (cfg->has_errors())

@@ -7,8 +7,11 @@
 
 #pragma once
 
-#include "../layout_constants.hpp"
 #include "element_texture.hpp"
+
+enum dpad_direction;
+
+enum button_state;
 
 class element_data_dpad : public element_data
 {
@@ -19,46 +22,35 @@ public:
     */
 
     /* Xinput directly generates direction */
-    element_data_dpad(const dpad_direction a, const dpad_direction b)
-        : element_data(DPAD_STICK)
-    {
-        m_direction = merge_directions(a, b);
-    }
+    element_data_dpad(dpad_direction a, dpad_direction b);
 
-    element_data_dpad(const dpad_direction d, const button_state state)
-        : element_data(DPAD_STICK)
-    {
-        m_direction = d;
-        m_state = state;
-    }
+    element_data_dpad(dpad_direction d, button_state state);
 
-    bool is_persistent() override { return true; }
+    bool is_persistent() override;
 
     void merge(element_data* other) override;
 
     static dpad_direction merge_directions(dpad_direction a, dpad_direction b);
 
-    dpad_direction get_direction() const { return m_direction; }
+    dpad_direction get_direction() const;
 
-    button_state get_state() { return m_state; }
+    button_state get_state() const;
 private:
-    dpad_direction m_direction = DPAD_CENTER;
-    button_state m_state = STATE_PRESSED;
+    dpad_direction m_direction;
+    button_state m_state;
 };
 
 class element_dpad : public element_texture
 {
 public:
-    element_dpad() : element_texture(DPAD_STICK)
-    {
-    };
+    element_dpad();
 
     void load(ccl_config* cfg, const std::string& id) override;
 
     void draw(gs_effect_t* effect, gs_image_file_t* image,
         element_data* data, sources::shared_settings* settings) override;
 
-    data_source get_source() override { return GAMEPAD; }
+    data_source get_source() override;
 
 private:
     /* Center is in m_mapping */

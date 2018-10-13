@@ -7,6 +7,42 @@
 
 #include "element.hpp"
 #include "../../../ccl/ccl.hpp"
+#include "util/layout_constants.hpp"
+
+element_data::element_data(const element_type type)
+{
+    m_type = type;
+}
+
+element_type element_data::get_type() const
+{
+    return m_type;
+}
+
+element::element() : m_keycode(0)
+{
+    m_type = INVALID;
+}
+
+element::element(const element_type type)
+{
+    m_type = type;
+}
+
+element_type element::get_type() const
+{
+    return m_type;
+}
+
+uint16_t element::get_keycode() const
+{
+    return m_keycode;
+}
+
+data_source element::get_source()
+{
+    return NONE;
+}
 
 void element::read_mapping(ccl_config* cfg, const std::string& id)
 {

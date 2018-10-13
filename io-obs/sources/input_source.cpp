@@ -12,6 +12,7 @@
 #include "../util/util.hpp"
 #include "../../ccl/ccl.hpp"
 #include <clocale>
+#include "util/layout_constants.hpp"
 
 namespace sources
 {
@@ -22,7 +23,7 @@ namespace sources
         m_overlay->load();
 
         m_settings.gamepad = obs_data_get_int(settings, S_CONTROLLER_ID);
-#ifdef HAVE_XINPUT
+#ifdef _WIN32
         m_settings.left_dz = obs_data_get_int(settings, S_CONTROLLER_L_DEAD_ZONE) / STICK_MAX_VAL;
         m_settings.right_dz = obs_data_get_int(settings, S_CONTROLLER_R_DEAD_ZONE) / STICK_MAX_VAL;
 #endif
@@ -37,7 +38,7 @@ namespace sources
     {
         if (!m_overlay->get_texture() || !m_overlay->get_texture()->texture)
             return;
-        
+
         if (m_settings.layout_file.empty() || !m_overlay->is_loaded())
         {
             gs_effect_set_texture(gs_effect_get_param_by_name(effect, "image"),
@@ -78,7 +79,7 @@ namespace sources
 
         return true;
     }
-    
+
     bool reload_pads(obs_properties_t* props, obs_property_t* property,
         void* data)
     {
@@ -114,26 +115,26 @@ namespace sources
         auto use_center = obs_properties_add_bool(
             props, S_MONITOR_USE_CENTER, T_MONITOR_USE_CENTER);
         obs_property_set_modified_callback(use_center,
-                                           use_monitor_center_changed);
+            use_monitor_center_changed);
 
         obs_property_set_visible(obs_properties_add_int(props, S_MONITOR_H_CENTER, T_MONITOR_H_CENTER,
-                               -9999, 9999, 1), false);
+            -9999, 9999, 1), false);
         obs_property_set_visible(obs_properties_add_int(props, S_MONITOR_V_CENTER, T_MONITOR_V_CENTER,
-                               -9999, 9999, 1), false);
+            -9999, 9999, 1), false);
         obs_property_set_visible(obs_properties_add_int_slider(props, S_MOUSE_DEAD_ZONE, T_MOUSE_DEAD_ZONE,
-                                      0, 50, 1), false);
+            0, 50, 1), false);
 
         /* Gamepad stuff */
         obs_property_set_visible(obs_properties_add_int(props, S_CONTROLLER_ID,
             T_CONTROLLER_ID, 0, 3, 1), false);
 
-#if HAVE_XINPUT /* Linux only allows values 0 - 127 */
+#if _WIN32 /* Linux only allows values 0 - 127 */
         obs_property_set_visible(obs_properties_add_int_slider(props, S_CONTROLLER_L_DEAD_ZONE,
-                                      T_CONROLLER_L_DEADZONE, 1,
-                                      STICK_MAX_VAL - 1, 1), false);
+            T_CONROLLER_L_DEADZONE, 1,
+            STICK_MAX_VAL - 1, 1), false);
         obs_property_set_visible(obs_properties_add_int_slider(props, S_CONTROLLER_R_DEAD_ZONE,
-                                      T_CONROLLER_R_DEADZONE, 1,
-                                      STICK_MAX_VAL - 1, 1), false);
+            T_CONROLLER_R_DEADZONE, 1,
+            STICK_MAX_VAL - 1, 1), false);
 #else
         obs_properties_add_button(props, S_RELOAD_PAD_DEVICES, T_RELOAD_PAD_DEVICES, reload_pads);
 #endif

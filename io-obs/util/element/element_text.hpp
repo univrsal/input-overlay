@@ -6,8 +6,6 @@
  */
 
 #pragma once
-
-#include "../layout_constants.hpp"
 #include "element_texture.hpp"
 
 /* Contains data for both trigger buttons
@@ -19,12 +17,9 @@ public:
         Separate constructors are used on linux
         because the values can't be queried together
     */
-    element_data_text()
-        : element_data(TRIGGER)
-    {
-    }
+    element_data_text();
 
-    bool is_persistent() override { return true; }
+    bool is_persistent() override;
 
     void merge(element_data* other) override;
 
@@ -34,16 +29,14 @@ private:
 class element_text : public element
 {
 public:
-    element_text() : element(TEXT)
-    {
-    };
+    element_text();
 
     void load(ccl_config* cfg, const std::string& id) override;
 
     void draw(gs_effect_t* effect, gs_image_file_t* image,
         element_data* data, sources::shared_settings* settings) override;
 
-    data_source get_source() override { return DEFAULT; }
+    data_source get_source() override;
 
 private:
 };

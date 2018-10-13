@@ -36,7 +36,8 @@ bool obs_module_load()
     dialog = new io_settings_dialog(main_window);
     obs_frontend_pop_ui_translation();
 
-    const auto menu_cb = [] {
+    const auto menu_cb = []
+    {
         dialog->toggleShowHide();
     };
     QAction::connect(menu_action, &QAction::triggered, menu_cb);
@@ -53,7 +54,7 @@ void obs_module_unload()
 {
     if (gamepad::gamepad_hook_state)
         gamepad::end_pad_hook();
-    
+
     if (hook::hook_initialized)
         hook::end_hook();
 }

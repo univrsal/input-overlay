@@ -9,10 +9,7 @@ set(CMAKE_AUTOUIC ON)
 
 if(MSVC)
     set(input-overlay_PLATFORM_DEPS
-        w32-pthreads
-        XInput9_1_0)
-
-    add_definitions(-DHAVE_XINPUT=1)
+        w32-pthreads)
 endif()
 
 if(UNIX)
@@ -49,6 +46,8 @@ set(input-overlay_SOURCES
     hook/hook_helper.hpp
     hook/gamepad_hook.cpp
     hook/gamepad_hook.hpp
+    hook/xinput_fix.cpp
+    hook/xinput_fix.hpp
     util/util.cpp
     util/util.hpp
     util/overlay.cpp

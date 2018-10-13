@@ -19,6 +19,7 @@
 class ccl_config;
 
 typedef struct gs_image_file gs_image_file_t;
+
 //namespace Data {
 
 class overlay

@@ -6,8 +6,7 @@
  */
 
 #pragma once
-#include "../layout_constants.hpp"
-#include "element.hpp"
+
 #include "element_texture.hpp"
 
 #define WHEEL_MAP_MIDDLE  0
@@ -20,50 +19,31 @@ enum wheel_data_type
     WHEEL_STATE
 };
 
+enum wheel_direction;
+
+enum button_state;
+
 class element_data_wheel : public element_data
 {
 public:
-    element_data_wheel(const wheel_direction dir, const int amount)
-        : element_data(MOUSE_SCROLLWHEEL)
-    {
-        m_data_type = WHEEL_STATE;
-        m_dir = dir;
-        m_amount = amount;
-    }
+    element_data_wheel(wheel_direction dir, int amount);
 
-    element_data_wheel(const button_state state)
-        : element_data(MOUSE_SCROLLWHEEL)
-    {
-        m_data_type = BUTTON_STATE;
-        m_middle_button = state;
-    }
+    element_data_wheel(button_state state);
 
-    int get_amount() const
-    {
-        return m_amount;
-    }
+    int get_amount() const;
 
-    wheel_direction get_dir() const
-    {
-        return m_dir;
-    }
+    wheel_direction get_dir() const;
 
-    void set_dir(const wheel_direction dir)
-    {
-        m_dir = dir;
-    }
+    void set_dir(wheel_direction dir);
 
-    button_state get_state() const
-    {
-        return m_middle_button;
-    }
+    button_state get_state() const;
 
-    bool is_persistent() override { return true; }
+    bool is_persistent() override;
 
     void merge(element_data* other) override;
 private:
     wheel_data_type m_data_type;
-    button_state m_middle_button = STATE_RELEASED;
+    button_state m_middle_button;
     wheel_direction m_dir;
     int m_amount = 0;
 };
@@ -71,16 +51,13 @@ private:
 class element_wheel : public element_texture
 {
 public:
-    element_wheel() : element_texture(MOUSE_SCROLLWHEEL)
-    {
-        /* NO-OP */
-    };
+    element_wheel();
 
     void load(ccl_config* cfg, const std::string& id) override;
     void draw(gs_effect_t* effect, gs_image_file_t* image,
         element_data* data, sources::shared_settings* settings) override;
 
-    data_source get_source() override { return DEFAULT; }
+    data_source get_source() override;
 private:
     /* Middle, Up, Down */
     gs_rect m_mappings[3];

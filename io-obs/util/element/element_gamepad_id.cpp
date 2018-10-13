@@ -8,7 +8,12 @@
 #include "../../sources/input_source.hpp"
 #include "../../../ccl/ccl.hpp"
 #include "element_gamepad_id.hpp"
-#include "../util.hpp"
+#include "util/layout_constants.hpp"
+
+element_gamepad_id::element_gamepad_id()
+    : element_texture(GAMEPAD_ID), m_mappings{}
+{
+};
 
 void element_gamepad_id::load(ccl_config* cfg, const std::string& id)
 {
@@ -32,4 +37,9 @@ void element_gamepad_id::draw(gs_effect_t* effect,
     {
         element_texture::draw(effect, image, &m_mapping);
     }
+}
+
+data_source element_gamepad_id::get_source()
+{
+    return GAMEPAD;
 }

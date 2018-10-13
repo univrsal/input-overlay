@@ -45,7 +45,7 @@ bool overlay::load()
     unload();
     const auto image_loaded = load_texture();
     m_is_loaded = image_loaded && load_cfg();
-    
+
     if (!m_is_loaded)
     {
         m_settings->gamepad = 0;
@@ -80,7 +80,7 @@ bool overlay::load_cfg()
     {
         m_settings->cx = static_cast<uint32_t>(cfg->get_int(CFG_TOTAL_WIDTH, true));
         m_settings->cy = static_cast<uint32_t>(cfg->get_int(CFG_TOTAL_HEIGHT, true));
-        
+
         auto element_id = cfg->get_string(CFG_FIRST_ID);
         const auto debug_mode = cfg->get_bool(CFG_DEBUG_FLAG, true);
 
@@ -131,8 +131,8 @@ bool overlay::load_texture()
     obs_enter_graphics();
     gs_image_file_init_texture(m_image);
     obs_leave_graphics();
-    
-	if (!m_image->loaded)
+
+    if (!m_image->loaded)
     {
         blog(LOG_WARNING, "[input-overlay] Error: failed to load texture %s", m_settings->image_file.c_str());
         flag = false;
@@ -142,7 +142,7 @@ bool overlay::load_texture()
         m_settings->cx = m_image->cx;
         m_settings->cy = m_image->cy;
     }
-    
+
     return flag;
 }
 
@@ -165,7 +165,7 @@ void overlay::draw(gs_effect_t* effect)
         for (auto const& element : m_elements)
         {
             element_data* data = nullptr;
-            switch(element->get_source())
+            switch (element->get_source())
             {
             case GAMEPAD:
                 data = hook::input_data->get_by_gamepad(m_settings->gamepad
@@ -226,14 +226,14 @@ void overlay::load_element(ccl_config* cfg, const std::string& id, const bool de
         {
 #endif
             blog(LOG_INFO, " Type: %14s, KEYCODE: 0x%4X ID: %s",
-                element_type_to_string(static_cast<element_type>(type)), new_element->get_keycode() ,id.c_str());
+                element_type_to_string(static_cast<element_type>(type)), new_element->get_keycode(), id.c_str());
         }
     }
 }
 
-const char * overlay::element_type_to_string(const element_type t)
+const char* overlay::element_type_to_string(const element_type t)
 {
-    switch(t)
+    switch (t)
     {
     case TEXTURE: return "Texture";
     case BUTTON: return "Button";

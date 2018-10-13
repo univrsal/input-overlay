@@ -29,7 +29,7 @@ namespace sources
         uint32_t monitor_w = 0, monitor_h = 0;
         uint8_t mouse_deadzone = 0;
         uint8_t gamepad = 0;
-#ifdef HAVE_XINPUT
+#ifdef _WIN32
         float left_dz = 0.f, right_dz = 0.f;
 #endif
         /* TODO: Mouse config etc.*/
@@ -48,7 +48,6 @@ namespace sources
         {
             m_overlay = std::make_unique<overlay>(&m_settings);
             obs_source_update(m_source, settings);
-
         }
 
         ~input_source() = default;

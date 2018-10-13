@@ -12,9 +12,7 @@
 
 #ifdef LINUX
 #include <stdint.h>
-#endif
-
-#ifdef WINDOWS
+#else
 #include <windows.h>
 #endif
 

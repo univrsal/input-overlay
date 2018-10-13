@@ -9,6 +9,12 @@
 #include "../../../ccl/ccl.hpp"
 #include "element_dpad.hpp"
 #include "../util.hpp"
+#include "util/layout_constants.hpp"
+
+element_dpad::element_dpad()
+    : element_texture(DPAD_STICK)
+{
+};
 
 void element_dpad::load(ccl_config* cfg, const std::string& id)
 {
@@ -39,6 +45,29 @@ void element_dpad::draw(gs_effect_t* effect,
         element_texture::draw(effect, image, nullptr);
     }
     UNUSED_PARAMETER(settings);
+}
+
+data_source element_dpad::get_source()
+{
+    return GAMEPAD;
+}
+
+element_data_dpad::element_data_dpad(const dpad_direction a, const dpad_direction b)
+    : element_data(DPAD_STICK)
+{
+    m_direction = merge_directions(a, b);
+}
+
+element_data_dpad::element_data_dpad(const dpad_direction d, const button_state state)
+    : element_data(DPAD_STICK)
+{
+    m_direction = d;
+    m_state = state;
+}
+
+bool element_data_dpad::is_persistent()
+{
+    return true;
 }
 
 void element_data_dpad::merge(element_data* other)
@@ -154,4 +183,14 @@ dpad_direction element_data_dpad::merge_directions(const dpad_direction a, const
     default: ;
         return a;
     }
+}
+
+dpad_direction element_data_dpad::get_direction() const
+{
+    return m_direction;
+}
+
+button_state element_data_dpad::get_state() const
+{
+    return m_state;
 }

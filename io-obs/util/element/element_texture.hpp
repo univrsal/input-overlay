@@ -12,15 +12,9 @@
 class element_texture : public element
 {
 public:
-    element_texture() : element(TEXTURE)
-    {
-        /* NO-OP */
-    };
+    element_texture();
 
-    element_texture(const element_type type) : element(type)
-    {
-        /* NO-OP */
-    }
+    element_texture(element_type type);
 
     void load(ccl_config* cfg, const std::string& id) override;
 
@@ -31,5 +25,5 @@ public:
     static void draw(gs_effect_t* effect, gs_image_file_t* image,
         const gs_rect* rect, const vec2* pos);
 
-    data_source get_source() override { return DEFAULT; }
+    data_source get_source() override;
 };
