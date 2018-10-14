@@ -75,14 +75,19 @@ set(input-overlay_SOURCES
     util/element/element_dpad.hpp
     util/element/element_data_holder.cpp
     util/element/element_data_holder.hpp
-    gui/io_settings_dialog.cpp
-    gui/io_settings_dialog.hpp
-    gui/ui_settings_dialog.hpp
+	gui/io_settings_dialog.cpp
     ../ccl/ccl.cpp
     ../ccl/ccl.hpp)
 
+set(io_settings_UI
+	gui/io_settings_dialog.ui)
+
+qt5_wrap_ui(frontend-tools_UI_HEADERS
+	${io_settings_UI})
+
 add_library(input-overlay MODULE
-        ${input-overlay_SOURCES})
+	${io_settings_UI_HEADERS}
+	${input-overlay_SOURCES})
 
 include_directories(
     ${UIOHOOK_INCLUDE_DIR}

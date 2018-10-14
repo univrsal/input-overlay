@@ -9,6 +9,7 @@
 #include <obs-frontend-api.h>
 #include <QMainWindow>
 #include <QAction>
+#include <util/config-file.h>
 
 #include "util/util.hpp"
 #include "sources/input_source.hpp"
@@ -42,10 +43,25 @@ bool obs_module_load()
     };
     QAction::connect(menu_action, &QAction::triggered, menu_cb);
 
-    sources::register_history();
-    sources::register_overlay_source();
-    hook::start_hook();
-    gamepad::start_pad_hook();
+	auto cfg = obs_frontend_get_global_config();
+
+    if (config_get_bool(cfg, S_REGION, S_HISTORY))
+        sources::register_history();
+
+	if (config_get_bool(cfg, S_REGION, S_OVERLAY))
+		sources::register_overlay_source();
+
+	const auto iohook = config_get_bool(cfg, S_REGION, S_IOHOOK);
+	const auto gamepad = config_get_bool(cfg, S_REGION, S_GAMEPAD);
+
+	if (iohook || gamepad)
+		hook::init_data_holder();
+
+	if (iohook)
+        hook::start_hook();
+    
+	if (gamepad)
+		gamepad::start_pad_hook();
 
     return true;
 }

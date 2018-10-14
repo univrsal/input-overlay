@@ -165,17 +165,21 @@ void overlay::draw(gs_effect_t* effect)
         for (auto const& element : m_elements)
         {
             element_data* data = nullptr;
-            switch (element->get_source())
+            if (hook::data_initialized)
             {
-            case GAMEPAD:
-                data = hook::input_data->get_by_gamepad(m_settings->gamepad, 
-					element->get_keycode());
-                break;
-            case DEFAULT:
-                data = hook::input_data->get_by_code(element->get_keycode());
-                break;
-            default: ;
+				switch (element->get_source())
+				{
+				case GAMEPAD:
+					data = hook::input_data->get_by_gamepad(m_settings->gamepad,
+						element->get_keycode());
+					break;
+				case DEFAULT:
+					data = hook::input_data->get_by_code(element->get_keycode());
+					break;
+				default:;
+				}
             }
+
             element->draw(effect, m_image, data, m_settings);
         }
     }

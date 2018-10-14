@@ -31,6 +31,7 @@ public:
     void toggleShowHide();
 private Q_SLOTS:
     void FormAccepted();
+	void CbRemoteStateChanged(int state);
 
 private:
     Ui::io_config_dialog* ui;

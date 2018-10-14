@@ -18,6 +18,9 @@ io_settings_dialog::io_settings_dialog(QWidget* parent)
     connect(ui->button_box, &QDialogButtonBox::accepted,
         this, &io_settings_dialog::FormAccepted);
 
+	connect(ui->cb_enable_remote, &QCheckBox::stateChanged,
+		this, &io_settings_dialog::CbRemoteStateChanged);
+
     auto cfg = obs_frontend_get_global_config();
     /* Set defaults */
     config_set_default_bool(cfg, S_REGION, S_IOHOOK, true);
@@ -38,6 +41,8 @@ io_settings_dialog::io_settings_dialog(QWidget* parent)
     ui->cb_enable_remote->setChecked(config_get_bool(cfg, S_REGION, S_REMOTE));
     ui->cb_log->setChecked(config_get_bool(cfg, S_REGION, S_LOGGING));
     ui->box_port->setValue(config_get_int(cfg, S_REGION, S_PORT));
+
+	CbRemoteStateChanged(0);
 }
 
 void io_settings_dialog::showEvent(QShowEvent* event)
@@ -50,12 +55,19 @@ void io_settings_dialog::toggleShowHide()
     setVisible(!isVisible());
 }
 
+void io_settings_dialog::CbRemoteStateChanged(int state)
+{
+	ui->cb_log->setEnabled(ui->cb_enable_remote->isChecked());
+	ui->box_port->setEnabled(ui->cb_enable_remote->isChecked());
+	ui->box_connections->setEnabled(ui->cb_enable_remote->isChecked());
+}
+
 void io_settings_dialog::FormAccepted()
 {
     auto cfg = obs_frontend_get_global_config();
     config_set_bool(cfg, S_REGION, S_IOHOOK, ui->cb_iohook->isChecked());
     config_set_bool(cfg, S_REGION, S_GAMEPAD, ui->cb_gamepad_hook->isChecked());
-    config_set_bool(cfg, S_REGION, S_OVERLAY, ui->cb_iohook->isChecked());
+    config_set_bool(cfg, S_REGION, S_OVERLAY, ui->cb_enable_overlay->isChecked());
     config_set_bool(cfg, S_REGION, S_HISTORY, ui->cb_enable_history->isChecked());
 
     config_set_bool(cfg, S_REGION, S_REMOTE, ui->cb_enable_remote->isChecked());

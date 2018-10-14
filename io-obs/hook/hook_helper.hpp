@@ -27,6 +27,7 @@ namespace hook
     extern int16_t mouse_x, mouse_y, mouse_x_smooth, mouse_y_smooth, mouse_last_x,
                    mouse_last_y;
     extern bool hook_initialized;
+	extern bool data_initialized;
 
 #ifdef WINDOWS
     DWORD WINAPI hook_thread_proc(LPVOID arg);
@@ -37,6 +38,8 @@ namespace hook
     void dispatch_proc(uiohook_event* event);
 
     bool logger_proc(unsigned int level, const char* format, ...);
+
+	void init_data_holder();
 
     void start_hook();
 

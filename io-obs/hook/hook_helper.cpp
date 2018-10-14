@@ -27,7 +27,7 @@ namespace hook
     int16_t mouse_x, mouse_y, mouse_x_smooth, mouse_y_smooth, mouse_last_x,
             mouse_last_y;
     bool hook_initialized = false;
-
+	bool data_initialized = false;
 #ifdef WINDOWS
     static HANDLE hook_thread;
     static HANDLE hook_running_mutex;
@@ -125,6 +125,16 @@ namespace hook
         return true;
     }
 
+	void init_data_holder()
+	{
+		input_data = new element_data_holder();
+		data_initialized = input_data;
+#ifdef _DEBUG
+		blog(LOG_INFO, "[input-overlay] libuiohook init start... Dataholder@0x%X\n",
+			reinterpret_cast<int>(input_data));
+#endif
+	}
+
     void end_hook()
     {
 #ifdef WINDOWS
@@ -145,12 +155,6 @@ namespace hook
 
     void start_hook()
     {
-        input_data = new element_data_holder();
-#ifdef _DEBUG
-        return;
-        blog(LOG_INFO, "[input-overlay] libuiohook init start... Dataholder@0x%X\n",
-            reinterpret_cast<int>(input_data));
-#endif
 #ifdef _WIN32
         hook_running_mutex = CreateMutex(nullptr, FALSE,
             TEXT("hook_running_mutex"));
