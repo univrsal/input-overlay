@@ -63,7 +63,7 @@ public:
 
     void delete_element(uint16_t id) const;
 
-    void set_new_element_type(element_type type) { m_new_element_type = type; }
+    void set_new_element_type(const element_type type) { m_new_element_type = type; }
 
     void queue_dialog_open(DialogID id);
 

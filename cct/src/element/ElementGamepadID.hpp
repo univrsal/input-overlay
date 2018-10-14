@@ -17,7 +17,7 @@ public:
     {
         /* NO-OP */
     };
-    ElementGamepadID(std::string id, SDL_Point pos, SDL_Rect mapping, uint8_t z);
+    ElementGamepadID(const std::string& id, SDL_Point pos, SDL_Rect mapping, uint8_t z);
 
     void ElementGamepadID::draw(Texture* atlas, CoordinateSystem* cs, bool selected, bool alpha) override;
 
@@ -28,4 +28,5 @@ public:
     void write_to_file(ccl_config* cfg, SDL_Point* default_dim, uint8_t& layout_flags) override;
 private:
     uint8_t m_last_gamepad_id = 0;
+	button_state m_state = STATE_RELEASED;
 };

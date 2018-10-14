@@ -10,8 +10,8 @@
 #include "../util/Texture.hpp"
 #include "../util/CoordinateSystem.hpp"
 
-ElementScrollWheel::ElementScrollWheel(std::string id, const SDL_Point pos, const SDL_Rect mapping, const uint8_t z)
-    : ElementTexture(MOUSE_SCROLLWHEEL, std::move(id), pos, mapping, z)
+ElementScrollWheel::ElementScrollWheel(const std::string& id, const SDL_Point pos, const SDL_Rect mapping, const uint8_t z)
+    : ElementTexture(MOUSE_SCROLLWHEEL, id, pos, mapping, z)
 {
     refresh_mappings();
 }
@@ -31,7 +31,7 @@ void ElementScrollWheel::draw(Texture* atlas, CoordinateSystem* cs, const bool s
     if (m_up)
         atlas->draw(cs->get_helper()->renderer(),
             &m_dimensions_scaled, &m_mapping_up, (alpha && !selected) ? ELEMENT_HIDE_ALPHA : 255);
-
+    
     atlas->draw(cs->get_helper()->renderer(), &m_dimensions_scaled, &m_mapping,
         (alpha && !selected) ? ELEMENT_HIDE_ALPHA : 255);
 

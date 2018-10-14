@@ -13,8 +13,8 @@
 #include "../util/Texture.hpp"
 #include "../../../ccl/ccl.hpp"
 
-ElementGamepadID::ElementGamepadID(std::string id, const SDL_Point pos, const SDL_Rect mapping, const uint8_t z)
-    : ElementTexture(GAMEPAD_ID, std::move(id), pos, mapping, z)
+ElementGamepadID::ElementGamepadID(const std::string& id, const SDL_Point pos, const SDL_Rect mapping, const uint8_t z)
+    : ElementTexture(GAMEPAD_ID, id, pos, mapping, z)
 {
     /* NO-OP */
 }
@@ -27,6 +27,14 @@ void ElementGamepadID::draw(Texture* atlas, CoordinateSystem* cs, const bool sel
     atlas->draw(cs->get_helper()->renderer(), &m_dimensions_scaled, &temp,
         (alpha && !selected) ? ELEMENT_HIDE_ALPHA : 255);
 
+    if (m_state) /* Guide button */
+    {
+		temp = m_mapping;
+		temp.x += (temp.w + CFG_INNER_BORDER) * 4;
+		atlas->draw(cs->get_helper()->renderer(), &m_dimensions_scaled, &temp,
+			(alpha && !selected) ? ELEMENT_HIDE_ALPHA : 255);
+    }
+
     if (selected)
         cs->get_helper()->util_draw_rect(&m_dimensions_scaled, cs->get_helper()->palette()->red());
 }
@@ -38,6 +46,8 @@ void ElementGamepadID::handle_event(SDL_Event* event, SDL_Helper* helper)
     case SDL_CONTROLLERBUTTONDOWN:
     case SDL_CONTROLLERBUTTONUP:
         m_last_gamepad_id = event->caxis.which;
+		if (event->cbutton.button == SDL_CONTROLLER_BUTTON_GUIDE)
+			m_state = event->type == SDL_CONTROLLERBUTTONDOWN ? STATE_PRESSED : STATE_RELEASED;
         break;
     case SDL_CONTROLLERAXISMOTION:
         m_last_gamepad_id = event->cbutton.which;
@@ -55,5 +65,6 @@ ElementGamepadID* ElementGamepadID::read_from_file(ccl_config* file, const std::
 
 void ElementGamepadID::write_to_file(ccl_config* cfg, SDL_Point* default_dim, uint8_t& layout_flags)
 {
+	ElementTexture::write_to_file(cfg, default_dim, layout_flags);
     layout_flags |= FLAG_GAMEPAD;
 }

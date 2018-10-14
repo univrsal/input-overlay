@@ -26,7 +26,7 @@ public:
         /* NO-OP */
     };
 
-    ElementScrollWheel(std::string id, SDL_Point pos, SDL_Rect mapping, uint8_t z);
+    ElementScrollWheel(const std::string& id, SDL_Point pos, SDL_Rect mapping, uint8_t z);
 
     void draw(Texture* atlas, CoordinateSystem* cs, bool selected, bool alpha) override;
 
