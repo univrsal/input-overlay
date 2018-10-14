@@ -7,9 +7,9 @@ if(MSVC)
 else()
     set(CMAKE_C_FLAGS_DEBUG "-D_DEBUG")
     SET(GCC_FLAGS "-fpermissive")
-    INCLUDE(FindPkgConfig)
-
-    PKG_SEARCH_MODULE(SDL2NET REQUIRED)
+    set(SDLNET_INCLUDE_DIRS "lib/SDL_net/include/")
+    #set(SDLNET_LIBRARIES "lib/SDL_net/lib/x64/libSDL2_net-2.0.so.0")
+    set(SDLNET_LIBRARIES "${CMAKE_CURRENT_BINARY_DIR}/lib/SDL_net/lib/x64/libSDL2_net-2.0.so.0")
 endif()
 
 set(io_client_SOURCES

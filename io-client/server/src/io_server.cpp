@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #ifndef _MSC_VER
 #include <unistd.h>
+#define _sleep usleep
 #endif
 #include "SDL_net.h"
 #include <stdio.h>
@@ -49,6 +50,7 @@ int main(int argc, char **argv)
 
 	/* open the server socket */
 	server = SDLNet_TCP_Open(&ip);
+	printf("HEYY\n");
 	if (!server)
 	{
 		printf("SDLNet_TCP_Open: %s\n", SDLNet_GetError());
@@ -58,6 +60,7 @@ int main(int argc, char **argv)
 	while (1)
 	{
 		/* try to accept a connection */
+
 		client = SDLNet_TCP_Accept(server);
 		if (!client)
 		{ /* no connection accepted */
