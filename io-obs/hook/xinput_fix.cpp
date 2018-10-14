@@ -5,6 +5,7 @@
  * github.com/univrsal/input-overlay
  */
 
+#ifdef _WIN32
 #include "xinput_fix.hpp"
 #include "util/util.hpp"
 #include <util/platform.h>
@@ -176,3 +177,5 @@ namespace xinput_fix
         }
     }
 }
+
+#endif /* _WIN32 */
