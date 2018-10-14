@@ -168,8 +168,8 @@ void overlay::draw(gs_effect_t* effect)
             switch (element->get_source())
             {
             case GAMEPAD:
-                data = hook::input_data->get_by_gamepad(m_settings->gamepad
-                    , element->get_keycode());
+                data = hook::input_data->get_by_gamepad(m_settings->gamepad, 
+					element->get_keycode());
                 break;
             case DEFAULT:
                 data = hook::input_data->get_by_code(element->get_keycode());

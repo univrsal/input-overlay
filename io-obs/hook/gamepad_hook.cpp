@@ -118,7 +118,7 @@ namespace gamepad
                 /* Trigger buttons */
                 hook::input_data->add_gamepad_data(pad.get_id(), VC_TRIGGER_DATA,
                     new element_data_trigger(
-                        trigger_r(pad.get_xinput()), trigger_l(pad.get_xinput())
+                        trigger_l(pad.get_xinput()), trigger_r(pad.get_xinput())
                     ));
 #else
                 unsigned char m_packet[8];

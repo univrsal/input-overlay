@@ -9,10 +9,12 @@
 #include "../../../ccl/ccl.hpp"
 #include "element_gamepad_id.hpp"
 #include "util/layout_constants.hpp"
+#include "element_button.hpp"
 
 element_gamepad_id::element_gamepad_id()
     : element_texture(GAMEPAD_ID), m_mappings{}
 {
+	m_keycode = PAD_TO_VC(PAD_X_BOX_KEY);
 };
 
 void element_gamepad_id::load(ccl_config* cfg, const std::string& id)
@@ -29,6 +31,15 @@ void element_gamepad_id::load(ccl_config* cfg, const std::string& id)
 void element_gamepad_id::draw(gs_effect_t* effect,
     gs_image_file_t* image, element_data* data, sources::shared_settings* settings)
 {
+    if (data)
+    {
+		const auto d = dynamic_cast<element_data_button*>(data);
+        if (d && d->get_state())
+        {
+			element_texture::draw(effect, image, &m_mappings[3]);
+        }
+    }
+
     if (settings->gamepad > 0)
     {
         element_texture::draw(effect, image, &m_mappings[settings->gamepad - 1]);

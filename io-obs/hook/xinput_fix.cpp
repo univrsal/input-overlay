@@ -14,7 +14,7 @@ namespace xinput_fix
 {
     bool loaded = false;
 
-    /* Will be loaded from xinput.dll */
+    /* Will be loaded from xinput1_3.dll */
     int (__stdcall *get_gamepad_state)(int, gamepad*);
 
     TCHAR xinput_dll_path[MAX_PATH];
@@ -62,7 +62,7 @@ namespace xinput_fix
 
     button_state pressed(gamepad* pad, const gamepad_codes code)
     {
-        return pad ? button_state(pad->wButtons & code) : STATE_RELEASED;
+        return pad ? button_state((pad->wButtons & code) != 0) : STATE_RELEASED;
     }
 
     void get_dpad(gamepad* pad, dpad_direction dirs[2])

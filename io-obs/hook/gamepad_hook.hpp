@@ -97,6 +97,7 @@ private:
         xinput_fix::CODE_B,
         xinput_fix::CODE_X,
         xinput_fix::CODE_Y,
+        xinput_fix::CODE_GUIDE,
         xinput_fix::CODE_DPAD_DOWN,
         xinput_fix::CODE_DPAD_UP,
         xinput_fix::CODE_DPAD_LEFT,

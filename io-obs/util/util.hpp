@@ -30,7 +30,7 @@
 #endif
 #else
 #define STICK_MAX_VAL       32767.f
-#define TRIGGER_MAX_VAL     128.f
+#define TRIGGER_MAX_VAL     256.f
 #endif
 
 #include <string>
