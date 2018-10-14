@@ -1,0 +1,54 @@
+2.0.1:
+Mārtiņš Možeiko - Fri Sep 27 23:26:33 2013
+ * Fixed returning all IP addresses from SDLNet_GetLocalAddresses() on Windows
+
+2.0.0:
+Sam Lantinga - Sat Jun  1 19:11:26 PDT 2013
+ * Updated for SDL 2.0 release
+
+1.2.9:
+Simeon Maxein - Mon Jul  2 08:02:57 EDT 2012
+ * Made it possible to use SDL_net without SDL
+
+1.2.8:
+Sam Lantinga - Sun Jan 15 01:39:35 EST 2012
+ * Added the definition for INADDR_LOOPBACK
+Sam Lantinga - Thu Jan 05 22:57:56 2012 -0500
+ * Added an Xcode project for iOS
+Sam Lantinga - Sat Dec 31 10:28:12 EST 2011
+ * SDL_net is now under the zlib license
+Sam Lantinga - Sun Nov 20 01:29:33 EST 2011
+ * Added SDLNet_UDP_SetPacketLoss() to simulate random packet loss
+Sam Lantinga - Fri Nov 04 04:52:12 2011 -0400
+ * Added SDLNet_GetLocalAddresses() to query local interfaces
+Sam Lantinga - Fri Nov  4 04:05:03 EDT 2011
+ * Removed obsolete OpenTransport code
+Sam Lantinga - Tue Mar 08 16:52:59 2011 -0800
+ * Added Android.mk to build on the Android platform
+Sam Lantinga - Sun Feb 27 10:00:53 PST 2011
+ * Fixed to compile cleanly with g++
+C.W. Betts - Thu Feb 17 12:52:47 PST 2011
+ * Fixed the code to use socklen_t where appropriate
+Evan Nemerson - Thu Feb 17 12:47:13 PST 2011
+ * Added pkg-config support
+esigra - Mon Feb 16 20:59:55 PST 2009
+ * Fixed C++ compilation with -Wold-style-cast
+Matthew Mondor - Fri Jan  4 08:44:22 PST 2008
+ * Enable multicast receiving on 224.0.0.1 on Windows (already worked on UNIX)
+
+1.2.7:
+Joakim L. Gilje - Sat Jul 14 22:54:37 PDT 2007
+ * Set server TCP sockets to blocking mode on Mac OS X, Solaris, etc.
+
+1.2.6:
+Sam Lantinga - Sun Apr 30 01:48:40 PDT 2006
+ * Added gcc-fat.sh for generating Universal binaries on Mac OS X
+ * Updated libtool support to version 1.5.22
+Sam Lantinga - Wed Nov 19 00:23:44 PST 2003
+ * Updated libtool support for new mingw32 DLL build process
+Shard - Thu, 05 Jun 2003 09:30:20 -0500
+ * Fixed compiling on BeOS, which may not have SO_BROADCAST
+Kyle Davenport - Sat, 19 Apr 2003 17:13:31 -0500
+ * Added .la files to the development RPM, fixing RPM build on RedHat 8
+
+1.2.5:
