@@ -3,6 +3,9 @@ project(input-overlay)
 find_path(UIOHOOK_INCLUDE_DIR uiohook.h)
 find_library(UIOHOOK_LIBRARY uiohook)
 
+find_path(NETLIB_INCLUDE_DIR netlib.h)
+find_library(NETLIB_LIBRARY netlib)
+
 set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
@@ -91,6 +94,7 @@ add_library(input-overlay MODULE
 
 include_directories(
     ${UIOHOOK_INCLUDE_DIR}
+    ${NETLIB_INCLUDE_DIR}
     SYSTEM "${CMAKE_SOURCE_DIR}/libobs"
     "../../../UI/obs-frontend-api"
     ${Qt5Core_INCLUDES}
@@ -101,6 +105,7 @@ target_link_libraries(input-overlay
     Qt5::Widgets
     obs-frontend-api
     ${input-overlay_PLATFORM_DEPS}
-    ${UIOHOOK_LIBRARY})
+    ${UIOHOOK_LIBRARY}
+    ${NETLIB_LIBRARY})
 
 install_obs_plugin_with_data(input-overlay data)
