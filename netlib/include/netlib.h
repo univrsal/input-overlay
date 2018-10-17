@@ -172,7 +172,7 @@ extern DECLSPEC void NETLIB_CALL netlib_free_packets(udp_packet** packets);
    internally in network (big endian) byte order, in addresses, etc.
    This allows other systems to send to this socket via a known port.
 */
-extern DECLSPEC udp_socket NETLIB_CALL netib_udp_open(uint16_t port);
+extern DECLSPEC udp_socket NETLIB_CALL netlib_udp_open(uint16_t port);
 
 /* Set the percentage of simulated packet loss for packets sent on the socket. */
 extern DECLSPEC void NETLIB_CALL netlib_udp_set_packet_loss(udp_socket sock, int percent);
@@ -259,7 +259,7 @@ typedef struct _netlib_generic_socket {
 	int ready;
 }* netlib_generic_socket;
 
-/* Allocate a socket set for use with netlib_check_sockets()
+/* Allocate a socket set for use with netlib_check_socket_set()
    This returns a socket set for up to 'maxsockets' sockets, or NULL if
    the function ran out of memory.
 */
@@ -285,6 +285,7 @@ FORCE_INLINE int netlib_tcp_del_socket(netlib_socket_set set, tcp_socket sock)
 {
 	return netlib_del_socket(set, (netlib_generic_socket)sock);
 }
+
 FORCE_INLINE int netlib_udp_del_socket(netlib_socket_set set, udp_socket sock)
 {
 	return netlib_del_socket(set, (netlib_generic_socket)sock);
@@ -297,9 +298,9 @@ FORCE_INLINE int netlib_udp_del_socket(netlib_socket_set set, udp_socket sock)
    first.  This function returns the number of sockets ready for reading,
    or -1 if there was an error with the select() system call.
 */
-extern DECLSPEC int NETLIB_CALL netlib_check_sockets(netlib_socket_set set, uint32_t timeout);
+extern DECLSPEC int NETLIB_CALL netlib_check_socket_set(netlib_socket_set set, uint32_t timeout);
 
-/* After calling netlib_check_sockets(), you can use this function on a
+/* After calling netlib_check_socket_set(), you can use this function on a
    socket that was in the socket set, to find out if data is available
    for reading.
 */
@@ -312,7 +313,7 @@ FORCE_INLINE int _netlib_socket_ready(netlib_generic_socket sock)
 }
 
 /* Free a set of sockets allocated by netlib_alloc_socket_set() */
-extern DECLSPEC void NETLIB_CALL netlib_free_sockets(netlib_socket_set set);
+extern DECLSPEC void NETLIB_CALL netlib_free_socket_set(netlib_socket_set set);
 
 /* === Error reporting === */
 
