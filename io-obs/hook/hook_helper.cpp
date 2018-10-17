@@ -28,7 +28,7 @@ namespace hook
             mouse_last_y;
     bool hook_initialized = false;
 	bool data_initialized = false;
-#ifdef WINDOWS
+#ifdef _WIN32
     static HANDLE hook_thread;
     static HANDLE hook_running_mutex;
     static HANDLE hook_control_mutex;
@@ -45,13 +45,13 @@ namespace hook
         switch (event->type)
         {
         case EVENT_HOOK_ENABLED:
-#ifdef WINDOWS
+#ifdef _WIN32
             WaitForSingleObject(hook_running_mutex, INFINITE);
 #else
 			pthread_mutex_lock(&hook_running_mutex);
 #endif
 
-#ifdef WINDOWS
+#ifdef _WIN32
             SetEvent(hook_control_cond);
 #else
 			pthread_cond_signal(&hook_control_cond);
@@ -59,13 +59,13 @@ namespace hook
 #endif
             break;
         case EVENT_HOOK_DISABLED:
-#ifdef WINDOWS
+#ifdef _WIN32
             WaitForSingleObject(hook_control_mutex, INFINITE);
 #else
 			pthread_mutex_lock(&hook_control_mutex);
 #endif
 
-#ifdef WINDOWS
+#ifdef _WIN32
             ReleaseMutex(hook_running_mutex);
             ResetEvent(hook_control_cond);
         default: ;
@@ -79,7 +79,7 @@ namespace hook
         process_event(event);
     }
 
-#ifdef WINDOWS
+#ifdef _WIN32
     DWORD WINAPI hook_thread_proc(const LPVOID arg)
     {
         /* Set the hook status. */
@@ -137,7 +137,7 @@ namespace hook
 
     void end_hook()
     {
-#ifdef WINDOWS
+#ifdef _WIN32
         /* Create event handles for the thread hook. */
         CloseHandle(hook_thread);
         CloseHandle(hook_running_mutex);
@@ -326,7 +326,7 @@ namespace hook
     {
         /* Lock the thread control mutex.  This will be unlocked when the
            thread has finished starting, or when it has fully stopped. */
-#ifdef WINDOWS
+#ifdef _WIN32
         WaitForSingleObject(hook_control_mutex, INFINITE);
 #else
 		pthread_mutex_lock(&hook_control_mutex);
@@ -335,7 +335,7 @@ namespace hook
         /* Set the initial status. */
         int status = UIOHOOK_FAILURE;
 
-#ifndef WINDOWS
+#ifndef _WIN32
 		/* Create the thread attribute. */
 		pthread_attr_t hook_thread_attr;
 		pthread_attr_init(&hook_thread_attr);
@@ -346,7 +346,7 @@ namespace hook
 		int priority = sched_get_priority_max(policy);
 #endif
 
-#if defined(WINDOWS)
+#if defined(_WIN32)
         DWORD hook_thread_id;
         DWORD* hook_thread_status = (DWORD*)malloc(sizeof(DWORD));
         hook_thread = CreateThread(nullptr, 0,
@@ -360,7 +360,7 @@ namespace hook
 		if (pthread_create(&hook_thread, &hook_thread_attr, hook_thread_proc, hook_thread_status) == 0)
 		{
 #endif
-#if defined(WINDOWS)
+#if defined(_WIN32)
             /* Attempt to set the thread priority to time critical. */
             if (SetThreadPriority(hook_thread, THREAD_PRIORITY_TIME_CRITICAL) == 0
             )
@@ -393,13 +393,13 @@ namespace hook
 			   event is received or the thread terminates.
 			   NOTE This unlocks the hook_control_mutex while we wait.*/
 
-#ifdef WINDOWS
+#ifdef _WIN32
             WaitForSingleObject(hook_control_cond, INFINITE);
 #else
 			pthread_cond_wait(&hook_control_cond, &hook_control_mutex);
 #endif
 
-#ifdef WINDOWS
+#ifdef _WIN32
             if (WaitForSingleObject(hook_running_mutex, 0) != WAIT_TIMEOUT)
             {
 #else
@@ -409,7 +409,7 @@ namespace hook
                 /* Lock Successful; The hook is not running but the hook_control_cond
                    was signaled!  This indicates that there was a startup problem!
                    Get the status back from the thread. */
-#ifdef WINDOWS
+#ifdef _WIN32
                 WaitForSingleObject(hook_thread, INFINITE);
                 GetExitCodeThread(hook_thread, hook_thread_status);
 #else
@@ -436,7 +436,7 @@ namespace hook
         }
 
         /* Make sure the control mutex is unlocked. */
-#ifdef WINDOWS
+#ifdef _WIN32
         ReleaseMutex(hook_control_mutex);
 #else
 		pthread_mutex_unlock(&hook_control_mutex);

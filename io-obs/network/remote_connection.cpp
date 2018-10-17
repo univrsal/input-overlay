@@ -19,7 +19,7 @@ namespace network
         
         if (netlib_init() == 0)
         {
-#ifdef WINDOWS
+#ifdef _WIN32
             hook_thread = CreateThread(nullptr, 0, static_cast<LPTHREAD_START_ROUTINE>(network_thread),
             nullptr, 0, nullptr);
             network_state = hook_thread;
@@ -34,7 +34,7 @@ namespace network
     
     }
 
-#ifdef WINDOWS
+#ifdef _WIN32
     DWORD WINAPI network_thread(LPVOID arg);
 #else
     void* network_thread(void*)
@@ -46,7 +46,7 @@ namespace network
         
         }
 
-#ifdef WINDOWS
+#ifdef _WIN32
         return 0x0;
 #else
         pthread_exit(nullptr);

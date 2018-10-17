@@ -11,7 +11,7 @@
 #pragma once
 
 #ifdef _WIN32
-#include <windows.h>
+#include <Windows.h>
 
 enum button_state;
 

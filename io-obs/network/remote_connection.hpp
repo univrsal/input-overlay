@@ -9,6 +9,10 @@
 
 #include <netlib.h>
 
+#ifdef _WIN32
+#include <Windows.h>
+#endif
+
 namespace network
 {
     extern netlib_socket_set sockets;
@@ -19,7 +23,7 @@ namespace network
     
     void close_network();
     
-#ifdef WINDOWS
+#ifdef _WIN32
     DWORD WINAPI hook_method(LPVOID arg);
 #else
     void* network_thread(void*);

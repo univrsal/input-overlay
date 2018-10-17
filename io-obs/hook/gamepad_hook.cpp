@@ -32,7 +32,7 @@ namespace gamepad
         if (gamepad_hook_state)
             return;
 
-#ifdef WINDOWS
+#ifdef _WIN32
         xinput_fix::load();
 
         if (!xinput_fix::loaded) /* Couldn't load xinput Dll*/
@@ -43,7 +43,7 @@ namespace gamepad
 #endif
         gamepad_hook_state = gamepad_hook_run_flag = init_pad_devices();
 
-#ifdef WINDOWS
+#ifdef _WIN32
         hook_thread = CreateThread(nullptr, 0, static_cast<LPTHREAD_START_ROUTINE>(hook_method),
             nullptr, 0, nullptr);
         gamepad_hook_state = hook_thread;
@@ -230,14 +230,14 @@ namespace gamepad
 
 #endif /* LINUX */
             }
-#ifdef  WINDOWS /* Delay on linux results in buffered input */
+#ifdef  _WIN32 /* Delay on linux results in buffered input */
             os_sleep_ms(25);
 #endif
         }
 
         //for (auto& state : pad_states)
         //    state.unload();
-#ifdef WINDOWS
+#ifdef _WIN32
         return UIOHOOK_SUCCESS;
 #else
         pthread_exit(nullptr);

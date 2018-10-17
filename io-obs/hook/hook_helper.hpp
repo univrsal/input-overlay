@@ -13,7 +13,7 @@
 #ifdef LINUX
 #include <stdint.h>
 #else
-#include <windows.h>
+#include <Windows.h>
 #endif
 
 class element_data_holder;
@@ -29,7 +29,7 @@ namespace hook
     extern bool hook_initialized;
 	extern bool data_initialized;
 
-#ifdef WINDOWS
+#ifdef _WIN32
     DWORD WINAPI hook_thread_proc(LPVOID arg);
 #else
 	void *hook_thread_proc(void *arg);

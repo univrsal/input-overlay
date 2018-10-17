@@ -73,7 +73,7 @@ bool element_data_dpad::is_persistent()
 void element_data_dpad::merge(element_data* other)
 {
     const auto d = dynamic_cast<element_data_dpad*>(other);
-#ifdef WINDOWS
+#ifdef _WIN32
     if (d)
     {
         m_direction = d->m_direction;

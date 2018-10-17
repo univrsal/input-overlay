@@ -17,7 +17,7 @@ namespace sources
 {
     void input_history_source::load_text_source()
     {
-#ifdef WINDOWS
+#ifdef _WIN32
         m_text_source = obs_source_create("text_gdiplus\0", "history-text-source",
             m_settings, nullptr);
 #else

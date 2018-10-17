@@ -10,12 +10,8 @@
 
 #ifndef CCT
 
-#ifndef WINDOWS
-#ifdef _WIN32
-#define WINDOWS
-#else
+#ifndef _WIN32
 #define LINUX
-#endif
 #endif /* WINDOWS / LINUX */
 
 #ifdef LINUX
