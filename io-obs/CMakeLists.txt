@@ -86,6 +86,10 @@ set(input-overlay_SOURCES
     gui/io_settings_dialog.cpp
     network/remote_connection.cpp
     network/remote_connection.hpp
+    network/io_server.cpp
+    network/io_server.hpp
+    network/io_client.cpp
+    network/io_client.hpp
     ../ccl/ccl.cpp
     ../ccl/ccl.hpp)
 

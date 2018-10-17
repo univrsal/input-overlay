@@ -13,25 +13,27 @@
 #include <Windows.h>
 #endif
 
+class io_server;
+
 namespace network
 {
-    extern netlib_socket_set sockets;
-    extern bool network_state;
-    extern bool network_flag;
-    
-    void start_network();
+    extern bool network_state; /* Initialization state*/
+    extern bool network_flag; /* Running state */
+	extern bool log_flag; /* Set in obs_module_load */
+
+    void start_network(uint16_t port);
     
     void close_network();
     
 #ifdef _WIN32
-    DWORD WINAPI hook_method(LPVOID arg);
+    DWORD WINAPI network_handler(LPVOID arg);
 #else
-    void* network_thread(void*);
+    void* network_handler(void*);
 #endif
-    
-    class remote_connection {
-    
-    };
+
+	char* read_text(tcp_socket sock, char** buf);
+
+	extern io_server* server_instance;
 }
 
 
