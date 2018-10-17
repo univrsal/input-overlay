@@ -3,9 +3,6 @@ project(input-overlay)
 find_path(UIOHOOK_INCLUDE_DIR uiohook.h)
 find_library(UIOHOOK_LIBRARY uiohook)
 
-find_path(NETLIB_INCLUDE_DIR netlib.h)
-find_library(NETLIB_LIBRARY netlib)
-
 set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
@@ -13,10 +10,18 @@ set(CMAKE_AUTOUIC ON)
 if(MSVC)
     set(input-overlay_PLATFORM_DEPS
         w32-pthreads)
+
+    find_path(NETLIB_INCLUDE_DIR netlib.h)
+    find_library(NETLIB_LIBRARY netlib)
 endif()
 
 if(UNIX)
     add_definitions(-DLINUX_INPUT=1)
+
+    set(NETLIB_INCLUDE_DIR
+        ${CMAKE_CURRENT_SOURCE_DIR}/../netlib/include)
+    set(NETLIB_LIBRARY
+        ${CMAKE_CURRENT_SOURCE_DIR}/../netlib/bin/linux64/libnetlib.so)
 endif()
 
 macro(use_cxx14)
@@ -78,7 +83,9 @@ set(input-overlay_SOURCES
     util/element/element_dpad.hpp
     util/element/element_data_holder.cpp
     util/element/element_data_holder.hpp
-	gui/io_settings_dialog.cpp
+    gui/io_settings_dialog.cpp
+    network/remote_connection.cpp
+    network/remote_connection.hpp
     ../ccl/ccl.cpp
     ../ccl/ccl.hpp)
 

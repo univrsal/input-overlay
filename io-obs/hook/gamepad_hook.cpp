@@ -32,7 +32,7 @@ namespace gamepad
         if (gamepad_hook_state)
             return;
 
-#ifdef _WIN32
+#ifdef WINDOWS
         xinput_fix::load();
 
         if (!xinput_fix::loaded) /* Couldn't load xinput Dll*/
@@ -43,7 +43,7 @@ namespace gamepad
 #endif
         gamepad_hook_state = gamepad_hook_run_flag = init_pad_devices();
 
-#ifdef _WIN32
+#ifdef WINDOWS
         hook_thread = CreateThread(nullptr, 0, static_cast<LPTHREAD_START_ROUTINE>(hook_method),
             nullptr, 0, nullptr);
         gamepad_hook_state = hook_thread;
@@ -78,7 +78,6 @@ namespace gamepad
 #ifdef _WIN32
     DWORD WINAPI hook_method(const LPVOID arg)
 #else
-    
     void* hook_method(void *)
 #endif
     {
