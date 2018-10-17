@@ -9,7 +9,7 @@
 #include <obs-module.h>
 #include "remote_connection.hpp"
 
-static netlib_socket_set sockets;
+static netlib_socket_set sockets = nullptr;
 
 namespace network
 {
@@ -107,7 +107,6 @@ namespace network
 
     bool io_server::create_sockets()
     {
-        sockets = nullptr;
         int i;
         if (sockets)
             netlib_free_socket_set(sockets);

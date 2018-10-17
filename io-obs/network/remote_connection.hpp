@@ -20,6 +20,9 @@ namespace network
     extern bool network_state; /* Initialization state*/
     extern bool network_flag; /* Running state */
 	extern bool log_flag; /* Set in obs_module_load */
+	extern const char* local_ip;
+
+	const char* get_status();
 
     void start_network(uint16_t port);
     

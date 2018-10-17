@@ -8,6 +8,7 @@
 #include "io_settings_dialog.hpp"
 #include <obs-frontend-api.h>
 #include <util/config-file.h>
+#include "network/remote_connection.hpp"
 
 io_settings_dialog::io_settings_dialog(QWidget* parent)
     : QDialog(parent, Qt::Dialog),
@@ -22,15 +23,6 @@ io_settings_dialog::io_settings_dialog(QWidget* parent)
 		this, &io_settings_dialog::CbRemoteStateChanged);
 
     auto cfg = obs_frontend_get_global_config();
-    /* Set defaults */
-    config_set_default_bool(cfg, S_REGION, S_IOHOOK, true);
-    config_set_default_bool(cfg, S_REGION, S_GAMEPAD, true);
-    config_set_default_bool(cfg, S_REGION, S_OVERLAY, true);
-    config_set_default_bool(cfg, S_REGION, S_HISTORY, true);
-
-    config_set_default_bool(cfg, S_REGION, S_REMOTE, false);
-    config_set_default_bool(cfg, S_REGION, S_LOGGING, false);
-    config_set_default_int(cfg, S_REGION, S_PORT, 1608);
 
     /* Load values */
     ui->cb_iohook->setChecked(config_get_bool(cfg, S_REGION, S_IOHOOK));
@@ -41,6 +33,14 @@ io_settings_dialog::io_settings_dialog(QWidget* parent)
     ui->cb_enable_remote->setChecked(config_get_bool(cfg, S_REGION, S_REMOTE));
     ui->cb_log->setChecked(config_get_bool(cfg, S_REGION, S_LOGGING));
     ui->box_port->setValue(config_get_int(cfg, S_REGION, S_PORT));
+
+	auto text = ui->lbl_status->text().toStdString();
+    
+	auto pos = text.find("%s");
+	text.replace(pos, strlen("%s"), network::get_status());
+	pos = text.find("%s");
+	text.replace(pos, strlen("%s"), network::local_ip);
+	ui->lbl_status->setText(text.c_str());
 
 	CbRemoteStateChanged(0);
 }

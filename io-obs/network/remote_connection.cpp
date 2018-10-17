@@ -15,6 +15,7 @@ namespace network
     bool network_state = false;
     bool network_flag = true;
     bool log_flag = false;
+	const char* local_ip = nullptr;
 
     io_server* server_instance = nullptr;
 #ifdef _WIN32
@@ -23,10 +24,25 @@ namespace network
 	static pthread_t network_thread;
 #endif
 
+    const char* get_status()
+    {
+		return network_state ? "UP" : "DOWN";
+    }
+
     void start_network(uint16_t port)
     {
         if (network_state)
             return;
+
+        /* Get ip of first interface */
+		ip_address addresses[2];
+        if (netlib_get_local_addresses(addresses, 2) > 0)
+        {
+			local_ip = netlib_resolve_ip(&addresses[0]);
+			if (!local_ip)
+				local_ip = "localhost"; /* Better than nothing */
+        }
+
         network_state = true;
         auto failed = false;
 
