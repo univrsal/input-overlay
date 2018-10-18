@@ -1,24 +1,39 @@
 cmake_minimum_required(VERSION 2.8)
 project(io_client)
 
+find_path(UIOHOOK_INCLUDE_DIR uiohook.h)
+find_library(UIOHOOK_LIBRARY uiohook)
+
 if(MSVC)
-    find_path(SDLNET_INCLUDE_DIRS SDL_ttf.h)
-    find_library(SDLNET_LIBRARIES SDL2_net)
-else()
-    set(CMAKE_C_FLAGS_DEBUG "-D_DEBUG")
-    SET(GCC_FLAGS "-fpermissive")
-    set(SDLNET_INCLUDE_DIRS "lib/SDL_net/include/")
-    #set(SDLNET_LIBRARIES "lib/SDL_net/lib/x64/libSDL2_net-2.0.so.0")
-    set(SDLNET_LIBRARIES "${CMAKE_CURRENT_BINARY_DIR}/lib/SDL_net/lib/x64/libSDL2_net-2.0.so.0")
+    set(client_PLATFORM_DEPS
+        w32-pthreads)
+    find_path(NETLIB_INCLUDE_DIR netlib.h)
+    find_library(NETLIB_LIBRARY netlib)
 endif()
 
+if(UNIX)
+    add_definitions(-DLINUX=1)
+
+    set(NETLIB_INCLUDE_DIR
+        ${CMAKE_CURRENT_SOURCE_DIR}/../netlib/include)
+    set(NETLIB_LIBRARY
+        ${CMAKE_CURRENT_SOURCE_DIR}/../netlib/bin/linux64/libnetlib.so)
+endif()
+
+
 set(io_client_SOURCES
-	src/io_client.cpp)
+    src/io_client.cpp
+    src/util.cpp
+    src/util.hpp
+    src/network.cpp
+    src/network.hpp
+    src/hook.cpp
+    src/hook.hpp)
 
-include_directories(${SDL2_INCLUDE_DIRS}
-    ${SDLNET_INCLUDE_DIRS})
+include_directories(${NETLIB_INCLUDE_DIR}
+    ${UIOHOOK_INCLUDE_DIR})
 
-add_subdirectory(server)
 add_executable(client ${io_client_SOURCES})
-target_link_libraries(client ${SDL2_LIBRARIES}
-    ${SDLNET_LIBRARIES})
+target_link_libraries(client ${UIOHOOK_LIBRARY}
+    ${NETLIB_LIBRARY}
+    ${client_PLATFORM_DEPS})
