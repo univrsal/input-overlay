@@ -29,7 +29,7 @@ namespace network
 		void listen(int& numready);
 		tcp_socket socket() const;
 		void add_client(tcp_socket socket, char* name);
-
+        void update_clients();
     private:
 		bool unique_name(char* name);
 		bool create_sockets();

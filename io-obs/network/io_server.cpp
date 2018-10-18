@@ -66,7 +66,19 @@ namespace network
     {
         return m_server;
     }
-
+    
+    void update_clients()
+    {
+        for (auto& const client : m_clients)
+        {
+            if (netlib_socket_ready(client->socket()))
+            {
+                /* Recieve input data */
+                
+            }
+        }
+    }
+    
     void io_server::add_client(tcp_socket socket, char* name)
     {
         if (!strlen(name))

@@ -36,6 +36,8 @@ namespace network
 
 	char* read_text(tcp_socket sock, char** buf);
 
+	int send_message(tcp_socket sock, char* buf);
+	
 	extern io_server* server_instance;
 }
 

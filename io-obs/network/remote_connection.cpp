@@ -155,6 +155,9 @@ namespace network
                     }
                 }
             }
+            
+            if (num_ready)
+                server_instance->update_clients();
         }
 
 #ifdef _WIN32
@@ -163,7 +166,45 @@ namespace network
         pthread_exit(nullptr);
 #endif
     }
-
+    
+    /* https://www.libsdl.org/projects/SDL_net/docs/demos/tcputil.h */
+    int send_message(tcp_socket sock, char* buf)
+    {
+        uint32_t length, result;
+        
+        if (!buf || !strlen(buf))
+            return 1;
+        
+        len = strlen(buf) + 1;
+        len = netlib_swap_BE32(len);
+        
+        result = netlib_tcp_send(sock, &len, sizeof(len));
+        if (result < sizeof(len))
+        {
+            if (netlib_get_error() && strlen(netlib_get_error()))
+            {
+                if (log_flag)
+                    blog(LOG_ERROR, "netlib_tcp_send failed: %s", netlib_get_error());
+                return 0;
+            }
+        }
+        
+        len = netlib_swap_BE32(len);
+        
+        result = netlib_tcp_send(sock, buf, len);
+        if (result < len)
+        {
+            if (netlib_get_error() && strlen(netlib_get_error()))
+            {
+                if (log_flag)
+                    blog(LOG_ERROR, "netlib_tcp_send failed: %s", netlib_get_error());
+                return 0;
+            }
+        }
+        
+        return result;
+    }
+    
     /* https://www.libsdl.org/projects/SDL_net/docs/demos/tcputil.h */
     char* read_text(tcp_socket sock, char** buf)
     {
