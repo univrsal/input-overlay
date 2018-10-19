@@ -19,11 +19,13 @@ namespace util
 		bool monitor_gamepad;
 		bool monitor_mouse;
 		bool monitor_keyboard;
+		char username[64];
 		uint16_t port;
+		ip_address ip;
 	} config;
 
-	extern config cfg;
-
     /* Get config values and print help */
-	bool parse_arguments(int argc, char** args);
+	bool parse_arguments(int argc, char** args, config* cfg);
+
+	int send_message(tcp_socket sock, char* buf);
 }

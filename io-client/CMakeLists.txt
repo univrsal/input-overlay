@@ -5,8 +5,7 @@ find_path(UIOHOOK_INCLUDE_DIR uiohook.h)
 find_library(UIOHOOK_LIBRARY uiohook)
 
 if(MSVC)
-    set(client_PLATFORM_DEPS
-        w32-pthreads)
+    set(client_PLATFORM_DEPS)
     find_path(NETLIB_INCLUDE_DIR netlib.h)
     find_library(NETLIB_LIBRARY netlib)
 endif()

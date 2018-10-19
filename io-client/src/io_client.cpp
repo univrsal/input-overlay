@@ -6,12 +6,28 @@
  */
 
 #include "util.hpp"
-
+#include "network.hpp"
+#include "hook.hpp"
 
 int main(int argc, char **argv)
 {
-	if (!util::parse_arguments(argc, argv))
-		return 0; /* Invalid arguments */
+	util::config cfg;
+	
+	if (!network::init())
+		return 1;
+
+	if (!util::parse_arguments(argc, argv, &cfg))
+		return 2; /* Invalid arguments */
+
+	if (!network::start_connection(&cfg))
+	{
+		network::close();
+		return 3;
+	}
+
+	if (!hook::init()) /* This will block if the hook runs */
+		return 4;
+
 
 	return 0;
 }

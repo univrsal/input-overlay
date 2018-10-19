@@ -11,45 +11,100 @@
 
 namespace util
 {
-	 bool parse_arguments(int argc, char ** args)
-	 {
-		 cfg.monitor_gamepad = false;
-		 cfg.monitor_keyboard = true;
-		 cfg.monitor_mouse = false;
-		 cfg.port = 1608;
-		 
-         if (argc < 2)
-         {
-			 printf("io_client usage:\n [ip] {port} {other options}\n");
-			 printf(" [] => required {} => optional\n");
-			 printf(" [ip]          can be ipv4 or hostname\n");
-			 printf(" {port}        default is 1608\n");
-			 printf(" --gamepad=1   enable/disable gamepad monitoring. Off by default\n");
-			 printf(" --mouse=1     enable/disable mouse monitoring.  Off by default\n");
-			 printf(" --keyboard=1  enable/disable keyboard monitoring. On by default\n");
-			 return false;
-         }
 
-	     auto newport = uint16_t(strtol(args[2], nullptr, 0));
-	     if (newport > 1024) /* No system ports pls */
-	     {
-	         cfg.port = newport;
-	     }
-	     else
-	     {
-	         printf("%hu is outside the valid port range [1024 - %i]", newport, 0xffff);
-	     }
+	bool parse_arguments(int argc, char ** args, config* cfg)
+	{
+		cfg->monitor_gamepad = false;
+		cfg->monitor_keyboard = true;
+		cfg->monitor_mouse = false;
+		cfg->port = 1608;
 
-		 std::string arg;
-         for (auto i = 3; i < argc; i++)
-         {
+		if (argc < 3)
+		{
+			printf("io_client usage: [ip] [name] {port} {other options}\n");
+			printf(" [] => required {} => optional\n");
+			printf(" [ip]          can be ipv4 or hostname\n");
+			printf(" [name]        unique name to identify client\n");
+			printf(" {port}        default is 1608\n");
+			printf(" --gamepad=1   enable/disable gamepad monitoring. Off by default\n");
+			printf(" --mouse=1     enable/disable mouse monitoring.  Off by default\n");
+			printf(" --keyboard=1  enable/disable keyboard monitoring. On by default\n");
+			return false;
+		}
+
+		auto const s = sizeof(cfg->username);
+		strncpy(cfg->username, args[2], s);
+		cfg->username[s - 1] = '\0';
+
+		if (argc > 3)
+		{
+			auto newport = uint16_t(strtol(args[3], nullptr, 0));
+			if (newport > 1024) /* No system ports pls */
+			{
+				cfg->port = newport;
+			}
+			else
+			{
+				printf("%hu is outside the valid port range [1024 - %i]\n", newport, 0xffff);
+			}
+		}
+
+        /* Resolve ip */
+        if (netlib_resolve_host(&cfg->ip, args[1], cfg->port) == -1)
+        {
+			printf("netlib_resolve_host failed: %s\n", netlib_get_error());
+			printf("Make sure obs studio is running with the remote connection enabled and configured\n");
+			return false;
+        }
+        
+		std::string arg;
+        for (auto i = 3; i < argc; i++)
+        {
              arg = args[i];
              if (arg.find("--gamepad") != std::string::npos)
-                 cfg.monitor_gamepad = arg.find('1') != std::string::npos;
+                 cfg->monitor_gamepad = arg.find('1') != std::string::npos;
              else if (arg.find("--mouse") != std::string::npos)
-                 cfg.monitor_mouse = arg.find('1') != std::string::npos;
+                 cfg->monitor_mouse = arg.find('1') != std::string::npos;
              else if (arg.find("--keyboard") != std::string::npos)
-                 cfg.monitor_keyboard = arg.find('1') != std::string::npos;
-         }
-	 }
- }
+                 cfg->monitor_keyboard = arg.find('1') != std::string::npos;
+        }
+
+		return true;
+    }
+
+	/* https://www.libsdl.org/projects/SDL_net/docs/demos/tcputil.h */
+	int send_message(tcp_socket sock, char* buf)
+	{
+		uint32_t len, result;
+
+		if (!buf || !strlen(buf))
+			return 1;
+
+		len = strlen(buf) + 1;
+		len = netlib_swap_BE32(len);
+
+		result = netlib_tcp_send(sock, &len, sizeof(len));
+		if (result < sizeof(len))
+		{
+			if (netlib_get_error() && strlen(netlib_get_error()))
+			{
+				printf("netlib_tcp_send failed: %s\n", netlib_get_error());
+				return 0;
+			}
+		}
+
+		len = netlib_swap_BE32(len);
+
+		result = netlib_tcp_send(sock, buf, len);
+		if (result < len)
+		{
+			if (netlib_get_error() && strlen(netlib_get_error()))
+			{
+			    printf("netlib_tcp_send failed: %s\n", netlib_get_error());
+				return 0;
+			}
+		}
+
+		return result;
+	}
+}
