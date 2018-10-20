@@ -9,6 +9,8 @@
 #include <obs-frontend-api.h>
 #include <util/config-file.h>
 #include "network/remote_connection.hpp"
+#include "network/io_server.hpp"
+#include "util/util.hpp"
 
 io_settings_dialog::io_settings_dialog(QWidget* parent)
     : QDialog(parent, Qt::Dialog),
@@ -34,25 +36,45 @@ io_settings_dialog::io_settings_dialog(QWidget* parent)
     ui->cb_log->setChecked(config_get_bool(cfg, S_REGION, S_LOGGING));
     ui->box_port->setValue(config_get_int(cfg, S_REGION, S_PORT));
 
+	CbRemoteStateChanged(0);
+
 	auto text = ui->lbl_status->text().toStdString();
-    
 	auto pos = text.find("%s");
-	text.replace(pos, strlen("%s"), network::get_status());
+    if (pos != std::string::npos)
+	    text.replace(pos, strlen("%s"), network::get_status());
 	pos = text.find("%s");
-	text.replace(pos, strlen("%s"), network::local_ip);
+	if (pos != std::string::npos)
+		text.replace(pos, strlen("%s"), network::local_ip);
 	ui->lbl_status->setText(text.c_str());
 
-	CbRemoteStateChanged(0);
+
+    /* Check for new connections every 250ms */
+	m_refresh = new QTimer(this);
+	connect(m_refresh, SIGNAL(timeout()), SLOT(RefreshConnections()));
+	m_refresh->start(250);
 }
 
 void io_settings_dialog::showEvent(QShowEvent* event)
 {
     Q_UNUSED(event);
+	RefreshConnections();
 }
 
 void io_settings_dialog::toggleShowHide()
 {
     setVisible(!isVisible());
+}
+
+void io_settings_dialog::RefreshConnections()
+{
+	/* Populate client list */
+	if (network::network_flag && network::server_instance->need_refresh())
+	{
+		ui->box_connections->clear();
+		QStringList list;
+		network::server_instance->get_clients(list);
+		ui->box_connections->addItems(list);
+	}
 }
 
 void io_settings_dialog::CbRemoteStateChanged(int state)

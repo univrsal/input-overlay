@@ -8,16 +8,7 @@
 #pragma once
 
 #include "ui_settings_dialog.hpp"
-
-/* Settings values*/
-#define S_REGION    "input-overlay"
-#define S_IOHOOK    "iohook"
-#define S_GAMEPAD   "gamepad"
-#define S_OVERLAY   "overlay"
-#define S_HISTORY   "history"
-#define S_REMOTE    "remote"
-#define S_LOGGING   "logging"
-#define S_PORT      "port"
+#include <QTimer>
 
 class io_settings_dialog : public QDialog
 {
@@ -29,10 +20,15 @@ public:
 
     void showEvent(QShowEvent* event) override;
     void toggleShowHide();
+	
 private Q_SLOTS:
+    void RefreshConnections();
     void FormAccepted();
 	void CbRemoteStateChanged(int state);
 
 private:
     Ui::io_config_dialog* ui;
+	QTimer* m_refresh;
 };
+
+static io_settings_dialog* settings_dialog = nullptr;

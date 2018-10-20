@@ -5,14 +5,17 @@
  * github.com/univrsal/input-overlay
  */
 
+#include <obs-frontend-api.h>
 #include "input_source.hpp"
 #include "../hook/hook_helper.hpp"
 #include "../hook/gamepad_hook.hpp"
 #include "../util/element/element_data_holder.hpp"
 #include "../util/util.hpp"
 #include "../../ccl/ccl.hpp"
-#include <clocale>
 #include "util/layout_constants.hpp"
+#include "util/config-file.h"
+#include "network/remote_connection.hpp"
+#include "network/io_server.hpp"
 
 namespace sources
 {
@@ -70,14 +73,23 @@ namespace sources
         return true;
     }
 
-    bool use_monitor_center_changed(obs_properties_t* props, obs_property_t* p,
-        obs_data_t* s)
+    bool use_monitor_center_changed(obs_properties_t* props, obs_property_t* p, obs_data_t* s)
     {
         const auto use_center = obs_data_get_bool(s, S_MONITOR_USE_CENTER);
         obs_property_set_visible(GET_PROPS(S_MONITOR_H_CENTER), use_center);
         obs_property_set_visible(GET_PROPS(S_MONITOR_V_CENTER), use_center);
 
         return true;
+    }
+
+    bool reload_connections(obs_properties_t* props, obs_property_t* prop, void* data)
+    {
+		auto connection_list = obs_properties_get(props, S_INPUT_SOURCE);
+		auto cfg = obs_frontend_get_global_config();      
+        if (connection_list)
+			network::server_instance->get_clients(connection_list, network::local_input);
+
+		return true;
     }
 
     bool reload_pads(obs_properties_t* props, obs_property_t* property,
@@ -93,6 +105,18 @@ namespace sources
         const auto props = obs_properties_create();
         std::string img_path;
         std::string layout_path;
+
+		auto config = obs_frontend_get_global_config();
+
+        if (config_get_bool(config, S_REGION, S_REMOTE))
+        {
+			auto list = obs_properties_add_list(props, S_INPUT_SOURCE, T_INPUT_SOURCE, OBS_COMBO_TYPE_LIST, OBS_COMBO_FORMAT_INT);
+			obs_properties_add_button(props, S_RELOAD_CONNECTIONS, T_RELOAD_CONNECTIONS, reload_connections);
+            if (network::network_flag)
+            {
+				network::server_instance->get_clients(list, network::local_input);
+            }
+        }
 
         auto filter_img = util_file_filter(
             T_FILTER_IMAGE_FILES, "*.jpg *.png *.bmp");

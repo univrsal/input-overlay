@@ -12,10 +12,13 @@
 #include <netlib.h>
 #include <vector>
 #include <memory>
+#include <obs-module.h>
 
 #ifdef _WIN32
 #include <Windows.h>
 #endif
+
+class QStringList;
 
 namespace network
 {
@@ -30,10 +33,19 @@ namespace network
 		tcp_socket socket() const;
 		void add_client(tcp_socket socket, char* name);
         void update_clients();
+		void get_clients(QStringList& list);
+		void get_clients(obs_property_t* prop, bool enable_local);
+		bool need_refresh() const;
+		void roundtrip(); /* Checks clients for last received data */
     private:
 		bool unique_name(char* name);
+        static void fix_name(char* name);
 		bool create_sockets();
-		
+
+		bool receive_event(tcp_socket socket);
+		void disconnect_client(uint8_t index);
+
+		bool m_clients_changed = false; /* Set to true on connection/disconnect and false after get_clients() */
 		uint8_t m_num_clients;
 		ip_address m_ip{};
 		tcp_socket m_server;

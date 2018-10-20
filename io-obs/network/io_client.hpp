@@ -19,6 +19,7 @@ namespace network
 
 		tcp_socket socket() const;
 		const char* name() const;
+		uint8_t id() const;
     private:
 		tcp_socket m_socket;
 		uint8_t m_id;

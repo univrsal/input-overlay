@@ -13,14 +13,15 @@
 #include <Windows.h>
 #endif
 
-class io_server;
-
 namespace network
 {
+	class io_server;
+
     extern bool network_state; /* Initialization state*/
     extern bool network_flag; /* Running state */
 	extern bool log_flag; /* Set in obs_module_load */
-	extern const char* local_ip;
+	extern bool local_input;
+	extern char local_ip[16];
 
 	const char* get_status();
 
@@ -35,9 +36,18 @@ namespace network
 #endif
 
 	char* read_text(tcp_socket sock, char** buf);
-
-	int send_message(tcp_socket sock, char* buf);
 	
+    enum message
+	{
+		MSG_READ_ERROR = -2,
+		MSG_INVALID,
+		MSG_NAME_NOT_UNIQUE,
+		MSG_NAME_INVALID,
+		MSG_SERVER_SHUTDOWN
+	};
+
+	int send_message(tcp_socket sock, message msg);
+
 	extern io_server* server_instance;
 }
 

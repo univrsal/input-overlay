@@ -59,6 +59,8 @@ namespace sources
 
     static bool use_monitor_center_changed(obs_properties_t* props, obs_property_t* p, obs_data_t* s);
 
+	static bool reload_connections(obs_properties_t* props, obs_property_t* property, void* data);
+
     /* For registering */
     static obs_properties_t* get_properties_for_overlay(void* data);
 

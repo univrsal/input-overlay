@@ -23,8 +23,6 @@
 OBS_DECLARE_MODULE()
 OBS_MODULE_USE_DEFAULT_LOCALE("input-overlay", "en-US")
 
-io_settings_dialog* dialog;
-
 void set_defaults(config_t* cfg)
 {
 	config_set_default_bool(cfg, S_REGION, S_IOHOOK, true);
@@ -40,23 +38,6 @@ void set_defaults(config_t* cfg)
 
 bool obs_module_load()
 {
-    /* UI registration from
-     * https://github.com/Palakis/obs-websocket/
-     */
-
-    const auto menu_action = static_cast<QAction*>(obs_frontend_add_tools_menu_qaction(
-        T_MENU_OPEN_SETTINGS));
-    obs_frontend_push_ui_translation(obs_module_get_string);
-    const auto main_window = static_cast<QMainWindow*>(obs_frontend_get_main_window());
-    dialog = new io_settings_dialog(main_window);
-    obs_frontend_pop_ui_translation();
-
-    const auto menu_cb = []
-    {
-        dialog->toggleShowHide();
-    };
-    QAction::connect(menu_action, &QAction::triggered, menu_cb);
-
 	auto cfg = obs_frontend_get_global_config();
 	set_defaults(cfg);
 
@@ -82,10 +63,25 @@ bool obs_module_load()
     if (remote)
     {
         const uint16_t port = config_get_int(cfg, S_REGION, S_PORT);
+		network::local_input = gamepad || iohook;
 		network::log_flag = config_get_bool(cfg, S_REGION, S_LOGGING);
         network::start_network(port);
-
     }
+
+	/* UI registration from
+	* https://github.com/Palakis/obs-websocket/
+	*/
+
+	const auto menu_action = static_cast<QAction*>(obs_frontend_add_tools_menu_qaction(
+		T_MENU_OPEN_SETTINGS));
+	obs_frontend_push_ui_translation(obs_module_get_string);
+	const auto main_window = static_cast<QMainWindow*>(obs_frontend_get_main_window());
+	settings_dialog = new io_settings_dialog(main_window);
+	obs_frontend_pop_ui_translation();
+
+	const auto menu_cb = [] { settings_dialog->toggleShowHide(); };
+	QAction::connect(menu_action, &QAction::triggered, menu_cb);
+
     return true;
 }
 

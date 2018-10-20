@@ -9,13 +9,15 @@
 #include <util/platform.h>
 #include "io_server.hpp"
 #include "remote_connection.hpp"
+#include <string>
 
 namespace network
 {
     bool network_state = false;
     bool network_flag = true;
+	bool local_input = false; /* True if either of the local hooks is running */
     bool log_flag = false;
-	const char* local_ip = nullptr;
+	char local_ip[16] = "127.0.0.1\0";
 
     io_server* server_instance = nullptr;
 #ifdef _WIN32
@@ -36,12 +38,14 @@ namespace network
 
         /* Get ip of first interface */
 		ip_address addresses[2];
-        if (netlib_get_local_addresses(addresses, 2) > 0)
-        {
-			local_ip = netlib_resolve_ip(&addresses[0]);
-			if (!local_ip)
-				local_ip = "localhost"; /* Better than nothing */
-        }
+		if (netlib_get_local_addresses(addresses, 2) > 0)
+		{
+			snprintf(local_ip, sizeof(local_ip), "%d.%d.%d.%d",
+				(addresses[0].host >> 0) & 0xFF,
+				(addresses[0].host >> 8) & 0xFF,
+				(addresses[0].host >> 16) & 0xFF,
+				(addresses[0].host >> 24) & 0xFF);
+		}
 
         network_state = true;
         auto failed = false;
@@ -127,14 +131,14 @@ namespace network
                 os_sleep_ms(50); /* Should be fast enough */
                 continue;
             }
-
+            
             if (netlib_socket_ready(server_instance->socket()))
             {
                 numready--;
 
                 if (log_flag)
                     blog(LOG_INFO, "[input-overlay] Received connection...");
-
+                
                 sock = netlib_tcp_accept(server_instance->socket());
 
                 if (sock)
@@ -156,7 +160,7 @@ namespace network
                 }
             }
             
-            if (num_ready)
+            if (numready)
                 server_instance->update_clients();
         }
 
@@ -167,44 +171,22 @@ namespace network
 #endif
     }
     
-    /* https://www.libsdl.org/projects/SDL_net/docs/demos/tcputil.h */
-    int send_message(tcp_socket sock, char* buf)
+    int send_message(tcp_socket sock, message msg)
     {
-        uint32_t length, result;
-        
-        if (!buf || !strlen(buf))
-            return 1;
-        
-        len = strlen(buf) + 1;
-        len = netlib_swap_BE32(len);
-        
-        result = netlib_tcp_send(sock, &len, sizeof(len));
-        if (result < sizeof(len))
+		auto msg_id = uint8_t(msg);
+		
+		uint32_t result = netlib_tcp_send(sock, &msg_id, sizeof(msg_id));
+
+        if (result < sizeof(msg_id))
         {
-            if (netlib_get_error() && strlen(netlib_get_error()))
-            {
-                if (log_flag)
-                    blog(LOG_ERROR, "netlib_tcp_send failed: %s", netlib_get_error());
-                return 0;
-            }
+			if (netlib_get_error() && strlen(netlib_get_error()))
+				printf("netlib_tcp_recv: %s\n", netlib_get_error());
+			return 0;
         }
-        
-        len = netlib_swap_BE32(len);
-        
-        result = netlib_tcp_send(sock, buf, len);
-        if (result < len)
-        {
-            if (netlib_get_error() && strlen(netlib_get_error()))
-            {
-                if (log_flag)
-                    blog(LOG_ERROR, "netlib_tcp_send failed: %s", netlib_get_error());
-                return 0;
-            }
-        }
-        
-        return result;
+
+		return result;
     }
-    
+
     /* https://www.libsdl.org/projects/SDL_net/docs/demos/tcputil.h */
     char* read_text(tcp_socket sock, char** buf)
     {

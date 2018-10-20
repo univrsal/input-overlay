@@ -53,6 +53,26 @@
 #define warning(format, ...) blog(LOG_WARNING, "[%s] " format, \
 		obs_source_get_name(m_source), ##__VA_ARGS__)
 
+/* Settings values*/
+#define S_REGION    "input-overlay"
+#define S_IOHOOK    "iohook"
+#define S_GAMEPAD   "gamepad"
+#define S_OVERLAY   "overlay"
+#define S_HISTORY   "history"
+#define S_REMOTE    "remote"
+#define S_LOGGING   "logging"
+#define S_PORT      "port"
+
+#define T_(v)                       obs_module_text(v)
+
+/* Common values */
+#define S_INPUT_SOURCE              "input_source"
+#define S_RELOAD_CONNECTIONS        "reload_connections"
+
+#define T_LOCAL_SOURCE              T_("Source.InputSource.Local")
+#define T_INPUT_SOURCE              T_("Source.InputSource")
+#define T_RELOAD_CONNECTIONS        T_("Source.InputSource.Reload")
+
 /* Lang Input Overlay */
 #define S_OVERLAY_FILE              "overlay_image"
 #define S_LAYOUT_FILE               "layout_file"
@@ -66,7 +86,6 @@
 #define S_MONITOR_V_CENTER          "monitor_v_center"
 #define S_RELOAD_PAD_DEVICES		"reload_pads"
 
-#define T_(v)                       obs_module_text(v)
 #define T_OVERLAY_FILE              T_("OverlayFile")
 #define T_LAYOUT_FILE               T_("LayoutFile")
 #define T_FILTER_IMAGE_FILES        T_("Filter.ImageFiles")

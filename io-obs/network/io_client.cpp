@@ -30,4 +30,9 @@ namespace network
     {
         return m_name;
     }
+
+    uint8_t io_client::id() const
+    {
+		return m_id;
+    }
 }
