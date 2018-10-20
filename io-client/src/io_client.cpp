@@ -19,7 +19,7 @@ int main(int argc, char **argv)
 	if (!util::parse_arguments(argc, argv, &cfg))
 		return 2; /* Invalid arguments */
 
-	if (!network::start_connection(&cfg))
+	if (!network::start_connection(&cfg)) /* Starts a separate network thread */
 	{
 		network::close();
 		return 3;
@@ -28,6 +28,6 @@ int main(int argc, char **argv)
 	if (!hook::init()) /* This will block if the hook runs */
 		return 4;
 
-
+	network::close();
 	return 0;
 }

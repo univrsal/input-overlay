@@ -19,6 +19,7 @@ namespace hook
         switch (level)
         {
 #ifdef USE_DEBUG
+		default:
 		case LOG_LEVEL_DEBUG:
 		case LOG_LEVEL_INFO:
 			va_start(args, format);
@@ -26,7 +27,6 @@ namespace hook
 			va_end(args);
 			break;
 #endif
-        default:
         case LOG_LEVEL_WARN:
         case LOG_LEVEL_ERROR:
             va_start(args, format);
@@ -57,7 +57,6 @@ namespace hook
 		case EVENT_MOUSE_CLICKED:
 		case EVENT_MOUSE_MOVED:
 		case EVENT_MOUSE_DRAGGED:
-
 			break;
 
 		case EVENT_MOUSE_WHEEL:
@@ -117,15 +116,17 @@ namespace hook
 			logger_proc(LOG_LEVEL_ERROR, "[uiohook] Failed to create apple run loop observer. (%#X)", status);
 			return false;
 		case UIOHOOK_FAILURE:
-		default:
+
 			logger_proc(LOG_LEVEL_ERROR, "[uiohook] An unknown hook error occurred. (%#X)", status);
 			return false;
+		default: ;
 		}
     }
 
 	void close()
     {
 		const auto status = hook_stop();
+		printf("Closing hook\n");
 		switch (status)
 		{
 		case UIOHOOK_ERROR_OUT_OF_MEMORY:
@@ -135,9 +136,9 @@ namespace hook
 			logger_proc(LOG_LEVEL_ERROR, "[uiohook] Failed to get XRecord context. (%#X)", status);
 			break;
 		case UIOHOOK_FAILURE:
-		default:
 			logger_proc(LOG_LEVEL_ERROR, "[uiohook] An unknown hook error occurred. (%#X)", status);
 			break;
+		default: ;
 		}
     }
 }

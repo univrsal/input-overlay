@@ -6,6 +6,7 @@
  */
 
 #include "network.hpp"
+#include "hook.hpp"
 #include "util.hpp"
 #include <cstdio>
 
@@ -13,6 +14,13 @@ namespace network
 {
 	tcp_socket sock = nullptr;
 	netlib_socket_set set = nullptr;
+	bool network_loop = true;
+    
+#ifdef _WIN32
+	static HANDLE network_thread;
+#else
+	static pthread_t network_thread;
+#endif
 
     bool start_connection(util::config* cfg)
     {
@@ -38,7 +46,7 @@ namespace network
 			return false;
         }
 
-		printf("Connection successful!");
+		printf("Connection successful!\n");
         
 		/* Send client name */
 		if (!util::send_message(sock, cfg->username))
@@ -47,10 +55,89 @@ namespace network
 			return false;
         }
 
+        if (!start_thread())
+        {
+			printf("Failed to create network thread.\n");
+			return false;
+        }
+
 		return true;
     }
 
-	bool init()
+    bool start_thread()
+    {
+#ifdef _WIN32
+		network_thread = CreateThread(nullptr, 0, static_cast<LPTHREAD_START_ROUTINE>(network_thread_method),
+			nullptr, 0, nullptr);
+		return network_thread;
+#else
+		return pthread_create(&game_pad_hook_thread, nullptr, hook_method, nullptr) == 0;
+#endif
+    }
+
+
+#ifdef _WIN32
+	DWORD WINAPI network_thread_method(const LPVOID arg)
+#else
+	void* network_thread_method(void *)
+#endif
+	{
+        while (network_loop)
+        {
+            if (!listen()) /* Has a timeout of 100ms*/
+            {
+				printf("Received quit signal\n");
+				break;
+            }
+        }
+
+		hook::close();
+#ifdef _WIN32
+		return 0;
+#else
+		pthread_exit(nullptr);
+#endif
+	}
+
+
+	int numready = 0;
+    bool listen()
+    {
+		numready = netlib_check_socket_set(set, 100);
+
+		if (numready == -1)
+		{
+			printf("netlib_check_socket_set failed: %s\n", netlib_get_error());
+			return false;
+		}
+
+        if (numready && netlib_socket_ready(sock))
+        {
+			auto msg = util::recv_msg(sock);
+
+            switch (msg)
+            {
+			case util::MSG_NAME_NOT_UNIQUE:
+				printf("Nickname is already in use. Disconnecting...\n");
+				return false;
+			case util::MSG_NAME_INVALID:
+				printf("Nickname is not valid. Disconnecting...\n");
+				return false;
+			case util::MSG_SERVER_SHUTDOWN:
+				printf("Server is shutting down.\n");
+				return false;
+			case util::MSG_READ_ERROR:
+				printf("Couldn't read message.\n");
+				return false;
+			default:
+			case util::MSG_INVALID:
+				return false;
+            }
+        }
+		return true;
+    }
+
+    bool init()
 	{
 		if (netlib_init() == -1)
 		{
@@ -64,6 +151,10 @@ namespace network
 	{
 		if (sock)
 			netlib_tcp_close(sock);
+#ifdef _WIN32
+		if (network_thread)
+			CloseHandle(network_thread);
+#endif
 		netlib_quit();
 	}
 }
