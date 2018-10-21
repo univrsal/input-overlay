@@ -6,15 +6,18 @@
  */
 
 #include "io_server.hpp"
-#include <obs-module.h>
-#include <QStringList>
 #include "remote_connection.hpp"
 #include "util/util.hpp"
+#include <obs-module.h>
+#include <util/platform.h>
+#include <algorithm>
+
 
 static netlib_socket_set sockets = nullptr;
 
 namespace network
 {
+
     io_server::io_server(const uint16_t port)
         : m_server(nullptr)
     {
@@ -25,6 +28,11 @@ namespace network
 
     io_server::~io_server()
     {
+        for (auto i = 0; i < m_num_clients; i++)
+        {
+			disconnect_client(i);
+        }
+
         m_clients.clear();
     }
 
@@ -61,7 +69,7 @@ namespace network
     void io_server::listen(int& numready)
     {
         if (create_sockets())
-            numready = netlib_check_socket_set(sockets, (uint32_t)-1); /* Wrapping intentional */
+            numready = netlib_check_socket_set(sockets, 100);
     }
 
     tcp_socket io_server::socket() const
@@ -72,30 +80,53 @@ namespace network
     void io_server::update_clients()
     {
 		uint8_t id = 0;
-        for (auto& const client : m_clients)
+
+#ifdef _DEBUG
+		uint64_t current_time, last_msg;
+#endif
+
+        for (const auto& client : m_clients)
         {
             if (netlib_socket_ready(client->socket()))
             {
                 /* Receive input data */
-                if (receive_event(client->socket()))
+				const auto msg = get_message_type(client->socket());
+
+                switch (msg)
                 {
-                    
-                }
-                else
-                {
-                    disconnect_client(id);
+				case MSG_PREVENT_TIMEOUT:
+#ifdef _DEBUG
+					last_msg = client->last_message() / (1000 * 1000);
+					blog(LOG_INFO, "[input-overlay] Received refresh message from %s after %ims.", client->name(), last_msg);
+#endif
+					client->reset_timeout();
+					break;
+				case MSG_EVENT_DATA:
+					if (receive_event(client->socket()))
+					{
+
+					}
+					else
+					{
+						if (log_flag)
+							blog(LOG_ERROR, "[input-overlay] Failed to receive event data from %s. Closed connection",
+								client->name());
+						disconnect_client(id);
+					}
+					break;
+				default: ;
                 }
             }
 			id++;
         }
     }
 
-    void io_server::get_clients(QStringList& list)
+	void io_server::get_clients(std::vector<const char*>& v)
     {
 
 		for (const auto& client : m_clients)
 		{
-			list.append(client->name());
+			v.emplace_back(client->name());
 		}
 		m_clients_changed = false;
     }
@@ -119,6 +150,29 @@ namespace network
     {
 		return m_clients_changed;
     }
+    
+	void io_server::roundtrip()
+	{
+		if (!m_clients.empty())
+		{
+			for (auto it = m_clients.begin(); it != m_clients.end(); )
+			{
+				if ((*it)->last_message() > TIMEOUT_NS)
+				{
+					if (log_flag)
+						blog(LOG_INFO, "[input-overlay] %s disconnected due to timeout. ", (*it)->name());
+					netlib_tcp_close((*it)->socket());
+					m_num_clients--;
+					m_clients_changed = true;
+					it = m_clients.erase(it);
+				}
+				else
+				{
+					++it;
+				}
+			}
+		}
+	}
 
     void io_server::add_client(tcp_socket socket, char* name)
     {
@@ -127,7 +181,7 @@ namespace network
         if (!strlen(name))
         {
             if (log_flag)
-                blog(LOG_INFO, "Disconnected %s: Invalid name", name);
+                blog(LOG_INFO, "[input-overlay] Disconnected %s: Invalid name", name);
 			send_message(socket, MSG_NAME_INVALID);
             netlib_tcp_close(socket);
             return;
@@ -169,7 +223,7 @@ namespace network
     /* Only works with prealloccated char arrays */
     void io_server::fix_name(char* name)
     {
-		static const char* accepted = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_-0123456789";
+		static auto accepted = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_-0123456789";
 		size_t pos;
         const auto len = strlen(name);
 		while ((pos = strspn(name, accepted)) != len)
@@ -206,16 +260,52 @@ namespace network
         return true;
     }
 
+    message io_server::get_message_type(tcp_socket socket)
+    {
+		uint8_t msg_id;
+
+		const uint32_t read_length = netlib_tcp_recv(socket, &msg_id, sizeof(msg_id));
+
+		if (read_length < sizeof(msg_id))
+		{
+			if (log_flag && netlib_get_error() && strlen(netlib_get_error()))
+				blog(LOG_ERROR, "[input-overlay] netlib_tcp_recv: %s\n", netlib_get_error());
+			return MSG_READ_ERROR;
+		}
+
+		switch (msg_id)
+		{
+		case MSG_NAME_INVALID:
+			return MSG_NAME_INVALID;
+		case MSG_NAME_NOT_UNIQUE:
+			return MSG_NAME_NOT_UNIQUE;
+		case MSG_SERVER_SHUTDOWN:
+			return MSG_SERVER_SHUTDOWN;
+		case MSG_PREVENT_TIMEOUT:
+			return MSG_PREVENT_TIMEOUT;
+		default:
+#ifdef _DEBUG
+            if (log_flag)
+				blog(LOG_ERROR, "[input-overlay] Received message with invalid id (%i).\n", msg_id);
+#endif
+			return MSG_INVALID;
+		}
+    }
+
     /* Reads libuihook event or gamepad event from socket*/
     bool io_server::receive_event(tcp_socket socket)
     {
 		return true;
     }
 
-    void io_server::disconnect_client(const uint8_t index)
+    void io_server::disconnect_client(const uint8_t id)
 	{
-		netlib_tcp_close(m_clients[index]->socket());
+		if (m_clients.empty() || id >= m_clients.size())
+			return;
+
+		netlib_tcp_close(m_clients[id]->socket());
 		m_num_clients--;
-		m_clients.erase(m_clients.begin() + index);
+		m_clients.erase(m_clients.begin() + id);
+		m_clients_changed = true;
     }
 }

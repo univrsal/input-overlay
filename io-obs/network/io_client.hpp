@@ -20,7 +20,10 @@ namespace network
 		tcp_socket socket() const;
 		const char* name() const;
 		uint8_t id() const;
+		uint64_t last_message() const;
+		void reset_timeout();
     private:
+		uint64_t m_last_message;
 		tcp_socket m_socket;
 		uint8_t m_id;
 		char* m_name;

@@ -76,7 +76,7 @@ namespace util
     }
 
 	/* https://www.libsdl.org/projects/SDL_net/docs/demos/tcputil.h */
-	int send_message(tcp_socket sock, char* buf)
+	int send_text(tcp_socket sock, char* buf)
 	{
 		uint32_t len, result;
 
@@ -110,6 +110,22 @@ namespace util
 
 		return result;
 	}
+
+    int send_msg(tcp_socket sock, message msg)
+    {
+		auto msg_id = uint8_t(msg);
+
+		uint32_t result = netlib_tcp_send(sock, &msg_id, sizeof(msg_id));
+
+		if (result < sizeof(msg_id))
+		{
+			if (netlib_get_error() && strlen(netlib_get_error()))
+				printf("netlib_tcp_recv: %s\n", netlib_get_error());
+			return 0;
+		}
+
+		return result;
+    }
 
     uint32_t get_ticks()
     {

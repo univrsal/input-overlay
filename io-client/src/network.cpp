@@ -49,7 +49,7 @@ namespace network
 		printf("Connection successful!\n");
         
 		/* Send client name */
-		if (!util::send_message(sock, cfg->username))
+		if (!util::send_text(sock, cfg->username))
         {
 			printf("Failed to send username (%s): %s\n", cfg->username, netlib_get_error());
 			return false;
@@ -75,19 +75,27 @@ namespace network
 #endif
     }
 
-
 #ifdef _WIN32
 	DWORD WINAPI network_thread_method(const LPVOID arg)
 #else
 	void* network_thread_method(void *)
 #endif
 	{
+		auto last_message = util::get_ticks();
+
         while (network_loop)
         {
             if (!listen()) /* Has a timeout of 100ms*/
             {
 				printf("Received quit signal\n");
 				break;
+            }
+
+            if (util::get_ticks() - last_message > DC_TIMEOUT)
+            {
+                /* About to timeout -> tell server we're still here */
+				util::send_msg(sock, util::MSG_PREVENT_TIMEOUT);
+				last_message = util::get_ticks();
             }
         }
 
@@ -99,11 +107,10 @@ namespace network
 #endif
 	}
 
-
 	int numready = 0;
     bool listen()
     {
-		numready = netlib_check_socket_set(set, 100);
+		numready = netlib_check_socket_set(set, LISTEN_TIMEOUT);
 
 		if (numready == -1)
 		{

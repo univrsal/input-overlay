@@ -13,6 +13,8 @@
 #include <Windows.h>
 #endif
 
+#define TIMEOUT_NS  500 * 1000 * 1000
+
 namespace network
 {
 	class io_server;
@@ -43,7 +45,9 @@ namespace network
 		MSG_INVALID,
 		MSG_NAME_NOT_UNIQUE,
 		MSG_NAME_INVALID,
-		MSG_SERVER_SHUTDOWN
+		MSG_SERVER_SHUTDOWN,
+		MSG_PREVENT_TIMEOUT,
+        MSG_EVENT_DATA,
 	};
 
 	int send_message(tcp_socket sock, message msg);

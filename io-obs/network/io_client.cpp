@@ -6,6 +6,8 @@
  */
 
 #include "io_client.hpp"
+#include <util/platform.h>
+#include "remote_connection.hpp"
 
 namespace network
 {
@@ -14,6 +16,7 @@ namespace network
         m_name = name;
         m_socket = socket;
         m_id = id;
+		m_last_message = os_gettime_ns();
     }
 
     io_client::~io_client()
@@ -34,5 +37,15 @@ namespace network
     uint8_t io_client::id() const
     {
 		return m_id;
+    }
+
+    uint64_t io_client::last_message() const
+    {
+		return os_gettime_ns() - m_last_message;
+    }
+
+    void io_client::reset_timeout()
+    {
+		m_last_message = os_gettime_ns();
     }
 }

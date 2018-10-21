@@ -72,7 +72,14 @@ void io_settings_dialog::RefreshConnections()
 	{
 		ui->box_connections->clear();
 		QStringList list;
-		network::server_instance->get_clients(list);
+		std::vector<const char*> names;
+        /* I'd do it differently, but including Qt headers and obs headers
+         * creates conflicts with LOG_WARNING...
+         */
+		network::server_instance->get_clients(names);
+
+		for (auto& name : names)
+			list.append(name);
 		ui->box_connections->addItems(list);
 	}
 }

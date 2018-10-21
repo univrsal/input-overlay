@@ -117,6 +117,7 @@ namespace network
         while (network_flag)
         {
             int numready, i;
+			server_instance->roundtrip();
             server_instance->listen(numready);
 
             if (numready == -1)
@@ -131,7 +132,7 @@ namespace network
                 os_sleep_ms(50); /* Should be fast enough */
                 continue;
             }
-            
+
             if (netlib_socket_ready(server_instance->socket()))
             {
                 numready--;
@@ -154,7 +155,7 @@ namespace network
                     else
                     {
                         if (log_flag)
-                            blog(LOG_INFO, "[input-overlay] Failed to receive client name.");
+                            blog(LOG_ERROR, "[input-overlay] Failed to receive client name.");
                         netlib_tcp_close(sock);
                     }
                 }
@@ -179,8 +180,8 @@ namespace network
 
         if (result < sizeof(msg_id))
         {
-			if (netlib_get_error() && strlen(netlib_get_error()))
-				printf("netlib_tcp_recv: %s\n", netlib_get_error());
+			if (log_flag && netlib_get_error() && strlen(netlib_get_error()))
+				blog(LOG_ERROR, "[input-overlay] netlib_tcp_recv: %s\n", netlib_get_error());
 			return 0;
         }
 
@@ -199,8 +200,8 @@ namespace network
         result = netlib_tcp_recv(sock, &len, sizeof(len));
         if (result < sizeof(len))
         {
-            if (netlib_get_error() && strlen(netlib_get_error())) /* sometimes blank! */
-                printf("netlib_tcp_recv: %s\n", netlib_get_error());
+            if (log_flag && netlib_get_error() && strlen(netlib_get_error())) /* sometimes blank! */
+                blog(LOG_ERROR, "[input-overlay] netlib_tcp_recv: %s\n", netlib_get_error());
             return nullptr;
         }
 
@@ -215,8 +216,8 @@ namespace network
         result = netlib_tcp_recv(sock, *buf, len);
         if (result < len)
         {
-            if (netlib_get_error() && strlen(netlib_get_error())) /* sometimes blank! */
-                printf("netlib_tcp_recv: %s\n", netlib_get_error());
+            if (log_flag && netlib_get_error() && strlen(netlib_get_error())) /* sometimes blank! */
+				blog(LOG_ERROR, "[input-overlay] netlib_tcp_recv: %s\n", netlib_get_error());
             free(*buf);
             buf = nullptr;
         }

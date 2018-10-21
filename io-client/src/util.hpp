@@ -30,13 +30,16 @@ namespace util
 		MSG_INVALID,
         MSG_NAME_NOT_UNIQUE,
         MSG_NAME_INVALID,
-        MSG_SERVER_SHUTDOWN
+        MSG_SERVER_SHUTDOWN,
+        MSG_PREVENT_TIMEOUT
     };
 
     /* Get config values and print help */
 	bool parse_arguments(int argc, char** args, config* cfg);
 
-	int send_message(tcp_socket sock, char* buf);
+	int send_text(tcp_socket sock, char* buf);
+
+	int send_msg(tcp_socket sock, message msg);
 
 	uint32_t get_ticks();
     
