@@ -8,6 +8,7 @@
 #include "hook.hpp"
 #include <cstdarg>
 #include <cstdio>
+#include "network.hpp"
 
 namespace hook
 {
@@ -40,31 +41,12 @@ namespace hook
 
 	void dispatch_proc(uiohook_event* const event)
 	{
-		switch (event->type)
+		network::last_message = util::get_ticks();
+		if (!util::send_event(network::sock, event))
 		{
-		case EVENT_KEY_PRESSED:
-
-		case EVENT_KEY_RELEASED:
-
-			break;
-
-		case EVENT_KEY_TYPED:
-
-			break;
-
-		case EVENT_MOUSE_PRESSED:
-		case EVENT_MOUSE_RELEASED:
-		case EVENT_MOUSE_CLICKED:
-		case EVENT_MOUSE_MOVED:
-		case EVENT_MOUSE_DRAGGED:
-			break;
-
-		case EVENT_MOUSE_WHEEL:
-
-			break;
-
-		default:
-			break;
+			//printf("Failed to send event data. Exiting...\n");
+			//network::close();
+			//hook::close();
 		}
 	}
 

@@ -39,7 +39,7 @@ namespace network
 
 	char* read_text(tcp_socket sock, char** buf);
 	
-    enum message
+	enum message
 	{
 		MSG_READ_ERROR = -2,
 		MSG_INVALID,
@@ -47,7 +47,9 @@ namespace network
 		MSG_NAME_INVALID,
 		MSG_SERVER_SHUTDOWN,
 		MSG_PREVENT_TIMEOUT,
-        MSG_EVENT_DATA,
+		MSG_EVENT_DATA,
+		MSG_BUTTON_DATA,
+		MSG_LAST
 	};
 
 	int send_message(tcp_socket sock, message msg);

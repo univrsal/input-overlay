@@ -8,6 +8,7 @@
 #pragma once
 
 #include <netlib.h>
+#include "../util/element/element_data_holder.hpp"
 
 namespace network
 {
@@ -22,6 +23,8 @@ namespace network
 		uint8_t id() const;
 		uint64_t last_message() const;
 		void reset_timeout();
+
+		element_data_holder m_holder;
     private:
 		uint64_t m_last_message;
 		tcp_socket m_socket;

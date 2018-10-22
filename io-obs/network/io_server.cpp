@@ -11,7 +11,7 @@
 #include <obs-module.h>
 #include <util/platform.h>
 #include <algorithm>
-
+#include "../util/element/element_button.hpp"
 
 static netlib_socket_set sockets = nullptr;
 
@@ -82,7 +82,7 @@ namespace network
 		uint8_t id = 0;
 
 #ifdef _DEBUG
-		uint64_t current_time, last_msg;
+		uint64_t last_msg;
 #endif
 
         for (const auto& client : m_clients)
@@ -91,28 +91,30 @@ namespace network
             {
                 /* Receive input data */
 				const auto msg = get_message_type(client->socket());
-
+				blog(LOG_INFO, "Recieved msg %i\n", msg);
+				
                 switch (msg)
                 {
 				case MSG_PREVENT_TIMEOUT:
-#ifdef _DEBUG
-					last_msg = client->last_message() / (1000 * 1000);
+					client->reset_timeout();
+#ifdef _DEBUG 
+                    last_msg = client->last_message() / (1000 * 1000);
 					blog(LOG_INFO, "[input-overlay] Received refresh message from %s after %ims.", client->name(), last_msg);
 #endif
-					client->reset_timeout();
-					break;
-				case MSG_EVENT_DATA:
-					if (receive_event(client->socket()))
-					{
+                    break;
 
-					}
-					else
+				case MSG_EVENT_DATA:
+					client->reset_timeout();
+					if (!receive_event(client.get()))
 					{
 						if (log_flag)
 							blog(LOG_ERROR, "[input-overlay] Failed to receive event data from %s. Closed connection",
 								client->name());
-						disconnect_client(id);
+                        /* This won't work while iterating */
+						//disconnect_client(id);
 					}
+					break;
+				case MSG_INVALID:
 					break;
 				default: ;
                 }
@@ -155,7 +157,7 @@ namespace network
 	{
 		if (!m_clients.empty())
 		{
-			for (auto it = m_clients.begin(); it != m_clients.end(); )
+			for (auto it = m_clients.begin(); it != m_clients.end();)
 			{
 				if ((*it)->last_message() > TIMEOUT_NS)
 				{
@@ -273,29 +275,26 @@ namespace network
 			return MSG_READ_ERROR;
 		}
 
-		switch (msg_id)
-		{
-		case MSG_NAME_INVALID:
-			return MSG_NAME_INVALID;
-		case MSG_NAME_NOT_UNIQUE:
-			return MSG_NAME_NOT_UNIQUE;
-		case MSG_SERVER_SHUTDOWN:
-			return MSG_SERVER_SHUTDOWN;
-		case MSG_PREVENT_TIMEOUT:
-			return MSG_PREVENT_TIMEOUT;
-		default:
-#ifdef _DEBUG
-            if (log_flag)
-				blog(LOG_ERROR, "[input-overlay] Received message with invalid id (%i).\n", msg_id);
-#endif
-			return MSG_INVALID;
-		}
+		if (msg_id >= 0 && msg_id < MSG_LAST)
+			return message(msg_id);
+		return MSG_INVALID;
     }
 
     /* Reads libuihook event or gamepad event from socket*/
-    bool io_server::receive_event(tcp_socket socket)
-    {
-		return true;
+	bool io_server::receive_event(io_client* client)
+	{
+		auto msg = get_message_type(client->socket());
+		element_data* data = nullptr;
+		uint16_t vc = 0xffff;
+		switch (msg)
+		{
+		case MSG_BUTTON_DATA:
+			data_button_from_socket(client->socket(), vc, data);
+			break;
+		default: ;
+		}
+
+		return data && vc != 0xffff;
     }
 
     void io_server::disconnect_client(const uint8_t id)

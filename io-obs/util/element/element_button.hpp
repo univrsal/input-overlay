@@ -9,6 +9,7 @@
 
 #include "../layout_constants.hpp"
 #include "element_texture.hpp"
+#include <netlib.h>
 
 class element_data_button : public element_data
 {
@@ -23,11 +24,11 @@ public:
     {
         return m_state;
     }
-
 private:
     button_state m_state;
 };
 
+void data_button_from_socket(tcp_socket socket, uint16_t& vc, element_data* data);
 
 class element_button : public element_texture
 {

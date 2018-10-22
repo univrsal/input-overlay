@@ -74,14 +74,14 @@ namespace network
 		return pthread_create(&game_pad_hook_thread, nullptr, hook_method, nullptr) == 0;
 #endif
     }
-
+	uint32_t last_message = 0;
 #ifdef _WIN32
 	DWORD WINAPI network_thread_method(const LPVOID arg)
 #else
 	void* network_thread_method(void *)
 #endif
 	{
-		auto last_message = util::get_ticks();
+		last_message = util::get_ticks();
 
         while (network_loop)
         {

@@ -41,7 +41,7 @@ namespace network
         static void fix_name(char* name);
 		bool create_sockets();
         static message get_message_type(tcp_socket socket);
-		bool receive_event(tcp_socket socket);
+		bool receive_event(io_client* client);
 		void disconnect_client(uint8_t id);
 
 		bool m_clients_changed = false; /* Set to true on connection/disconnect and false after get_clients() */

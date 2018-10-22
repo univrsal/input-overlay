@@ -9,6 +9,27 @@
 #include "element_button.hpp"
 #include "../../../ccl/ccl.hpp"
 
+void data_button_from_socket(tcp_socket socket, uint16_t& vc, element_data* data)
+{
+	uint16_t keycode = 0;
+	uint32_t result = netlib_tcp_recv(socket, &vc, sizeof(vc));
+	vc = UTIL_SWAP_BE16(vc);
+
+	if (result < sizeof(vc))
+	{
+		return;
+	}
+
+	uint8_t state;
+	result = netlib_tcp_recv(socket, &state, sizeof(state));
+	if (result < sizeof(state))
+	{
+		return;
+	}
+
+	data = new element_data_button(button_state(state));
+}
+
 void element_button::load(ccl_config* cfg, const std::string& id)
 {
     element_texture::load(cfg, id);

@@ -127,6 +127,45 @@ namespace util
 		return result;
     }
 
+    int send_event(tcp_socket sock, uiohook_event* const event)
+    {
+		if (!event)
+			return -1;
+		send_msg(sock, MSG_EVENT_DATA);
+		int result = 0, result2 = 0;
+		switch(event->type)
+        {
+		case EVENT_KEY_PRESSED:
+			result = send_msg(sock, MSG_BUTTON_DATA);
+			result2 = send_keystate(sock, event->data.keyboard.keycode, true);
+			break;
+		case EVENT_KEY_RELEASED:
+			result = send_msg(sock, MSG_BUTTON_DATA);
+			result2 = send_keystate(sock, event->data.keyboard.keycode, false);
+			break;
+        }
+
+		return result < sizeof(uint8_t) || result2 < sizeof(uint16_t);
+    }
+
+    int send_keystate(tcp_socket sock, uint16_t code, bool pressed)
+    {
+		uint16_t swap = swap_be16(code);
+		uint32_t result = netlib_tcp_send(sock, &swap, sizeof(swap));
+        if (result < sizeof(swap))
+        {
+			printf("netlib_tcp_send failed when sending keycode: %s\n", netlib_get_error());
+        }
+
+		uint8_t state(pressed);
+		result = netlib_tcp_send(sock, &state, sizeof(state));
+		if (result < sizeof(swap))
+		{
+			printf("netlib_tcp_send failed when sending keystate: %s\n", netlib_get_error());
+		}
+		return result;
+    }
+
     uint32_t get_ticks()
     {
 #ifdef _WIN32

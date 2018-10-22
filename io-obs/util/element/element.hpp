@@ -51,7 +51,6 @@ public:
     {
         /* NO-OP */
     }
-
 protected:
     element_type m_type;
 };

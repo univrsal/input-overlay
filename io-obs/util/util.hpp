@@ -47,6 +47,7 @@
 #define UTIL_MAX(a,b)               (((a) > (b)) ? (a) : (b))
 #define UTIL_MIN(a,b)               (((a) < (b)) ? (a) : (b))
 #define UTIL_CLAMP(lower, x, upper) (UTIL_MIN(upper, UTIL_MAX(x, lower)))
+#define UTIL_SWAP_BE16(i)           ((i >> 8) | (i << 8))
 
 #define DEAD_ZONE(x, dz)    ((x < dz) && (x > -dz))
 

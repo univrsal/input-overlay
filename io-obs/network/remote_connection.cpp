@@ -14,7 +14,7 @@
 namespace network
 {
     bool network_state = false;
-    bool network_flag = true;
+    bool network_flag = false;
 	bool local_input = false; /* True if either of the local hooks is running */
     bool log_flag = false;
 	char local_ip[16] = "127.0.0.1\0";
@@ -57,6 +57,7 @@ namespace network
             if (server_instance->init())
             {
                 auto error = 0;
+				network_flag = true;
 #ifdef _WIN32
                 network_thread = CreateThread(nullptr, 0, static_cast<LPTHREAD_START_ROUTINE>(network_handler),
                     nullptr, 0, nullptr);
@@ -136,7 +137,7 @@ namespace network
             if (netlib_socket_ready(server_instance->socket()))
             {
                 numready--;
-
+                
                 if (log_flag)
                     blog(LOG_INFO, "[input-overlay] Received connection...");
                 
