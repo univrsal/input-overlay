@@ -12,6 +12,8 @@
 
 namespace network
 {
+	enum message;
+
 	class io_client
 	{
 	public:
@@ -23,9 +25,10 @@ namespace network
 		uint8_t id() const;
 		uint64_t last_message() const;
 		void reset_timeout();
-
+		element_data_holder* get_data();
+		bool read_event(netlib_byte_buf* buffer, message msg);
+	private:
 		element_data_holder m_holder;
-    private:
 		uint64_t m_last_message;
 		tcp_socket m_socket;
 		uint8_t m_id;

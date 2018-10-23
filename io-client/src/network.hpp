@@ -22,6 +22,8 @@ namespace network
 	extern netlib_socket_set set;
 	extern bool network_loop;
 	extern uint32_t last_message;
+	extern netlib_byte_buf* buffer;
+
 	bool init();
 	bool start_connection(util::config* cfg);
 	bool start_thread();

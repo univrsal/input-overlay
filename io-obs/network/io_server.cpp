@@ -90,34 +90,43 @@ namespace network
             if (netlib_socket_ready(client->socket()))
             {
                 /* Receive input data */
-				const auto msg = get_message_type(client->socket());
-				blog(LOG_INFO, "Recieved msg %i\n", msg);
+				auto buffer = netlib_alloc_byte_buf(5); /* 5 byte fits all event data */
+                if (!netlib_tcp_recv_buf(client->socket(), buffer))
+                {
+					if (log_flag)
+						blog(LOG_ERROR, "[input-overlay] Failed to receive buffer from %s. Closed connection", client->name());
+					/* TODO: Disconnect routine */
+                    continue;
+                }
+
+                const auto msg = read_msg_from_buffer(buffer);
 				
                 switch (msg)
                 {
 				case MSG_PREVENT_TIMEOUT:
-					client->reset_timeout();
 #ifdef _DEBUG 
                     last_msg = client->last_message() / (1000 * 1000);
 					blog(LOG_INFO, "[input-overlay] Received refresh message from %s after %ims.", client->name(), last_msg);
 #endif
-                    break;
-
-				case MSG_EVENT_DATA:
 					client->reset_timeout();
-					if (!receive_event(client.get()))
+                    break;
+				case MSG_MOUSE_POS_DATA:
+				case MSG_BUTTON_DATA:
+					client->reset_timeout();
+					if (!client->read_event(buffer, msg))
 					{
 						if (log_flag)
 							blog(LOG_ERROR, "[input-overlay] Failed to receive event data from %s. Closed connection",
 								client->name());
-                        /* This won't work while iterating */
-						//disconnect_client(id);
+						/* TODO: Disconnect routine */
 					}
 					break;
 				case MSG_INVALID:
 					break;
 				default: ;
                 }
+
+				netlib_free_byte_buf(buffer);
             }
 			id++;
         }
@@ -135,16 +144,14 @@ namespace network
 
     void io_server::get_clients(obs_property_t* prop, const bool enable_local)
     {
-		auto i = 1; /* 0 is reserved for local connection */
-		
-        obs_property_list_clear(prop);
+		obs_property_list_clear(prop);
 
 		if (enable_local)
 			obs_property_list_add_int(prop, T_LOCAL_SOURCE, 0);
 
 		for (const auto& client : m_clients)
 		{
-			obs_property_list_add_int(prop, client->name(), i++);
+			obs_property_list_add_int(prop, client->name(), client->id() + 1); /* 0 is for local input */
 		}
     }
 
@@ -175,6 +182,13 @@ namespace network
 			}
 		}
 	}
+
+    io_client* io_server::get_client(const uint8_t id)
+    {
+		if (id >= 0 && id < m_clients.size())
+			return m_clients[id].get();
+		return nullptr;
+    }
 
     void io_server::add_client(tcp_socket socket, char* name)
     {
@@ -260,41 +274,6 @@ namespace network
             netlib_tcp_add_socket(sockets, client->socket());
 
         return true;
-    }
-
-    message io_server::get_message_type(tcp_socket socket)
-    {
-		uint8_t msg_id;
-
-		const uint32_t read_length = netlib_tcp_recv(socket, &msg_id, sizeof(msg_id));
-
-		if (read_length < sizeof(msg_id))
-		{
-			if (log_flag && netlib_get_error() && strlen(netlib_get_error()))
-				blog(LOG_ERROR, "[input-overlay] netlib_tcp_recv: %s\n", netlib_get_error());
-			return MSG_READ_ERROR;
-		}
-
-		if (msg_id >= 0 && msg_id < MSG_LAST)
-			return message(msg_id);
-		return MSG_INVALID;
-    }
-
-    /* Reads libuihook event or gamepad event from socket*/
-	bool io_server::receive_event(io_client* client)
-	{
-		auto msg = get_message_type(client->socket());
-		element_data* data = nullptr;
-		uint16_t vc = 0xffff;
-		switch (msg)
-		{
-		case MSG_BUTTON_DATA:
-			data_button_from_socket(client->socket(), vc, data);
-			break;
-		default: ;
-		}
-
-		return data && vc != 0xffff;
     }
 
     void io_server::disconnect_client(const uint8_t id)

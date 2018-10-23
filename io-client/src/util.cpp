@@ -8,6 +8,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <string>
+#include "network.hpp"
 
 #ifdef _WIN32
 #include <Windows.h>
@@ -111,59 +112,62 @@ namespace util
 		return result;
 	}
 
-    int send_msg(tcp_socket sock, message msg)
-    {
-		auto msg_id = uint8_t(msg);
-
-		uint32_t result = netlib_tcp_send(sock, &msg_id, sizeof(msg_id));
-
-		if (result < sizeof(msg_id))
-		{
-			if (netlib_get_error() && strlen(netlib_get_error()))
-				printf("netlib_tcp_recv: %s\n", netlib_get_error());
-			return 0;
-		}
-
-		return result;
-    }
-
     int send_event(tcp_socket sock, uiohook_event* const event)
     {
+		network::buffer->write_pos = 0;
 		if (!event)
 			return -1;
-		send_msg(sock, MSG_EVENT_DATA);
-		int result = 0, result2 = 0;
+		auto result = 0, result2 = 0;
+		bool send = false;
 		switch(event->type)
         {
 		case EVENT_KEY_PRESSED:
-			result = send_msg(sock, MSG_BUTTON_DATA);
-			result2 = send_keystate(sock, event->data.keyboard.keycode, true);
+			result = netlib_write_uint8(network::buffer, MSG_BUTTON_DATA);
+			result2 = write_keystate(event->data.keyboard.keycode, true);
+			send = true;
 			break;
 		case EVENT_KEY_RELEASED:
-			result = send_msg(sock, MSG_BUTTON_DATA);
-			result2 = send_keystate(sock, event->data.keyboard.keycode, false);
+			result = netlib_write_uint8(network::buffer, MSG_BUTTON_DATA);
+			result2 = write_keystate(event->data.keyboard.keycode, false);
+			send = true;
 			break;
+		default:;
         }
 
-		return result < sizeof(uint8_t) || result2 < sizeof(uint16_t);
+		if (send)
+		{
+            if (result && result2)
+            {
+				netlib_tcp_send_buf(sock, network::buffer);
+				network::last_message = util::get_ticks();
+            }
+			else
+			{
+			    if (!result)
+				    printf("netlib_write_uint8 failed: %s\n", netlib_get_error());
+				if (!result2)
+					printf("write_keystate failed\n");
+			}
+		}
+		return !send || result && result2;
     }
 
-    int send_keystate(tcp_socket sock, uint16_t code, bool pressed)
+    int write_keystate(uint16_t code, bool pressed)
     {
-		uint16_t swap = swap_be16(code);
-		uint32_t result = netlib_tcp_send(sock, &swap, sizeof(swap));
-        if (result < sizeof(swap))
-        {
-			printf("netlib_tcp_send failed when sending keycode: %s\n", netlib_get_error());
-        }
-
-		uint8_t state(pressed);
-		result = netlib_tcp_send(sock, &state, sizeof(state));
-		if (result < sizeof(swap))
+		int result = netlib_write_uint16(network::buffer, code);
+		if (!result)
 		{
-			printf("netlib_tcp_send failed when sending keystate: %s\n", netlib_get_error());
+			printf("Couldn't write keycode: %s\n", netlib_get_error());
+			return -1;
 		}
-		return result;
+		
+	    result = netlib_write_uint8(network::buffer, pressed);
+        if (!result)
+        {
+			printf("Couldn't write keystate: %s\n", netlib_get_error());
+			return -1;
+        }
+		return 1;
     }
 
     uint32_t get_ticks()

@@ -217,12 +217,27 @@ namespace network
         result = netlib_tcp_recv(sock, *buf, len);
         if (result < len)
         {
-            if (log_flag && netlib_get_error() && strlen(netlib_get_error())) /* sometimes blank! */
+            if (log_flag && netlib_get_error() && strlen(netlib_get_error()))
 				blog(LOG_ERROR, "[input-overlay] netlib_tcp_recv: %s\n", netlib_get_error());
             free(*buf);
             buf = nullptr;
         }
 
         return *buf;
+    }
+
+	message read_msg_from_buffer(netlib_byte_buf* buf)
+	{
+		uint8_t id = 0;
+		if (!netlib_read_uint8(buf, &id))
+		{
+			if (log_flag && netlib_get_error() && strlen(netlib_get_error()))
+				blog(LOG_ERROR, "[input-overlay] netlib_read_uint8: %s\n", netlib_get_error());
+			return MSG_READ_ERROR;
+		}
+
+		if (id >= MSG_NAME_NOT_UNIQUE && id <= MSG_LAST)
+			return message(id);
+		return MSG_INVALID;
     }
 }

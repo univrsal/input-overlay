@@ -32,6 +32,7 @@ namespace sources
 #ifdef _WIN32
         float left_dz = 0.f, right_dz = 0.f;
 #endif
+		uint8_t selected_source = 0; /* 0 = Local input */
         /* TODO: Mouse config etc.*/
     };
 

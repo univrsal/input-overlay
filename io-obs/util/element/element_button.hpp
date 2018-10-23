@@ -24,11 +24,10 @@ public:
     {
         return m_state;
     }
+	static element_data_button* from_buffer(netlib_byte_buf* buffer);
 private:
     button_state m_state;
 };
-
-void data_button_from_socket(tcp_socket socket, uint16_t& vc, element_data* data);
 
 class element_button : public element_texture
 {

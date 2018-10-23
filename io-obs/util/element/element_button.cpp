@@ -9,25 +9,16 @@
 #include "element_button.hpp"
 #include "../../../ccl/ccl.hpp"
 
-void data_button_from_socket(tcp_socket socket, uint16_t& vc, element_data* data)
+element_data_button* element_data_button::from_buffer(netlib_byte_buf* buffer)
 {
-	uint16_t keycode = 0;
-	uint32_t result = netlib_tcp_recv(socket, &vc, sizeof(vc));
-	vc = UTIL_SWAP_BE16(vc);
+	uint8_t state = 0;
 
-	if (result < sizeof(vc))
-	{
-		return;
-	}
+    if (!netlib_read_uint8(buffer, &state))
+    {
+		return nullptr;
+    }
 
-	uint8_t state;
-	result = netlib_tcp_recv(socket, &state, sizeof(state));
-	if (result < sizeof(state))
-	{
-		return;
-	}
-
-	data = new element_data_button(button_state(state));
+	return new element_data_button(button_state(state));
 }
 
 void element_button::load(ccl_config* cfg, const std::string& id)

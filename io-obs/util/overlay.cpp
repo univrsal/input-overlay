@@ -17,6 +17,8 @@
 #include "../sources/input_source.hpp"
 #include "element/element_gamepad_id.hpp"
 #include "element/element_dpad.hpp"
+#include "network/remote_connection.hpp"
+#include "network/io_server.hpp"
 
 extern "C" {
 #include <graphics/image-file.h>
@@ -165,19 +167,34 @@ void overlay::draw(gs_effect_t* effect)
         for (auto const& element : m_elements)
         {
             element_data* data = nullptr;
-            if (hook::data_initialized)
+            if (hook::data_initialized || network::network_flag)
             {
-				switch (element->get_source())
-				{
-				case GAMEPAD:
-					data = hook::input_data->get_by_gamepad(m_settings->gamepad,
-						element->get_keycode());
-					break;
-				case DEFAULT:
-					data = hook::input_data->get_by_code(element->get_keycode());
-					break;
-				default:;
-				}
+				element_data_holder* source = nullptr;
+
+                if (m_settings->selected_source == 0)
+                {
+                    source = hook::input_data;
+                }
+                else if (network::server_instance)
+                {
+                    source = network::server_instance->
+                             get_client(m_settings->selected_source - 1)->get_data();
+                }
+
+                if (source)
+                {
+					switch (element->get_source())
+					{
+					case GAMEPAD:
+						data = source->get_by_gamepad(m_settings->gamepad,
+							element->get_keycode());
+						break;
+					case DEFAULT:
+						data = source->get_by_code(element->get_keycode());
+						break;
+					default:;
+					}
+                }
             }
 
             element->draw(effect, m_image, data, m_settings);

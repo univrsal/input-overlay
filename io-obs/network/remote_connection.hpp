@@ -47,10 +47,12 @@ namespace network
 		MSG_NAME_INVALID,
 		MSG_SERVER_SHUTDOWN,
 		MSG_PREVENT_TIMEOUT,
-		MSG_EVENT_DATA,
 		MSG_BUTTON_DATA,
+        MSG_MOUSE_POS_DATA,
 		MSG_LAST
 	};
+
+	message read_msg_from_buffer(netlib_byte_buf* buf);
 
 	int send_message(tcp_socket sock, message msg);
 

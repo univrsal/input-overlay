@@ -15,7 +15,9 @@ namespace network
 	tcp_socket sock = nullptr;
 	netlib_socket_set set = nullptr;
 	bool network_loop = true;
-    
+    /* Shared buffer for writing data, which will be sent to the server */
+	netlib_byte_buf* buffer = nullptr;
+
 #ifdef _WIN32
 	static HANDLE network_thread;
 #else
@@ -94,7 +96,21 @@ namespace network
             if (util::get_ticks() - last_message > DC_TIMEOUT)
             {
                 /* About to timeout -> tell server we're still here */
-				util::send_msg(sock, util::MSG_PREVENT_TIMEOUT);
+				network::buffer->write_pos = 0;
+				if (!netlib_write_uint8(network::buffer, util::MSG_PREVENT_TIMEOUT))
+				{
+					printf("netlib_write_uint8: %s\n", netlib_get_error());
+					network_loop = false;
+					break;
+				}
+				
+				if (!netlib_tcp_send_buf(sock, buffer))
+				{
+					printf("netlib_tcp_send_buf: %s\n", netlib_get_error());
+					network_loop = false;
+					break;
+				}
+
 				last_message = util::get_ticks();
             }
         }
@@ -146,6 +162,14 @@ namespace network
 
     bool init()
 	{
+		buffer = netlib_alloc_byte_buf(5);
+        
+        if (!buffer)
+        {
+			printf("netlib_alloc_byte_buf failed: %s\n", netlib_get_error());
+			return false;
+        }
+
 		if (netlib_init() == -1)
 		{
 			printf("netlib_init failed: %s\n", netlib_get_error());
@@ -162,6 +186,8 @@ namespace network
 		if (network_thread)
 			CloseHandle(network_thread);
 #endif
+		if (buffer)
+			netlib_free_byte_buf(buffer);
 		netlib_quit();
 	}
 }

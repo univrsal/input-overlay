@@ -27,14 +27,15 @@ namespace util
 
     enum message
     {
-        MSG_READ_ERROR = -2,
+		MSG_READ_ERROR = -2,
 		MSG_INVALID,
-        MSG_NAME_NOT_UNIQUE,
-        MSG_NAME_INVALID,
-        MSG_SERVER_SHUTDOWN,
-        MSG_PREVENT_TIMEOUT,
-		MSG_EVENT_DATA,
-        MSG_BUTTON_DATA
+		MSG_NAME_NOT_UNIQUE,
+		MSG_NAME_INVALID,
+		MSG_SERVER_SHUTDOWN,
+		MSG_PREVENT_TIMEOUT,
+		MSG_BUTTON_DATA,
+		MSG_MOUSE_POS_DATA,
+		MSG_LAST
     };
 
     /* Get config values and print help */
@@ -42,11 +43,9 @@ namespace util
 
 	int send_text(tcp_socket sock, char* buf);
 
-	int send_msg(tcp_socket sock, message msg);
-
 	int send_event(tcp_socket sock, uiohook_event* const event);
 
-	int send_keystate(tcp_socket sock, uint16_t code, bool pressed);
+	int write_keystate(uint16_t code, bool pressed);
 
 	inline uint16_t swap_be16(uint16_t in)
 	{

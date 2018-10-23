@@ -41,10 +41,9 @@ namespace hook
 
 	void dispatch_proc(uiohook_event* const event)
 	{
-		network::last_message = util::get_ticks();
 		if (!util::send_event(network::sock, event))
 		{
-			//printf("Failed to send event data. Exiting...\n");
+			printf("Failed to send event data. Exiting...\n");
 			//network::close();
 			//hook::close();
 		}

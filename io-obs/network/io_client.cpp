@@ -8,6 +8,7 @@
 #include "io_client.hpp"
 #include <util/platform.h>
 #include "remote_connection.hpp"
+#include "util/element/element_button.hpp"
 
 namespace network
 {
@@ -47,5 +48,42 @@ namespace network
     void io_client::reset_timeout()
     {
 		m_last_message = os_gettime_ns();
+    }
+
+    element_data_holder* io_client::get_data()
+    {
+		return &m_holder;
+    }
+
+    bool io_client::read_event(netlib_byte_buf* buffer, const message msg)
+    {
+		element_data* data = nullptr;
+		uint16_t vc = 0;
+		uint8_t pad_id = 0;
+		auto flag = true;
+
+		if (!netlib_read_uint16(buffer, &vc))
+			flag = false;
+
+        switch (msg)
+        {
+		case MSG_BUTTON_DATA:
+			data = element_data_button::from_buffer(buffer);
+			break;
+		default:;
+        }
+
+        if (!flag || !data)
+        {
+            if (log_flag)
+                blog(LOG_ERROR, "[input-overlay] Couldn't read event for client %s. Error: %s\n", name(),
+                    netlib_get_error());
+        }
+        else
+        {
+            m_holder.add_data(vc, data);
+        }
+
+		return flag;
     }
 }
