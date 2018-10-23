@@ -8,6 +8,7 @@
 #include "util.hpp"
 #include "network.hpp"
 #include "hook.hpp"
+#include <stdio.h>
 
 int main(int argc, char **argv)
 {
@@ -15,9 +16,13 @@ int main(int argc, char **argv)
 	
 	if (!network::init())
 		return 1;
+	else
+	    printf("Network init done.\n");
 
 	if (!util::parse_arguments(argc, argv, &cfg))
 		return 2; /* Invalid arguments */
+    else
+        printf("Arguments: Port: %hu, Name: %s, IP: %s\n", cfg.port, cfg.username, argv[1]);
 
 	if (!network::start_connection(&cfg)) /* Starts a separate network thread */
 	{

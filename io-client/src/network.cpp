@@ -9,6 +9,7 @@
 #include "hook.hpp"
 #include "util.hpp"
 #include <cstdio>
+#include <pthread.h>
 
 namespace network
 {
@@ -26,14 +27,17 @@ namespace network
 
     bool start_connection(util::config* cfg)
     {
+    	printf("Allocating socket...");
 		set = netlib_alloc_socket_set(1);
+		printf(" Done.\n");
 
-        if (!set)
+		if (!set)
         {
 			printf("netlib_alloc_socket_set failed: %s\n", netlib_get_error());
 			return false;
         }
-        
+
+        printf("Opening socket... ");
         sock = netlib_tcp_open(&cfg->ip);
 
         if (!sock)
@@ -41,6 +45,8 @@ namespace network
 			printf("netlib_tcp_open failed: %s\n", netlib_get_error());
 			return false;
         }
+
+        printf("Done.\n");
 
         if (netlib_tcp_add_socket(set, sock) == -1)
         {
@@ -73,7 +79,7 @@ namespace network
 			nullptr, 0, nullptr);
 		return network_thread;
 #else
-		return pthread_create(&game_pad_hook_thread, nullptr, hook_method, nullptr) == 0;
+		return pthread_create(&network_thread, nullptr, network_thread_method, nullptr) == 0;
 #endif
     }
 	uint32_t last_message = 0;

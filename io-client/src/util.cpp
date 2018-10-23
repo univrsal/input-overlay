@@ -7,12 +7,12 @@
 #include "util.hpp"
 #include <cstdio>
 #include <cstdlib>
-#include <string>
 #include "network.hpp"
-
+#include <string>
 #ifdef _WIN32
 #include <Windows.h>
 #else
+#include <cstring>
 #include <math.h>
 #include <stdio.h>
 #include <time.h>
