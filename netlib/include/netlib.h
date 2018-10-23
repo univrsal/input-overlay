@@ -22,7 +22,8 @@
 extern "C" {
 #endif
 
-typedef struct netlib_version {
+typedef struct netlib_version
+{
 	uint8_t major;
 	uint8_t minor;
 	uint8_t patch;
@@ -30,7 +31,7 @@ typedef struct netlib_version {
 
 /* Printable format: "%d.%d.%d", MAJOR, MINOR, PATCHLEVEL */
 #define NETLIB_MAJOR_VERSION   0
-#define NETLIB_MINOR_VERSION   1
+#define NETLIB_MINOR_VERSION   2
 #define NETLIB_PATHLEVEL	   0
 
 /* This macro can be used to fill a version structure with the compile-time
@@ -53,7 +54,8 @@ extern DECLSPEC const netlib_version* NETLIB_CALL netlib_get_version(void);
 extern DECLSPEC int  NETLIB_CALL netlib_init(void);
 extern DECLSPEC void NETLIB_CALL netlib_quit(void);
 
-typedef struct {
+typedef struct
+{
 	uint32_t host;            /* 32-bit IPv4 host address */
 	uint16_t port;            /* 16-bit protocol port */
 } ip_address;
@@ -81,7 +83,7 @@ extern DECLSPEC int NETLIB_CALL netlib_resolve_host(ip_address* address, const c
 
 /* Resolve an ip address to a host name in canonical form.
    If the ip couldn't be resolved, this function returns NULL,
-   otherwise a pointer to a static buffer containing the hostname
+   otherwise a pointer to a static data containing the hostname
    is returned.  Note that this function is not thread-safe.
 */
 extern DECLSPEC const char * NETLIB_CALL netlib_resolve_ip(const ip_address* ip);
@@ -123,7 +125,7 @@ extern DECLSPEC ip_address* NETLIB_CALL netlib_tcp_get_peer_address(tcp_socket s
 extern DECLSPEC int NETLIB_CALL netlib_tcp_send(tcp_socket sock, const void* data, int len);
 
 /* Receive up to 'maxlen' bytes of data over the non-server socket 'sock',
-   and store them in the buffer pointed to by 'data'.
+   and store them in the data pointed to by 'data'.
    This function returns the actual amount of data received.  If the return
    value is less than or equal to zero, then either the remote connection was
    closed, or an unknown socket error occurred.
@@ -142,16 +144,17 @@ extern DECLSPEC void NETLIB_CALL netlib_tcp_close(tcp_socket sock);
 
 typedef struct _udp_socket* udp_socket;
 
-typedef struct {
+typedef struct 
+{
 	int channel;        /* The src/dst channel of the packet */
 	uint8_t *data;      /* The packet data */
 	int len;            /* The length of the packet data */
-	int maxlen;         /* The size of the data buffer */
+	int maxlen;         /* The length of the data data */
 	int status;         /* packet status after sending */
 	ip_address address; /* The source/dest address of an incoming/outgoing packet */
 } udp_packet;
 
-/* Allocate/resize/free a single UDP packet 'size' bytes long.
+/* Allocate/resize/free a single UDP packet 'length' bytes long.
    The new packet is returned, or NULL if the function ran out of memory.
 */
 extern DECLSPEC udp_packet* NETLIB_CALL netlib_alloc_packet(int size);
@@ -159,7 +162,7 @@ extern DECLSPEC int NETLIB_CALL netlib_resize_packet(udp_packet* packet, int new
 extern DECLSPEC void NETLIB_CALL netlib_free_packet(udp_packet* packet);
 
 /* Allocate/Free a UDP packet vector (array of packets) of 'howmany' packets,
-   each 'size' bytes long.
+   each 'length' bytes long.
    A pointer to the first packet in the array is returned, or NULL if the
    function ran out of memory.
 */
@@ -217,7 +220,7 @@ extern DECLSPEC int NETLIB_CALL netlib_udp_send_packets(udp_socket sock, udp_pac
    This function returns 1 if the packet was sent, or 0 on error.
    
    NOTE:
-   The maximum size of the packet is limited by the MTU (Maximum Transfer Unit)
+   The maximum length of the packet is limited by the MTU (Maximum Transfer Unit)
    of the transport medium.  It can be as low as 250 bytes for some PPP links,
    and as high as 1500 bytes for ethernet.
 */
@@ -255,7 +258,8 @@ extern DECLSPEC void NETLIB_CALL netlib_udp_close(udp_socket sock);
 typedef struct _netlib_socket_set* netlib_socket_set;
 
 /* Any network socket can be safely cast to this socket type */
-typedef struct _netlib_generic_socket {
+typedef struct _netlib_generic_socket
+{
 	int ready;
 }* netlib_generic_socket;
 
@@ -322,11 +326,11 @@ extern DECLSPEC const char* NETLIB_CALL netlib_get_error(void);
 
 /* === Functions to read/write network data */
 
-/* Write a 16/32-bit value to network packet buffer */
+/* Write a 16/32-bit value to network packet data */
 #define netlib_write16(value, areap) _netlib_write16(value, areap)
 #define netlib_write32(value, areap) _netlib_write32(value, areap)
 
-/* Read a 16/32-bit value from network packet buffer */
+/* Read a 16/32-bit value from network packet data */
 #define netlib_read16(areap) _netlib_read16(areap)
 #define netlib_read32(areap) _netlib_read32(areap)
 
@@ -358,7 +362,62 @@ FORCE_INLINE uint32_t _netlib_read32(const void *areap)
 	return ((uint32_t)area[0]) << 24 | ((uint32_t)area[1]) << 16 | ((uint32_t)area[2]) << 8 | ((uint32_t)area[3]);
 }
 
-extern DECLSPEC uint32_t NETLIB_CALL netlib_swap_BE32(uint32_t val);
+FORCE_INLINE uint32_t netlib_swap_BE32(uint32_t val)
+{
+	val = ((val << 8) & 0xFF00FF00) | ((val >> 8) & 0xFF00FF);
+	return (val << 16) | (val >> 16);
+}
+
+FORCE_INLINE uint16_t netlib_swap_BE16(uint16_t val)
+{
+	return (val >> 8) | (val << 8);
+}
+
+/* === Buffer API (This is not part of SDL_net) === */
+
+typedef struct
+{
+	uint8_t* data;
+	uint8_t length;
+	uint8_t read_pos;
+	uint8_t write_pos;
+} netlib_byte_buf;
+
+extern DECLSPEC netlib_byte_buf* NETLIB_CALL netlib_alloc_byte_buf(uint8_t size);
+
+extern DECLSPEC void NETLIB_CALL netlib_free_byte_buf(netlib_byte_buf* buf);
+
+extern DECLSPEC int NETLIB_CALL netlib_tcp_send_buf(tcp_socket sock, netlib_byte_buf* buf);
+
+extern DECLSPEC int NETLIB_CALL netlib_tcp_recv_buf(tcp_socket sock, netlib_byte_buf* buf);
+
+/* === Writing to a data === */
+
+extern DECLSPEC int NETLIB_CALL netlib_write_uint8(netlib_byte_buf* buf, uint8_t val);
+
+extern DECLSPEC int NETLIB_CALL netlib_write_uint16(netlib_byte_buf* buf, uint16_t val);
+
+extern DECLSPEC int NETLIB_CALL netlib_write_uint32(netlib_byte_buf* buf, uint32_t val);
+
+#define netlib_write_int8(buf, val) netlib_write_uint8(buf, (uint8_t) val)
+
+#define netlib_write_int16(buf, val) netlib_write_uint16(buf, (uint16_t) val)
+
+#define netlib_write_int32(buf, val) netlib_write_uint32(buf, (uint32_t) val)
+
+/* === Reading from a data === */
+
+extern DECLSPEC int NETLIB_CALL netlib_read_uint8(netlib_byte_buf* buf, uint8_t* val);
+
+extern DECLSPEC int NETLIB_CALL netlib_read_uint16(netlib_byte_buf* buf, uint16_t* val);
+
+extern DECLSPEC int NETLIB_CALL netlib_read_uint32(netlib_byte_buf* buf, uint32_t* val);
+
+#define netlib_read_int8(buf, val) netlib_read_uint8(buf, (uint8_t*) val)
+
+#define netlib_read_int16(buf, val) netlib_read_uint16(buf, (uint16_t*) val)
+
+#define netlib_read_int32(buf, val) netlib_read_uint32(buf, (uint32_t*) val)
 
 #ifdef __cplusplus
 }
