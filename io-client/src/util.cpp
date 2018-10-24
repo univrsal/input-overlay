@@ -118,7 +118,8 @@ namespace util
 		if (!event)
 			return -1;
 		auto result = 0, result2 = 0;
-		bool send = false;
+		auto send = false;
+
 		switch(event->type)
         {
 		case EVENT_KEY_PRESSED:
@@ -143,10 +144,7 @@ namespace util
             }
 			else
 			{
-			    if (!result)
-				    printf("netlib_write_uint8 failed: %s\n", netlib_get_error());
-				if (!result2)
-					printf("write_keystate failed\n");
+				printf("Writing event data failed: %s\n", netlib_get_error());
 			}
 		}
 		return !send || result && result2;

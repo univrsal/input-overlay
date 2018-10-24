@@ -16,12 +16,14 @@ namespace network
         m_name = name;
         m_socket = socket;
         m_id = id;
+		m_valid = true;
 		m_last_message = os_gettime_ns();
     }
 
     io_client::~io_client()
     {
 		delete m_name;
+		netlib_tcp_close(m_socket);
     }
 
     tcp_socket io_client::socket() const
@@ -74,15 +76,23 @@ namespace network
 
         if (!flag || !data)
         {
-            if (log_flag)
-                blog(LOG_ERROR, "[input-overlay] Couldn't read event for client %s. Error: %s\n", name(),
-                    netlib_get_error());
+            LOG_(LOG_ERROR, "Couldn't read event for client %s. Error: %s", name(), netlib_get_error());
         }
         else
         {
             m_holder.add_data(vc, data);
         }
-
+            
 		return flag;
+    }
+
+    bool io_client::valid() const
+    {
+		return m_valid;
+    }
+
+    void io_client::mark_invalid()
+    {
+		m_valid = false;
     }
 }

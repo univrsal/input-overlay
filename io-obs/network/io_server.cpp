@@ -28,11 +28,9 @@ namespace network
 
     io_server::~io_server()
     {
-        for (auto i = 0; i < m_num_clients; i++)
-        {
-			disconnect_client(i);
-        }
-
+        /* Smart pointer will delete 
+         * and destructor will close socket
+         */
         m_clients.clear();
     }
 
@@ -42,24 +40,24 @@ namespace network
 
         if (netlib_resolve_host(&m_ip, nullptr, m_ip.port) == -1)
         {
-            if (log_flag)
-                blog(LOG_ERROR, "[input-overlay] netlib_resolve_host failed: %s. ", netlib_get_error());
+            LOG_(LOG_ERROR, "netlib_resolve_host failed: %s.", netlib_get_error());
 			flag = false;
         }
         else
         {
-            if (log_flag)
-            {
-                const auto ipaddr = netlib_swap_BE32(m_ip.host);
-                blog(LOG_INFO, "[input-overlay] Remote connection opened on %d.%d.%d.%d:%hu",
-                    ipaddr >> 24, ipaddr >> 16 & 0xff, ipaddr >> 8 & 0xff, ipaddr & 0xff, m_ip.port);
-            }
+			const auto ipaddr = netlib_swap_BE32(m_ip.host);
+			LOG_(LOG_INFO, "Remote connection open on %d.%d.%d.%d:%hu",
+				ipaddr >> 24, ipaddr >> 16 & 0xff, ipaddr >> 8 & 0xff, ipaddr & 0xff, m_ip.port);
 
 			m_server = netlib_tcp_open(&m_ip);
+			m_buffer = netlib_alloc_byte_buf(BUFFER_SIZE);
 
+            if (!m_buffer)
+            	LOG_(LOG_ERROR, "netlib_alloc_byte_buf failed; %s", netlib_get_error());
+            
 			if (!m_server)
 			{
-				blog(LOG_ERROR, "[input-overlay] netlib_tcp_open failed: %s", netlib_get_error());
+				LOG_(LOG_ERROR, "netlib_tcp_open failed: %s", netlib_get_error());
 				flag = false;
 			}
 		}
@@ -90,34 +88,32 @@ namespace network
             if (netlib_socket_ready(client->socket()))
             {
                 /* Receive input data */
-				auto buffer = netlib_alloc_byte_buf(5); /* 5 byte fits all event data */
-                if (!netlib_tcp_recv_buf(client->socket(), buffer))
+				m_buffer->read_pos = 0; /* Reset buffer */
+
+                if (!netlib_tcp_recv_buf(client->socket(), m_buffer))
                 {
-					if (log_flag)
-						blog(LOG_ERROR, "[input-overlay] Failed to receive buffer from %s. Closed connection", client->name());
+				    LOG_(LOG_ERROR, "Failed to receive buffer from %s. Closed connection", client->name());
 					/* TODO: Disconnect routine */
                     continue;
                 }
 
-                const auto msg = read_msg_from_buffer(buffer);
+                const auto msg = read_msg_from_buffer(m_buffer);
 				
                 switch (msg)
                 {
 				case MSG_PREVENT_TIMEOUT:
 #ifdef _DEBUG 
                     last_msg = client->last_message() / (1000 * 1000);
-					blog(LOG_INFO, "[input-overlay] Received refresh message from %s after %ims.", client->name(), last_msg);
+					LOG_(LOG_INFO, "Received refresh message from %s after %ums.", client->name(), last_msg);
 #endif
 					client->reset_timeout();
                     break;
 				case MSG_MOUSE_POS_DATA:
 				case MSG_BUTTON_DATA:
 					client->reset_timeout();
-					if (!client->read_event(buffer, msg))
+					if (!client->read_event(m_buffer, msg))
 					{
-						if (log_flag)
-							blog(LOG_ERROR, "[input-overlay] Failed to receive event data from %s. Closed connection",
-								client->name());
+						LOG_(LOG_ERROR, "Failed to receive event data from %s. Closed connection", client->name());
 						/* TODO: Disconnect routine */
 					}
 					break;
@@ -125,8 +121,6 @@ namespace network
 					break;
 				default: ;
                 }
-
-				netlib_free_byte_buf(buffer);
             }
 			id++;
         }
@@ -155,7 +149,7 @@ namespace network
 		}
     }
 
-    bool io_server::need_refresh() const
+    bool io_server::clients_changed() const
     {
 		return m_clients_changed;
     }
@@ -164,22 +158,29 @@ namespace network
 	{
 		if (!m_clients.empty())
 		{
-			for (auto it = m_clients.begin(); it != m_clients.end();)
-			{
-				if ((*it)->last_message() > TIMEOUT_NS)
-				{
-					if (log_flag)
-						blog(LOG_INFO, "[input-overlay] %s disconnected due to timeout. ", (*it)->name());
-					netlib_tcp_close((*it)->socket());
-					m_num_clients--;
-					m_clients_changed = true;
-					it = m_clients.erase(it);
-				}
-				else
-				{
-					++it;
-				}
-			}
+			auto old = m_clients.size();
+            m_clients.erase(std::remove_if(
+			    m_clients.begin(), m_clients.end(),
+                [](const std::unique_ptr<io_client>& o)
+                {
+                    if (!o->valid())
+                    {
+						network::server_instance->m_num_clients--;
+						LOG_(LOG_INFO, "%s disconnected. Invalid socket.", o->name());
+						return true;
+                    }
+                    else if (o->last_message() > TIMEOUT_NS)
+                    {
+						network::server_instance->m_num_clients--;
+						LOG_(LOG_INFO, "%s disconnected due to timeout.", o->name());
+						return true;
+                    }
+					return false;
+                }
+			), m_clients.end());
+
+			if (old != m_clients.size())
+				m_clients_changed = true;
 		}
 	}
 
@@ -196,8 +197,7 @@ namespace network
 
         if (!strlen(name))
         {
-            if (log_flag)
-                blog(LOG_INFO, "[input-overlay] Disconnected %s: Invalid name", name);
+            LOG_(LOG_INFO, "Disconnected %s: Invalid name", name);
 			send_message(socket, MSG_NAME_INVALID);
             netlib_tcp_close(socket);
             return;
@@ -205,15 +205,13 @@ namespace network
 
         if (!unique_name(name))
         {
-            if (log_flag)
-                blog(LOG_INFO, "Disconnected %s: Name already in use", name);
+            LOG_(LOG_INFO, "Disconnected %s: Name already in use", name);
 			send_message(socket, MSG_NAME_NOT_UNIQUE);
             netlib_tcp_close(socket);
             return;
         }
 
-		if (log_flag)
-			blog(LOG_INFO, "[input-overlay] Received connection from '%s'.", name);
+		LOG_(LOG_INFO, "Received connection from '%s'.", name);
 
 		m_clients_changed = true;
         m_clients.emplace_back(new io_client(name, socket, m_num_clients));
@@ -257,13 +255,7 @@ namespace network
         sockets = netlib_alloc_socket_set(m_num_clients + 1);
         if (!sockets)
         {
-            if (log_flag)
-            {
-                blog(LOG_ERROR,
-                    "[input-overlay] netlib_alloc_socket_set failed with %i clients.",
-                    m_num_clients + 1);
-            }
-
+            LOG_(LOG_ERROR, "netlib_alloc_socket_set failed with %i clients.", m_num_clients + 1);
             network_flag = false;
             return false;
         }
@@ -274,16 +266,5 @@ namespace network
             netlib_tcp_add_socket(sockets, client->socket());
 
         return true;
-    }
-
-    void io_server::disconnect_client(const uint8_t id)
-	{
-		if (m_clients.empty() || id >= m_clients.size())
-			return;
-
-		netlib_tcp_close(m_clients[id]->socket());
-		m_num_clients--;
-		m_clients.erase(m_clients.begin() + id);
-		m_clients_changed = true;
     }
 }

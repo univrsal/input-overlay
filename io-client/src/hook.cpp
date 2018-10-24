@@ -44,8 +44,8 @@ namespace hook
 		if (!util::send_event(network::sock, event))
 		{
 			printf("Failed to send event data. Exiting...\n");
-			//network::close();
-			//hook::close();
+			network::close();
+			hook::close();
 		}
 	}
 

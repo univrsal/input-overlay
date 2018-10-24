@@ -69,29 +69,25 @@ namespace network
 #endif
                 if (!network_state)
                 {
-                    if (log_flag)
-                        blog(LOG_ERROR, "[input-overlay] Server thread creation failed with code: %i", error);
+                    LOG_(LOG_ERROR, "Server thread creation failed with code: %i", error);
                     failed = true;
                 }
             }
             else
             {
-                if (log_flag)
-                    blog(LOG_ERROR, "[input-overlay] Server init failed");
+                LOG_(LOG_ERROR, "Server init failed");
                 failed = true;
             }
         }
         else
         {
-            if (log_flag)
-                blog(LOG_ERROR, "[input-overlay] netlib_init failed: %s", netlib_get_error());
+            LOG_(LOG_ERROR, "netlib_init failed: %s", netlib_get_error());
             failed = true;
         }
 
         if (failed)
         {
-            if (log_flag)
-                blog(LOG_ERROR, "[input-overlay] Remote connection disabled due to errors");
+            LOG_(LOG_ERROR, "Remote connection disabled due to errors");
             close_network();
         }
     }
@@ -123,8 +119,7 @@ namespace network
 
             if (numready == -1)
             {
-                if (log_flag)
-                    blog(LOG_ERROR, "[input-overlay] netlib_check_sockets failed: %s", netlib_get_error());
+                LOG_(LOG_ERROR, "netlib_check_sockets failed: %s", netlib_get_error());
                 break;
             }
 
@@ -137,17 +132,14 @@ namespace network
             if (netlib_socket_ready(server_instance->socket()))
             {
                 numready--;
-                
-                if (log_flag)
-                    blog(LOG_INFO, "[input-overlay] Received connection...");
+                LOG_(LOG_INFO, "Received connection...");
                 
                 sock = netlib_tcp_accept(server_instance->socket());
 
                 if (sock)
                 {
                     char* name = nullptr;
-                    if (log_flag)
-                        blog(LOG_INFO, "[input-overlay] Accepted connection...");
+                    LOG_(LOG_INFO, "Accepted connection...");
 
                     if (read_text(sock, &name))
                     {
@@ -155,8 +147,7 @@ namespace network
                     }
                     else
                     {
-                        if (log_flag)
-                            blog(LOG_ERROR, "[input-overlay] Failed to receive client name.");
+                        LOG_(LOG_ERROR, "Failed to receive client name.");
                         netlib_tcp_close(sock);
                     }
                 }
@@ -181,8 +172,7 @@ namespace network
 
         if (result < sizeof(msg_id))
         {
-			if (log_flag && netlib_get_error() && strlen(netlib_get_error()))
-				blog(LOG_ERROR, "[input-overlay] netlib_tcp_recv: %s\n", netlib_get_error());
+			LOG_(LOG_ERROR, "netlib_tcp_recv: %s\n", netlib_get_error());
 			return 0;
         }
 
@@ -201,8 +191,7 @@ namespace network
         result = netlib_tcp_recv(sock, &len, sizeof(len));
         if (result < sizeof(len))
         {
-            if (log_flag && netlib_get_error() && strlen(netlib_get_error())) /* sometimes blank! */
-                blog(LOG_ERROR, "[input-overlay] netlib_tcp_recv: %s\n", netlib_get_error());
+            LOG_(LOG_ERROR, "netlib_tcp_recv: %s\n", netlib_get_error());
             return nullptr;
         }
 
@@ -217,8 +206,7 @@ namespace network
         result = netlib_tcp_recv(sock, *buf, len);
         if (result < len)
         {
-            if (log_flag && netlib_get_error() && strlen(netlib_get_error()))
-				blog(LOG_ERROR, "[input-overlay] netlib_tcp_recv: %s\n", netlib_get_error());
+            LOG_(LOG_ERROR, "netlib_tcp_recv: %s\n", netlib_get_error());
             free(*buf);
             buf = nullptr;
         }
@@ -231,8 +219,7 @@ namespace network
 		uint8_t id = 0;
 		if (!netlib_read_uint8(buf, &id))
 		{
-			if (log_flag && netlib_get_error() && strlen(netlib_get_error()))
-				blog(LOG_ERROR, "[input-overlay] netlib_read_uint8: %s\n", netlib_get_error());
+			LOG_(LOG_ERROR, "netlib_read_uint8: %s\n", netlib_get_error());
 			return MSG_READ_ERROR;
 		}
 

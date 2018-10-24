@@ -13,7 +13,8 @@
 #include <Windows.h>
 #endif
 
-#define TIMEOUT_NS  500 * 1000 * 1000
+#define TIMEOUT_NS  (1000 * 1000 * 1000)
+#define LOG_(lvl, msg, ...) if (log_flag) blog(lvl, "[input-overlay] " msg, ##__VA_ARGS__)
 
 namespace network
 {

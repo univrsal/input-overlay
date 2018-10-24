@@ -27,11 +27,15 @@ namespace network
 		void reset_timeout();
 		element_data_holder* get_data();
 		bool read_event(netlib_byte_buf* buffer, message msg);
+		void mark_invalid();
+		bool valid() const;
 	private:
 		element_data_holder m_holder;
 		uint64_t m_last_message;
 		tcp_socket m_socket;
 		uint8_t m_id;
+		/* Set to false if this client should be disconnected on next roundtrip */
+		bool m_valid;
 		char* m_name;
     };
 }

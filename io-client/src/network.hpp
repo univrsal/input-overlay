@@ -13,8 +13,8 @@
 #include "util.hpp"
 
 #define LISTEN_TIMEOUT  100
-/* Can't wait exactly 500ms because the server times clients out 500ms*/
-#define DC_TIMEOUT      (400)
+/* Can't wait exactly 1000ms because the server times clients out 1000ms*/
+#define DC_TIMEOUT      (1000 - LISTEN_TIMEOUT)
 
 namespace network
 {

@@ -68,7 +68,7 @@ void io_settings_dialog::toggleShowHide()
 void io_settings_dialog::RefreshConnections()
 {
 	/* Populate client list */
-	if (network::network_flag && network::server_instance && network::server_instance->need_refresh())
+	if (network::network_flag && network::server_instance && network::server_instance->clients_changed())
 	{
 		ui->box_connections->clear();
 		QStringList list;
