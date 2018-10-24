@@ -38,6 +38,7 @@ namespace network
         }
 
         printf("Opening socket... ");
+
         sock = netlib_tcp_open(&cfg->ip);
 
         if (!sock)

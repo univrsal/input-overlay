@@ -11,8 +11,9 @@ if(MSVC)
 endif()
 
 if(UNIX)
-    add_definitions(-DLINUX=1)
-
+    add_definitions(-DUNIX=1)
+    set(client_PLATFORM_DEPS
+            pthread)
     set(NETLIB_INCLUDE_DIR
         ${CMAKE_CURRENT_SOURCE_DIR}/../netlib/include)
     set(NETLIB_LIBRARY

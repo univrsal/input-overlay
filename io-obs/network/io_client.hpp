@@ -9,10 +9,10 @@
 
 #include <netlib.h>
 #include "../util/element/element_data_holder.hpp"
+#include "remote_connection.hpp"
 
 namespace network
 {
-	enum message;
 
 	class io_client
 	{

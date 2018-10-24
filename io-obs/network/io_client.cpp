@@ -7,7 +7,6 @@
 
 #include "io_client.hpp"
 #include <util/platform.h>
-#include "remote_connection.hpp"
 #include "util/element/element_button.hpp"
 
 namespace network

@@ -19,7 +19,7 @@
 #define DECLSPEC __declspec(dllexport)
 #define NETLIB_CALL __cdecl
 #define FORCE_INLINE __forceinline
-#elif defined UNIX
+#else
 #define DECLSPEC
 #define NETLIB_CALL
 #define FORCE_INLINE __attribute__((always_inline)) static __inline__
