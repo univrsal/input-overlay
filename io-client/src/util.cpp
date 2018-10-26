@@ -16,6 +16,8 @@
 #include <math.h>
 #include <stdio.h>
 #include <time.h>
+#include <uiohook.h>
+
 #endif
 namespace util
 {
@@ -117,22 +119,38 @@ namespace util
 		network::buffer->write_pos = 0;
 		if (!event)
 			return -1;
-		auto result = 0, result2 = 0;
+		auto result = 0;
 		auto send = false;
 
 		switch(event->type)
         {
 		case EVENT_KEY_PRESSED:
-			result = netlib_write_uint8(network::buffer, MSG_BUTTON_DATA);
-			result2 = write_keystate(event->data.keyboard.keycode, true);
+			result = netlib_write_uint8(network::buffer, MSG_BUTTON_DATA)
+			        && write_keystate(event->data.keyboard.keycode, true);
 			send = true;
 			break;
 		case EVENT_KEY_RELEASED:
-			result = netlib_write_uint8(network::buffer, MSG_BUTTON_DATA);
-			result2 = write_keystate(event->data.keyboard.keycode, false);
+			result = netlib_write_uint8(network::buffer, MSG_BUTTON_DATA)
+			        && write_keystate(event->data.keyboard.keycode, false);
 			send = true;
 			break;
-		default:;
+        case EVENT_MOUSE_PRESSED:
+            result = netlib_write_uint8(network::buffer, MSG_BUTTON_DATA)
+                    && write_keystate(event->data.mouse.button, true);
+            send = true;
+            break;
+        case EVENT_MOUSE_RELEASED:
+            result = netlib_write_uint8(network::buffer, MSG_BUTTON_DATA)
+                    && write_keystate(event->data.mouse.button, false);
+            send = true;
+            break;
+        case EVENT_MOUSE_MOVED:
+        case EVENT_MOUSE_DRAGGED:
+            result = netlib_write_uint8(network::buffer, MSG_MOUSE_POS_DATA)
+                    && netlib_write_int16(network::buffer, event->data.mouse.x)
+                    && netlib_write_int16(network::buffer, event->data.mouse.y);
+            break;
+        default:;
         }
 
 		if (send)
