@@ -11,6 +11,18 @@
 
 namespace gamepad
 {
+    /* Contains the current state of a gamepad*/
+    struct gamepad_state
+    {
+		int16_t button_states;
+        /* Floats take more space, but
+         * more straightforward than using
+         * 16 bit/8 bit depending on the system
+         */
+		float stick_l_x, stick_l_y;
+		float stick_r_x, stick_r_y;
+		int8_t trigger_l, trigger_r;
+    };
 
 #ifdef _WIN32
 #include "xinput_fix.hpp"
@@ -46,10 +58,10 @@ namespace gamepad
 #define ID_R_TRIGGER    5
 #endif /* WINDOWS */
 
-	class gamepad_state
+	class gamepad_handle
 	{
 	public:
-		~gamepad_state();
+		~gamepad_handle();
 
 		void unload();
 
@@ -63,7 +75,7 @@ namespace gamepad
 
 #ifdef _WIN32
 		void update();
-
+		xinput_fix::gamepad* get_xinput();
 	private:
 		xinput_fix::gamepad m_x_input;
 		bool m_valid = false;
@@ -74,9 +86,8 @@ namespace gamepad
 		FILE* m_device_file = nullptr;
 		std::string m_path;
 #endif
-	private:
 		int8_t m_pad_id = -1;
-		
+		gamepad_state old_state;
     };
 
     /* Thread stuff*/
@@ -84,7 +95,7 @@ namespace gamepad
 	bool init_pads();
 	void end_pad_hook();
 
-	extern gamepad_state pads[PAD_COUNT];
+	extern gamepad_handle pad_handles[PAD_COUNT];
 	extern bool hook_state;
 	extern bool hook_run_flag;
 

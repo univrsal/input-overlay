@@ -7,12 +7,13 @@
 
 #include "gamepad.hpp"
 #include <stdio.h>
+#include "network.hpp"
 
 namespace gamepad
 {
 	bool gamepad_hook_state = false;
 	bool gamepad_hook_run_flag = true;
-	gamepad_state pad_states[PAD_COUNT];
+	gamepad_handle pad_handles[PAD_COUNT];
 
 #ifdef _WIN32
 	static HANDLE hook_thread;
@@ -20,12 +21,12 @@ namespace gamepad
 	static pthread_t game_pad_hook_thread;
 #endif
 
-    gamepad_state::~gamepad_state()
+	gamepad_handle::~gamepad_handle()
     {
 		unload();
     }
 
-    void gamepad_state::unload()
+    void gamepad_handle::unload()
     {
 #ifdef _WIN32
 		RtlZeroMemory(&m_x_input, sizeof(xinput_fix::gamepad));
@@ -36,7 +37,7 @@ namespace gamepad
 #endif
     }
 
-    void gamepad_state::load()
+    void gamepad_handle::load()
     {
 #ifdef _WIN32
 		unload();
@@ -52,7 +53,7 @@ namespace gamepad
 #endif
     }
 
-    bool gamepad_state::valid()
+    bool gamepad_handle::valid()
     {
 #ifdef _WIN32
 		update();
@@ -62,7 +63,7 @@ namespace gamepad
 #endif
     }
 
-    void gamepad_state::init(const uint8_t pad_id)
+    void gamepad_handle::init(const uint8_t pad_id)
     {
 #ifdef _WIN32
 		m_pad_id = pad_id;
@@ -77,18 +78,23 @@ namespace gamepad
 #endif
     }
 
-    uint8_t gamepad_state::get_id() const
+    uint8_t gamepad_handle::get_id() const
     {
 		return m_pad_id;
     }
 
 #ifdef _WIN32
-    void gamepad_state::update()
+    void gamepad_handle::update()
     {
 		if (xinput_fix::update(m_pad_id, &m_x_input) == ERROR_SUCCESS)
 			m_valid = true;
 		else
 			m_valid = false;
+    }
+
+    xinput_fix::gamepad* gamepad_handle::get_xinput()
+    {
+		return &m_x_input;
     }
 
 #else
@@ -129,7 +135,7 @@ namespace gamepad
 	{
 		uint8_t id = 0;
 		auto flag = false;
-		for (auto& state : pad_states)
+		for (auto& state : pad_handles)
 		{
 			state.init(id++);
 			if (state.valid())
@@ -140,6 +146,9 @@ namespace gamepad
 
 	void end_pad_hook()
 	{
+		if (!gamepad_hook_state)
+			return;
+		gamepad_hook_state = false;
 		gamepad_hook_run_flag = false;
 
 #ifdef _WIN32
@@ -155,16 +164,25 @@ namespace gamepad
     {
 		while (gamepad_hook_run_flag)
 		{
-			for (auto& pad : pad_states)
+			for (auto& pad : pad_handles)
 			{
 				if (!pad.valid())
 					continue;
 #ifdef _WIN32
-
+                for (const auto& button : pad_keys)
+                {
+					util::write_keystate(network::gamepad_buffer, xinput_fix::to_vc(button), xinput_fix::pressed(pad.get_xinput(), button));
+					if (netlib_tcp_send_buf(network::sock, network::gamepad_buffer) != network::gamepad_buffer->length)
+					{
+						printf("Sending gamepad buffer failed\n");
+					}
+				}
 #else
 
 #endif
 			}
+
+            /* Get changes and send them */
 		}
 
 #ifdef _WIN32

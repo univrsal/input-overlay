@@ -22,7 +22,8 @@ namespace network
 	extern netlib_socket_set set;
 	extern bool network_loop;
 	extern uint32_t last_message;
-	extern netlib_byte_buf* buffer;
+	extern netlib_byte_buf* iohook_buffer;
+	extern netlib_byte_buf* gamepad_buffer;
 
 	bool init();
 	bool start_connection();

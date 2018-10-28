@@ -30,7 +30,16 @@
 #endif
 
 #include <string>
+#ifndef IO_CLIENT
 #include <obs-module.h>
+#define warning(format, ...) blog(LOG_WARNING, "[%s] " format, \
+		obs_source_get_name(m_source), ##__VA_ARGS__)
+#define T_(v)                       obs_module_text(v)
+#define GET_PROPS(S)    (obs_properties_get(props, S))
+#define GET_BOOL(X)     (obs_data_get_bool(s, X))
+#else
+#define T_(v)
+#endif
 
 #ifdef DEBUG
 #include <random>
@@ -42,17 +51,13 @@
 #define M_PI 3.14159265358979323846
 #endif
 
-#define GET_PROPS(S)    (obs_properties_get(props, S))
-#define GET_BOOL(X)     (obs_data_get_bool(s, X))
+
 #define UTIL_MAX(a,b)               (((a) > (b)) ? (a) : (b))
 #define UTIL_MIN(a,b)               (((a) < (b)) ? (a) : (b))
 #define UTIL_CLAMP(lower, x, upper) (UTIL_MIN(upper, UTIL_MAX(x, lower)))
 #define UTIL_SWAP_BE16(i)           ((i >> 8) | (i << 8))
 
 #define DEAD_ZONE(x, dz)    ((x < dz) && (x > -dz))
-
-#define warning(format, ...) blog(LOG_WARNING, "[%s] " format, \
-		obs_source_get_name(m_source), ##__VA_ARGS__)
 
 /* Settings values*/
 #define S_REGION    "input-overlay"
@@ -63,8 +68,6 @@
 #define S_REMOTE    "remote"
 #define S_LOGGING   "logging"
 #define S_PORT      "port"
-
-#define T_(v)                       obs_module_text(v)
 
 /* Common values */
 #define S_INPUT_SOURCE              "input_source"

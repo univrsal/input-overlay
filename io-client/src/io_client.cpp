@@ -9,19 +9,20 @@
 #include "network.hpp"
 #include "hook.hpp"
 #include <stdio.h>
+#include "gamepad.hpp"
 
 int main(int argc, char **argv)
 {
 	
 	if (!network::init())
 		return 1;
-	else
-	    printf("Network init done.\n");
+	
+    printf("Network init done.\n");
 
 	if (!util::parse_arguments(argc, argv))
 		return 2; /* Invalid arguments */
-    else
-        printf("Arguments: Port: %hu, Name: %s, IP: %s\n", util::cfg.port, util::cfg.username, argv[1]);
+
+    printf("Arguments: Port: %hu, Name: %s, IP: %s\n", util::cfg.port, util::cfg.username, argv[1]);
 
 	if (!network::start_connection()) /* Starts a separate network thread */
 	{
@@ -29,9 +30,20 @@ int main(int argc, char **argv)
 		return 3;
 	}
 
+    if (util::cfg.monitor_gamepad)
+    {
+		gamepad::start_pad_hook();
+
+        if (!gamepad::hook_state)
+        {
+			printf("Starting gamepad hook failed\n");
+        }
+    }
+
 	if (!hook::init()) /* This will block if the hook runs */
 		return 4;
 
 	network::close();
+	gamepad::end_pad_hook();
 	return 0;
 }

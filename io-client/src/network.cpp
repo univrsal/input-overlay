@@ -18,8 +18,8 @@ namespace network
 	netlib_socket_set set = nullptr;
 	bool network_loop = true;
     /* Shared buffer for writing data, which will be sent to the server */
-	netlib_byte_buf* buffer = nullptr;
-
+	netlib_byte_buf* iohook_buffer = nullptr;
+	netlib_byte_buf* gamepad_buffer = nullptr;
 #ifdef _WIN32
 	static HANDLE network_thread;
 #else
@@ -104,15 +104,15 @@ namespace network
             if (util::get_ticks() - last_message > DC_TIMEOUT)
             {
                 /* About to timeout -> tell server we're still here */
-				network::buffer->write_pos = 0;
-				if (!netlib_write_uint8(network::buffer, util::MSG_PREVENT_TIMEOUT))
+				network::iohook_buffer->write_pos = 0;
+				if (!netlib_write_uint8(network::iohook_buffer, util::MSG_PREVENT_TIMEOUT))
 				{
 					printf("netlib_write_uint8: %s\n", netlib_get_error());
 					network_loop = false;
 					break;
 				}
 				
-				if (!netlib_tcp_send_buf(sock, buffer))
+				if (!netlib_tcp_send_buf(sock, iohook_buffer))
 				{
 					printf("netlib_tcp_send_buf: %s\n", netlib_get_error());
 					network_loop = false;
@@ -170,19 +170,20 @@ namespace network
 
     bool init()
 	{
-		buffer = netlib_alloc_byte_buf(5);
-        
-        if (!buffer)
-        {
-			printf("netlib_alloc_byte_buf failed: %s\n", netlib_get_error());
-			return false;
-        }
-
 		if (netlib_init() == -1)
 		{
 			printf("netlib_init failed: %s\n", netlib_get_error());
 			return false;
 		}
+
+		iohook_buffer = netlib_alloc_byte_buf(5); /* Separate buffers to prevent  */
+		gamepad_buffer = netlib_alloc_byte_buf(5); /* interference in different threads */
+
+        if (!iohook_buffer || !gamepad_buffer)
+        {
+			printf("netlib_alloc_byte_buf failed: %s\n", netlib_get_error());
+			return false;
+        }
 		return true;
     }
 
@@ -194,8 +195,12 @@ namespace network
 		if (network_thread)
 			CloseHandle(network_thread);
 #endif
-		if (buffer)
-			netlib_free_byte_buf(buffer);
+		if (iohook_buffer)
+			netlib_free_byte_buf(iohook_buffer);
+
+		if (gamepad_buffer)
+			netlib_free_byte_buf(gamepad_buffer);
+        
 		netlib_quit();
 	}
 }
