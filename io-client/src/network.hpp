@@ -13,7 +13,7 @@
 #include "util.hpp"
 
 #define LISTEN_TIMEOUT  100
-/* Can't wait exactly 1000ms because the server times clients out 1000ms*/
+/* Can't wait exactly 1000ms because the server times clients out at 1000ms*/
 #define DC_TIMEOUT      (1000 - LISTEN_TIMEOUT)
 
 namespace network
@@ -25,7 +25,7 @@ namespace network
 	extern netlib_byte_buf* buffer;
 
 	bool init();
-	bool start_connection(util::config* cfg);
+	bool start_connection();
 	bool start_thread();
 	bool listen();
 

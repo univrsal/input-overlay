@@ -41,7 +41,7 @@ namespace hook
 
 	void dispatch_proc(uiohook_event* const event)
 	{
-		if (!util::send_event(network::sock, event))
+		if (!util::send_uiohook_event(network::sock, event))
 		{
 			printf("Failed to send event data. Exiting...\n");
 			network::close();
@@ -101,6 +101,7 @@ namespace hook
 			logger_proc(LOG_LEVEL_ERROR, "[uiohook] An unknown hook error occurred. (%#X)", status);
 			return false;
 		default: ;
+			return true; /* Unknown error but we can still try */
 		}
     }
 

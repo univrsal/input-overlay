@@ -28,7 +28,11 @@ set(io_client_SOURCES
     src/network.cpp
     src/network.hpp
     src/hook.cpp
-    src/hook.hpp)
+    src/hook.hpp
+    src/gamepad.cpp
+    src/gamepad.hpp
+    src/xinput_fix.cpp
+    src/xinput_fix.hpp)
 
 include_directories(${NETLIB_INCLUDE_DIR}
     ${UIOHOOK_INCLUDE_DIR})

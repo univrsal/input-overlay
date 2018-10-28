@@ -21,8 +21,9 @@
 #endif
 namespace util
 {
+	config cfg;
 
-	bool parse_arguments(int argc, char ** args, config* cfg)
+	bool parse_arguments(int argc, char ** args)
 	{
 		if (argc < 3)
 		{
@@ -37,26 +38,26 @@ namespace util
 			return false;
 		}
 
-		cfg->monitor_gamepad = false;
-		cfg->monitor_keyboard = true;
-		cfg->monitor_mouse = false;
-		cfg->port = 1608;
+		cfg.monitor_gamepad = false;
+		cfg.monitor_keyboard = true;
+		cfg.monitor_mouse = false;
+		cfg.port = 1608;
 
-		auto const s = sizeof(cfg->username);
-		strncpy(cfg->username, args[2], s);
-		cfg->username[s - 1] = '\0';
+		auto const s = sizeof(cfg.username);
+		strncpy(cfg.username, args[2], s);
+		cfg.username[s - 1] = '\0';
 
 		if (argc > 3)
 		{
 			auto newport = uint16_t(strtol(args[3], nullptr, 0));
 			if (newport > 1024) /* No system ports pls */
-				cfg->port = newport;
+				cfg.port = newport;
 			else
 				printf("%hu is outside the valid port range [1024 - %i]\n", newport, 0xffff);
 		}
 
         /* Resolve ip */
-        if (netlib_resolve_host(&cfg->ip, args[1], cfg->port) == -1)
+        if (netlib_resolve_host(&cfg.ip, args[1], cfg.port) == -1)
         {
 			printf("netlib_resolve_host failed: %s\n", netlib_get_error());
 			printf("Make sure obs studio is running with the remote connection enabled and configured\n");
@@ -68,11 +69,11 @@ namespace util
         {
              arg = args[i];
              if (arg.find("--gamepad") != std::string::npos)
-                 cfg->monitor_gamepad = arg.find('1') != std::string::npos;
+                 cfg.monitor_gamepad = arg.find('1') != std::string::npos;
              else if (arg.find("--mouse") != std::string::npos)
-                 cfg->monitor_mouse = arg.find('1') != std::string::npos;
+                 cfg.monitor_mouse = arg.find('1') != std::string::npos;
              else if (arg.find("--keyboard") != std::string::npos)
-                 cfg->monitor_keyboard = arg.find('1') != std::string::npos;
+                 cfg.monitor_keyboard = arg.find('1') != std::string::npos;
         }
 
 		return true;
@@ -114,7 +115,7 @@ namespace util
 		return result;
 	}
 
-    int send_event(tcp_socket sock, uiohook_event* const event)
+    int send_uiohook_event(tcp_socket sock, uiohook_event* const event)
     {
 		network::buffer->write_pos = 0;
 		if (!event)
@@ -125,37 +126,52 @@ namespace util
 		switch(event->type)
         {
 		case EVENT_KEY_PRESSED:
-			result = netlib_write_uint8(network::buffer, MSG_BUTTON_DATA)
-			        && write_keystate(event->data.keyboard.keycode, true);
-			send = true;
+            if (util::cfg.monitor_keyboard)
+            {
+				result = netlib_write_uint8(network::buffer, MSG_BUTTON_DATA)
+					&& write_keystate(event->data.keyboard.keycode, true);
+				send = true;
+            }
 			break;
 		case EVENT_KEY_RELEASED:
-			result = netlib_write_uint8(network::buffer, MSG_BUTTON_DATA)
-			        && write_keystate(event->data.keyboard.keycode, false);
-			send = true;
+			if (util::cfg.monitor_keyboard)
+			{
+				result = netlib_write_uint8(network::buffer, MSG_BUTTON_DATA)
+					&& write_keystate(event->data.keyboard.keycode, false);
+				send = true;
+			}
 			break;
         case EVENT_MOUSE_PRESSED:
-            result = netlib_write_uint8(network::buffer, MSG_BUTTON_DATA)
-                    && write_keystate(event->data.mouse.button, true);
-            send = true;
+			if (util::cfg.monitor_mouse)
+			{
+				result = netlib_write_uint8(network::buffer, MSG_BUTTON_DATA)
+					&& write_keystate(event->data.mouse.button, true);
+				send = true;
+			}
             break;
         case EVENT_MOUSE_RELEASED:
-            result = netlib_write_uint8(network::buffer, MSG_BUTTON_DATA)
-                    && write_keystate(event->data.mouse.button, false);
-            send = true;
+			if (util::cfg.monitor_mouse)
+			{
+				result = netlib_write_uint8(network::buffer, MSG_BUTTON_DATA)
+					&& write_keystate(event->data.mouse.button, false);
+				send = true;
+			}
             break;
         case EVENT_MOUSE_MOVED:
         case EVENT_MOUSE_DRAGGED:
-            result = netlib_write_uint8(network::buffer, MSG_MOUSE_POS_DATA)
-                    && netlib_write_int16(network::buffer, event->data.mouse.x)
-                    && netlib_write_int16(network::buffer, event->data.mouse.y);
+			if (util::cfg.monitor_mouse)
+			{
+				result = netlib_write_uint8(network::buffer, MSG_MOUSE_POS_DATA)
+					&& netlib_write_int16(network::buffer, event->data.mouse.x)
+					&& netlib_write_int16(network::buffer, event->data.mouse.y);
+			}
             break;
         default:;
         }
 
 		if (send)
 		{
-            if (result && result2)
+            if (result)
             {
 				netlib_tcp_send_buf(sock, network::buffer);
 				network::last_message = util::get_ticks();
@@ -165,7 +181,7 @@ namespace util
 				printf("Writing event data failed: %s\n", netlib_get_error());
 			}
 		}
-		return !send || result && result2;
+		return !send || result;
     }
 
     int write_keystate(uint16_t code, bool pressed)

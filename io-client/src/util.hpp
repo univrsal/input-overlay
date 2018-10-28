@@ -25,6 +25,8 @@ namespace util
 		ip_address ip;
 	} config;
 
+	extern config cfg;
+
     enum message
     {
 		MSG_READ_ERROR = -2,
@@ -39,11 +41,11 @@ namespace util
     };
 
     /* Get config values and print help */
-	bool parse_arguments(int argc, char** args, config* cfg);
+	bool parse_arguments(int argc, char** args);
 
 	int send_text(tcp_socket sock, char* buf);
 
-	int send_event(tcp_socket sock, uiohook_event* const event);
+	int send_uiohook_event(tcp_socket sock, uiohook_event* const event);
 
 	int write_keystate(uint16_t code, bool pressed);
 

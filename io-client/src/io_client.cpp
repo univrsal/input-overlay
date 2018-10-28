@@ -12,19 +12,18 @@
 
 int main(int argc, char **argv)
 {
-	util::config cfg;
 	
 	if (!network::init())
 		return 1;
 	else
 	    printf("Network init done.\n");
 
-	if (!util::parse_arguments(argc, argv, &cfg))
+	if (!util::parse_arguments(argc, argv))
 		return 2; /* Invalid arguments */
     else
-        printf("Arguments: Port: %hu, Name: %s, IP: %s\n", cfg.port, cfg.username, argv[1]);
+        printf("Arguments: Port: %hu, Name: %s, IP: %s\n", util::cfg.port, util::cfg.username, argv[1]);
 
-	if (!network::start_connection(&cfg)) /* Starts a separate network thread */
+	if (!network::start_connection()) /* Starts a separate network thread */
 	{
 		network::close();
 		return 3;

@@ -9,8 +9,9 @@
 #include "hook.hpp"
 #include "util.hpp"
 #include <cstdio>
+#ifdef UNIX
 #include <pthread.h>
-
+#endif
 namespace network
 {
 	tcp_socket sock = nullptr;
@@ -25,7 +26,7 @@ namespace network
 	static pthread_t network_thread;
 #endif
 
-    bool start_connection(util::config* cfg)
+    bool start_connection()
     {
     	printf("Allocating socket...");
 		set = netlib_alloc_socket_set(1);
@@ -39,7 +40,7 @@ namespace network
 
         printf("Opening socket... ");
 
-        sock = netlib_tcp_open(&cfg->ip);
+        sock = netlib_tcp_open(&util::cfg.ip);
 
         if (!sock)
         {
@@ -58,9 +59,9 @@ namespace network
 		printf("Connection successful!\n");
         
 		/* Send client name */
-		if (!util::send_text(sock, cfg->username))
+		if (!util::send_text(sock, util::cfg.username))
         {
-			printf("Failed to send username (%s): %s\n", cfg->username, netlib_get_error());
+			printf("Failed to send username (%s): %s\n", util::cfg.username, netlib_get_error());
 			return false;
         }
 
