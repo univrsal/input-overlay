@@ -32,7 +32,9 @@ set(io_client_SOURCES
     src/gamepad.cpp
     src/gamepad.hpp
     src/xinput_fix.cpp
-    src/xinput_fix.hpp)
+    src/xinput_fix.hpp
+    src/gamepad_state.cpp
+    src/gamepad_state.hpp)
 
 include_directories(${NETLIB_INCLUDE_DIR}
     ${UIOHOOK_INCLUDE_DIR})

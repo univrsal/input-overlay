@@ -21,7 +21,7 @@ class ElementScrollWheel
 {
 public:
     ElementScrollWheel() : 
-        ElementTexture(), m_mapping_pressed()
+        ElementTexture()
     {
         /* NO-OP */
     };

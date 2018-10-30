@@ -173,5 +173,6 @@ ElementDPad* ElementDPad::read_from_file(ccl_config* file, const std::string& id
 
 void ElementDPad::write_to_file(ccl_config* cfg, SDL_Point* default_dim, uint8_t& layout_flags)
 {
+	ElementTexture::write_to_file(cfg, default_dim, layout_flags);
     layout_flags |= FLAG_GAMEPAD;
 }

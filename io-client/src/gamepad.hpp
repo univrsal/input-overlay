@@ -11,19 +11,6 @@
 
 namespace gamepad
 {
-    /* Contains the current state of a gamepad*/
-    struct gamepad_state
-    {
-		int16_t button_states;
-        /* Floats take more space, but
-         * more straightforward than using
-         * 16 bit/8 bit depending on the system
-         */
-		float stick_l_x, stick_l_y;
-		float stick_r_x, stick_r_y;
-		int8_t trigger_l, trigger_r;
-    };
-
 #ifdef _WIN32
 #include "xinput_fix.hpp"
 	static xinput_fix::gamepad_codes pad_keys[] =
