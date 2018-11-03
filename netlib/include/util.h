@@ -15,11 +15,11 @@
 #ifndef NET_LIB_UTIL_H
 #define NET_LIB_UTIL_H
 
-#ifdef _WIN32
+#ifdef WINDOWS
 #define DECLSPEC __declspec(dllexport)
 #define NETLIB_CALL __cdecl
 #define FORCE_INLINE __forceinline
-#else
+#elif defined UNIX
 #define DECLSPEC
 #define NETLIB_CALL
 #define FORCE_INLINE __attribute__((always_inline)) static __inline__

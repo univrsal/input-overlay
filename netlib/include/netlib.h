@@ -405,6 +405,8 @@ extern DECLSPEC int NETLIB_CALL netlib_write_uint32(netlib_byte_buf* buf, uint32
 
 #define netlib_write_int32(buf, val) netlib_write_uint32(buf, (uint32_t) val)
 
+extern DECLSPEC int NETLIB_CALL netlib_write_float(netlib_byte_buf* buf, float val);
+
 /* === Reading from a data === */
 
 extern DECLSPEC int NETLIB_CALL netlib_read_uint8(netlib_byte_buf* buf, uint8_t* val);
@@ -419,6 +421,7 @@ extern DECLSPEC int NETLIB_CALL netlib_read_uint32(netlib_byte_buf* buf, uint32_
 
 #define netlib_read_int32(buf, val) netlib_read_uint32(buf, (uint32_t*) val)
 
+extern DECLSPEC int NETLIB_CALL netlib_read_float(netlib_byte_buf* buf, float* val);
 #ifdef __cplusplus
 }
 #endif
