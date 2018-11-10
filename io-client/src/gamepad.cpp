@@ -83,6 +83,16 @@ namespace gamepad
 		return m_pad_id;
     }
 
+    gamepad_state* gamepad_handle::get_state()
+    {
+        return &m_current_state;
+    }
+
+    void gamepad_handle::set_state(const gamepad_state new_state)
+    {
+        m_current_state = new_state;
+    }
+
 #ifdef _WIN32
     void gamepad_handle::update()
     {
@@ -162,6 +172,9 @@ namespace gamepad
 	void* hook_method(void *)
 #endif
     {
+        /* The hook only keeps track of the gamepad states here
+         * and the changes will then be sent in a different thread
+         */
 		while (gamepad_hook_run_flag)
 		{
 			for (auto& pad : pad_handles)
@@ -169,20 +182,15 @@ namespace gamepad
 				if (!pad.valid())
 					continue;
 #ifdef _WIN32
-                for (const auto& button : pad_keys)
+                gamepad_state new_state(pad.get_xinput());
+                if (pad.get_state()->merge(&new_state))
                 {
-					util::write_keystate(network::gamepad_buffer, xinput_fix::to_vc(button), xinput_fix::pressed(pad.get_xinput(), button));
-					if (netlib_tcp_send_buf(network::sock, network::gamepad_buffer) != network::gamepad_buffer->length)
-					{
-						printf("Sending gamepad buffer failed\n");
-					}
-				}
+                    pad.set_state(new_state);
+                }
 #else
-
+                /* TODO: Linux implementation */
 #endif
 			}
-
-            /* Get changes and send them */
 		}
 
 #ifdef _WIN32

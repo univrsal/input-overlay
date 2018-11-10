@@ -18,8 +18,8 @@ namespace network
 	netlib_socket_set set = nullptr;
 	bool network_loop = true;
     /* Shared buffer for writing data, which will be sent to the server */
-	netlib_byte_buf* iohook_buffer = nullptr;
-	netlib_byte_buf* gamepad_buffer = nullptr;
+	netlib_byte_buf* network_buffer = nullptr;
+
 #ifdef _WIN32
 	static HANDLE network_thread;
 #else
@@ -104,15 +104,15 @@ namespace network
             if (util::get_ticks() - last_message > DC_TIMEOUT)
             {
                 /* About to timeout -> tell server we're still here */
-				network::iohook_buffer->write_pos = 0;
-				if (!netlib_write_uint8(network::iohook_buffer, util::MSG_PREVENT_TIMEOUT))
+				network::network_buffer->write_pos = 0;
+				if (!netlib_write_uint8(network::network_buffer, MSG_PREVENT_TIMEOUT))
 				{
 					printf("netlib_write_uint8: %s\n", netlib_get_error());
 					network_loop = false;
 					break;
 				}
 				
-				if (!netlib_tcp_send_buf(sock, iohook_buffer))
+				if (!netlib_tcp_send_buf(sock, network_buffer))
 				{
 					printf("netlib_tcp_send_buf: %s\n", netlib_get_error());
 					network_loop = false;
@@ -148,20 +148,20 @@ namespace network
 
             switch (msg)
             {
-			case util::MSG_NAME_NOT_UNIQUE:
+			case MSG_NAME_NOT_UNIQUE:
 				printf("Nickname is already in use. Disconnecting...\n");
 				return false;
-			case util::MSG_NAME_INVALID:
+			case MSG_NAME_INVALID:
 				printf("Nickname is not valid. Disconnecting...\n");
 				return false;
-			case util::MSG_SERVER_SHUTDOWN:
+			case MSG_SERVER_SHUTDOWN:
 				printf("Server is shutting down.\n");
 				return false;
-			case util::MSG_READ_ERROR:
+			case MSG_READ_ERROR:
 				printf("Couldn't read message.\n");
 				return false;
 			default:
-			case util::MSG_INVALID:
+			case MSG_INVALID:
 				return false;
             }
         }
@@ -176,10 +176,9 @@ namespace network
 			return false;
 		}
 
-		iohook_buffer = netlib_alloc_byte_buf(5); /* Separate buffers to prevent  */
-		gamepad_buffer = netlib_alloc_byte_buf(5); /* interference in different threads */
+		network_buffer = netlib_alloc_byte_buf(BUFFER_SIZE);
 
-        if (!iohook_buffer || !gamepad_buffer)
+        if (!network_buffer)
         {
 			printf("netlib_alloc_byte_buf failed: %s\n", netlib_get_error());
 			return false;
@@ -195,11 +194,8 @@ namespace network
 		if (network_thread)
 			CloseHandle(network_thread);
 #endif
-		if (iohook_buffer)
-			netlib_free_byte_buf(iohook_buffer);
-
-		if (gamepad_buffer)
-			netlib_free_byte_buf(gamepad_buffer);
+		if (network_buffer)
+			netlib_free_byte_buf(network_buffer);
         
 		netlib_quit();
 	}

@@ -6,7 +6,8 @@
  */
 
 #pragma once
-#include <stdint.h>
+#include <cstdint>
+#include "xinput_fix.hpp"
 
 namespace gamepad
 {
@@ -14,8 +15,14 @@ namespace gamepad
 	class gamepad_state
 	{
 	public:
-		gamepad_state();
-		void get_difference(const gamepad_state* new_state, gamepad_state* result);
+        gamepad_state();
+#ifdef _WIN32
+	    explicit gamepad_state(xinput_fix::gamepad* pad);
+#else
+        /* Linux constructor */
+#endif
+	    bool merge(gamepad_state* new_state) const;
+
 		int16_t button_states;
 		/* Floats take more space, but are
 		* more straightforward than using

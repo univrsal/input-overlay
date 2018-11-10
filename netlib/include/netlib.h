@@ -389,6 +389,12 @@ extern DECLSPEC void NETLIB_CALL netlib_free_byte_buf(netlib_byte_buf* buf);
 
 extern DECLSPEC int NETLIB_CALL netlib_tcp_send_buf(tcp_socket sock, netlib_byte_buf* buf);
 
+/* Only sends bytes up to write_pos */
+extern DECLSPEC int NETLIB_CALL netlib_tcp_send_buf_smart(tcp_socket sock, netlib_byte_buf* buf);
+
+/* Returns amount of bytes received, might be lesser than length of buffer
+ * if netlib_tcp_send_buf_smart was used
+ */
 extern DECLSPEC int NETLIB_CALL netlib_tcp_recv_buf(tcp_socket sock, netlib_byte_buf* buf);
 
 /* === Writing to a data === */

@@ -12,6 +12,7 @@
 #endif
 #include "util.hpp"
 
+#define BUFFER_SIZE     90 /* We need 89 bytes if all four gamepads are sent + 5 bytes for a mouse event*/
 #define LISTEN_TIMEOUT  100
 /* Can't wait exactly 1000ms because the server times clients out at 1000ms*/
 #define DC_TIMEOUT      (1000 - LISTEN_TIMEOUT)
@@ -22,8 +23,7 @@ namespace network
 	extern netlib_socket_set set;
 	extern bool network_loop;
 	extern uint32_t last_message;
-	extern netlib_byte_buf* iohook_buffer;
-	extern netlib_byte_buf* gamepad_buffer;
+	extern netlib_byte_buf* network_buffer;
 
 	bool init();
 	bool start_connection();

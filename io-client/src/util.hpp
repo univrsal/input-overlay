@@ -12,6 +12,15 @@
 
 #include <netlib.h>
 #include <uiohook.h>
+#include "../../io-obs/network/messages.hpp"
+
+#ifdef _WIN32
+#define STICK_MAX_VAL       32767.f
+#define TRIGGER_MAX_VAL     256.f
+#else
+#define STICK_MAX_VAL       127.f
+#define TRIGGER_MAX_VAL     256.f
+#endif
 
 namespace util
 {
@@ -26,19 +35,6 @@ namespace util
 	} config;
 
 	extern config cfg;
-
-    enum message
-    {
-		MSG_READ_ERROR = -2,
-		MSG_INVALID,
-		MSG_NAME_NOT_UNIQUE,
-		MSG_NAME_INVALID,
-		MSG_SERVER_SHUTDOWN,
-		MSG_PREVENT_TIMEOUT,
-		MSG_BUTTON_DATA,
-		MSG_MOUSE_POS_DATA,
-		MSG_LAST
-    };
 
     /* Get config values and print help */
 	bool parse_arguments(int argc, char** args);

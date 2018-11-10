@@ -15,7 +15,7 @@
 #ifndef NET_LIB_UTIL_H
 #define NET_LIB_UTIL_H
 
-#ifdef WINDOWS
+#ifdef _WIN32
 #define DECLSPEC __declspec(dllexport)
 #define NETLIB_CALL __cdecl
 #define FORCE_INLINE __forceinline

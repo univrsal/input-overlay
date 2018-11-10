@@ -53,7 +53,7 @@ namespace util
 			if (newport > 1024) /* No system ports pls */
 				cfg.port = newport;
 			else
-				printf("%hu is outside the valid port range [1024 - %i]\n", newport, 0xffff);
+				printf("%hu is outside the valid port range [1024 - %hu]\n", newport, 0xffff);
 		}
 
         /* Resolve ip */
@@ -117,7 +117,7 @@ namespace util
 
     int send_uiohook_event(tcp_socket sock, uiohook_event* const event)
     {
-		network::iohook_buffer->write_pos = 0;
+		network::network_buffer->write_pos = 0;
 		if (!event)
 			return -1;
 		auto result = 0;
@@ -128,32 +128,32 @@ namespace util
 		case EVENT_KEY_PRESSED:
             if (util::cfg.monitor_keyboard)
             {
-				result = netlib_write_uint8(network::iohook_buffer, MSG_BUTTON_DATA)
-					&& write_keystate(network::iohook_buffer, event->data.keyboard.keycode, true);
+				result = netlib_write_uint8(network::network_buffer, MSG_BUTTON_DATA)
+					&& write_keystate(network::network_buffer, event->data.keyboard.keycode, true);
 				send = true;
             }
 			break;
 		case EVENT_KEY_RELEASED:
 			if (util::cfg.monitor_keyboard)
 			{
-				result = netlib_write_uint8(network::iohook_buffer, MSG_BUTTON_DATA)
-					&& write_keystate(network::iohook_buffer, event->data.keyboard.keycode, false);
+				result = netlib_write_uint8(network::network_buffer, MSG_BUTTON_DATA)
+					&& write_keystate(network::network_buffer, event->data.keyboard.keycode, false);
 				send = true;
 			}
 			break;
         case EVENT_MOUSE_PRESSED:
 			if (util::cfg.monitor_mouse)
 			{
-				result = netlib_write_uint8(network::iohook_buffer, MSG_BUTTON_DATA)
-					&& write_keystate(network::iohook_buffer, event->data.mouse.button, true);
+				result = netlib_write_uint8(network::network_buffer, MSG_BUTTON_DATA)
+					&& write_keystate(network::network_buffer, event->data.mouse.button, true);
 				send = true;
 			}
             break;
         case EVENT_MOUSE_RELEASED:
 			if (util::cfg.monitor_mouse)
 			{
-				result = netlib_write_uint8(network::iohook_buffer, MSG_BUTTON_DATA)
-					&& write_keystate(network::iohook_buffer, event->data.mouse.button, false);
+				result = netlib_write_uint8(network::network_buffer, MSG_BUTTON_DATA)
+					&& write_keystate(network::network_buffer, event->data.mouse.button, false);
 				send = true;
 			}
             break;
@@ -161,9 +161,9 @@ namespace util
         case EVENT_MOUSE_DRAGGED:
 			if (util::cfg.monitor_mouse)
 			{
-				result = netlib_write_uint8(network::iohook_buffer, MSG_MOUSE_POS_DATA)
-					&& netlib_write_int16(network::iohook_buffer, event->data.mouse.x)
-					&& netlib_write_int16(network::iohook_buffer, event->data.mouse.y);
+				result = netlib_write_uint8(network::network_buffer, MSG_MOUSE_POS_DATA)
+					&& netlib_write_int16(network::network_buffer, event->data.mouse.x)
+					&& netlib_write_int16(network::network_buffer, event->data.mouse.y);
 			}
             break;
         default:;
@@ -173,7 +173,7 @@ namespace util
 		{
 		    if (result)
 		    {
-		        netlib_tcp_send_buf(sock, network::iohook_buffer);
+		        netlib_tcp_send_buf(sock, network::network_buffer);
 		        network::last_message = util::get_ticks();
 		    }
 		    else

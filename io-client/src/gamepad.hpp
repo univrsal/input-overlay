@@ -7,14 +7,18 @@
 
 #pragma once
 #include <stdint.h>
+#include "gamepad_state.hpp"
+#include "xinput_fix.hpp"
+
 #define PAD_COUNT 4
 
 namespace gamepad
 {
-#ifdef _WIN32
-#include "xinput_fix.hpp"
-	static xinput_fix::gamepad_codes pad_keys[] =
-	{
+    static xinput_fix::gamepad_codes pad_keys[] =
+	{ /* These keycodes are only used on windows,
+	     but the linux client converts them to these
+	     to agree on one standard 
+	  */
 		xinput_fix::CODE_A,
 		xinput_fix::CODE_B,
 		xinput_fix::CODE_X,
@@ -29,7 +33,7 @@ namespace gamepad
 		xinput_fix::CODE_START,
 		xinput_fix::CODE_BACK
 	};
-#else
+#ifndef _WIN32
 #define ID_TYPE         6
 #define ID_BUTTON       1
 #define ID_STATE_1      4
@@ -43,7 +47,7 @@ namespace gamepad
 #define ID_R_ANALOG_X   3
 #define ID_R_ANALOG_Y   4
 #define ID_R_TRIGGER    5
-#endif /* WINDOWS */
+#endif /* !WINDOWS */
 
 	class gamepad_handle
 	{
@@ -60,11 +64,14 @@ namespace gamepad
 
 		uint8_t get_id() const;
 
+        gamepad_state* get_state();
+
+        void set_state(gamepad_state new_state);
 #ifdef _WIN32
 		void update();
 		xinput_fix::gamepad* get_xinput();
 	private:
-		xinput_fix::gamepad m_x_input;
+		xinput_fix::gamepad m_x_input = {};
 		bool m_valid = false;
 #else
 		FILE* dev();
@@ -74,7 +81,7 @@ namespace gamepad
 		std::string m_path;
 #endif
 		int8_t m_pad_id = -1;
-		gamepad_state old_state;
+		gamepad_state m_current_state;
     };
 
     /* Thread stuff*/
