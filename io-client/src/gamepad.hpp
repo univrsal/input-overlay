@@ -66,7 +66,9 @@ namespace gamepad
 
         gamepad_state* get_state();
 
-        void set_state(gamepad_state new_state);
+        void update_state(gamepad_state* new_state);
+
+        bool m_changed = false;
 #ifdef _WIN32
 		void update();
 		xinput_fix::gamepad* get_xinput();
@@ -82,17 +84,25 @@ namespace gamepad
 #endif
 		int8_t m_pad_id = -1;
 		gamepad_state m_current_state;
+        
     };
 
     /* Thread stuff*/
-	void start_pad_hook();
+	bool start_pad_hook();
 	bool init_pads();
-	void end_pad_hook();
+	void close();
+
+#ifdef _WIN32
+    extern HANDLE hook_thread;
+#else
+    extern pthread_t game_pad_hook_thread;
+#endif
 
 	extern gamepad_handle pad_handles[PAD_COUNT];
 	extern bool hook_state;
 	extern bool hook_run_flag;
 
+    bool check_changes();
 #ifdef _WIN32
 	DWORD WINAPI hook_method(LPVOID arg);
 #else

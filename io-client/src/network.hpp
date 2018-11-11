@@ -12,7 +12,10 @@
 #endif
 #include "util.hpp"
 
-#define BUFFER_SIZE     90 /* We need 89 bytes if all four gamepads are sent + 5 bytes for a mouse event*/
+ /* We need 90 bytes if all four gamepads are sent + 5 bytes for a mouse event
+  * (Mouse event is the largest uiohook event)
+  */
+#define BUFFER_SIZE     90
 #define LISTEN_TIMEOUT  100
 /* Can't wait exactly 1000ms because the server times clients out at 1000ms*/
 #define DC_TIMEOUT      (1000 - LISTEN_TIMEOUT)
@@ -22,9 +25,11 @@ namespace network
 	extern tcp_socket sock;
 	extern netlib_socket_set set;
 	extern bool network_loop;
-	extern uint32_t last_message;
-	extern netlib_byte_buf* network_buffer;
-
+    extern volatile bool data_to_send;  /* Set to true by other threads */
+    extern volatile bool data_block;    /* Set to true to prevent other threads from modifying data, which is about to be sent */
+	extern uint32_t last_message;       /* Keeps track of timeout */
+	extern netlib_byte_buf* buffer;     /* Shared buffer for writing data, which will be sent to the server */
+	
 	bool init();
 	bool start_connection();
 	bool start_thread();

@@ -6,19 +6,20 @@
  */
 
 #include "gamepad.hpp"
-#include <stdio.h>
 #include "network.hpp"
+#include <stdio.h>
+#include <thread>
 
 namespace gamepad
 {
-	bool gamepad_hook_state = false;
-	bool gamepad_hook_run_flag = true;
+	bool hook_state = false;
+	bool hook_run_flag = true;
 	gamepad_handle pad_handles[PAD_COUNT];
 
 #ifdef _WIN32
-	static HANDLE hook_thread;
+    HANDLE hook_thread;
 #else
-	static pthread_t game_pad_hook_thread;
+    pthread_t game_pad_hook_thread;
 #endif
 
 	gamepad_handle::~gamepad_handle()
@@ -88,9 +89,13 @@ namespace gamepad
         return &m_current_state;
     }
 
-    void gamepad_handle::set_state(const gamepad_state new_state)
+    void gamepad_handle::update_state(gamepad_state * new_state)
     {
-        m_current_state = new_state;
+        if (new_state)
+        {
+            if (m_current_state.merge(new_state))
+                m_changed = true;
+        }
     }
 
 #ifdef _WIN32
@@ -116,10 +121,10 @@ namespace gamepad
 
     /* Hook util methods */
 
-	void start_pad_hook()
+	bool start_pad_hook()
 	{
-		if (gamepad_hook_state)
-			return;
+		if (hook_state)
+			return true;
 
 #ifdef _WIN32
 		xinput_fix::load();
@@ -127,18 +132,19 @@ namespace gamepad
 		if (!xinput_fix::loaded) /* Couldn't load xinput Dll*/
 		{
 			printf("Gamepad hook init failed\n");
-			return;
+			return false;
 		}
 #endif
-		gamepad_hook_state = gamepad_hook_run_flag = init_pads();
+		hook_state = hook_run_flag = init_pads();
 
 #ifdef _WIN32
 		hook_thread = CreateThread(nullptr, 0, static_cast<LPTHREAD_START_ROUTINE>(hook_method),
 			nullptr, 0, nullptr);
-		gamepad_hook_state = hook_thread;
+		hook_state = hook_thread;
 #else
-		gamepad_hook_state = pthread_create(&game_pad_hook_thread, nullptr, hook_method, nullptr) == 0;
+        hook_state = pthread_create(&game_pad_hook_thread, nullptr, hook_method, nullptr) == 0;
 #endif
+        return hook_state;
 	}
 
 	bool init_pads()
@@ -154,43 +160,62 @@ namespace gamepad
 		return flag;
 	}
 
-	void end_pad_hook()
+	void close()
 	{
-		if (!gamepad_hook_state)
+		if (!hook_state)
 			return;
-		gamepad_hook_state = false;
-		gamepad_hook_run_flag = false;
+		hook_state = false;
+		hook_run_flag = false;
 
 #ifdef _WIN32
 		CloseHandle(hook_thread);
 #endif
 	}
-	/* Background process for quering game pads */
+
+    bool check_changes()
+    {
+        if (!util::cfg.monitor_gamepad)
+            return false;
+        for (auto& pad : pad_handles)
+            if (pad.m_changed)
+                return true;
+        return false;
+    }
+
+	/* Background process for querying game pads */
 #ifdef _WIN32
 	DWORD WINAPI hook_method(const LPVOID arg)
 #else
-	void* hook_method(void *)
+    void* hook_method(void *)
 #endif
     {
         /* The hook only keeps track of the gamepad states here
          * and the changes will then be sent in a different thread
          */
-		while (gamepad_hook_run_flag)
+		while (hook_run_flag)
 		{
-			for (auto& pad : pad_handles)
-			{
-				if (!pad.valid())
-					continue;
+#ifdef _WIN32 /* On linux the check happens inside the for loop */
+            if (network::data_block)
+            {
+                Sleep(25);
+                continue;
+            }
+#endif
+
+            for (auto& pad : pad_handles)
+            {
+                if (!pad.valid())
+                    continue;
 #ifdef _WIN32
                 gamepad_state new_state(pad.get_xinput());
-                if (pad.get_state()->merge(&new_state))
-                {
-                    pad.set_state(new_state);
-                }
+                pad.update_state(&new_state);
 #else
                 /* TODO: Linux implementation */
 #endif
-			}
+            }
+#ifdef _WIN32
+            Sleep(25);
+#endif
 		}
 
 #ifdef _WIN32

@@ -9,6 +9,8 @@
 #include <cstdlib>
 #include "network.hpp"
 #include <string>
+#include "gamepad.hpp"
+#include "hook.hpp"
 #ifdef _WIN32
 #include <Windows.h>
 #else
@@ -63,9 +65,10 @@ namespace util
 			printf("Make sure obs studio is running with the remote connection enabled and configured\n");
 			return false;
         }
-        
+
+        /* Parse additional arguments */
 		std::string arg;
-        for (auto i = 3; i < argc; i++)
+        for (auto i = 4; i < argc; i++)
         {
              arg = args[i];
              if (arg.find("--gamepad") != std::string::npos)
@@ -80,7 +83,7 @@ namespace util
     }
 
 	/* https://www.libsdl.org/projects/SDL_net/docs/demos/tcputil.h */
-	int send_text(tcp_socket sock, char* buf)
+	int send_text(char* buf)
 	{
 		uint32_t len, result;
 
@@ -90,7 +93,7 @@ namespace util
 		len = strlen(buf) + 1;
 		len = netlib_swap_BE32(len);
 
-		result = netlib_tcp_send(sock, &len, sizeof(len));
+		result = netlib_tcp_send(network::sock, &len, sizeof(len));
 		if (result < sizeof(len))
 		{
 			if (netlib_get_error() && strlen(netlib_get_error()))
@@ -102,7 +105,7 @@ namespace util
 
 		len = netlib_swap_BE32(len);
 
-		result = netlib_tcp_send(sock, buf, len);
+		result = netlib_tcp_send(network::sock, buf, len);
 		if (result < len)
 		{
 			if (netlib_get_error() && strlen(netlib_get_error()))
@@ -115,78 +118,100 @@ namespace util
 		return result;
 	}
 
-    int send_uiohook_event(tcp_socket sock, uiohook_event* const event)
+    int write_uiohook_event(uiohook_event* const event)
     {
-		network::network_buffer->write_pos = 0;
 		if (!event)
 			return -1;
-		auto result = 0;
+		auto result = 1;
 		auto send = false;
 
 		switch(event->type)
         {
 		case EVENT_KEY_PRESSED:
-            if (util::cfg.monitor_keyboard)
+            if (cfg.monitor_keyboard)
             {
-				result = netlib_write_uint8(network::network_buffer, MSG_BUTTON_DATA)
-					&& write_keystate(network::network_buffer, event->data.keyboard.keycode, true);
+				result = netlib_write_uint8(network::buffer, MSG_BUTTON_DATA)
+					&& write_keystate(network::buffer, event->data.keyboard.keycode, true);
 				send = true;
             }
 			break;
 		case EVENT_KEY_RELEASED:
-			if (util::cfg.monitor_keyboard)
+			if (cfg.monitor_keyboard)
 			{
-				result = netlib_write_uint8(network::network_buffer, MSG_BUTTON_DATA)
-					&& write_keystate(network::network_buffer, event->data.keyboard.keycode, false);
+				result = netlib_write_uint8(network::buffer, MSG_BUTTON_DATA)
+					&& write_keystate(network::buffer, event->data.keyboard.keycode, false);
 				send = true;
 			}
 			break;
         case EVENT_MOUSE_PRESSED:
-			if (util::cfg.monitor_mouse)
+			if (cfg.monitor_mouse)
 			{
-				result = netlib_write_uint8(network::network_buffer, MSG_BUTTON_DATA)
-					&& write_keystate(network::network_buffer, event->data.mouse.button, true);
+				result = netlib_write_uint8(network::buffer, MSG_BUTTON_DATA)
+					&& write_keystate(network::buffer, event->data.mouse.button, true);
 				send = true;
 			}
             break;
         case EVENT_MOUSE_RELEASED:
-			if (util::cfg.monitor_mouse)
+			if (cfg.monitor_mouse)
 			{
-				result = netlib_write_uint8(network::network_buffer, MSG_BUTTON_DATA)
-					&& write_keystate(network::network_buffer, event->data.mouse.button, false);
+				result = netlib_write_uint8(network::buffer, MSG_BUTTON_DATA)
+					&& write_keystate(network::buffer, event->data.mouse.button, false);
 				send = true;
 			}
             break;
         case EVENT_MOUSE_MOVED:
         case EVENT_MOUSE_DRAGGED:
-			if (util::cfg.monitor_mouse)
+			if (cfg.monitor_mouse)
 			{
-				result = netlib_write_uint8(network::network_buffer, MSG_MOUSE_POS_DATA)
-					&& netlib_write_int16(network::network_buffer, event->data.mouse.x)
-					&& netlib_write_int16(network::network_buffer, event->data.mouse.y);
+				result = netlib_write_uint8(network::buffer, MSG_MOUSE_POS_DATA)
+					&& netlib_write_int16(network::buffer, event->data.mouse.x)
+					&& netlib_write_int16(network::buffer, event->data.mouse.y);
 			}
             break;
-        default:;
+        default: ;
         }
 
-		if (send)
+		if (!result)
 		{
-		    if (result)
-		    {
-		        netlib_tcp_send_buf(sock, network::network_buffer);
-		        network::last_message = util::get_ticks();
-		    }
-		    else
-		    {
-		        printf("Writing event data failed: %s\n", netlib_get_error());
-		    }
+            printf("Writing event data to buffer failed: %s\n", netlib_get_error());
+            close_all();
 		}
-		return !send || result;
+
+		return send;
+    }
+
+    int write_gamepad_data()
+    {
+        auto result = 1;
+        netlib_write_uint8(network::buffer, MSG_GAMEPAD_DATA);
+        for (auto& pad : gamepad::pad_handles)
+        {
+            if (pad.m_changed)
+            {
+                if (
+                    !netlib_write_uint8(network::buffer, pad.get_id()) ||
+                    !netlib_write_uint16(network::buffer, pad.get_state()->button_states) ||
+                    !netlib_write_float(network::buffer, pad.get_state()->stick_l_x) ||
+                    !netlib_write_float(network::buffer, pad.get_state()->stick_l_y) ||
+                    !netlib_write_float(network::buffer, pad.get_state()->stick_r_x) ||
+                    !netlib_write_float(network::buffer, pad.get_state()->stick_r_y) ||
+                    !netlib_write_uint8(network::buffer, pad.get_state()->trigger_l) ||
+                    !netlib_write_uint8(network::buffer, pad.get_state()->trigger_r))
+                    result = 0;
+
+                pad.m_changed = false;
+            }
+        }
+
+        if (!result)
+            printf("Writing event data to buffer failed: %s\n", netlib_get_error());
+        
+        return result;
     }
 
     int write_keystate(netlib_byte_buf* buffer, uint16_t code, bool pressed)
     {
-		int result = netlib_write_uint16(buffer, code);
+		auto result = netlib_write_uint16(buffer, code);
 		if (!result)
 		{
 			printf("Couldn't write keycode: %s\n", netlib_get_error());
@@ -215,11 +240,11 @@ namespace util
 #endif
     }
 
-    message recv_msg(tcp_socket sock)
+    message recv_msg()
     {
 		uint8_t msg_id;
 
-		const uint32_t read_length = netlib_tcp_recv(sock, &msg_id, sizeof(msg_id));
+		const uint32_t read_length = netlib_tcp_recv(network::sock, &msg_id, sizeof(msg_id));
 
         if (read_length < sizeof(msg_id))
         {
@@ -241,4 +266,30 @@ namespace util
 			return MSG_INVALID;
 		}
     }
+
+    void close_all()
+    {
+        network::close();
+        gamepad::close();
+        hook::close();
+    }
+
+#ifdef _DEBUG
+    void to_bits(size_t const size, void const* const ptr)
+    {
+        const auto b = (unsigned char*)ptr;
+        unsigned char byte;
+        int i, j;
+
+        for (i = size - 1; i >= 0; i--)
+        {
+            for (j = 7; j >= 0; j--)
+            {
+                byte = (b[i] >> j) & 1;
+                printf("%u", byte);
+            }
+        }
+        puts("");
+    }
+#endif
 }

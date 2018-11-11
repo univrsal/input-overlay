@@ -22,6 +22,8 @@
 #define TRIGGER_MAX_VAL     256.f
 #endif
 
+#define DEBUG_LOG(fmt, ...) printf("[%s:%d]: " fmt, __FUNCTION__, __LINE__, __VA_ARGS__);
+
 namespace util
 {
 	typedef struct
@@ -39,9 +41,11 @@ namespace util
     /* Get config values and print help */
 	bool parse_arguments(int argc, char** args);
 
-	int send_text(tcp_socket sock, char* buf);
+	int send_text(char* buf);
 
-	int send_uiohook_event(tcp_socket sock, uiohook_event* const event);
+	int write_uiohook_event(uiohook_event* const event);
+
+    int write_gamepad_data();
 
 	int write_keystate(netlib_byte_buf* buffer, uint16_t code, bool pressed);
 
@@ -52,5 +56,11 @@ namespace util
 
 	uint32_t get_ticks();
     
-	message recv_msg(tcp_socket sock);
+	message recv_msg();
+
+    void close_all();
+
+#ifdef _DEBUG
+    void to_bits(size_t const size, void const * const ptr);
+#endif
 }

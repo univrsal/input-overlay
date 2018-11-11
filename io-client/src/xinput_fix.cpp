@@ -34,7 +34,7 @@ namespace xinput_fix
 
         /* For logging */
        
-        printf("Loading xinput1_3.dll from %s", dll_path.c_str());
+        printf("Loading xinput1_3.dll from %s\n", dll_path.c_str());
 
         xinput_dll = LoadLibrary(dll_path.c_str());
         if (xinput_dll)
@@ -44,12 +44,12 @@ namespace xinput_fix
 
             if (get_gamepad_state)
             {
-                printf("Loading of xinput succeeded");
+                printf("Loading of xinput succeeded\n");
                 loaded = true;
             }
             else
             {
-				printf("Loading of xinput failed: %i", GetLastError());
+				printf("Loading of xinput failed: %i\n", GetLastError());
             }
         }
     }

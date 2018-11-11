@@ -8,6 +8,7 @@
 #include "gamepad_state.hpp"
 #include "xinput_fix.hpp"
 #include "../../io-obs/util/layout_constants.hpp"
+#define IO_CLIENT 1 /* Prevents external util.hpp from including obs headers */
 #include "../../io-obs/util/util.hpp"
 
 namespace gamepad
@@ -37,7 +38,7 @@ namespace gamepad
         }
     }
 
-    bool gamepad_state::merge(gamepad_state* new_state) const
+    bool gamepad_state::merge(gamepad_state* new_state)
     {
 		if (!new_state)
 			return false;
@@ -62,10 +63,21 @@ namespace gamepad
         else if (new_state->trigger_r != trigger_r)
             merged = true;
 
+        if (merged)
+        {
+            button_states = new_state->button_states;
+            stick_l_x = new_state->stick_l_x;
+            stick_l_y = new_state->stick_l_y;
+            stick_r_x = new_state->stick_r_x;
+            stick_r_y = new_state->stick_r_y;
+            trigger_l = new_state->trigger_l;
+            trigger_r = new_state->trigger_r;
+        }
 #else   /* On linux old values should be kept and if needed overridden by new ones */
 
         /*TODO: implementation*/
 #endif
+
 		return merged;
 	}
 }

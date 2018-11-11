@@ -21,7 +21,7 @@ namespace gamepad
 #else
         /* Linux constructor */
 #endif
-	    bool merge(gamepad_state* new_state) const;
+	    bool merge(gamepad_state* new_state);
 
 		int16_t button_states;
 		/* Floats take more space, but are
