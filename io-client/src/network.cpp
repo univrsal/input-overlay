@@ -158,6 +158,20 @@ namespace network
 
         DEBUG_LOG("Network loop exited\n");
 
+        /* Tell server we're disconnecting */
+        buffer->write_pos = 0;
+        netlib_write_uint8(buffer, MSG_CLIENT_DC);
+        netlib_tcp_send_buf_smart(sock, buffer);
+
+        if (sock)
+            netlib_tcp_close(sock);
+
+        if (buffer)
+            netlib_free_byte_buf(buffer);
+
+        netlib_quit();
+        util::close_all();
+
 #ifdef _WIN32
 		return 0;
 #else
@@ -222,21 +236,6 @@ namespace network
 
 	void close()
 	{
-#ifdef _WIN32
-        if (network_loop && network_thread)
-        {
-            CloseHandle(network_thread);
-            network_thread = nullptr;
-        }
-#endif 
         network_loop = false;
-		if (sock)
-			netlib_tcp_close(sock);
- 
-        
-		if (buffer)
-			netlib_free_byte_buf(buffer);
-        
-		netlib_quit();
 	}
 }

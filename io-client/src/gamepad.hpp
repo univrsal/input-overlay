@@ -98,7 +98,7 @@ namespace gamepad
     };
 
     /* Thread stuff*/
-	bool start_pad_hook();
+	bool start_pad_hook(bool threaded);
 	bool init_pads();
 	void close();
 

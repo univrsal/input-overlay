@@ -121,9 +121,8 @@ namespace gamepad
 
     /* Hook util methods */
 
-	bool start_pad_hook()
+	bool start_pad_hook(bool threaded)
 	{
-        return true;
 		if (hook_state)
 			return true;
 
@@ -132,19 +131,32 @@ namespace gamepad
 
 		if (!xinput_fix::loaded) /* Couldn't load xinput Dll*/
 		{
-			printf("Gamepad hook init failed\n");
+			printf("Xinput init failed\n");
 			return false;
 		}
 #endif
 		hook_state = hook_run_flag = init_pads();
+        if (!hook_state)
+        {
+            printf("Initializing gamepads failed\n");
+            return false;
+        }
 
+        if (threaded)
+        {
 #ifdef _WIN32
-		hook_thread = CreateThread(nullptr, 0, static_cast<LPTHREAD_START_ROUTINE>(hook_method),
-			nullptr, 0, nullptr);
-		hook_state = hook_thread;
+		    hook_thread = CreateThread(nullptr, 0, static_cast<LPTHREAD_START_ROUTINE>(hook_method),
+			    nullptr, 0, nullptr);
+		    hook_state = hook_thread;
 #else
-        hook_state = pthread_create(&game_pad_hook_thread, nullptr, hook_method, nullptr) == 0;
+            hook_state = pthread_create(&game_pad_hook_thread, nullptr, hook_method, nullptr) == 0;
 #endif
+        }
+        else
+        {
+            hook_state = true;
+            hook_method(nullptr);
+        }
         return hook_state;
 	}
 
@@ -158,7 +170,12 @@ namespace gamepad
 			if (state.valid())
 				flag = true;
 		}
-		return flag;
+#ifdef _WIN32
+        return true; /* On windows we can use hotplug and detect gamepads on the fly */
+#else
+        return flag;
+#endif
+		
 	}
 
 	void close()
@@ -167,10 +184,6 @@ namespace gamepad
 			return;
 		hook_state = false;
 		hook_run_flag = false;
-
-#ifdef _WIN32
-		CloseHandle(hook_thread);
-#endif
 	}
 
     bool check_changes()
@@ -202,7 +215,6 @@ namespace gamepad
                 continue;
             }
 #endif
-
             for (auto& pad : pad_handles)
             {
                 if (!pad.valid())
@@ -218,6 +230,9 @@ namespace gamepad
             Sleep(25);
 #endif
 		}
+
+        for (auto& pad : pad_handles)
+            pad.unload();
 
 #ifdef _WIN32
 		return 0x0;

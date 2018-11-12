@@ -4,37 +4,28 @@
  * See LICENSE or mozilla.org/en-US/MPL/2.0/
  * github.com/univrsal/input-overlay
  */
-
+#include <stdio.h>
+#include <signal.h>
 #include "util.hpp"
 #include "network.hpp"
 #include "hook.hpp"
-#include <stdio.h>
 #include "gamepad.hpp"
 
-static volatile bool quit = false;
 /* Catch Application closing */
-#ifdef _WIN32
-#include <Windows.h>
-BOOL WINAPI CtrlHandler(DWORD fdwCtrlType)
+void sig_int__handler(int signal)
 {
-    gamepad::hook_run_flag = false;
-    network::network_loop = false;
-    hook::close();
-    return TRUE;
+    util::close_all();
 }
-#else
-
-#endif
+void sig_break__handler(int signal)
+{
+    util::close_all();
+}
 
 int main(int argc, char **argv)
 {
-#ifdef _WIN32
-    if (!SetConsoleCtrlHandler(CtrlHandler, TRUE))
-        printf("Couldn't register console event handler. Might not exit properly\n");
-#else
-    /* TODO: Linux console signal handling */
-#endif
-    
+    signal(SIGINT, &sig_int__handler);
+    signal(SIGBREAK, &sig_break__handler);
+
 	if (!network::init())
 		return 1;
 	
@@ -59,15 +50,18 @@ int main(int argc, char **argv)
 
     if (util::cfg.monitor_gamepad)
     {
-        if (!util::cfg.monitor_keyboard && !util::cfg.monitor_mouse)
-        /* Start in blocking mode */
+        auto threaded = util::cfg.monitor_keyboard || util::cfg.monitor_mouse;
+        if (threaded)
         {
-            gamepad::hook_method(nullptr);
+            if (!gamepad::start_pad_hook(true))
+            {
+                printf("Gamepad hook initialization failed!\n");
+                return 5;
+            }
         }
-        else if (!gamepad::start_pad_hook())
+        else
         {
-            printf("Starting gamepad hook failed\n");
-            return 5;
+            gamepad::start_pad_hook(false);
         }
 	}
 
@@ -78,5 +72,6 @@ int main(int argc, char **argv)
     }
 
     util::close_all();
+
 	return 0;
 }

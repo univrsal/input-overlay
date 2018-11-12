@@ -8,7 +8,7 @@
 #pragma once
 
 #include <netlib.h>
-
+#include "messages.hpp"
 #ifdef _WIN32
 #include <Windows.h>
 #endif
@@ -39,19 +39,6 @@ namespace network
 #endif
 
 	char* read_text(tcp_socket sock, char** buf);
-	
-	enum message
-	{
-		MSG_READ_ERROR = -2,
-		MSG_INVALID,
-		MSG_NAME_NOT_UNIQUE,
-		MSG_NAME_INVALID,
-		MSG_SERVER_SHUTDOWN,
-		MSG_PREVENT_TIMEOUT,
-		MSG_BUTTON_DATA,
-        MSG_MOUSE_POS_DATA,
-		MSG_LAST
-	};
 
 	message read_msg_from_buffer(netlib_byte_buf* buf);
 

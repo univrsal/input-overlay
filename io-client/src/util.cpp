@@ -269,9 +269,9 @@ namespace util
 
     void close_all()
     {
+        hook::close();
         network::close();
         gamepad::close();
-        hook::close();
     }
 
 #ifdef _DEBUG

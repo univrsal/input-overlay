@@ -20,10 +20,10 @@
 
 #define BUFFER_SIZE 5
 
+enum message;
+
 namespace network
 {
-	enum message;
-
     class io_server
     {
     public:

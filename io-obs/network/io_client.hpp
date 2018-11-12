@@ -13,7 +13,6 @@
 
 namespace network
 {
-
 	class io_client
 	{
 	public:
