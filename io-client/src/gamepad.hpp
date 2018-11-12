@@ -14,6 +14,16 @@
 
 namespace gamepad
 {
+#ifdef _WIN32
+    extern HANDLE hook_thread;
+#else
+    extern pthread_t game_pad_hook_thread;
+#endif
+    class gamepad_handle;
+    extern gamepad_handle pad_handles[PAD_COUNT];
+    extern volatile bool hook_state;
+    extern volatile bool hook_run_flag;
+
     static xinput_fix::gamepad_codes pad_keys[] =
 	{ /* These keycodes are only used on windows,
 	     but the linux client converts them to these
@@ -91,16 +101,6 @@ namespace gamepad
 	bool start_pad_hook();
 	bool init_pads();
 	void close();
-
-#ifdef _WIN32
-    extern HANDLE hook_thread;
-#else
-    extern pthread_t game_pad_hook_thread;
-#endif
-
-	extern gamepad_handle pad_handles[PAD_COUNT];
-	extern bool hook_state;
-	extern bool hook_run_flag;
 
     bool check_changes();
 #ifdef _WIN32

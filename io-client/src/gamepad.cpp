@@ -12,8 +12,8 @@
 
 namespace gamepad
 {
-	bool hook_state = false;
-	bool hook_run_flag = true;
+    volatile bool hook_state = false;
+    volatile bool hook_run_flag = true;
 	gamepad_handle pad_handles[PAD_COUNT];
 
 #ifdef _WIN32
@@ -123,6 +123,7 @@ namespace gamepad
 
 	bool start_pad_hook()
 	{
+        return true;
 		if (hook_state)
 			return true;
 

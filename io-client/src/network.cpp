@@ -18,7 +18,7 @@ namespace network
 {
 	tcp_socket sock = nullptr;
 	netlib_socket_set set = nullptr;
-	bool network_loop = true;
+    volatile bool network_loop = true;
     netlib_byte_buf* buffer = nullptr;
 
     volatile bool data_to_send = false;
@@ -156,8 +156,8 @@ namespace network
             }
         }
 
-        network_loop = false;
-        hook::close();
+        DEBUG_LOG("Network loop exited\n");
+
 #ifdef _WIN32
 		return 0;
 #else
@@ -222,16 +222,18 @@ namespace network
 
 	void close()
 	{
-		if (sock)
-			netlib_tcp_close(sock);
 #ifdef _WIN32
-		if (network_loop && network_thread)
-		{
+        if (network_loop && network_thread)
+        {
             CloseHandle(network_thread);
             network_thread = nullptr;
-		}
-#endif  
-			
+        }
+#endif 
+        network_loop = false;
+		if (sock)
+			netlib_tcp_close(sock);
+ 
+        
 		if (buffer)
 			netlib_free_byte_buf(buffer);
         

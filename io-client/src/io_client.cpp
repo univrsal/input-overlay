@@ -11,41 +11,30 @@
 #include <stdio.h>
 #include "gamepad.hpp"
 
+static volatile bool quit = false;
 /* Catch Application closing */
 #ifdef _WIN32
+#include <Windows.h>
 BOOL WINAPI CtrlHandler(DWORD fdwCtrlType)
 {
-    switch (fdwCtrlType)
-    {
-    case CTRL_CLOSE_EVENT:
-    case CTRL_C_EVENT:
-        printf("Received close event\n");
-        util::close_all();
-        return TRUE;
-    case CTRL_LOGOFF_EVENT:
-    case CTRL_SHUTDOWN_EVENT:
-        printf("Received close event\n");
-        util::close_all();
-        return FALSE;
-    default:
-        return FALSE;
-    }
+    gamepad::hook_run_flag = false;
+    network::network_loop = false;
+    hook::close();
+    return TRUE;
 }
 #else
 
 #endif
-
 
 int main(int argc, char **argv)
 {
 #ifdef _WIN32
     if (!SetConsoleCtrlHandler(CtrlHandler, TRUE))
         printf("Couldn't register console event handler. Might not exit properly\n");
-   
 #else
     /* TODO: Linux console signal handling */
 #endif
-
+    
 	if (!network::init())
 		return 1;
 	
@@ -68,28 +57,24 @@ int main(int argc, char **argv)
 		return 4;
 	}
 
-    if (util::cfg.monitor_gamepad && !gamepad::start_pad_hook())
+    if (util::cfg.monitor_gamepad)
     {
-        printf("Starting gamepad hook failed\n");
-        return 5;
+        if (!util::cfg.monitor_keyboard && !util::cfg.monitor_mouse)
+        /* Start in blocking mode */
+        {
+            gamepad::hook_method(nullptr);
+        }
+        else if (!gamepad::start_pad_hook())
+        {
+            printf("Starting gamepad hook failed\n");
+            return 5;
+        }
 	}
 
     if ((util::cfg.monitor_keyboard || util::cfg.monitor_mouse) && !hook::init())
     {
         printf("uiohook init failed\n");
         return 6;
-    }
-    
-    if(!hook::hook_state && gamepad::hook_state)
-    {
-        /* uiohook normally blocks so if it's not running this will block 
-         * until the program exits
-         */
-#ifdef _WIN32
-        WaitForSingleObject(gamepad::hook_thread, INFINITE);
-#else
-        pthread_join(gamepad::hook_thread, nullptr);
-#endif
     }
 
     util::close_all();

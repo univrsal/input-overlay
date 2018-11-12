@@ -12,7 +12,7 @@ namespace hook
 {
     extern uiohook_event* last_event;
     extern volatile bool new_event;
-    extern bool hook_state;
+    extern volatile bool hook_state;
 	bool logger_proc(unsigned level, const char* format, ...);
 
 	void dispatch_proc(uiohook_event * const event);

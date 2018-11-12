@@ -15,7 +15,7 @@ namespace hook
 {
     uiohook_event* last_event = nullptr; /* Copy of last event */
     volatile bool new_event = false;
-    bool hook_state = false;
+    volatile bool hook_state = false;
 
     bool logger_proc(unsigned level, const char* format, ...)
     {
@@ -50,6 +50,7 @@ namespace hook
         {
         case EVENT_HOOK_ENABLED:
             printf("uiohook started\n");
+            hook_state = true;
             break;
         case EVENT_HOOK_DISABLED:
             printf("uiohook exited\n");
@@ -125,7 +126,6 @@ namespace hook
 			logger_proc(LOG_LEVEL_ERROR, "[uiohook] Failed to create apple run loop observer. (%#X)", status);
 			return false;
 		case UIOHOOK_FAILURE:
-
 			logger_proc(LOG_LEVEL_ERROR, "[uiohook] An unknown hook error occurred. (%#X)", status);
 			return false;
 		default: ;
@@ -137,6 +137,7 @@ namespace hook
     {
         if (!hook_state)
             return;
+
 		const auto status = hook_stop();
         delete last_event;
         last_event = nullptr;

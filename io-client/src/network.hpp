@@ -24,7 +24,7 @@ namespace network
 {
 	extern tcp_socket sock;
 	extern netlib_socket_set set;
-	extern bool network_loop;
+	extern volatile bool network_loop;
     extern volatile bool data_to_send;  /* Set to true by other threads */
     extern volatile bool data_block;    /* Set to true to prevent other threads from modifying data, which is about to be sent */
 	extern uint32_t last_message;       /* Keeps track of timeout */
