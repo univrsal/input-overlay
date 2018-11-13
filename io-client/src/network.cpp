@@ -6,7 +6,7 @@
  */
 
 #include "network.hpp"
-#include "hook.hpp"
+#include "uiohook.hpp"
 #include "util.hpp"
 #include <cstdio>
 #include "gamepad.hpp"
@@ -99,6 +99,7 @@ namespace network
 
         while (network_loop)
         {
+            buffer->write_pos = 0;
             if (!listen()) /* Has a timeout of 100ms*/
             {
 				printf("Received quit signal\n");
@@ -117,27 +118,26 @@ namespace network
                     break;
                 }
 
-#ifdef _DEBUG /* Visualize gamepad data */
-                util::to_bits(network::buffer->write_pos, network::buffer);
+                if (uiohook::new_event)
+                    util::write_uiohook_event(uiohook::last_event);
+#ifdef _DEBUG
+                DEBUG_LOG("Sending message with ID %i with %i bytes\n", buffer->data[0], buffer->write_pos);
 #endif
-                if (hook::new_event)
-                    util::write_uiohook_event(hook::last_event);
-                
                 if (!netlib_tcp_send_buf_smart(sock, buffer))
                 {
                     DEBUG_LOG("netlib_tcp_send_buf_smart: %s\n", netlib_get_error());
-                    //break;
+                    break;
                 }
 
                 data_block = false;
                 data_to_send = false;
-                hook::new_event = false;
-                //last_message = util::get_ticks();
-                buffer->write_pos = 0;
+                uiohook::new_event = false;
+                last_message = util::get_ticks();
             }
             /* About to timeout -> tell server we're still here */
             else if (util::get_ticks() - last_message > DC_TIMEOUT)
             {
+                
                 buffer->write_pos = 0;
 
 				if (!netlib_write_uint8(buffer, MSG_PREVENT_TIMEOUT))
@@ -151,7 +151,9 @@ namespace network
                     DEBUG_LOG("netlib_tcp_send_buf_smart: %s\n", netlib_get_error());
 					break;
 				}
-                printf("yezsz\n");
+#ifdef _DEBUG
+                DEBUG_LOG("Sending ping\n");
+#endif
 				last_message = util::get_ticks();
             }
         }
@@ -163,11 +165,14 @@ namespace network
         netlib_write_uint8(buffer, MSG_CLIENT_DC);
         netlib_tcp_send_buf_smart(sock, buffer);
 
-        if (sock)
-            netlib_tcp_close(sock);
-
-        if (buffer)
-            netlib_free_byte_buf(buffer);
+        /* Give server time to process DC message */
+#ifdef _WIN32
+        Sleep(100);
+#else
+        usleep(100 * 1000);
+#endif
+        netlib_tcp_close(sock);
+        netlib_free_byte_buf(buffer);
 
         netlib_quit();
         util::close_all();

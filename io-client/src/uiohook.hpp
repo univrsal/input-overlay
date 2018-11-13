@@ -8,7 +8,7 @@
 #pragma once
 #include <uiohook.h>
 
-namespace hook
+namespace uiohook
 {
     extern uiohook_event* last_event;
     extern volatile bool new_event;
@@ -16,6 +16,7 @@ namespace hook
 	bool logger_proc(unsigned level, const char* format, ...);
 
 	void dispatch_proc(uiohook_event * const event);
+    void process_event(uiohook_event * const event);
 
 	bool init();
 

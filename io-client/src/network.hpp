@@ -16,9 +16,9 @@
   * (Mouse event is the largest uiohook event)
   */
 #define BUFFER_SIZE     90
-#define LISTEN_TIMEOUT  100
+#define LISTEN_TIMEOUT  50
 /* Can't wait exactly 1000ms because the server times clients out at 1000ms*/
-#define DC_TIMEOUT      (1000 - LISTEN_TIMEOUT)
+#define DC_TIMEOUT      (800 - LISTEN_TIMEOUT)
 
 namespace network
 {

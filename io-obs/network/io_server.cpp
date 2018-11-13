@@ -89,54 +89,65 @@ namespace network
             {
                 /* Receive input data */
 				m_buffer->read_pos = 0; /* Reset buffer */
-
-                if (!netlib_tcp_recv_buf(client->socket(), m_buffer))
+                const size_t read = netlib_tcp_recv_buf(client->socket(), m_buffer);
+                if (!read)
                 {
 				    LOG_(LOG_ERROR, "Failed to receive buffer from %s. Closed connection", client->name());
                     client->mark_invalid();
                     continue;
                 }
 
-                const auto msg = read_msg_from_buffer(m_buffer);
-				
-                switch (msg)
-                {
-				case MSG_PREVENT_TIMEOUT:
-                    last_msg = client->last_message() / (1000 * 1000);
-#ifdef _DEBUG 
-                    
-					LOG_(LOG_INFO, "Received refresh message from %s after %ums.", client->name(), last_msg);
+#ifdef _DEBUG
+                LOG_(LOG_INFO, "Recieved message with %i bytes (%.2f% of buffer used)", read, read / float(m_buffer->length));
 #endif
-                    /* Sockets can get stuck after incorrect DC
-                     * So if the message is received at an unusual speed
-                     * just disconnect the client
-                     */
-                    if (client->last_message() < TIMEOUT_NS / 2)
+                while (m_buffer->read_pos < m_buffer->length) /* Buffer can contain multiple messages */
+                {
+                    const auto msg = read_msg_from_buffer(m_buffer);
+				    
+                    switch (msg)
                     {
-                        LOG_(LOG_INFO, "Recieved refresh message from %s at unusual speed(%ums). Disconnecting.",
-                            client->name(), last_msg);
-                        client->mark_invalid();
-                    }
-                    else
-                    {
+				    case MSG_PREVENT_TIMEOUT:
+                        last_msg = client->last_message() / (1000 * 1000);
+#ifdef _DEBUG
+					    LOG_(LOG_INFO, "Received refresh message from %s after %ums.", client->name(), last_msg);
+#endif
+                        /* Sockets can get stuck after incorrect DC
+                         * So if the message is received at an unusual speed
+                         * just disconnect the client
+                         */
+                        if (client->last_message() < TIMEOUT_NS / 2)
+                        {
+                            LOG_(LOG_INFO, "Received refresh message from %s at unusual speed(%ums). Disconnecting.",
+                                client->name(), last_msg);
+                            client->mark_invalid();
+                        }
+                        else
+                        {
+                            client->reset_timeout();
+                        }
+					    break;
+				    case MSG_MOUSE_POS_DATA:
+				    case MSG_BUTTON_DATA:
+					    client->reset_timeout();
+					    if (!client->read_event(m_buffer, msg))
+					    {
+						    LOG_(LOG_ERROR, "Failed to receive event data from %s. Closed connection", client->name());
+						    /* TODO: Disconnect routine? */
+					    }
+					    break;
+                    case MSG_GAMEPAD_DATA:
+                        LOG_(LOG_INFO, "Recieved gamepad message");
                         client->reset_timeout();
+                        /* TODO: Read gamepad data */
+                        m_buffer->read_pos += 21; /* Gamepad message body takes 21 bytes */
+                        break;
+                    case MSG_CLIENT_DC:
+                        client->mark_invalid();
+                        break;
+				    case MSG_INVALID:
+					    break;
+				    default: ;
                     }
-					break;
-				case MSG_MOUSE_POS_DATA:
-				case MSG_BUTTON_DATA:
-					client->reset_timeout();
-					if (!client->read_event(m_buffer, msg))
-					{
-						LOG_(LOG_ERROR, "Failed to receive event data from %s. Closed connection", client->name());
-						/* TODO: Disconnect routine */
-					}
-					break;
-                case MSG_CLIENT_DC:
-                    client->mark_invalid();
-                    break;
-				case MSG_INVALID:
-					break;
-				default: ;
                 }
             }
 			id++;

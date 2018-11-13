@@ -167,12 +167,14 @@ namespace network
     int send_message(tcp_socket sock, message msg)
     {
 		auto msg_id = uint8_t(msg);
-		
-		uint32_t result = netlib_tcp_send(sock, &msg_id, sizeof(msg_id));
+#ifdef _DEBUG
+        LOG_(LOG_INFO, "Send message of ID %i\n", msg);
+#endif
+        const uint32_t result = netlib_tcp_send(sock, &msg_id, sizeof(msg_id));
 
         if (result < sizeof(msg_id))
         {
-			LOG_(LOG_ERROR, "netlib_tcp_recv: %s\n", netlib_get_error());
+			LOG_(LOG_ERROR, "netlib_tcp_send: %s\n", netlib_get_error());
 			return 0;
         }
 

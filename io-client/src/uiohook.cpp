@@ -5,13 +5,13 @@
  * github.com/univrsal/input-overlay
  */
 
-#include "hook.hpp"
+#include "uiohook.hpp"
 #include <cstdarg>
 #include <cstdio>
 #include "network.hpp"
 #include "gamepad.hpp"
 
-namespace hook
+namespace uiohook
 {
     uiohook_event* last_event = nullptr; /* Copy of last event */
     volatile bool new_event = false;
@@ -55,26 +55,38 @@ namespace hook
         case EVENT_HOOK_DISABLED:
             printf("uiohook exited\n");
             break;
-        case EVENT_KEY_TYPED:
-        case EVENT_KEY_PRESSED:
-        case EVENT_KEY_RELEASED:
         case EVENT_MOUSE_CLICKED:
         case EVENT_MOUSE_PRESSED:
         case EVENT_MOUSE_RELEASED:
         case EVENT_MOUSE_MOVED:
         case EVENT_MOUSE_DRAGGED:
         case EVENT_MOUSE_WHEEL:
-            /* Received event */
-            if (!network::data_block)
-            {
-                network::data_to_send = true;
-                new_event = true;
-                *last_event = *event;
-            }
+            if (util::cfg.monitor_mouse)
+                process_event(event);
+            break;
+        case EVENT_KEY_TYPED:
+        case EVENT_KEY_PRESSED:
+        case EVENT_KEY_RELEASED:
+            if (util::cfg.monitor_keyboard)
+                process_event(event);
             break;
         default:;
         }
 	}
+
+    void process_event(uiohook_event* const event)
+    {
+        if (!network::data_block)
+        {
+            network::data_to_send = true;
+            new_event = true;
+            *last_event = *event;
+        }
+        else
+        {
+            DEBUG_LOG("failed to process, data is blocked by network thread\n");
+        }
+    }
 
     bool init()
     {
@@ -137,7 +149,7 @@ namespace hook
     {
         if (!hook_state)
             return;
-
+        hook_state = false;
 		const auto status = hook_stop();
         delete last_event;
         last_event = nullptr;

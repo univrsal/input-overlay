@@ -10,7 +10,7 @@
 #include "network.hpp"
 #include <string>
 #include "gamepad.hpp"
-#include "hook.hpp"
+#include "uiohook.hpp"
 #ifdef _WIN32
 #include <Windows.h>
 #else
@@ -125,6 +125,9 @@ namespace util
 		auto result = 1;
 		auto send = false;
 
+#ifdef _DEBUG
+        DEBUG_LOG("Processing event from %llums ago\n", get_ticks() - (event->time / (1000 * 1000)));
+#endif
 		switch(event->type)
         {
 		case EVENT_KEY_PRESSED:
@@ -202,7 +205,7 @@ namespace util
                 pad.m_changed = false;
             }
         }
-
+        
         if (!result)
             printf("Writing event data to buffer failed: %s\n", netlib_get_error());
         
@@ -245,6 +248,9 @@ namespace util
 		uint8_t msg_id;
 
 		const uint32_t read_length = netlib_tcp_recv(network::sock, &msg_id, sizeof(msg_id));
+#ifdef _DEBUG
+        printf("Received message with ID %i\n", msg_id);
+#endif
 
         if (read_length < sizeof(msg_id))
         {
@@ -269,7 +275,7 @@ namespace util
 
     void close_all()
     {
-        hook::close();
+        uiohook::close();
         network::close();
         gamepad::close();
     }

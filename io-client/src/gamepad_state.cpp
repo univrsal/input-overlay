@@ -10,7 +10,6 @@
 #include "../../io-obs/util/layout_constants.hpp"
 #define IO_CLIENT 1 /* Prevents external util.hpp from including obs headers */
 #include "../../io-obs/util/util.hpp"
-
 namespace gamepad
 {
 	gamepad_state::gamepad_state()
@@ -47,20 +46,18 @@ namespace gamepad
 	    /* On windows the new state contains all changes -> No merging needed*/
         if (new_state->button_states != button_states)
             merged = true;
-        /* TODO: Maybe use deadzone here 
-         * Right now even the slightest movement results in updates
-         */
-        else if (new_state->stick_l_x != stick_l_x) 
+        /* TODO: Dead zones might need tweaking */
+        else if (abs(new_state->stick_l_x - stick_l_x) > 0.1f) 
             merged = true;                           
-        else if (new_state->stick_l_y != stick_l_y)
+        else if (abs(new_state->stick_l_y - stick_l_y) > 0.1f)
             merged = true;
-        else if (new_state->stick_r_x != stick_r_x)
+        else if (abs(new_state->stick_r_x - stick_r_x) > 0.1f)
             merged = true;
-        else if (new_state->stick_r_y != stick_r_y)
+        else if (abs(new_state->stick_r_y - stick_r_y) > 0.1f)
             merged = true;
-        else if (new_state->trigger_l != trigger_l)
+        else if (abs(new_state->trigger_l - trigger_l) > 10)
             merged = true;
-        else if (new_state->trigger_r != trigger_r)
+        else if (abs(new_state->trigger_r - trigger_r) > 10)
             merged = true;
 
         if (merged)
@@ -71,7 +68,7 @@ namespace gamepad
             stick_r_x = new_state->stick_r_x;
             stick_r_y = new_state->stick_r_y;
             trigger_l = new_state->trigger_l;
-            trigger_r = new_state->trigger_r;
+            trigger_r = new_state->trigger_r;   
         }
 #else   /* On linux old values should be kept and if needed overridden by new ones */
 

@@ -94,7 +94,10 @@ namespace gamepad
         if (new_state)
         {
             if (m_current_state.merge(new_state))
+            {
                 m_changed = true;
+                network::data_to_send = true;
+            }
         }
     }
 

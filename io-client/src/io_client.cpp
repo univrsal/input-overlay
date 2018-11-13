@@ -8,7 +8,7 @@
 #include <signal.h>
 #include "util.hpp"
 #include "network.hpp"
-#include "hook.hpp"
+#include "uiohook.hpp"
 #include "gamepad.hpp"
 
 /* Catch Application closing */
@@ -48,9 +48,10 @@ int main(int argc, char **argv)
 		return 4;
 	}
 
+    /* This will block if uiohook isn't running */
     if (util::cfg.monitor_gamepad)
     {
-        auto threaded = util::cfg.monitor_keyboard || util::cfg.monitor_mouse;
+        auto threaded = true;// util::cfg.monitor_keyboard || util::cfg.monitor_mouse;
         if (threaded)
         {
             if (!gamepad::start_pad_hook(true))
@@ -64,8 +65,9 @@ int main(int argc, char **argv)
             gamepad::start_pad_hook(false);
         }
 	}
+    network::network_thread_method(nullptr);
 
-    if ((util::cfg.monitor_keyboard || util::cfg.monitor_mouse) && !hook::init())
+    if ((util::cfg.monitor_keyboard || util::cfg.monitor_mouse) && !uiohook::init())
     {
         printf("uiohook init failed\n");
         return 6;
