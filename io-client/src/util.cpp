@@ -123,7 +123,6 @@ namespace util
 		if (!event)
 			return -1;
 		auto result = 1;
-		auto send = false;
 
 #ifdef _DEBUG
         DEBUG_LOG("Processing event from %llums ago\n", get_ticks() - (event->time / (1000 * 1000)));
@@ -135,7 +134,6 @@ namespace util
             {
 				result = netlib_write_uint8(network::buffer, MSG_BUTTON_DATA)
 					&& write_keystate(network::buffer, event->data.keyboard.keycode, true);
-				send = true;
             }
 			break;
 		case EVENT_KEY_RELEASED:
@@ -143,7 +141,6 @@ namespace util
 			{
 				result = netlib_write_uint8(network::buffer, MSG_BUTTON_DATA)
 					&& write_keystate(network::buffer, event->data.keyboard.keycode, false);
-				send = true;
 			}
 			break;
         case EVENT_MOUSE_PRESSED:
@@ -151,7 +148,6 @@ namespace util
 			{
 				result = netlib_write_uint8(network::buffer, MSG_BUTTON_DATA)
 					&& write_keystate(network::buffer, event->data.mouse.button, true);
-				send = true;
 			}
             break;
         case EVENT_MOUSE_RELEASED:
@@ -159,7 +155,6 @@ namespace util
 			{
 				result = netlib_write_uint8(network::buffer, MSG_BUTTON_DATA)
 					&& write_keystate(network::buffer, event->data.mouse.button, false);
-				send = true;
 			}
             break;
         case EVENT_MOUSE_MOVED:
@@ -174,13 +169,7 @@ namespace util
         default: ;
         }
 
-		if (!result)
-		{
-            printf("Writing event data to buffer failed: %s\n", netlib_get_error());
-            close_all();
-		}
-
-		return send;
+		return result;
     }
 
     int write_gamepad_data()
@@ -262,11 +251,9 @@ namespace util
         switch (msg_id)
 		{
 		case MSG_NAME_INVALID:
-			return MSG_NAME_INVALID;
 		case MSG_NAME_NOT_UNIQUE:
-			return MSG_NAME_NOT_UNIQUE;
 		case MSG_SERVER_SHUTDOWN:
-			return MSG_SERVER_SHUTDOWN;
+			return message(msg_id);
 		default:
 			printf("Received message with invalid id (%i).\n", msg_id);
 			return MSG_INVALID;
@@ -276,8 +263,8 @@ namespace util
     void close_all()
     {
         uiohook::close();
-        network::close();
         gamepad::close();
+        network::close();
     }
 
 #ifdef _DEBUG

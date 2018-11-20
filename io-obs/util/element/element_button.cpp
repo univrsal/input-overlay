@@ -14,9 +14,7 @@ element_data_button* element_data_button::from_buffer(netlib_byte_buf* buffer)
 	uint8_t state = 0;
 
     if (!netlib_read_uint8(buffer, &state))
-    {
-		return nullptr;
-    }
+    	return nullptr;
 
 	return new element_data_button(button_state(state));
 }

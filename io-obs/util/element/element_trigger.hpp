@@ -8,6 +8,7 @@
 #pragma once
 
 #include "element_texture.hpp"
+#include <netlib.h>
 
 enum trigger_data_type
 {
@@ -41,6 +42,8 @@ public:
     bool is_persistent() override;
 
     void merge(element_data* other) override;
+
+    static element_data_trigger* from_buffer(netlib_byte_buf* buffer);
 
 private:
     trigger_data_type m_data_type = T_DATA_NONE;

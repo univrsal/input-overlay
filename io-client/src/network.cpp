@@ -115,11 +115,18 @@ namespace network
                 if (gamepad::check_changes() && !util::write_gamepad_data())
                 {
                     printf("Failed to write gamepad event data to buffer. Exiting...\n");
+#ifndef _DEBUG
                     break;
+#endif
                 }
 
-                if (uiohook::new_event)
-                    util::write_uiohook_event(uiohook::last_event);
+                if (uiohook::new_event && !util::write_uiohook_event(uiohook::last_event))
+                {
+                    printf("Writing event data to buffer failed: %s\n", netlib_get_error());
+#ifndef _DEBUG
+                    break;
+#endif
+                }
 #ifdef _DEBUG
                 DEBUG_LOG("Sending message with ID %i with %i bytes\n", buffer->data[0], buffer->write_pos);
 #endif
@@ -159,22 +166,6 @@ namespace network
         }
 
         DEBUG_LOG("Network loop exited\n");
-
-        /* Tell server we're disconnecting */
-        buffer->write_pos = 0;
-        netlib_write_uint8(buffer, MSG_CLIENT_DC);
-        netlib_tcp_send_buf_smart(sock, buffer);
-
-        /* Give server time to process DC message */
-#ifdef _WIN32
-        Sleep(100);
-#else
-        usleep(100 * 1000);
-#endif
-        netlib_tcp_close(sock);
-        netlib_free_byte_buf(buffer);
-
-        netlib_quit();
         util::close_all();
 
 #ifdef _WIN32
@@ -241,6 +232,22 @@ namespace network
 
 	void close()
 	{
+
+        /* Tell server we're disconnecting */
+        buffer->write_pos = 0;
+        netlib_write_uint8(buffer, MSG_CLIENT_DC);
+        netlib_tcp_send_buf_smart(sock, buffer);
+
+        /* Give server time to process DC message */
+#ifdef _WIN32
+        Sleep(100);
+#else
+        usleep(100 * 1000);
+#endif
         network_loop = false;
+
+        netlib_tcp_close(sock);
+        netlib_free_byte_buf(buffer);
+        netlib_quit();
 	}
 }

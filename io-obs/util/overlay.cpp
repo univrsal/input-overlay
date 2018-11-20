@@ -164,39 +164,39 @@ void overlay::draw(gs_effect_t* effect)
 {
     if (m_is_loaded)
     {
+        element_data_holder* source = nullptr;
+        if (hook::data_initialized || network::network_flag)
+        {
+            if (m_settings->selected_source == 0)
+            {
+                source = hook::input_data;
+            }
+            else if (network::server_instance)
+            {
+                source = network::server_instance->
+                    get_client(m_settings->selected_source - 1)->get_data();
+            }
+        }
+
         for (auto const& element : m_elements)
         {
             element_data* data = nullptr;
-            if (hook::data_initialized || network::network_flag)
+          	
+            if (source)
             {
-				element_data_holder* source = nullptr;
-
-                if (m_settings->selected_source == 0)
-                {
-                    source = hook::input_data;
-                }
-                else if (network::server_instance)
-                {
-                    source = network::server_instance->
-                             get_client(m_settings->selected_source - 1)->get_data();
-                }
-
-                if (source)
-                {
-					switch (element->get_source())
-					{
-					case GAMEPAD:
-						data = source->get_by_gamepad(m_settings->gamepad,
-							element->get_keycode());
-						break;
-					case DEFAULT:
-						data = source->get_by_code(element->get_keycode());
-						break;
-					default:;
-					}
-                }
+				switch (element->get_source())
+				{
+				case GAMEPAD:
+					data = source->get_by_gamepad(m_settings->gamepad,
+						element->get_keycode());
+					break;
+				case DEFAULT:
+					data = source->get_by_code(element->get_keycode());
+					break;
+				default:;
+				}
             }
-
+            
             element->draw(effect, m_image, data, m_settings);
         }
     }

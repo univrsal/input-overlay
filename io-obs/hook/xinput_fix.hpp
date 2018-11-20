@@ -9,9 +9,11 @@
  */
 
 #pragma once
+#include <cstdint>
 
 #ifdef _WIN32
 #include <Windows.h>
+#endif
 
 enum button_state;
 
@@ -37,7 +39,27 @@ namespace xinput_fix
         CODE_X = 0x4000,
         CODE_Y = 0x8000
     };
+    
+    static gamepad_codes all_codes[] =
+    {
+        CODE_A,
+        CODE_B,
+        CODE_X,
+        CODE_Y,
+        CODE_GUIDE,
+        CODE_DPAD_DOWN,
+        CODE_DPAD_UP,
+        CODE_DPAD_LEFT,
+        CODE_DPAD_RIGHT,
+        CODE_LEFT_SHOULDER,
+        CODE_RIGHT_SHOULDER,
+        CODE_START,
+        CODE_BACK
+    };
 
+    uint16_t to_vc(gamepad_codes code);
+
+#ifdef _WIN32
     typedef struct
     {
         unsigned long eventCount;
@@ -51,8 +73,7 @@ namespace xinput_fix
     } gamepad;
 
     extern bool loaded;
-    extern gamepad_codes all_codes[];
-
+    
     /* Util functions */
     void load();
 
@@ -65,8 +86,6 @@ namespace xinput_fix
     void free(gamepad* pad);
 
     int update(int id, gamepad* pad);
-
-    UINT16 to_vc(gamepad_codes code);
 
     float trigger_l(gamepad* pad);
 

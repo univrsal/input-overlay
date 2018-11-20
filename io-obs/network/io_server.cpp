@@ -98,7 +98,7 @@ namespace network
                 }
 
 #ifdef _DEBUG
-                LOG_(LOG_INFO, "Recieved message with %i bytes (%.2f% of buffer used)", read, read / float(m_buffer->length));
+                LOG_(LOG_INFO, "Recieved message with %i bytes", read);
 #endif
                 while (m_buffer->read_pos < m_buffer->length) /* Buffer can contain multiple messages */
                 {
@@ -115,7 +115,7 @@ namespace network
                          * So if the message is received at an unusual speed
                          * just disconnect the client
                          */
-                        if (client->last_message() < TIMEOUT_NS / 2)
+                        if (client->last_message() < TIMEOUT_NS / 4)
                         {
                             LOG_(LOG_INFO, "Received refresh message from %s at unusual speed(%ums). Disconnecting.",
                                 client->name(), last_msg);
@@ -128,19 +128,16 @@ namespace network
 					    break;
 				    case MSG_MOUSE_POS_DATA:
 				    case MSG_BUTTON_DATA:
+                    case MSG_GAMEPAD_DATA:
 					    client->reset_timeout();
 					    if (!client->read_event(m_buffer, msg))
 					    {
 						    LOG_(LOG_ERROR, "Failed to receive event data from %s. Closed connection", client->name());
 						    /* TODO: Disconnect routine? */
 					    }
+                        /* TODO: DEBUG */
+                        m_buffer->read_pos = m_buffer->length; /* Cancel reading immediately for now */
 					    break;
-                    case MSG_GAMEPAD_DATA:
-                        LOG_(LOG_INFO, "Recieved gamepad message");
-                        client->reset_timeout();
-                        /* TODO: Read gamepad data */
-                        m_buffer->read_pos += 21; /* Gamepad message body takes 21 bytes */
-                        break;
                     case MSG_CLIENT_DC:
                         client->mark_invalid();
                         break;

@@ -27,8 +27,8 @@ set(io_client_SOURCES
     src/util.hpp
     src/network.cpp
     src/network.hpp
-    src/hook.cpp
-    src/hook.hpp
+    src/uiohook.cpp
+    src/uiohook.hpp
     src/gamepad.cpp
     src/gamepad.hpp
     src/xinput_fix.cpp

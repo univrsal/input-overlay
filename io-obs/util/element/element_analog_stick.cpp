@@ -113,3 +113,22 @@ void element_data_analog_stick::merge(element_data* other)
         }
     }
 }
+
+element_data_analog_stick* element_data_analog_stick::from_buffer(netlib_byte_buf* buffer)
+{
+    auto result = new element_data_analog_stick();
+
+    if (!netlib_read_float(buffer, &result->m_left_stick.x) ||
+        !netlib_read_float(buffer, &result->m_left_stick.y) ||
+        !netlib_read_float(buffer, &result->m_right_stick.x) ||
+        !netlib_read_float(buffer, &result->m_right_stick.y))
+    {
+#ifdef _DEBUG
+        blog(LOG_INFO, "Reading of analog stick data failed: %s", netlib_get_error());
+#endif
+        delete result;
+        return nullptr;
+    }
+
+    return result;
+}

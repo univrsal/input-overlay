@@ -91,23 +91,6 @@ private:
     /* Windows implementation */
 #ifdef _WIN32
 
-    static xinput_fix::gamepad_codes pad_keys[] =
-    {
-        xinput_fix::CODE_A,
-        xinput_fix::CODE_B,
-        xinput_fix::CODE_X,
-        xinput_fix::CODE_Y,
-        xinput_fix::CODE_GUIDE,
-        xinput_fix::CODE_DPAD_DOWN,
-        xinput_fix::CODE_DPAD_UP,
-        xinput_fix::CODE_DPAD_LEFT,
-        xinput_fix::CODE_DPAD_RIGHT,
-        xinput_fix::CODE_LEFT_SHOULDER,
-        xinput_fix::CODE_RIGHT_SHOULDER,
-        xinput_fix::CODE_START,
-        xinput_fix::CODE_BACK
-    };
-
     struct GamepadState
     {
         ~GamepadState()

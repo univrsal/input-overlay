@@ -165,3 +165,16 @@ void element_data_trigger::merge(element_data* other)
         }
     }
 }
+
+element_data_trigger* element_data_trigger::from_buffer(netlib_byte_buf* buffer)
+{
+    uint8_t left, right;
+    if (!netlib_read_uint8(buffer, &left) || !netlib_read_uint8(buffer, &right))
+    {
+#ifdef _DEBUG
+        blog(LOG_INFO, "Failed to read trigger data: %s", netlib_get_error());
+#endif
+        return nullptr;
+    }
+    return new element_data_trigger(left / TRIGGER_MAX_VAL, right / TRIGGER_MAX_VAL);
+}

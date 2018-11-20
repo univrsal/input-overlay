@@ -38,6 +38,16 @@ namespace util
 
 	extern config cfg;
 
+    enum return_codes
+    {
+        RET_NETWORK_INIT,
+        RET_ARGUMENT_PARSING,
+        RET_NO_HOOKS,
+        RET_CONNECTION,
+        RET_GAMEPAD_INIT,
+        RET_UIOHOOK_INIT
+    };
+
     /* Get config values and print help */
 	bool parse_arguments(int argc, char** args);
 

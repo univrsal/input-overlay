@@ -91,12 +91,12 @@ namespace gamepad
                     continue;
 
 #ifdef _WIN32
-                dpad_direction dir[] = {DPAD_CENTER, DPAD_CENTER};
+                dpad_direction dir[] = { DPAD_CENTER, DPAD_CENTER };
 
-                for (const auto& button : pad_keys)
+                for (const auto& button : xinput_fix::all_codes)
                 {
                     const auto state = pressed(pad.get_xinput(), button);
-                    hook::input_data->add_gamepad_data(pad.get_id(), to_vc(button),
+                    hook::input_data->add_gamepad_data(pad.get_id(), xinput_fix::to_vc(button),
                         new element_data_button(state));
                 }
 

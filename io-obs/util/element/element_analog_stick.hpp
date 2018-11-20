@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <netlib.h>
 #include "../layout_constants.hpp"
 #include "element_texture.hpp"
 
@@ -26,6 +27,10 @@ enum stick_data_type
 class element_data_analog_stick : public element_data
 {
 public:
+    element_data_analog_stick()
+        : element_data(BUTTON)
+    {
+    }
     /*
         Separate constructors are used on linux
         because the values can't be queried together
@@ -103,6 +108,7 @@ public:
 
     void merge(element_data* other) override;
 
+    static element_data_analog_stick* from_buffer(netlib_byte_buf* buffer);
 private:
     vec2 m_left_stick, m_right_stick;
     stick_data_type m_data_type;

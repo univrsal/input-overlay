@@ -27,17 +27,17 @@ int main(int argc, char **argv)
     signal(SIGBREAK, &sig_break__handler);
 
 	if (!network::init())
-		return 1;
+		return util::RET_NETWORK_INIT;
 	
     printf("Network init done.\n");
 
 	if (!util::parse_arguments(argc, argv))
-		return 2; /* Invalid arguments */
+		return util::RET_ARGUMENT_PARSING; /* Invalid arguments */
 
     if (!util::cfg.monitor_keyboard && !util::cfg.monitor_mouse && !util::cfg.monitor_gamepad)
     {
         printf("Nothing to monitor!\n");
-        return 3;
+        return util::RET_NO_HOOKS;
     }
 
     printf("Arguments: Port: %hu, Name: %s, IP: %s\n", util::cfg.port, util::cfg.username, argv[1]);
@@ -45,19 +45,19 @@ int main(int argc, char **argv)
 	if (!network::start_connection()) /* Starts a separate network thread */
 	{
 		network::close();
-		return 4;
+		return util::RET_CONNECTION;
 	}
 
     /* This will block if uiohook isn't running */
     if (util::cfg.monitor_gamepad)
     {
-        auto threaded = true;// util::cfg.monitor_keyboard || util::cfg.monitor_mouse;
+        auto threaded = util::cfg.monitor_keyboard || util::cfg.monitor_mouse;
         if (threaded)
         {
             if (!gamepad::start_pad_hook(true))
             {
                 printf("Gamepad hook initialization failed!\n");
-                return 5;
+                return util::RET_GAMEPAD_INIT;
             }
         }
         else
@@ -70,7 +70,7 @@ int main(int argc, char **argv)
     if ((util::cfg.monitor_keyboard || util::cfg.monitor_mouse) && !uiohook::init())
     {
         printf("uiohook init failed\n");
-        return 6;
+        return util::RET_UIOHOOK_INIT;
     }
 
     util::close_all();
