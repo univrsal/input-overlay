@@ -106,37 +106,14 @@ namespace network
 				    
                     switch (msg)
                     {
-				    case MSG_PREVENT_TIMEOUT:
-                        last_msg = client->last_message() / (1000 * 1000);
-#ifdef _DEBUG
-					    LOG_(LOG_INFO, "Received refresh message from %s after %ums.", client->name(), last_msg);
-#endif
-                        /* Sockets can get stuck after incorrect DC
-                         * So if the message is received at an unusual speed
-                         * just disconnect the client
-                         */
-                        if (client->last_message() < TIMEOUT_NS / 4)
-                        {
-                            LOG_(LOG_INFO, "Received refresh message from %s at unusual speed(%ums). Disconnecting.",
-                                client->name(), last_msg);
-                            client->mark_invalid();
-                        }
-                        else
-                        {
-                            client->reset_timeout();
-                        }
-					    break;
 				    case MSG_MOUSE_POS_DATA:
 				    case MSG_BUTTON_DATA:
                     case MSG_GAMEPAD_DATA:
-					    client->reset_timeout();
 					    if (!client->read_event(m_buffer, msg))
 					    {
 						    LOG_(LOG_ERROR, "Failed to receive event data from %s. Closed connection", client->name());
 						    /* TODO: Disconnect routine? */
 					    }
-                        /* TODO: DEBUG */
-                        m_buffer->read_pos = m_buffer->length; /* Cancel reading immediately for now */
 					    break;
                     case MSG_CLIENT_DC:
                         client->mark_invalid();
@@ -190,14 +167,8 @@ namespace network
                 {
                     if (!o->valid())
                     {
-						network::server_instance->m_num_clients--;
+						server_instance->m_num_clients--;
 						LOG_(LOG_INFO, "%s disconnected. Invalid socket.", o->name());
-						return true;
-                    }
-                    if (o->last_message() > TIMEOUT_NS)
-                    {
-						network::server_instance->m_num_clients--;
-						LOG_(LOG_INFO, "%s disconnected due to timeout.", o->name());
 						return true;
                     }
 					return false;

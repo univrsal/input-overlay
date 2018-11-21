@@ -88,15 +88,13 @@ namespace network
 		return pthread_create(&network_thread, nullptr, network_thread_method, nullptr) == 0;
 #endif
     }
-	uint32_t last_message = 0;
+
 #ifdef _WIN32
 	DWORD WINAPI network_thread_method(const LPVOID arg)
 #else
 	void* network_thread_method(void *)
 #endif
 	{
-		last_message = util::get_ticks();
-
         while (network_loop)
         {
             buffer->write_pos = 0;
@@ -139,29 +137,6 @@ namespace network
                 data_block = false;
                 data_to_send = false;
                 uiohook::new_event = false;
-                last_message = util::get_ticks();
-            }
-            /* About to timeout -> tell server we're still here */
-            else if (util::get_ticks() - last_message > DC_TIMEOUT)
-            {
-                
-                buffer->write_pos = 0;
-
-				if (!netlib_write_uint8(buffer, MSG_PREVENT_TIMEOUT))
-				{
-					DEBUG_LOG("netlib_write_uint8: %s\n", netlib_get_error());
-					break;
-				}
-
-				if (!netlib_tcp_send_buf_smart(sock, buffer))
-				{
-                    DEBUG_LOG("netlib_tcp_send_buf_smart: %s\n", netlib_get_error());
-					break;
-				}
-#ifdef _DEBUG
-                DEBUG_LOG("Sending ping\n");
-#endif
-				last_message = util::get_ticks();
             }
         }
 

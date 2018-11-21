@@ -22,15 +22,12 @@ namespace network
 		tcp_socket socket() const;
 		const char* name() const;
 		uint8_t id() const;
-		uint64_t last_message() const;
-		void reset_timeout();
 		element_data_holder* get_data();
 		bool read_event(netlib_byte_buf* buffer, message msg);
 		void mark_invalid();
 		bool valid() const;
 	private:
 		element_data_holder m_holder;
-		uint64_t m_last_message;
 		tcp_socket m_socket;
 		uint8_t m_id;
 		/* Set to false if this client should be disconnected on next roundtrip */

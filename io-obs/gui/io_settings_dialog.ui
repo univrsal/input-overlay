@@ -158,6 +158,13 @@
         </property>
        </widget>
       </item>
+      <item>
+       <widget class="QPushButton" name="btn_refresh">
+        <property name="text">
+         <string>Source.InputSource.Reload</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>

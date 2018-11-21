@@ -6,11 +6,9 @@
  */
 
 #include "io_client.hpp"
-#include <util/platform.h>
 #include "util/element/element_button.hpp"
 #include "hook/gamepad_hook.hpp"
 #include "util/element/element_analog_stick.hpp"
-#include "util/element/element_trigger.hpp"
 
 namespace network
 {
@@ -20,7 +18,6 @@ namespace network
         m_socket = socket;
         m_id = id;
 		m_valid = true;
-		m_last_message = os_gettime_ns();
     }
 
     io_client::~io_client()
@@ -44,37 +41,9 @@ namespace network
 		return m_id;
     }
 
-    uint64_t io_client::last_message() const
-    {
-		return os_gettime_ns() - m_last_message;
-    }
-
-    void io_client::reset_timeout()
-    {
-		m_last_message = os_gettime_ns();
-    }
-
     element_data_holder* io_client::get_data()
     {
 		return &m_holder;
-    }
-
-    /* TODO: REMOVE */
-    void to_bits(size_t const size, void const* const ptr)
-    {
-        const auto b = (unsigned char*)ptr;
-        unsigned char byte;
-        int i, j;
-
-        for (i = size - 1; i >= 0; i--)
-        {
-            for (j = 7; j >= 0; j--)
-            {
-                byte = (b[i] >> j) & 1;
-                printf("%u", byte);
-            }
-        }
-        puts("");
     }
 
     bool io_client::read_event(netlib_byte_buf* buffer, const message msg)
@@ -99,8 +68,6 @@ namespace network
 
             if (flag)
             {
-                
-
                 /* Add all buttons to the holder*/
                 for (auto& btn : xinput_fix::all_codes)
                 {

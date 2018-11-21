@@ -108,4 +108,5 @@ void io_settings_dialog::FormAccepted()
 io_settings_dialog::~io_settings_dialog()
 {
     delete ui;
+    delete m_refresh;
 }

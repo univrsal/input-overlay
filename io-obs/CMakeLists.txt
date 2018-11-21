@@ -83,6 +83,7 @@ set(input-overlay_SOURCES
     util/element/element_dpad.hpp
     util/element/element_data_holder.cpp
     util/element/element_data_holder.hpp
+    gui/io_settings_dialog.hpp
     gui/io_settings_dialog.cpp
     network/remote_connection.cpp
     network/remote_connection.hpp
