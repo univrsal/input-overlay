@@ -22,10 +22,11 @@ public:
     void toggleShowHide();
 	
 private Q_SLOTS:
-    void RefreshConnections();
+    void RefreshConnectionsList();
     void FormAccepted();
 	void CbRemoteStateChanged(int state);
-
+    void PingClients();
+    
 private:
     Ui::io_config_dialog* ui;
 	QTimer* m_refresh;

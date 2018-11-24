@@ -104,6 +104,8 @@ public:
         return &m_right_stick;
     }
 
+    void set_state(button_state left, button_state right);
+
     bool is_persistent() override { return true; }
 
     void merge(element_data* other) override;

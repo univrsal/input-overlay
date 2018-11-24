@@ -125,7 +125,7 @@ namespace network
 
             if (!numready)
             {
-                os_sleep_ms(50); /* Should be fast enough */
+                os_sleep_ms(LISTEN_TIMEOUT); /* Should be fast enough */
                 continue;
             }
 

@@ -24,7 +24,10 @@ io_settings_dialog::io_settings_dialog(QWidget* parent)
 	connect(ui->cb_enable_remote, &QCheckBox::stateChanged,
 		this, &io_settings_dialog::CbRemoteStateChanged);
 
-    auto cfg = obs_frontend_get_global_config();
+    connect(ui->btn_refresh, &QPushButton::clicked,
+        this, &io_settings_dialog::PingClients);
+
+    const auto cfg = obs_frontend_get_global_config();
 
     /* Load values */
     ui->cb_iohook->setChecked(config_get_bool(cfg, S_REGION, S_IOHOOK));
@@ -50,14 +53,14 @@ io_settings_dialog::io_settings_dialog(QWidget* parent)
 
     /* Check for new connections every 250ms */
 	m_refresh = new QTimer(this);
-	connect(m_refresh, SIGNAL(timeout()), SLOT(RefreshConnections()));
+	connect(m_refresh, SIGNAL(timeout()), SLOT(RefreshConnectionsList()));
 	m_refresh->start(250);
 }
 
 void io_settings_dialog::showEvent(QShowEvent* event)
 {
     Q_UNUSED(event);
-	RefreshConnections();
+    RefreshConnectionsList();
 }
 
 void io_settings_dialog::toggleShowHide()
@@ -65,7 +68,7 @@ void io_settings_dialog::toggleShowHide()
     setVisible(!isVisible());
 }
 
-void io_settings_dialog::RefreshConnections()
+void io_settings_dialog::RefreshConnectionsList()
 {
 	/* Populate client list */
 	if (network::network_flag && network::server_instance && network::server_instance->clients_changed())
@@ -89,6 +92,11 @@ void io_settings_dialog::CbRemoteStateChanged(int state)
 	ui->cb_log->setEnabled(ui->cb_enable_remote->isChecked());
 	ui->box_port->setEnabled(ui->cb_enable_remote->isChecked());
 	ui->box_connections->setEnabled(ui->cb_enable_remote->isChecked());
+}
+
+void io_settings_dialog::PingClients()
+{
+    network::server_instance->ping_clients();
 }
 
 void io_settings_dialog::FormAccepted()

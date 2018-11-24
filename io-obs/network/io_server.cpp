@@ -11,7 +11,6 @@
 #include <obs-module.h>
 #include <util/platform.h>
 #include <algorithm>
-#include "../util/element/element_button.hpp"
 
 static netlib_socket_set sockets = nullptr;
 
@@ -67,7 +66,7 @@ namespace network
     void io_server::listen(int& numready)
     {
         if (create_sockets())
-            numready = netlib_check_socket_set(sockets, 100);
+            numready = netlib_check_socket_set(sockets, LISTEN_TIMEOUT);
     }
 
     tcp_socket io_server::socket() const
@@ -77,12 +76,6 @@ namespace network
     
     void io_server::update_clients()
     {
-		uint8_t id = 0;
-
-#ifdef _DEBUG
-		uint64_t last_msg;
-#endif
-
         for (const auto& client : m_clients)
         {
             if (netlib_socket_ready(client->socket()))
@@ -98,7 +91,7 @@ namespace network
                 }
 
 #ifdef _DEBUG
-                LOG_(LOG_INFO, "Recieved message with %i bytes", read);
+                LOG_(LOG_INFO, "Received message with %i bytes", read);
 #endif
                 while (m_buffer->read_pos < m_buffer->length) /* Buffer can contain multiple messages */
                 {
@@ -110,10 +103,7 @@ namespace network
 				    case MSG_BUTTON_DATA:
                     case MSG_GAMEPAD_DATA:
 					    if (!client->read_event(m_buffer, msg))
-					    {
-						    LOG_(LOG_ERROR, "Failed to receive event data from %s. Closed connection", client->name());
-						    /* TODO: Disconnect routine? */
-					    }
+						    LOG_(LOG_ERROR, "Failed to receive event data from %s.", client->name());
 					    break;
                     case MSG_CLIENT_DC:
                         client->mark_invalid();
@@ -124,13 +114,11 @@ namespace network
                     }
                 }
             }
-			id++;
         }
     }
 
 	void io_server::get_clients(std::vector<const char*>& v)
     {
-
 		for (const auto& client : m_clients)
 		{
 			v.emplace_back(client->name());
@@ -155,8 +143,17 @@ namespace network
     {
 		return m_clients_changed;
     }
-    
-	void io_server::roundtrip()
+
+    void io_server::ping_clients()
+    {
+        for (auto& client : m_clients)
+        {
+            if (!send_message(client->socket(), MSG_PING_CLIENT))
+                client->mark_invalid(); /* Can't send data -> Connection is dead */
+        }
+    }
+
+    void io_server::roundtrip()
 	{
 		if (!m_clients.empty())
 		{
@@ -168,7 +165,7 @@ namespace network
                     if (!o->valid())
                     {
 						server_instance->m_num_clients--;
-						LOG_(LOG_INFO, "%s disconnected. Invalid socket.", o->name());
+						LOG_(LOG_INFO, "%s disconnected.", o->name());
 						return true;
                     }
 					return false;
@@ -230,7 +227,7 @@ namespace network
         return flag;
     }
 
-    /* Only works with prealloccated char arrays */
+    /* Only works with pre-allocated char arrays */
     void io_server::fix_name(char* name)
     {
 		static auto accepted = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_-0123456789";

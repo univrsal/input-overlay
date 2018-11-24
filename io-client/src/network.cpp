@@ -18,11 +18,12 @@ namespace network
 {
 	tcp_socket sock = nullptr;
 	netlib_socket_set set = nullptr;
-    volatile bool network_loop = true;
     netlib_byte_buf* buffer = nullptr;
 
     volatile bool data_to_send = false;
     volatile bool data_block = false;
+    volatile bool network_loop = true;
+    bool connected = false;
 
 #ifdef _WIN32
 	static HANDLE network_thread;
@@ -74,7 +75,7 @@ namespace network
 			printf("Failed to create network thread.\n");
 			return false;
         }
-
+        connected = true;
 		return true;
     }
 
@@ -141,7 +142,6 @@ namespace network
         }
 
         DEBUG_LOG("Network loop exited\n");
-        util::close_all();
 
 #ifdef _WIN32
 		return 0;
@@ -179,6 +179,8 @@ namespace network
 			case MSG_READ_ERROR:
 				printf("Couldn't read message.\n");
 				return false;
+            case MSG_PING_CLIENT: /* NO-OP needed */
+                return true;
 			default:
 			case MSG_INVALID:
 				return false;
@@ -207,12 +209,14 @@ namespace network
 
 	void close()
 	{
-
         /* Tell server we're disconnecting */
-        buffer->write_pos = 0;
-        netlib_write_uint8(buffer, MSG_CLIENT_DC);
-        netlib_tcp_send_buf_smart(sock, buffer);
-
+        if (connected)
+        {
+            buffer->write_pos = 0;
+            netlib_write_uint8(buffer, MSG_CLIENT_DC);
+            netlib_tcp_send_buf_smart(sock, buffer);
+        }
+        
         /* Give server time to process DC message */
 #ifdef _WIN32
         Sleep(100);

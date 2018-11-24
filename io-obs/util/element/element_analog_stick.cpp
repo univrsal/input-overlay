@@ -74,6 +74,12 @@ void element_analog_stick::calc_position(
     }
 }
 
+void element_data_analog_stick::set_state(const button_state left, const button_state right)
+{
+    m_left_state = left;
+    m_right_state= right;
+}
+
 void element_data_analog_stick::merge(element_data* other)
 {
     if (other && other->get_type() == m_type)
@@ -127,8 +133,8 @@ element_data_analog_stick* element_data_analog_stick::from_buffer(netlib_byte_bu
         blog(LOG_INFO, "Reading of analog stick data failed: %s", netlib_get_error());
 #endif
         delete result;
+        
         return nullptr;
     }
-
     return result;
 }

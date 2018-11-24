@@ -36,6 +36,6 @@ private:
     /* Prevent drawing thread from accessing data while
      * hook threads write to it
      */
-    bool m_data_locked = false;
-    bool m_gamepad_data_locked = false;
+    volatile bool m_data_locked = false;
+    volatile bool m_gamepad_data_locked = false;
 };

@@ -70,6 +70,7 @@ namespace gamepad
             trigger_l = new_state->trigger_l;
             trigger_r = new_state->trigger_r;   
         }
+        printf("X: %.2f, Y: %.2f \n", stick_l_x, stick_l_y);
 #else   /* On linux old values should be kept and if needed overridden by new ones */
 
         /*TODO: implementation*/

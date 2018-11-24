@@ -9,6 +9,7 @@
 #include "util/element/element_button.hpp"
 #include "hook/gamepad_hook.hpp"
 #include "util/element/element_analog_stick.hpp"
+#include "util/element/element_trigger.hpp"
 
 namespace network
 {
@@ -63,7 +64,7 @@ namespace network
             uint16_t pad_buttons = 0;
             float stick_l_x, stick_l_y, stick_r_x, stick_r_y;
             
-            flag = netlib_read_uint8(buffer, &pad_id) && netlib_read_uint16(buffer, &pad_buttons);
+            flag = netlib_read_uint8(buffer, &pad_id) && netlib_read_uint16(buffer, &pad_buttons) && pad_id < 4;
             blog(LOG_INFO, "Gamepad data for %i with 0x%X buttons", pad_id, pad_buttons);
 
             if (flag)
@@ -75,11 +76,17 @@ namespace network
                         new element_data_button((pad_buttons & btn) > 0 ? STATE_PRESSED : STATE_RELEASED));
                 }
 
-                ///* Analog sticks are sent before triggers*/
-                //m_holder.add_gamepad_data(pad_id, VC_STICK_DATA,
-                //    element_data_analog_stick::from_buffer(buffer));
-                //m_holder.add_gamepad_data(pad_id, VC_TRIGGER_DATA,
-                //    element_data_trigger::from_buffer(buffer));
+                /* Analog sticks are sent before triggers*/
+                auto temp = element_data_analog_stick::from_buffer(buffer);
+                if (temp)
+                    temp->set_state((pad_buttons & xinput_fix::CODE_LEFT_THUMB) > 0 ? STATE_PRESSED : STATE_RELEASED,
+                        (pad_buttons & xinput_fix::CODE_RIGHT_THUMB) > 0 ? STATE_PRESSED : STATE_RELEASED);
+                m_holder.add_gamepad_data(pad_id, VC_STICK_DATA, temp);
+                
+                blog(LOG_INFO, "LEFT: %s, RIGHT: %s\n", temp->left_pressed() ? "YE" : "NE", temp->right_pressed() ? "YE" : "NE");
+
+                m_holder.add_gamepad_data(pad_id, VC_TRIGGER_DATA,
+                    element_data_trigger::from_buffer(buffer));
             }
             else
             {

@@ -18,8 +18,8 @@
 #include <Windows.h>
 #endif
 
-#define BUFFER_SIZE 5
-
+#define BUFFER_SIZE 90
+#define LISTEN_TIMEOUT 25
 enum message;
 
 namespace network
@@ -45,6 +45,8 @@ namespace network
         void get_clients(obs_property_t* prop, bool enable_local);
 		
         bool clients_changed() const;
+
+        void ping_clients();
 
 		/* Checks clients and removes them
 		 * if necessary

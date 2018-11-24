@@ -14,18 +14,21 @@
 /* Catch Application closing */
 void sig_int__handler(int signal)
 {
-    util::close_all();
+    network::network_loop = false;
+    gamepad::hook_run_flag = false;
 }
 void sig_break__handler(int signal)
 {
-    util::close_all();
+    network::network_loop = false;
+    gamepad::hook_run_flag = false;
 }
+
 
 int main(int argc, char **argv)
 {
     signal(SIGINT, &sig_int__handler);
     signal(SIGBREAK, &sig_break__handler);
-
+    
 	if (!network::init())
 		return util::RET_NETWORK_INIT;
 	

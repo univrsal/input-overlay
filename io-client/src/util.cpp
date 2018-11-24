@@ -253,6 +253,7 @@ namespace util
 		case MSG_NAME_INVALID:
 		case MSG_NAME_NOT_UNIQUE:
 		case MSG_SERVER_SHUTDOWN:
+        case MSG_PING_CLIENT:
 			return message(msg_id);
 		default:
 			printf("Received message with invalid id (%i).\n", msg_id);
@@ -271,14 +272,12 @@ namespace util
     void to_bits(size_t const size, void const* const ptr)
     {
         const auto b = (unsigned char*)ptr;
-        unsigned char byte;
-        int i, j;
 
-        for (i = size - 1; i >= 0; i--)
+        for (int i = size - 1; i >= 0; i--)
         {
-            for (j = 7; j >= 0; j--)
+            for (auto j = 7; j >= 0; j--)
             {
-                byte = (b[i] >> j) & 1;
+                const unsigned char byte = (b[i] >> j) & 1;
                 printf("%u", byte);
             }
         }
