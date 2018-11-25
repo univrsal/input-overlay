@@ -23,7 +23,7 @@ void AtlasSelector::close()
 void AtlasSelector::init(Dialog* parent, const SDL_Rect dim, const int8_t id)
 {
     GuiElement::init(parent, dim, id);
-    m_cs = new CoordinateSystem(SDL_Point{90, 90}, m_dimensions, get_helper());
+    m_cs = new CoordinateSystem(SDL_Point{X_AXIS, Y_AXIS}, m_dimensions, get_helper());
     m_cs->enable_border();
     m_cs->enable_crosshair();
 }

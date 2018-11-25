@@ -45,19 +45,23 @@ public:
         m_parent_dialog->action_performed(ACTION_COMBO_ITEM_SELECTED);
     }
 
+    void toggle_list();
+
     bool can_select() override;
 
     void select_state(bool state) override;
 
     bool handle_events(SDL_Event* event, bool was_handled) override;
 
-    bool is_mouse_over_list(const int& x, const int& y) const;
+    bool is_mouse_over_list(const SDL_Point* p = nullptr) const;
 
-    bool is_mouse_over(const int& x, const int& y) override;
+    bool is_mouse_over(const SDL_Point* p = nullptr) override;
 
     void cycle_up(bool select);
 
     void cycle_down(bool select);
+
+    void resize() override;
 private:
     std::vector<std::string> m_items;
     SDL_Rect m_item_box;

@@ -27,9 +27,9 @@ namespace gamepad
             button_states = pad->wButtons;
             
             stick_l_x = pad->sThumbLX / STICK_MAX_VAL;
-            stick_l_y = pad->sThumbLY / STICK_MAX_VAL;
+            stick_l_y = pad->sThumbLY / STICK_MAX_VAL * (-1.f); /* The y values are inverted */
             stick_r_x = pad->sThumbRX / STICK_MAX_VAL;
-            stick_r_y = pad->sThumbRY / STICK_MAX_VAL;
+            stick_r_y = pad->sThumbRY / STICK_MAX_VAL * (-1.f);
 
             /* Both linux and windows use one byte for these */
             trigger_l = pad->bLeftTrigger;
@@ -70,7 +70,7 @@ namespace gamepad
             trigger_l = new_state->trigger_l;
             trigger_r = new_state->trigger_r;   
         }
-        printf("X: %.2f, Y: %.2f \n", stick_l_x, stick_l_y);
+
 #else   /* On linux old values should be kept and if needed overridden by new ones */
 
         /*TODO: implementation*/

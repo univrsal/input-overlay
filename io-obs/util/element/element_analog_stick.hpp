@@ -28,16 +28,18 @@ class element_data_analog_stick : public element_data
 {
 public:
     element_data_analog_stick()
-        : element_data(BUTTON)
+        : element_data(BUTTON), m_left_stick(), m_right_stick(),
+        m_left_state(), m_right_state()
     {
         m_data_type = BOTH;
     }
+
     /*
         Separate constructors are used on linux
         because the values can't be queried together
     */
     element_data_analog_stick(const button_state state, const element_side side)
-        : element_data(BUTTON)
+        : element_data(BUTTON), m_left_stick(), m_right_stick()
     {
         if (side == SIDE_LEFT)
         {
@@ -52,7 +54,7 @@ public:
     }
 
     element_data_analog_stick(const float axis_value, const stick_data_type data_type)
-        : element_data(BUTTON)
+        : element_data(BUTTON), m_left_state(), m_right_state()
     {
         switch (data_type)
         {
@@ -113,7 +115,7 @@ public:
 
     static element_data_analog_stick* from_buffer(netlib_byte_buf* buffer);
 private:
-    vec2 m_left_stick, m_right_stick;
+    vec2 m_left_stick{}, m_right_stick{};
     stick_data_type m_data_type;
     button_state m_left_state, m_right_state;
 };
@@ -121,9 +123,9 @@ private:
 class element_analog_stick : public element_texture
 {
 public:
-    element_analog_stick() : element_texture(BUTTON)
+    element_analog_stick() : element_texture(BUTTON), m_side()
     {
-    };
+    }
 
     void load(ccl_config* cfg, const std::string& id) override;
 
@@ -133,7 +135,7 @@ public:
     data_source get_source() override { return GAMEPAD; }
 private:
     void calc_position(vec2* v, element_data_analog_stick* d, sources::shared_settings* settings) const;
-    gs_rect m_pressed;
+    gs_rect m_pressed{};
     element_side m_side;
     uint8_t m_radius = 0;
 };

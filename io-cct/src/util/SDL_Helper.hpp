@@ -71,7 +71,7 @@ public:
     void util_fill_rect(const SDL_Rect* rect, const SDL_Color* color, uint8_t alpha) const;
 
     static bool util_is_in_rect(const SDL_Rect* rect, int x, int y);
-    bool util_mouse_in_rect(const SDL_Rect* rect) const;
+    bool util_mouse_in_rect(const SDL_Rect* rect);
 
     void util_text(const std::string* text, int x, int y, const SDL_Color* color,
                    uint8_t font = FONT_WSTRING) const;
@@ -92,7 +92,7 @@ public:
     uint8_t util_default_text_height() const;
     uint8_t util_font_height(uint8_t font) const;
     
-    static void util_open_url(std::string ur);
+    static void util_open_url(std::string url);
 
     template <typename ... Args>
     static std::string format(const char* format, Args ... args);
@@ -158,18 +158,18 @@ private:
             return m_large_font;
         default:
         case FONT_WSTRING:
-            return m_wstring_font;
+            return m_default_font;
         }
     }
 
 
-    SDL_Point m_window_size = {};
-    SDL_Point m_mouse_pos = {};
-    SDL_Renderer* m_sdl_renderer = nullptr;
-    SDL_Window* m_sdl_window = nullptr;
+    SDL_Point m_window_size;
+    SDL_Point m_mouse_pos;
+    SDL_Renderer* m_sdl_renderer;
+    SDL_Window* m_sdl_window;
 
     TTF_Font* m_large_font = nullptr;
-    TTF_Font* m_wstring_font = nullptr;
+    TTF_Font* m_default_font = nullptr;
 
     uint8_t m_large_font_height = 0;
     uint8_t m_wstring_font_height = 0;

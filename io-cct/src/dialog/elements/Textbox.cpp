@@ -87,7 +87,7 @@ bool Textbox::handle_events(SDL_Event* event, const bool was_handled)
         /* Handle focus */
         if (!was_handled && event->button.button == SDL_BUTTON_LEFT)
         {
-            m_focused = is_mouse_over(event->button.x, event->button.y);
+            m_focused = is_mouse_over();
             if (m_focused)
             {
                 m_alert = false;

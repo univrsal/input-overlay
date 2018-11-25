@@ -14,8 +14,7 @@
 #include "../../ccl/ccl.hpp"
 #include "element/ElementAnalogStick.hpp"
 
-#define X_AXIS 100
-#define Y_AXIS 100
+
 
 Config::Config(const char* texture, const char* config, const SDL_Point def_dim, const SDL_Point space, SDL_Helper* h,
                DialogElementSettings* s)

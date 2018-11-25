@@ -50,14 +50,11 @@ void Combobox::draw_foreground()
     if (m_list_open)
     {
         uint16_t y = get_bottom() + ITEM_V_SPACE;
-        SDL_Rect temp = {
-            get_left(), get_bottom() - 1, get_width(),
-            ((int)m_items.size()) * m_item_v_space + ITEM_V_SPACE
-        };
 
-        get_helper()->util_fill_rect(&temp, get_helper()->palette()->gray());
-        get_helper()->util_draw_rect(&temp, get_helper()->palette()->light_gray());
-
+        get_helper()->util_fill_rect(&m_item_box, get_helper()->palette()->gray());
+        get_helper()->util_draw_rect(&m_item_box, get_helper()->palette()->light_gray());
+        
+        auto temp = m_item_box;
         temp.y = get_bottom() + ITEM_V_SPACE + m_hovered_id * m_item_v_space;
         temp.h = get_helper()->util_default_text_height();
         get_helper()->util_fill_rect(&temp, get_helper()->palette()->light_gray());
@@ -68,6 +65,12 @@ void Combobox::draw_foreground()
             y += m_item_v_space;
         }
     }
+}
+
+void Combobox::toggle_list()
+{
+    m_list_open = !m_list_open;
+    resize();
 }
 
 bool Combobox::can_select()
@@ -88,8 +91,8 @@ bool Combobox::handle_events(SDL_Event* event, const bool was_handled)
         /* Handle focus */
         if (event->button.button == SDL_BUTTON_LEFT)
         {
-            m_focused = is_mouse_over(event->button.x, event->button.y);
-            if (is_mouse_over_list(event->button.x, event->button.y))
+            m_focused = is_mouse_over();
+            if (is_mouse_over_list())
             {
                 select_item(m_hovered_id);
                 handled = true;
@@ -98,7 +101,7 @@ bool Combobox::handle_events(SDL_Event* event, const bool was_handled)
             if (m_focused)
             {
                 handled = true;
-                m_list_open = !m_list_open;
+                toggle_list();
                 m_parent_dialog->change_focus(m_element_id);
                 m_hovered_id = 0;
             }
@@ -144,7 +147,7 @@ bool Combobox::handle_events(SDL_Event* event, const bool was_handled)
             if (m_list_open)
                 select_item(m_hovered_id);
 
-            m_list_open = !m_list_open;
+            toggle_list();
             m_hovered_id = 0;
         }
         else if (m_list_open || m_focused)
@@ -159,14 +162,16 @@ bool Combobox::handle_events(SDL_Event* event, const bool was_handled)
     return handled;
 }
 
-bool Combobox::is_mouse_over_list(const int& x, const int& y) const
+bool Combobox::is_mouse_over_list(const SDL_Point* p) const
 {
-    return m_list_open && SDL_Helper::util_is_in_rect(&m_item_box, x, y);
+    if (!p)
+        p = m_parent_dialog->helper()->util_mouse_pos();
+    return m_list_open && SDL_Helper::util_is_in_rect(&m_item_box, p->x, p->y);
 }
 
-bool Combobox::is_mouse_over(const int& x, const int& y)
+bool Combobox::is_mouse_over(const SDL_Point* p)
 {
-    return GuiElement::is_mouse_over(x, y) || is_mouse_over_list(x, y);
+    return GuiElement::is_mouse_over(p) || is_mouse_over_list(p);
 }
 
 void Combobox::cycle_up(const bool select)
@@ -187,4 +192,13 @@ void Combobox::cycle_down(const bool select)
         m_hovered_id++;
     if (select)
         select_item(m_hovered_id);
+}
+
+void Combobox::resize()
+{
+    m_item_box =
+    {
+        get_left(), get_bottom() - 1, get_width(),
+        int(m_items.size()) * m_item_v_space + ITEM_V_SPACE
+    };
 }

@@ -132,6 +132,7 @@ public:
     SDL_Rect get_dimensions() const {
         return m_dimensions;
     }
+    
     SDL_Helper* get_helper() const {
         return m_helper;
     }
@@ -198,4 +199,5 @@ private:
     bool m_dragging = false;
     bool m_border = false; /* Used inside dialogs */
     bool m_crosshair = false;
+    bool m_mouse_over = false;
 };

@@ -190,6 +190,9 @@ bool Dialog::handle_events(SDL_Event* event)
             }
 
             m_title_bar = {m_dimensions.x + 5, m_dimensions.y + 5, m_dimensions.w - 10, 20};
+            
+            for (const auto& element : m_screen_elements)
+                element->resize();
         }
     }
     else if (event->type == SDL_KEYDOWN)
@@ -215,7 +218,6 @@ bool Dialog::handle_events(SDL_Event* event)
 
     auto cursor_handled = false;
     auto element_handled = false;
-    
 
     if (m_focused_element)
     {

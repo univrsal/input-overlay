@@ -112,7 +112,7 @@ bool Button::handle_events(SDL_Event* event, bool was_handled)
         }
         else if (event->type == SDL_MOUSEMOTION)
         {
-            m_hovered = is_mouse_over(event->button.x, event->button.y);
+            m_hovered = is_mouse_over();
             if (event->motion.state & SDL_BUTTON_LMASK)
             {
                 if (m_hovered)

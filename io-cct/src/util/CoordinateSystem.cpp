@@ -10,12 +10,12 @@
 bool CoordinateSystem::handle_events(SDL_Event* e)
 {
     auto was_handled = false;
-
+    
     if (e->type == SDL_MOUSEBUTTONDOWN)
     {
         if (e->button.button == SDL_BUTTON_RIGHT)
         {
-            if (m_helper->util_mouse_in_rect(&m_system_area))
+            if (m_mouse_over)
             {
                 m_drag_offset = {
                     e->button.x - m_origin.x,
@@ -27,7 +27,7 @@ bool CoordinateSystem::handle_events(SDL_Event* e)
         }
         else if (e->button.button == SDL_BUTTON_LEFT && m_selection)
         {
-            if (m_helper->util_mouse_in_rect(&m_system_area))
+            if (m_mouse_over)
             {
                 if (SDL_RectEmpty(m_selection))
                 {
@@ -60,6 +60,8 @@ bool CoordinateSystem::handle_events(SDL_Event* e)
     }
     else if (e->type == SDL_MOUSEMOTION)
     {
+        m_mouse_over =m_helper->util_mouse_in_rect(&m_system_area);
+
         if (m_dragging && (e->motion.state & SDL_BUTTON_RMASK))
         {
             m_origin.x = UTIL_MIN(e->button.x - m_drag_offset.x, get_origin_left());
@@ -109,8 +111,15 @@ bool CoordinateSystem::handle_events(SDL_Event* e)
             mouse_state(e);
         }
     }
-    else if (e->type == SDL_MOUSEWHEEL)
+    else if (e->type == SDL_MOUSEWHEEL && m_mouse_over)
     {
+        auto mouse = *m_helper->util_mouse_pos();
+        mouse.x -= get_origin_left();
+        mouse.y -= get_origin_top();
+
+        SDL_Point old_scale = { mouse.x * m_scale_f + m_origin.x,
+            mouse.y * m_scale_f + m_origin.y };
+
         if (e->wheel.y > 0) /* TRIGGER_UP */
         {
             m_scale_f = UTIL_MIN(++m_scale_f, 8);
@@ -119,10 +128,20 @@ bool CoordinateSystem::handle_events(SDL_Event* e)
         {
             m_scale_f = UTIL_MAX(--m_scale_f, 1);
         }
+        //mouse = { e->button.x, e->button.y };
+        // translate(mouse.x, mouse.y);
+        SDL_Point new_scale = { mouse.x * m_scale_f + m_origin.x,
+            mouse.y * m_scale_f + m_origin.y };
+        
+        /* Move origin so the original center stays centered */
+        printf("X: %i, Y: %i\n", old_scale.x, old_scale.y);
+
+        //m_origin.x += (new_scale.x - old_scale.x);
+        //m_origin.y += (new_scale.y - old_scale.y);
 
         m_origin.x = UTIL_MIN(m_origin.x, get_origin_left());
-        m_origin.y = UTIL_MIN(m_origin.y, get_origin_top());;
-
+        m_origin.y = UTIL_MIN(m_origin.y, get_origin_top());
+        
         m_selecting = false;
         m_sizing = false;
         was_handled = true;

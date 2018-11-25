@@ -89,7 +89,7 @@ bool Checkbox::handle_events(SDL_Event* event, bool was_handled)
     auto handled = false;
     if (event->type == SDL_MOUSEBUTTONDOWN)
     {
-        if (event->button.button == SDL_BUTTON_LEFT && is_mouse_over(event->button.x, event->button.y))
+        if (event->button.button == SDL_BUTTON_LEFT && is_mouse_over())
         {
             handled = true;
             m_state = !m_state;

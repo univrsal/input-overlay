@@ -49,7 +49,7 @@ bool SDL_Helper::init()
         m_sdl_renderer = SDL_CreateRenderer(m_sdl_window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
         /* Window icon */
-        const std::string windows = "Windows";
+        static const std::string windows = "Windows";
         if (windows != SDL_GetPlatform()) /* Windows gets the icon from the exe */
         {
             m_windows = false;
@@ -87,9 +87,9 @@ bool SDL_Helper::init()
     else
     {
         m_large_font = TTF_OpenFont(PATH_UNICODE_FONT, FONT_LARGE);
-        m_wstring_font = TTF_OpenFont(PATH_UNICODE_FONT, FONT_DEFAULT);
+        m_default_font = TTF_OpenFont(PATH_UNICODE_FONT, FONT_DEFAULT);
 
-        if (!m_wstring_font)
+        if (!m_default_font)
         {
             printf(SDL_FONT_LOADING_FAILED);
             m_init_success = false;
@@ -98,7 +98,7 @@ bool SDL_Helper::init()
         {
             m_font_helper = new FontHelper(this);
             m_large_font_height = TTF_FontHeight(m_large_font);
-            m_wstring_font_height = TTF_FontHeight(m_wstring_font);
+            m_wstring_font_height = TTF_FontHeight(m_default_font);
 
             /* Cursors */
             m_size_h = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZEWE);
@@ -124,13 +124,13 @@ void SDL_Helper::close()
     SDL_DestroyRenderer(m_sdl_renderer);
     SDL_DestroyWindow(m_sdl_window);
 
-    if (m_wstring_font)
-        TTF_CloseFont(m_wstring_font);
+    if (m_default_font)
+        TTF_CloseFont(m_default_font);
     if (m_large_font)
         TTF_CloseFont(m_large_font);
 
     m_large_font = nullptr;
-    m_wstring_font = nullptr;
+    m_default_font = nullptr;
 
     TTF_Quit();
     SDL_Quit();
@@ -246,7 +246,7 @@ bool SDL_Helper::util_is_in_rect(const SDL_Rect* rect, const int x, const int y)
     return x >= rect->x && x <= (rect->x + rect->w) && y >= rect->y && y <= (rect->y + rect->h);
 }
 
-bool SDL_Helper::util_mouse_in_rect(const SDL_Rect * rect) const
+bool SDL_Helper::util_mouse_in_rect(const SDL_Rect * rect)
 {
     return SDL_PointInRect(&m_mouse_pos, rect);
 }
@@ -321,7 +321,7 @@ void SDL_Helper::util_open_url(std::string url)
     }
 
     auto result = 0;
-#ifdef WINDOWS
+#ifdef _WIN32
         result = system(("start " + url).c_str());
 #else
     result = system(("xdg-open " + url + "& disown").c_str());

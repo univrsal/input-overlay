@@ -14,6 +14,10 @@
 #define SDL_WINDOW_TPF                  (1000 / SDL_WINDOW_FPS)
 #define SDL_WINDOW_TITLE                "io-cct"
 
+/* 0/0 for coordinate systems */
+#define X_AXIS 110
+#define Y_AXIS 110
+
 /* Resources */
 #define PATH_UNICODE_FONT               "res/unifont.ttf"
 #define PATH_TRANSLATIONS               "res/lang"

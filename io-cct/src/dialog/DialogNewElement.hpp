@@ -106,7 +106,7 @@ private:
 
     uint16_t m_element_y = 0; /* Y position of the lowest gui element */
     static const uint16_t panel_w = 254;
-    uint16_t m_id = 1;
+    uint8_t m_id = 1;
 
     AtlasSelector* m_selector = nullptr;
     Tool* m_tool = nullptr;

@@ -55,8 +55,6 @@ public:
 
     virtual void refresh(); /* Update localization */
 
-    virtual bool is_mouse_over(const int& x, const int& y);
-
     virtual bool is_mouse_over(const SDL_Point* p = nullptr);
 
     virtual void set_pos(int x, int y);
