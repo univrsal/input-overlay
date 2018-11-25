@@ -30,6 +30,7 @@ public:
     element_data_analog_stick()
         : element_data(BUTTON)
     {
+        m_data_type = BOTH;
     }
     /*
         Separate constructors are used on linux
