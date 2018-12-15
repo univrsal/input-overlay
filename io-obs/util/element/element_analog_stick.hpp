@@ -13,13 +13,13 @@
 
 enum stick_data_type
 {
-    BOTH,
-    PRESSED_STATE_LEFT,
+    SD_BOTH,
+    SD_PRESSED_STATE_LEFT,
     PRESSED_STATE_RIGHT,
-    STICK_STATE_LEFT_X,
-    STICK_STATE_LEFT_Y,
-    STICK_STATE_RIGHT_X,
-    STICK_STATE_RIGHT_Y
+    SD_STICK_STATE_LEFT_X,
+    SD_LEFT_Y,
+    SD_RIGHT_X,
+    SD_RIGHT_Y
 };
 
 /* Contains data for both analog sticks
@@ -31,7 +31,7 @@ public:
         : element_data(BUTTON), m_left_stick(), m_right_stick(),
         m_left_state(), m_right_state()
     {
-        m_data_type = BOTH;
+        m_data_type = SD_BOTH;
     }
 
     /*
@@ -44,7 +44,7 @@ public:
         if (side == SIDE_LEFT)
         {
             m_left_state = state;
-            m_data_type = PRESSED_STATE_LEFT;
+            m_data_type = SD_PRESSED_STATE_LEFT;
         }
         else
         {
@@ -58,16 +58,16 @@ public:
     {
         switch (data_type)
         {
-        case STICK_STATE_LEFT_X:
+        case SD_STICK_STATE_LEFT_X:
             m_left_stick = {axis_value, -1};
             break;
-        case STICK_STATE_LEFT_Y:
+        case SD_LEFT_Y:
             m_left_stick = {-1, axis_value};
             break;
-        case STICK_STATE_RIGHT_X:
+        case SD_RIGHT_X:
             m_right_stick = {axis_value, -1};
             break;
-        case STICK_STATE_RIGHT_Y:
+        case SD_RIGHT_Y:
             m_right_stick = {-1, axis_value};
             break;
         default: ;
@@ -84,7 +84,7 @@ public:
         m_right_stick = {r_x, r_y};
         m_left_state = left;
         m_right_state = right;
-        m_data_type = BOTH;
+        m_data_type = SD_BOTH;
     }
 
     bool left_pressed() const
@@ -116,14 +116,14 @@ public:
     static element_data_analog_stick* from_buffer(netlib_byte_buf* buffer);
 private:
     vec2 m_left_stick{}, m_right_stick{};
-    stick_data_type m_data_type;
+    stick_data_type m_data_type = SD_BOTH;
     button_state m_left_state, m_right_state;
 };
 
 class element_analog_stick : public element_texture
 {
 public:
-    element_analog_stick() : element_texture(BUTTON), m_side()
+    element_analog_stick() : element_texture(ANALOG_STICK), m_side()
     {
     }
 

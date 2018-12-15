@@ -12,7 +12,7 @@
 #include "util/layout_constants.hpp"
 
 element_trigger::element_trigger()
-    : element_texture(BUTTON)
+    : element_texture(TRIGGER)
 {
 };
 

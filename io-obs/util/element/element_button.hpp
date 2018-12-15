@@ -24,6 +24,9 @@ public:
     {
         return m_state;
     }
+
+    void merge(element_data* other) override;
+
 	static element_data_button* from_buffer(netlib_byte_buf* buffer);
 private:
     button_state m_state;

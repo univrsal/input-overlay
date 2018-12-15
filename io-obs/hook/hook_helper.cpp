@@ -262,7 +262,8 @@ namespace hook
                 new element_data_button(STATE_PRESSED));
             break;
         case EVENT_KEY_RELEASED:
-            input_data->remove_data(event->data.keyboard.keycode);
+            input_data->add_data(event->data.keyboard.keycode,
+                new element_data_button(STATE_RELEASED)); /* TODO: used to be remove_data */
             break;
         case EVENT_MOUSE_PRESSED:
             if (event->data.mouse.button == MOUSE_BUTTON3)

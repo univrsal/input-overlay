@@ -32,6 +32,7 @@ public:
     std::map<uint16_t, std::unique_ptr<element_data>> m_data;
     std::map<uint16_t, std::unique_ptr<element_data>> m_gamepad_data[4];
 
+    bool is_blocked() const;
 private:
     /* Prevent drawing thread from accessing data while
      * hook threads write to it

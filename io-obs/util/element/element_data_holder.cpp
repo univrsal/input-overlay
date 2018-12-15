@@ -35,6 +35,11 @@ bool element_data_holder::is_empty() const
     return (m_map_cleared || m_data.empty()) && flag;
 }
 
+bool element_data_holder::is_blocked() const
+{
+    return m_data_locked || m_gamepad_data_locked;
+}
+
 void element_data_holder::add_data(const uint16_t keycode, element_data* data)
 {
 #ifdef _DEBUG
@@ -100,7 +105,7 @@ void element_data_holder::remove_gamepad_data(const uint8_t gamepad, const uint1
     m_gamepad_data_locked = true;
     if (gamepad_data_exists(gamepad, keycode))
     {
-        m_gamepad_data[gamepad][keycode].reset(nullptr);
+        m_gamepad_data[gamepad][keycode].reset();
         m_gamepad_data[gamepad].erase(keycode);
     }
     m_gamepad_data_locked = false;
@@ -130,7 +135,7 @@ void element_data_holder::remove_data(const uint16_t keycode)
     m_data_locked = true;
     if (data_exists(keycode))
     {
-        m_data[keycode].reset(nullptr);
+        m_data[keycode].reset();
         m_data.erase(keycode);
     }
     m_data_locked = false;

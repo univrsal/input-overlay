@@ -35,7 +35,10 @@ namespace sources
 
     inline void input_source::tick(float seconds)
     {
-        /* NO-OP */
+        if (m_overlay->is_loaded())
+        {
+            m_overlay->refresh_data();
+        }
     }
 
     inline void input_source::render(gs_effect_t* effect) const

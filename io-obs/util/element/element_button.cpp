@@ -9,6 +9,18 @@
 #include "element_button.hpp"
 #include "../../../ccl/ccl.hpp"
 
+void element_data_button::merge(element_data* other)
+{
+    if (other && other->get_type() == BUTTON)
+    {
+        const auto other_btn = dynamic_cast<element_data_button*>(other);
+        if (other_btn)
+        {
+            m_state = other_btn->m_state;
+        }
+    }
+}
+
 element_data_button* element_data_button::from_buffer(netlib_byte_buf* buffer)
 {
 	uint8_t state = 0;

@@ -54,7 +54,7 @@ namespace sources
         ~input_source() = default;
 
         inline void update(obs_data_t* settings);
-        static inline void tick(float seconds);
+        inline void tick(float seconds);
         inline void render(gs_effect_t* effect) const;
     };
 

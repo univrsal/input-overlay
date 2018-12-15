@@ -90,28 +90,28 @@ void element_data_analog_stick::merge(element_data* other)
         {
             switch (other_stick->m_data_type)
             {
-            case BOTH:
+            case SD_BOTH:
                 m_left_stick = other_stick->m_left_stick;
                 m_right_stick = other_stick->m_right_stick;
                 m_left_state = other_stick->m_left_state;
                 m_right_state = other_stick->m_right_state;
                 break;
-            case PRESSED_STATE_LEFT:
+            case SD_PRESSED_STATE_LEFT:
                 m_left_state = other_stick->m_left_state;
                 break;
             case PRESSED_STATE_RIGHT:
                 m_right_state = other_stick->m_right_state;
                 break;
-            case STICK_STATE_LEFT_X:
+            case SD_STICK_STATE_LEFT_X:
                 m_left_stick.x = other_stick->m_left_stick.x;
                 break;
-            case STICK_STATE_LEFT_Y:
+            case SD_LEFT_Y:
                 m_left_stick.y = other_stick->m_left_stick.y;
                 break;
-            case STICK_STATE_RIGHT_X:
+            case SD_RIGHT_X:
                 m_right_stick.x = other_stick->m_right_stick.x;
                 break;
-            case STICK_STATE_RIGHT_Y:
+            case SD_RIGHT_Y:
                 m_right_stick.y = other_stick->m_right_stick.y;
                 break;
             default: ;

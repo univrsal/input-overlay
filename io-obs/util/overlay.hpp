@@ -12,11 +12,13 @@
 #endif
 #include <memory>
 #include <vector>
+#include <map>
 #include "element/element.hpp"
 
 #include "../hook/hook_helper.hpp"
 
 class ccl_config;
+class element_data;
 
 typedef struct gs_image_file gs_image_file_t;
 
@@ -36,6 +38,8 @@ public:
     void unload();
 
     void draw(gs_effect_t* effect);
+
+    void refresh_data();
 
     bool is_loaded() const
     {
@@ -62,6 +66,7 @@ private:
 
     bool m_is_loaded = false;
     std::vector<std::unique_ptr<element>> m_elements;
+    std::map<uint16_t, std::unique_ptr<element_data>> m_data;
 
     uint16_t m_track_radius{};
     uint16_t m_max_mouse_movement{};

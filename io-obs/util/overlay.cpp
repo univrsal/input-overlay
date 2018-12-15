@@ -65,6 +65,7 @@ void overlay::unload()
 {
     unload_texture();
     unload_elements();
+    m_data.clear();
     m_settings->gamepad = 0;
     m_settings->cx = 100;
     m_settings->cy = 100;
@@ -110,6 +111,38 @@ bool overlay::load_cfg()
         {
             blog(LOG_WARNING, "Fatal errors occured while loading config file");
             flag = false;
+        }
+        else
+        {
+            /* Populate data map */
+            for (auto const& element : m_elements)
+            {
+                element_data* data = nullptr;
+                element_data_button* btn = nullptr;
+                switch (element->get_type())
+                {
+                case BUTTON:
+                    btn = new element_data_button(STATE_RELEASED);
+                    m_data[element->get_keycode()] = std::unique_ptr<element_data>(btn);
+                    break;
+                case MOUSE_SCROLLWHEEL:
+                    data = new element_data_wheel(STATE_RELEASED);
+                    break;
+                case TRIGGER:
+                    data = new element_data_trigger(0.f, 0.f);
+                    break;
+                case ANALOG_STICK:
+                    data = new element_data_analog_stick(STATE_RELEASED, STATE_RELEASED, 0.f, 0.f, 0.f, 0.f);
+                    break;
+                case DPAD_STICK:
+                    data = new element_data_dpad(DPAD_LEFT, STATE_RELEASED);
+                    break;
+                default:;
+                }
+
+                if (data)
+                    m_data[element->get_keycode()] = std::unique_ptr<element_data>(data);
+            }
         }
     }
     delete cfg;
@@ -164,40 +197,63 @@ void overlay::draw(gs_effect_t* effect)
 {
     if (m_is_loaded)
     {
-        element_data_holder* source = nullptr;
-        if (hook::data_initialized || network::network_flag)
+        for (auto const& element : m_elements)
         {
-            if (m_settings->selected_source == 0)
-            {
-                source = hook::input_data;
-            }
-            else if (network::server_instance)
-            {
-                source = network::server_instance->
-                    get_client(m_settings->selected_source - 1)->get_data();
-            }
+            const auto data = m_data[element->get_keycode()].get();
+            element->draw(effect, m_image, data, m_settings);
         }
+    }
+}
 
+void overlay::refresh_data()
+{
+    /* This copies over necessary element data information
+     * to make sure the overlay always has data available to
+     * draw the overlay. If the data was directly accessed in the render
+     * method, the overlay can start to flicker if the frame is rendered
+     * while the data is currently inaccessible, because it is being written
+     * to by the input thread, resulting in all buttons being unpressed
+     */
+
+    element_data_holder* source = nullptr;
+    if (hook::data_initialized || network::network_flag)
+    {
+        if (network::server_instance && m_settings->selected_source > 0)
+        {
+            source = network::server_instance->
+                get_client(m_settings->selected_source - 1)->get_data();
+        }
+        else
+        {
+            source = hook::input_data;
+        }
+    }
+
+    if (source && !source->is_blocked())
+    {
         for (auto const& element : m_elements)
         {
             element_data* data = nullptr;
-          	
+
             if (source)
             {
-				switch (element->get_source())
-				{
-				case GAMEPAD:
-					data = source->get_by_gamepad(m_settings->gamepad,
-						element->get_keycode());
-					break;
-				case DEFAULT:
-					data = source->get_by_code(element->get_keycode());
-					break;
-				default:;
-				}
+                switch (element->get_source())
+                {
+                case GAMEPAD:
+                    data = source->get_by_gamepad(m_settings->gamepad,
+                        element->get_keycode());
+                    break;
+                case DEFAULT:
+                    data = source->get_by_code(element->get_keycode());
+                    break;
+                default:;
+                }
             }
-            
-            element->draw(effect, m_image, data, m_settings);
+
+            if (data && m_data[element->get_keycode()] != nullptr)
+            {
+                m_data[element->get_keycode()]->merge(data);
+            }
         }
     }
 }
@@ -206,6 +262,7 @@ void overlay::load_element(ccl_config* cfg, const std::string& id, const bool de
 {
     const auto type = cfg->get_int(id + CFG_TYPE);
     element* new_element = nullptr;
+
     switch (type)
     {
     case TEXTURE:
@@ -251,6 +308,7 @@ void overlay::load_element(ccl_config* cfg, const std::string& id, const bool de
         }
     }
 }
+
 
 const char* overlay::element_type_to_string(const element_type t)
 {

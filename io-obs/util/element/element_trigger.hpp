@@ -46,7 +46,7 @@ public:
     static element_data_trigger* from_buffer(netlib_byte_buf* buffer);
 
 private:
-    trigger_data_type m_data_type = T_DATA_NONE;
+    trigger_data_type m_data_type = T_DATA_BOTH;
     float m_left_trigger = 0.f, m_right_trigger = 0.f;
 };
 
