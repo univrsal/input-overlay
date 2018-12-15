@@ -29,7 +29,6 @@ void Textbox::close()
 {
     GuiElement::close();
     m_cut_text.clear();
-    m_focused = false;
 }
 
 void Textbox::draw_foreground()
@@ -40,7 +39,7 @@ void Textbox::draw_foreground()
 void Textbox::draw_background()
 {
     get_helper()->util_fill_rect(get_dimensions(), get_helper()->palette()->gray());
-    if (m_focused)
+    if (m_flags & ELEMENT_FOCUSED)
     {
         get_helper()->util_draw_rect(get_dimensions(), get_helper()->palette()->light_gray());
     }
@@ -72,7 +71,7 @@ void Textbox::draw_background()
         cursor_pos += get_helper()->util_text_dim(&m_composition, FONT_WSTRING).w;
     }
 
-    if (m_focused)
+    if (m_flags & ELEMENT_FOCUSED)
     {
         SDL_Rect temp = {cursor_pos, get_top() + 2, 2, get_dimensions()->h - 4};
         get_helper()->util_fill_rect(&temp, get_helper()->palette()->white());
@@ -87,8 +86,9 @@ bool Textbox::handle_events(SDL_Event* event, const bool was_handled)
         /* Handle focus */
         if (!was_handled && event->button.button == SDL_BUTTON_LEFT)
         {
-            m_focused = is_mouse_over();
-            if (m_focused)
+            SDL_Helper::util_set_flag(m_flags, ELEMENT_FOCUSED, is_mouse_over());
+            
+            if (m_flags & ELEMENT_FOCUSED)
             {
                 m_alert = false;
                 SDL_SetTextInputRect(get_dimensions());
@@ -102,7 +102,7 @@ bool Textbox::handle_events(SDL_Event* event, const bool was_handled)
             }
         }
     }
-    else if (m_focused)
+    else if (m_flags & ELEMENT_FOCUSED)
     {
         if (event->type == SDL_KEYDOWN)
         {
@@ -194,7 +194,7 @@ bool Textbox::can_select()
 
 void Textbox::select_state(const bool state)
 {
-    m_focused = state;
+    SDL_Helper::util_set_flag(m_flags, ELEMENT_FOCUSED, state);
     if (!state)
         get_text(); /* Reset if empty */
 }

@@ -149,6 +149,14 @@ public:
     void end_frame();
     void cap_frame() const;
     float util_get_fps() const;
+
+    static void util_set_flag(uint16_t& flags, const uint16_t mask, const bool state)
+    {
+        if (state)
+            flags |= mask;
+        else
+            flags &= ~mask;
+    }
 private:
     TTF_Font* get_font(const uint8_t type) const
     {

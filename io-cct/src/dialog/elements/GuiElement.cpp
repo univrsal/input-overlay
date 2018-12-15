@@ -11,7 +11,7 @@
 
 GuiElement::~GuiElement()
 {
-    close();
+    GuiElement::close();
     m_parent_dialog = nullptr;
 }
 
@@ -95,7 +95,7 @@ uint8_t GuiElement::get_cursor()
     return CURSOR_ARROW;
 }
 
-void GuiElement::set_flags(const uint8_t flags)
+void GuiElement::set_flags(const uint16_t flags)
 {
     m_flags = flags;
 }

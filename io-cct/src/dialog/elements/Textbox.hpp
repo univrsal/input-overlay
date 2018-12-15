@@ -11,15 +11,6 @@
 #include "../Dialog.hpp"
 #include <string>
 
-#define TEXTBOX_NUMERIC 1 << 0
-#define TEXTBOX_HEX 1 << 1
-#define TEXTBOX_NO_SPACE 1 << 2
-#define TEXTBOX_KEYBIND 1 << 3
-#define TEXTBOX_DROP_FILE 1 << 4
-#define TEXTBOX_ALPHA_NUMERIC 1 << 5
-
-#define ACTION_FILE_DROPPED -20
-
 class Dialog;
 
 class GuiElement;
@@ -78,5 +69,4 @@ private:
     std::string m_cut_text;
     uint8_t m_cut_off = 38;
     bool m_alert = false;
-    bool m_focused = false;
 };

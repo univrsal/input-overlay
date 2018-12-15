@@ -11,12 +11,23 @@
 
 #define DEBUG_DRAW_OUTLINE 0
 
-#define ELEMENT_ABSOLUTE_POSITION 1 << 10 /* Element will not align to parent dialog position */
-#define ELEMENT_UNLOCALIZED 1 << 11 /* The element will not look up localized strings */
-
 class Dialog;
 
 class SDL_Helper;
+
+enum element_flags
+{
+    TEXTBOX_NUMERIC = 1 << 0,
+    TEXTBOX_HEX = 1 << 1,
+    TEXTBOX_NO_SPACE = 1 << 2,
+    TEXTBOX_KEYBIND = 1 << 3,
+    TEXTBOX_DROP_FILE = 1 << 4,
+    TEXTBOX_ALPHA_NUMERIC = 1 << 5,
+    ELEMENT_FOCUSED = 1 << 6,
+    ELEMENT_ENABLED = 1 << 7,
+    ELEMENT_ABSOLUTE_POSITION = 1 << 10,    /* Element will not align to parent dialog position */
+    ELEMENT_UNLOCALIZED = 1 << 11           /* The element will not look up localized strings   */
+};
 
 enum actions
 {
@@ -73,7 +84,7 @@ public:
 
     virtual void init(Dialog* parent, SDL_Rect dim, int8_t id);
 
-    void set_flags(uint8_t flags);
+    void set_flags(uint16_t flags);
 
     int get_left() const;
 
@@ -86,8 +97,10 @@ public:
     int get_width() const;
 
     int get_height() const;
+
 protected:
     Dialog* m_parent_dialog = nullptr;
+    bool m_enabled = true;
     SDL_Rect m_dimensions = {}; /* Width/Height and absolute position */
     SDL_Point m_position = {}; /* Position relative to dialog*/
     int8_t m_element_id = 0;

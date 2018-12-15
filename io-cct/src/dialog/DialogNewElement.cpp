@@ -50,6 +50,7 @@ void DialogNewElement::load_from_element(Element* e)
             mouse = dynamic_cast<ElementMouseMovement*>(e);
             m_binary_choice->select_item(mouse->get_mouse_type());
             m_radius->set_text(std::to_string(mouse->get_radius()));
+            break;
         case TRIGGER:
             trigger = dynamic_cast<ElementTrigger*>(e);
             m_binary_choice->select_item(trigger->get_side());

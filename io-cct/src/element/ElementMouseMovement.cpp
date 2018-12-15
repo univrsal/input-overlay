@@ -14,16 +14,17 @@
 #include "../../../ccl/ccl.hpp"
 
 ElementMouseMovement::ElementMouseMovement(const std::string& id, const SDL_Point pos,
-                                           const SDL_Rect mapping, mouse_movement_type type, const uint16_t radius, const uint8_t z)
-    : ElementTexture(MOUSE_MOVEMENT, id, pos, mapping, z), m_type()
+    const SDL_Rect mapping, const mouse_movement_type type, const uint16_t radius, const uint8_t z)
+    : ElementTexture(MOUSE_MOVEMENT, id, pos, mapping, z)
 {
     m_radius = radius;
+    m_type = type;
 }
 
 ElementError ElementMouseMovement::is_valid(Notifier* n, SDL_Helper* h)
 {
     auto error = ElementTexture::is_valid(n, h);
-    if (error == VALID && m_radius == 0)
+    if (error == VALID && (m_type == DOT && m_radius == 0))
     {
         n->add_msg(MESSAGE_ERROR, h->loc(LANG_ERROR_RADIUS_INVALID));
         error = MOUSE_RADIUS;
@@ -35,9 +36,13 @@ void ElementMouseMovement::write_to_file(ccl_config* cfg, SDL_Point* default_dim
 {
     ElementTexture::write_to_file(cfg, default_dim, layout_flags);
     auto comment = "Movement type of " + m_id;
+
     cfg->add_int(m_id + CFG_MOUSE_TYPE, comment, m_type, true);
-    comment = "Movement radius of " + m_id;
-    cfg->add_int(m_id + CFG_MOUSE_RADIUS, comment, m_radius, true);
+    if (m_type == DOT)
+    {
+        comment = "Movement radius of " + m_id;
+        cfg->add_int(m_id + CFG_MOUSE_RADIUS, comment, m_radius, true);
+    }
 
     layout_flags |= FLAG_MOUSE;
 }
@@ -62,11 +67,11 @@ uint16_t ElementMouseMovement::get_radius() const
 ElementMouseMovement* ElementMouseMovement::
 read_from_file(ccl_config* file, const std::string& id, SDL_Point* default_dim)
 {
-    mouse_movement_type mmt = DOT;
+    auto mmt = DOT;
     if (file->get_int(id + CFG_MOUSE_TYPE) != 0)
         mmt = ARROW;
 
     return new ElementMouseMovement(id, read_position(file, id),
-                                    read_mapping(file, id, default_dim), mmt,
-                                    file->get_int(id + CFG_MOUSE_RADIUS), read_layer(file, id));
+        read_mapping(file, id, default_dim), mmt,
+        file->get_int(id + CFG_MOUSE_RADIUS), read_layer(file, id));
 }
