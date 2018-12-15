@@ -26,14 +26,15 @@ namespace sources
         std::string image_file;
         std::string layout_file;
         uint32_t cx = 0, cy = 0;
+        bool use_center = false;
         uint32_t monitor_w = 0, monitor_h = 0;
         uint8_t mouse_deadzone = 0;
+        uint16_t mouse_sens = 0; /* mouse_delta / mouse_sens = mouse movement */
         uint8_t gamepad = 0;
 #ifdef _WIN32
         float left_dz = 0.f, right_dz = 0.f;
 #endif
 		uint8_t selected_source = 0; /* 0 = Local input */
-        /* TODO: Mouse config etc.*/
     };
 
     class input_source

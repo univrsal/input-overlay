@@ -188,6 +188,7 @@
 #define VC_MOUSE_WHEEL_UP     0xED11
 #define VC_MOUSE_WHEEL_DOWN   0xED12
 #define VC_MOUSE_WHEEL	      0xED13
+#define VC_MOUSE_DATA         0xED14 /* Contains mouse position, click count and wheel motion */
 
 #define VC_MOUSE_BUTTON1      (MOUSE_BUTTON1 | VC_MOUSE_MASK)
 #define VC_MOUSE_BUTTON2      (MOUSE_BUTTON2 | VC_MOUSE_MASK)

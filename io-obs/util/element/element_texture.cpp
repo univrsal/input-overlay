@@ -56,6 +56,21 @@ void element_texture::draw(gs_effect_t* effect, gs_image_file_t* image,
     gs_matrix_pop();
 }
 
+void element_texture::draw(gs_effect* effect, gs_image_file_t* image, const gs_rect* rect, const vec2* pos, const float angle)
+{
+    gs_effect_set_texture(gs_effect_get_param_by_name(effect, "image"), image->texture);
+
+    gs_matrix_push();
+    {
+        gs_matrix_translate3f(pos->x, pos->y, 1.f);
+        gs_matrix_rotaa4f(0.f, 0.f, 1.f, angle);
+        gs_matrix_translate3f(pos->x, pos->y, 1.f);
+        gs_draw_sprite_subregion(image->texture, 0, rect->x, rect->y, rect->cx,
+            rect->cy);
+    }
+    gs_matrix_pop();
+}
+
 data_source element_texture::get_source()
 {
     return GAMEPAD;

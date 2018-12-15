@@ -12,6 +12,7 @@
 #include "../util/element/element_data_holder.hpp"
 #include "../util/element/element_mouse_wheel.hpp"
 #include "../util/element/element_button.hpp"
+#include "util/element/element_mouse_movement.hpp"
 
 namespace hook
 {
@@ -266,6 +267,7 @@ namespace hook
                 new element_data_button(STATE_RELEASED)); /* TODO: used to be remove_data */
             break;
         case EVENT_MOUSE_PRESSED:
+            /* TODO: Also add click count to mouse data */
             if (event->data.mouse.button == MOUSE_BUTTON3)
                 /* Special case :/ */
                 input_data->add_data(VC_MOUSE_WHEEL,
@@ -304,20 +306,18 @@ namespace hook
 
             input_data->add_data(
                 VC_MOUSE_WHEEL, new element_data_wheel(dir, new_amount));
+            /* TODO: Also add to MOUSE_DATA */
             break;
         case EVENT_KEY_TYPED:
             last_character = event->data.keyboard.keychar;
             break;
         case EVENT_MOUSE_DRAGGED:
         case EVENT_MOUSE_MOVED:
-            mouse_last_x = mouse_x;
-            mouse_last_y = mouse_y;
-            mouse_x = event->data.mouse.x;
-            mouse_y = event->data.mouse.y;
-            mouse_x_smooth = static_cast<uint16_t>((mouse_last_x * 4 + mouse_x + 4
+            input_data->add_data(VC_MOUSE_DATA, new element_data_mouse_stats(event->data.mouse.x, event->data.mouse.y));
+            /*mouse_x_smooth = static_cast<uint16_t>((mouse_last_x * 4 + mouse_x + 4
             ) / 5);
             mouse_y_smooth = static_cast<uint16_t>((mouse_last_y * 4 + mouse_y + 4
-            ) / 5);
+            ) / 5); */ /* TODO: deprecated? */
             break;
         default: ;
         }

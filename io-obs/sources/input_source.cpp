@@ -21,16 +21,25 @@ namespace sources
 {
     inline void input_source::update(obs_data_t* settings)
     {
+        m_settings.selected_source = obs_data_get_int(settings, S_INPUT_SOURCE);
+
         m_settings.image_file = obs_data_get_string(settings, S_OVERLAY_FILE);
         m_settings.layout_file = obs_data_get_string(settings, S_LAYOUT_FILE);
         m_overlay->load();
 
         m_settings.gamepad = obs_data_get_int(settings, S_CONTROLLER_ID);
-		m_settings.selected_source = obs_data_get_int(settings, S_INPUT_SOURCE);
 #ifdef _WIN32
         m_settings.left_dz = obs_data_get_int(settings, S_CONTROLLER_L_DEAD_ZONE) / STICK_MAX_VAL;
         m_settings.right_dz = obs_data_get_int(settings, S_CONTROLLER_R_DEAD_ZONE) / STICK_MAX_VAL;
 #endif
+        m_settings.mouse_sens = obs_data_get_int(settings, S_MOUSE_SENS);
+
+        if (obs_data_get_bool(settings, S_MONITOR_USE_CENTER))
+        {        
+            m_settings.monitor_h = obs_data_get_int(settings, S_MONITOR_H_CENTER);
+            m_settings.monitor_w = obs_data_get_int(settings, S_MONITOR_V_CENTER);
+            m_settings.mouse_deadzone = obs_data_get_int(settings, S_MOUSE_DEAD_ZONE);
+        }
     }
 
     inline void input_source::tick(float seconds)
@@ -86,7 +95,7 @@ namespace sources
         return true;
     }
 
-    bool reload_connections(obs_properties_t* props, obs_property_t* prop, void* data)
+    bool reload_connections(obs_properties_t* props, obs_property_t* property, void* data)
     {
 		auto connection_list = obs_properties_get(props, S_INPUT_SOURCE);
 		auto cfg = obs_frontend_get_global_config();      
