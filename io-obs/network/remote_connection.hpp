@@ -24,6 +24,7 @@ namespace network
     extern bool network_flag; /* Running state */
 	extern bool log_flag; /* Set in obs_module_load */
 	extern bool local_input;
+    extern uint16_t refresh_rate;
 	extern char local_ip[16];
 
 	const char* get_status();

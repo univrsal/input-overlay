@@ -73,5 +73,5 @@ void element_texture::draw(gs_effect* effect, gs_image_file_t* image, const gs_r
 
 data_source element_texture::get_source()
 {
-    return GAMEPAD;
+    return NONE;
 }

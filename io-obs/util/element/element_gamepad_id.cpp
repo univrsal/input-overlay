@@ -52,5 +52,5 @@ void element_gamepad_id::draw(gs_effect_t* effect,
 
 data_source element_gamepad_id::get_source()
 {
-    return GAMEPAD;
+    return NONE;
 }

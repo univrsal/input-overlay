@@ -17,6 +17,7 @@ namespace network
     bool network_flag = false;
 	bool local_input = false; /* True if either of the local hooks is running */
     bool log_flag = false;
+    uint16_t refresh_rate = 250;
 	char local_ip[16] = "127.0.0.1\0";
 
     io_server* server_instance = nullptr;
@@ -225,7 +226,7 @@ namespace network
 			return MSG_READ_ERROR;
 		}
 
-		if (id >= MSG_NAME_NOT_UNIQUE && id <= MSG_LAST)
+		if (id >= 0 && id <= MSG_LAST)
 			return message(id);
 		return MSG_INVALID;
     }

@@ -23,6 +23,7 @@ namespace network
         sockets = nullptr;
         m_num_clients = 0;
         m_ip.port = port;
+        m_last_refresh = os_gettime_ns();
     }
 
     io_server::~io_server()
@@ -90,9 +91,6 @@ namespace network
                     continue;
                 }
 
-#ifdef _DEBUG
-                LOG_(LOG_INFO, "Received message with %i bytes", read);
-#endif
                 while (m_buffer->read_pos < m_buffer->length) /* Buffer can contain multiple messages */
                 {
                     const auto msg = read_msg_from_buffer(m_buffer);
@@ -102,7 +100,7 @@ namespace network
 				    case MSG_MOUSE_POS_DATA:
 				    case MSG_BUTTON_DATA:
                     case MSG_GAMEPAD_DATA:
-					    if (!client->read_event(m_buffer, msg))
+                        if (!client->read_event(m_buffer, msg))
 						    LOG_(LOG_ERROR, "Failed to receive event data from %s.", client->name());
 					    break;
                     case MSG_CLIENT_DC:
@@ -171,6 +169,17 @@ namespace network
 					return false;
                 }
 			), m_clients.end());
+
+            if (os_gettime_ns() - m_last_refresh > network::refresh_rate)
+            {
+                for (auto& client : m_clients)
+                {
+                    if (!send_message(client->socket(), MSG_REFRESH))
+                        client->mark_invalid();
+                }
+                m_last_refresh = os_gettime_ns();
+            }
+
 
 			if (old != m_clients.size())
 				m_clients_changed = true;

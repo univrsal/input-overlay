@@ -27,6 +27,9 @@ io_settings_dialog::io_settings_dialog(QWidget* parent)
     connect(ui->btn_refresh, &QPushButton::clicked,
         this, &io_settings_dialog::PingClients);
 
+    connect(ui->box_refresh_rate, qOverload<int>(&QSpinBox::valueChanged),
+        this, &io_settings_dialog::BoxRefreshChanged);
+
     const auto cfg = obs_frontend_get_global_config();
 
     /* Load values */
@@ -39,7 +42,11 @@ io_settings_dialog::io_settings_dialog(QWidget* parent)
     ui->cb_log->setChecked(config_get_bool(cfg, S_REGION, S_LOGGING));
     ui->box_port->setValue(config_get_int(cfg, S_REGION, S_PORT));
 
-	CbRemoteStateChanged(0);
+    /* Tooltips aren't translated by obs */
+    ui->box_refresh_rate->setToolTip(T_REFRESH_RATE_TOOLTIP);
+    ui->lbl_refresh_rate->setToolTip(T_REFRESH_RATE_TOOLTIP);
+
+    CbRemoteStateChanged(0);
 
 	auto text = ui->lbl_status->text().toStdString();
 	auto pos = text.find("%s");
@@ -97,6 +104,11 @@ void io_settings_dialog::CbRemoteStateChanged(int state)
 void io_settings_dialog::PingClients()
 {
     network::server_instance->ping_clients();
+}
+
+void io_settings_dialog::BoxRefreshChanged(int value)
+{
+    network::refresh_rate = value;
 }
 
 void io_settings_dialog::FormAccepted()

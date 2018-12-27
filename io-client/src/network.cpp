@@ -98,8 +98,7 @@ namespace network
 	{
         while (network_loop)
         {
-            buffer->write_pos = 0;
-            if (!listen()) /* Has a timeout of 100ms*/
+            if (!listen()) /* Has a timeout of 25ms*/
             {
 				printf("Received quit signal\n");
 				break;
@@ -108,17 +107,18 @@ namespace network
             /* If any data is ready send it */
             if (data_to_send)
             {
+                buffer->write_pos = 0;
                 data_block = true;
                 
                 /* First write pending data */
                 if (gamepad::check_changes() && !util::write_gamepad_data())
                 {
-                    printf("Failed to write gamepad event data to buffer. Exiting...\n");
+                    printf("Failed to write gamepad event data to buffer. Exiting...\n");      
 #ifndef _DEBUG
                     break;
 #endif
                 }
-
+                
                 if (uiohook::new_event && !util::write_uiohook_event(uiohook::last_event))
                 {
                     printf("Writing event data to buffer failed: %s\n", netlib_get_error());
@@ -126,10 +126,12 @@ namespace network
                     break;
 #endif
                 }
-#ifdef _DEBUG
-                DEBUG_LOG("Sending message with ID %i with %i bytes\n", buffer->data[0], buffer->write_pos);
-#endif
-                if (!netlib_tcp_send_buf_smart(sock, buffer))
+               
+                if (buffer->write_pos < 1)
+                {
+                    DEBUG_LOG("Error: nothing to send\n");
+                }
+                else if (!netlib_tcp_send_buf_smart(sock, buffer))
                 {
                     DEBUG_LOG("netlib_tcp_send_buf_smart: %s\n", netlib_get_error());
                     break;
@@ -178,7 +180,7 @@ namespace network
 				return false;
 			case MSG_READ_ERROR:
 				printf("Couldn't read message.\n");
-				return false;
+				return true; /* Not a fatal error */
             case MSG_PING_CLIENT: /* NO-OP needed */
                 return true;
 			default:

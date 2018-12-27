@@ -17,5 +17,6 @@ enum message
 	MSG_MOUSE_POS_DATA,
     MSG_GAMEPAD_DATA,
     MSG_CLIENT_DC,
+    MSG_REFRESH,
 	MSG_LAST
 };

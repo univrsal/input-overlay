@@ -26,6 +26,7 @@ private Q_SLOTS:
     void FormAccepted();
 	void CbRemoteStateChanged(int state);
     void PingClients();
+    void BoxRefreshChanged(int value);
     
 private:
     Ui::io_config_dialog* ui;

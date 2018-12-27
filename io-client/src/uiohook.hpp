@@ -17,7 +17,7 @@ namespace uiohook
 
 	void dispatch_proc(uiohook_event * const event);
     void process_event(uiohook_event * const event);
-
+    void force_refresh(); /* Server requested update */
 	bool init();
 
 	void close();

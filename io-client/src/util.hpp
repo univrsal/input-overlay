@@ -53,11 +53,11 @@ namespace util
 
 	int send_text(char* buf);
 
-	int write_uiohook_event(uiohook_event* const event);
+	bool write_uiohook_event(uiohook_event* const event);
 
     int write_gamepad_data();
 
-	int write_keystate(netlib_byte_buf* buffer, uint16_t code, bool pressed);
+	bool write_keystate(netlib_byte_buf* buffer, uint16_t code, bool pressed);
 
 	inline uint16_t swap_be16(uint16_t in)
 	{

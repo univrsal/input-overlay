@@ -58,7 +58,8 @@ namespace network
 		bool unique_name(char* name);
         static void fix_name(char* name);
 		bool create_sockets();
-	
+
+        uint64_t m_last_refresh = 0;
 		netlib_byte_buf* m_buffer = nullptr; /* Used for temporarily storing sent data */
 		bool m_clients_changed = false; /* Set to true on connection/disconnect and false after get_clients() */
 		uint8_t m_num_clients;

@@ -11,6 +11,9 @@
 #include <string>
 #include "gamepad.hpp"
 #include "uiohook.hpp"
+#define IO_CLIENT
+#include "../../io-obs/util/util.hpp"
+
 #ifdef _WIN32
 #include <Windows.h>
 #else
@@ -79,6 +82,11 @@ namespace util
                  cfg.monitor_keyboard = arg.find('1') != std::string::npos;
         }
 
+        printf("io_client configuration:\n Host:\
+     %s:%s\n Name:     %s\n Keyboard: %s\n Mouse:    %s\n Gamepad:  %s\n",
+            args[1], args[3], args[2], cfg.monitor_keyboard ? "Yes" : "No",
+            cfg.monitor_mouse ? "Yes" : "No", cfg.monitor_gamepad ? "Yes" : "No");
+        
 		return true;
     }
 
@@ -118,43 +126,35 @@ namespace util
 		return result;
 	}
 
-    int write_uiohook_event(uiohook_event* const event)
+    bool write_uiohook_event(uiohook_event* const event)
     {
 		if (!event)
-			return -1;
-		auto result = 1;
+			return false;
+		auto result = true;
 
 #ifdef _DEBUG
-        DEBUG_LOG("Processing event from %llums ago\n", get_ticks() - (event->time / (1000 * 1000)));
+        DEBUG_LOG("Processing event from %.1fms ago\n", static_cast<double>((get_ticks() - event->time) / 1000));
 #endif
+
 		switch(event->type)
         {
 		case EVENT_KEY_PRESSED:
+        case EVENT_KEY_RELEASED:
             if (cfg.monitor_keyboard)
             {
 				result = netlib_write_uint8(network::buffer, MSG_BUTTON_DATA)
-					&& write_keystate(network::buffer, event->data.keyboard.keycode, true);
+					&& write_keystate(network::buffer, event->data.keyboard.keycode,
+                        event->type == EVENT_KEY_PRESSED);
             }
 			break;
-		case EVENT_KEY_RELEASED:
-			if (cfg.monitor_keyboard)
-			{
-				result = netlib_write_uint8(network::buffer, MSG_BUTTON_DATA)
-					&& write_keystate(network::buffer, event->data.keyboard.keycode, false);
-			}
-			break;
-        case EVENT_MOUSE_PRESSED:
-			if (cfg.monitor_mouse)
-			{
-				result = netlib_write_uint8(network::buffer, MSG_BUTTON_DATA)
-					&& write_keystate(network::buffer, event->data.mouse.button, true);
-			}
-            break;
         case EVENT_MOUSE_RELEASED:
+        case EVENT_MOUSE_PRESSED:
+        case EVENT_MOUSE_CLICKED:
 			if (cfg.monitor_mouse)
 			{
 				result = netlib_write_uint8(network::buffer, MSG_BUTTON_DATA)
-					&& write_keystate(network::buffer, event->data.mouse.button, false);
+					&& write_keystate(network::buffer, event->data.mouse.button | VC_MOUSE_MASK,
+                        event->type == EVENT_MOUSE_PRESSED);
 			}
             break;
         case EVENT_MOUSE_MOVED:
@@ -166,7 +166,7 @@ namespace util
 					&& netlib_write_int16(network::buffer, event->data.mouse.y);
 			}
             break;
-        default: ;
+        default: result = false;
         }
 
 		return result;
@@ -201,22 +201,24 @@ namespace util
         return result;
     }
 
-    int write_keystate(netlib_byte_buf* buffer, uint16_t code, bool pressed)
+    bool write_keystate(netlib_byte_buf* buffer, uint16_t code, bool pressed)
     {
 		auto result = netlib_write_uint16(buffer, code);
-		if (!result)
+        
+	    if (!result)
 		{
 			printf("Couldn't write keycode: %s\n", netlib_get_error());
-			return -1;
+			return false;
 		}
 		
 	    result = netlib_write_uint8(buffer, pressed);
         if (!result)
         {
 			printf("Couldn't write keystate: %s\n", netlib_get_error());
-			return -1;
+			return false;
         }
-		return 1;
+        
+	    return true;
     }
 
     uint32_t get_ticks()

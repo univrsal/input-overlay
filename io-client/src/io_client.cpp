@@ -43,8 +43,6 @@ int main(int argc, char **argv)
         return util::RET_NO_HOOKS;
     }
 
-    printf("Arguments: Port: %hu, Name: %s, IP: %s\n", util::cfg.port, util::cfg.username, argv[1]);
-
 	if (!network::start_connection()) /* Starts a separate network thread */
 	{
 		network::close();
@@ -68,8 +66,7 @@ int main(int argc, char **argv)
             gamepad::start_pad_hook(false);
         }
 	}
-    network::network_thread_method(nullptr);
-
+    
     if ((util::cfg.monitor_keyboard || util::cfg.monitor_mouse) && !uiohook::init())
     {
         printf("uiohook init failed\n");

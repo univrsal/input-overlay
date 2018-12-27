@@ -14,6 +14,7 @@
 void element_mouse_movement::load(ccl_config* cfg, const std::string& id)
 {
     element_texture::load(cfg, id);
+    m_keycode = VC_MOUSE_DATA;
     m_radius = cfg->get_int(id + CFG_MOUSE_RADIUS);
     m_movement_type = cfg->get_int(id + CFG_MOUSE_TYPE) == 0 ? DOT : ARROW;
 }
@@ -45,7 +46,7 @@ void element_mouse_movement::draw(gs_effect_t* effect,
 }
 
 element_data_mouse_stats::element_data_mouse_stats(int16_t x, int16_t y)
-    : element_data(TRIGGER)
+    : element_data(MOUSE_MOVEMENT), m_last_x(0), m_last_y(0), m_old_angle(0)
 {
     m_x = x;
     m_y = y;

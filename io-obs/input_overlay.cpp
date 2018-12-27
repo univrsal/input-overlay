@@ -33,6 +33,7 @@ void set_defaults(config_t* cfg)
 	config_set_default_bool(cfg, S_REGION, S_REMOTE, false);
 	config_set_default_bool(cfg, S_REGION, S_LOGGING, false);
 	config_set_default_int(cfg, S_REGION, S_PORT, 1608);
+    config_set_default_int(cfg, S_REGION, S_REFRESH, network::refresh_rate);
 }
 
 
@@ -66,6 +67,7 @@ bool obs_module_load()
 		network::local_input = gamepad || iohook;
 		network::log_flag = config_get_bool(cfg, S_REGION, S_LOGGING);
         network::start_network(port);
+        network::refresh_rate = config_get_int(cfg, S_REGION, S_REFRESH);
     }
 
 	/* UI registration from

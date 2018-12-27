@@ -88,6 +88,11 @@ namespace uiohook
         }
     }
 
+    void force_refresh()
+    {
+        new_event = true;
+    }
+
     bool init()
     {
         last_event = new uiohook_event(); /* Allocate memory for copy of last event */

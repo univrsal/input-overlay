@@ -199,7 +199,16 @@ namespace gamepad
         return false;
     }
 
-	/* Background process for querying game pads */
+    void force_refresh()
+    {
+        if (util::cfg.monitor_gamepad)
+        {
+            for (auto& pad : pad_handles)
+                if (pad.valid()) pad.m_changed = true;
+        }
+    }
+
+    /* Background process for querying game pads */
 #ifdef _WIN32
 	DWORD WINAPI hook_method(const LPVOID arg)
 #else

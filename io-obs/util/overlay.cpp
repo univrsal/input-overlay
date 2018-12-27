@@ -19,6 +19,7 @@
 #include "element/element_dpad.hpp"
 #include "network/remote_connection.hpp"
 #include "network/io_server.hpp"
+#include "element/element_mouse_movement.hpp"
 
 extern "C" {
 #include <graphics/image-file.h>
@@ -118,12 +119,11 @@ bool overlay::load_cfg()
             for (auto const& element : m_elements)
             {
                 element_data* data = nullptr;
-                element_data_button* btn = nullptr;
+
                 switch (element->get_type())
                 {
                 case BUTTON:
-                    btn = new element_data_button(STATE_RELEASED);
-                    m_data[element->get_keycode()] = std::unique_ptr<element_data>(btn);
+                    data = new element_data_button(STATE_RELEASED);
                     break;
                 case MOUSE_SCROLLWHEEL:
                     data = new element_data_wheel(STATE_RELEASED);
@@ -137,6 +137,9 @@ bool overlay::load_cfg()
                 case DPAD_STICK:
                     data = new element_data_dpad(DPAD_LEFT, STATE_RELEASED);
                     break;
+                case MOUSE_MOVEMENT:
+                    data = new element_data_mouse_stats(0, 0);
+                    break;
                 default:;
                 }
 
@@ -145,6 +148,7 @@ bool overlay::load_cfg()
             }
         }
     }
+
     delete cfg;
     return flag;
 }
@@ -286,6 +290,12 @@ void overlay::load_element(ccl_config* cfg, const std::string& id, const bool de
     case DPAD_STICK:
         new_element = new element_dpad();
         break;
+    case MOUSE_MOVEMENT:
+        new_element = new element_mouse_movement();
+        break;
+    case TEXT:
+        /* TODO: text element*/
+        break;
     default:
         if (debug)
             blog(LOG_INFO, "Invalid element type %i for %s",
@@ -308,7 +318,6 @@ void overlay::load_element(ccl_config* cfg, const std::string& id, const bool de
         }
     }
 }
-
 
 const char* overlay::element_type_to_string(const element_type t)
 {

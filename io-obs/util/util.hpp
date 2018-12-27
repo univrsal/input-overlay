@@ -68,6 +68,7 @@
 #define S_REMOTE    "remote"
 #define S_LOGGING   "logging"
 #define S_PORT      "port"
+#define S_REFRESH   "refresh_rate"
 
 /* Common values */
 #define S_INPUT_SOURCE              "input_source"
@@ -177,6 +178,7 @@
 #define T_OVERLAY_COMMAND_MODE          T_("Overlay.Commandmode")
 
 #define T_MENU_OPEN_SETTINGS		T_("Menu.InputOverlay.OpenSettings")
+#define T_REFRESH_RATE_TOOLTIP      T_("Dialog.InputOverlay.RemoteRefreshRate.Tooltip")
 
 #define WHEEL_UP        -1
 #define WHEEL_DOWN      1
