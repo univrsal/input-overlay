@@ -7,6 +7,7 @@
 
 #pragma once
 #include <stdint.h>
+#include <mutex>
 #include "gamepad_state.hpp"
 #include "xinput_fix.hpp"
 
@@ -83,6 +84,7 @@ namespace gamepad
 		void update();
 		xinput_fix::gamepad* get_xinput();
 	private:
+        std::mutex m_mutex;
 		xinput_fix::gamepad m_x_input = {};
 		bool m_valid = false;
 #else

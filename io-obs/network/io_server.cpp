@@ -155,7 +155,7 @@ namespace network
 	{
 		if (!m_clients.empty())
 		{
-			auto old = m_clients.size();
+		    const auto old = server_instance->m_num_clients;
             m_clients.erase(std::remove_if(
 			    m_clients.begin(), m_clients.end(),
                 [](const std::unique_ptr<io_client>& o)
@@ -170,7 +170,7 @@ namespace network
                 }
 			), m_clients.end());
 
-            if (os_gettime_ns() - m_last_refresh > network::refresh_rate)
+            if ((os_gettime_ns() - m_last_refresh) / (1000 * 1000) > network::refresh_rate)
             {
                 for (auto& client : m_clients)
                 {
@@ -180,8 +180,7 @@ namespace network
                 m_last_refresh = os_gettime_ns();
             }
 
-
-			if (old != m_clients.size())
+			if (old != server_instance->m_num_clients)
 				m_clients_changed = true;
 		}
 	}

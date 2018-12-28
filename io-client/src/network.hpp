@@ -24,7 +24,7 @@ namespace network
 	extern netlib_socket_set set;
     extern bool connected;
 	extern volatile bool network_loop;
-    extern volatile bool data_to_send;  /* Set to true by other threads */
+    extern volatile bool need_refresh;  /* Set to true by other threads */
     extern volatile bool data_block;    /* Set to true to prevent other threads from modifying data, which is about to be sent */
 	extern netlib_byte_buf* buffer;     /* Shared buffer for writing data, which will be sent to the server */
 	

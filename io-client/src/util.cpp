@@ -32,14 +32,14 @@ namespace util
 	{
 		if (argc < 3)
 		{
-			printf("io_client usage: [ip] [name] {port} {other options}\n");
-			printf(" [] => required {} => optional\n");
-			printf(" [ip]          can be ipv4 or hostname\n");
-			printf(" [name]        unique name to identify client (max. 64 characters)\n");
-			printf(" {port}        default is 1608 [1025 - %hu]\n", 0xffff);
-			printf(" --gamepad=1   enable/disable gamepad monitoring. Off by default\n");
-			printf(" --mouse=1     enable/disable mouse monitoring.  Off by default\n");
-			printf(" --keyboard=1  enable/disable keyboard monitoring. On by default\n");
+			DEBUG_LOG("io_client usage: [ip] [name] {port} {other options}\n");
+			DEBUG_LOG(" [] => required {} => optional\n");
+			DEBUG_LOG(" [ip]          can be ipv4 or hostname\n");
+			DEBUG_LOG(" [name]        unique name to identify client (max. 64 characters)\n");
+			DEBUG_LOG(" {port}        default is 1608 [1025 - %hu]\n", 0xffff);
+			DEBUG_LOG(" --gamepad=1   enable/disable gamepad monitoring. Off by default\n");
+			DEBUG_LOG(" --mouse=1     enable/disable mouse monitoring.  Off by default\n");
+			DEBUG_LOG(" --keyboard=1  enable/disable keyboard monitoring. On by default\n");
 			return false;
 		}
 
@@ -58,14 +58,14 @@ namespace util
 			if (newport > 1024) /* No system ports pls */
 				cfg.port = newport;
 			else
-				printf("%hu is outside the valid port range [1024 - %hu]\n", newport, 0xffff);
+				DEBUG_LOG("%hu is outside the valid port range [1024 - %hu]\n", newport, 0xffff);
 		}
 
         /* Resolve ip */
         if (netlib_resolve_host(&cfg.ip, args[1], cfg.port) == -1)
         {
-			printf("netlib_resolve_host failed: %s\n", netlib_get_error());
-			printf("Make sure obs studio is running with the remote connection enabled and configured\n");
+			DEBUG_LOG("netlib_resolve_host failed: %s\n", netlib_get_error());
+			DEBUG_LOG("Make sure obs studio is running with the remote connection enabled and configured\n");
 			return false;
         }
 
@@ -82,10 +82,12 @@ namespace util
                  cfg.monitor_keyboard = arg.find('1') != std::string::npos;
         }
 
-        printf("io_client configuration:\n Host:\
-     %s:%s\n Name:     %s\n Keyboard: %s\n Mouse:    %s\n Gamepad:  %s\n",
-            args[1], args[3], args[2], cfg.monitor_keyboard ? "Yes" : "No",
-            cfg.monitor_mouse ? "Yes" : "No", cfg.monitor_gamepad ? "Yes" : "No");
+        DEBUG_LOG("io_client configuration:\n");
+        DEBUG_LOG(" Host : %s:%s\n", args[1], args[3]);
+        DEBUG_LOG(" Name:     %s\n", args[2]);
+        DEBUG_LOG(" Keyboard: %s\n", cfg.monitor_keyboard ? "Yes" : "No");
+        DEBUG_LOG(" Mouse:    %s\n", cfg.monitor_mouse ? "Yes" : "No");
+        DEBUG_LOG(" Gamepad:  %s\n", cfg.monitor_gamepad ? "Yes" : "No");
         
 		return true;
     }
@@ -106,7 +108,7 @@ namespace util
 		{
 			if (netlib_get_error() && strlen(netlib_get_error()))
 			{
-				printf("netlib_tcp_send failed: %s\n", netlib_get_error());
+				DEBUG_LOG("netlib_tcp_send failed: %s\n", netlib_get_error());
 				return 0;
 			}
 		}
@@ -118,7 +120,7 @@ namespace util
 		{
 			if (netlib_get_error() && strlen(netlib_get_error()))
 			{
-			    printf("netlib_tcp_send failed: %s\n", netlib_get_error());
+			    DEBUG_LOG("netlib_tcp_send failed: %s\n", netlib_get_error());
 				return 0;
 			}
 		}
@@ -130,14 +132,12 @@ namespace util
     {
 		if (!event)
 			return false;
-		auto result = true;
-
-#ifdef _DEBUG
-        DEBUG_LOG("Processing event from %.1fms ago\n", static_cast<double>((get_ticks() - event->time) / 1000));
-#endif
+        auto result = true;
 
 		switch(event->type)
         {
+        case EVENT_KEY_TYPED: /* TODO: typing? */
+            break;
 		case EVENT_KEY_PRESSED:
         case EVENT_KEY_RELEASED:
             if (cfg.monitor_keyboard)
@@ -156,6 +156,10 @@ namespace util
 					&& write_keystate(network::buffer, event->data.mouse.button | VC_MOUSE_MASK,
                         event->type == EVENT_MOUSE_PRESSED);
 			}
+            break;
+        
+        case EVENT_MOUSE_WHEEL:
+            /* TODO: implement */
             break;
         case EVENT_MOUSE_MOVED:
         case EVENT_MOUSE_DRAGGED:
@@ -196,7 +200,7 @@ namespace util
         }
         
         if (!result)
-            printf("Writing event data to buffer failed: %s\n", netlib_get_error());
+            DEBUG_LOG("Writing event data to buffer failed: %s\n", netlib_get_error());
         
         return result;
     }
@@ -207,14 +211,14 @@ namespace util
         
 	    if (!result)
 		{
-			printf("Couldn't write keycode: %s\n", netlib_get_error());
+			DEBUG_LOG("Couldn't write keycode: %s\n", netlib_get_error());
 			return false;
 		}
 		
 	    result = netlib_write_uint8(buffer, pressed);
         if (!result)
         {
-			printf("Couldn't write keystate: %s\n", netlib_get_error());
+			DEBUG_LOG("Couldn't write keystate: %s\n", netlib_get_error());
 			return false;
         }
         
@@ -236,31 +240,23 @@ namespace util
 
     message recv_msg()
     {
-		uint8_t msg_id;
+        uint8_t msg_id;
 
-		const uint32_t read_length = netlib_tcp_recv(network::sock, &msg_id, sizeof(msg_id));
-#ifdef _DEBUG
-        printf("Received message with ID %i\n", msg_id);
-#endif
+        const uint32_t read_length = netlib_tcp_recv(network::sock, &msg_id, sizeof(msg_id));
 
         if (read_length < sizeof(msg_id))
         {
-			if (netlib_get_error() && strlen(netlib_get_error()))
-				printf("netlib_tcp_recv: %s\n", netlib_get_error());
-			return MSG_READ_ERROR;
+            if (netlib_get_error() && strlen(netlib_get_error()))
+                DEBUG_LOG("netlib_tcp_recv: %s\n", netlib_get_error());
+            return MSG_READ_ERROR;
         }
 
-        switch (msg_id)
-		{
-		case MSG_NAME_INVALID:
-		case MSG_NAME_NOT_UNIQUE:
-		case MSG_SERVER_SHUTDOWN:
-        case MSG_PING_CLIENT:
-			return message(msg_id);
-		default:
-			printf("Received message with invalid id (%i).\n", msg_id);
-			return MSG_INVALID;
-		}
+        if (msg_id < MSG_LAST)
+            return message(msg_id);
+
+	    DEBUG_LOG("Received message with invalid id (%i).\n", msg_id);
+        return MSG_INVALID;
+
     }
 
     void close_all()

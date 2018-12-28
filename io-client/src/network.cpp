@@ -20,7 +20,7 @@ namespace network
 	netlib_socket_set set = nullptr;
     netlib_byte_buf* buffer = nullptr;
 
-    volatile bool data_to_send = false;
+    volatile bool need_refresh = false;
     volatile bool data_block = false;
     volatile bool network_loop = true;
     bool connected = false;
@@ -33,23 +33,24 @@ namespace network
 
     bool start_connection()
     {
-    	printf("Allocating socket...");
+    	DEBUG_LOG("Allocating socket...");
 		set = netlib_alloc_socket_set(1);
-		printf(" Done.\n");
-
+		
 		if (!set)
         {
-			printf("netlib_alloc_socket_set failed: %s\n", netlib_get_error());
+			DEBUG_LOG("\nnetlib_alloc_socket_set failed: %s\n", netlib_get_error());
 			return false;
         }
+        printf(" Done.\n");
 
-        printf("Opening socket... ");
+
+        DEBUG_LOG("Opening socket... ");
 
         sock = netlib_tcp_open(&util::cfg.ip);
 
         if (!sock)
         {
-			printf("netlib_tcp_open failed: %s\n", netlib_get_error());
+			DEBUG_LOG("\nnetlib_tcp_open failed: %s\n", netlib_get_error());
 			return false;
         }
 
@@ -57,22 +58,22 @@ namespace network
 
         if (netlib_tcp_add_socket(set, sock) == -1)
         {
-			printf("netlib_tcp_add_socket failed: %s\n", netlib_get_error());
+			DEBUG_LOG("netlib_tcp_add_socket failed: %s\n", netlib_get_error());
 			return false;
         }
 
-		printf("Connection successful!\n");
+		DEBUG_LOG("Connection successful!\n");
         
 		/* Send client name */
 		if (!util::send_text(util::cfg.username))
         {
-			printf("Failed to send username (%s): %s\n", util::cfg.username, netlib_get_error());
+			DEBUG_LOG("Failed to send username (%s): %s\n", util::cfg.username, netlib_get_error());
 			return false;
         }
 
         if (!start_thread())
         {
-			printf("Failed to create network thread.\n");
+			DEBUG_LOG("Failed to create network thread.\n");
 			return false;
         }
         connected = true;
@@ -100,46 +101,36 @@ namespace network
         {
             if (!listen()) /* Has a timeout of 25ms*/
             {
-				printf("Received quit signal\n");
+				DEBUG_LOG("Received quit signal\n");
 				break;
             }
 
-            /* If any data is ready send it */
-            if (data_to_send)
+            if (need_refresh)
             {
                 buffer->write_pos = 0;
-                data_block = true;
-                
-                /* First write pending data */
                 if (gamepad::check_changes() && !util::write_gamepad_data())
                 {
-                    printf("Failed to write gamepad event data to buffer. Exiting...\n");      
+                    DEBUG_LOG("Failed to write gamepad event data to buffer. Exiting...\n");
 #ifndef _DEBUG
                     break;
 #endif
                 }
-                
-                if (uiohook::new_event && !util::write_uiohook_event(uiohook::last_event))
+
+                if (uiohook::new_event && !util::write_uiohook_event(uiohook::holder.get()))
                 {
-                    printf("Writing event data to buffer failed: %s\n", netlib_get_error());
+                    DEBUG_LOG("Writing event data to buffer failed: %s\n", netlib_get_error());
 #ifndef _DEBUG
                     break;
-#endif
+#endif                        
                 }
-               
-                if (buffer->write_pos < 1)
-                {
-                    DEBUG_LOG("Error: nothing to send\n");
-                }
-                else if (!netlib_tcp_send_buf_smart(sock, buffer))
+
+                if (buffer->write_pos > 0 && !netlib_tcp_send_buf_smart(sock, buffer))
                 {
                     DEBUG_LOG("netlib_tcp_send_buf_smart: %s\n", netlib_get_error());
                     break;
                 }
 
-                data_block = false;
-                data_to_send = false;
-                uiohook::new_event = false;
+                need_refresh = false;
             }
         }
 
@@ -170,17 +161,19 @@ namespace network
             switch (msg)
             {
 			case MSG_NAME_NOT_UNIQUE:
-				printf("Nickname is already in use. Disconnecting...\n");
+				DEBUG_LOG("Nickname is already in use. Disconnecting...\n");
 				return false;
 			case MSG_NAME_INVALID:
-				printf("Nickname is not valid. Disconnecting...\n");
+				DEBUG_LOG("Nickname is not valid. Disconnecting...\n");
 				return false;
 			case MSG_SERVER_SHUTDOWN:
-				printf("Server is shutting down.\n");
+				DEBUG_LOG("Server is shutting down.\n");
 				return false;
 			case MSG_READ_ERROR:
-				printf("Couldn't read message.\n");
+				DEBUG_LOG("Couldn't read message.\n");
 				return true; /* Not a fatal error */
+            case MSG_REFRESH:
+                need_refresh = true; /* fallthrough */
             case MSG_PING_CLIENT: /* NO-OP needed */
                 return true;
 			default:

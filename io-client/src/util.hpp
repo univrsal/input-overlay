@@ -22,7 +22,7 @@
 #define TRIGGER_MAX_VAL     256.f
 #endif
 
-#define DEBUG_LOG(fmt, ...) printf("[%s:%d]: " fmt, __FUNCTION__, __LINE__, __VA_ARGS__);
+#define DEBUG_LOG(fmt, ...) printf("[%25.25s:%03d]: " fmt, __FUNCTION__, __LINE__, __VA_ARGS__);
 
 namespace util
 {

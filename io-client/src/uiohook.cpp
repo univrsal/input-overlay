@@ -13,9 +13,32 @@
 
 namespace uiohook
 {
-    uiohook_event* last_event = nullptr; /* Copy of last event */
+    event_holder holder;
     volatile bool new_event = false;
     volatile bool hook_state = false;
+
+    event_holder::event_holder()
+    {
+        m_event = new uiohook_event();
+    }
+
+    event_holder::~event_holder()
+    {
+        delete m_event;
+        m_event = nullptr;
+    }
+
+    uiohook_event* event_holder::get() const
+    {
+        return m_event;
+    }
+
+    void event_holder::process_event(uiohook_event* event)
+    {
+        m_mutex.lock();
+        *m_event = *event;
+        m_mutex.unlock();
+    }
 
     bool logger_proc(unsigned level, const char* format, ...)
     {
@@ -24,15 +47,17 @@ namespace uiohook
         va_list args;
         switch (level)
         {
+        default:
 #ifdef USE_DEBUG
-		default:
+
 		case LOG_LEVEL_DEBUG:
 		case LOG_LEVEL_INFO:
 			va_start(args, format);
 			status = vfprintf(stdout, format, args) >= 0;
 			va_end(args);
-			break;
+			
 #endif
+            break;
         case LOG_LEVEL_WARN:
         case LOG_LEVEL_ERROR:
             va_start(args, format);
@@ -49,11 +74,11 @@ namespace uiohook
         switch(event->type)
         {
         case EVENT_HOOK_ENABLED:
-            printf("uiohook started\n");
+            DEBUG_LOG("uiohook started\n");
             hook_state = true;
             break;
         case EVENT_HOOK_DISABLED:
-            printf("uiohook exited\n");
+            DEBUG_LOG("uiohook exited\n");
             break;
         case EVENT_MOUSE_CLICKED:
         case EVENT_MOUSE_PRESSED:
@@ -61,32 +86,20 @@ namespace uiohook
         case EVENT_MOUSE_MOVED:
         case EVENT_MOUSE_DRAGGED:
         case EVENT_MOUSE_WHEEL:
+            new_event = true;
             if (util::cfg.monitor_mouse)
-                process_event(event);
+                holder.process_event(event);
             break;
         case EVENT_KEY_TYPED:
         case EVENT_KEY_PRESSED:
         case EVENT_KEY_RELEASED:
+            new_event = true;
             if (util::cfg.monitor_keyboard)
-                process_event(event);
+                holder.process_event(event);
             break;
         default:;
         }
 	}
-
-    void process_event(uiohook_event* const event)
-    {
-        if (!network::data_block)
-        {
-            network::data_to_send = true;
-            new_event = true;
-            *last_event = *event;
-        }
-        else
-        {
-            DEBUG_LOG("failed to process, data is blocked by network thread\n");
-        }
-    }
 
     void force_refresh()
     {
@@ -95,7 +108,6 @@ namespace uiohook
 
     bool init()
     {
-        last_event = new uiohook_event(); /* Allocate memory for copy of last event */
 		hook_set_logger_proc(&logger_proc);
     	hook_set_dispatch_proc(&dispatch_proc);
 
@@ -150,16 +162,14 @@ namespace uiohook
 		}
     }
 
-	void close()
+    void close()
     {
         if (!hook_state)
             return;
         hook_state = false;
 		const auto status = hook_stop();
-        delete last_event;
-        last_event = nullptr;
 
-		printf("Closing hook\n");
+		DEBUG_LOG("Closing hook\n");
 		switch (status)
 		{
 		case UIOHOOK_ERROR_OUT_OF_MEMORY:

@@ -93,21 +93,24 @@ namespace gamepad
     {
         if (new_state)
         {
+            m_mutex.lock();
             if (m_current_state.merge(new_state))
             {
                 m_changed = true;
-                network::data_to_send = true;
             }
+            m_mutex.unlock();
         }
     }
 
 #ifdef _WIN32
     void gamepad_handle::update()
     {
+        m_mutex.lock();
 		if (xinput_fix::update(m_pad_id, &m_x_input) == ERROR_SUCCESS)
 			m_valid = true;
 		else
 			m_valid = false;
+        m_mutex.unlock();
     }
 
     xinput_fix::gamepad* gamepad_handle::get_xinput()
@@ -134,14 +137,14 @@ namespace gamepad
 
 		if (!xinput_fix::loaded) /* Couldn't load xinput Dll*/
 		{
-			printf("Xinput init failed\n");
+			DEBUG_LOG("Xinput init failed\n");
 			return false;
 		}
 #endif
 		hook_state = hook_run_flag = init_pads();
         if (!hook_state)
         {
-            printf("Initializing gamepads failed\n");
+            DEBUG_LOG("Initializing gamepads failed\n");
             return false;
         }
 
@@ -220,13 +223,6 @@ namespace gamepad
          */
 		while (hook_run_flag)
 		{
-#ifdef _WIN32 /* On linux the check happens inside the for loop */
-            if (network::data_block)
-            {
-                Sleep(25);
-                continue;
-            }
-#endif
             for (auto& pad : pad_handles)
             {
                 if (!pad.valid())
