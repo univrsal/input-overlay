@@ -12,10 +12,8 @@
 #endif
 #include "util.hpp"
 
- /* We need 90 bytes if all four gamepads are sent + 5 bytes for a mouse event
-  * (Mouse event is the largest uiohook event)
-  */
-#define BUFFER_SIZE     90
+ /* We need 85 bytes if all four gamepads are sent + 32 bytes if all buttons are pressed down */
+#define BUFFER_SIZE     118
 #define LISTEN_TIMEOUT  25
 
 namespace network

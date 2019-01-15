@@ -15,8 +15,7 @@ element_data_holder::element_data_holder()
 
 element_data_holder::~element_data_holder()
 {
-    m_data.clear();
-    m_map_cleared = true;
+    clear_data();
 }
 
 bool element_data_holder::is_empty() const
@@ -32,7 +31,7 @@ bool element_data_holder::is_empty() const
         }
     }
 
-    return (m_map_cleared || m_data.empty()) && flag;
+    return m_data.empty() && flag;
 }
 
 bool element_data_holder::is_blocked() const
@@ -114,6 +113,23 @@ element_data* element_data_holder::get_by_gamepad(const uint8_t gamepad, const u
         return nullptr;
     }
     return m_gamepad_data[gamepad][keycode].get();
+}
+
+void element_data_holder::clear_data()
+{
+    clear_button_data();
+    clear_gamepad_data();
+}
+
+void element_data_holder::clear_button_data()
+{
+    m_data.clear();
+}
+
+void element_data_holder::clear_gamepad_data()
+{
+    for (auto& data : m_gamepad_data)
+        data.clear();
 }
 
 bool element_data_holder::data_exists(const uint16_t keycode)

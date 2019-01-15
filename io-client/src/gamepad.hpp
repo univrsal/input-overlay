@@ -106,7 +106,6 @@ namespace gamepad
 
     bool check_changes();
 
-    void force_refresh(); /* Server requested update */
 #ifdef _WIN32
 	DWORD WINAPI hook_method(LPVOID arg);
 #else

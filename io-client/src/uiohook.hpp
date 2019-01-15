@@ -7,30 +7,32 @@
 
 #pragma once
 #include <uiohook.h>
-#include <memory>
 #include <mutex>
-#include <queue>
+#include <map>
+#include <netlib.h>
 
 namespace uiohook
 {
-    class event_holder
+    class data_holder
     {
         std::mutex m_mutex;
-        uiohook_event* m_event = nullptr;
+        std::map<uint16_t, bool> m_button_states;
+        int16_t m_mouse_x, m_mouse_y;
+        int8_t m_wheel_direction;
+        uint16_t m_lmb_clicks, m_rmb_clicks, m_mmb_clicks;
+        bool m_new_mouse_data;
     public:
-        event_holder();
-        ~event_holder();
-        uiohook_event* get() const;
-        void process_event(uiohook_event * event);
+        data_holder();
+        void add_button(uint16_t keycode, bool pressed);
+        void add_mouse(int16_t x, int16_t y);
+        bool write_to_buffer(netlib_byte_buf* buffer);
     };
 
-    extern volatile bool new_event;
-    extern event_holder holder;
+    extern data_holder data;
     extern volatile bool hook_state;
 	bool logger_proc(unsigned level, const char* format, ...);
 
 	void dispatch_proc(uiohook_event * event);
-    void force_refresh(); /* Server requested update */
-	bool init();
+    bool init();
     void close();
 }

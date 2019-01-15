@@ -26,16 +26,19 @@ public:
     void remove_gamepad_data(uint8_t gamepad, uint16_t keycode);
     element_data* get_by_gamepad(uint8_t gamepad, uint16_t keycode);
 
-    bool is_empty() const;
-    bool m_map_cleared = false;
+    void clear_data();
+    void clear_button_data();
+    void clear_gamepad_data();
 
+    bool is_empty() const;
+    bool is_blocked() const;
+private:
     std::map<uint16_t, std::unique_ptr<element_data>> m_data;
     std::map<uint16_t, std::unique_ptr<element_data>> m_gamepad_data[4];
 
-    bool is_blocked() const;
-private:
     /* Prevent drawing thread from accessing data while
      * hook threads write to it
+     * TODO: use mutex?
      */
     volatile bool m_data_locked = false;
     volatile bool m_gamepad_data_locked = false;

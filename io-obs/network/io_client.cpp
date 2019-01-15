@@ -51,20 +51,33 @@ namespace network
     bool io_client::read_event(netlib_byte_buf* buffer, const message msg)
     {
 		auto flag = true;
-
+        m_holder.clear_button_data();
         if (msg == MSG_BUTTON_DATA)
         {
+            uint8_t key_count = 0;
             uint16_t vc = 0;
-            if (!netlib_read_uint16(buffer, &vc))
+
+            if (!netlib_read_uint8(buffer, &key_count))
                 flag = false;
-            m_holder.add_data(vc, element_data_button::from_buffer(buffer));
+           
+            if (flag) /* Only pressed buttons are sent */
+            {
+                for (int i = 0; i < key_count; i++)
+                {
+                    if (!netlib_read_uint16(buffer, &vc))
+                    {
+                        flag = false;
+                        break;
+                    }
+                    m_holder.add_data(vc, new element_data_button(STATE_PRESSED));
+                }
+            }
             /* TODO: add mouse clicks to mouse stats */
         }
         else if (msg == MSG_MOUSE_POS_DATA)
         {
             int16_t x = 0, y = 0;
             flag = netlib_read_int16(buffer, &x) && netlib_read_int16(buffer, &y);
-            LOG_(LOG_INFO, "Read mouse pos x: %i, y: %i\n", x, y);
 
             if (flag)
             {

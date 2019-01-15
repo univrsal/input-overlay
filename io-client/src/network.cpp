@@ -5,8 +5,8 @@
  * github.com/univrsal/input-overlay
  */
 
-#include "network.hpp"
 #include "uiohook.hpp"
+#include "network.hpp"
 #include "util.hpp"
 #include <cstdio>
 #include "gamepad.hpp"
@@ -116,12 +116,12 @@ namespace network
 #endif
                 }
 
-                if (uiohook::new_event && !util::write_uiohook_event(uiohook::holder.get()))
+                if (!uiohook::data.write_to_buffer(network::buffer))
                 {
-                    DEBUG_LOG("Writing event data to buffer failed: %s\n", netlib_get_error());
+                    DEBUG_LOG("Writing uiohook data to buffer failed: %s\n", netlib_get_error());
 #ifndef _DEBUG
                     break;
-#endif                        
+#endif                     
                 }
 
                 if (buffer->write_pos > 0 && !netlib_tcp_send_buf_smart(sock, buffer))

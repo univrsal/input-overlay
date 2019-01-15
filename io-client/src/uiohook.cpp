@@ -10,34 +10,67 @@
 #include <cstdio>
 #include "network.hpp"
 #include "gamepad.hpp"
+#define IO_CLIENT
+#include "../../io-obs/util/util.hpp"
 
 namespace uiohook
 {
-    event_holder holder;
-    volatile bool new_event = false;
+    data_holder data;
     volatile bool hook_state = false;
 
-    event_holder::event_holder()
+    data_holder::data_holder(): m_mouse_x(0), m_mouse_y(0), m_wheel_direction(0), m_lmb_clicks(0), m_rmb_clicks(0),
+        m_mmb_clicks(0), m_new_mouse_data(false)
     {
-        m_event = new uiohook_event();
     }
 
-    event_holder::~event_holder()
-    {
-        delete m_event;
-        m_event = nullptr;
-    }
-
-    uiohook_event* event_holder::get() const
-    {
-        return m_event;
-    }
-
-    void event_holder::process_event(uiohook_event* event)
+    void data_holder::add_button(const uint16_t keycode, const bool pressed)
     {
         m_mutex.lock();
-        *m_event = *event;
+        if (pressed)
+            m_button_states[keycode] = pressed;
+        else
+            m_button_states.erase(keycode);
         m_mutex.unlock();
+    }
+
+    void data_holder::add_mouse(const int16_t x, const int16_t y)
+    {
+        m_mutex.lock();
+        m_mouse_x = x;
+        m_mouse_y = y;
+        m_new_mouse_data = true;
+        m_mutex.unlock();
+    }
+
+    bool data_holder::write_to_buffer(netlib_byte_buf* buffer)
+    {
+        auto success = true;
+        if (m_new_mouse_data)
+        {
+            success = netlib_write_uint8(buffer, MSG_MOUSE_POS_DATA) &&
+                netlib_write_int16(buffer, m_mouse_x) && netlib_write_int16(buffer, m_mouse_y);
+            /* TODO: write other mouse data */
+            m_new_mouse_data = false;
+        }
+
+        if (!m_button_states.empty())
+        {
+            if (!netlib_write_uint8(buffer, MSG_BUTTON_DATA)
+                || !netlib_write_uint8(buffer, m_button_states.size()))
+            {
+                success = false;
+            }
+            else
+            {
+                for (const auto& data : m_button_states)
+                {
+                    if (!netlib_write_uint16(buffer, data.first))
+                        success = false;
+                }
+            }
+
+        }
+        return success;
     }
 
     bool logger_proc(unsigned level, const char* format, ...)
@@ -83,36 +116,32 @@ namespace uiohook
         case EVENT_MOUSE_CLICKED:
         case EVENT_MOUSE_PRESSED:
         case EVENT_MOUSE_RELEASED:
+            if (util::cfg.monitor_mouse)
+                data.add_button(event->data.mouse.button | VC_MOUSE_MASK, event->type == EVENT_MOUSE_PRESSED);
+            break;
         case EVENT_MOUSE_MOVED:
         case EVENT_MOUSE_DRAGGED:
         case EVENT_MOUSE_WHEEL:
-            new_event = true;
             if (util::cfg.monitor_mouse)
-                holder.process_event(event);
+                data.add_mouse(event->data.mouse.x, event->data.mouse.y);
             break;
-        case EVENT_KEY_TYPED:
+        case EVENT_KEY_TYPED: /* TODO: how to handle this */
         case EVENT_KEY_PRESSED:
         case EVENT_KEY_RELEASED:
-            new_event = true;
             if (util::cfg.monitor_keyboard)
-                holder.process_event(event);
+                data.add_button(event->data.keyboard.keycode, event->type == EVENT_KEY_PRESSED);
             break;
         default:;
         }
 	}
-
-    void force_refresh()
-    {
-        new_event = true;
-    }
 
     bool init()
     {
 		hook_set_logger_proc(&logger_proc);
     	hook_set_dispatch_proc(&dispatch_proc);
 
-		const auto status = hook_run();
-        
+        const auto status = hook_run();
+
 		switch (status)
 		{
 		case UIOHOOK_SUCCESS:

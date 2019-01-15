@@ -17,6 +17,7 @@ void sig_int__handler(int signal)
     network::network_loop = false;
     gamepad::hook_run_flag = false;
 }
+
 void sig_break__handler(int signal)
 {
     network::network_loop = false;

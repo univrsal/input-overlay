@@ -254,10 +254,11 @@ void overlay::refresh_data()
                 }
             }
 
-            if (data && m_data[element->get_keycode()] != nullptr)
+            if (m_data[element->get_keycode()] != nullptr)
             {
                 m_data[element->get_keycode()]->merge(data);
             }
+
         }
     }
 }
