@@ -7,15 +7,12 @@
 
 #pragma once
 
-#ifdef _WIN32
 #include "xinput_fix.hpp"
-#else
 #include <stdio.h>
 #include <stdlib.h>
 #include <string>
 #include <malloc.h>
 #include <unistd.h>
-#endif
 #include "util/util.hpp"
 
 namespace gamepad

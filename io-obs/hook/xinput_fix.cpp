@@ -9,7 +9,6 @@
 #include "xinput_fix.hpp"
 #include "util/util.hpp"
 #include <util/platform.h>
-#include "../util/layout_constants.hpp"
 
 namespace xinput_fix
 {
@@ -157,6 +156,6 @@ namespace xinput_fix
             return pad->sThumbRY / STICK_MAX_VAL;
         return 0.f;
     }
-}
-
 #endif /* _WIN32 */
+
+}

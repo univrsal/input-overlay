@@ -195,7 +195,7 @@ namespace gamepad
                                     (m_packet[ID_STATE_2] - 255) / STICK_MAX_VAL, 1.f);
                             
                             hook::input_data->add_gamepad_data(pad.get_id(), VC_STICK_DATA, new element_data_analog_stick(axis,
-                                STICK_STATE_RIGHT_X));
+                                SD_RIGHT_X));
                             break;
                         case ID_R_ANALOG_Y:
                             if (m_packet[ID_STATE_2] < 128)
@@ -204,7 +204,7 @@ namespace gamepad
                                 axis = UTIL_CLAMP(-1.f, (m_packet[ID_STATE_2] - 255) /
                                 STICK_MAX_VAL, 1.f);
                             hook::input_data->add_gamepad_data(pad.get_id(), VC_STICK_DATA, new element_data_analog_stick(axis,
-                                STICK_STATE_RIGHT_Y));
+                                SD_RIGHT_Y));
                             break;
                         case ID_L_ANALOG_X:
                             if (m_packet[ID_STATE_2] < 128)
@@ -213,7 +213,7 @@ namespace gamepad
                                 axis = UTIL_CLAMP(-1.f, (m_packet[ID_STATE_2] - 255) / STICK_MAX_VAL, 1.f);
         
                             hook::input_data->add_gamepad_data(pad.get_id(), VC_STICK_DATA, new element_data_analog_stick(axis,
-                                STICK_STATE_LEFT_X));
+                                SD_LEFT_X));
                             break;
                         case ID_L_ANALOG_Y:
                             if (m_packet[ID_STATE_2] < 128)
@@ -222,7 +222,7 @@ namespace gamepad
                                 axis = UTIL_CLAMP(-1.f, ((float) m_packet[ID_STATE_2] - 255) / STICK_MAX_VAL, 1.f);
         
                             hook::input_data->add_gamepad_data(pad.get_id(), VC_STICK_DATA, new element_data_analog_stick(axis,
-                                STICK_STATE_LEFT_Y));
+                                SD_LEFT_Y));
                             break;
                         default: ;
                     }

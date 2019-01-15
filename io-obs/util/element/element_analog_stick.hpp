@@ -15,8 +15,8 @@ enum stick_data_type
 {
     SD_BOTH,
     SD_PRESSED_STATE_LEFT,
-    PRESSED_STATE_RIGHT,
-    SD_STICK_STATE_LEFT_X,
+    SD_PRESSED_STATE_RIGHT,
+    SD_LEFT_X,
     SD_LEFT_Y,
     SD_RIGHT_X,
     SD_RIGHT_Y
@@ -49,7 +49,7 @@ public:
         else
         {
             m_right_state = state;
-            m_data_type = PRESSED_STATE_RIGHT;
+            m_data_type = SD_PRESSED_STATE_RIGHT;
         }
     }
 
@@ -58,7 +58,7 @@ public:
     {
         switch (data_type)
         {
-        case SD_STICK_STATE_LEFT_X:
+        case SD_LEFT_X:
             m_left_stick = {axis_value, -1};
             break;
         case SD_LEFT_Y:

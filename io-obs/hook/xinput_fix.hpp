@@ -13,11 +13,10 @@
 
 #ifdef _WIN32
 #include <Windows.h>
-#endif
 
-enum button_state;
-
+enum button_state; /* Forward declaration for Windows methods */
 enum dpad_direction;
+#endif
 
 namespace xinput_fix
 {
@@ -100,5 +99,5 @@ namespace xinput_fix
     float stick_r_y(gamepad* pad);
 
     UINT16 to_vc(UINT16 code);
-}
 #endif
+}
