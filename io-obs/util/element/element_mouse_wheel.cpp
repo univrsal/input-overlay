@@ -40,6 +40,12 @@ void element_wheel::draw(gs_effect_t* effect, gs_image_file_t* image,
 
         if (wheel)
         {
+            if (os_gettime_ns() - hook::last_wheel >=
+                SCROLL_TIMEOUT)
+            {
+                wheel->set_dir(WHEEL_DIR_NONE);
+            }
+
             if (wheel->get_state() == STATE_PRESSED)
                 element_texture::draw(effect, image, &m_mappings[WHEEL_MAP_MIDDLE]);
 
@@ -53,13 +59,6 @@ void element_wheel::draw(gs_effect_t* effect, gs_image_file_t* image,
                 break;
             default:
             case WHEEL_DIR_NONE: ;
-            }
-
-            if (hook::last_wheel != 0 && os_gettime_ns() - hook::last_wheel >=
-                SCROLL_TIMEOUT)
-            {
-                wheel->set_dir(WHEEL_DIR_NONE);
-                hook::last_wheel = 0;
             }
         }
     }

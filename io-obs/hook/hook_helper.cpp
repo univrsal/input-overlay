@@ -251,11 +251,6 @@ namespace hook
         wheel_direction dir;
         auto new_amount = 0;
 
-        if (input_data) d = input_data->get_by_code(VC_MOUSE_WHEEL);
-
-        if (d)
-            wheel = reinterpret_cast<element_data_wheel*>(d);
-
         switch (event->type)
         {
         case EVENT_KEY_PRESSED:
@@ -291,6 +286,10 @@ namespace hook
                 dir = WHEEL_DIR_DOWN;
             else
                 dir = WHEEL_DIR_UP;
+
+            /* Get current Mouse wheel state */
+            if (input_data) d = input_data->get_by_code(VC_MOUSE_WHEEL);
+            if (d) wheel = reinterpret_cast<element_data_wheel*>(d);
 
             if (wheel)
             {
