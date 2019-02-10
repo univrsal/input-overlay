@@ -168,7 +168,7 @@ namespace sources
         obs_property_set_visible(obs_properties_add_int(props, S_MONITOR_V_CENTER, T_MONITOR_V_CENTER,
             -9999, 9999, 1), false);
         obs_property_set_visible(obs_properties_add_int_slider(props, S_MOUSE_DEAD_ZONE, T_MOUSE_DEAD_ZONE,
-            0, 50, 1), false);
+            0, 500, 1), false);
 
         /* Gamepad stuff */
         obs_property_set_visible(obs_properties_add_int(props, S_CONTROLLER_ID,

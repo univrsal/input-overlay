@@ -23,7 +23,9 @@ namespace network
     volatile bool need_refresh = false;
     volatile bool data_block = false;
     volatile bool network_loop = true;
+    
     bool connected = false;
+    bool state = false;
 
 #ifdef _WIN32
 	static HANDLE network_thread;
@@ -102,6 +104,7 @@ namespace network
             if (!listen()) /* Has a timeout of 25ms*/
             {
 				DEBUG_LOG("Received quit signal\n");
+                util::close_all();
 				break;
             }
 
@@ -111,17 +114,13 @@ namespace network
                 if (gamepad::check_changes() && !util::write_gamepad_data())
                 {
                     DEBUG_LOG("Failed to write gamepad event data to buffer. Exiting...\n");
-#ifndef _DEBUG
                     break;
-#endif
                 }
 
                 if (!uiohook::data.write_to_buffer(network::buffer))
                 {
                     DEBUG_LOG("Writing uiohook data to buffer failed: %s\n", netlib_get_error());
-#ifndef _DEBUG
-                    break;
-#endif                     
+                    break;                 
                 }
 
                 if (buffer->write_pos > 0 && !netlib_tcp_send_buf_smart(sock, buffer))
@@ -171,7 +170,7 @@ namespace network
 				return false;
 			case MSG_READ_ERROR:
 				DEBUG_LOG("Couldn't read message.\n");
-				return true; /* Not a fatal error */
+				return false;
             case MSG_REFRESH:
                 need_refresh = true; /* fallthrough */
             case MSG_PING_CLIENT: /* NO-OP needed */
@@ -199,11 +198,16 @@ namespace network
             DEBUG_LOG("netlib_alloc_byte_buf failed: %s\n", netlib_get_error());
 			return false;
         }
+        state = true;
 		return true;
     }
 
 	void close()
 	{
+        if (!state)
+            return;
+        state = false;
+
         /* Tell server we're disconnecting */
         if (connected)
         {
@@ -223,5 +227,6 @@ namespace network
         netlib_tcp_close(sock);
         netlib_free_byte_buf(buffer);
         netlib_quit();
+        buffer = NULL;
 	}
 }

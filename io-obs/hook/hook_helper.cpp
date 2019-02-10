@@ -313,10 +313,6 @@ namespace hook
         case EVENT_MOUSE_DRAGGED:
         case EVENT_MOUSE_MOVED:
             input_data->add_data(VC_MOUSE_DATA, new element_data_mouse_stats(event->data.mouse.x, event->data.mouse.y));
-            /*mouse_x_smooth = static_cast<uint16_t>((mouse_last_x * 4 + mouse_x + 4
-            ) / 5);
-            mouse_y_smooth = static_cast<uint16_t>((mouse_last_y * 4 + mouse_y + 4
-            ) / 5); */ /* TODO: deprecated? */
             break;
         default: ;
         }

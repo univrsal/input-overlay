@@ -51,14 +51,6 @@ namespace uiohook
          */
 
         auto success = true;
-        if (m_new_mouse_data)
-        {
-            success = netlib_write_uint8(buffer, MSG_MOUSE_POS_DATA) &&
-                netlib_write_int16(buffer, m_mouse_x) && netlib_write_int16(buffer, m_mouse_y);
-            /* TODO: write other mouse data */
-            m_new_mouse_data = false;
-        }
-
 
         if (netlib_write_uint8(buffer, MSG_BUTTON_DATA))
         {
@@ -86,6 +78,15 @@ namespace uiohook
         {
             success = false;
         }
+
+        if (m_new_mouse_data)
+        {
+            success = netlib_write_uint8(buffer, MSG_MOUSE_POS_DATA) &&
+                netlib_write_int16(buffer, m_mouse_x) && netlib_write_int16(buffer, m_mouse_y);
+            /* TODO: write other mouse data */
+            m_new_mouse_data = false;
+        }
+
         return success;
     }
 

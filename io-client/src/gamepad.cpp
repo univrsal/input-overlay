@@ -190,6 +190,7 @@ namespace gamepad
 			return;
 		hook_state = false;
 		hook_run_flag = false;
+        xinput_fix::unload();
 	}
 
     bool check_changes()

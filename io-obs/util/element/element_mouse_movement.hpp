@@ -26,6 +26,7 @@ public:
 
     void get_mouse_offset(sources::shared_settings* settings,
         const vec2& center, vec2& out, const uint8_t radius) const;
+
 private:
     int16_t m_x, m_y;
     int16_t m_last_x, m_last_y;

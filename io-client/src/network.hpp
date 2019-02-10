@@ -21,6 +21,7 @@ namespace network
 	extern tcp_socket sock;
 	extern netlib_socket_set set;
     extern bool connected;
+    extern bool state;
 	extern volatile bool network_loop;
     extern volatile bool need_refresh;  /* Set to true by other threads */
     extern volatile bool data_block;    /* Set to true to prevent other threads from modifying data, which is about to be sent */
