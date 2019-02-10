@@ -23,10 +23,15 @@ namespace sources
     {
         m_settings.selected_source = obs_data_get_int(settings, S_INPUT_SOURCE);
 
+        const auto config = obs_data_get_string(settings, S_LAYOUT_FILE);
         m_settings.image_file = obs_data_get_string(settings, S_OVERLAY_FILE);
-        m_settings.layout_file = obs_data_get_string(settings, S_LAYOUT_FILE);
-        m_overlay->load();
 
+        if (m_settings.layout_file != config) /* Only reload config file if path changed */
+        {
+            m_settings.layout_file = config;
+            m_overlay->load();
+        }
+        
         m_settings.gamepad = obs_data_get_int(settings, S_CONTROLLER_ID);
 #ifdef _WIN32
         m_settings.left_dz = obs_data_get_int(settings, S_CONTROLLER_L_DEAD_ZONE) / STICK_MAX_VAL;
@@ -34,7 +39,7 @@ namespace sources
 #endif
         m_settings.mouse_sens = obs_data_get_int(settings, S_MOUSE_SENS);
 
-        if (obs_data_get_bool(settings, S_MONITOR_USE_CENTER))
+        if ((m_settings.use_center = obs_data_get_bool(settings, S_MONITOR_USE_CENTER)))
         {        
             m_settings.monitor_h = obs_data_get_int(settings, S_MONITOR_H_CENTER);
             m_settings.monitor_w = obs_data_get_int(settings, S_MONITOR_V_CENTER);
@@ -108,6 +113,10 @@ namespace sources
     bool reload_pads(obs_properties_t* props, obs_property_t* property,
         void* data)
     {
+        UNUSED_PARAMETER(props);
+        UNUSED_PARAMETER(property);
+        UNUSED_PARAMETER(data);
+
         gamepad::init_pad_devices();
         return true;
     }

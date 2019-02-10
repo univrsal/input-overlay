@@ -59,7 +59,7 @@ bool element_data_mouse_stats::is_persistent()
 
 void element_data_mouse_stats::merge(element_data* other)
 {
-    if (other)
+    if (other && other->get_type() == MOUSE_MOVEMENT)
     {
         const auto data = dynamic_cast<element_data_mouse_stats*>(other);
         if (data)
@@ -86,14 +86,14 @@ float element_data_mouse_stats::get_mouse_angle(sources::shared_settings* settin
         d_x = m_x - m_last_x;
         d_y = m_y - m_last_y;
     }
-
+    
+    const float new_angle = (0.5 * M_PI) + (atan2f(d_y, d_x));
     if (abs(d_x) < settings->mouse_deadzone || abs(d_y) < settings->mouse_deadzone)
     {
         /* Draw old angle (new movement was to minor) */
         return m_old_angle;
     }
 
-    const float new_angle = (0.5 * M_PI) + (atan2f(d_x, d_x));
     m_old_angle = new_angle;
     return new_angle;
 }
@@ -112,7 +112,13 @@ void element_data_mouse_stats::get_mouse_offset(sources::shared_settings* settin
     {
         d_x = m_x - m_last_x;
         d_y = m_y - m_last_y;
+
+        if (abs(d_x) < settings->mouse_deadzone)
+            d_x = 0;
+        if (abs(d_y) < settings->mouse_deadzone)
+            d_y = 0;
     }
+    
 
     const auto factor_x = UTIL_CLAMP(-1, ((double)d_x / settings->mouse_sens), 1);
     const auto factor_y = UTIL_CLAMP(-1, ((double)d_y / settings->mouse_sens), 1);
