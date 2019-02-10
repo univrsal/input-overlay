@@ -149,9 +149,9 @@ namespace hook
 		pthread_mutex_destroy(&hook_control_mutex);
 		pthread_cond_destroy(&hook_control_cond);
 #endif
+        hook_stop();
         delete input_data;
         input_data = nullptr;
-        hook_stop();
     }
 
     void start_hook()
