@@ -12,13 +12,14 @@
 #include <stdlib.h>
 #include <string>
 #include <malloc.h>
-#include <unistd.h>
+
 #include "util/util.hpp"
 
 namespace gamepad
 {
     /* Linux implementation */
 #ifdef LINUX
+#include <unistd.h>
 #define ID_TYPE         6
 #define ID_BUTTON       1
 #define ID_STATE_1      4

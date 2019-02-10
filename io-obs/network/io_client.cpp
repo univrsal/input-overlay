@@ -62,15 +62,23 @@ namespace network
            
             if (flag) /* Only pressed buttons are sent */
             {
-                for (int i = 0; i < key_count; i++)
+                if (key_count == 0xff)
                 {
-                    if (!netlib_read_uint16(buffer, &vc))
-                    {
-                        flag = false;
-                        break;
-                    }
-                    m_holder.add_data(vc, new element_data_button(STATE_PRESSED));
+                    m_holder.clear_button_data();
                 }
+                else
+                {
+                    for (int i = 0; i < key_count; i++)
+                    {
+                        if (!netlib_read_uint16(buffer, &vc))
+                        {
+                            flag = false;
+                            break;
+                        }
+                        m_holder.add_data(vc, new element_data_button(STATE_PRESSED));
+                    }
+                }
+
             }
             /* TODO: add mouse clicks to mouse stats */
         }

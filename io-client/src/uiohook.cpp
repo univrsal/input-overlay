@@ -44,6 +44,12 @@ namespace uiohook
 
     bool data_holder::write_to_buffer(netlib_byte_buf* buffer)
     {
+        /* Message always sends both mouse and button data.
+         * if there's no buttons pressed the button message
+         * will contain the button count 0xff, signaling
+         * that any previously pressed keys should be cleared
+         */
+
         auto success = true;
         if (m_new_mouse_data)
         {
@@ -53,22 +59,32 @@ namespace uiohook
             m_new_mouse_data = false;
         }
 
-        if (!m_button_states.empty())
+
+        if (netlib_write_uint8(buffer, MSG_BUTTON_DATA))
         {
-            if (!netlib_write_uint8(buffer, MSG_BUTTON_DATA)
-                || !netlib_write_uint8(buffer, m_button_states.size()))
+            if (m_button_states.empty() && !netlib_write_uint8(buffer, 0xff))
             {
                 success = false;
             }
             else
             {
-                for (const auto& data : m_button_states)
+                if (netlib_write_uint8(buffer, m_button_states.size()))
                 {
-                    if (!netlib_write_uint16(buffer, data.first))
-                        success = false;
+                    for (const auto& data : m_button_states)
+                    {
+                        if (!netlib_write_uint16(buffer, data.first))
+                            success = false;
+                    }
+                }
+                else
+                {
+                    success = false;
                 }
             }
-
+        }
+        else
+        {
+            success = false;
         }
         return success;
     }

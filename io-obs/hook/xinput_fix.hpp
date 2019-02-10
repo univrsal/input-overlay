@@ -10,12 +10,10 @@
 
 #pragma once
 #include <cstdint>
+#include "../../io-obs/util/layout_constants.hpp"
 
 #ifdef _WIN32
 #include <Windows.h>
-
-enum button_state; /* Forward declaration for Windows methods */
-enum dpad_direction;
 #endif
 
 namespace xinput_fix
