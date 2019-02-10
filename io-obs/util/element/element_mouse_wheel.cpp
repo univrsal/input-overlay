@@ -13,7 +13,7 @@
 #include "util/layout_constants.hpp"
 
 element_wheel::element_wheel()
-    : element_texture(MOUSE_SCROLLWHEEL)
+    : element_texture(MOUSE_SCROLLWHEEL), m_mappings{}
 {
     /* NO-OP */
 };
@@ -72,7 +72,7 @@ data_source element_wheel::get_source()
 }
 
 element_data_wheel::element_data_wheel(const wheel_direction dir, const int amount)
-    : element_data(MOUSE_SCROLLWHEEL)
+    : element_data(MOUSE_SCROLLWHEEL), m_middle_button(STATE_RELEASED)
 {
     m_data_type = WHEEL_STATE;
     m_dir = dir;
@@ -80,7 +80,7 @@ element_data_wheel::element_data_wheel(const wheel_direction dir, const int amou
 }
 
 element_data_wheel::element_data_wheel(const button_state state)
-    : element_data(MOUSE_SCROLLWHEEL)
+    : element_data(MOUSE_SCROLLWHEEL), m_dir()
 {
     m_data_type = BUTTON_STATE;
     m_middle_button = state;
@@ -116,23 +116,33 @@ void element_data_wheel::merge(element_data* other)
     if (other && other->get_type() == m_type)
     {
         const auto other_wheel = dynamic_cast<element_data_wheel*>(other);
+        
         if (other_wheel)
         {
+            /* After the merge this data contains both the scroll wheel state and the button state */
+            if (m_data_type != other_wheel->m_data_type)
+                m_data_type = WHEEL_BOTH;
+
             switch (other_wheel->m_data_type)
             {
             case BUTTON_STATE:
-#ifdef _DEBUG
-                blog(LOG_INFO, "Merged button state: %i old, %i new\n",
-                    m_middle_button, other_wheel->get_state());
-#endif
                 m_middle_button = other_wheel->get_state();
                 break;
             case WHEEL_STATE:
                 m_amount = other_wheel->get_amount();
                 m_dir = other_wheel->get_dir();
                 break;
+            case WHEEL_BOTH:
+                m_amount = other_wheel->get_amount();
+                m_dir = other_wheel->get_dir();
+                m_middle_button = other_wheel->get_state();
             default: ;
             }
         }
     }
+}
+
+wheel_data_type element_data_wheel::get_data_type() const
+{
+    return m_data_type;
 }

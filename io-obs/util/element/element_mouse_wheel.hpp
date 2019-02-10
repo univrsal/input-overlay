@@ -8,6 +8,7 @@
 #pragma once
 
 #include "element_texture.hpp"
+#include "util/layout_constants.hpp"
 
 #define WHEEL_MAP_MIDDLE  0
 #define WHEEL_MAP_UP      1
@@ -15,13 +16,10 @@
 
 enum wheel_data_type
 {
+    WHEEL_BOTH,
     BUTTON_STATE,
     WHEEL_STATE
 };
-
-enum wheel_direction;
-
-enum button_state;
 
 class element_data_wheel : public element_data
 {
@@ -41,6 +39,8 @@ public:
     bool is_persistent() override;
 
     void merge(element_data* other) override;
+
+    wheel_data_type get_data_type() const;
 private:
     wheel_data_type m_data_type;
     button_state m_middle_button;

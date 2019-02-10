@@ -247,15 +247,29 @@ void overlay::refresh_data()
                     data = source->get_by_gamepad(m_settings->gamepad,
                         element->get_keycode());
                     break;
+                default:
                 case DEFAULT:
                     data = source->get_by_code(element->get_keycode());
                     break;
-                default:;
+                case NONE:;
+                case MOUSE_POS:;
                 }
             }
 
             if (m_data[element->get_keycode()] != nullptr)
             {
+                if (data && m_data[element->get_keycode()]->get_type() == MOUSE_SCROLLWHEEL &&
+                    data->get_type() == MOUSE_SCROLLWHEEL)
+                {
+                    auto* w = dynamic_cast<element_data_wheel*>(m_data[element->get_keycode()].get());
+                    auto* w2 = dynamic_cast<element_data_wheel*>(data);
+
+                    if (w && w2)
+                    {
+                        blog(LOG_INFO, "This: %s, Other: %s", w->get_data_type() == WHEEL_STATE ? "wheel" : "button",
+                            w2->get_data_type() == WHEEL_STATE ? "wheel" : "button");
+                    }
+                }
                 m_data[element->get_keycode()]->merge(data);
             }
 
