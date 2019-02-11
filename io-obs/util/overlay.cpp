@@ -220,6 +220,9 @@ void overlay::refresh_data()
      */
 
     element_data_holder* source = nullptr;
+    std::lock_guard<std::mutex> lck1(hook::mutex);
+    std::lock_guard<std::mutex> lck2(network::mutex);
+
     if (hook::data_initialized || network::network_flag)
     {
         if (network::server_instance && m_settings->selected_source > 0)
@@ -233,7 +236,7 @@ void overlay::refresh_data()
         }
     }
 
-    if (source && !source->is_blocked())
+    if (source)
     {
         for (auto const& element : m_elements)
         {

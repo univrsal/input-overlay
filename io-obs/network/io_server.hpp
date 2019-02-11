@@ -13,6 +13,7 @@
 #include <vector>
 #include <memory>
 #include <obs-module.h>
+#include <mutex>
 
 #ifdef _WIN32
 #include <Windows.h>
@@ -24,6 +25,8 @@ enum message;
 
 namespace network
 {
+    extern std::mutex mutex;
+
     class io_server
     {
     public:

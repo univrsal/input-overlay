@@ -16,6 +16,7 @@ static netlib_socket_set sockets = nullptr;
 
 namespace network
 {
+    std::mutex mutex;
 
     io_server::io_server(const uint16_t port)
         : m_server(nullptr)
@@ -77,6 +78,8 @@ namespace network
     
     void io_server::update_clients()
     {
+        mutex.lock();
+
         for (const auto& client : m_clients)
         {
             if (netlib_socket_ready(client->socket()))
@@ -113,6 +116,7 @@ namespace network
                 }
             }
         }
+        mutex.unlock();
     }
 
 	void io_server::get_clients(std::vector<const char*>& v)
@@ -153,6 +157,8 @@ namespace network
 
     void io_server::roundtrip()
 	{
+        mutex.lock();
+
 		if (!m_clients.empty())
 		{
 		    const auto old = server_instance->m_num_clients;
@@ -183,6 +189,8 @@ namespace network
 			if (old != server_instance->m_num_clients)
 				m_clients_changed = true;
 		}
+
+        mutex.unlock();
 	}
 
     io_client* io_server::get_client(const uint8_t id)
@@ -194,6 +202,8 @@ namespace network
 
     void io_server::add_client(tcp_socket socket, char* name)
     {
+        std::lock_guard<std::mutex> lock(mutex);
+
 		fix_name(name);
 
         if (!strlen(name))

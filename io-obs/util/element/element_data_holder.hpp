@@ -9,6 +9,7 @@
 #include "element.hpp"
 #include <map>
 #include <memory>
+#include <mutex>
 
 class element_data_holder
 {
@@ -31,15 +32,7 @@ public:
     void clear_gamepad_data();
 
     bool is_empty() const;
-    bool is_blocked() const;
 private:
     std::map<uint16_t, std::unique_ptr<element_data>> m_data;
     std::map<uint16_t, std::unique_ptr<element_data>> m_gamepad_data[4];
-
-    /* Prevent drawing thread from accessing data while
-     * hook threads write to it
-     * TODO: use mutex?
-     */
-    volatile bool m_data_locked = false;
-    volatile bool m_gamepad_data_locked = false;
 };

@@ -64,6 +64,7 @@ namespace uiohook
                 {
                     for (const auto& data : m_button_states)
                     {
+                        printf("wrote key: 0x%X\n", data.first);
                         if (!netlib_write_uint16(buffer, data.first))
                             success = false;
                     }

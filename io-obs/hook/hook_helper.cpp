@@ -29,6 +29,9 @@ namespace hook
             mouse_last_y;
     bool hook_initialized = false;
 	bool data_initialized = false;
+    std::mutex mutex;
+
+
 #ifdef _WIN32
     static HANDLE hook_thread;
     static HANDLE hook_running_mutex;
@@ -246,6 +249,8 @@ namespace hook
 
     void process_event(uiohook_event* const event)
     {
+        mutex.lock();
+
         element_data* d = nullptr;
         element_data_wheel* wheel = nullptr;
         wheel_direction dir;
@@ -316,6 +321,8 @@ namespace hook
             break;
         default: ;
         }
+
+        mutex.unlock();
     }
 
     int hook_enable()

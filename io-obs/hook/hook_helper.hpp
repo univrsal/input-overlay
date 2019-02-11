@@ -8,6 +8,8 @@
 #pragma once
 
 #include <uiohook.h>
+#include <mutex>
+
 #include "../util/util.hpp"
 
 #ifdef LINUX
@@ -28,6 +30,7 @@ namespace hook
                    mouse_last_y;
     extern bool hook_initialized;
 	extern bool data_initialized;
+    extern std::mutex mutex;
 
 #ifdef _WIN32
     DWORD WINAPI hook_thread_proc(LPVOID arg);

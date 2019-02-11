@@ -34,14 +34,9 @@ bool element_data_holder::is_empty() const
     return m_data.empty() && flag;
 }
 
-bool element_data_holder::is_blocked() const
-{
-    return m_data_locked || m_gamepad_data_locked;
-}
 
 void element_data_holder::add_data(const uint16_t keycode, element_data* data)
 {
-    m_data_locked = true;
     if (data_exists(keycode))
     {
         if (m_data[keycode]->is_persistent())
@@ -59,14 +54,12 @@ void element_data_holder::add_data(const uint16_t keycode, element_data* data)
     {
         m_data[keycode] = std::unique_ptr<element_data>(data);
     }
-    m_data_locked = false;
 }
 
 void element_data_holder::add_gamepad_data(const uint8_t gamepad,
     const uint16_t keycode,
     element_data* data)
 {
-    m_gamepad_data_locked = true;
     if (gamepad_data_exists(gamepad, keycode))
     {
         if (m_gamepad_data[gamepad][keycode]->is_persistent())
@@ -85,7 +78,6 @@ void element_data_holder::add_gamepad_data(const uint8_t gamepad,
     {
         m_gamepad_data[gamepad][keycode] = std::unique_ptr<element_data>(data);
     }
-    m_gamepad_data_locked = false;
 }
 
 bool element_data_holder::gamepad_data_exists(const uint8_t gamepad, const uint16_t keycode)
@@ -97,22 +89,17 @@ bool element_data_holder::gamepad_data_exists(const uint8_t gamepad, const uint1
 
 void element_data_holder::remove_gamepad_data(const uint8_t gamepad, const uint16_t keycode)
 {
-    m_gamepad_data_locked = true;
     if (gamepad_data_exists(gamepad, keycode))
     {
         m_gamepad_data[gamepad][keycode].reset();
         m_gamepad_data[gamepad].erase(keycode);
     }
-    m_gamepad_data_locked = false;
 }
 
 element_data* element_data_holder::get_by_gamepad(const uint8_t gamepad, const uint16_t keycode)
 {
-    if (m_gamepad_data_locked)
-    {
-        return nullptr;
-    }
-    return m_gamepad_data[gamepad][keycode].get();
+    auto result = m_gamepad_data[gamepad][keycode].get();
+    return result;
 }
 
 void element_data_holder::clear_data()
@@ -128,33 +115,32 @@ void element_data_holder::clear_button_data()
 
 void element_data_holder::clear_gamepad_data()
 {
-    for (auto& data : m_gamepad_data)
-        data.clear();
+    m_gamepad_data->clear();
 }
 
 bool element_data_holder::data_exists(const uint16_t keycode)
 {
     if (is_empty())
         return false;
+    
     return m_data[keycode] != nullptr;
 }
 
 void element_data_holder::remove_data(const uint16_t keycode)
 {
-    m_data_locked = true;
     if (data_exists(keycode))
     {
+
         m_data[keycode].reset();
         m_data.erase(keycode);
     }
-    m_data_locked = false;
 }
 
 element_data* element_data_holder::get_by_code(const uint16_t keycode)
 {
-    if (m_data_locked || m_data.empty())
-    {
+    
+    if (!data_exists(keycode))
         return nullptr;
-    }
+
     return m_data[keycode].get();
 }
