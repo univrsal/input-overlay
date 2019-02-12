@@ -68,6 +68,7 @@ data_source element_wheel::get_source()
 element_data_wheel::element_data_wheel(const wheel_direction dir, const int amount, const button_state state)
     : element_data_wheel(dir, amount)
 {
+    m_data_type = WHEEL_BOTH;
     m_middle_button = state;
 }
 

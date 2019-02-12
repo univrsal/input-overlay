@@ -87,7 +87,6 @@ namespace network
             flag = netlib_read_int16(buffer, &x) && netlib_read_int16(buffer, &y) &&
                 netlib_read_int8(buffer, &dir) && netlib_read_int16(buffer, &amount) &&
                 netlib_read_uint8(buffer, &pressed);
-
             if (flag)
             {
                 if (dir >= WHEEL_DIR_UP && dir <= WHEEL_DIR_DOWN)
