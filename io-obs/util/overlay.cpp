@@ -110,7 +110,7 @@ bool overlay::load_cfg()
         blog(LOG_WARNING, "[input-overlay] %s", cfg->get_error_message().c_str());
         if (cfg->has_fatal_errors())
         {
-            blog(LOG_WARNING, "Fatal errors occured while loading config file");
+            blog(LOG_WARNING, "[input-overlay] Fatal errors occured while loading config file");
             flag = false;
         }
         else
@@ -242,7 +242,7 @@ void overlay::refresh_data()
         {
             element_data* data = nullptr;
 
-            if (source)
+            if (m_data[element->get_keycode()] != nullptr)
             {
                 switch (element->get_source())
                 {
@@ -257,10 +257,6 @@ void overlay::refresh_data()
                     break;
                 case NONE:;
                 }
-            }
-
-            if (m_data[element->get_keycode()] != nullptr)
-            {
                 m_data[element->get_keycode()]->merge(data);
             }
         }
@@ -303,7 +299,7 @@ void overlay::load_element(ccl_config* cfg, const std::string& id, const bool de
         break;
     default:
         if (debug)
-            blog(LOG_INFO, "Invalid element type %i for %s",
+            blog(LOG_INFO, "[input-overlay] Invalid element type %i for %s",
                 type, id.c_str());
     }
 
@@ -318,7 +314,7 @@ void overlay::load_element(ccl_config* cfg, const std::string& id, const bool de
 #else
         {
 #endif
-            blog(LOG_INFO, " Type: %14s, KEYCODE: 0x%4X ID: %s",
+            blog(LOG_INFO, "[input-overlay]  Type: %14s, KEYCODE: 0x%4X ID: %s",
                 element_type_to_string(static_cast<element_type>(type)), new_element->get_keycode(), id.c_str());
         }
     }

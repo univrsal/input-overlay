@@ -64,7 +64,6 @@ namespace network
             if (flag) /* Only pressed buttons are sent */
             {
                 m_holder.clear_button_data();
-                blog(LOG_INFO, "Got %i keys", key_count);
                 for (int i = 0; i < key_count; i++)
                 {
                     if (!netlib_read_uint16(buffer, &vc))

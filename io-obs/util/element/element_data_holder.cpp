@@ -20,13 +20,13 @@ element_data_holder::~element_data_holder()
 
 bool element_data_holder::is_empty() const
 {
-    auto flag = true;
+    auto flag = false;
 
     for (const auto& pad : m_gamepad_data)
     {
         if (pad.empty())
         {
-            flag = false;
+            flag = true;
             break;
         }
     }
