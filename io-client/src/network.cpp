@@ -108,6 +108,12 @@ namespace network
 				break;
             }
 
+            /* Reset scroll wheel if no scroll event happened */
+            if (util::get_ticks() - uiohook::data.get_last_scroll() >= SCROLL_TIMEOUT)
+            {
+                uiohook::data.reset_wheel();
+            }
+
             if (need_refresh)
             {
                 std::lock_guard<std::mutex> lock(uiohook::m_mutex);

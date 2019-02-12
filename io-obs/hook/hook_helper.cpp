@@ -292,7 +292,7 @@ namespace hook
             break;
         case EVENT_MOUSE_PRESSED:
         case EVENT_MOUSE_RELEASED:
-            if (event->data.mouse.button == MOUSE_BUTTON3)
+            if (util_mouse_to_vc(event->data.mouse.button) == VC_MOUSE_BUTTON3)
                 /* Special case :/ */
                 input_data->add_data(VC_MOUSE_WHEEL,
                     new element_data_wheel(event->type == EVENT_MOUSE_PRESSED ? STATE_PRESSED : STATE_RELEASED));

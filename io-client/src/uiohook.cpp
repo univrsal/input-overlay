@@ -42,7 +42,7 @@ namespace uiohook
         m_mutex.unlock();
     }
 
-    void data_holder::set_wheel(int amount, wheel_dir dir, uint64_t time)
+    void data_holder::set_wheel(int amount, wheel_dir dir)
     {
         m_mutex.lock();
         if (dir != m_wheel_direction)
@@ -51,14 +51,15 @@ namespace uiohook
             m_wheel_amount += amount;
         m_wheel_direction = dir;
         m_new_mouse_data = true;
-        m_last_scroll = time;
+        m_last_scroll = util::get_ticks();
         m_mutex.unlock();
     }
 
-    void data_holder::set_wheel(wheel_dir dir)
+    void data_holder::reset_wheel()
     {
         m_mutex.lock();
-        m_wheel_direction = dir;
+        m_new_mouse_data = true;
+        m_wheel_direction = wheel_none;
         m_mutex.unlock();
     }
 
@@ -103,7 +104,7 @@ namespace uiohook
                 netlib_write_int8(buffer, m_wheel_direction) &&
                 netlib_write_int16(buffer, m_wheel_amount) &&
                 netlib_write_int8(buffer, m_wheel_pressed);
-
+            
             /* TODO: write other mouse data */
             m_new_mouse_data = false;
         }
@@ -111,7 +112,7 @@ namespace uiohook
         return success;
     }
 
-    uint64_t data_holder::get_last_scroll()
+    uint32_t data_holder::get_last_scroll()
     {
         return m_last_scroll;
     }
@@ -147,11 +148,6 @@ namespace uiohook
 
 	void dispatch_proc(uiohook_event* const event)
 	{
-        if (event->time - data.get_last_scroll() >= SCROLL_TIMEOUT)
-        {
-            data.set_wheel(wheel_none);
-        }
-
         switch(event->type)
         {
         case EVENT_HOOK_ENABLED:
@@ -166,10 +162,10 @@ namespace uiohook
         case EVENT_MOUSE_RELEASED:
             if (util::cfg.monitor_mouse)
             {
-                if (event->data.mouse.button == MOUSE_BUTTON3)
+                if (is_middle_mouse(event->data.mouse.button))
                     data.set_wheel(event->type == EVENT_MOUSE_PRESSED);
                 else
-                    data.set_button(event->data.mouse.button | VC_MOUSE_MASK,
+                    data.set_button(util_mouse_fix(event->data.mouse.button)| VC_MOUSE_MASK,
                         event->type == EVENT_MOUSE_PRESSED);
             }
             break;
@@ -177,7 +173,7 @@ namespace uiohook
             if (util::cfg.monitor_mouse)
             {
                 data.set_wheel(event->data.wheel.amount, event->data.wheel.rotation >= WHEEL_DOWN
-                    ? wheel_down : wheel_up, event->time);
+                    ? wheel_down : wheel_up);
             } /* Fallthrough */
         case EVENT_MOUSE_MOVED:
         case EVENT_MOUSE_DRAGGED:

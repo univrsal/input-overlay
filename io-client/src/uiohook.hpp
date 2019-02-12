@@ -11,7 +11,7 @@
 #include <map>
 #include <netlib.h>
 
-#define SCROLL_TIMEOUT 120 * 1000 * 1000
+#define SCROLL_TIMEOUT 120
 namespace uiohook
 {
     extern std::mutex m_mutex;
@@ -31,18 +31,34 @@ namespace uiohook
         int16_t m_wheel_amount;
         bool m_wheel_pressed;
         bool m_new_mouse_data;
-        uint64_t m_last_scroll;
+        uint32_t m_last_scroll;
 
     public:
         data_holder();
         void set_button(uint16_t keycode, bool pressed);
         void set_mouse_pos(int16_t x, int16_t y);
-        void set_wheel(int amount, wheel_dir dir, uint64_t time);
-        void set_wheel(wheel_dir dir);
+        void set_wheel(int amount, wheel_dir dir);
+        void reset_wheel();
         void set_wheel(bool pressed);
         bool write_to_buffer(netlib_byte_buf* buffer);
-        uint64_t get_last_scroll();
+        uint32_t get_last_scroll();
     };
+
+    inline uint16_t util_mouse_fix(int m)
+    {
+#ifndef _WIN32 /* Linux mixes right mouse and middle mouse or is windows getting it wrong? */
+        if (m == 3)
+            m = 2;
+        else if (m == 2)
+            m = 3;
+#endif
+        return m;
+    }
+    
+    inline bool is_middle_mouse(int m)
+    {
+        return util_mouse_fix(m) == MOUSE_BUTTON3;
+    }
 
     extern data_holder data;
     extern volatile bool hook_state;
