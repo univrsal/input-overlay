@@ -24,13 +24,11 @@ enum wheel_data_type
 class element_data_wheel : public element_data
 {
 public:
-    element_data_wheel(wheel_direction dir, int amount, button_state state);
+    element_data_wheel(wheel_direction dir, button_state state);
 
-    element_data_wheel(wheel_direction dir, int amount);
+    element_data_wheel(wheel_direction dir);
 
     element_data_wheel(button_state state);
-
-    int get_amount() const;
 
     wheel_direction get_dir() const;
 
@@ -47,7 +45,6 @@ private:
     wheel_data_type m_data_type;
     button_state m_middle_button;
     wheel_direction m_dir;
-    int m_amount = 0;
 };
 
 class element_wheel : public element_texture

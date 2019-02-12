@@ -12,6 +12,7 @@
 #include "util/element/element_trigger.hpp"
 #include "util/element/element_mouse_movement.hpp"
 #include "util/element/element_mouse_wheel.hpp"
+#include <uiohook.h>
 
 namespace network
 {
@@ -72,9 +73,25 @@ namespace network
                         break;
                     }
                     m_holder.add_data(vc, new element_data_button(STATE_PRESSED));
+
+                    switch(vc)
+                    {
+                    case VC_MOUSE_BUTTON1:
+                        m_holder.add_data(
+                            VC_MOUSE_DATA, new element_data_mouse_stats(stat_lmb));
+                        break;
+                    case VC_MOUSE_BUTTON2:
+                        m_holder.add_data(
+                            VC_MOUSE_DATA, new element_data_mouse_stats(stat_rmb));
+                        break;
+                    case VC_MOUSE_BUTTON3:
+                        m_holder.add_data(
+                            VC_MOUSE_DATA, new element_data_mouse_stats(stat_mmb));
+                        break;
+                    default:;
+                    }
                 }
             }
-            /* TODO: add mouse clicks to mouse stats */
         }
         else if (msg == MSG_MOUSE_DATA)
         {
@@ -93,7 +110,8 @@ namespace network
                     direction = wheel_direction(dir);
 
                 m_holder.add_data(VC_MOUSE_DATA, new element_data_mouse_stats(x, y));
-                m_holder.add_data(VC_MOUSE_WHEEL, new element_data_wheel(direction, amount,
+                m_holder.add_data(VC_MOUSE_DATA, new element_data_mouse_stats(amount));
+                m_holder.add_data(VC_MOUSE_WHEEL, new element_data_wheel(direction,
                     pressed ? STATE_PRESSED : STATE_RELEASED));
             }
         }

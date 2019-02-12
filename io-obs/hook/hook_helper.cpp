@@ -253,6 +253,7 @@ namespace hook
 
         element_data* d = nullptr;
         element_data_wheel* wheel = nullptr;
+        element_data_mouse_stats* mouse_stats = nullptr;
         wheel_direction dir;
         int new_amount;
 
@@ -278,27 +279,19 @@ namespace hook
                 dir = WHEEL_DIR_UP;
 
             /* Get current Mouse wheel state */
-            if (input_data) d = input_data->get_by_code(VC_MOUSE_WHEEL);
-            if (d) wheel = dynamic_cast<element_data_wheel*>(d);
-
-            if (wheel)
+            if (input_data)
             {
-                if (dir != wheel->get_dir())
-                    new_amount = event->data.wheel.rotation;
-                else
-                    new_amount = wheel->get_amount() + event->data.wheel.rotation;
-            }
-            else
-            {
-                new_amount = event->data.wheel.rotation;
+                d = input_data->get_by_code(VC_MOUSE_DATA);
+                if (d) mouse_stats = dynamic_cast<element_data_mouse_stats*>(d);
             }
 
             input_data->add_data(
-                VC_MOUSE_WHEEL, new element_data_wheel(dir, new_amount));
-            /* TODO: Also add to MOUSE_DATA */
-        case EVENT_MOUSE_PRESSED: /* Fallthrough*/
+                VC_MOUSE_WHEEL, new element_data_wheel(dir));
+            input_data->add_data(
+                VC_MOUSE_DATA, new element_data_mouse_stats(event->data.wheel.amount));
+            break;
+        case EVENT_MOUSE_PRESSED:
         case EVENT_MOUSE_RELEASED:
-            /* TODO: Also add click count to mouse data */
             if (event->data.mouse.button == MOUSE_BUTTON3)
                 /* Special case :/ */
                 input_data->add_data(VC_MOUSE_WHEEL,
@@ -306,6 +299,24 @@ namespace hook
             else
                 input_data->add_data(util_mouse_to_vc(event->data.mouse.button),
                     new element_data_button(event->type == EVENT_MOUSE_PRESSED ? STATE_PRESSED : STATE_RELEASED));
+
+            switch(event->data.mouse.button)
+            {
+            case MOUSE_BUTTON1:
+                input_data->add_data(
+                    VC_MOUSE_DATA, new element_data_mouse_stats(stat_lmb));
+                break;
+            case MOUSE_BUTTON2:
+                input_data->add_data(
+                    VC_MOUSE_DATA, new element_data_mouse_stats(stat_rmb));
+                break;
+            case MOUSE_BUTTON3:
+                input_data->add_data(
+                    VC_MOUSE_DATA, new element_data_mouse_stats(stat_mmb));
+                break;
+            default:;
+            }
+
             break;
         case EVENT_KEY_TYPED:
             last_character = event->data.keyboard.keychar;

@@ -65,19 +65,18 @@ data_source element_wheel::get_source()
     return DEFAULT;
 }
 
-element_data_wheel::element_data_wheel(const wheel_direction dir, const int amount, const button_state state)
-    : element_data_wheel(dir, amount)
+element_data_wheel::element_data_wheel(const wheel_direction dir, const button_state state)
+    : element_data_wheel(dir)
 {
     m_data_type = WHEEL_BOTH;
     m_middle_button = state;
 }
 
-element_data_wheel::element_data_wheel(const wheel_direction dir, const int amount)
+element_data_wheel::element_data_wheel(const wheel_direction dir)
     : element_data(MOUSE_SCROLLWHEEL), m_middle_button(STATE_RELEASED)
 {
     m_data_type = WHEEL_STATE;
     m_dir = dir;
-    m_amount = amount;
 }
 
 element_data_wheel::element_data_wheel(const button_state state)
@@ -87,10 +86,6 @@ element_data_wheel::element_data_wheel(const button_state state)
     m_middle_button = state;
 }
 
-int element_data_wheel::get_amount() const
-{
-    return m_amount;
-}
 
 wheel_direction element_data_wheel::get_dir() const
 {
@@ -130,11 +125,9 @@ void element_data_wheel::merge(element_data* other)
                 m_middle_button = other_wheel->get_state();
                 break;
             case WHEEL_STATE:
-                m_amount = other_wheel->get_amount();
                 m_dir = other_wheel->get_dir();
                 break;
             case WHEEL_BOTH:
-                m_amount = other_wheel->get_amount();
                 m_dir = other_wheel->get_dir();
                 m_middle_button = other_wheel->get_state();
             default: ;

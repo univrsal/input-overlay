@@ -45,11 +45,25 @@ void element_mouse_movement::draw(gs_effect_t* effect,
     }
 }
 
-element_data_mouse_stats::element_data_mouse_stats(int16_t x, int16_t y)
-    : element_data(MOUSE_MOVEMENT), m_last_x(0), m_last_y(0), m_old_angle(0)
+element_data_mouse_stats::element_data_mouse_stats(const int16_t x, const int16_t y)
+    : element_data(MOUSE_MOVEMENT)
 {
+    m_type = stat_pos;
     m_x = x;
     m_y = y;
+}
+
+element_data_mouse_stats::element_data_mouse_stats(const stat_type type)
+    : element_data(MOUSE_MOVEMENT)
+{
+    m_type = type;
+}
+
+element_data_mouse_stats::element_data_mouse_stats(int scroll_amount)
+    : element_data(MOUSE_MOVEMENT)
+{
+    m_type = stat_scroll_amount;
+    m_wheel_current = scroll_amount;
 }
 
 bool element_data_mouse_stats::is_persistent()
@@ -64,10 +78,42 @@ void element_data_mouse_stats::merge(element_data* other)
         const auto data = dynamic_cast<element_data_mouse_stats*>(other);
         if (data)
         {
-            m_last_x = m_x;
-            m_last_y = m_y;
-            m_x = data->m_x;
-            m_y = data->m_y;
+            switch(data->m_type)
+            {
+            case stat_pos:
+                m_last_x = m_x;
+                m_last_y = m_y;
+                m_x = data->m_x;
+                m_y = data->m_y;
+                break;
+            case stat_scroll_amount:
+                if (data->m_wheel_current <= WHEEL_UP)
+                    m_wheel_up_total += data->m_wheel_current;
+                else
+                    m_wheel_down_total += data->m_wheel_current;
+
+                if ((m_wheel_current < 0) == (data->m_wheel_current < 0))
+                    m_wheel_current += data->m_wheel_current;
+                else
+                    m_wheel_current = data->m_wheel_current;
+                break;
+            case stat_lmb: 
+                m_lmbcount_total++;
+                m_rmbcount_current = 0;
+                m_mmbcount_current = 0;
+                break;
+            case stat_rmb:
+                m_lmbcount_current = 0;
+                m_rmbcount_total++;
+                m_mmbcount_current = 0;
+                break;
+            case stat_mmb:
+                m_lmbcount_current = 0;
+                m_rmbcount_current = 0;
+                m_mmbcount_total++;
+                break;
+            default:;
+            }
         }
     }
 }
