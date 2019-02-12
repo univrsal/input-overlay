@@ -9,7 +9,6 @@
 #include "element.hpp"
 #include <map>
 #include <memory>
-#include <mutex>
 
 class element_data_holder
 {
@@ -33,6 +32,6 @@ public:
 
     bool is_empty() const;
 private:
-    std::map<uint16_t, std::unique_ptr<element_data>> m_data;
+    std::map<uint16_t, std::unique_ptr<element_data>> m_button_data;
     std::map<uint16_t, std::unique_ptr<element_data>> m_gamepad_data[4];
 };

@@ -15,15 +15,15 @@
 
 namespace uiohook
 {
+    std::mutex m_mutex;
     data_holder data;
     volatile bool hook_state = false;
 
-    data_holder::data_holder(): m_mouse_x(0), m_mouse_y(0), m_wheel_direction(0), m_lmb_clicks(0), m_rmb_clicks(0),
-        m_mmb_clicks(0), m_new_mouse_data(false)
+    data_holder::data_holder(): m_mouse_x(0), m_mouse_y(0), m_wheel_direction(wheel_none), m_new_mouse_data(false)
     {
     }
 
-    void data_holder::add_button(const uint16_t keycode, const bool pressed)
+    void data_holder::set_button(const uint16_t keycode, const bool pressed)
     {
         m_mutex.lock();
         if (pressed)
@@ -33,7 +33,7 @@ namespace uiohook
         m_mutex.unlock();
     }
 
-    void data_holder::add_mouse(const int16_t x, const int16_t y)
+    void data_holder::set_mouse_pos(const int16_t x, const int16_t y)
     {
         m_mutex.lock();
         m_mouse_x = x;
@@ -42,37 +42,53 @@ namespace uiohook
         m_mutex.unlock();
     }
 
+    void data_holder::set_wheel(int amount, wheel_dir dir, uint64_t time)
+    {
+        m_mutex.lock();
+        if (dir != m_wheel_direction)
+            m_wheel_amount = amount;
+        else
+            m_wheel_amount += amount;
+        m_wheel_direction = dir;
+        m_new_mouse_data = true;
+        m_last_scroll = time;
+        m_mutex.unlock();
+    }
+
+    void data_holder::set_wheel(wheel_dir dir)
+    {
+        m_mutex.lock();
+        m_wheel_direction = dir;
+        m_mutex.unlock();
+    }
+
+    void data_holder::set_wheel(bool pressed)
+    {
+        m_mutex.lock();
+        m_new_mouse_data = true;
+        m_wheel_pressed = pressed;
+        m_mutex.unlock();
+    }
+
     bool data_holder::write_to_buffer(netlib_byte_buf* buffer)
     {
-        /* Message always sends both mouse and button data.
-         * if there's no buttons pressed the button message
-         * will contain the button count 0xff, signaling
-         * that any previously pressed keys should be cleared
-         */
+        /* Message always sends both mouse and button data. */
 
         auto success = true;
 
         if (netlib_write_uint8(buffer, MSG_BUTTON_DATA))
         {
-            if (m_button_states.empty() && !netlib_write_uint8(buffer, 0xff))
+            if (netlib_write_uint8(buffer, int(m_button_states.size())))
             {
-                success = false;
+                for (const auto& data : m_button_states)
+                {
+                    if (!netlib_write_uint16(buffer, data.first))
+                        success = false;
+                }
             }
             else
             {
-                if (netlib_write_uint8(buffer, m_button_states.size()))
-                {
-                    for (const auto& data : m_button_states)
-                    {
-                        printf("wrote key: 0x%X\n", data.first);
-                        if (!netlib_write_uint16(buffer, data.first))
-                            success = false;
-                    }
-                }
-                else
-                {
-                    success = false;
-                }
+                success = false;
             }
         }
         else
@@ -82,13 +98,22 @@ namespace uiohook
 
         if (m_new_mouse_data)
         {
-            success = netlib_write_uint8(buffer, MSG_MOUSE_POS_DATA) &&
-                netlib_write_int16(buffer, m_mouse_x) && netlib_write_int16(buffer, m_mouse_y);
+            success = netlib_write_uint8(buffer, MSG_MOUSE_DATA) &&
+                netlib_write_int16(buffer, m_mouse_x) && netlib_write_int16(buffer, m_mouse_y) &&
+                netlib_write_int8(buffer, m_wheel_direction) &&
+                netlib_write_int16(buffer, m_wheel_amount) &&
+                netlib_write_int8(buffer, m_wheel_pressed);
+
             /* TODO: write other mouse data */
             m_new_mouse_data = false;
         }
 
         return success;
+    }
+
+    uint64_t data_holder::get_last_scroll()
+    {
+        return m_last_scroll;
     }
 
     bool logger_proc(unsigned level, const char* format, ...)
@@ -122,6 +147,11 @@ namespace uiohook
 
 	void dispatch_proc(uiohook_event* const event)
 	{
+        if (event->time - data.get_last_scroll() >= SCROLL_TIMEOUT)
+        {
+            data.set_wheel(wheel_none);
+        }
+
         switch(event->type)
         {
         case EVENT_HOOK_ENABLED:
@@ -135,19 +165,30 @@ namespace uiohook
         case EVENT_MOUSE_PRESSED:
         case EVENT_MOUSE_RELEASED:
             if (util::cfg.monitor_mouse)
-                data.add_button(event->data.mouse.button | VC_MOUSE_MASK, event->type == EVENT_MOUSE_PRESSED);
+            {
+                if (event->data.mouse.button == MOUSE_BUTTON3)
+                    data.set_wheel(event->type == EVENT_MOUSE_PRESSED);
+                else
+                    data.set_button(event->data.mouse.button | VC_MOUSE_MASK,
+                        event->type == EVENT_MOUSE_PRESSED);
+            }
             break;
-        case EVENT_MOUSE_MOVED:
-        case EVENT_MOUSE_DRAGGED:
         case EVENT_MOUSE_WHEEL:
             if (util::cfg.monitor_mouse)
-                data.add_mouse(event->data.mouse.x, event->data.mouse.y);
+            {
+                data.set_wheel(event->data.wheel.amount, event->data.wheel.rotation >= WHEEL_DOWN
+                    ? wheel_down : wheel_up, event->time);
+            } /* Fallthrough */
+        case EVENT_MOUSE_MOVED:
+        case EVENT_MOUSE_DRAGGED:
+            if (util::cfg.monitor_mouse)
+                data.set_mouse_pos(event->data.mouse.x, event->data.mouse.y);
             break;
         case EVENT_KEY_TYPED: /* TODO: how to handle this */
         case EVENT_KEY_PRESSED:
         case EVENT_KEY_RELEASED:
             if (util::cfg.monitor_keyboard)
-                data.add_button(event->data.keyboard.keycode, event->type == EVENT_KEY_PRESSED);
+                data.set_button(event->data.keyboard.keycode, event->type == EVENT_KEY_PRESSED);
             break;
         default:;
         }

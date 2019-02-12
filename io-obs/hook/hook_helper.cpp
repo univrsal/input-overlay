@@ -254,36 +254,21 @@ namespace hook
         element_data* d = nullptr;
         element_data_wheel* wheel = nullptr;
         wheel_direction dir;
-        auto new_amount = 0;
+        int new_amount;
+
+        if (os_gettime_ns() - hook::last_wheel >= SCROLL_TIMEOUT)
+        {
+            if (input_data) d = input_data->get_by_code(VC_MOUSE_WHEEL);
+            if (d) wheel = dynamic_cast<element_data_wheel*>(d);
+            if (wheel) wheel->set_dir(WHEEL_DIR_NONE);
+        }
 
         switch (event->type)
         {
-        case EVENT_KEY_PRESSED:
+        case EVENT_KEY_PRESSED: 
+        case EVENT_KEY_RELEASED:/* Fallthrough */
             input_data->add_data(event->data.keyboard.keycode,
-                new element_data_button(STATE_PRESSED));
-            break;
-        case EVENT_KEY_RELEASED:
-            input_data->add_data(event->data.keyboard.keycode,
-                new element_data_button(STATE_RELEASED)); /* TODO: used to be remove_data */
-            break;
-        case EVENT_MOUSE_PRESSED:
-            /* TODO: Also add click count to mouse data */
-            if (event->data.mouse.button == MOUSE_BUTTON3)
-                /* Special case :/ */
-                input_data->add_data(VC_MOUSE_WHEEL,
-                    new element_data_wheel(STATE_PRESSED));
-            else
-                input_data->add_data(util_mouse_to_vc(event->data.mouse.button),
-                    new element_data_button(STATE_PRESSED));
-            break;
-        case EVENT_MOUSE_RELEASED:
-            if (event->data.mouse.button == MOUSE_BUTTON3)
-                /* Special case :/ */
-                input_data->add_data(VC_MOUSE_WHEEL,
-                    new element_data_wheel(STATE_RELEASED));
-            else
-                input_data->add_data(util_mouse_to_vc(event->data.mouse.button),
-                    new element_data_button(STATE_RELEASED));
+                new element_data_button(event->type == EVENT_KEY_PRESSED ? STATE_PRESSED : STATE_RELEASED ));
             break;
         case EVENT_MOUSE_WHEEL:
             last_wheel = os_gettime_ns();
@@ -294,7 +279,7 @@ namespace hook
 
             /* Get current Mouse wheel state */
             if (input_data) d = input_data->get_by_code(VC_MOUSE_WHEEL);
-            if (d) wheel = reinterpret_cast<element_data_wheel*>(d);
+            if (d) wheel = dynamic_cast<element_data_wheel*>(d);
 
             if (wheel)
             {
@@ -311,6 +296,16 @@ namespace hook
             input_data->add_data(
                 VC_MOUSE_WHEEL, new element_data_wheel(dir, new_amount));
             /* TODO: Also add to MOUSE_DATA */
+        case EVENT_MOUSE_PRESSED: /* Fallthrough*/
+        case EVENT_MOUSE_RELEASED:
+            /* TODO: Also add click count to mouse data */
+            if (event->data.mouse.button == MOUSE_BUTTON3)
+                /* Special case :/ */
+                input_data->add_data(VC_MOUSE_WHEEL,
+                    new element_data_wheel(event->type == EVENT_MOUSE_PRESSED ? STATE_PRESSED : STATE_RELEASED));
+            else
+                input_data->add_data(util_mouse_to_vc(event->data.mouse.button),
+                    new element_data_button(event->type == EVENT_MOUSE_PRESSED ? STATE_PRESSED : STATE_RELEASED));
             break;
         case EVENT_KEY_TYPED:
             last_character = event->data.keyboard.keychar;

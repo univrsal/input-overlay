@@ -110,6 +110,8 @@ namespace network
 
             if (need_refresh)
             {
+                std::lock_guard<std::mutex> lock(uiohook::m_mutex);
+
                 buffer->write_pos = 0;
                 if (gamepad::check_changes() && !util::write_gamepad_data())
                 {
@@ -120,7 +122,13 @@ namespace network
                 if (!uiohook::data.write_to_buffer(network::buffer))
                 {
                     DEBUG_LOG("Writing uiohook data to buffer failed: %s\n", netlib_get_error());
-                    break;                 
+                    break;
+                }
+
+                if (!netlib_write_uint8(network::buffer, MSG_END_BUFFER))
+                {
+                    DEBUG_LOG("Writing buffer end failed: %s\n", netlib_get_error());
+                    break;
                 }
 
                 if (buffer->write_pos > 0 && !netlib_tcp_send_buf_smart(sock, buffer))
@@ -129,6 +137,7 @@ namespace network
                     break;
                 }
 
+                
                 need_refresh = false;
             }
         }

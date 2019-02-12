@@ -86,21 +86,22 @@ namespace network
             {
                 /* Receive input data */
 				m_buffer->read_pos = 0; /* Reset buffer */
-                const size_t read = netlib_tcp_recv_buf(client->socket(), m_buffer);
-                if (!read)
+                const int read = netlib_tcp_recv_buf(client->socket(), m_buffer);
+
+                if (read < 0)
                 {
 				    LOG_(LOG_ERROR, "Failed to receive buffer from %s. Closed connection", client->name());
                     client->mark_invalid();
                     continue;
                 }
 
-                while (m_buffer->read_pos < m_buffer->length) /* Buffer can contain multiple messages */
+                while (m_buffer->read_pos < read) /* Buffer can contain multiple messages */
                 {
                     const auto msg = read_msg_from_buffer(m_buffer);
 				    
                     switch (msg)
                     {
-				    case MSG_MOUSE_POS_DATA:
+				    case MSG_MOUSE_DATA:
 				    case MSG_BUTTON_DATA:
                     case MSG_GAMEPAD_DATA:
                         if (!client->read_event(m_buffer, msg))
@@ -109,9 +110,10 @@ namespace network
                     case MSG_CLIENT_DC:
                         client->mark_invalid();
                         break;
+                    default:
+                    case MSG_END_BUFFER:
 				    case MSG_INVALID:
 					    break;
-				    default: ;
                     }
                 }
             }

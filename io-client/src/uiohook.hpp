@@ -11,21 +11,37 @@
 #include <map>
 #include <netlib.h>
 
+#define SCROLL_TIMEOUT 120 * 1000 * 1000
 namespace uiohook
 {
+    extern std::mutex m_mutex;
+    enum wheel_dir
+    {
+        wheel_up = -1,
+        wheel_none,
+        wheel_down
+    };
+
+
     class data_holder
     {
-        std::mutex m_mutex;
         std::map<uint16_t, bool> m_button_states;
         int16_t m_mouse_x, m_mouse_y;
-        int8_t m_wheel_direction;
-        uint16_t m_lmb_clicks, m_rmb_clicks, m_mmb_clicks;
+        wheel_dir m_wheel_direction;
+        int16_t m_wheel_amount;
+        bool m_wheel_pressed;
         bool m_new_mouse_data;
+        uint64_t m_last_scroll;
+
     public:
         data_holder();
-        void add_button(uint16_t keycode, bool pressed);
-        void add_mouse(int16_t x, int16_t y);
+        void set_button(uint16_t keycode, bool pressed);
+        void set_mouse_pos(int16_t x, int16_t y);
+        void set_wheel(int amount, wheel_dir dir, uint64_t time);
+        void set_wheel(wheel_dir dir);
+        void set_wheel(bool pressed);
         bool write_to_buffer(netlib_byte_buf* buffer);
+        uint64_t get_last_scroll();
     };
 
     extern data_holder data;

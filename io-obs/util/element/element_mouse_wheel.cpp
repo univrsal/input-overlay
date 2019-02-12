@@ -40,12 +40,6 @@ void element_wheel::draw(gs_effect_t* effect, gs_image_file_t* image,
 
         if (wheel)
         {
-            if (os_gettime_ns() - hook::last_wheel >=
-                SCROLL_TIMEOUT)
-            {
-                wheel->set_dir(WHEEL_DIR_NONE);
-            }
-
             if (wheel->get_state() == STATE_PRESSED)
                 element_texture::draw(effect, image, &m_mappings[WHEEL_MAP_MIDDLE]);
 
@@ -69,6 +63,12 @@ void element_wheel::draw(gs_effect_t* effect, gs_image_file_t* image,
 data_source element_wheel::get_source()
 {
     return DEFAULT;
+}
+
+element_data_wheel::element_data_wheel(const wheel_direction dir, const int amount, const button_state state)
+    : element_data_wheel(dir, amount)
+{
+    m_middle_button = state;
 }
 
 element_data_wheel::element_data_wheel(const wheel_direction dir, const int amount)

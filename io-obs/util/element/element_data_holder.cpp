@@ -10,7 +10,7 @@
 
 element_data_holder::element_data_holder()
 {
-    m_data = std::map<uint16_t, std::unique_ptr<element_data>>();
+    m_button_data = std::map<uint16_t, std::unique_ptr<element_data>>();
 }
 
 element_data_holder::~element_data_holder()
@@ -31,7 +31,7 @@ bool element_data_holder::is_empty() const
         }
     }
 
-    return m_data.empty() && flag;
+    return m_button_data.empty() && flag;
 }
 
 
@@ -39,20 +39,20 @@ void element_data_holder::add_data(const uint16_t keycode, element_data* data)
 {
     if (data_exists(keycode))
     {
-        if (m_data[keycode]->is_persistent())
+        if (m_button_data[keycode]->is_persistent())
         {
-            m_data[keycode]->merge(data);
+            m_button_data[keycode]->merge(data);
             delete data; /* Existing data was used -> delete other one */
         }
         else
         {
             remove_data(keycode);
-            m_data[keycode] = std::unique_ptr<element_data>(data);
+            m_button_data[keycode] = std::unique_ptr<element_data>(data);
         }
     }
     else
     {
-        m_data[keycode] = std::unique_ptr<element_data>(data);
+        m_button_data[keycode] = std::unique_ptr<element_data>(data);
     }
 }
 
@@ -110,7 +110,7 @@ void element_data_holder::clear_data()
 
 void element_data_holder::clear_button_data()
 {
-    m_data.clear();
+    m_button_data.clear();
 }
 
 void element_data_holder::clear_gamepad_data()
@@ -123,7 +123,7 @@ bool element_data_holder::data_exists(const uint16_t keycode)
     if (is_empty())
         return false;
     
-    return m_data[keycode] != nullptr;
+    return m_button_data[keycode] != nullptr;
 }
 
 void element_data_holder::remove_data(const uint16_t keycode)
@@ -131,8 +131,8 @@ void element_data_holder::remove_data(const uint16_t keycode)
     if (data_exists(keycode))
     {
 
-        m_data[keycode].reset();
-        m_data.erase(keycode);
+        m_button_data[keycode].reset();
+        m_button_data.erase(keycode);
     }
 }
 
@@ -142,5 +142,5 @@ element_data* element_data_holder::get_by_code(const uint16_t keycode)
     if (!data_exists(keycode))
         return nullptr;
 
-    return m_data[keycode].get();
+    return m_button_data[keycode].get();
 }

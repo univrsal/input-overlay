@@ -24,6 +24,8 @@ enum wheel_data_type
 class element_data_wheel : public element_data
 {
 public:
+    element_data_wheel(wheel_direction dir, int amount, button_state state);
+
     element_data_wheel(wheel_direction dir, int amount);
 
     element_data_wheel(button_state state);

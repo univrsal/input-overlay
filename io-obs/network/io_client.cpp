@@ -11,6 +11,7 @@
 #include "util/element/element_analog_stick.hpp"
 #include "util/element/element_trigger.hpp"
 #include "util/element/element_mouse_movement.hpp"
+#include "util/element/element_mouse_wheel.hpp"
 
 namespace network
 {
@@ -50,8 +51,8 @@ namespace network
 
     bool io_client::read_event(netlib_byte_buf* buffer, const message msg)
     {
-		auto flag = true;
-        m_holder.clear_button_data();
+        auto flag = true;
+
         if (msg == MSG_BUTTON_DATA)
         {
             uint8_t key_count = 0;
@@ -62,34 +63,40 @@ namespace network
            
             if (flag) /* Only pressed buttons are sent */
             {
-                if (key_count == 0xff)
+                m_holder.clear_button_data();
+                blog(LOG_INFO, "Got %i keys", key_count);
+                for (int i = 0; i < key_count; i++)
                 {
-                    m_holder.clear_button_data();
-                }
-                else
-                {
-                    for (int i = 0; i < key_count; i++)
+                    if (!netlib_read_uint16(buffer, &vc))
                     {
-                        if (!netlib_read_uint16(buffer, &vc))
-                        {
-                            flag = false;
-                            break;
-                        }
-                        m_holder.add_data(vc, new element_data_button(STATE_PRESSED));
+                        flag = false;
+                        break;
                     }
+                    m_holder.add_data(vc, new element_data_button(STATE_PRESSED));
                 }
-
             }
             /* TODO: add mouse clicks to mouse stats */
         }
-        else if (msg == MSG_MOUSE_POS_DATA)
+        else if (msg == MSG_MOUSE_DATA)
         {
             int16_t x = 0, y = 0;
-            flag = netlib_read_int16(buffer, &x) && netlib_read_int16(buffer, &y);
+            int8_t dir = 0;
+            wheel_direction direction = WHEEL_DIR_NONE;
+            int16_t amount = 0;
+            uint8_t pressed = 0;
+
+            flag = netlib_read_int16(buffer, &x) && netlib_read_int16(buffer, &y) &&
+                netlib_read_int8(buffer, &dir) && netlib_read_int16(buffer, &amount) &&
+                netlib_read_uint8(buffer, &pressed);
 
             if (flag)
             {
+                if (dir >= WHEEL_DIR_UP && dir <= WHEEL_DIR_DOWN)
+                    direction = wheel_direction(dir);
+
                 m_holder.add_data(VC_MOUSE_DATA, new element_data_mouse_stats(x, y));
+                m_holder.add_data(VC_MOUSE_WHEEL, new element_data_wheel(direction, amount,
+                    pressed ? STATE_PRESSED : STATE_RELEASED));
             }
         }
         else if (msg == MSG_GAMEPAD_DATA)

@@ -256,7 +256,6 @@ void overlay::refresh_data()
                     data = source->get_by_code(element->get_keycode());
                     break;
                 case NONE:;
-                
                 }
             }
 
@@ -264,7 +263,6 @@ void overlay::refresh_data()
             {
                 m_data[element->get_keycode()]->merge(data);
             }
-
         }
     }
 }

@@ -128,53 +128,7 @@ namespace util
 		return result;
 	}
 
-    bool write_uiohook_event(uiohook_event* const event)
-    {
-		if (!event)
-			return false;
-        auto result = true;
-
-		switch(event->type)
-        {
-        case EVENT_KEY_TYPED: /* TODO: typing? */
-            break;
-		case EVENT_KEY_PRESSED:
-        case EVENT_KEY_RELEASED:
-            if (cfg.monitor_keyboard)
-            {
-				result = netlib_write_uint8(network::buffer, MSG_BUTTON_DATA)
-					&& write_keystate(network::buffer, event->data.keyboard.keycode,
-                        event->type == EVENT_KEY_PRESSED);
-            }
-			break;
-        case EVENT_MOUSE_RELEASED:
-        case EVENT_MOUSE_PRESSED:
-        case EVENT_MOUSE_CLICKED:
-			if (cfg.monitor_mouse)
-			{
-				result = netlib_write_uint8(network::buffer, MSG_BUTTON_DATA)
-					&& write_keystate(network::buffer, event->data.mouse.button | VC_MOUSE_MASK,
-                        event->type == EVENT_MOUSE_PRESSED);
-			}
-            break;
-        
-        case EVENT_MOUSE_WHEEL:
-            /* TODO: implement */
-            break;
-        case EVENT_MOUSE_MOVED:
-        case EVENT_MOUSE_DRAGGED:
-			if (cfg.monitor_mouse)
-			{
-				result = netlib_write_uint8(network::buffer, MSG_MOUSE_POS_DATA)
-					&& netlib_write_int16(network::buffer, event->data.mouse.x)
-					&& netlib_write_int16(network::buffer, event->data.mouse.y);
-			}
-            break;
-        default: result = false;
-        }
-
-		return result;
-    }
+   
 
     int write_gamepad_data()
     {
