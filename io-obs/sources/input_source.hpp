@@ -25,22 +25,27 @@ namespace sources
     public:
         std::string image_file;
         std::string layout_file;
-        uint32_t cx = 0, cy = 0;
-        bool use_center = false;
+
+        uint32_t cx = 0, cy = 0;                /* Source width/height */
+        bool use_center = false;                /* true if monitor center is used for mouse movement */
         uint32_t monitor_w = 0, monitor_h = 0;
         uint8_t mouse_deadzone = 0;
-        uint16_t mouse_sens = 0; /* mouse_delta / mouse_sens = mouse movement */
-        uint8_t gamepad = 0;
+        uint16_t mouse_sens = 0;                /* mouse_delta / mouse_sens = mouse movement */
+        uint8_t gamepad = 0;                    /* selected gamepad id */
+
 #ifdef _WIN32
-        float left_dz = 0.f, right_dz = 0.f;
+        float left_dz = 0.f, right_dz = 0.f;    /* Windows gamepad analog sticks deadzone  (in %)*/
 #endif
-		uint8_t selected_source = 0; /* 0 = Local input */
+		uint8_t selected_source = 0;            /* 0 = Local input */
+        uint8_t layout_flags = 0;               /* See overlay_flags in layout_constants.hpp */
     };
 
     class input_source
     {
     public:
         obs_source_t* m_source = nullptr;
+        obs_source_t* m_text_source = nullptr; /* contains an instance of freetype/gdi+ source if overlay uses text */
+
         uint32_t cx = 0, cy = 0;
         std::unique_ptr<overlay> m_overlay{};
         shared_settings m_settings;

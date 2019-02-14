@@ -163,6 +163,7 @@ namespace sources
         }
         else
         {
+            /* Decides loop direction depending on input-history direction */
 #define START ((m_history_direction == DIR_UP || m_history_direction == DIR_LEFT) ? m_history_size - 1 : 0)
 #define CONDITION ((m_history_direction == DIR_UP || m_history_direction == DIR_LEFT) ? (i >= 0) : (i < m_history_size))
 #define INCREMENT (i += ((m_history_direction == DIR_UP || m_history_direction == DIR_LEFT) ? -1 : 1))
@@ -269,37 +270,37 @@ namespace sources
     {
         obs_source_update(m_text_source, settings);
 
-        SET_MASK(MASK_TEXT_MODE, obs_data_get_int(settings, S_OVERLAY_MODE) == 0);
+        SET_MASK(MASK_TEXT_MODE, obs_data_get_int(settings, S_HISTORY_MODE) == 0);
         SET_MASK(MASK_INCLUDE_MOUSE, obs_data_get_bool(settings,
-            S_OVERLAY_INCLUDE_MOUSE));
+            S_HISTORY_INCLUDE_MOUSE));
         SET_MASK(MASK_REPEAT_KEYS, obs_data_get_bool(settings,
-            S_OVERLAY_ENABLE_REPEAT_KEYS));
+            S_HISTORY_ENABLE_REPEAT_KEYS));
         SET_MASK(MASK_AUTO_CLEAR, obs_data_get_bool(settings,
-            S_OVERLAY_ENABLE_AUTO_CLEAR));
+            S_HISTORY_ENABLE_AUTO_CLEAR));
         SET_MASK(MASK_FIX_CUTTING, obs_data_get_bool(settings,
-            S_OVERLAY_FIX_CUTTING));
+            S_HISTORY_FIX_CUTTING));
         SET_MASK(MASK_USE_FALLBACK, obs_data_get_bool(settings,
-            S_OVERLAY_USE_FALLBACK_NAME));
+            S_HISTORY_USE_FALLBACK_NAME));
         SET_MASK(MASK_COMMAND_MODE, obs_data_get_bool(settings,
-            S_OVERLAY_COMMAND_MODE));
+            S_HISTORY_COMMAND_MODE));
         SET_MASK(MASK_INCLUDE_PAD, obs_data_get_bool(settings,
-            S_OVERLAY_INCLUDE_PAD));
+            S_HISTORY_INCLUDE_PAD));
 
-        m_update_interval = obs_data_get_int(settings, S_OVERLAY_INTERVAL);
+        m_update_interval = obs_data_get_int(settings, S_HISTORY_INTERVAL);
         m_clear_interval = obs_data_get_int(settings,
-            S_OVERLAY_AUTO_CLEAR_INTERVAL);
+            S_HISTORY_AUTO_CLEAR_INTERVAL);
 
-        m_key_name_path = obs_data_get_string(settings, S_OVERLAY_KEY_NAME_PATH);
+        m_key_name_path = obs_data_get_string(settings, S_HISTORY_KEY_NAME_PATH);
         m_key_icon_config_path = obs_data_get_string(
-            settings, S_OVERLAY_KEY_ICON_CONFIG_PATH);
-        m_key_icon_path = obs_data_get_string(settings, S_OVERLAY_KEY_ICON_PATH);
+            settings, S_HISTORY_KEY_ICON_CONFIG_PATH);
+        m_key_icon_path = obs_data_get_string(settings, S_HISTORY_KEY_ICON_PATH);
 
-        m_icon_h_space = obs_data_get_int(settings, S_OVERLAY_ICON_H_SPACE);
-        m_icon_v_space = obs_data_get_int(settings, S_OVERLAY_ICON_V_SPACE);
+        m_icon_h_space = obs_data_get_int(settings, S_HISTORY_ICON_H_SPACE);
+        m_icon_v_space = obs_data_get_int(settings, S_HISTORY_ICON_V_SPACE);
 
-        m_history_size = obs_data_get_int(settings, S_OVERLAY_HISTORY_SIZE);
+        m_history_size = obs_data_get_int(settings, S_HISTORY_SIZE);
         m_history_direction = static_cast<icon_direction>(obs_data_get_int(
-            settings, S_OVERLAY_DIRECTION));
+            settings, S_HISTORY_DIRECTION));
 
         if (GET_MASK(MASK_COMMAND_MODE))
         {
@@ -599,24 +600,24 @@ namespace sources
 
     bool mode_changed(obs_properties_t* props, obs_property_t* p, obs_data_t* s)
     {
-        const auto state_text = obs_data_get_int(s, S_OVERLAY_MODE) == 0;
+        const auto state_text = obs_data_get_int(s, S_HISTORY_MODE) == 0;
 
-        TEXT_VIS(GET_PROPS(S_OVERLAY_FONT));
-        TEXT_VIS(GET_PROPS(S_OVERLAY_FONT_COLOR));
-        TEXT_VIS(GET_PROPS(S_OVERLAY_OUTLINE));
-        TEXT_VIS(GET_PROPS(S_OVERLAY_OUTLINE_SIZE));
-        TEXT_VIS(GET_PROPS(S_OVERLAY_OUTLINE_COLOR));
-        TEXT_VIS(GET_PROPS(S_OVERLAY_OUTLINE_OPACITY));
-        TEXT_VIS(GET_PROPS(S_OVERLAY_FIX_CUTTING));
-        TEXT_VIS(GET_PROPS(S_OVERLAY_OPACITY));
-        TEXT_VIS(GET_PROPS(S_OVERLAY_KEY_NAME_PATH));
-        TEXT_VIS(GET_PROPS(S_OVERLAY_USE_FALLBACK_NAME));
-        TEXT_VIS(GET_PROPS(S_OVERLAY_COMMAND_MODE));
+        TEXT_VIS(GET_PROPS(S_HISTORY_FONT));
+        TEXT_VIS(GET_PROPS(S_HISTORY_FONT_COLOR));
+        TEXT_VIS(GET_PROPS(S_HISTORY_OUTLINE));
+        TEXT_VIS(GET_PROPS(S_HISTORY_OUTLINE_SIZE));
+        TEXT_VIS(GET_PROPS(S_HISTORY_OUTLINE_COLOR));
+        TEXT_VIS(GET_PROPS(S_HISTORY_OUTLINE_OPACITY));
+        TEXT_VIS(GET_PROPS(S_HISTORY_FIX_CUTTING));
+        TEXT_VIS(GET_PROPS(S_HISTORY_OPACITY));
+        TEXT_VIS(GET_PROPS(S_HISTORY_KEY_NAME_PATH));
+        TEXT_VIS(GET_PROPS(S_HISTORY_USE_FALLBACK_NAME));
+        TEXT_VIS(GET_PROPS(S_HISTORY_COMMAND_MODE));
 
-        ICON_VIS(GET_PROPS(S_OVERLAY_KEY_ICON_CONFIG_PATH));
-        ICON_VIS(GET_PROPS(S_OVERLAY_KEY_ICON_PATH));
-        ICON_VIS(GET_PROPS(S_OVERLAY_ICON_V_SPACE));
-        ICON_VIS(GET_PROPS(S_OVERLAY_ICON_H_SPACE));
+        ICON_VIS(GET_PROPS(S_HISTORY_KEY_ICON_CONFIG_PATH));
+        ICON_VIS(GET_PROPS(S_HISTORY_KEY_ICON_PATH));
+        ICON_VIS(GET_PROPS(S_HISTORY_ICON_V_SPACE));
+        ICON_VIS(GET_PROPS(S_HISTORY_ICON_H_SPACE));
 
         return true;
     }
@@ -625,7 +626,7 @@ namespace sources
         obs_data_t* s)
     {
         const auto id = obs_properties_get(props, S_CONTROLLER_ID);
-        obs_property_set_visible(id, obs_data_get_bool(s, S_OVERLAY_INCLUDE_PAD));
+        obs_property_set_visible(id, obs_data_get_bool(s, S_HISTORY_INCLUDE_PAD));
         return true;
     }
 
@@ -633,12 +634,12 @@ namespace sources
     {
         const auto s = reinterpret_cast<input_history_source*>(data);
         const auto props = obs_properties_create();
-        const auto mode_list = obs_properties_add_list(props, S_OVERLAY_MODE,
-            T_OVERLAY_MODE,
+        const auto mode_list = obs_properties_add_list(props, S_HISTORY_MODE,
+            T_HISTORY_MODE,
             OBS_COMBO_TYPE_LIST,
             OBS_COMBO_FORMAT_INT);
-        obs_property_list_add_int(mode_list, T_OVERLAY_MODE_TEXT, 0);
-        obs_property_list_add_int(mode_list, T_OVERLAY_MODE_ICON, 1);
+        obs_property_list_add_int(mode_list, T_HISTORY_MODE_TEXT, 0);
+        obs_property_list_add_int(mode_list, T_HISTORY_MODE_ICON, 1);
         obs_property_set_modified_callback(mode_list, mode_changed);
 
         /* Key name file */
@@ -669,81 +670,81 @@ namespace sources
         }
 
         /* Icon mode propterties */
-        obs_properties_add_path(props, S_OVERLAY_KEY_ICON_PATH,
-            T_OVERLAY_KEY_ICON_PATH, OBS_PATH_FILE,
+        obs_properties_add_path(props, S_HISTORY_KEY_ICON_PATH,
+            T_HISTORY_KEY_ICON_PATH, OBS_PATH_FILE,
             filter_img.c_str(), key_icon_path.c_str());
 
-        obs_properties_add_path(props, S_OVERLAY_KEY_ICON_CONFIG_PATH,
-            T_OVERLAY_KEY_ICON_CONFIG_PATH, OBS_PATH_FILE,
+        obs_properties_add_path(props, S_HISTORY_KEY_ICON_CONFIG_PATH,
+            T_HISTORY_KEY_ICON_CONFIG_PATH, OBS_PATH_FILE,
             filter_text.c_str(),
             key_icon_config_path.c_str());
 
-        obs_properties_add_int(props, S_OVERLAY_ICON_H_SPACE,
-            T_OVERLAY_ICON_H_SPACE, -999, 999, 1);
-        obs_properties_add_int(props, S_OVERLAY_ICON_V_SPACE,
-            T_OVERLAY_ICON_V_SPACE, -999, 999, 1);
+        obs_properties_add_int(props, S_HISTORY_ICON_H_SPACE,
+            T_HISTORY_ICON_H_SPACE, -999, 999, 1);
+        obs_properties_add_int(props, S_HISTORY_ICON_V_SPACE,
+            T_HISTORY_ICON_V_SPACE, -999, 999, 1);
 
         /* Text mode properties*/
 
-        obs_properties_add_path(props, S_OVERLAY_KEY_NAME_PATH,
-            T_OVERLAY_KEY_NAME_PATH, OBS_PATH_FILE,
+        obs_properties_add_path(props, S_HISTORY_KEY_NAME_PATH,
+            T_HISTORY_KEY_NAME_PATH, OBS_PATH_FILE,
             filter_text.c_str(), key_names_path.c_str());
-        obs_properties_add_bool(props, S_OVERLAY_USE_FALLBACK_NAME,
-            T_OVERLAY_USE_FALLBACK_NAMES);
+        obs_properties_add_bool(props, S_HISTORY_USE_FALLBACK_NAME,
+            T_HISTORY_USE_FALLBACK_NAMES);
 
         /* Font */
-        obs_properties_add_font(props, S_OVERLAY_FONT, T_OVERLAY_FONT);
-        obs_properties_add_color(props, S_OVERLAY_FONT_COLOR,
-            T_OVERLAY_FONT_COLOR);
-        obs_properties_add_int_slider(props, S_OVERLAY_OPACITY, T_OVERLAY_OPACITY,
+        obs_properties_add_font(props, S_HISTORY_FONT, T_HISTORY_FONT);
+        obs_properties_add_color(props, S_HISTORY_FONT_COLOR,
+            T_HISTORY_FONT_COLOR);
+        obs_properties_add_int_slider(props, S_HISTORY_OPACITY, T_HISTORY_OPACITY,
             0, 100, 1);
-        obs_properties_add_bool(props, S_OVERLAY_OUTLINE, T_OVERLAY_OUTLINE);
+        obs_properties_add_bool(props, S_HISTORY_OUTLINE, T_HISTORY_OUTLINE);
 
-        obs_properties_add_int(props, S_OVERLAY_OUTLINE_SIZE,
-            T_OVERLAY_OUTLINE_SIZE, 1, 20, 1);
-        obs_properties_add_color(props, S_OVERLAY_OUTLINE_COLOR,
-            T_OVERLAY_OUTLINE_COLOR);
-        obs_properties_add_int_slider(props, S_OVERLAY_OUTLINE_OPACITY,
-            T_OVERLAY_OUTLINE_OPACITY, 0, 100, 1);
+        obs_properties_add_int(props, S_HISTORY_OUTLINE_SIZE,
+            T_HISTORY_OUTLINE_SIZE, 1, 20, 1);
+        obs_properties_add_color(props, S_HISTORY_OUTLINE_COLOR,
+            T_HISTORY_OUTLINE_COLOR);
+        obs_properties_add_int_slider(props, S_HISTORY_OUTLINE_OPACITY,
+            T_HISTORY_OUTLINE_OPACITY, 0, 100, 1);
 
         /* Other */
         const auto icon_dir_list = obs_properties_add_list(
-            props, S_OVERLAY_DIRECTION,
-            T_OVERLAY_DIRECTION, OBS_COMBO_TYPE_LIST,
+            props, S_HISTORY_DIRECTION,
+            T_HISTORY_DIRECTION, OBS_COMBO_TYPE_LIST,
             OBS_COMBO_FORMAT_INT);
 
         const auto include_pad = obs_properties_add_bool(
-            props, S_OVERLAY_INCLUDE_PAD, T_OVERLAY_INCLUDE_PAD);
+            props, S_HISTORY_INCLUDE_PAD, T_HISTORY_INCLUDE_PAD);
 
-        obs_property_list_add_int(icon_dir_list, T_OVERLAY_DIRECTION_DOWN, 0);
-        obs_property_list_add_int(icon_dir_list, T_OVERLAY_DIRECTION_UP, 1);
-        obs_property_list_add_int(icon_dir_list, T_OVERLAY_DIRECTION_LEFT, 2);
-        obs_property_list_add_int(icon_dir_list, T_OVERLAY_DIRECTION_RIGHT, 3);
+        obs_property_list_add_int(icon_dir_list, T_HISTORY_DIRECTION_DOWN, 0);
+        obs_property_list_add_int(icon_dir_list, T_HISTORY_DIRECTION_UP, 1);
+        obs_property_list_add_int(icon_dir_list, T_HISTORY_DIRECTION_LEFT, 2);
+        obs_property_list_add_int(icon_dir_list, T_HISTORY_DIRECTION_RIGHT, 3);
 
-        obs_properties_add_int(props, S_OVERLAY_HISTORY_SIZE,
-            T_OVERLAY_HISTORY_SIZE, 1, MAX_HISTORY_SIZE, 1);
-        obs_properties_add_bool(props, S_OVERLAY_FIX_CUTTING,
-            T_OVERLAY_FIX_CUTTING);
-        obs_properties_add_bool(props, S_OVERLAY_INCLUDE_MOUSE,
-            T_OVERLAY_INCLUDE_MOUSE);
+        obs_properties_add_int(props, S_HISTORY_SIZE,
+            T_HISTORY_HISTORY_SIZE, 1, MAX_HISTORY_SIZE, 1);
+        obs_properties_add_bool(props, S_HISTORY_FIX_CUTTING,
+            T_HISTORY_FIX_CUTTING);
+        obs_properties_add_bool(props, S_HISTORY_INCLUDE_MOUSE,
+            T_HISTORY_INCLUDE_MOUSE);
 
         obs_property_set_modified_callback(include_pad, include_pad_changed);
         obs_properties_add_int(props, S_CONTROLLER_ID, T_CONTROLLER_ID, 0, 3, 1);
-        obs_properties_add_int(props, S_OVERLAY_INTERVAL, T_OVERLAY_INTERVAL, 1,
+        obs_properties_add_int(props, S_HISTORY_INTERVAL, T_HISTORY_INTERVAL, 1,
             1000, 1);
 
-        obs_properties_add_bool(props, S_OVERLAY_ENABLE_REPEAT_KEYS,
-            T_OVERLAY_ENABLE_REPEAT_KEYS);
-        obs_properties_add_bool(props, S_OVERLAY_ENABLE_AUTO_CLEAR,
-            T_OVERLAY_ENABLE_AUTO_CLEAR);
-        obs_properties_add_int(props, S_OVERLAY_AUTO_CLEAR_INTERVAL,
-            T_OVERLAY_AUTO_CLEAR_INTERVAL, 1, 30, 1);
+        obs_properties_add_bool(props, S_HISTORY_ENABLE_REPEAT_KEYS,
+            T_HISTORY_ENABLE_REPEAT_KEYS);
+        obs_properties_add_bool(props, S_HISTORY_ENABLE_AUTO_CLEAR,
+            T_HISTORY_ENABLE_AUTO_CLEAR);
+        obs_properties_add_int(props, S_HISTORY_AUTO_CLEAR_INTERVAL,
+            T_HISTORY_AUTO_CLEAR_INTERVAL, 1, 30, 1);
 
         /* Command mode */
-        obs_properties_add_bool(props, S_OVERLAY_COMMAND_MODE,
-            T_OVERLAY_COMMAND_MODE);
-        obs_properties_add_button(props, S_OVERLAY_CLEAR_HISTORY,
-            T_OVERLAY_CLEAR_HISTORY, clear_history);
+        obs_properties_add_bool(props, S_HISTORY_COMMAND_MODE,
+            T_HISTORY_COMMAND_MODE);
+        obs_properties_add_button(props, S_HISTORY_CLEAR_HISTORY,
+            T_HISTORY_CLEAR_HISTORY, clear_history);
         return props;
     }
 
@@ -775,9 +776,9 @@ namespace sources
 
         si.get_defaults = [](obs_data_t* settings)
         {
-            obs_data_set_default_int(settings, S_OVERLAY_HISTORY_SIZE, 1);
-            obs_data_set_default_int(settings, S_OVERLAY_INTERVAL, 2);
-            obs_data_set_default_int(settings, S_OVERLAY_AUTO_CLEAR_INTERVAL, 2);
+            obs_data_set_default_int(settings, S_HISTORY_SIZE, 1);
+            obs_data_set_default_int(settings, S_HISTORY_INTERVAL, 2);
+            obs_data_set_default_int(settings, S_HISTORY_AUTO_CLEAR_INTERVAL, 2);
         };
 
         si.update = [](void* data, obs_data_t* settings)

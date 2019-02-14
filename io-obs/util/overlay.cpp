@@ -20,6 +20,7 @@
 #include "network/remote_connection.hpp"
 #include "network/io_server.hpp"
 #include "element/element_mouse_movement.hpp"
+#include "element/element_text.hpp"
 
 extern "C" {
 #include <graphics/image-file.h>
@@ -84,6 +85,7 @@ bool overlay::load_cfg()
     {
         m_settings->cx = static_cast<uint32_t>(cfg->get_int(CFG_TOTAL_WIDTH, true));
         m_settings->cy = static_cast<uint32_t>(cfg->get_int(CFG_TOTAL_HEIGHT, true));
+        m_settings->layout_flags = cfg->get_int(CFG_FLAGS, true);
 
         auto element_id = cfg->get_string(CFG_FIRST_ID);
         const auto debug_mode = cfg->get_bool(CFG_DEBUG_FLAG, true);
@@ -139,6 +141,9 @@ bool overlay::load_cfg()
                     break;
                 case MOUSE_MOVEMENT:
                     data = new element_data_mouse_stats(0, 0);
+                    break;
+                case TEXT:
+                    data = new element_data_text();
                     break;
                 default:;
                 }
@@ -295,7 +300,7 @@ void overlay::load_element(ccl_config* cfg, const std::string& id, const bool de
         new_element = new element_mouse_movement();
         break;
     case TEXT:
-        /* TODO: text element*/
+        new_element = new element_text();
         break;
     default:
         if (debug)

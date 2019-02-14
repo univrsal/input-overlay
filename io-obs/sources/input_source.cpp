@@ -144,7 +144,7 @@ namespace sources
             T_FILTER_IMAGE_FILES, "*.jpg *.png *.bmp");
         auto filter_text = util_file_filter(T_FILTER_TEXT_FILES, "*.ini");
 
-        obs_properties_add_path(props, S_OVERLAY_FILE, T_OVERLAY_FILE,
+        obs_properties_add_path(props, S_OVERLAY_FILE, T_TEXTURE_FILE,
             OBS_PATH_FILE,
             filter_img.c_str(), img_path.c_str());
 
