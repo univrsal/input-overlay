@@ -38,35 +38,45 @@ namespace sources
 #endif
 		uint8_t selected_source = 0;            /* 0 = Local input */
         uint8_t layout_flags = 0;               /* See overlay_flags in layout_constants.hpp */
+    
+        obs_source_t* text_source = nullptr; /* contains an instance of freetype/gdi+ source if overlay uses text */
     };
 
     class input_source
     {
     public:
         obs_source_t* m_source = nullptr;
-        obs_source_t* m_text_source = nullptr; /* contains an instance of freetype/gdi+ source if overlay uses text */
+        obs_data_t* m_source_settings = nullptr;
 
         uint32_t cx = 0, cy = 0;
         std::unique_ptr<overlay> m_overlay{};
         shared_settings m_settings;
-
+        
         input_source(obs_source_t* source, obs_data_t* settings) :
-            m_source(source)
+            m_source(source), m_source_settings(settings)
         {
             m_overlay = std::make_unique<overlay>(&m_settings);
+            load_text_source();
             obs_source_update(m_source, settings);
         }
 
-        ~input_source() = default;
+        ~input_source()
+        {
+            unload_text_source();
+        }
 
         inline void update(obs_data_t* settings);
         inline void tick(float seconds);
         inline void render(gs_effect_t* effect) const;
+
+        void load_text_source();
+        void unload_text_source();
     };
 
-    static bool use_monitor_center_changed(obs_properties_t* props, obs_property_t* p, obs_data_t* s);
-
+    /* Event handlers */
+    static bool use_monitor_center_changed(obs_properties_t* props, obs_property_t* p, obs_data_t* data);
 	static bool reload_connections(obs_properties_t* props, obs_property_t* property, void* data);
+    static bool toggle_font_settings(obs_properties_t* props, obs_property_t* p, obs_data_t* data);
 
     /* For registering */
     static obs_properties_t* get_properties_for_overlay(void* data);

@@ -29,6 +29,7 @@ void set_defaults(config_t* cfg)
 	config_set_default_bool(cfg, S_REGION, S_GAMEPAD, true);
 	config_set_default_bool(cfg, S_REGION, S_OVERLAY, true);
 	config_set_default_bool(cfg, S_REGION, S_HISTORY, true);
+    config_set_default_bool(cfg, S_REGION, S_TEXT, false);
 
 	config_set_default_bool(cfg, S_REGION, S_REMOTE, false);
 	config_set_default_bool(cfg, S_REGION, S_LOGGING, false);

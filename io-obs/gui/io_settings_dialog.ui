@@ -79,6 +79,13 @@
         </property>
        </widget>
       </item>
+      <item>
+       <widget class="QCheckBox" name="cb_enable_text">
+        <property name="text">
+         <string>Dialog.InputOverlay.EnableText</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>

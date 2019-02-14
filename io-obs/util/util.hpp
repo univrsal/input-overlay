@@ -70,27 +70,30 @@
 #define S_LOGGING                       "logging"
 #define S_PORT                          "port"
 #define S_REFRESH                       "refresh_rate"
+#define S_TEXT                          "enable_text"
 
 /* Common values */
-#define S_INPUT_SOURCE                  "input_source"
-#define S_RELOAD_CONNECTIONS            "reload_connections"
+#define S_INPUT_SOURCE                  "io.input_source"
+#define S_RELOAD_CONNECTIONS            "io.reload_connections"
 
 #define T_LOCAL_SOURCE                  T_("Source.InputSource.Local")
 #define T_INPUT_SOURCE                  T_("Source.InputSource")
 #define T_RELOAD_CONNECTIONS            T_("Source.InputSource.Reload")
 
 /* Lang Input Overlay */
-#define S_OVERLAY_FILE                  "overlay_image"
-#define S_LAYOUT_FILE                   "layout_file"
-#define S_CONTROLLER_ID                 "controller_id"
-#define S_CONTROLLER_L_DEAD_ZONE        "controller_l_deadzone"
-#define S_CONTROLLER_R_DEAD_ZONE        "controller_r_deadzone"
-#define S_MOUSE_SENS                    "mouse_sens"
-#define S_MOUSE_DEAD_ZONE               "mouse_deadzone"
-#define S_MONITOR_USE_CENTER            "monitor_use_center"
-#define S_MONITOR_H_CENTER              "monitor_h_center"
-#define S_MONITOR_V_CENTER              "monitor_v_center"
-#define S_RELOAD_PAD_DEVICES		    "reload_pads"
+/* 'io' prefix is to distinguish my properties from the text source properties */
+#define S_OVERLAY_FILE                  "io.overlay_image"
+#define S_LAYOUT_FILE                   "io.layout_file"
+#define S_OVERLAY_FONT                  "io.font_settings"
+#define S_CONTROLLER_ID                 "io.controller_id"
+#define S_CONTROLLER_L_DEAD_ZONE        "io.controller_l_deadzone"
+#define S_CONTROLLER_R_DEAD_ZONE        "io.controller_r_deadzone"
+#define S_MOUSE_SENS                    "io.mouse_sens"
+#define S_MOUSE_DEAD_ZONE               "io.mouse_deadzone"
+#define S_MONITOR_USE_CENTER            "io.monitor_use_center"
+#define S_MONITOR_H_CENTER              "io.monitor_h_center"
+#define S_MONITOR_V_CENTER              "io.monitor_v_center"
+#define S_RELOAD_PAD_DEVICES		    "io.reload_pads"
 
 #define T_TEXTURE_FILE                  T_("Overlay.Path.Texture")
 #define T_LAYOUT_FILE                   T_("Overlay.Path.Layout")

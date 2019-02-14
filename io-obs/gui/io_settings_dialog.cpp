@@ -37,6 +37,7 @@ io_settings_dialog::io_settings_dialog(QWidget* parent)
     ui->cb_gamepad_hook->setChecked(config_get_bool(cfg, S_REGION, S_GAMEPAD));
     ui->cb_enable_overlay->setChecked(config_get_bool(cfg, S_REGION, S_OVERLAY));
     ui->cb_enable_history->setChecked(config_get_bool(cfg, S_REGION, S_HISTORY));
+    ui->cb_enable_text->setChecked(config_get_bool(cfg, S_REGION, S_TEXT));
 
     ui->cb_enable_remote->setChecked(config_get_bool(cfg, S_REGION, S_REMOTE));
     ui->cb_log->setChecked(config_get_bool(cfg, S_REGION, S_LOGGING));
@@ -118,6 +119,7 @@ void io_settings_dialog::FormAccepted()
     config_set_bool(cfg, S_REGION, S_GAMEPAD, ui->cb_gamepad_hook->isChecked());
     config_set_bool(cfg, S_REGION, S_OVERLAY, ui->cb_enable_overlay->isChecked());
     config_set_bool(cfg, S_REGION, S_HISTORY, ui->cb_enable_history->isChecked());
+    config_set_bool(cfg, S_REGION, S_TEXT, ui->cb_enable_text->isChecked());
 
     config_set_bool(cfg, S_REGION, S_REMOTE, ui->cb_enable_remote->isChecked());
     config_set_bool(cfg, S_REGION, S_LOGGING, ui->cb_log->isChecked());
