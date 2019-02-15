@@ -132,7 +132,7 @@ enum element_type
     BUTTON,
     /* MOUSE_WHEEL was taken :( */
     MOUSE_SCROLLWHEEL,
-    MOUSE_MOVEMENT,
+    MOUSE_STATS,
     ANALOG_STICK,
     TRIGGER,
     /* Shows game pad number 1 through 4 */

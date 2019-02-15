@@ -139,17 +139,19 @@ bool overlay::load_cfg()
                 case DPAD_STICK:
                     data = new element_data_dpad(DPAD_LEFT, STATE_RELEASED);
                     break;
-                case MOUSE_MOVEMENT:
-                    data = new element_data_mouse_stats(0, 0);
-                    break;
                 case TEXT:
-                    data = new element_data_text();
+                    if (m_data[element->get_keycode()] != nullptr)
+                        break; /* text and mouse_stats use the same keycode so 
+                                  if there's already an instance of this data -> break */
+                case MOUSE_STATS:
+                    data = new element_data_mouse_stats(0, 0);
                     break;
                 default:;
                 }
 
                 if (data)
                     m_data[element->get_keycode()] = std::unique_ptr<element_data>(data);
+                
             }
         }
     }
@@ -296,7 +298,7 @@ void overlay::load_element(ccl_config* cfg, const std::string& id, const bool de
     case DPAD_STICK:
         new_element = new element_dpad();
         break;
-    case MOUSE_MOVEMENT:
+    case MOUSE_STATS:
         new_element = new element_mouse_movement();
         break;
     case TEXT:
@@ -333,7 +335,7 @@ const char* overlay::element_type_to_string(const element_type t)
     case BUTTON: return "Button";
     case ANALOG_STICK: return "Analog stick";
     case MOUSE_SCROLLWHEEL: return "Scroll wheel";
-    case MOUSE_MOVEMENT: return "Mouse movement";
+    case MOUSE_STATS: return "Mouse movement";
     case TRIGGER: return "Trigger";
     case GAMEPAD_ID: return "Gamepad ID";
     case TEXT: return "Text";

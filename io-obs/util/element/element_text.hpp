@@ -8,24 +8,6 @@
 #pragma once
 #include "element_texture.hpp"
 
-/* Contains data for both trigger buttons
- */
-class element_data_text : public element_data
-{
-public:
-    /*
-        Separate constructors are used on linux
-        because the values can't be queried together
-    */
-    element_data_text();
-
-    bool is_persistent() override;
-
-    void merge(element_data* other) override;
-
-private:
-};
-
 class element_text : public element
 {
 public:
@@ -39,4 +21,9 @@ public:
     data_source get_source() override;
 
 private:
+    bool m_use_total_values = false;
+    std::string m_unformatted_text;
+    
+    void format(std::string& str, const char* find, int replace) const;
 };
+

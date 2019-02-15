@@ -39,23 +39,25 @@ namespace sources
 		uint8_t selected_source = 0;            /* 0 = Local input */
         uint8_t layout_flags = 0;               /* See overlay_flags in layout_constants.hpp */
     
-        obs_source_t* text_source = nullptr; /* contains an instance of freetype/gdi+ source if overlay uses text */
+        obs_source_t* text_source = nullptr;    /* contains an instance of freetype/gdi+ source if overlay uses text */
+        obs_data_t* data = nullptr;             /* Pointer to source property data */
+
     };
 
     class input_source
     {
     public:
         obs_source_t* m_source = nullptr;
-        obs_data_t* m_source_settings = nullptr;
-
+        
         uint32_t cx = 0, cy = 0;
         std::unique_ptr<overlay> m_overlay{};
         shared_settings m_settings;
         
         input_source(obs_source_t* source, obs_data_t* settings) :
-            m_source(source), m_source_settings(settings)
+            m_source(source)
         {
             m_overlay = std::make_unique<overlay>(&m_settings);
+            m_settings.data = settings;
             load_text_source();
             obs_source_update(m_source, settings);
         }

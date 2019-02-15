@@ -38,7 +38,22 @@ public:
     float get_mouse_angle(sources::shared_settings* settings);
 
     void get_mouse_offset(sources::shared_settings* settings,
-        const vec2& center, vec2& out, const uint8_t radius) const;
+        const vec2& center, vec2& out, uint8_t radius) const;
+
+    uint32_t get_mmb_total() const;
+    uint32_t get_mmb_current() const;
+
+    uint32_t get_lmb_total() const;
+    uint32_t get_lmb_current() const;
+
+    uint32_t get_rmb_total() const;
+    uint32_t get_rmb_current() const;
+
+    int16_t get_mouse_x() const;
+    int16_t get_mouse_y() const;
+
+    int32_t get_wheel_current() const;
+    int32_t get_wheel_total() const;
 private:
     stat_type m_type;
 
@@ -47,7 +62,7 @@ private:
     uint32_t m_lmbcount_total{}, m_lmbcount_current{}, m_rmbcount_total{}, m_rmbcount_current{},
         m_mmbcount_total{}, m_mmbcount_current{};
     int32_t m_wheel_up_total{}, m_wheel_down_total{}, m_wheel_current{};
-
+    wheel_direction m_dir = WHEEL_DIR_NONE;
     float m_old_angle{};
 };
 
