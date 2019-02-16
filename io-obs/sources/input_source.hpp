@@ -38,10 +38,7 @@ namespace sources
 #endif
 		uint8_t selected_source = 0;            /* 0 = Local input */
         uint8_t layout_flags = 0;               /* See overlay_flags in layout_constants.hpp */
-    
-        obs_source_t* text_source = nullptr;    /* contains an instance of freetype/gdi+ source if overlay uses text */
         obs_data_t* data = nullptr;             /* Pointer to source property data */
-
     };
 
     class input_source
@@ -58,28 +55,20 @@ namespace sources
         {
             m_overlay = std::make_unique<overlay>(&m_settings);
             m_settings.data = settings;
-            load_text_source();
             obs_source_update(m_source, settings);
         }
 
-        ~input_source()
-        {
-            unload_text_source();
-        }
+        ~input_source() = default;
 
         inline void update(obs_data_t* settings);
         inline void tick(float seconds);
         inline void render(gs_effect_t* effect) const;
-
-        void load_text_source();
-        void unload_text_source();
     };
 
     /* Event handlers */
     static bool use_monitor_center_changed(obs_properties_t* props, obs_property_t* p, obs_data_t* data);
 	static bool reload_connections(obs_properties_t* props, obs_property_t* property, void* data);
-    static bool toggle_font_settings(obs_properties_t* props, obs_property_t* p, obs_data_t* data);
-
+    
     /* For registering */
     static obs_properties_t* get_properties_for_overlay(void* data);
 

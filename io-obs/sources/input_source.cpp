@@ -6,7 +6,6 @@
  */
 
 #include <obs-frontend-api.h>
-#include <cstring>
 #include "input_source.hpp"
 #include "../hook/hook_helper.hpp"
 #include "../hook/gamepad_hook.hpp"
@@ -70,34 +69,6 @@ namespace sources
         else
         {
             m_overlay->draw(effect);
-            /*gs_matrix_push();
-            gs_matrix_translate3f(30, 20, 1.f);
-            obs_source_video_render(m_settings.text_source);
-            gs_matrix_pop();*/
-        }
-    }
-
-    void input_source::load_text_source()
-    {
-        if (config_get_bool(obs_frontend_get_global_config(), S_REGION, S_TEXT))
-        {
-#ifdef _WIN32
-            m_settings.text_source = obs_source_create("text_gdiplus\0", "overlay-text-source",
-                m_settings.data, nullptr);
-#else
-            m_text_source = obs_source_create("text_ft2_source\0", "overlay-text-source", m_source_settings, nullptr);
-#endif
-            obs_source_add_active_child(m_source, m_settings.text_source);
-        }
-    }
-
-    void input_source::unload_text_source()
-    {
-        if (m_settings.text_source)
-        {
-            obs_source_remove(m_settings.text_source);
-            obs_source_release(m_settings.text_source);
-            m_settings.text_source = nullptr;
         }
     }
 
@@ -116,9 +87,6 @@ namespace sources
         obs_property_set_visible(GET_PROPS(S_MOUSE_SENS), flags & FLAG_MOUSE);
         obs_property_set_visible(GET_PROPS(S_MONITOR_USE_CENTER), flags & FLAG_MOUSE);
         obs_property_set_visible(GET_PROPS(S_MOUSE_DEAD_ZONE), flags & FLAG_MOUSE);
-
-        if (config_get_bool(obs_frontend_get_global_config(), S_REGION, S_TEXT))
-            obs_property_set_visible(GET_PROPS(S_OVERLAY_FONT), true);// flags & FLAG_TEXT); // TODO: temporary
         return true;
     }
 
@@ -141,34 +109,6 @@ namespace sources
 		return true;
     }
 
-    bool toggle_font_settings(obs_properties_t* props, obs_property_t* p, obs_data_t* data)
-    {
-        const auto show = obs_data_get_bool(data, S_OVERLAY_FONT);
-        auto prop = obs_properties_first(props);
-        auto use_gradient = obs_data_get_bool(data, "gradient");
-        auto use_outline = obs_data_get_bool(data, "outline");
-
-        for (; prop; obs_property_next(&prop))
-        {
-            auto name = obs_property_name(prop);
-
-            if (!strcmp(name, "read_from_file") || !strcmp(name, "text") ||
-                !strcmp(name, "file") || !strcmp(name, "vertical") ||
-                strstr(name, "align") || strstr(name, "extents") ||
-                strstr(name, "chatlog")
-                || (!use_gradient && strstr(name, "gradient") && strlen(name) > strlen("gradient"))
-                || (!use_outline && strstr(name, "outline") && strlen(name) > strlen("outline")))
-            {  /* do not show unnecessary properties */
-                obs_property_set_visible(prop, false);
-            }
-            else if (!strstr(name, "io"))
-            {
-                obs_property_set_visible(prop, show);
-            }
-        }
-        return true;
-    }
-
     bool reload_pads(obs_properties_t* props, obs_property_t* property,
         void* data)
     {
@@ -186,24 +126,8 @@ namespace sources
         std::string layout_path;
         auto config = obs_frontend_get_global_config();
         const auto s = static_cast<input_source*>(data);
-        obs_properties_t* props = nullptr;
+        obs_properties_t* props = obs_properties_create();
 
-        /* Font settings */
-        if (config_get_bool(config, S_REGION, S_TEXT) && s->m_settings.text_source)
-        {
-            props = obs_source_properties(s->m_settings.text_source);
-            auto prop = obs_properties_first(props);
-            
-            for (;prop; obs_property_next(&prop)) /* Hide font properties by default */
-                obs_property_set_visible(prop, false);
-
-            auto font_settings = obs_properties_add_bool(props, S_OVERLAY_FONT, T_OVERLAY_FONT);
-            obs_property_set_modified_callback(font_settings, toggle_font_settings);
-        }
-        else
-        {
-            props = obs_properties_create();
-        }
         /* If enabled add dropdown to select input source */
         if (config_get_bool(config, S_REGION, S_REMOTE))
         {
