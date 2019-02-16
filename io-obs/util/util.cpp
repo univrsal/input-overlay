@@ -235,9 +235,9 @@ const char* key_to_text(const int key_code)
         return "MOUSE4";
     case VC_MOUSE_BUTTON5:
         return "MOUSE5";
-        /*case VC_MOUSE_WHEEL_UP:
+    case VC_MOUSE_WHEEL_UP:
             return "SCROLL UP";
-        case VC_MOUSE_WHEEL_DOWN:*/
+    case VC_MOUSE_WHEEL_DOWN:
         return "SCROLL DOWN";
     case PAD_A | VC_PAD_MASK:
         return "A";
@@ -273,9 +273,126 @@ const char* key_to_text(const int key_code)
         return "LT";
     case PAD_RT | VC_PAD_MASK:
         return "RT";
+    case VC_APP_MAIL:
+        return "Mail app";
+    case VC_APP_MUSIC:
+        return "Music app";
+    case VC_APP_CALCULATOR:
+        return "Calculator app";
+    case VC_APP_PICTURES:
+        return "Picture app";
+    case VC_MEDIA_PLAY:
+        return "Play";
+    case VC_MEDIA_NEXT:
+        return "Next song";
+    case VC_MEDIA_PREVIOUS:
+        return "Previous song";
+    case VC_MEDIA_EJECT:
+        return "Eject media";
+    case VC_MEDIA_SELECT:
+        return "Select media";
+    case VC_MEDIA_STOP:
+        return "Stop media";
+    case VC_VOLUME_DOWN:
+        return "Volume down";
+    case VC_VOLUME_UP:
+        return "Volume up";
+    case VC_VOLUME_MUTE:
+        return "Volume mute/unmute";
+    case VC_BROWSER_BACK:
+        return "Browse back";
+    case VC_BROWSER_FAVORITES:
+        return "Browser favorites";
+    case VC_BROWSER_FORWARD:
+        return "Browse forward";
+    case VC_BROWSER_HOME:
+        return "Browser homepage";
+    case VC_BROWSER_REFRESH:
+        return "Browser refresh";
+    case VC_BROWSER_STOP:
+        return "Browser stop loading";
+    case VC_CONTEXT_MENU:
+        return "Open contextmenu";
+    case VC_KATAKANA:
+        return "Katakana";
+    case VC_UNDERSCORE:
+        return "_";
+    case VC_FURIGANA:
+        return "Furigana";
+    case VC_KANJI:
+        return "Kanji";
+    case VC_HIRAGANA:
+        return "Hiragana";
+    case VC_YEN:
+        return "Yen";
+    case VC_SUN_HELP: /* wtf? */
+        return "Sun help";
+    case VC_SUN_STOP:
+        return "Sun stop";
+    case VC_SUN_PROPS:
+        return "Sun properties";
+    case VC_SUN_FRONT:
+        return "Sun front";
+    case VC_SUN_OPEN:
+        return "Sun open";
+    case VC_SUN_FIND:
+        return "Sun find";
+    case VC_SUN_AGAIN:
+        return "Sun again";
+    case VC_SUN_UNDO:
+        return "Sun undo";
+    case VC_SUN_COPY:
+        return "Sun copy";
+    case VC_SUN_INSERT:
+        return "Sun insert";
+    case VC_SUN_CUT:
+        return "Sun cut";
+    case VC_POWER:
+        return "Power";
+    case VC_SLEEP:
+        return "Sleep";
+    case VC_WAKE:
+        return "Wake";
+    case VC_CLEAR:
+        return "Clear";
+    case VC_BACKQUOTE:
+        return "Backquote";
+    case VC_MINUS:
+        return "-";
+    case VC_EQUALS:
+        return "=";
+    case VC_OPEN_BRACKET:
+        return "[";
+    case VC_CLOSE_BRACKET:
+        return "]";
+    case VC_BACK_SLASH:
+        return "\\";
+    case VC_SEMICOLON:
+        return ";";
+    case VC_QUOTE:
+        return "\"";
+    case VC_COMMA:
+        return ",";
+    case VC_PERIOD:
+        return ".";
+    case VC_SLASH:
+        return "/";
+    case VC_KP_PAGE_DOWN:
+        return "Keypad page down";
+    case VC_KP_PAGE_UP:
+        return "Keypad page up";
+    case VC_KP_END:
+        return "Keypad end";
+    case VC_KP_HOME:
+        return "Keypad home";
+    case VC_KP_INSERT:
+        return "Keypad insert";
+    case VC_KP_DELETE:
+        return "Keypad delete";
+    case VC_KP_SEPARATOR:
+        return "Separator";
     default:
         return nullptr;
-        break;
     }
 }
 
