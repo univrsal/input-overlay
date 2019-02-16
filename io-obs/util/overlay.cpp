@@ -20,7 +20,6 @@
 #include "network/remote_connection.hpp"
 #include "network/io_server.hpp"
 #include "element/element_mouse_movement.hpp"
-#include "element/element_text.hpp"
 
 extern "C" {
 #include <graphics/image-file.h>
@@ -139,10 +138,6 @@ bool overlay::load_cfg()
                 case DPAD_STICK:
                     data = new element_data_dpad(DPAD_LEFT, STATE_RELEASED);
                     break;
-                case TEXT:
-                    if (m_data[element->get_keycode()] != nullptr)
-                        break; /* text and mouse_stats use the same keycode so 
-                                  if there's already an instance of this data -> break */
                 case MOUSE_STATS:
                     data = new element_data_mouse_stats(0, 0);
                     break;
@@ -301,9 +296,6 @@ void overlay::load_element(ccl_config* cfg, const std::string& id, const bool de
     case MOUSE_STATS:
         new_element = new element_mouse_movement();
         break;
-    case TEXT:
-        new_element = new element_text();
-        break;
     default:
         if (debug)
             blog(LOG_INFO, "[input-overlay] Invalid element type %i for %s",
@@ -338,7 +330,6 @@ const char* overlay::element_type_to_string(const element_type t)
     case MOUSE_STATS: return "Mouse movement";
     case TRIGGER: return "Trigger";
     case GAMEPAD_ID: return "Gamepad ID";
-    case TEXT: return "Text";
     case DPAD_STICK: return "DPad";
     default:
     case INVALID: return "Invalid";

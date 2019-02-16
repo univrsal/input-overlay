@@ -23,7 +23,6 @@
 #include "../util/Notifier.hpp"
 #include "../util/SDL_Helper.hpp"
 #include "../../../ccl/ccl.hpp"
-#include "ElementText.hpp"
 
 Element* Element::read_from_file(ccl_config* file, const std::string& id, const element_type t, SDL_Point* default_dim)
 {
@@ -35,14 +34,12 @@ Element* Element::read_from_file(ccl_config* file, const std::string& id, const 
         return ElementButton::read_from_file(file, id, default_dim);
     case MOUSE_SCROLLWHEEL:
         return ElementScrollWheel::read_from_file(file, id, default_dim);
-    case MOUSE_MOVEMENT:
+    case MOUSE_STATS:
         return ElementMouseMovement::read_from_file(file, id, default_dim);
     case ANALOG_STICK:
         return ElementAnalogStick::read_from_file(file, id, default_dim);
     case TRIGGER:
         return ElementTrigger::read_from_file(file, id, default_dim);
-    case TEXT:
-        return ElementText::read_from_file(file, id, default_dim);
     case DPAD_STICK:
         return ElementDPad::read_from_file(file, id, default_dim);
     case GAMEPAD_ID:
@@ -66,16 +63,13 @@ Element* Element::from_dialog(DialogNewElement* dialog)
     case TRIGGER:
         e = new ElementTrigger();
         break;
-    case TEXT:
-        e = new ElementText();
-        break;
     case MOUSE_SCROLLWHEEL:
         e = new ElementScrollWheel();
         break;
     case DPAD_STICK:
         e = new ElementDPad();
         break;
-    case MOUSE_MOVEMENT:
+    case MOUSE_STATS:
         e = new ElementMouseMovement();
         break;
     case ANALOG_STICK:
@@ -102,9 +96,8 @@ bool Element::valid_type(const int t)
     case ANALOG_STICK:
     case BUTTON:
     case DPAD_STICK:
-    case MOUSE_MOVEMENT:
+    case MOUSE_STATS:
     case MOUSE_SCROLLWHEEL:
-    case TEXT:
     case TEXTURE:
     case TRIGGER:
     case GAMEPAD_ID:

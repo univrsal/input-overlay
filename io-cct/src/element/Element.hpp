@@ -23,8 +23,7 @@ enum ElementError
     MAPPING_EMPTY,
     KEYCODE_INVALID,
     STICK_RADIUS,
-    MOUSE_RADIUS,
-    TEXT_EMPTY
+    MOUSE_RADIUS
 };
 
 class SDL_Helper;

@@ -95,8 +95,6 @@ set(io-cct_SOURCES
     src/element/Element.hpp
     src/element/ElementTexture.cpp
     src/element/ElementTexture.hpp
-    src/element/ElementText.cpp
-    src/element/ElementText.hpp
     src/element/ElementButton.cpp
     src/element/ElementButton.hpp
     src/element/ElementAnalogStick.cpp

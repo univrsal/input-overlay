@@ -31,7 +31,6 @@ void DialogElementType::init()
     m_type->add_item(LANG_ELEMENT_ANALOG_STICK);
     m_type->add_item(LANG_ELEMENT_TRIGGER);
     m_type->add_item(LANG_ELEMENT_GAMEPAD_ID);
-    m_type->add_item(LANG_ELEMENT_TEXT);
     m_type->add_item(LANG_ELEMENT_DPAD_STICK);
 
     add(new Button(ACTION_OK, 8, m_dimensions.h - 32, LANG_BUTTON_OK, this));

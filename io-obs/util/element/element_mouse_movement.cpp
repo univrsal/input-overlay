@@ -59,11 +59,13 @@ element_data_mouse_stats::element_data_mouse_stats(const stat_type type)
     m_type = type;
 }
 
-element_data_mouse_stats::element_data_mouse_stats(int scroll_amount)
+element_data_mouse_stats::element_data_mouse_stats(int scroll_amount, const wheel_direction dir, bool unused)
     : element_data(MOUSE_STATS)
 {
+    UNUSED_PARAMETER(unused);
     m_type = stat_scroll_amount;
     m_wheel_current = scroll_amount;
+    m_dir = dir;
 }
 
 bool element_data_mouse_stats::is_persistent()
@@ -88,15 +90,10 @@ void element_data_mouse_stats::merge(element_data* other)
                 break;
             case stat_scroll_amount:
                 if (data->m_wheel_current <= WHEEL_UP)
-                {
                     m_wheel_up_total += data->m_wheel_current;
-                    m_dir = WHEEL_DIR_UP;
-                }
                 else
-                {
                     m_wheel_down_total += data->m_wheel_current;
-                    m_dir = WHEEL_DIR_DOWN;
-                }
+                m_dir = data->m_dir;
                     
                 if ((m_wheel_current < 0) == (data->m_wheel_current < 0))
                     m_wheel_current += data->m_wheel_current;
@@ -122,6 +119,7 @@ void element_data_mouse_stats::merge(element_data* other)
             }
         }
     }
+
 }
 
 float element_data_mouse_stats::get_mouse_angle(sources::shared_settings* settings)

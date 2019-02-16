@@ -70,6 +70,10 @@ namespace sources
         else
         {
             m_overlay->draw(effect);
+            /*gs_matrix_push();
+            gs_matrix_translate3f(30, 20, 1.f);
+            obs_source_video_render(m_settings.text_source);
+            gs_matrix_pop();*/
         }
     }
 

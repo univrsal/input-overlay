@@ -15,7 +15,7 @@
 
 ElementMouseMovement::ElementMouseMovement(const std::string& id, const SDL_Point pos,
     const SDL_Rect mapping, const mouse_movement_type type, const uint16_t radius, const uint8_t z)
-    : ElementTexture(MOUSE_MOVEMENT, id, pos, mapping, z)
+    : ElementTexture(MOUSE_STATS, id, pos, mapping, z)
 {
     m_radius = radius;
     m_type = type;

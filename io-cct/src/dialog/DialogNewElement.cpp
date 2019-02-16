@@ -3,7 +3,6 @@
 #include "../element/ElementAnalogStick.hpp"
 #include "../element/ElementMouseMovement.hpp"
 #include "../element/ElementTrigger.hpp"
-#include "../element/ElementText.hpp"
 
 void DialogNewElement::load_from_element(Element* e)
 {
@@ -37,7 +36,6 @@ void DialogNewElement::load_from_element(Element* e)
         ElementAnalogStick* stick = nullptr;
         ElementMouseMovement* mouse = nullptr;
         ElementTrigger* trigger = nullptr;
-        ElementText* text = nullptr;
 
         switch (e->get_type())
         {
@@ -46,7 +44,7 @@ void DialogNewElement::load_from_element(Element* e)
             m_binary_choice->select_item(stick->get_stick());
             m_radius->set_text(std::to_string(stick->get_radius()));
             break;
-        case MOUSE_MOVEMENT:
+        case MOUSE_STATS:
             mouse = dynamic_cast<ElementMouseMovement*>(e);
             m_binary_choice->select_item(mouse->get_mouse_type());
             m_radius->set_text(std::to_string(mouse->get_radius()));
@@ -57,11 +55,6 @@ void DialogNewElement::load_from_element(Element* e)
             m_direction->select_item(trigger->get_direction());
             m_trigger_mode->set_checked(trigger->get_mode());
             break;
-        case TEXT:
-            text = dynamic_cast<ElementText*>(e);
-            m_text->set_text(text->get_text());
-            m_text_reset->set_checked(text->get_reset());
-            break;
         default: ;
         }
     }
@@ -69,15 +62,8 @@ void DialogNewElement::load_from_element(Element* e)
 
 void DialogNewElement::init()
 {
-    if (m_type == TEXT)
-    {
-        set_dimension(panel_w + 16, 550);
-        set_flags(DIALOG_TOP_MOST | DIALOG_CENTERED);
-    }
-    else
-    {
-        set_flags(DIALOG_TOP_MOST | DIALOG_FLUID);
-    }
+    set_flags(DIALOG_TOP_MOST | DIALOG_FLUID);
+    
 
     Dialog::init();
     m_element_y = 30;
@@ -91,15 +77,13 @@ void DialogNewElement::init()
         add_keycode_elements();
     else if (m_type == MOUSE_SCROLLWHEEL)
         add_info(LANG_LABEL_WHEEL_INFO);
-    else if (m_type == MOUSE_MOVEMENT)
+    else if (m_type == MOUSE_STATS)
         add_mouse_or_analog_stick(LANG_LABEL_MOUSE_TYPE,
                                   LANG_ITEM_MOUSE_TYPE_DOT, LANG_ITEM_MOUSE_TYPE_ARROW);
     else if (m_type == TRIGGER)
         add_trigger();
     else if (m_type == GAMEPAD_ID)
         add_info(LANG_LABEL_GAMEPAD_ID_INFO);
-    else if (m_type == TEXT)
-        add_text();
     else if (m_type == DPAD_STICK)
         add_info(LANG_LABEL_DPAD_INFO);
 
@@ -109,7 +93,7 @@ void DialogNewElement::init()
     case BUTTON:
     case TEXTURE:
     case MOUSE_SCROLLWHEEL:
-    case MOUSE_MOVEMENT:
+    case MOUSE_STATS:
     case TRIGGER:
     case GAMEPAD_ID:
     case DPAD_STICK:
@@ -120,7 +104,6 @@ void DialogNewElement::init()
         add_selection_elements();
         break;
     case INVALID:
-    case TEXT: 
     default: ;
     }
 
@@ -193,7 +176,7 @@ bool DialogNewElement::handle_events(SDL_Event* event)
     {
     case TEXTURE:
     case BUTTON:
-    case MOUSE_MOVEMENT:
+    case MOUSE_STATS:
     case ANALOG_STICK:
     case MOUSE_SCROLLWHEEL:
     case GAMEPAD_ID:
@@ -335,20 +318,6 @@ void DialogNewElement::set_default_dim(int w, int h)
     }
 }
 
-const std::string* DialogNewElement::get_text() const
-{
-    if (m_text)
-        return m_text->get_text();
-    return nullptr;
-}
-
-bool DialogNewElement::get_text_reset() const
-{
-    if (m_text_reset)
-        return m_text_reset->get_state();
-    return false;
-}
-
 void DialogNewElement::handle_error(ElementError e) const
 {
     switch (e)
@@ -368,9 +337,6 @@ void DialogNewElement::handle_error(ElementError e) const
         break;
     case STICK_RADIUS:
         m_radius->set_alert(true);
-        break;
-    case TEXT_EMPTY:
-        m_text->set_alert(true);
         break;
     default: ;
     }
@@ -494,16 +460,5 @@ void DialogNewElement::add_trigger()
     m_element_y += 25;
 
     add(m_trigger_mode = new Checkbox(m_id++, 8, m_element_y, LANG_CHECKBOX_TRIGGER_BUTON, this));
-    m_element_y += 40;
-}
-
-void DialogNewElement::add_text()
-{
-    if (m_element_y == 0)
-        m_element_y = 30;
-    add_info(LANG_LABEL_TEXT_FORMAT_INFO);
-    add(m_text = new Textbox(m_id++, 8, m_element_y, panel_w, 20, "", this));
-    m_element_y += 25;
-    add(m_text_reset = new Checkbox(m_id++, 8, m_element_y, LANG_CHECKBOX_RESET_TEXT, this));
     m_element_y += 40;
 }

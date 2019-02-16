@@ -29,7 +29,7 @@ public:
 
     element_data_mouse_stats(stat_type type);
 
-    element_data_mouse_stats(int scroll_amount);
+    element_data_mouse_stats(int scroll_amount, wheel_direction dir, bool unused);
 
     bool is_persistent() override;
 

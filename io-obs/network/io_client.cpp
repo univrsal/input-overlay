@@ -110,7 +110,7 @@ namespace network
                     direction = wheel_direction(dir);
 
                 m_holder.add_data(VC_MOUSE_DATA, new element_data_mouse_stats(x, y));
-                m_holder.add_data(VC_MOUSE_DATA, new element_data_mouse_stats(amount));
+                m_holder.add_data(VC_MOUSE_DATA, new element_data_mouse_stats(amount, direction, false));
                 m_holder.add_data(VC_MOUSE_WHEEL, new element_data_wheel(direction,
                     pressed ? STATE_PRESSED : STATE_RELEASED));
             }

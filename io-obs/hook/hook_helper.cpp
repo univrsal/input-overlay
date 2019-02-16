@@ -257,7 +257,7 @@ namespace hook
         wheel_direction dir;
         int new_amount;
 
-        if (os_gettime_ns() - hook::last_wheel >= SCROLL_TIMEOUT)
+        if ( os_gettime_ns() - hook::last_wheel >= SCROLL_TIMEOUT)
         {
             if (input_data) d = input_data->get_by_code(VC_MOUSE_WHEEL);
             if (d) wheel = dynamic_cast<element_data_wheel*>(d);
@@ -278,17 +278,10 @@ namespace hook
             else
                 dir = WHEEL_DIR_UP;
 
-            /* Get current Mouse wheel state */
-            if (input_data)
-            {
-                d = input_data->get_by_code(VC_MOUSE_DATA);
-                if (d) mouse_stats = dynamic_cast<element_data_mouse_stats*>(d);
-            }
-
             input_data->add_data(
                 VC_MOUSE_WHEEL, new element_data_wheel(dir));
             input_data->add_data(
-                VC_MOUSE_DATA, new element_data_mouse_stats(event->data.wheel.amount));
+                VC_MOUSE_DATA, new element_data_mouse_stats(event->data.wheel.amount, dir, false));
             break;
         case EVENT_MOUSE_PRESSED:
         case EVENT_MOUSE_RELEASED:

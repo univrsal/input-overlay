@@ -98,9 +98,6 @@ private:
     /* Adds game pad trigger elements */
     void add_trigger();
 
-    /* Adds text elements*/
-    void add_text();
-
     /* Tracks whether or not the element name was changed*/
     std::string m_initial_name;
 
@@ -126,14 +123,12 @@ private:
     Textbox* m_element_id = nullptr;
     Textbox* m_keycode = nullptr;
     Textbox* m_z_level = nullptr;
-    Textbox* m_text = nullptr;
 
     Button* m_ok = nullptr;
     Button* m_cancel = nullptr;
 
     Checkbox* m_read_keybind = nullptr;
     Checkbox* m_trigger_mode = nullptr;
-    Checkbox* m_text_reset = nullptr;
 
     /* UV mapping */
     SDL_Rect m_selection;

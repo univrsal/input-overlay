@@ -123,8 +123,6 @@
 #define LANG_LABEL_TRIGGER_SIDE         "label_trigger_side"
 #define LANG_CHECKBOX_TRIGGER_BUTON     "checkbox_trigger_button"
 #define LANG_LABEL_GAMEPAD_ID_INFO      "label_gamepad_id_info"
-#define LANG_LABEL_TEXT_FORMAT_INFO     "label_text_format_info"
-#define LANG_CHECKBOX_RESET_TEXT        "checkbox_reset_text"
 #define LANG_LABEL_DPAD_INFO            "label_dpad_info"
 
 /* Selected element settings */
@@ -146,6 +144,5 @@
 #define LANG_ELEMENT_MOUSE_MOVEMENT     "element_mouse_movement"
 #define LANG_ELEMENT_ANALOG_STICK       "element_analog_stick"
 #define LANG_ELEMENT_TRIGGER            "element_trigger"
-#define LANG_ELEMENT_TEXT               "element_text"
 #define LANG_ELEMENT_DPAD_STICK         "element_dpad_stick"
 #define LANG_ELEMENT_GAMEPAD_ID         "element_gamepad_id"

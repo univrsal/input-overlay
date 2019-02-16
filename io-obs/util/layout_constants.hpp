@@ -137,6 +137,5 @@ enum element_type
     TRIGGER,
     /* Shows game pad number 1 through 4 */
     GAMEPAD_ID,
-    TEXT,
     DPAD_STICK,
 };
