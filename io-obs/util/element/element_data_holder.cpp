@@ -118,6 +118,47 @@ void element_data_holder::clear_gamepad_data()
     m_gamepad_data->clear();
 }
 
+void element_data_holder::populate_vector(std::vector<uint16_t>& vec, const uint8_t gamepad)
+{
+    for (const auto& data : m_button_data)
+    {
+        auto new_key = true;
+        for (const auto& vc : vec) /* Check if this key is already in the vector */
+        {
+            if (data.first == vc)
+            {
+                new_key = false;
+                break;
+            }
+        }
+
+        if (new_key) /* if not add it */
+        {
+            vec.emplace_back(data.first);
+        }
+    }
+
+    /* Same procedure for the gamepad */
+    for (const auto& data : m_gamepad_data[gamepad])
+    {
+        auto new_key = true;
+        for (const auto& vc : vec) /* Check if this key is already in the vector */
+        {
+            if (data.first == vc)
+            {
+                new_key = false;
+                break;
+            }
+        }
+
+        if (new_key) /* if not add it */
+        {
+            vec.emplace_back(data.first);
+        }
+    }
+
+}
+
 bool element_data_holder::data_exists(const uint16_t keycode)
 {
     if (is_empty())

@@ -81,6 +81,20 @@ set(input-overlay_SOURCES
     util/element/element_dpad.hpp
     util/element/element_data_holder.cpp
     util/element/element_data_holder.hpp
+    util/history/effect.cpp
+    util/history/effect.hpp
+    util/history/scale_effect.cpp
+    util/history/scale_effect.hpp
+    util/history/translate_effect.cpp
+    util/history/translate_effect.hpp
+    util/history/input_entry.cpp
+    util/history/input_entry.hpp
+    util/history/input_queue.cpp
+    util/history/input_queue.hpp
+    util/history/history_icons.cpp
+    util/history/history_icons.hpp
+    util/history/key_names.cpp
+    util/history/key_names.hpp
     gui/io_settings_dialog.hpp
     gui/io_settings_dialog.cpp
     network/remote_connection.cpp

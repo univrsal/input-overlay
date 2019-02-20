@@ -27,7 +27,7 @@ extern "C" {
 
 namespace sources
 {
-    class shared_settings;
+    class overlay_settings;
 }
 
 //namespace Layout {
@@ -37,7 +37,7 @@ overlay::~overlay()
     unload();
 }
 
-overlay::overlay(sources::shared_settings* settings)
+overlay::overlay(sources::overlay_settings* settings)
 {
     m_settings = settings;
     m_is_loaded = load();

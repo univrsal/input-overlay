@@ -30,7 +30,7 @@ void element_dpad::load(ccl_config* cfg, const std::string& id)
 }
 
 void element_dpad::draw(gs_effect_t* effect,
-    gs_image_file_t* image, element_data* data, sources::shared_settings* settings)
+    gs_image_file_t* image, element_data* data, sources::overlay_settings* settings)
 {
     const auto d = dynamic_cast<element_data_dpad*>(data);
 

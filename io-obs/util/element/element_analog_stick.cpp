@@ -21,7 +21,7 @@ void element_analog_stick::load(ccl_config* cfg, const std::string& id)
 }
 
 void element_analog_stick::draw(gs_effect_t* effect, gs_image_file_t* image,
-    element_data* data, sources::shared_settings* settings)
+    element_data* data, sources::overlay_settings* settings)
 {
     if (data)
     {
@@ -46,7 +46,7 @@ void element_analog_stick::draw(gs_effect_t* effect, gs_image_file_t* image,
 }
 
 void element_analog_stick::calc_position(
-    vec2* v, element_data_analog_stick* d, sources::shared_settings* settings) const
+    vec2* v, element_data_analog_stick* d, sources::overlay_settings* settings) const
 {
     switch (m_side)
     {

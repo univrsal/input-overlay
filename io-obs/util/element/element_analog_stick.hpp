@@ -130,11 +130,11 @@ public:
     void load(ccl_config* cfg, const std::string& id) override;
 
     void draw(gs_effect_t* effect, gs_image_file_t* image,
-        element_data* data, sources::shared_settings* settings) override;
+        element_data* data, sources::overlay_settings* settings) override;
 
     data_source get_source() override { return GAMEPAD; }
 private:
-    void calc_position(vec2* v, element_data_analog_stick* d, sources::shared_settings* settings) const;
+    void calc_position(vec2* v, element_data_analog_stick* d, sources::overlay_settings* settings) const;
     gs_rect m_pressed{};
     element_side m_side;
     uint8_t m_radius = 0;

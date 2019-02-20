@@ -31,7 +31,7 @@ public:
 
     ~overlay();
 
-    overlay(sources::shared_settings* settings);
+    overlay(sources::overlay_settings* settings);
 
     bool load();
 
@@ -62,7 +62,7 @@ private:
 
     gs_image_file_t* m_image = nullptr;
 
-    sources::shared_settings* m_settings = nullptr;
+    sources::overlay_settings* m_settings = nullptr;
 
     bool m_is_loaded = false;
     std::vector<std::unique_ptr<element>> m_elements;

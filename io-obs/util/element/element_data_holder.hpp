@@ -9,7 +9,11 @@
 #include "element.hpp"
 #include <map>
 #include <memory>
+#include <vector>
 
+/* Holds all input data for connected clients
+ * and/or the local computer
+ */
 class element_data_holder
 {
 public:
@@ -29,6 +33,8 @@ public:
     void clear_data();
     void clear_button_data();
     void clear_gamepad_data();
+
+    void populate_vector(std::vector<uint16_t>& vec, uint8_t gamepad);
 
     bool is_empty() const;
 private:

@@ -33,7 +33,7 @@ void element_texture::load(ccl_config* cfg, const std::string& id)
 }
 
 void element_texture::draw(gs_effect_t* effect, gs_image_file_t* image,
-    element_data* data, sources::shared_settings* settings)
+    element_data* data, sources::overlay_settings* settings)
 {
     draw(effect, image, &m_mapping, &m_pos);
 }

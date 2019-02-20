@@ -20,7 +20,7 @@ typedef struct obs_data obs_data_t;
 
 namespace sources
 {
-    class shared_settings
+    class overlay_settings
     {
     public:
         std::string image_file;
@@ -48,7 +48,7 @@ namespace sources
         
         uint32_t cx = 0, cy = 0;
         std::unique_ptr<overlay> m_overlay{};
-        shared_settings m_settings;
+        overlay_settings m_settings;
         
         input_source(obs_source_t* source, obs_data_t* settings) :
             m_source(source)
@@ -71,6 +71,5 @@ namespace sources
     
     /* For registering */
     static obs_properties_t* get_properties_for_overlay(void* data);
-
-    void register_overlay_source();
+    static void register_overlay_source();
 }

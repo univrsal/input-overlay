@@ -19,7 +19,7 @@ public:
     void load(ccl_config* cfg, const std::string& id) override;
 
     void draw(gs_effect_t* effect, gs_image_file_t* image,
-        element_data* data, sources::shared_settings* settings) override;
+        element_data* data, sources::overlay_settings* settings) override;
     void draw(gs_effect_t* effect, gs_image_file_t* image,
         const gs_rect* rect) const;
     static void draw(gs_effect_t* effect, gs_image_file_t* image,

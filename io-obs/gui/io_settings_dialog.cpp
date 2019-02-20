@@ -27,8 +27,8 @@ io_settings_dialog::io_settings_dialog(QWidget* parent)
     connect(ui->btn_refresh, &QPushButton::clicked,
         this, &io_settings_dialog::PingClients);
 
-    connect(ui->box_refresh_rate, qOverload<int>(&QSpinBox::valueChanged),
-        this, &io_settings_dialog::BoxRefreshChanged);
+    /*connect(ui->box_refresh_rate, qOverload<int>(&QSpinBox::valueChanged),
+        this, &io_settings_dialog::BoxRefreshChanged);*/
 
     const auto cfg = obs_frontend_get_global_config();
 

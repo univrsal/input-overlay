@@ -12,6 +12,7 @@
 #include "../util/element/element_data_holder.hpp"
 #include "../util/element/element_button.hpp"
 #include "../util/element/element_mouse_wheel.hpp"
+#include "graphics/matrix4.h"
 
 namespace sources
 {
@@ -102,7 +103,7 @@ namespace sources
         m_prev_keys = {};
         m_current_keys = {};
 
-        obs_data_set_string(m_settings, "text", "");
+        obs_data_set_string(m_settings, "text", "BREHHHH");
         obs_source_update(m_text_source, m_settings);
         obs_source_update(m_source, m_settings);
     }
@@ -153,6 +154,7 @@ namespace sources
 
     void input_history_source::handle_text_history()
     {
+        return;
         std::string text;
         std::string line;
 
@@ -196,6 +198,7 @@ namespace sources
 
     void input_history_source::handle_icon_history(gs_effect_t* effect)
     {
+        return;
         if (m_key_icons && m_key_icons->is_loaded())
         {
             gs_effect_set_texture(gs_effect_get_param_by_name(effect, "image"),
@@ -340,6 +343,9 @@ namespace sources
 
     inline void input_history_source::tick(float seconds)
     {
+        cx = 50;
+        cy = 50;
+        return;
         if (!m_source || !obs_source_showing(m_source))
             return;
 
@@ -437,11 +443,41 @@ namespace sources
         }
     }
 
+    static float offset = 0.f;
+    static float delta = 0.3f;
     inline void input_history_source::render(gs_effect_t* effect)
     {
         if (GET_MASK(MASK_TEXT_MODE))
         {
+            obs_enter_graphics();
+
             obs_source_video_render(m_text_source);
+            
+            gs_matrix_push();
+            gs_matrix_translate3f(0.f, 30.f + offset, 0.f);
+            obs_source_video_render(m_text_source);
+            gs_matrix_pop();
+
+            gs_matrix_push();
+            gs_matrix_translate3f(0.f, 60.f + offset, 0.f);
+            gs_matrix_scale3f(offset / 30.f, offset / 30.f, offset / 30.f);
+            auto* param = gs_effect_get_param_by_idx(effect, 0);
+
+            if (param)
+            {
+                matrix4 matrix;
+                matrix4_identity(&matrix);
+                matrix.t.w = 0.01f;
+
+                gs_effect_set_matrix4(param, &matrix);
+            }
+            offset += delta;
+            obs_source_video_render(m_text_source);
+            gs_matrix_pop();
+            obs_leave_graphics();
+
+            if (offset >= 30.f || offset <= 0.f)
+                delta *= -1.f;
         }
         else
         {
@@ -796,59 +832,6 @@ namespace sources
         obs_register_source(&si);
     }
 
-    void key_names::load_from_file(const std::string& path)
-    {
-        auto cfg = new ccl_config(path, "");
-
-        if (!cfg->is_empty())
-        {
-            auto node = cfg->get_first();
-
-            if (!node)
-            {
-                delete cfg;
-                return;
-            }
-
-            do
-            {
-                if (node->get_type() == 2)
-                {
-                    auto val = node->get_id();
-                    uint16_t key_code = std::stoul(val, nullptr, 16);
-                    m_names[key_code] = node->get_value();
-                }
-            }
-            while ((node = node->get_next()) != nullptr);
-        }
-
-        if (cfg->has_errors())
-        {
-            blog(LOG_WARNING, "[ccl] %s", cfg->get_error_message().c_str());
-        }
-
-        if (cfg)
-        {
-            delete cfg;
-            cfg = nullptr;
-        }
-    }
-
-    const char* key_names::get_name(const uint16_t vc)
-    {
-        if (m_names.find(vc) != m_names.end())
-        {
-            return m_names[vc].c_str();
-        }
-
-        return nullptr;
-    }
-
-    key_names::~key_names()
-    {
-        m_names.clear();
-    }
-
     key_icons::~key_icons()
     {
         unload_texture();
@@ -932,40 +915,6 @@ namespace sources
         {
             delete cfg;
             cfg = nullptr;
-        }
-    }
-
-    key_icon* key_icons::get_icon_for_key(const uint16_t vc)
-    {
-        if (!m_loaded)
-            return nullptr;
-
-        if (m_icons.find(vc) != m_icons.end())
-        {
-            return &m_icons[vc];
-        }
-
-        return nullptr;
-    }
-
-    bool key_icons::has_texture_for_bundle(key_bundle* bundle)
-    {
-        for (unsigned short key : bundle->m_keys)
-        {
-            /* Any key inside a bundle has icon --> draw the entire bundle */
-            if (get_icon_for_key(key)) return true;
-        }
-        return false;
-    }
-
-    void key_icons::unload_texture()
-    {
-        if (m_icon_texture)
-        {
-            obs_enter_graphics();
-            ////gs_image_file_free(m_icon_texture);
-            m_icon_texture = nullptr;
-            obs_leave_graphics();
         }
     }
 }

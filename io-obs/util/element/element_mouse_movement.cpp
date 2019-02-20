@@ -20,7 +20,7 @@ void element_mouse_movement::load(ccl_config* cfg, const std::string& id)
 }
 
 void element_mouse_movement::draw(gs_effect_t* effect,
-    gs_image_file_t* image, element_data* data, sources::shared_settings* settings)
+    gs_image_file_t* image, element_data* data, sources::overlay_settings* settings)
 {
     if (data && data->get_type() == MOUSE_STATS)
     {
@@ -122,7 +122,7 @@ void element_data_mouse_stats::merge(element_data* other)
 
 }
 
-float element_data_mouse_stats::get_mouse_angle(sources::shared_settings* settings)
+float element_data_mouse_stats::get_mouse_angle(sources::overlay_settings* settings)
 {
     auto d_x = 0, d_y = 0;
 
@@ -148,7 +148,7 @@ float element_data_mouse_stats::get_mouse_angle(sources::shared_settings* settin
     return new_angle;
 }
 
-void element_data_mouse_stats::get_mouse_offset(sources::shared_settings* settings,
+void element_data_mouse_stats::get_mouse_offset(sources::overlay_settings* settings,
     const vec2& center, vec2& out, const uint8_t radius) const
 {
     auto d_x = 0, d_y = 0;

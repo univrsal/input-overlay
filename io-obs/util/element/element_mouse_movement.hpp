@@ -35,9 +35,9 @@ public:
 
     void merge(element_data* other) override;
 
-    float get_mouse_angle(sources::shared_settings* settings);
+    float get_mouse_angle(sources::overlay_settings* settings);
 
-    void get_mouse_offset(sources::shared_settings* settings,
+    void get_mouse_offset(sources::overlay_settings* settings,
         const vec2& center, vec2& out, uint8_t radius) const;
 
     uint32_t get_mmb_total() const;
@@ -74,7 +74,7 @@ public:
     void load(ccl_config* cfg, const std::string& id) override;
 
     void draw(gs_effect_t* effect, gs_image_file_t* image,
-        element_data* data, sources::shared_settings* settings) override;
+        element_data* data, sources::overlay_settings* settings) override;
 
     data_source get_source() override { return MOUSE_POS; }
 

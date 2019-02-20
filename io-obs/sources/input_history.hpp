@@ -15,6 +15,7 @@
 #include "../util/layout_constants.hpp"
 #include "../hook/gamepad_hook.hpp"
 #include "../hook/hook_helper.hpp"
+#include "util/history/key_names.hpp"
 
 extern "C" {
 #include <graphics/image-file.h>
@@ -30,7 +31,6 @@ extern "C" {
 #define MASK_TEXT_MODE      1 << 0
 #define MASK_FIX_CUTTING    1 << 1
 #define MASK_INCLUDE_MOUSE  1 << 2
-#define MASK_UPDATE_KEYS    1 << 3
 #define MASK_AUTO_CLEAR     1 << 4
 #define MASK_REPEAT_KEYS    1 << 5
 #define MASK_TRANSLATION    1 << 6
@@ -40,20 +40,30 @@ extern "C" {
 
 namespace sources
 {
-    class key_names;
-    class key_bundle;
-
-    class key_names
+    enum history_flags
     {
-    public:
-        void load_from_file(const std::string& path);
-        const char* get_name(uint16_t vc);
-
-        ~key_names();
-
-    private:
-        std::map<uint16_t, std::string> m_names;
+        FLAG_TEXT_MODE      = 1 << 0,
+        FLAG_FIX_CUTTING    = 1 << 1,
+        FLAG_INCLUDE_MOUSE  = 1 << 2,
+        FLAG_AUTO_CLEAR     = 1 << 3,
+        FLAG_REPEAT_KEYS    = 1 << 4,
+        FLAG_CUSTOM_NAMES   = 1 << 5,
+        FLAG_USE_FALLBACK   = 1 << 6,
+        FLAG_COMMAND_MODE   = 1 << 7,
+        FLAG_INCLUDE_PAD    = 1 << 8,
+        FLAG_USE_MASKS      = 1 << 9
     };
+
+    struct history_settings
+    {
+        uint8_t target_gamepad = 0;             /* Only one gamepad is used per source */
+        obs_source_t* text_source = nullptr;    /* Contains text source used for text mode */
+        uint16_t flags = 0x0;                   /* Contains all settings flags */
+        key_names names;                        /* Custom keyname configuration */
+        
+    };
+
+    class key_bundle;
 
     class key_bundle
     {
@@ -138,37 +148,6 @@ namespace sources
             }
             return result;
         }
-    };
-
-    struct key_icon
-    {
-        uint16_t u, v;
-    };
-
-    struct key_icons
-    {
-        ~key_icons();
-
-        void load_from_file(const std::string& img_path,
-            const std::string& cfg_path);
-        key_icon* get_icon_for_key(uint16_t vc);
-
-        uint16_t get_w() const { return m_icon_w; }
-        uint16_t get_h() const { return m_icon_h; }
-
-        bool is_loaded() const { return m_loaded; }
-        bool has_texture_for_bundle(key_bundle* bundle);
-
-        gs_image_file_t* get_texture() const { return m_icon_texture; }
-
-    private:
-        bool m_loaded = false;
-        uint16_t m_icon_count = 0;
-        uint16_t m_icon_w = 0;
-        uint16_t m_icon_h = 0;
-        std::map<uint16_t, key_icon> m_icons;
-        void unload_texture();
-        gs_image_file_t* m_icon_texture = nullptr;
     };
 
     struct input_history_source

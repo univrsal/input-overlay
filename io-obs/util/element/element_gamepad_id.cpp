@@ -29,7 +29,7 @@ void element_gamepad_id::load(ccl_config* cfg, const std::string& id)
 }
 
 void element_gamepad_id::draw(gs_effect_t* effect,
-    gs_image_file_t* image, element_data* data, sources::shared_settings* settings)
+    gs_image_file_t* image, element_data* data, sources::overlay_settings* settings)
 {
     if (data)
     {
