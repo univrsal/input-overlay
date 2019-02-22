@@ -15,6 +15,7 @@ class scale_effect
     float m_delta;
 public:
     scale_effect(float duration, float scale);
+    scale_effect(float duration, float scale, float start);
 
     void tick(float seconds) override;
     void render() override;

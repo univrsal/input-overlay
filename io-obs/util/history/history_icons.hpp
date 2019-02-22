@@ -6,16 +6,18 @@
  */
 
 #pragma once
-#include <string>
 #include <map>
+extern "C"
+{
 #include <graphics/image-file.h>
+}
 
 struct icon
 {
     uint16_t u, v;
 };
 
-class key_icons
+class history_icons
 {
     bool m_loaded = false;
     uint16_t m_icon_count = 0;
@@ -25,10 +27,10 @@ class key_icons
     void unload_texture();
     gs_image_file_t* m_icon_texture = nullptr;
 public:
-    ~key_icons();
+    ~history_icons();
 
     void load_from_file(const char* cfg, const char* img);
-    
+    void draw(uint16_t vc, vec2* pos);
     uint16_t get_w() const { return m_icon_w; }
     uint16_t get_h() const { return m_icon_h; }
 

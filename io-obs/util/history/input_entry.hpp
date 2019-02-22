@@ -31,17 +31,27 @@ class input_entry
     /* Contains input sequence as string*/
     std::string m_text;
 
+    vec2 m_position{};
+    uint16_t m_height = 0, m_width = 0;
+
+    /* Converts input mask (additional info for input event like holding Ctrl or shift) to string*/
     static void mask_to_string(std::string& str, uint16_t mask, bool use_fallback, key_names* names);
+
+    bool m_remove = false; /* Set to true once this entry is the last in the list */
 public:
-    input_entry() = default;
+    input_entry(vec2 pos);
     ~input_entry() = default;
 
-    void collect_inputs(element_data_holder* data);
-    void build_string(key_names* names, sources::history_settings* settings);
-    
+    uint16_t get_width() const;
+    uint16_t get_height() const;
+
+    void collect_inputs(sources::history_settings* settings);
+    void build_string(sources::history_settings* settings);
     void tick(float seconds);
     void add_effect(effect* e);
-
-    void render_text(obs_source_t* text_source, sources::history_settings* settings);
+    void render_text(sources::history_settings* settings);
     void render_icons(sources::history_settings* settings);
+
+    void mark_for_removal();
+    bool finished() const;
 };

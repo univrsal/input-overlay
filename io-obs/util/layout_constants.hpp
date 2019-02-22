@@ -104,7 +104,7 @@ enum trigger_direction
     TRIGGER_RIGHT
 };
 
-enum icon_direction
+enum history_direction
 {
     DIR_DOWN,
     DIR_UP,

@@ -9,7 +9,7 @@
 #include "history_icons.hpp"
 #include "../../../ccl/ccl.hpp"
 
-void key_icons::unload_texture()
+void history_icons::unload_texture()
 {
     if (m_icon_texture)
     {
@@ -20,12 +20,12 @@ void key_icons::unload_texture()
     }
 }
 
-key_icons::~key_icons()
+history_icons::~history_icons()
 {
     unload_texture();
 }
 
-void key_icons::load_from_file(const char* cfg, const char* img)
+void history_icons::load_from_file(const char* cfg, const char* img)
 {
     m_loaded = false;
     if (!cfg || !img)
@@ -90,4 +90,9 @@ void key_icons::load_from_file(const char* cfg, const char* img)
 
     if (ccl.has_errors())
         blog(LOG_WARNING, "[input-overlay] %s", ccl.get_error_message().c_str());
+}
+
+void history_icons::draw(uint16_t vc, vec2* pos)
+{
+
 }

@@ -71,5 +71,5 @@ namespace sources
     
     /* For registering */
     static obs_properties_t* get_properties_for_overlay(void* data);
-    static void register_overlay_source();
+    void register_overlay_source();
 }

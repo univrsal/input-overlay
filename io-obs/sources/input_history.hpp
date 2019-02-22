@@ -8,79 +8,74 @@
 #pragma once
 
 #include <obs-module.h>
-#include <map>
-#include "input_source.hpp"
-#include "../../ccl/ccl.hpp"
 #include "../util/util.hpp"
 #include "../util/layout_constants.hpp"
 #include "../hook/gamepad_hook.hpp"
 #include "../hook/hook_helper.hpp"
-#include "util/history/key_names.hpp"
+
+class input_queue;
 
 extern "C" {
 #include <graphics/image-file.h>
 }
 
+class history_icons;
+class key_names;
 
-#define MAX_HISTORY_SIZE 5
-#define MAX_SIMULTANEOUS_KEYS 10
-
-#define SET_MASK(a, b)      (util_set_mask(m_bool_values, a, b))
-#define GET_MASK(a)         (m_bool_values & a)
-
-#define MASK_TEXT_MODE      1 << 0
-#define MASK_FIX_CUTTING    1 << 1
-#define MASK_INCLUDE_MOUSE  1 << 2
-#define MASK_AUTO_CLEAR     1 << 4
-#define MASK_REPEAT_KEYS    1 << 5
-#define MASK_TRANSLATION    1 << 6
-#define MASK_USE_FALLBACK   1 << 7
-#define MASK_COMMAND_MODE   1 << 8
-#define MASK_INCLUDE_PAD    1 << 9
+#define MAX_HISTORY_SIZE 32
+#define SET_FLAG(a, b)      (util_set_mask(m_settings.flags, a, b))
+#define GET_FLAG(a)         (m_settings.flags & a)
 
 namespace sources
 {
+    enum history_mode
+    {
+        MODE_TEXT,
+        MODE_ICONS,
+        MODE_COMMANDS
+    };
+
     enum history_flags
     {
-        FLAG_TEXT_MODE      = 1 << 0,
-        FLAG_FIX_CUTTING    = 1 << 1,
-        FLAG_INCLUDE_MOUSE  = 1 << 2,
-        FLAG_AUTO_CLEAR     = 1 << 3,
-        FLAG_REPEAT_KEYS    = 1 << 4,
-        FLAG_CUSTOM_NAMES   = 1 << 5,
-        FLAG_USE_FALLBACK   = 1 << 6,
-        FLAG_COMMAND_MODE   = 1 << 7,
-        FLAG_INCLUDE_PAD    = 1 << 8,
-        FLAG_USE_MASKS      = 1 << 9
+        FLAG_FIX_CUTTING    = 1 << 0,   /* Append space at the end of text to fix cursive fonts cutting off*/
+        FLAG_INCLUDE_MOUSE  = 1 << 1,   /* Include mouse clicks and scrolling */
+        FLAG_AUTO_CLEAR     = 1 << 2,   /* Use automatic clearing */
+        FLAG_REPEAT_KEYS    = 1 << 3,   /* Allow repeated keys*/
+        FLAG_MERGE_REPEAT   = 1 << 4,   /* Merge repeated keys into one entry */
+        FLAG_CUSTOM_NAMES   = 1 << 5,   /* Use custom key name config */
+        FLAG_USE_FALLBACK   = 1 << 6,   /* Use hardcoded names if config doesn't define a key name */
+        FLAG_INCLUDE_PAD    = 1 << 7,   /* Include gamepad inputs */
+        FLAG_USE_MASKS      = 1 << 8    /* Use event masks (Holding Ctrl, Shift etc.) */
     };
 
     struct history_settings
     {
+        /* Configurable properties */
+        history_mode mode = MODE_TEXT;          /* Mode for visualization */
+        uint8_t history_size = 0;               /* Maximum amount of entries in history */
         uint8_t target_gamepad = 0;             /* Only one gamepad is used per source */
+        uint16_t v_space = 0, h_space = 0;      /* Vertical/Horizontal space. h_space only for icons */
+        history_direction dir = DIR_DOWN;       /* Flow direction of input display */
+        double update_interval = 0.f;           /* Timespan in which inputs will be accumulated */
+        double auto_clear_interval = 0.f;       /* Timespan of no inputs after which history will be cleared */
+        const char* key_name_path = nullptr;    /* Path to additional key name config*/
+        const char* icon_path = nullptr;        /* Path to icons used for icon mode */
+        const char* icon_cfg_path = nullptr;    /* Path to icon config file */
+
+        /* General values */
+        element_data_holder* data = nullptr;    /* Points to selected input source */
+        obs_source_t* source = nullptr;         /* input-history source */
+        obs_data_t* settings = nullptr;         /* input-history settings (includes text source settings) */
         obs_source_t* text_source = nullptr;    /* Contains text source used for text mode */
+        obs_data_t* text_settings = nullptr;    /* Settings for text source */
         uint16_t flags = 0x0;                   /* Contains all settings flags */
-        key_names names;                        /* Custom keyname configuration */
-        
+        input_queue* queue = nullptr;           /* Contains input entries for visualization*/
+        key_names* names = nullptr;             /* Custom key name configuration */
+        history_icons* icons = nullptr;         /* Texture and config to display keys as icons */
+        uint32_t cx = 25, cy = 25;              /* Source dimensions */
     };
 
-    class key_bundle;
-
-    class key_bundle
-    {
-    public:
-        bool m_empty = true;
-        uint16_t m_keys[MAX_SIMULTANEOUS_KEYS] = {0};
-
-        void merge(key_bundle other);
-
-        std::string to_string(uint8_t masks, key_names* names);
-        bool compare(key_bundle* other);
-        bool is_only_mouse();
-        void add_key(uint16_t key);
-    private:
-        uint8_t m_index = 0;
-    };
-
+    /* TODO: Rework */
     struct command_handler
     {
         bool m_empty = true;
@@ -150,53 +145,17 @@ namespace sources
         }
     };
 
-    struct input_history_source
+    class input_history_source
     {
-        obs_source_t* m_source = nullptr;
-        obs_data_t* m_settings = nullptr;
-        obs_source_t* m_text_source = nullptr;
-
-        uint8_t m_history_size = 1;
-        uint8_t m_pad_id = 0;
-
-        uint32_t cx = 0;
-        uint32_t cy = 0;
-        uint32_t m_update_interval = 1, m_counter = 0;
-        int16_t m_icon_v_space = 0, m_icon_h_space = 0;
-
-        uint16_t m_bool_values = 0x0000;
-        icon_direction m_history_direction = DIR_DOWN;
-
-        key_bundle m_current_keys;
-        key_bundle m_prev_keys;
-        key_bundle m_history[MAX_HISTORY_SIZE];
-
-        std::string m_key_name_path;
-        std::string m_key_icon_path;
-        std::string m_key_icon_config_path;
-
-        key_names* m_key_names = nullptr;
-        key_icons* m_key_icons = nullptr;
         command_handler* m_command_handler = nullptr;
 
-        float m_clear_timer = 0.f;
-        int m_clear_interval = 0;
-
-        input_history_source(obs_source_t* source_, obs_data_t* settings) :
-            m_source(source_),
-            m_settings(settings)
-        {
-            obs_source_update(m_source, settings);
-            load_text_source();
-        }
-
-        ~input_history_source()
-        {
-            unload_text_source();
-            unload_icons();
-            unload_translation();
-            unload_command_handler();
-        }
+        double m_clear_timer = 0.f;
+        double m_collect_timer = 0.f;
+    public:
+        history_settings m_settings;
+        
+        input_history_source(obs_source_t* source_, obs_data_t* settings);
+        ~input_history_source();
 
         void load_text_source();
         void load_icons();
@@ -208,19 +167,17 @@ namespace sources
         inline void unload_translation();
         inline void unload_command_handler();
 
-        key_bundle check_keys() const;
-        /* Checks currently left_pressed keys and puts them in a bundle */
-        void add_to_history(key_bundle b);
-        void clear_history();
-        void handle_text_history();
-        void handle_icon_history(gs_effect_t* effect);
+        void clear_history() const;
 
         inline void update(obs_data_t* settings);
         inline void tick(float seconds);
-        inline void render(gs_effect_t* effect);
+        inline void render(gs_effect_t* effect) const;
+
+        uint32_t get_width() const { return m_settings.cx; }
+        uint32_t get_height() const { return m_settings.cy; }
     };
 
-    // Util for registering the source
+    /* Util for registering the source */
     static bool clear_history(obs_properties_t* props, obs_property_t* property,
         void* data);
 

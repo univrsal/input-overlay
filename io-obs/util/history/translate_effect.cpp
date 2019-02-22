@@ -11,8 +11,8 @@ extern "C" {
 #include <graphics/graphics.h>
 }
 
-translate_effect::translate_effect(const float duration, vec3& direction)
-    : effect(duration), m_direction(direction), m_total()
+translate_effect::translate_effect(const float duration, vec2& direction, bool translate)
+    : effect(duration), m_direction(direction), m_translate(translate)
 {
     /* NO-OP */
 }
@@ -20,10 +20,11 @@ translate_effect::translate_effect(const float duration, vec3& direction)
 void translate_effect::tick(const float seconds)
 {
     effect::tick(seconds);
-    vec3_mulf(&m_total, &m_direction, get_progress());
+    vec2_mulf(m_pos, &m_direction, get_progress());
 }
 
 void translate_effect::render()
 {
-    gs_matrix_translate(&m_total);
+    if (m_translate)
+        gs_matrix_translate3f(m_pos->x, m_pos->y, 0.f);
 }

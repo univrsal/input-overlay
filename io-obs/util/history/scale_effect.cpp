@@ -18,6 +18,12 @@ scale_effect::scale_effect(const float duration, const float scale)
     m_delta = scale / duration;
 }
 
+scale_effect::scale_effect(const float duration, const float scale, const float start)
+    : effect(duration), m_scale(start)
+{
+    m_delta = scale / duration;
+}
+
 void scale_effect::tick(const float seconds)
 {
     effect::tick(seconds);

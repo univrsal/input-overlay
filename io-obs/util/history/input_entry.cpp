@@ -9,6 +9,9 @@
 #include "../../sources/input_history.hpp"
 #include "effect.hpp"
 #include "../element/element_data_holder.hpp"
+#include "key_names.hpp"
+#include "history_icons.hpp"
+#include <algorithm>
 
 /* Maps a specific mask value to a keycode
  * libuiohook repports events with masks
@@ -39,7 +42,6 @@ void input_entry::mask_to_string(std::string& str, uint16_t mask, bool use_fallb
 {
     const char* name = nullptr;
     
-
     for (const auto& m : mask_vc_map)
     {
         if (mask & m.mask)
@@ -52,25 +54,38 @@ void input_entry::mask_to_string(std::string& str, uint16_t mask, bool use_fallb
     }
 }
 
-void input_entry::collect_inputs(element_data_holder* data)
+input_entry::input_entry(const vec2 pos): m_mask(0)
 {
-    if (data)
-        data->populate_vector(m_inputs, 0);
+    m_position = pos;
 }
 
-void input_entry::build_string(key_names* names, sources::history_settings* settings)
+uint16_t input_entry::get_width() const
+{
+    return m_width;
+}
+
+uint16_t input_entry::get_height() const
+{
+    return m_height;
+}
+
+void input_entry::collect_inputs(sources::history_settings* settings)
+{
+    if (settings->data)
+        settings->data->populate_vector(m_inputs, settings->target_gamepad);
+}
+
+void input_entry::build_string(sources::history_settings* settings)
 {
     const bool use_fallback = settings->flags & sources::FLAG_USE_FALLBACK;
     const char* name = nullptr;
 
     if (settings->flags & sources::FLAG_USE_MASKS)
-    { 
-        mask_to_string(m_text, m_mask, use_fallback, names);
-    }
+        mask_to_string(m_text, m_mask, use_fallback, settings->names);
 
     for (const auto& key : m_inputs)
     {
-        if ((name = names->get_name(key)))
+        if ((name = settings->names->get_name(key)))
             m_text += name + plus;
         else if (use_fallback)
             m_text += key_to_text(key) + plus;
@@ -84,6 +99,24 @@ void input_entry::tick(const float seconds)
 {
     for (auto& effect : m_effects)
         effect->tick(seconds);
+
+    /* Remove all finished effects safely */
+    m_effects.erase(std::remove_if(
+        m_effects.begin(), m_effects.end(),
+        [](const std::unique_ptr<effect>& o)
+    {
+#ifdef _DEBUG
+        if (o->done())
+        {
+            blog(LOG_DEBUG, "Effect finished.");
+            return true;
+        }
+        return false;
+#else
+        return o->done();
+#endif
+    }
+    ), m_effects.end());
 }
 
 void input_entry::add_effect(effect* e)
@@ -91,10 +124,20 @@ void input_entry::add_effect(effect* e)
     m_effects.emplace_back(e);
 }
 
-void input_entry::render_text(obs_source_t* text_source, sources::history_settings* settings)
+void input_entry::render_text(sources::history_settings* settings)
 {
     gs_matrix_push();
-    
+
+    obs_data_set_string(settings->text_settings, "text", m_text.c_str());
+    obs_source_update(settings->text_source, settings->text_settings);
+
+    if (m_width == 0 || m_height == 00)
+    {
+        m_width = obs_source_get_width(settings->text_source);
+        m_height = obs_source_get_height(settings->text_source);
+    }
+
+    obs_source_video_render(settings->text_source);
 
     for (auto& effect : m_effects)
         effect->render();
@@ -104,8 +147,30 @@ void input_entry::render_text(obs_source_t* text_source, sources::history_settin
 void input_entry::render_icons(sources::history_settings* settings)
 {
     gs_matrix_push();
+    auto temp = m_position;
+    auto i = 0;
 
+    for (const auto& vc : m_inputs)
+    {
+        settings->icons->draw(vc, &temp);
+
+        if (settings->dir == DIR_DOWN || settings->dir == DIR_UP)
+            temp.x += i++ * (settings->h_space + settings->icons->get_w());
+        else        
+            temp.y += i++ * (settings->v_space + settings->icons->get_h());
+    }
+    
     for (auto& effect : m_effects)
         effect->render();
     gs_matrix_pop();
+}
+
+void input_entry::mark_for_removal()
+{
+    m_remove = true;
+}
+
+bool input_entry::finished() const
+{
+    return m_effects.empty() && m_remove;
 }
