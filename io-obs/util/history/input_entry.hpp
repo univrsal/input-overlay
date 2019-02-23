@@ -39,12 +39,14 @@ class input_entry
 
     bool m_remove = false; /* Set to true once this entry is the last in the list */
 public:
-    input_entry(vec2 pos);
+    input_entry();
     ~input_entry() = default;
 
     uint16_t get_width() const;
     uint16_t get_height() const;
 
+    vec2* get_pos();
+    void set_pos(float x, float y);
     void collect_inputs(sources::history_settings* settings);
     void build_string(sources::history_settings* settings);
     void tick(float seconds);

@@ -54,9 +54,9 @@ void input_entry::mask_to_string(std::string& str, uint16_t mask, bool use_fallb
     }
 }
 
-input_entry::input_entry(const vec2 pos): m_mask(0)
+input_entry::input_entry() : m_mask(0)
 {
-    m_position = pos;
+    m_position = { 0.f, 0.f };
 }
 
 uint16_t input_entry::get_width() const
@@ -67,6 +67,16 @@ uint16_t input_entry::get_width() const
 uint16_t input_entry::get_height() const
 {
     return m_height;
+}
+
+vec2* input_entry::get_pos()
+{
+    return &m_position;
+}
+
+void input_entry::set_pos(float x, float y)
+{
+    m_position = { x, y };
 }
 
 void input_entry::collect_inputs(sources::history_settings* settings)

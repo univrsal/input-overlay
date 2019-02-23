@@ -215,33 +215,6 @@ namespace sources
         return true;
     }
 
-#define TEXT_VIS(S)     (obs_property_set_visible(S, state_text))
-#define ICON_VIS(S)     (obs_property_set_visible(S, !state_text))
-
-    bool mode_changed(obs_properties_t* props, obs_property_t* p, obs_data_t* s)
-    {
-        const auto state_text = obs_data_get_int(s, S_HISTORY_MODE) == 0;
-
-        TEXT_VIS(GET_PROPS(S_HISTORY_FONT));
-        TEXT_VIS(GET_PROPS(S_HISTORY_FONT_COLOR));
-        TEXT_VIS(GET_PROPS(S_HISTORY_OUTLINE));
-        TEXT_VIS(GET_PROPS(S_HISTORY_OUTLINE_SIZE));
-        TEXT_VIS(GET_PROPS(S_HISTORY_OUTLINE_COLOR));
-        TEXT_VIS(GET_PROPS(S_HISTORY_OUTLINE_OPACITY));
-        TEXT_VIS(GET_PROPS(S_HISTORY_FIX_CUTTING));
-        TEXT_VIS(GET_PROPS(S_HISTORY_OPACITY));
-        TEXT_VIS(GET_PROPS(S_HISTORY_KEY_NAME_PATH));
-        TEXT_VIS(GET_PROPS(S_HISTORY_USE_FALLBACK_NAME));
-        TEXT_VIS(GET_PROPS(S_HISTORY_COMMAND_MODE));
-
-        ICON_VIS(GET_PROPS(S_HISTORY_KEY_ICON_CONFIG_PATH));
-        ICON_VIS(GET_PROPS(S_HISTORY_KEY_ICON_PATH));
-        ICON_VIS(GET_PROPS(S_HISTORY_ICON_V_SPACE));
-        ICON_VIS(GET_PROPS(S_HISTORY_ICON_H_SPACE));
-
-        return true;
-    }
-
     bool include_pad_changed(obs_properties* props, obs_property_t* p,
         obs_data_t* s)
     {
@@ -250,24 +223,76 @@ namespace sources
         return true;
     }
 
+    /* Hides/shows all necessary properties of child text source */
+    bool toggle_font_settings(obs_properties_t* props, obs_property_t* p, obs_data_t* data)
+    {
+        const auto show = obs_data_get_bool(data, S_HISTORY_SHOW_FONT);
+        auto prop = obs_properties_first(props);
+        auto use_gradient = obs_data_get_bool(data, "gradient");
+        auto use_outline = obs_data_get_bool(data, "outline");
+
+        for (; prop; obs_property_next(&prop))
+        {
+            auto name = obs_property_name(prop);
+
+            if (!strcmp(name, "read_from_file") || !strcmp(name, "text") ||
+                !strcmp(name, "file") || !strcmp(name, "vertical") ||
+                strstr(name, "align") || strstr(name, "extents") ||
+                strstr(name, "chatlog")
+                || (!use_gradient && strstr(name, "gradient") && strlen(name) > strlen("gradient"))
+                || (!use_outline && strstr(name, "outline") && strlen(name) > strlen("outline")))
+            {  /* do not show unnecessary properties */
+                obs_property_set_visible(prop, false);
+            }
+            else if (!strstr(name, "io"))
+            {
+                obs_property_set_visible(prop, show);
+            }
+        }
+        return true;
+    }
+
+#define TEXT_VIS(S)     (obs_property_set_visible(S, mode == MODE_TEXT))
+#define ICON_VIS(S)     (obs_property_set_visible(S, mode == MODE_ICONS))
+
+    bool mode_changed(obs_properties_t* props, obs_property_t* p, obs_data_t* s)
+    {
+        const auto mode = obs_data_get_int(s, S_HISTORY_MODE);
+
+        TEXT_VIS(GET_PROPS(S_HISTORY_SHOW_FONT));
+        ICON_VIS(GET_PROPS(S_HISTORY_KEY_ICON_CONFIG_PATH));
+        ICON_VIS(GET_PROPS(S_HISTORY_KEY_ICON_PATH));
+        ICON_VIS(GET_PROPS(S_HISTORY_ICON_V_SPACE));
+        ICON_VIS(GET_PROPS(S_HISTORY_ICON_H_SPACE));
+
+        toggle_font_settings(props, p, s); /* Update font property visibility */
+        return true;
+    }
+
     obs_properties_t* get_properties_for_history(void* data)
     {
         const auto s = reinterpret_cast<input_history_source*>(data);
-        const auto props = obs_properties_create();
+        const auto props = obs_source_properties(s->m_settings.text_source); /* Reuse text properties */
+        /* Hide font properties by default */
+        auto prop = obs_properties_first(props);
+        for (; prop; obs_property_next(&prop))
+            obs_property_set_visible(prop, false);
+        
         const auto mode_list = obs_properties_add_list(props, S_HISTORY_MODE,
             T_HISTORY_MODE,
             OBS_COMBO_TYPE_LIST,
             OBS_COMBO_FORMAT_INT);
-        obs_property_list_add_int(mode_list, T_HISTORY_MODE_TEXT, 0);
-        obs_property_list_add_int(mode_list, T_HISTORY_MODE_ICON, 1);
+
+        obs_property_list_add_int(mode_list, T_HISTORY_MODE_TEXT, MODE_TEXT);
+        obs_property_list_add_int(mode_list, T_HISTORY_MODE_ICON, MODE_ICONS);
+        obs_property_list_add_int(mode_list, T_HISTORY_MODE_ICON, MODE_COMMANDS);
         obs_property_set_modified_callback(mode_list, mode_changed);
 
-        /* Key name file */
+        /* Key name, icon and config file */
         auto filter_img = util_file_filter(
             T_FILTER_IMAGE_FILES, "*.jpg *.png *.bmp");
         auto filter_text = util_file_filter(T_FILTER_TEXT_FILES, "*.ini");
         std::string key_names_path, key_icon_path, key_icon_config_path;
-
 
         if (s->m_settings.key_name_path)
         {
@@ -287,7 +312,7 @@ namespace sources
             util_format_path(key_icon_config_path);
         }
         
-        /* Icon mode propterties */
+        /* Icon mode properties */
         obs_properties_add_path(props, S_HISTORY_KEY_ICON_PATH,
             T_HISTORY_KEY_ICON_PATH, OBS_PATH_FILE,
             filter_img.c_str(), key_icon_path.c_str());
@@ -298,9 +323,9 @@ namespace sources
             key_icon_config_path.c_str());
 
         obs_properties_add_int(props, S_HISTORY_ICON_H_SPACE,
-            T_HISTORY_ICON_H_SPACE, -999, 999, 1);
+            T_HISTORY_ICON_H_SPACE, -1000, 1000, 1);
         obs_properties_add_int(props, S_HISTORY_ICON_V_SPACE,
-            T_HISTORY_ICON_V_SPACE, -999, 999, 1);
+            T_HISTORY_ICON_V_SPACE, -1000, 1000, 1);
 
         /* Text mode properties*/
 
@@ -310,20 +335,9 @@ namespace sources
         obs_properties_add_bool(props, S_HISTORY_USE_FALLBACK_NAME,
             T_HISTORY_USE_FALLBACK_NAMES);
 
-        /* Font */
-        obs_properties_add_font(props, S_HISTORY_FONT, T_HISTORY_FONT);
-        obs_properties_add_color(props, S_HISTORY_FONT_COLOR,
-            T_HISTORY_FONT_COLOR);
-        obs_properties_add_int_slider(props, S_HISTORY_OPACITY, T_HISTORY_OPACITY,
-            0, 100, 1);
-        obs_properties_add_bool(props, S_HISTORY_OUTLINE, T_HISTORY_OUTLINE);
-
-        obs_properties_add_int(props, S_HISTORY_OUTLINE_SIZE,
-            T_HISTORY_OUTLINE_SIZE, 1, 20, 1);
-        obs_properties_add_color(props, S_HISTORY_OUTLINE_COLOR,
-            T_HISTORY_OUTLINE_COLOR);
-        obs_properties_add_int_slider(props, S_HISTORY_OUTLINE_OPACITY,
-            T_HISTORY_OUTLINE_OPACITY, 0, 100, 1);
+        /* Add option to toggle font options (Less clutter) */
+        const auto font_settings = obs_properties_add_bool(props, S_HISTORY_FONT, T_HISTORY_SHOW_FONT);
+        obs_property_set_modified_callback(font_settings, toggle_font_settings);
 
         /* Other */
         const auto icon_dir_list = obs_properties_add_list(
@@ -357,10 +371,6 @@ namespace sources
             T_HISTORY_ENABLE_AUTO_CLEAR);
         obs_properties_add_int(props, S_HISTORY_AUTO_CLEAR_INTERVAL,
             T_HISTORY_AUTO_CLEAR_INTERVAL, 1, 30, 1);
-
-        /* Command mode */
-        obs_properties_add_bool(props, S_HISTORY_COMMAND_MODE,
-            T_HISTORY_COMMAND_MODE);
 
         obs_properties_add_button(props, S_HISTORY_CLEAR_HISTORY,
             T_HISTORY_CLEAR_HISTORY, clear_history);

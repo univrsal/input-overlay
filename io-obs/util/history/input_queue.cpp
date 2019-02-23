@@ -14,7 +14,7 @@
 input_queue::input_queue(sources::history_settings* settings)
     : m_settings(settings)
 {
-    m_current = new input_entry(vec2 { 0.f, 0.f});
+    m_current = new input_entry();
 }
 
 input_queue::~input_queue()
@@ -29,12 +29,29 @@ void input_queue::collect_input() const
 
 void input_queue::swap()
 {
+    /* Set correct position based on flow direction */
+    switch(m_settings->dir)
+    {
+    case DIR_UP:
+        m_current->set_pos(0,
+            m_height * (m_settings->history_size + m_settings->v_space));
+        break;
+    case DIR_LEFT:
+        m_current->set_pos(m_width * (m_settings->history_size
+            + m_settings->h_space), 0);
+        break;
+    default:    /* Default is (0,0) top right */
+    case DIR_RIGHT:
+    case DIR_DOWN:;
+    }
+
     m_entries.emplace_back(m_current);
     /* new entry fill fade in by being scaled up from 0 to 100% */
     m_current->add_effect(new scale_effect(.5f, 1.f));
 
-    m_current = new input_entry(vec2{ 0.f, 0.f });
-
+    /* Now create a new entry which accumulates inputs until next swap() call */
+    m_current = new input_entry();
+    
     vec2 dir = {};
 
     switch(m_settings->dir)
@@ -63,7 +80,7 @@ void input_queue::swap()
          * mode draws the text source by translating the matrix in the correct position
          * so any mode that uses text has to set translation to true
          */
-        entry->add_effect(new translate_effect(.5f, dir,
+        entry->add_effect(new translate_effect(.5f, dir, entry->get_pos(),
             m_settings->mode != sources::MODE_ICONS));
     }
 

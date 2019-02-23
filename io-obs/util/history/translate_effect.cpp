@@ -11,10 +11,10 @@ extern "C" {
 #include <graphics/graphics.h>
 }
 
-translate_effect::translate_effect(const float duration, vec2& direction, bool translate)
+translate_effect::translate_effect(const float duration, vec2& direction, vec2* target, const bool translate)
     : effect(duration), m_direction(direction), m_translate(translate)
 {
-    /* NO-OP */
+    m_pos = target;
 }
 
 void translate_effect::tick(const float seconds)

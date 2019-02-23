@@ -52,7 +52,6 @@
 #define M_PI 3.14159265358979323846
 #endif
 
-
 #define UTIL_MAX(a,b)                   (((a) > (b)) ? (a) : (b))
 #define UTIL_MIN(a,b)                   (((a) < (b)) ? (a) : (b))
 #define UTIL_CLAMP(lower, x, upper)     (UTIL_MIN(upper, UTIL_MAX(x, lower)))
@@ -80,7 +79,6 @@
 #define T_RELOAD_CONNECTIONS            T_("Source.InputSource.Reload")
 
 /* Lang Input Overlay */
-/* 'io' prefix is to distinguish my properties from the text source properties */
 #define S_OVERLAY_FILE                  "io.overlay_image"
 #define S_LAYOUT_FILE                   "io.layout_file"
 #define S_CONTROLLER_ID                 "io.controller_id"
@@ -109,30 +107,31 @@
 #define T_MONITOR_V_CENTER              T_("Monitor.CenterY")
 
 /* Lang Input History */
-#define S_HISTORY_SIZE                  "history_size"
-#define S_HISTORY_FIX_CUTTING           "fix_cutting"
-#define S_HISTORY_INCLUDE_MOUSE	        "include_mouse"
-#define S_HISTORY_INCLUDE_PAD           "include_pad"
-#define S_HISTORY_INTERVAL              "interval"
-#define S_HISTORY_CLEAR_HISTORY         "clear_history"
-#define S_HISTORY_ENABLE_REPEAT_KEYS    "repeat_keys"
-#define S_HISTORY_ENABLE_AUTO_CLEAR     "auto_clear"
-#define S_HISTORY_AUTO_CLEAR_INTERVAL   "auto_clear_interval"
-#define S_HISTORY_ICON_V_SPACE          "icon_v_space"
-#define S_HISTORY_ICON_H_SPACE          "icon_h_space"
+#define S_HISTORY_SIZE                  "io.history_size"
+#define S_HISTORY_FIX_CUTTING           "io.fix_cutting"
+#define S_HISTORY_INCLUDE_MOUSE	        "io.include_mouse"
+#define S_HISTORY_INCLUDE_PAD           "io.include_pad"
+#define S_HISTORY_INTERVAL              "io.interval"
+#define S_HISTORY_CLEAR_HISTORY         "io.clear_history"
+#define S_HISTORY_ENABLE_REPEAT_KEYS    "io.repeat_keys"
+#define S_HISTORY_ENABLE_AUTO_CLEAR     "io.auto_clear"
+#define S_HISTORY_AUTO_CLEAR_INTERVAL   "io.auto_clear_interval"
+#define S_HISTORY_ICON_V_SPACE          "io.icon_v_space"
+#define S_HISTORY_ICON_H_SPACE          "io.icon_h_space"
 
-#define S_HISTORY_MODE                  "mode"
-#define S_HISTORY_KEY_NAME_PATH         "key_name_path"
-#define S_HISTORY_USE_FALLBACK_NAME     "use_fallback_names"
-#define S_HISTORY_DIRECTION             "direction"
-#define S_HISTORY_DIRECTION_UP          "up"
-#define S_HISTORY_DIRECTION_DOWN        "down"
-#define S_HISTORY_DIRECTION_LEFT        "left"
-#define S_HISTORY_DIRECTION_RIGHT       "right"
+#define S_HISTORY_MODE                  "io.mode"
+#define S_HISTORY_KEY_NAME_PATH         "io.key_name_path"
+#define S_HISTORY_USE_FALLBACK_NAME     "io.use_fallback_names"
+#define S_HISTORY_DIRECTION             "io.direction"
+#define S_HISTORY_DIRECTION_UP          "io.up"
+#define S_HISTORY_DIRECTION_DOWN        "io.down"
+#define S_HISTORY_DIRECTION_LEFT        "io.left"
+#define S_HISTORY_DIRECTION_RIGHT       "io.right"
 
-#define S_HISTORY_KEY_ICON_PATH         "key_icon_path"
-#define S_HISTORY_KEY_ICON_CONFIG_PATH  "key_icon_config"
+#define S_HISTORY_KEY_ICON_PATH         "io.key_icon_path"
+#define S_HISTORY_KEY_ICON_CONFIG_PATH  "io.key_icon_config"
 
+#define S_HISTORY_SHOW_FONT             "io.show_font"
 #define S_HISTORY_FONT                  "font"
 #define S_HISTORY_FONT_COLOR            "color"
 #define S_HISTORY_OUTLINE               "outline"
@@ -140,7 +139,10 @@
 #define S_HISTORY_OUTLINE_COLOR         "outline_color"
 #define S_HISTORY_OUTLINE_OPACITY       "outline_opacity"
 #define S_HISTORY_OPACITY               "opacity"
-#define S_HISTORY_COMMAND_MODE          "command_mode"
+#define S_HISTORY_OUTLINE               "outline"
+#define S_HISTORY_OUTLINE_SIZE          "outline_size"
+#define S_HISTORY_OUTLINE_COLOR         "outline_color"
+#define S_HISTORY_OUTLINE_OPACITY       "outline_opacity"
 
 #define T_HISTORY_USE_FALLBACK_NAMES    T_("History.UseFallbackNames")
 #define T_HISTORY_KEY_NAME_PATH         T_("History.Path.KeyNames")
@@ -152,12 +154,14 @@
 #define T_HISTORY_MODE                  T_("History.Mode")
 #define T_HISTORY_MODE_TEXT             T_("History.Mode.Text")
 #define T_HISTORY_MODE_ICON             T_("History.Mode.Icons")
+#define T_HISTORY_COMMAND_MODE          T_("History.Mode.Commands")
 #define T_HISTORY_DIRECTION             T_("History.Direction")
 #define T_HISTORY_DIRECTION_UP          T_("History.Direction.Up")
 #define T_HISTORY_DIRECTION_DOWN        T_("History.Direction.Down")
 #define T_HISTORY_DIRECTION_LEFT        T_("History.Direction.Left")
 #define T_HISTORY_DIRECTION_RIGHT       T_("History.Direction.Right")
 
+#define T_HISTORY_SHOW_FONT             T_("History.Font.Show")
 #define T_HISTORY_FONT                  T_("History.Font")
 #define T_HISTORY_FONT_COLOR            T_("History.Font.Color")
 #define T_HISTORY_OPACITY               T_("History.Font.Opacity")
@@ -165,6 +169,10 @@
 #define T_HISTORY_OUTLINE_SIZE          T_("History.Font.Outline.Size")
 #define T_HISTORY_OUTLINE_COLOR         T_("History.Font.Outline.Color")
 #define T_HISTORY_OUTLINE_OPACITY       T_("History.Font.Outline.Opacity")
+#define T_HISTORY_GRADIENT              T_("History.Font.Gradient")
+#define T_HISTORY_GRADIENT_COLOR        T_("History.Font.Gradient.Color")
+#define T_HISTORY_GRADIENT_DIRECTION    T_("History.Font.Gradient.Direction")
+
 
 #define T_HISTORY_DIRECTION             T_("History.Direction")
 #define T_HISTORY_HISTORY_SIZE          T_("History.Size")
@@ -177,8 +185,6 @@
 #define T_HISTORY_ENABLE_REPEAT_KEYS    T_("History.Enable.RepeatKeys")
 #define T_HISTORY_ENABLE_AUTO_CLEAR     T_("History.Enable.AutoClear")
 #define T_HISTORY_AUTO_CLEAR_INTERVAL   T_("History.AutoClear.Interval")
-
-#define T_HISTORY_COMMAND_MODE          T_("History.Commandmode")
 
 #define T_MENU_OPEN_SETTINGS		    T_("Menu.InputOverlay.OpenSettings")
 #define T_REFRESH_RATE_TOOLTIP          T_("Dialog.InputOverlay.RemoteRefreshRate.Tooltip")
