@@ -59,6 +59,11 @@ input_entry::input_entry() : m_mask(0)
     m_position = { 0.f, 0.f };
 }
 
+input_entry::~input_entry()
+{
+    m_inputs.clear();
+}
+
 uint16_t input_entry::get_width() const
 {
     return m_width;
@@ -82,7 +87,7 @@ void input_entry::set_pos(float x, float y)
 void input_entry::collect_inputs(sources::history_settings* settings)
 {
     if (settings->data)
-        settings->data->populate_vector(m_inputs, settings->target_gamepad);
+        settings->data->populate_vector(m_inputs, settings);
 }
 
 void input_entry::build_string(sources::history_settings* settings)
@@ -95,9 +100,9 @@ void input_entry::build_string(sources::history_settings* settings)
 
     for (const auto& key : m_inputs)
     {
-        if ((name = settings->names->get_name(key)))
+        if (settings->names && (name = settings->names->get_name(key)))
             m_text += name + plus;
-        else if (use_fallback)
+        else if (use_fallback || !settings->names)
             m_text += key_to_text(key) + plus;
     }
 
@@ -137,9 +142,11 @@ void input_entry::add_effect(effect* e)
 void input_entry::render_text(sources::history_settings* settings)
 {
     gs_matrix_push();
+    blog(LOG_INFO, "drawww");
 
-    obs_data_set_string(settings->text_settings, "text", m_text.c_str());
-    obs_source_update(settings->text_source, settings->text_settings);
+    obs_data_set_string(settings->settings, "text", m_text.c_str());
+    obs_source_update(settings->text_source, settings->settings);
+    obs_source_update(settings->source, settings->settings);
 
     if (m_width == 0 || m_height == 00)
     {
@@ -149,8 +156,8 @@ void input_entry::render_text(sources::history_settings* settings)
 
     obs_source_video_render(settings->text_source);
 
-    for (auto& effect : m_effects)
-        effect->render();
+  /*  for (auto& effect : m_effects)
+        effect->render();*/
     gs_matrix_pop();
 }
 
@@ -183,4 +190,15 @@ void input_entry::mark_for_removal()
 bool input_entry::finished() const
 {
     return m_effects.empty() && m_remove;
+}
+
+bool input_entry::empty() const
+{
+    return m_inputs.empty();
+}
+
+void input_entry::test()
+{
+    for (auto& input : m_inputs)
+        blog(LOG_INFO, "0x%X ", input);
 }

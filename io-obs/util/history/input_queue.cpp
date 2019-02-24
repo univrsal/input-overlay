@@ -20,6 +20,7 @@ input_queue::input_queue(sources::history_settings* settings)
 input_queue::~input_queue()
 {
     delete m_current;
+    m_entries.clear();
 }
 
 void input_queue::collect_input() const
@@ -29,6 +30,11 @@ void input_queue::collect_input() const
 
 void input_queue::swap()
 {
+    if (m_current->empty())
+        return; /* Nothing to do */
+
+    m_current->build_string(m_settings);
+
     /* Set correct position based on flow direction */
     switch(m_settings->dir)
     {
@@ -44,14 +50,14 @@ void input_queue::swap()
     case DIR_RIGHT:
     case DIR_DOWN:;
     }
-
-    m_entries.emplace_back(m_current);
+    
     /* new entry fill fade in by being scaled up from 0 to 100% */
     m_current->add_effect(new scale_effect(.5f, 1.f));
-
-    /* Now create a new entry which accumulates inputs until next swap() call */
-    m_current = new input_entry();
+    m_entries.emplace_back(m_current);
     
+    /* Now create a new entry which accumulates inputs until next swap() call */
+    m_current = nullptr;
+    m_current = new input_entry();
     vec2 dir = {};
 
     switch(m_settings->dir)
@@ -87,9 +93,12 @@ void input_queue::swap()
     /* Mark the last entry for removal, meaning that after the fade out effect is over
      * it'll be deleted
      */
-    m_entries.front()->mark_for_removal();
-    /* Add fading out effect */
-    m_entries.front()->add_effect(new scale_effect(.5f, -1.f, 1.f));
+    if (m_entries.size() >= m_settings->history_size)
+    {
+        m_entries.front()->mark_for_removal();
+        /* Add fading out effect */
+        m_entries.front()->add_effect(new scale_effect(.5f, -1.f, 1.f));
+    }
 }
 
 void input_queue::tick(float seconds)
@@ -162,7 +171,7 @@ void input_queue::render(gs_effect_t* effect)
     else
     {
         for (auto& entry : m_entries)
-            entry->render_icons(m_settings);
+            entry->render_text(m_settings);
     }
 }
 

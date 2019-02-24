@@ -132,7 +132,8 @@
 #define S_HISTORY_KEY_ICON_CONFIG_PATH  "io.key_icon_config"
 
 #define S_HISTORY_SHOW_FONT             "io.show_font"
-#define S_HISTORY_FONT                  "font"
+#define S_HISTORY_FONT                  "io.font"
+/* === These settings are handled by the text source === */
 #define S_HISTORY_FONT_COLOR            "color"
 #define S_HISTORY_OUTLINE               "outline"
 #define S_HISTORY_OUTLINE_SIZE          "outline_size"
@@ -189,7 +190,7 @@
 #define T_MENU_OPEN_SETTINGS		    T_("Menu.InputOverlay.OpenSettings")
 #define T_REFRESH_RATE_TOOLTIP          T_("Dialog.InputOverlay.RemoteRefreshRate.Tooltip")
 
-#define WHEEL_UP        -1
+#define WHEEL_UP       -1
 #define WHEEL_DOWN      1
 
 /* These were free in uiohook.h */

@@ -7,12 +7,15 @@
  */
 
 #include <iomanip>
+#include <obs-frontend-api.h>
 #include "input_history.hpp"
 #include "../util/element/element_button.hpp"
 #include "graphics/matrix4.h"
 #include "util/history/history_icons.hpp"
 #include "util/history/key_names.hpp"
 #include "util/history/input_queue.hpp"
+#include "util/config-file.h"
+#include "network/io_server.hpp"
 
 namespace sources
 {
@@ -108,8 +111,18 @@ namespace sources
     inline void input_history_source::update(obs_data_t* settings)
     {
         obs_source_update(m_settings.text_source, settings);
+        bool need_clear = false; /* Some settings clearing the history */
 
-        
+        /* Get the input source */
+        if (hook::data_initialized || network::network_flag)
+        {
+            uint8_t source_id = obs_data_get_int(settings, S_INPUT_SOURCE);
+            if (source_id > 0)
+                m_settings.data = network::server_instance->get_client(source_id)->get_data();
+            else
+                m_settings.data = hook::input_data;
+        }
+
         m_settings.mode = history_mode(obs_data_get_int(settings, S_HISTORY_MODE));
 
         SET_FLAG(FLAG_INCLUDE_MOUSE, obs_data_get_bool(settings,
@@ -126,7 +139,7 @@ namespace sources
             S_HISTORY_INCLUDE_PAD));
 
         m_settings.update_interval = obs_data_get_double(settings, S_HISTORY_INTERVAL);
-        m_settings.auto_clear_interval = obs_data_get_int(settings,
+        m_settings.auto_clear_interval = obs_data_get_double(settings,
             S_HISTORY_AUTO_CLEAR_INTERVAL);
 
         m_settings.key_name_path = obs_data_get_string(settings, S_HISTORY_KEY_NAME_PATH);
@@ -148,7 +161,8 @@ namespace sources
 
         if (m_settings.mode == MODE_ICONS)
             unload_icons();
-        else
+        else if (m_settings.icon_path && strlen(m_settings.icon_path) > 0 &&
+            m_settings.icon_cfg_path && strlen(m_settings.icon_cfg_path) > 0)
             load_icons();
 
         if (!m_settings.key_name_path || strlen(m_settings.key_name_path) < 1)
@@ -171,6 +185,8 @@ namespace sources
     {
         if (!obs_source_showing(m_settings.source))
             return;
+
+        m_settings.queue->tick(seconds);
 
         if (GET_FLAG(FLAG_AUTO_CLEAR))
         {
@@ -244,7 +260,9 @@ namespace sources
             {  /* do not show unnecessary properties */
                 obs_property_set_visible(prop, false);
             }
-            else if (!strstr(name, "io"))
+            else if (!strstr(name, "io")) /* All input-history values start with 'io.' ->
+                                                    if the value does not contain 'io' it's part
+                                                    of the text source properties */
             {
                 obs_property_set_visible(prop, show);
             }
@@ -269,15 +287,41 @@ namespace sources
         return true;
     }
 
+    bool reload_connections(obs_properties_t* props, obs_property_t* property, void* data)
+    {
+        const auto connection_list = obs_properties_get(props, S_INPUT_SOURCE);
+        auto cfg = obs_frontend_get_global_config();
+        if (connection_list)
+            network::server_instance->get_clients(connection_list, network::local_input);
+
+        return true;
+    }
+
     obs_properties_t* get_properties_for_history(void* data)
     {
         const auto s = reinterpret_cast<input_history_source*>(data);
         const auto props = obs_source_properties(s->m_settings.text_source); /* Reuse text properties */
+        
         /* Hide font properties by default */
         auto prop = obs_properties_first(props);
         for (; prop; obs_property_next(&prop))
             obs_property_set_visible(prop, false);
         
+        /* Add option to toggle font options (Less clutter) */
+        const auto font_settings = obs_properties_add_bool(props, S_HISTORY_SHOW_FONT, T_HISTORY_SHOW_FONT);
+        obs_property_set_modified_callback(font_settings, toggle_font_settings);
+
+        /* If enabled add dropdown to select input source */
+        if (config_get_bool(obs_frontend_get_global_config(), S_REGION, S_REMOTE))
+        {
+            auto list = obs_properties_add_list(props, S_INPUT_SOURCE, T_INPUT_SOURCE, OBS_COMBO_TYPE_LIST, OBS_COMBO_FORMAT_INT);
+            obs_properties_add_button(props, S_RELOAD_CONNECTIONS, T_RELOAD_CONNECTIONS, reload_connections);
+            if (network::network_flag)
+            {
+                network::server_instance->get_clients(list, network::local_input);
+            }
+        }
+
         const auto mode_list = obs_properties_add_list(props, S_HISTORY_MODE,
             T_HISTORY_MODE,
             OBS_COMBO_TYPE_LIST,
@@ -328,52 +372,52 @@ namespace sources
             T_HISTORY_ICON_V_SPACE, -1000, 1000, 1);
 
         /* Text mode properties*/
-
         obs_properties_add_path(props, S_HISTORY_KEY_NAME_PATH,
             T_HISTORY_KEY_NAME_PATH, OBS_PATH_FILE,
             filter_text.c_str(), key_names_path.c_str());
         obs_properties_add_bool(props, S_HISTORY_USE_FALLBACK_NAME,
             T_HISTORY_USE_FALLBACK_NAMES);
 
-        /* Add option to toggle font options (Less clutter) */
-        const auto font_settings = obs_properties_add_bool(props, S_HISTORY_FONT, T_HISTORY_SHOW_FONT);
-        obs_property_set_modified_callback(font_settings, toggle_font_settings);
-
-        /* Other */
+        /* Entry flow direction */
         const auto icon_dir_list = obs_properties_add_list(
             props, S_HISTORY_DIRECTION,
             T_HISTORY_DIRECTION, OBS_COMBO_TYPE_LIST,
             OBS_COMBO_FORMAT_INT);
-
-        const auto include_pad = obs_properties_add_bool(
-            props, S_HISTORY_INCLUDE_PAD, T_HISTORY_INCLUDE_PAD);
 
         obs_property_list_add_int(icon_dir_list, T_HISTORY_DIRECTION_DOWN, 0);
         obs_property_list_add_int(icon_dir_list, T_HISTORY_DIRECTION_UP, 1);
         obs_property_list_add_int(icon_dir_list, T_HISTORY_DIRECTION_LEFT, 2);
         obs_property_list_add_int(icon_dir_list, T_HISTORY_DIRECTION_RIGHT, 3);
 
+        /* gamepad */
+        const auto include_pad = obs_properties_add_bool(
+            props, S_HISTORY_INCLUDE_PAD, T_HISTORY_INCLUDE_PAD);
+        obs_property_set_modified_callback(include_pad, include_pad_changed);
+        obs_properties_add_int(props, S_CONTROLLER_ID, T_CONTROLLER_ID, 0, 3, 1);
+
+        /* Auto clear */
+        obs_properties_add_bool(props, S_HISTORY_ENABLE_AUTO_CLEAR,
+            T_HISTORY_ENABLE_AUTO_CLEAR);
+        obs_properties_add_float_slider(props, S_HISTORY_AUTO_CLEAR_INTERVAL,
+            T_HISTORY_AUTO_CLEAR_INTERVAL, 0.1, 10, 0.1);
+
+        obs_properties_add_button(props, S_HISTORY_CLEAR_HISTORY,
+            T_HISTORY_CLEAR_HISTORY, clear_history);
+
+        /* Misc */
         obs_properties_add_int(props, S_HISTORY_SIZE,
             T_HISTORY_HISTORY_SIZE, 1, MAX_HISTORY_SIZE, 1);
         obs_properties_add_bool(props, S_HISTORY_FIX_CUTTING,
             T_HISTORY_FIX_CUTTING);
         obs_properties_add_bool(props, S_HISTORY_INCLUDE_MOUSE,
             T_HISTORY_INCLUDE_MOUSE);
-
-        obs_property_set_modified_callback(include_pad, include_pad_changed);
-        obs_properties_add_int(props, S_CONTROLLER_ID, T_CONTROLLER_ID, 0, 3, 1);
-        obs_properties_add_int(props, S_HISTORY_INTERVAL, T_HISTORY_INTERVAL, 1,
-            1000, 1);
+       
+        obs_properties_add_float_slider(props, S_HISTORY_INTERVAL, T_HISTORY_INTERVAL, 0.1,
+            10, 0.1);
 
         obs_properties_add_bool(props, S_HISTORY_ENABLE_REPEAT_KEYS,
             T_HISTORY_ENABLE_REPEAT_KEYS);
-        obs_properties_add_bool(props, S_HISTORY_ENABLE_AUTO_CLEAR,
-            T_HISTORY_ENABLE_AUTO_CLEAR);
-        obs_properties_add_int(props, S_HISTORY_AUTO_CLEAR_INTERVAL,
-            T_HISTORY_AUTO_CLEAR_INTERVAL, 1, 30, 1);
-
-        obs_properties_add_button(props, S_HISTORY_CLEAR_HISTORY,
-            T_HISTORY_CLEAR_HISTORY, clear_history);
+       
         return props;
     }
 

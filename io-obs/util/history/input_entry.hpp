@@ -40,7 +40,7 @@ class input_entry
     bool m_remove = false; /* Set to true once this entry is the last in the list */
 public:
     input_entry();
-    ~input_entry() = default;
+    ~input_entry();
 
     uint16_t get_width() const;
     uint16_t get_height() const;
@@ -56,4 +56,7 @@ public:
 
     void mark_for_removal();
     bool finished() const;
+    bool empty() const;
+
+    void test();
 };

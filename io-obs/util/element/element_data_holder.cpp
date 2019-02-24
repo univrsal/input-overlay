@@ -7,6 +7,8 @@
 
 #include "element_data_holder.hpp"
 #include "element_trigger.hpp"
+#include "sources/input_history.hpp"
+#include "element_button.hpp"
 
 element_data_holder::element_data_holder()
 {
@@ -118,11 +120,25 @@ void element_data_holder::clear_gamepad_data()
     m_gamepad_data->clear();
 }
 
-void element_data_holder::populate_vector(std::vector<uint16_t>& vec, const uint8_t gamepad)
+void element_data_holder::populate_vector(std::vector<uint16_t>& vec, sources::history_settings* settings)
 {
     for (const auto& data : m_button_data)
     {
         auto new_key = true;
+        /* Mouse data is persistent and shouldn't be included
+         * Any mouse buttons should only be included if enabled
+         */
+        if (data.first == VC_MOUSE_DATA || (data.first >> 8) == (VC_MOUSE_MASK >> 8)
+            && !(settings->flags & sources::FLAG_INCLUDE_MOUSE))
+            continue;
+
+        if (data.second->get_type() == BUTTON)
+        {
+            if (dynamic_cast<element_data_button*>(data.second.get())
+                ->get_state() == STATE_RELEASED)
+                continue;
+        }
+
         for (const auto& vc : vec) /* Check if this key is already in the vector */
         {
             if (data.first == vc)
@@ -139,24 +155,26 @@ void element_data_holder::populate_vector(std::vector<uint16_t>& vec, const uint
     }
 
     /* Same procedure for the gamepad */
-    for (const auto& data : m_gamepad_data[gamepad])
+    if (settings->flags & sources::FLAG_INCLUDE_PAD)
     {
-        auto new_key = true;
-        for (const auto& vc : vec) /* Check if this key is already in the vector */
+        for (const auto& data : m_gamepad_data[settings->target_gamepad])
         {
-            if (data.first == vc)
+            auto new_key = true;
+            for (const auto& vc : vec) /* Check if this key is already in the vector */
             {
-                new_key = false;
-                break;
+                if (data.first == vc)
+                {
+                    new_key = false;
+                    break;
+                }
+            }
+
+            if (new_key) /* if not add it */
+            {
+                vec.emplace_back(data.first);
             }
         }
-
-        if (new_key) /* if not add it */
-        {
-            vec.emplace_back(data.first);
-        }
     }
-
 }
 
 bool element_data_holder::data_exists(const uint16_t keycode)

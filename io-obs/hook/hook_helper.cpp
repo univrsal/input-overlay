@@ -132,7 +132,7 @@ namespace hook
 	void init_data_holder()
 	{
 		input_data = new element_data_holder();
-		data_initialized = input_data;
+        data_initialized = input_data;
 #ifdef _DEBUG
 		blog(LOG_INFO, "[input-overlay] libuiohook init start... Dataholder@0x%X\n",
 			reinterpret_cast<int>(input_data));

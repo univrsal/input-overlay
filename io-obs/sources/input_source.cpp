@@ -124,9 +124,9 @@ namespace sources
     {
         std::string img_path;
         std::string layout_path;
-        auto config = obs_frontend_get_global_config();
+        const auto config = obs_frontend_get_global_config();
         const auto s = static_cast<input_source*>(data);
-        obs_properties_t* props = obs_properties_create();
+        const auto props = obs_properties_create();
 
         /* If enabled add dropdown to select input source */
         if (config_get_bool(config, S_REGION, S_REMOTE))
@@ -158,7 +158,7 @@ namespace sources
         obs_property_set_visible(obs_properties_add_int_slider(props,
             S_MOUSE_SENS, T_MOUSE_SENS, 1, 500, 1), false);
 
-        auto use_center = obs_properties_add_bool(
+        const auto use_center = obs_properties_add_bool(
             props, S_MONITOR_USE_CENTER, T_MONITOR_USE_CENTER);
         obs_property_set_modified_callback(use_center,
             use_monitor_center_changed);
