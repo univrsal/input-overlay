@@ -95,6 +95,10 @@ set(input-overlay_SOURCES
     util/history/history_icons.hpp
     util/history/key_names.cpp
     util/history/key_names.hpp
+    util/history/icon_handler.cpp
+    util/history/icon_handler.hpp
+    util/history/text_handler.cpp
+    util/history/text_handler.hpp
     gui/io_settings_dialog.hpp
     gui/io_settings_dialog.cpp
     network/remote_connection.cpp

@@ -141,8 +141,8 @@ void input_entry::add_effect(effect* e)
 
 void input_entry::render_text(sources::history_settings* settings)
 {
-    gs_matrix_push();
-    blog(LOG_INFO, "drawww");
+    //gs_matrix_push();
+    blog(LOG_INFO, "drawing: %s", m_text.c_str());
 
     obs_data_set_string(settings->settings, "text", m_text.c_str());
     obs_source_update(settings->text_source, settings->settings);
@@ -158,7 +158,7 @@ void input_entry::render_text(sources::history_settings* settings)
 
   /*  for (auto& effect : m_effects)
         effect->render();*/
-    gs_matrix_pop();
+    //gs_matrix_pop();
 }
 
 void input_entry::render_icons(sources::history_settings* settings)

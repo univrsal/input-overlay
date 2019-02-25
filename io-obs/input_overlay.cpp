@@ -54,8 +54,8 @@ bool obs_module_load()
 	if (iohook || gamepad)
 		hook::init_data_holder();
 
-	if (iohook)
-        hook::start_hook();
+	//if (iohook)
+ //       hook::start_hook();
     
 	if (gamepad)
 		gamepad::start_pad_hook();

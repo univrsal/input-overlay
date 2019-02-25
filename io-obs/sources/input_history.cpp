@@ -25,26 +25,14 @@ namespace sources
         m_settings.settings = settings;
         m_settings.queue = new input_queue(&m_settings);
         obs_source_update(source_, settings);
-        load_text_source();
     }
 
     input_history_source::~input_history_source()
     {
-        unload_text_source();
+        delete m_settings.queue;
         unload_icons();
         unload_translation();
         unload_command_handler();
-    }
-
-    void input_history_source::load_text_source()
-    {
-#ifdef _WIN32
-        m_settings.text_source = obs_source_create("text_gdiplus\0", "history-text-source",
-            m_settings.settings, nullptr);
-#else
-        m_settings.text_source = obs_source_create("text_ft2_source\0", "history-text-source", m_settings.settings, nullptr);
-#endif
-        obs_source_add_active_child(m_settings.source, m_settings.text_source);
     }
 
     void input_history_source::load_icons()
@@ -65,14 +53,6 @@ namespace sources
     {
         if (!m_command_handler)
             m_command_handler = new command_handler();
-    }
-
-    void input_history_source::unload_text_source()
-    {
-        
-        obs_source_remove(m_settings.text_source);
-        obs_source_release(m_settings.text_source);
-        m_settings.text_source = nullptr;
     }
 
     void input_history_source::unload_icons()
@@ -110,7 +90,6 @@ namespace sources
 
     inline void input_history_source::update(obs_data_t* settings)
     {
-        obs_source_update(m_settings.text_source, settings);
         bool need_clear = false; /* Some settings clearing the history */
 
         /* Get the input source */
@@ -123,7 +102,15 @@ namespace sources
                 m_settings.data = hook::input_data;
         }
 
-        m_settings.mode = history_mode(obs_data_get_int(settings, S_HISTORY_MODE));
+        auto new_mode = history_mode(obs_data_get_int(settings, S_HISTORY_MODE));
+
+        if (new_mode != MODE_ICONS)
+            m_settings.queue->update(settings);
+        else
+            /* Icon mode doesn't need the text sources */
+            m_settings.queue->free_text();
+
+        m_settings.mode = new_mode;
 
         SET_FLAG(FLAG_INCLUDE_MOUSE, obs_data_get_bool(settings,
             S_HISTORY_INCLUDE_MOUSE));
@@ -300,8 +287,13 @@ namespace sources
     obs_properties_t* get_properties_for_history(void* data)
     {
         const auto s = reinterpret_cast<input_history_source*>(data);
-        const auto props = obs_source_properties(s->m_settings.text_source); /* Reuse text properties */
-        
+        obs_properties_t* props = nullptr;
+
+        if (s->m_settings.mode != MODE_ICONS)
+            props = obs_source_properties(s->m_settings.queue->get_fade_in()); /* Reuse text properties */
+        else
+            props = obs_properties_create();
+
         /* Hide font properties by default */
         auto prop = obs_properties_first(props);
         for (; prop; obs_property_next(&prop))

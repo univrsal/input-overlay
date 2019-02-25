@@ -66,7 +66,6 @@ namespace sources
         element_data_holder* data = nullptr;    /* Points to selected input source */
         obs_source_t* source = nullptr;         /* input-history source */
         obs_data_t* settings = nullptr;         /* input-history settings (includes text source settings) */
-        obs_source_t* text_source = nullptr;    /* Contains text source used for text mode */
         obs_data_t* text_settings = nullptr;    /* Settings for text source */
         uint16_t flags = 0x0;                   /* Contains all settings flags */
         input_queue* queue = nullptr;           /* Contains input entries for visualization*/
@@ -157,12 +156,10 @@ namespace sources
         input_history_source(obs_source_t* source_, obs_data_t* settings);
         ~input_history_source();
 
-        void load_text_source();
         void load_icons();
         void load_translation();
         void load_command_handler();
 
-        inline void unload_text_source();
         inline void unload_icons();
         inline void unload_translation();
         inline void unload_command_handler();
