@@ -33,27 +33,10 @@ namespace sources
         unload_command_handler();
     }
 
-
-    void input_history_source::load_translation()
-    {
-        if (m_settings.names == nullptr)
-            m_settings.names = new key_names();
-        m_settings.names->load_from_file(m_settings.key_name_path);
-    }
-
     void input_history_source::load_command_handler()
     {
         if (!m_command_handler)
             m_command_handler = new command_handler();
-    }
-
-    void input_history_source::unload_translation()
-    {
-        if (m_settings.names)
-        {
-            delete m_settings.names;
-            m_settings.names = nullptr;
-        }
     }
 
     inline void input_history_source::unload_command_handler()
@@ -73,8 +56,6 @@ namespace sources
 
     inline void input_history_source::update(obs_data_t* settings)
     {
-        bool need_clear = false; /* Some settings clearing the history */
-
         /* Get the input source */
         if (hook::data_initialized || network::network_flag)
         {
@@ -85,15 +66,7 @@ namespace sources
                 m_settings.data = hook::input_data;
         }
 
-        auto new_mode = history_mode(obs_data_get_int(settings, S_HISTORY_MODE));
-
-        if (new_mode != MODE_ICONS)
-            m_settings.queue->update(settings);
-        else
-            /* Icon mode doesn't need the text sources */
-            m_settings.queue->free_text();
-
-        m_settings.mode = new_mode;
+        m_settings.mode = history_mode(obs_data_get_int(settings, S_HISTORY_MODE));
 
         SET_FLAG(FLAG_INCLUDE_MOUSE, obs_data_get_bool(settings,
             S_HISTORY_INCLUDE_MOUSE));
@@ -129,26 +102,16 @@ namespace sources
         else
             unload_command_handler();
 
-        if (m_settings.mode == MODE_ICONS)
-            unload_icons();
-        else if (m_settings.icon_path && strlen(m_settings.icon_path) > 0 &&
-            m_settings.icon_cfg_path && strlen(m_settings.icon_cfg_path) > 0)
-            load_icons();
-
         if (!m_settings.key_name_path || strlen(m_settings.key_name_path) < 1)
-        {
             SET_FLAG(FLAG_CUSTOM_NAMES, false);
-            unload_translation();
-        }
         else
-        {
             SET_FLAG(FLAG_CUSTOM_NAMES, true);
-            load_translation();
-        }
 
         if (GET_FLAG(FLAG_INCLUDE_PAD))
             m_settings.target_gamepad = static_cast<uint8_t>(obs_data_get_int(
                 settings, S_CONTROLLER_ID));
+
+        m_settings.queue->update(); /* Apply new settings to queue */
     }
 
     inline void input_history_source::tick(float seconds)
@@ -168,24 +131,17 @@ namespace sources
             }
         }
 
-        if (GET_FLAG(FLAG_USE_MASKS))
+        m_collect_timer += seconds;
+        if (m_collect_timer >= m_settings.update_interval)
         {
-            
+            m_collect_timer = 0.f;
+            /* Moves current input entry from collection into list */
+            m_settings.queue->swap();
         }
         else
         {
-            m_collect_timer += seconds;
-            if (m_collect_timer >= m_settings.update_interval)
-            {
-                m_collect_timer = 0.f;
-                /* Moves current input entry from collection into list */
-                m_settings.queue->swap();
-            }
-            else
-            {
-                m_settings.queue->collect_input();
-            }
-        }
+            m_settings.queue->collect_input();
+        }        
     }
 
     inline void input_history_source::render(gs_effect_t* effect) const

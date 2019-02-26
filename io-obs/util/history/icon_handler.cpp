@@ -19,3 +19,19 @@ void icon_handler::load_icons(const char* img, const char* cfg)
 {
     m_icons.load_from_file(cfg, img);
 }
+
+void icon_handler::update()
+{
+}
+
+void icon_handler::tick(float seconds)
+{
+}
+
+void icon_handler::swap(input_entry* current)
+{
+}
+
+void icon_handler::render()
+{
+}

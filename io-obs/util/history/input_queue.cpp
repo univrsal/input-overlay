@@ -13,32 +13,27 @@
 
 void input_queue::init_icon()
 {
-    free_text();
-    m_icon_handler = new icon_handler();
+    free_handler();
+    m_current_handler = new icon_handler();
 }
 
 void input_queue::init_text()
 {
-    free_icon();
-    m_text_handler = new text_handler(m_settings);
+    free_handler();
+    m_current_handler = new text_handler(m_settings);
 }
 
-void input_queue::free_icon()
+void input_queue::free_handler()
 {
-    delete m_icon_handler;
-    m_icon_handler = nullptr;
+    delete m_current_handler;
+    m_current_handler = nullptr;
 }
 
-void input_queue::free_text()
-{
-    delete m_text_handler;
-    m_text_handler = nullptr;
-}
 
 input_queue::input_queue(sources::history_settings* settings)
     : m_settings(settings)
 {
-    m_current = new input_entry();
+    m_queued_entry = new input_entry();
 
     switch(settings->mode)
     {
@@ -54,9 +49,8 @@ input_queue::input_queue(sources::history_settings* settings)
 
 input_queue::~input_queue()
 {
-    free_text();
-    free_icon();
-    delete m_current;
+    free_handler();
+    delete m_queued_entry;
 }
 
 void input_queue::update()
@@ -73,41 +67,35 @@ void input_queue::update()
     }
 }
 
-obs_source_t* input_queue::get_fade_in()
+obs_source_t* input_queue::get_fade_in() const
 {
     return nullptr;
 }
 
 void input_queue::collect_input() const
 {
-    m_current->collect_inputs(m_settings);
+    m_queued_entry->collect_inputs(m_settings);
 }
 
-void input_queue::swap()
+void input_queue::swap() const
 {
-
+    m_current_handler->swap(m_queued_entry);
 }
 
-void input_queue::tick(const float seconds)
+void input_queue::tick(const float seconds) const
 {
-
+    m_current_handler->tick(seconds);
 }
 
-void input_queue::render(gs_effect_t* effect)
+void input_queue::render(gs_effect_t* effect) const
 {
-    if (m_settings->mode == sources::MODE_ICONS)
-    {
-
-    }
-    else
-    {
-
-    }
+    UNUSED_PARAMETER(effect);
+    m_current_handler->render();
 }
 
 void input_queue::clear()
 {
-    m_entries.clear();
+    
     m_height = 0;
     m_width = 0;
 }

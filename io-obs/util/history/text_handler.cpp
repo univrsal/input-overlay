@@ -189,3 +189,10 @@ void text_handler::swap(input_entry* current)
 
     update();
 }
+
+void text_handler::render()
+{
+    m_entry_in->render_text();
+    m_entry_body->render_text();
+    m_entry_out->render_text();
+}

@@ -10,6 +10,7 @@
 #include <vector>
 #include <obs.hpp>
 #include "key_names.hpp"
+#include "handler.hpp"
 
 class input_entry;
 
@@ -24,6 +25,7 @@ enum text_phase
 };
 
 class text_handler
+    : public handler
 {
     std::string m_in;                   /* Fading in text */
     std::vector<std::string> m_values;  /* Text body (All key combinations in order) */
@@ -49,7 +51,8 @@ public:
     ~text_handler();
 
     void load_names(const char* cfg);
-    void update();
-    void tick(float seconds);
-    void swap(input_entry* current);
+    void update() override;
+    void tick(float seconds) override;
+    void swap(input_entry* current) override;
+    void render() override;
 };

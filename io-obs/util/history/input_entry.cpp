@@ -123,11 +123,11 @@ void input_entry::add_effect(effect* e)
 void input_entry::render_text()
 {
     gs_matrix_push();
-
-    obs_source_video_render(m_text_source);
-
+   
     for (auto& effect : m_effects)
         effect->render();
+    obs_source_video_render(m_text_source);
+
     gs_matrix_pop();
 }
 
@@ -137,15 +137,15 @@ void input_entry::render_icons(sources::history_settings* settings)
     auto temp = m_position;
     auto i = 0;
 
-    for (const auto& vc : m_inputs)
-    {
-        settings->icons->draw(vc, &temp);
+    //for (const auto& vc : m_inputs)
+    //{
+    //    settings->icons->draw(vc, &temp);
 
-        if (settings->dir == DIR_DOWN || settings->dir == DIR_UP)
-            temp.x += i++ * (settings->h_space + settings->icons->get_w());
-        else        
-            temp.y += i++ * (settings->v_space + settings->icons->get_h());
-    }
+    //    if (settings->dir == DIR_DOWN || settings->dir == DIR_UP)
+    //        temp.x += i++ * (settings->h_space + settings->icons->get_w());
+    //    else        
+    //        temp.y += i++ * (settings->v_space + settings->icons->get_h());
+    //}
     
     for (auto& effect : m_effects)
         effect->render();

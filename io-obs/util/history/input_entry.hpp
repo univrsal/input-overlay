@@ -54,7 +54,7 @@ public:
 
     void mark_for_removal();
     bool finished() const;
-    bool effects_finished();
+    bool effects_finished() const;
     bool empty() const;
 
     void test();

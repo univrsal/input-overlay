@@ -7,8 +7,10 @@
 
 #pragma once
 #include "history_icons.hpp"
+#include "handler.hpp"
 
 class icon_handler
+    : public handler
 {
     history_icons m_icons;
 public:
@@ -16,4 +18,9 @@ public:
     ~icon_handler();
 
     void load_icons(const char* img, const char* cfg);
+
+    void update() override;
+    void tick(float seconds) override;
+    void swap(input_entry* current) override;
+    void render() override;
 };
