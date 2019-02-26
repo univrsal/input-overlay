@@ -30,17 +30,9 @@ namespace sources
     input_history_source::~input_history_source()
     {
         delete m_settings.queue;
-        unload_icons();
-        unload_translation();
         unload_command_handler();
     }
 
-    void input_history_source::load_icons()
-    {
-        if (m_settings.icons == nullptr)
-            m_settings.icons = new history_icons();
-        m_settings.icons->load_from_file(m_settings.icon_cfg_path, m_settings.icon_path);
-    }
 
     void input_history_source::load_translation()
     {
@@ -53,15 +45,6 @@ namespace sources
     {
         if (!m_command_handler)
             m_command_handler = new command_handler();
-    }
-
-    void input_history_source::unload_icons()
-    {
-        if (m_settings.icons)
-        {
-            delete m_settings.icons;
-            m_settings.icons = nullptr;
-        }
     }
 
     void input_history_source::unload_translation()

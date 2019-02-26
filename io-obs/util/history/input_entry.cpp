@@ -13,48 +13,16 @@
 #include "history_icons.hpp"
 #include <algorithm>
 
-/* Maps a specific mask value to a keycode
- * libuiohook repports events with masks
- * which can be used to detect key combinations
- * e.g. when the users presses Ctr+C, the event
- * will have the keycode C with the mask MASK_CTRL_L
- * (if the left control key was used)
- * Since input-history translates keycodes into text
- * this maps each mask to the respective keycode
- * for easier translation
- */
-struct mask_vc
+input_entry::input_entry(obs_source_t* source)
 {
-    uint16_t mask, vc;
-};
+    m_text_source = source;
+    m_position = { 0.f, 0.f };
 
-const std::string plus = " + ";
-mask_vc mask_vc_map[] = { {MASK_ALT_L, VC_ALT_L}, {MASK_ALT_R, VC_ALT_R},
-    {MASK_CTRL_L, VC_CONTROL_L}, {MASK_CTRL_R, VC_CONTROL_R},
-    {MASK_SHIFT_L, VC_SHIFT_L}, {MASK_SHIFT_R, VC_SHIFT_R},
-    {MASK_META_L, VC_META_L}, {MASK_META_R, VC_META_R},
-    {MASK_CAPS_LOCK, VC_CAPS_LOCK}, {MASK_NUM_LOCK, VC_NUM_LOCK},
-    {MASK_SCROLL_LOCK, VC_SCROLL_LOCK}, {MASK_BUTTON1, VC_MOUSE_BUTTON1},
-    {MASK_BUTTON2, VC_MOUSE_BUTTON2}, {MASK_BUTTON3, VC_MOUSE_BUTTON3},
-    {MASK_BUTTON4, VC_MOUSE_BUTTON4}, {MASK_BUTTON5, VC_MOUSE_BUTTON5}};
-
-void input_entry::mask_to_string(std::string& str, uint16_t mask, bool use_fallback, key_names* names)
-{
-    const char* name = nullptr;
-    
-    for (const auto& m : mask_vc_map)
-    {
-        if (mask & m.mask)
-        {
-            if ((name = names->get_name(m.vc)))
-                str += name + plus;
-            else if (use_fallback)
-                str += key_to_text(m.vc) + plus;
-        }
-    }
+    m_width = obs_source_get_width(source);
+    m_height = obs_source_get_height(source);
 }
 
-input_entry::input_entry() : m_mask(0)
+input_entry::input_entry()
 {
     m_position = { 0.f, 0.f };
 }
@@ -84,30 +52,43 @@ void input_entry::set_pos(float x, float y)
     m_position = { x, y };
 }
 
+void input_entry::set_text(const char* text, obs_data_t* settings)
+{
+    if (m_text_source)
+    {
+        obs_data_set_string(settings, "text", text);
+        obs_source_update(m_text_source, settings);
+        //obs_source_update(settings->source, settings);
+
+        m_width = obs_source_get_width(m_text_source);
+        m_height = obs_source_get_height(m_text_source);
+    }
+}
+
 void input_entry::collect_inputs(sources::history_settings* settings)
 {
     if (settings->data)
         settings->data->populate_vector(m_inputs, settings);
 }
 
-void input_entry::build_string(sources::history_settings* settings)
+std::string input_entry::build_string(key_names* names, const bool use_fallback)
 {
-    const bool use_fallback = settings->flags & sources::FLAG_USE_FALLBACK;
+    static std::string plus = " + ";
+    std::string result;
     const char* name = nullptr;
-
-    if (settings->flags & sources::FLAG_USE_MASKS)
-        mask_to_string(m_text, m_mask, use_fallback, settings->names);
 
     for (const auto& key : m_inputs)
     {
-        if (settings->names && (name = settings->names->get_name(key)))
-            m_text += name + plus;
-        else if (use_fallback || !settings->names)
-            m_text += key_to_text(key) + plus;
+        if (names && (name = names->get_name(key)))
+            result += name + plus;
+        else if (use_fallback || !names)
+            result += key_to_text(key) + plus;
     }
 
     /* Remove the last ' + '*/
-    m_text.erase(m_text.length() - 3);
+    result.erase(result.length() - 3);
+
+    return result;
 }
 
 void input_entry::tick(const float seconds)
@@ -139,26 +120,15 @@ void input_entry::add_effect(effect* e)
     m_effects.emplace_back(e);
 }
 
-void input_entry::render_text(sources::history_settings* settings)
+void input_entry::render_text()
 {
-    //gs_matrix_push();
-    blog(LOG_INFO, "drawing: %s", m_text.c_str());
+    gs_matrix_push();
 
-    obs_data_set_string(settings->settings, "text", m_text.c_str());
-    obs_source_update(settings->text_source, settings->settings);
-    obs_source_update(settings->source, settings->settings);
+    obs_source_video_render(m_text_source);
 
-    if (m_width == 0 || m_height == 00)
-    {
-        m_width = obs_source_get_width(settings->text_source);
-        m_height = obs_source_get_height(settings->text_source);
-    }
-
-    obs_source_video_render(settings->text_source);
-
-  /*  for (auto& effect : m_effects)
-        effect->render();*/
-    //gs_matrix_pop();
+    for (auto& effect : m_effects)
+        effect->render();
+    gs_matrix_pop();
 }
 
 void input_entry::render_icons(sources::history_settings* settings)
@@ -190,6 +160,11 @@ void input_entry::mark_for_removal()
 bool input_entry::finished() const
 {
     return m_effects.empty() && m_remove;
+}
+
+bool input_entry::effects_finished() const
+{
+    return m_effects.empty();
 }
 
 bool input_entry::empty() const

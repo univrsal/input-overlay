@@ -19,9 +19,6 @@ extern "C" {
 #include <graphics/image-file.h>
 }
 
-class history_icons;
-class key_names;
-
 #define MAX_HISTORY_SIZE 32
 #define SET_FLAG(a, b)      (util_set_mask(m_settings.flags, a, b))
 #define GET_FLAG(a)         (m_settings.flags & a)
@@ -45,7 +42,6 @@ namespace sources
         FLAG_CUSTOM_NAMES   = 1 << 5,   /* Use custom key name config */
         FLAG_USE_FALLBACK   = 1 << 6,   /* Use hardcoded names if config doesn't define a key name */
         FLAG_INCLUDE_PAD    = 1 << 7,   /* Include gamepad inputs */
-        FLAG_USE_MASKS      = 1 << 8    /* Use event masks (Holding Ctrl, Shift etc.) */
     };
 
     struct history_settings
@@ -66,11 +62,8 @@ namespace sources
         element_data_holder* data = nullptr;    /* Points to selected input source */
         obs_source_t* source = nullptr;         /* input-history source */
         obs_data_t* settings = nullptr;         /* input-history settings (includes text source settings) */
-        obs_data_t* text_settings = nullptr;    /* Settings for text source */
         uint16_t flags = 0x0;                   /* Contains all settings flags */
         input_queue* queue = nullptr;           /* Contains input entries for visualization*/
-        key_names* names = nullptr;             /* Custom key name configuration */
-        history_icons* icons = nullptr;         /* Texture and config to display keys as icons */
         uint32_t cx = 25, cy = 25;              /* Source dimensions */
     };
 
@@ -156,12 +149,8 @@ namespace sources
         input_history_source(obs_source_t* source_, obs_data_t* settings);
         ~input_history_source();
 
-        void load_icons();
-        void load_translation();
         void load_command_handler();
 
-        inline void unload_icons();
-        inline void unload_translation();
         inline void unload_command_handler();
 
         void clear_history() const;

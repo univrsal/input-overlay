@@ -6,80 +6,76 @@
  * github.com/univrsal/input-overlay
  */
 
-#include  "input_queue.hpp"
-#include "scale_effect.hpp"
-#include "translate_effect.hpp"
+#include "input_queue.hpp"
 #include "sources/input_history.hpp"
+#include "icon_handler.hpp"
+#include "text_handler.hpp"
 
-input_queue::input_queue(sources::history_settings* settings)
-    : m_settings(settings), m_holder(nullptr), m_fade_in(nullptr), m_fade_out(nullptr)
+void input_queue::init_icon()
 {
-    m_current = new input_entry();
-}
-
-input_queue::~input_queue()
-{
-    delete m_current;
-    m_entries.clear();
     free_text();
+    m_icon_handler = new icon_handler();
 }
-
-#ifdef _WIN32
-#define TEXT_SOURCE "text_gdiplus\0"
-#else
-#define TEXT_SOURCE "text_ft2_source\0"
-#endif
 
 void input_queue::init_text()
 {
-    if (!m_last)
-        m_last = new input_entry();
+    free_icon();
+    m_text_handler = new text_handler(m_settings);
+}
 
-    m_fade_in = obs_source_create(TEXT_SOURCE, "history-text-source",
-        m_settings->settings, nullptr);
-    m_fade_out = obs_source_create(TEXT_SOURCE, "history-text-source",
-        m_settings->settings, nullptr);
-    m_holder = obs_source_create(TEXT_SOURCE, "history-text-source",
-        m_settings->settings, nullptr);
-
-    obs_source_add_active_child(m_settings->source, m_fade_in);
-    obs_source_add_active_child(m_settings->source, m_fade_out);
-    obs_source_add_active_child(m_settings->source, m_holder);
+void input_queue::free_icon()
+{
+    delete m_icon_handler;
+    m_icon_handler = nullptr;
 }
 
 void input_queue::free_text()
 {
-    delete m_last;
-    m_last = nullptr;
-
-    obs_source_remove(m_fade_in);
-    obs_source_remove(m_fade_out);
-    obs_source_remove(m_holder);
-
-    obs_source_release(m_fade_in);
-    obs_source_release(m_fade_out);
-    obs_source_release(m_holder);
-
-    m_fade_in = nullptr;
-    m_fade_out = nullptr;
-    m_holder = nullptr;
+    delete m_text_handler;
+    m_text_handler = nullptr;
 }
 
-void input_queue::update(obs_data_t* settings)
+input_queue::input_queue(sources::history_settings* settings)
+    : m_settings(settings)
 {
-    if (m_fade_in)
-        init_text();
+    m_current = new input_entry();
 
-    obs_source_update(m_fade_in, settings);
-    obs_source_update(m_fade_out, settings);
-    obs_source_update(m_holder, settings);
+    switch(settings->mode)
+    {
+    default:
+    case sources::MODE_COMMANDS:
+    case sources::MODE_TEXT:
+        init_text();
+        break;
+    case sources::MODE_ICONS:
+        init_icon();
+    }
+}
+
+input_queue::~input_queue()
+{
+    free_text();
+    free_icon();
+    delete m_current;
+}
+
+void input_queue::update()
+{
+    switch (m_settings->mode)
+    {
+    default:
+    case sources::MODE_COMMANDS:
+    case sources::MODE_TEXT:
+        init_text();
+        break;
+    case sources::MODE_ICONS:
+        init_icon();
+    }
 }
 
 obs_source_t* input_queue::get_fade_in()
 {
-    if (!m_fade_in)
-        init_text();
-    return m_fade_in;
+    return nullptr;
 }
 
 void input_queue::collect_input() const
@@ -101,13 +97,11 @@ void input_queue::render(gs_effect_t* effect)
 {
     if (m_settings->mode == sources::MODE_ICONS)
     {
-        for (auto& entry : m_entries)
-            entry->render_icons(m_settings);
+
     }
     else
     {
-        for (auto& entry : m_entries)
-            entry->render_text(m_settings);
+
     }
 }
 

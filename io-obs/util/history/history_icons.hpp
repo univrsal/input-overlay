@@ -24,8 +24,9 @@ class history_icons
     uint16_t m_icon_w = 0;
     uint16_t m_icon_h = 0;
     std::map<uint16_t, icon> m_icons;
-    void unload_texture();
     gs_image_file_t* m_icon_texture = nullptr;
+
+    void unload_texture();
 public:
     ~history_icons();
 

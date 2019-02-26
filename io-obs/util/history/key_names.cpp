@@ -11,17 +11,14 @@
 
 void key_names::load_from_file(const char* path)
 {
-    auto cfg = new ccl_config(path, "");
+    auto cfg = ccl_config(path, "");
 
-    if (!cfg->is_empty())
+    if (!cfg.is_empty())
     {
-        auto node = cfg->get_first();
+        auto node = cfg.get_first();
 
         if (!node)
-        {
-            delete cfg;
             return;
-        }
 
         do
         {
@@ -34,10 +31,8 @@ void key_names::load_from_file(const char* path)
         } while ((node = node->get_next()) != nullptr);
     }
 
-    if (cfg->has_errors())
-        blog(LOG_WARNING, "[input-overlay] %s", cfg->get_error_message().c_str());
-
-    delete cfg;    
+    if (cfg.has_errors())
+        blog(LOG_WARNING, "[input-overlay] %s", cfg.get_error_message().c_str());
 }
 
 const char* key_names::get_name(const uint16_t vc)

@@ -18,6 +18,7 @@ void history_icons::unload_texture()
         m_icon_texture = nullptr;
         obs_leave_graphics();
     }
+    m_loaded = false;
 }
 
 history_icons::~history_icons()
@@ -27,7 +28,7 @@ history_icons::~history_icons()
 
 void history_icons::load_from_file(const char* cfg, const char* img)
 {
-    m_loaded = false;
+    unload_texture();
     if (!cfg || !img)
         return;
     m_icon_texture = new gs_image_file_t();
