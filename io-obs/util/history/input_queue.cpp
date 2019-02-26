@@ -53,23 +53,29 @@ input_queue::~input_queue()
     delete m_queued_entry;
 }
 
-void input_queue::update()
+void input_queue::update(sources::history_mode new_mode)
 {
-    switch (m_settings->mode)
+    if (new_mode != m_settings->mode)
     {
-    default:
-    case sources::MODE_COMMANDS:
-    case sources::MODE_TEXT:
-        init_text();
-        break;
-    case sources::MODE_ICONS:
-        init_icon();
+        switch (m_settings->mode)
+        {
+        default:
+        case sources::MODE_COMMANDS:
+        case sources::MODE_TEXT:
+            init_text();
+            break;
+        case sources::MODE_ICONS:
+            init_icon();
+        }
     }
+
+    m_current_handler->update();
 }
 
 obs_source_t* input_queue::get_fade_in() const
 {
-    return nullptr;
+    const auto h = dynamic_cast<text_handler*>(m_current_handler);
+    return h ? h->get_src_in() : nullptr;
 }
 
 void input_queue::collect_input() const

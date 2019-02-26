@@ -24,7 +24,7 @@ namespace sources
         m_settings.source = source_;
         m_settings.settings = settings;
         m_settings.queue = new input_queue(&m_settings);
-        obs_source_update(source_, settings);
+        update(settings);
     }
 
     input_history_source::~input_history_source()
@@ -65,8 +65,6 @@ namespace sources
             else
                 m_settings.data = hook::input_data;
         }
-
-        m_settings.mode = history_mode(obs_data_get_int(settings, S_HISTORY_MODE));
 
         SET_FLAG(FLAG_INCLUDE_MOUSE, obs_data_get_bool(settings,
             S_HISTORY_INCLUDE_MOUSE));
@@ -111,7 +109,10 @@ namespace sources
             m_settings.target_gamepad = static_cast<uint8_t>(obs_data_get_int(
                 settings, S_CONTROLLER_ID));
 
-        m_settings.queue->update(); /* Apply new settings to queue */
+        /* Order is important here */
+        const auto new_mode = history_mode(obs_data_get_int(settings, S_HISTORY_MODE));
+        m_settings.queue->update(new_mode); /* Apply new settings to queue */
+        m_settings.mode = new_mode;
     }
 
     inline void input_history_source::tick(float seconds)

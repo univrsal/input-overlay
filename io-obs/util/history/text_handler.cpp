@@ -46,11 +46,11 @@ void text_handler::make_body_text(std::string& str)
 text_handler::text_handler(sources::history_settings* settings)
     : m_settings(settings)
 {
-    m_src_in = obs_source_create(TEXT_SOURCE, "history-text-source",
+    m_src_in = obs_source_create(TEXT_SOURCE, "history-fade-in-text",
         settings->settings, nullptr);
-    m_src_out = obs_source_create(TEXT_SOURCE, "history-text-source",
+    m_src_out = obs_source_create(TEXT_SOURCE, "history-fade-out-text",
         settings->settings, nullptr);
-    m_src_body = obs_source_create(TEXT_SOURCE, "history-text-source",
+    m_src_body = obs_source_create(TEXT_SOURCE, "history-body-text",
         settings->settings, nullptr);
 
     obs_source_add_active_child(settings->source, m_src_in);
@@ -195,4 +195,9 @@ void text_handler::render()
     m_entry_in->render_text();
     m_entry_body->render_text();
     m_entry_out->render_text();
+}
+
+obs_source_t* text_handler::get_src_in() const
+{
+    return m_src_in;
 }

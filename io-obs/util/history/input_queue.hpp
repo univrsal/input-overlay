@@ -8,6 +8,7 @@
 
 #pragma once
 #include "input_entry.hpp"
+#include "sources/input_history.hpp"
 
 class handler;
 
@@ -34,7 +35,7 @@ public:
     void collect_input() const; /* Accumulates input events in current entry */
     void swap() const; /* Adds current entry to the list */
     void tick(float seconds) const;
-    void update();
+    void update(sources::history_mode new_mode);
     void render(gs_effect_t* effect) const;
     void clear();
 };
