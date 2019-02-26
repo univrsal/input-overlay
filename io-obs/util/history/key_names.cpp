@@ -11,6 +11,7 @@
 
 void key_names::load_from_file(const char* path)
 {
+    m_names.clear();
     auto cfg = ccl_config(path, "");
 
     if (!cfg.is_empty())
@@ -33,6 +34,11 @@ void key_names::load_from_file(const char* path)
 
     if (cfg.has_errors())
         blog(LOG_WARNING, "[input-overlay] %s", cfg.get_error_message().c_str());
+}
+
+bool key_names::empty() const
+{
+    return m_names.empty();
 }
 
 const char* key_names::get_name(const uint16_t vc)

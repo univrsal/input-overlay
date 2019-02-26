@@ -79,9 +79,9 @@ std::string input_entry::build_string(key_names* names, const bool use_fallback)
 
     for (const auto& key : m_inputs)
     {
-        if (names && (name = names->get_name(key)))
+        if (!names->empty() && (name = names->get_name(key)))
             result += name + plus;
-        else if (use_fallback || !names)
+        else if (use_fallback || names->empty() )
             result += key_to_text(key) + plus;
     }
 

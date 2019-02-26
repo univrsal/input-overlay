@@ -18,6 +18,6 @@ public:
     ~key_names() = default;
 
     void load_from_file(const char* path);
-
+    bool empty() const;
     const char* get_name(const uint16_t vc);
 };
