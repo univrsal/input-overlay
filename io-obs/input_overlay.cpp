@@ -38,6 +38,7 @@ void set_defaults(config_t* cfg)
 
 bool obs_module_load()
 {
+    
 	auto cfg = obs_frontend_get_global_config();
 	set_defaults(cfg);
 
@@ -54,8 +55,8 @@ bool obs_module_load()
 	if (iohook || gamepad)
 		hook::init_data_holder();
 
-	//if (iohook)
- //       hook::start_hook();
+	if (iohook)
+        hook::start_hook();
     
 	if (gamepad)
 		gamepad::start_pad_hook();

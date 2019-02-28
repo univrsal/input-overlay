@@ -40,19 +40,25 @@ void text_handler::make_body_text(std::string& str)
 {
     for (const auto& line : m_values)
         str += line + "\n";
-    str.pop_back(); str.pop_back(); /* Get rid of last '\n' */
+    if (str.length() > 2)
+    {
+        str.pop_back(); str.pop_back(); /* Get rid of last '\n' */
+    }
 }
 
 text_handler::text_handler(sources::history_settings* settings)
     : m_settings(settings)
 {
-    m_src_in = obs_source_create(TEXT_SOURCE, "history-fade-in-text",
-        settings->settings, nullptr);
-    m_src_out = obs_source_create(TEXT_SOURCE, "history-fade-out-text",
-        settings->settings, nullptr);
+
+    /* The body source uses the input-history settings */
     m_src_body = obs_source_create(TEXT_SOURCE, "history-body-text",
         settings->settings, nullptr);
 
+    m_src_in = obs_source_create(TEXT_SOURCE, "history-fade-in-text",
+        nullptr, nullptr);
+    m_src_out = obs_source_create(TEXT_SOURCE, "history-fade-out-text",
+        nullptr, nullptr);
+    
     obs_source_add_active_child(settings->source, m_src_in);
     obs_source_add_active_child(settings->source, m_src_out);
     obs_source_add_active_child(settings->source, m_src_body);
@@ -127,6 +133,10 @@ void text_handler::update()
         break;
     default: ;
     }
+
+    obs_source_update(m_src_body, m_settings->settings);
+    obs_source_update(m_src_in, m_settings->settings);
+    obs_source_update(m_src_out, m_settings->settings);
 }
 
 void text_handler::tick(const float seconds)
@@ -160,6 +170,7 @@ void text_handler::swap(input_entry* current)
     m_in = current->build_string(&m_names,
         m_settings->flags & sources::FLAG_USE_FALLBACK);
     m_entry_in->set_text(m_in.c_str(), m_settings->settings);
+    blog(LOG_DEBUG, "Swap: %s", m_in.c_str());
 
     /* If the currently displayed exceed the history size (the currently upcoming value
      * also counts) take the last entry and fade it out

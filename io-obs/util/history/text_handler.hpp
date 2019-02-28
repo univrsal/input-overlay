@@ -39,7 +39,7 @@ class text_handler
      *             entry fades in.
      */
     obs_source_t* m_src_body{}, *m_src_in{}, *m_src_out{};
-
+    
     input_entry* m_entry_in, *m_entry_out, *m_entry_body;
     text_phase m_phase;
     key_names m_names; /* Contains custom key names */

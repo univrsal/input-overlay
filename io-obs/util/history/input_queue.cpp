@@ -34,17 +34,6 @@ input_queue::input_queue(sources::history_settings* settings)
     : m_settings(settings)
 {
     m_queued_entry = new input_entry();
-
-    switch(settings->mode)
-    {
-    default:
-    case sources::MODE_COMMANDS:
-    case sources::MODE_TEXT:
-        init_text();
-        break;
-    case sources::MODE_ICONS:
-        init_icon();
-    }
 }
 
 input_queue::~input_queue()
@@ -53,9 +42,9 @@ input_queue::~input_queue()
     delete m_queued_entry;
 }
 
-void input_queue::update(sources::history_mode new_mode)
+void input_queue::update(const sources::history_mode new_mode)
 {
-    if (new_mode != m_settings->mode)
+    if (new_mode != m_settings->mode || !m_current_handler)
     {
         switch (m_settings->mode)
         {
@@ -85,7 +74,11 @@ void input_queue::collect_input() const
 
 void input_queue::swap() const
 {
-    m_current_handler->swap(m_queued_entry);
+    if (!m_queued_entry->empty())
+    {
+        m_current_handler->swap(m_queued_entry);
+        m_queued_entry->clear();
+    }
 }
 
 void input_queue::tick(const float seconds) const
@@ -101,7 +94,6 @@ void input_queue::render(gs_effect_t* effect) const
 
 void input_queue::clear()
 {
-    
     m_height = 0;
     m_width = 0;
 }

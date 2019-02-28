@@ -86,7 +86,8 @@ std::string input_entry::build_string(key_names* names, const bool use_fallback)
     }
 
     /* Remove the last ' + '*/
-    result.erase(result.length() - 3);
+    if (result.length() > 3)
+        result.erase(result.length() - 3);
 
     return result;
 }
@@ -101,16 +102,7 @@ void input_entry::tick(const float seconds)
         m_effects.begin(), m_effects.end(),
         [](const std::unique_ptr<effect>& o)
     {
-#ifdef _DEBUG
-        if (o->done())
-        {
-            blog(LOG_DEBUG, "Effect finished.");
-            return true;
-        }
-        return false;
-#else
         return o->done();
-#endif
     }
     ), m_effects.end());
 }
@@ -150,6 +142,11 @@ void input_entry::render_icons(sources::history_settings* settings)
     for (auto& effect : m_effects)
         effect->render();
     gs_matrix_pop();
+}
+
+void input_entry::clear()
+{
+    m_inputs.clear();
 }
 
 void input_entry::mark_for_removal()

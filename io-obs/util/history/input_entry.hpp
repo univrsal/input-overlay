@@ -51,8 +51,9 @@ public:
     void add_effect(effect* e);
     void render_text();
     void render_icons(sources::history_settings* settings);
-
+    void clear();
     void mark_for_removal();
+    
     bool finished() const;
     bool effects_finished() const;
     bool empty() const;
