@@ -38,10 +38,9 @@ namespace sources
         FLAG_INCLUDE_MOUSE  = 1 << 1,   /* Include mouse clicks and scrolling */
         FLAG_AUTO_CLEAR     = 1 << 2,   /* Use automatic clearing */
         FLAG_REPEAT_KEYS    = 1 << 3,   /* Allow repeated keys*/
-        FLAG_MERGE_REPEAT   = 1 << 4,   /* Merge repeated keys into one entry */
-        FLAG_CUSTOM_NAMES   = 1 << 5,   /* Use custom key name config */
-        FLAG_USE_FALLBACK   = 1 << 6,   /* Use hardcoded names if config doesn't define a key name */
-        FLAG_INCLUDE_PAD    = 1 << 7,   /* Include gamepad inputs */
+        FLAG_CUSTOM_NAMES   = 1 << 4,   /* Use custom key name config */
+        FLAG_USE_FALLBACK   = 1 << 5,   /* Use hardcoded names if config doesn't define a key name */
+        FLAG_INCLUDE_PAD    = 1 << 6,   /* Include gamepad inputs */
     };
 
     struct history_settings

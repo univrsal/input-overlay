@@ -12,6 +12,7 @@
 #include "key_names.hpp"
 #include "history_icons.hpp"
 #include <algorithm>
+#include "network/io_server.hpp"
 
 input_entry::input_entry(obs_source_t* source)
 {
@@ -58,8 +59,6 @@ void input_entry::set_text(const char* text, obs_data_t* settings)
     {
         obs_data_set_string(settings, "text", text);
         obs_source_update(m_text_source, settings);
-        //obs_source_update(settings->source, settings);
-
         m_width = obs_source_get_width(m_text_source);
         m_height = obs_source_get_height(m_text_source);
     }
@@ -68,7 +67,11 @@ void input_entry::set_text(const char* text, obs_data_t* settings)
 void input_entry::collect_inputs(sources::history_settings* settings)
 {
     if (settings->data)
+    {
+        std::lock_guard<std::mutex> lck1(hook::mutex);
+        std::lock_guard<std::mutex> lck2(network::mutex);
         settings->data->populate_vector(m_inputs, settings);
+    }
 }
 
 std::string input_entry::build_string(key_names* names, const bool use_fallback)
@@ -87,8 +90,9 @@ std::string input_entry::build_string(key_names* names, const bool use_fallback)
 
     /* Remove the last ' + '*/
     if (result.length() > 3)
-        result.erase(result.length() - 3);
+        result.erase(result.length() - 2);
 
+    blog(LOG_INFO , "new text: %s", result.c_str());
     return result;
 }
 
@@ -112,15 +116,9 @@ void input_entry::add_effect(effect* e)
     m_effects.emplace_back(e);
 }
 
-void input_entry::render_text()
+void input_entry::render_text() const
 {
-    gs_matrix_push();
-   
-    for (auto& effect : m_effects)
-        effect->render();
     obs_source_video_render(m_text_source);
-
-    gs_matrix_pop();
 }
 
 void input_entry::render_icons(sources::history_settings* settings)
@@ -147,6 +145,7 @@ void input_entry::render_icons(sources::history_settings* settings)
 void input_entry::clear()
 {
     m_inputs.clear();
+    m_effects.clear();
 }
 
 void input_entry::mark_for_removal()

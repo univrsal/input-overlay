@@ -9,7 +9,7 @@
 #include <cstdint>
 #include <vector>
 #include <memory>
-#include "obs.hpp"
+#include <obs.hpp>
 
 class key_names;
 
@@ -49,7 +49,7 @@ public:
     void collect_inputs(sources::history_settings* settings);
     void tick(float seconds);
     void add_effect(effect* e);
-    void render_text();
+    void render_text() const;
     void render_icons(sources::history_settings* settings);
     void clear();
     void mark_for_removal();

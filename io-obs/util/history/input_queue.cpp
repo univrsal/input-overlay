@@ -64,7 +64,7 @@ void input_queue::update(const sources::history_mode new_mode)
 obs_source_t* input_queue::get_fade_in() const
 {
     const auto h = dynamic_cast<text_handler*>(m_current_handler);
-    return h ? h->get_src_in() : nullptr;
+    return h ? h->get_text_source() : nullptr;
 }
 
 void input_queue::collect_input() const

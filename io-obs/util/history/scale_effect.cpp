@@ -6,7 +6,6 @@
  */
 
 #include "scale_effect.hpp"
-#include "graphics/vec3.h"
 
 extern "C" {
 #include <graphics/graphics.h>

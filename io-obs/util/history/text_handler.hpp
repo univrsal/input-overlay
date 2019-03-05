@@ -8,7 +8,8 @@
 #pragma once
 #include <string>
 #include <vector>
-#include <obs.hpp>
+#include <obs-module.h>
+#include <memory>
 #include "key_names.hpp"
 #include "handler.hpp"
 
@@ -18,33 +19,27 @@ namespace sources {
     struct history_settings;
 }
 
-enum text_phase
+struct key_combination
 {
-    BLENDING, /* New entry blends in (last entry blends out, if maximum size is exceeded)*/
-    DISPLAY   /* all strings in m_values are displayed */
+    key_combination(const std::string str)
+    {
+        repeat = 1;
+        keys = str;
+    }
+
+    std::string keys;
+    uint8_t repeat;
 };
 
 class text_handler
     : public handler
 {
-    std::string m_in;                   /* Fading in text */
-    std::vector<std::string> m_values;  /* Text body (All key combinations in order) */
-    vec2 m_move_dir;
-    /* Since displaying multiple blocks of text isn't easily doable
-     * input-history uses three different sources.
-     * m_fade_in:  This source draws the currently coming up input combination
-     *             and will only be visible during the fade in/out period
-     * m_holder:   This source draws all current key combinations
-     * m_fade_out: This source draws the last entry that fades out while a new
-     *             entry fades in.
-     */
-    obs_source_t* m_src_body{}, *m_src_in{}, *m_src_out{};
-    
-    input_entry* m_entry_in, *m_entry_out, *m_entry_body;
-    text_phase m_phase;
-    key_names m_names; /* Contains custom key names */
-    sources::history_settings* m_settings;
+    std::vector<std::unique_ptr<key_combination>> m_values;  /* Text body (All key combinations in order) */
 
+    key_names m_names; /* Contains custom key names */
+    input_entry* m_display = nullptr;
+    sources::history_settings* m_settings = nullptr;
+    obs_source_t* m_text_source = nullptr;
     void make_body_text(std::string& str);
 public:
     text_handler(sources::history_settings* settings);
@@ -56,5 +51,5 @@ public:
     void swap(input_entry* current) override;
     void render() override;
 
-    obs_source_t* get_src_in() const; /* Used to add the text properties in get_properties_for_history */
+    obs_source_t* get_text_source() const; /* Used to add the text properties in get_properties_for_history */
 };
