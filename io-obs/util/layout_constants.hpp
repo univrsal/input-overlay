@@ -46,7 +46,9 @@
 /* ns after last scroll message until reset */
 #define SCROLL_TIMEOUT      (120 * 1000 * 1000)
 
-/* Text element formatting */
+#define TRIGGER_THRESHOLD   0.2f
+
+/* Text element formatting TODO: remove*/
 #define TEXT_FORMAT_WHEEL_AMOUNT    "%w"
 #define TEXT_FORMAT_LMB_CLICKS      "%l"
 #define TEXT_FORMAT_RMB_CLICKS      "%r"

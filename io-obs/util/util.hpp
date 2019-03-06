@@ -264,6 +264,12 @@ void util_set_mask(uint16_t& masks, uint16_t mask, bool state);
 
 uint16_t util_mouse_to_vc(int m);
 
+inline bool ends_with(std::string const& value, std::string const& ending)
+{
+    if (ending.size() > value.size()) return false;
+    return std::equal(ending.rbegin(), ending.rend(), value.rbegin());
+}
+
 #ifdef DEBUG
 uint16_t random_vc();
 #endif

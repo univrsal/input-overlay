@@ -8,17 +8,17 @@
 #pragma once
 
 #include "xinput_fix.hpp"
-#include <stdio.h>
-#include <stdlib.h>
-#include <string>
-#include <malloc.h>
-
 #include "util/util.hpp"
+#include <stdio.h>
+#include <mutex>
 
 namespace gamepad
 {
     /* Linux implementation */
 #ifdef LINUX
+#include <stdlib.h>
+#include <string>
+#include <malloc.h>
 #include <unistd.h>
 #define ID_TYPE         6
 #define ID_BUTTON       1
@@ -161,6 +161,8 @@ private:
 
     bool init_pad_devices();
 
+    /* Mutex for thread safety */
+    extern std::mutex mutex;
     /* Four structs containing info to query gamepads */
     extern GamepadState pad_states[PAD_COUNT];
     /* Init state of hook */

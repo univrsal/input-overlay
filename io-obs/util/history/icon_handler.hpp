@@ -23,4 +23,5 @@ public:
     void tick(float seconds) override;
     void swap(input_entry* current) override;
     void render() override;
+    void clear() override;
 };

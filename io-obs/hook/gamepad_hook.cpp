@@ -20,8 +20,9 @@ namespace gamepad
     bool gamepad_hook_state = false;
     bool gamepad_hook_run_flag = true;
     GamepadState pad_states[PAD_COUNT];
-
+    std::mutex mutex;
 #ifdef _WIN32
+    
     static HANDLE hook_thread;
 #else
     static pthread_t game_pad_hook_thread;
@@ -85,6 +86,8 @@ namespace gamepad
         {
             if (!hook::input_data)
                 break;
+            mutex.lock();
+
             for (auto& pad : pad_states)
             {
                 if (!pad.valid())
@@ -229,6 +232,7 @@ namespace gamepad
                 }
 
 #endif /* LINUX */
+                mutex.unlock();
             }
 #ifdef  _WIN32 /* Delay on linux results in buffered input */
             os_sleep_ms(25);

@@ -35,3 +35,8 @@ void icon_handler::swap(input_entry* current)
 void icon_handler::render()
 {
 }
+
+void icon_handler::clear()
+{
+
+}

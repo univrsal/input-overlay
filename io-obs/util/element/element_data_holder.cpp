@@ -9,6 +9,7 @@
 #include "element_trigger.hpp"
 #include "sources/input_history.hpp"
 #include "element_button.hpp"
+#include "element_analog_stick.hpp"
 
 element_data_holder::element_data_holder()
 {
@@ -159,19 +160,70 @@ void element_data_holder::populate_vector(std::vector<uint16_t>& vec, sources::h
     {
         for (const auto& data : m_gamepad_data[settings->target_gamepad])
         {
-            auto new_key = true;
-            for (const auto& vc : vec) /* Check if this key is already in the vector */
+            auto add = true;
+            auto code = data.first;
+            element_data_analog_stick* stick = nullptr;
+            element_data_button* button = nullptr;
+            element_data_trigger* trigger = nullptr;
+
+            if (data.second)
             {
-                if (data.first == vc)
+                switch (data.second->get_type())
                 {
-                    new_key = false;
+                case BUTTON:
+                    button = dynamic_cast<element_data_button*>(data.second.get());
+                    if (button && button->get_state() == STATE_RELEASED)
+                        continue;
                     break;
+                case ANALOG_STICK:
+                    stick = dynamic_cast<element_data_analog_stick*>(data.second.get());
+                    if (stick)
+                    {
+                        if (stick->left_pressed() )
+                            code = PAD_L_ANALOG | VC_PAD_MASK;
+                        else if (stick->right_pressed())
+                            code = PAD_R_ANALOG | VC_PAD_MASK;
+                    }
+                    break;
+                case TRIGGER:
+                    trigger = dynamic_cast<element_data_trigger*>(data.second.get());
+
+                    if (trigger)
+                    {
+                        if (trigger->get_left() > TRIGGER_THRESHOLD)
+                            vec.emplace_back(PAD_LT | VC_PAD_MASK);
+
+                        if (trigger->get_right() > TRIGGER_THRESHOLD)
+                            vec.emplace_back(PAD_RT | VC_PAD_MASK);
+                    }
+                default:;
                 }
             }
-
-            if (new_key) /* if not add it */
+            else
             {
-                vec.emplace_back(data.first);
+                switch (data.first)
+                {
+                case VC_DPAD_DATA:
+                case VC_TRIGGER_DATA:
+                case VC_STICK_DATA:
+                    continue; /* Not used in history*/
+                default:;
+                }
+            }
+            
+            if (add)
+            {
+                for (const auto& vc : vec) /* Check if this key is already in the vector */
+                {
+                    if (code == vc)
+                    {
+                        add = false;
+                        break;
+                    }
+                }
+
+                blog(LOG_INFO, "Added gamepad 0x%X", data.first);
+                vec.emplace_back(code);
             }
         }
     }

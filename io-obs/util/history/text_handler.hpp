@@ -50,6 +50,7 @@ public:
     void tick(float seconds) override;
     void swap(input_entry* current) override;
     void render() override;
+    void clear() override;
 
     obs_source_t* get_text_source() const; /* Used to add the text properties in get_properties_for_history */
 };

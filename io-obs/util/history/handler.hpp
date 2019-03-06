@@ -17,4 +17,5 @@ public:
     virtual void tick(float seconds) = 0;
     virtual void swap(input_entry* current) = 0;
     virtual void render() = 0;
+    virtual void clear() = 0;
 };

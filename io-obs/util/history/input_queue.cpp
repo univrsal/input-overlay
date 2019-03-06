@@ -49,7 +49,6 @@ void input_queue::update(const sources::history_mode new_mode)
         switch (m_settings->mode)
         {
         default:
-        case sources::MODE_COMMANDS:
         case sources::MODE_TEXT:
             init_text();
             break;
@@ -94,6 +93,11 @@ void input_queue::render(gs_effect_t* effect) const
 
 void input_queue::clear()
 {
-    m_height = 0;
-    m_width = 0;
+    /* Not zero, since then the source is hard to 
+     * move and click on
+     */
+    if (m_current_handler)
+        m_current_handler->clear();
+    m_height = 50;
+    m_width = 50;
 }

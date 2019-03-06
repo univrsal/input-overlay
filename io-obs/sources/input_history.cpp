@@ -30,22 +30,6 @@ namespace sources
     input_history_source::~input_history_source()
     {
         delete m_settings.queue;
-        unload_command_handler();
-    }
-
-    void input_history_source::load_command_handler()
-    {
-        if (!m_command_handler)
-            m_command_handler = new command_handler();
-    }
-
-    inline void input_history_source::unload_command_handler()
-    {
-        if (m_command_handler)
-        {
-            delete m_command_handler;
-            m_command_handler = nullptr;
-        }
     }
 
     void input_history_source::clear_history() const
@@ -95,11 +79,6 @@ namespace sources
         m_settings.dir = history_direction(obs_data_get_int(
             settings, S_HISTORY_DIRECTION));
 
-        if (m_settings.mode == MODE_COMMANDS)
-            load_command_handler();
-        else
-            unload_command_handler();
-
         if (!m_settings.key_name_path || strlen(m_settings.key_name_path) < 1)
             SET_FLAG(FLAG_CUSTOM_NAMES, false);
         else
@@ -136,13 +115,14 @@ namespace sources
         if (m_collect_timer >= m_settings.update_interval)
         {
             m_collect_timer = 0.f;
+            m_clear_timer = 0.f;
             /* Moves current input entry from collection into list */
             m_settings.queue->swap();
         }
         else
         {
             m_settings.queue->collect_input();
-        }        
+        }
     }
 
     inline void input_history_source::render(gs_effect_t* effect) const
@@ -228,6 +208,7 @@ namespace sources
     {
         const auto s = reinterpret_cast<input_history_source*>(data);
         obs_properties_t* props = nullptr;
+        auto cfg = obs_frontend_get_global_config();
 
         if (s->m_settings.mode != MODE_ICONS)
             props = obs_source_properties(s->m_settings.queue->get_fade_in()); /* Reuse text properties */
@@ -244,7 +225,7 @@ namespace sources
         obs_property_set_modified_callback(font_settings, toggle_font_settings);
 
         /* If enabled add dropdown to select input source */
-        if (config_get_bool(obs_frontend_get_global_config(), S_REGION, S_REMOTE))
+        if (config_get_bool(cfg, S_REGION, S_REMOTE))
         {
             auto list = obs_properties_add_list(props, S_INPUT_SOURCE, T_INPUT_SOURCE, OBS_COMBO_TYPE_LIST, OBS_COMBO_FORMAT_INT);
             obs_properties_add_button(props, S_RELOAD_CONNECTIONS, T_RELOAD_CONNECTIONS, reload_connections);
@@ -261,7 +242,6 @@ namespace sources
 
         obs_property_list_add_int(mode_list, T_HISTORY_MODE_TEXT, MODE_TEXT);
         obs_property_list_add_int(mode_list, T_HISTORY_MODE_ICON, MODE_ICONS);
-        obs_property_list_add_int(mode_list, T_HISTORY_MODE_ICON, MODE_COMMANDS);
         obs_property_set_modified_callback(mode_list, mode_changed);
 
         /* Key name, icon and config file */
@@ -322,11 +302,14 @@ namespace sources
         obs_property_list_add_int(icon_dir_list, T_HISTORY_DIRECTION_RIGHT, 3);
 
         /* gamepad */
-        const auto include_pad = obs_properties_add_bool(
-            props, S_HISTORY_INCLUDE_PAD, T_HISTORY_INCLUDE_PAD);
-        obs_property_set_modified_callback(include_pad, include_pad_changed);
-        obs_properties_add_int(props, S_CONTROLLER_ID, T_CONTROLLER_ID, 0, 3, 1);
-
+        if (config_get_bool(cfg, S_REGION, S_GAMEPAD))
+        {
+            const auto include_pad = obs_properties_add_bool(
+                props, S_HISTORY_INCLUDE_PAD, T_HISTORY_INCLUDE_PAD);
+            obs_property_set_modified_callback(include_pad, include_pad_changed);
+            obs_properties_add_int(props, S_CONTROLLER_ID, T_CONTROLLER_ID, 0, 3, 1);
+        }
+        
         /* Auto clear */
         obs_properties_add_bool(props, S_HISTORY_ENABLE_AUTO_CLEAR,
             T_HISTORY_ENABLE_AUTO_CLEAR);

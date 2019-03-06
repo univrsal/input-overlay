@@ -28,8 +28,7 @@ namespace sources
     enum history_mode
     {
         MODE_TEXT,
-        MODE_ICONS,
-        MODE_COMMANDS
+        MODE_ICONS
     };
 
     enum history_flags
@@ -66,80 +65,8 @@ namespace sources
         uint32_t cx = 25, cy = 25;              /* Source dimensions */
     };
 
-    /* TODO: Rework */
-    struct command_handler
-    {
-        bool m_empty = true;
-        std::string commands[MAX_HISTORY_SIZE];
-
-        void finish_command()
-        {
-            for (auto i = MAX_HISTORY_SIZE - 1; i > 0; i--)
-            {
-                commands[i] = commands[i - 1];
-            }
-            commands[0] = "";
-        }
-
-        bool special_handling(const wint_t character)
-        {
-            if (character == CHAR_BACK)
-            {
-                if (commands[0].length() > 0)
-                    commands[0].pop_back();
-            }
-            else if (character == CHAR_ENTER)
-            {
-                finish_command();
-            }
-            return character == CHAR_BACK || character == CHAR_ENTER;
-        }
-
-        void clear()
-        {
-            for (auto& command : commands)
-                command = "";
-        }
-
-        void handle_char(const wint_t character)
-        {
-            if (special_handling(character))
-                return;
-
-            char buffer[2];
-            snprintf(buffer, sizeof(buffer), "%lc", character);
-            commands[0].append(buffer);
-        }
-
-        std::string get_history(const bool down) const
-        {
-            std::string result;
-            if (down)
-            {
-                for (auto i = MAX_HISTORY_SIZE - 1; i >= 0; i--)
-                {
-                    result.append(commands[i]);
-                    if (i >= 1)
-                        result.append("\n");
-                }
-            }
-            else
-            {
-                for (auto i = 0; i < MAX_HISTORY_SIZE; i++)
-                {
-                    result.append(commands[i]);
-                    if (i < MAX_HISTORY_SIZE - 1)
-                        result.append("\n");
-                }
-            }
-            return result;
-        }
-    };
-
     class input_history_source
     {
-        command_handler* m_command_handler = nullptr;
-
         double m_clear_timer = 0.f;
         double m_collect_timer = 0.f;
     public:
@@ -147,10 +74,6 @@ namespace sources
         
         input_history_source(obs_source_t* source_, obs_data_t* settings);
         ~input_history_source();
-
-        void load_command_handler();
-
-        inline void unload_command_handler();
 
         void clear_history() const;
 
