@@ -43,9 +43,12 @@ bool key_names::empty() const
 
 const char* key_names::get_name(const uint16_t vc)
 {
-    if (m_names.find(vc) != m_names.end())
-    {
+    /* Users can use an empty name in the config to
+     * prevent certain keys from showing up in input-history
+     * empty name = key is disabled
+     */
+    if (m_names.find(vc) != m_names.end() && !m_names[vc].empty())
         return m_names[vc].c_str();
-    }
+
     return nullptr;
 }

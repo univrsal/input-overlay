@@ -121,11 +121,18 @@ void element_data_holder::clear_gamepad_data()
     m_gamepad_data->clear();
 }
 
+bool inline is_new_key(const std::vector<uint16_t>& vec, uint16_t vc)
+{
+    for (const auto& k : vec)
+        if (k == vc)
+            return false;
+    return true;
+}
+
 void element_data_holder::populate_vector(std::vector<uint16_t>& vec, sources::history_settings* settings)
 {
     for (const auto& data : m_button_data)
     {
-        auto new_key = true;
         /* Mouse data is persistent and shouldn't be included
          * Any mouse buttons should only be included if enabled
          */
@@ -140,16 +147,7 @@ void element_data_holder::populate_vector(std::vector<uint16_t>& vec, sources::h
                 continue;
         }
 
-        for (const auto& vc : vec) /* Check if this key is already in the vector */
-        {
-            if (data.first == vc)
-            {
-                new_key = false;
-                break;
-            }
-        }
-
-        if (new_key) /* if not add it */
+        if (is_new_key(vec, data.first)) /* if not add it */
         {
             vec.emplace_back(data.first);
         }
@@ -179,10 +177,12 @@ void element_data_holder::populate_vector(std::vector<uint16_t>& vec, sources::h
                     stick = dynamic_cast<element_data_analog_stick*>(data.second.get());
                     if (stick)
                     {
-                        if (stick->left_pressed() )
-                            code = PAD_L_ANALOG | VC_PAD_MASK;
-                        else if (stick->right_pressed())
-                            code = PAD_R_ANALOG | VC_PAD_MASK;
+                        if (stick->left_pressed() && is_new_key(vec, PAD_L_ANALOG | VC_PAD_MASK))
+                            vec.emplace_back(PAD_L_ANALOG | VC_PAD_MASK);
+                        
+                        if (stick->right_pressed() && is_new_key(vec, PAD_R_ANALOG | VC_PAD_MASK))
+                            vec.emplace_back(PAD_R_ANALOG | VC_PAD_MASK);
+                        add = false;
                     }
                     break;
                 case TRIGGER:
@@ -190,40 +190,29 @@ void element_data_holder::populate_vector(std::vector<uint16_t>& vec, sources::h
 
                     if (trigger)
                     {
-                        if (trigger->get_left() > TRIGGER_THRESHOLD)
+                        if (trigger->get_left() > TRIGGER_THRESHOLD && is_new_key(vec, PAD_LT | VC_PAD_MASK))
                             vec.emplace_back(PAD_LT | VC_PAD_MASK);
 
-                        if (trigger->get_right() > TRIGGER_THRESHOLD)
+                        if (trigger->get_right() > TRIGGER_THRESHOLD && is_new_key(vec, PAD_RT | VC_PAD_MASK))
                             vec.emplace_back(PAD_RT | VC_PAD_MASK);
+                        add = false;
                     }
-                default:;
-                }
-            }
-            else
-            {
-                switch (data.first)
-                {
-                case VC_DPAD_DATA:
-                case VC_TRIGGER_DATA:
-                case VC_STICK_DATA:
-                    continue; /* Not used in history*/
                 default:;
                 }
             }
             
-            if (add)
+            if (add && is_new_key(vec, code))
             {
-                for (const auto& vc : vec) /* Check if this key is already in the vector */
+                switch(code)
                 {
-                    if (code == vc)
-                    {
-                        add = false;
-                        break;
-                    }
+                case VC_STICK_DATA:
+                case VC_TRIGGER_DATA:
+                case VC_MOUSE_DATA:
+                case VC_DPAD_DATA:
+                    break;
+                default:
+                    vec.emplace_back(code);
                 }
-
-                blog(LOG_INFO, "Added gamepad 0x%X", data.first);
-                vec.emplace_back(code);
             }
         }
     }

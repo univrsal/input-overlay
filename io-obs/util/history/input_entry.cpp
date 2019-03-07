@@ -80,7 +80,7 @@ std::string input_entry::build_string(key_names* names, const bool use_fallback)
     static std::string plus = " + ";
     std::string result;
     const char* name = nullptr;
-    
+
     for (const auto& key : m_inputs)
     {
         if (!names->empty() && (name = names->get_name(key)))
@@ -93,7 +93,6 @@ std::string input_entry::build_string(key_names* names, const bool use_fallback)
     if (ends_with(result, plus))
         result.erase(result.length() - 3);
 
-    blog(LOG_INFO , "new text: %s", result.c_str());
     return result;
 }
 

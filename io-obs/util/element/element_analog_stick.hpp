@@ -28,7 +28,7 @@ class element_data_analog_stick : public element_data
 {
 public:
     element_data_analog_stick()
-        : element_data(BUTTON), m_left_stick(), m_right_stick(),
+        : element_data(ANALOG_STICK), m_left_stick(), m_right_stick(),
         m_left_state(), m_right_state()
     {
         m_data_type = SD_BOTH;
@@ -39,7 +39,7 @@ public:
         because the values can't be queried together
     */
     element_data_analog_stick(const button_state state, const element_side side)
-        : element_data(BUTTON), m_left_stick(), m_right_stick()
+        : element_data(ANALOG_STICK), m_left_stick(), m_right_stick()
     {
         if (side == SIDE_LEFT)
         {
@@ -54,7 +54,7 @@ public:
     }
 
     element_data_analog_stick(const float axis_value, const stick_data_type data_type)
-        : element_data(BUTTON), m_left_state(), m_right_state()
+        : element_data(ANALOG_STICK), m_left_state(), m_right_state()
     {
         switch (data_type)
         {
@@ -78,7 +78,7 @@ public:
     element_data_analog_stick(const button_state left, const button_state right,
         const float l_x, const float l_y,
         const float r_x, const float r_y)
-        : element_data(BUTTON)
+        : element_data(ANALOG_STICK)
     {
         m_left_stick = {l_x, l_y};
         m_right_stick = {r_x, r_y};
