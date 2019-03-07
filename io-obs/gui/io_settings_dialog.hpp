@@ -25,6 +25,7 @@ private Q_SLOTS:
     void RefreshConnectionsList();
     void FormAccepted();
 	void CbRemoteStateChanged(int state);
+    void CbInputControlStateChanged(int state);
     void PingClients();
     void BoxRefreshChanged(int value);
     

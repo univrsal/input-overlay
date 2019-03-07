@@ -69,6 +69,10 @@
 #define S_LOGGING                       "logging"
 #define S_PORT                          "port"
 #define S_REFRESH                       "refresh_rate"
+#define S_CONTROL                       "control"
+#define S_CONTROL_MODE                  "control_mode"
+#define S_FILTER_COUNT                  "filter_count"
+#define S_FILTERS                       "filters"
 
 /* Common values */
 #define S_INPUT_SOURCE                  "io.input_source"

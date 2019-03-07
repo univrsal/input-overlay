@@ -27,6 +27,9 @@ io_settings_dialog::io_settings_dialog(QWidget* parent)
     connect(ui->btn_refresh, &QPushButton::clicked,
         this, &io_settings_dialog::PingClients);
 
+    connect(ui->cb_enable_control, &QCheckBox::stateChanged,
+        this, &io_settings_dialog::CbInputControlStateChanged);
+
     /*connect(ui->box_refresh_rate, qOverload<int>(&QSpinBox::valueChanged),
         this, &io_settings_dialog::BoxRefreshChanged);*/
 
@@ -96,9 +99,20 @@ void io_settings_dialog::RefreshConnectionsList()
 
 void io_settings_dialog::CbRemoteStateChanged(int state)
 {
-	ui->cb_log->setEnabled(ui->cb_enable_remote->isChecked());
-	ui->box_port->setEnabled(ui->cb_enable_remote->isChecked());
-	ui->box_connections->setEnabled(ui->cb_enable_remote->isChecked());
+	ui->cb_log->setEnabled(state);
+	ui->box_port->setEnabled(state);
+	ui->box_connections->setEnabled(state);
+    ui->btn_refresh->setEnabled(state);
+    ui->box_refresh_rate->setEnabled(state);
+}
+
+void io_settings_dialog::CbInputControlStateChanged(int state)
+{
+    ui->cb_list_mode->setEnabled(state);
+    ui->cb_text->setEnabled(state);
+    ui->btn_add->setEnabled(state);
+    ui->btn_remove->setEnabled(state);
+    ui->list_filters->setEnabled(state);
 }
 
 void io_settings_dialog::PingClients()
@@ -114,6 +128,7 @@ void io_settings_dialog::BoxRefreshChanged(int value)
 void io_settings_dialog::FormAccepted()
 {
     auto cfg = obs_frontend_get_global_config();
+
     config_set_bool(cfg, S_REGION, S_IOHOOK, ui->cb_iohook->isChecked());
     config_set_bool(cfg, S_REGION, S_GAMEPAD, ui->cb_gamepad_hook->isChecked());
     config_set_bool(cfg, S_REGION, S_OVERLAY, ui->cb_enable_overlay->isChecked());
@@ -122,6 +137,17 @@ void io_settings_dialog::FormAccepted()
     config_set_bool(cfg, S_REGION, S_REMOTE, ui->cb_enable_remote->isChecked());
     config_set_bool(cfg, S_REGION, S_LOGGING, ui->cb_log->isChecked());
     config_set_int(cfg, S_REGION, S_PORT, ui->box_port->value());
+
+    config_set_bool(cfg, S_REGION, S_CONTROL, ui->cb_enable_control->isChecked());
+    config_set_int(cfg, S_REGION, S_CONTROL_MODE, ui->cb_list_mode->currentIndex());
+    config_set_int(cfg, S_REGION, S_FILTER_COUNT, ui->list_filters->count());
+    
+    std::string filters;
+    for (auto i = 0; i < ui->list_filters->count(); i++)
+    {
+        filters += ui->list_filters->itemAt(0, i)->text().toStdString() + ";";
+    }
+    config_set_string(cfg, S_REGION, S_FILTERS, filters.c_str());
 }
 
 

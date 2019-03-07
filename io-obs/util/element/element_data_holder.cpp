@@ -139,6 +139,8 @@ void element_data_holder::populate_vector(std::vector<uint16_t>& vec, sources::h
         if (data.first == VC_MOUSE_DATA || (data.first >> 8) == (VC_MOUSE_MASK >> 8)
             && !(settings->flags & sources::FLAG_INCLUDE_MOUSE))
             continue;
+        
+        blog(LOG_INFO, "vc: 0x%X", data.first);
 
         if (data.second->get_type() == BUTTON)
         {
@@ -207,7 +209,6 @@ void element_data_holder::populate_vector(std::vector<uint16_t>& vec, sources::h
                 {
                 case VC_STICK_DATA:
                 case VC_TRIGGER_DATA:
-                case VC_MOUSE_DATA:
                 case VC_DPAD_DATA:
                     break;
                 default:
