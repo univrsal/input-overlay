@@ -51,6 +51,7 @@ bool obs_module_load()
 	const auto iohook = config_get_bool(cfg, S_REGION, S_IOHOOK);
 	const auto gamepad = config_get_bool(cfg, S_REGION, S_GAMEPAD);
 	const auto remote = config_get_bool(cfg, S_REGION, S_REMOTE);
+    const auto control = config_get_bool(cfg, S_REGION, S_CONTROL);
 
 	if (iohook || gamepad)
 		hook::init_data_holder();
@@ -69,6 +70,10 @@ bool obs_module_load()
         network::start_network(port);
         network::refresh_rate = config_get_int(cfg, S_REGION, S_REFRESH);
     }
+
+    /* Input filtering via focused window title */
+    if (control)
+        io_window_filters.read_from_config(cfg);
 
 	/* UI registration from
 	* https://github.com/Palakis/obs-websocket/

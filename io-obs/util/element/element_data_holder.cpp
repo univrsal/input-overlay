@@ -23,20 +23,19 @@ element_data_holder::~element_data_holder()
 
 bool element_data_holder::is_empty() const
 {
-    auto flag = false;
+    auto flag = true;
 
     for (const auto& pad : m_gamepad_data)
     {
-        if (pad.empty())
+        if (!pad.empty())
         {
-            flag = true;
+            flag = false;
             break;
         }
     }
 
-    return m_button_data.empty() && flag;
+    return flag && m_button_data.empty();
 }
-
 
 void element_data_holder::add_data(const uint16_t keycode, element_data* data)
 {

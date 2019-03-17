@@ -27,9 +27,27 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QTabWidget" name="tabWidget">
+    <widget class="QTabWidget" name="tabs">
+     <property name="tabPosition">
+      <enum>QTabWidget::North</enum>
+     </property>
+     <property name="tabShape">
+      <enum>QTabWidget::Rounded</enum>
+     </property>
      <property name="currentIndex">
       <number>0</number>
+     </property>
+     <property name="elideMode">
+      <enum>Qt::ElideRight</enum>
+     </property>
+     <property name="tabsClosable">
+      <bool>false</bool>
+     </property>
+     <property name="movable">
+      <bool>false</bool>
+     </property>
+     <property name="tabBarAutoHide">
+      <bool>false</bool>
      </property>
      <widget class="QWidget" name="tab_local">
       <attribute name="title">
@@ -39,7 +57,7 @@
        <item>
         <widget class="QLabel" name="lbl_local_features">
          <property name="text">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Dialog.LocalFeatures.Info&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          <string>Dialog.LocalFeatures.Info</string>
          </property>
          <property name="textFormat">
           <enum>Qt::RichText</enum>
@@ -82,6 +100,13 @@
         </widget>
        </item>
        <item>
+        <widget class="QCheckBox" name="cb_regex">
+         <property name="text">
+          <string>Dialog.InputControl.Regex.Enable</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QLabel" name="lbl_mode">
          <property name="text">
           <string>Dialog.InputControl.Mode</string>
@@ -109,17 +134,54 @@
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="label">
+        <widget class="QLabel" name="lbl_new_entry">
          <property name="text">
           <string>Dialog.InputControl.NewEntry</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QComboBox" name="cb_text">
-         <property name="editable">
-          <bool>true</bool>
+        <widget class="QFrame" name="frame_entry">
+         <property name="frameShape">
+          <enum>QFrame::NoFrame</enum>
          </property>
+         <layout class="QHBoxLayout" name="horizontalLayout">
+          <property name="spacing">
+           <number>4</number>
+          </property>
+          <property name="leftMargin">
+           <number>2</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>2</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="QComboBox" name="cb_text">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="editable">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="btn_refresh_cb">
+            <property name="text">
+             <string>Source.InputSource.Reload</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </widget>
        </item>
        <item>

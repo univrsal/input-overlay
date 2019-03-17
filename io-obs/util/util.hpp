@@ -12,7 +12,7 @@
 
 #ifndef _WIN32
 #define LINUX
-#endif /* WINDOWS / LINUX */
+#endif /* WINDOWS / LINUX, TODO: do this in Cmake and include macOS */
 
 #ifdef LINUX
 #define STICK_MAX_VAL   127.f
@@ -70,9 +70,10 @@
 #define S_PORT                          "port"
 #define S_REFRESH                       "refresh_rate"
 #define S_CONTROL                       "control"
+#define S_REGEX                         "regex"
 #define S_CONTROL_MODE                  "control_mode"
 #define S_FILTER_COUNT                  "filter_count"
-#define S_FILTERS                       "filters"
+#define S_FILTER_BASE                   "filter_"
 
 /* Common values */
 #define S_INPUT_SOURCE                  "io.input_source"
@@ -273,6 +274,17 @@ inline bool ends_with(std::string const& value, std::string const& ending)
     if (ending.size() > value.size()) return false;
     return std::equal(ending.rbegin(), ending.rend(), value.rbegin());
 }
+
+/* Source:
+ * github.com/obsproject/obs-studio/blob/master/UI/frontend-plugins/frontend-tools/auto-scene-switcher-win.cpp
+ * github.com/obsproject/obs-studio/blob/master/UI/frontend-plugins/frontend-tools/auto-scene-switcher-nix.cpp
+ * github.com/obsproject/obs-studio/blob/master/UI/frontend-plugins/frontend-tools/auto-scene-switcher-osx.mm
+ * 
+ * Including the header directly didn't work
+ */
+
+void get_window_list(std::vector<std::string> &windows);
+void get_current_window_title(std::string &title);
 
 #ifdef DEBUG
 uint16_t random_vc();
