@@ -49,6 +49,7 @@ public:
     /* used if is persistent */
     virtual void merge(element_data* other)
     {
+        UNUSED_PARAMETER(other);
         /* NO-OP */
     }
 protected:

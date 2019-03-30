@@ -79,6 +79,7 @@ namespace hook
 #endif
 			pthread_mutex_unlock(&hook_running_mutex);
 #endif
+            default: ; /* Prevent missing case error */
         }
         process_event(event);
     }
@@ -134,8 +135,8 @@ namespace hook
 		input_data = new element_data_holder();
         data_initialized = input_data;
 #ifdef _DEBUG
-		blog(LOG_INFO, "[input-overlay] libuiohook init start... Dataholder@0x%X\n",
-			reinterpret_cast<int>(input_data));
+		blog(LOG_INFO, "[input-overlay] libuiohook init start... Dataholder@0x%lX\n",
+			reinterpret_cast<uint64_t>(input_data));
 #endif
 	}
 
@@ -253,9 +254,7 @@ namespace hook
 
         element_data* d = nullptr;
         element_data_wheel* wheel = nullptr;
-        element_data_mouse_stats* mouse_stats = nullptr;
         wheel_direction dir;
-        int new_amount;
 
         if ( os_gettime_ns() - hook::last_wheel >= SCROLL_TIMEOUT)
         {

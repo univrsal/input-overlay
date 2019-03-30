@@ -117,10 +117,10 @@ namespace network
         }
         else if (msg == MSG_GAMEPAD_DATA)
         {
-            uint8_t pad_id = 0, trigger_l = 0, trigger_r = 0;
+            uint8_t pad_id = 0;/*, trigger_l = 0, trigger_r = 0;
+            float stick_l_x, stick_l_y, stick_r_x, stick_r_y; // TODO: unused? */
             uint16_t pad_buttons = 0;
-            float stick_l_x, stick_l_y, stick_r_x, stick_r_y;
-            
+
             flag = netlib_read_uint8(buffer, &pad_id) && netlib_read_uint16(buffer, &pad_buttons) && pad_id < 4;
      
             if (flag)

@@ -1,11 +1,11 @@
 project(input-overlay)
 
-find_path(UIOHOOK_INCLUDE_DIR uiohook.h)
-find_library(UIOHOOK_LIBRARY uiohook)
-
 set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
+
+option(ENABLE_STATIC_NETLIB "Use packaged netlib version" ON)
+option(ENABLE_STATIC_UIOHOOK "Use packged uiohook version" ON)
 
 if(MSVC)
     set(input-overlay_PLATFORM_DEPS
@@ -13,15 +13,41 @@ if(MSVC)
 
     find_path(NETLIB_INCLUDE_DIR netlib.h)
     find_library(NETLIB_LIBRARY netlib)
+
+    find_path(UIOHOOK_INCLUDE_DIR uiohook.h)
+    find_library(UIOHOOK_LIBRARY uiohook)
 endif()
 
-if(UNIX)
-    add_definitions(-DLINUX_INPUT=1)
+if("${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
+    add_definitions(-DLINUX=1)
     add_definitions(-DUNIX=1)
-    set(NETLIB_INCLUDE_DIR
-        ${CMAKE_CURRENT_SOURCE_DIR}/../netlib/include)
-    set(NETLIB_LIBRARY
-        ${CMAKE_CURRENT_SOURCE_DIR}/../netlib/bin/linux64/libnetlib.so)
+
+    if (ENABLE_STATIC_NETLIB)
+        message("-- [input-overlay] Using precompiled netlib")
+        set(NETLIB_INCLUDE_DIR
+                ${CMAKE_CURRENT_SOURCE_DIR}/../netlib/include)
+        set(NETLIB_LIBRARY
+                ${CMAKE_CURRENT_SOURCE_DIR}/../netlib/bin/linux64/libnetlib.so)
+    else()
+        find_path(NETLIB_INCLUDE_DIR netlib.h)
+        find_library(NETLIB_LIBRARY netlib)
+    endif()
+
+    if (ENABLE_STATIC_UIOHOOK)
+        message("-- [input-overlay] Using precompiled uiohook")
+        set(UIOHOOK_INCLUDE_DIR
+                ${CMAKE_CURRENT_SOURCE_DIR}/../libuiohook/include)
+        set(UIOHOOK_LIBRARY
+                ${CMAKE_CURRENT_SOURCE_DIR}/../libuiohook/bin/linux64/libuiohook.so.0)
+    else()
+        find_path(UIOHOOK_INCLUDE_DIR uiohook.h)
+        find_library(UIOHOOK_LIBRARY uiohook)
+    endif()
+
+endif()
+
+if(APPLE)
+    # TODO: macOS stuff
 endif()
 
 macro(use_cxx14)
@@ -36,7 +62,6 @@ endmacro(use_cxx14)
 
 use_cxx14()
 
-#find_package(Qt5Core REQUIRED)
 find_package(Qt5Widgets REQUIRED)
 
 if(NOT Qt5Widgets_FOUND)
@@ -109,7 +134,7 @@ set(input-overlay_SOURCES
     network/io_client.cpp
     network/io_client.hpp
     ../ccl/ccl.cpp
-    ../ccl/ccl.hpp)
+    ../ccl/ccl.hpp util/window_helper.hpp util/window_helper_nix.cpp)
 
 set(io_settings_UI
 	gui/io_settings_dialog.ui)

@@ -143,7 +143,7 @@ void io_settings_dialog::BoxRefreshChanged(int value)
 void io_settings_dialog::RefreshWindowList()
 {
     std::vector<std::string> windows;
-    get_window_list(windows);
+    GetWindowList(windows);
     ui->cb_text->clear();
 
     for (auto window : windows)
@@ -261,7 +261,7 @@ bool input_filter::input_blocked()
     filter_mutex.lock();
     std::string current_window;
     auto flag = false;
-    get_current_window_title(current_window);
+    GetCurrentWindowTitle(current_window);
 
     for (auto filter : m_filters)
     {

@@ -22,7 +22,9 @@
 #elif defined UNIX
 #define DECLSPEC
 #define NETLIB_CALL
+#ifndef FORCE_INLINE
 #define FORCE_INLINE __attribute__((always_inline)) static __inline__
+#endif
 #endif
 
 #ifndef NULL

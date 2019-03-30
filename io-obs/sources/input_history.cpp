@@ -133,6 +133,8 @@ namespace sources
     bool clear_history(obs_properties_t* props, obs_property_t* property,
         void* data)
     {
+        UNUSED_PARAMETER(props);
+        UNUSED_PARAMETER(property);
         auto* source = reinterpret_cast<input_history_source*>(data);
         source->clear_history();
         return true;
@@ -141,6 +143,7 @@ namespace sources
     bool include_pad_changed(obs_properties* props, obs_property_t* p,
         obs_data_t* s)
     {
+        UNUSED_PARAMETER(p);
         const auto id = obs_properties_get(props, S_CONTROLLER_ID);
         obs_property_set_visible(id, obs_data_get_bool(s, S_HISTORY_INCLUDE_PAD));
         return true;
@@ -149,6 +152,7 @@ namespace sources
     /* Hides/shows all necessary properties of child text source */
     bool toggle_font_settings(obs_properties_t* props, obs_property_t* p, obs_data_t* data)
     {
+        UNUSED_PARAMETER(p);
         const auto show = obs_data_get_bool(data, S_HISTORY_SHOW_FONT);
         auto prop = obs_properties_first(props);
         auto use_gradient = obs_data_get_bool(data, "gradient");
@@ -196,8 +200,9 @@ namespace sources
 
     bool reload_connections(obs_properties_t* props, obs_property_t* property, void* data)
     {
+        UNUSED_PARAMETER(property);
+        UNUSED_PARAMETER(data);
         const auto connection_list = obs_properties_get(props, S_INPUT_SOURCE);
-        auto cfg = obs_frontend_get_global_config();
         if (connection_list)
             network::server_instance->get_clients(connection_list, network::local_input);
 

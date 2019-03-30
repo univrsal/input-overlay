@@ -49,6 +49,7 @@ namespace sources
 
     inline void input_source::tick(float seconds)
     {
+        UNUSED_PARAMETER(seconds);
         if (m_overlay->is_loaded())
         {
             m_overlay->refresh_data();
@@ -75,6 +76,7 @@ namespace sources
     bool path_changed(obs_properties_t* props, obs_property_t* p,
         obs_data_t* s)
     {
+        UNUSED_PARAMETER(p);
         const std::string cfg = obs_data_get_string(s, S_LAYOUT_FILE);
         auto temp = ccl_config(cfg, "");
 
@@ -92,17 +94,21 @@ namespace sources
 
     bool use_monitor_center_changed(obs_properties_t* props, obs_property_t* p, obs_data_t* data)
     {
+        UNUSED_PARAMETER(p);
+
         const auto use_center = obs_data_get_bool(data, S_MONITOR_USE_CENTER);
         obs_property_set_visible(GET_PROPS(S_MONITOR_H_CENTER), use_center);
         obs_property_set_visible(GET_PROPS(S_MONITOR_V_CENTER), use_center);
-
         return true;
     }
 
     bool reload_connections(obs_properties_t* props, obs_property_t* property, void* data)
     {
+        UNUSED_PARAMETER(property);
+        UNUSED_PARAMETER(data);
+
 		auto connection_list = obs_properties_get(props, S_INPUT_SOURCE);
-		auto cfg = obs_frontend_get_global_config();      
+
         if (connection_list)
 			network::server_instance->get_clients(connection_list, network::local_input);
 

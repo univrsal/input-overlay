@@ -11,19 +11,14 @@
 #ifndef CCT
 
 #ifndef _WIN32
+#ifndef LINUX
 #define LINUX
+#endif
 #endif /* WINDOWS / LINUX, TODO: do this in Cmake and include macOS */
 
 #ifdef LINUX
 #define STICK_MAX_VAL   127.f
 #include <math.h>
-
-#ifndef VC_KP_UP /* keypad arrows are undefined on linux */
-#define VC_KP_UP 0xEE48
-#define VC_KP_DOWN 0xEE4B
-#define VC_KP_LEFT 0xEE4D
-#define VC_KP_RIGHT 0xEE50
-#endif
 #else
 #define STICK_MAX_VAL       32767.f
 #endif
@@ -279,13 +274,6 @@ inline bool ends_with(std::string const& value, std::string const& ending)
  * github.com/obsproject/obs-studio/blob/master/UI/frontend-plugins/frontend-tools/auto-scene-switcher-win.cpp
  * github.com/obsproject/obs-studio/blob/master/UI/frontend-plugins/frontend-tools/auto-scene-switcher-nix.cpp
  * github.com/obsproject/obs-studio/blob/master/UI/frontend-plugins/frontend-tools/auto-scene-switcher-osx.mm
- * 
- * Including the header directly didn't work
  */
-
-void get_window_list(std::vector<std::string> &windows);
-void get_current_window_title(std::string &title);
-
-#ifdef DEBUG
-uint16_t random_vc();
-#endif
+extern void GetWindowList(std::vector<std::string> &windows);
+extern void GetCurrentWindowTitle(std::string &title);

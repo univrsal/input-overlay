@@ -19,6 +19,9 @@
 #include "gui/io_settings_dialog.hpp"
 #include "network/remote_connection.hpp"
 
+#ifdef LINUX
+extern void cleanupDisplay();
+#endif
 
 OBS_DECLARE_MODULE()
 OBS_MODULE_USE_DEFAULT_LOCALE("input-overlay", "en-US")
@@ -38,7 +41,7 @@ void set_defaults(config_t* cfg)
 
 bool obs_module_load()
 {
-    
+
 	auto cfg = obs_frontend_get_global_config();
 	set_defaults(cfg);
 
@@ -58,7 +61,7 @@ bool obs_module_load()
 
 	if (iohook)
         hook::start_hook();
-    
+
 	if (gamepad)
 		gamepad::start_pad_hook();
 
@@ -99,4 +102,7 @@ void obs_module_unload()
 
     if (hook::hook_initialized)
         hook::end_hook();
+#ifdef LINUX
+    cleanupDisplay();
+#endif
 }

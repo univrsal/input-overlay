@@ -43,7 +43,6 @@ struct GamepadState
 
 	void unload()
 	{
-	    return;
 		if (m_device_file)
 			fclose(m_device_file);
 		m_device_file = nullptr;
