@@ -7,11 +7,11 @@
 
 #pragma once
 
-#include <obs-module.h>
 #include "../util/util.hpp"
 #include "../util/layout_constants.hpp"
 #include "../hook/gamepad_hook.hpp"
 #include "../hook/hook_helper.hpp"
+#include <obs-module.h>
 
 class input_queue;
 
@@ -27,19 +27,18 @@ namespace sources
 {
     enum history_mode
     {
-        MODE_TEXT,
-        MODE_ICONS
+        MODE_TEXT, MODE_ICONS
     };
 
     enum history_flags
     {
-        FLAG_FIX_CUTTING    = 1 << 0,   /* Append space at the end of text to fix cursive fonts cutting off*/
-        FLAG_INCLUDE_MOUSE  = 1 << 1,   /* Include mouse clicks and scrolling */
-        FLAG_AUTO_CLEAR     = 1 << 2,   /* Use automatic clearing */
-        FLAG_REPEAT_KEYS    = 1 << 3,   /* Allow repeated keys*/
-        FLAG_CUSTOM_NAMES   = 1 << 4,   /* Use custom key name config */
-        FLAG_USE_FALLBACK   = 1 << 5,   /* Use hardcoded names if config doesn't define a key name */
-        FLAG_INCLUDE_PAD    = 1 << 6,   /* Include gamepad inputs */
+        FLAG_FIX_CUTTING = 1 << 0,   /* Append space at the end of text to fix cursive fonts cutting off*/
+        FLAG_INCLUDE_MOUSE = 1 << 1,   /* Include mouse clicks and scrolling */
+        FLAG_AUTO_CLEAR = 1 << 2,   /* Use automatic clearing */
+        FLAG_REPEAT_KEYS = 1 << 3,   /* Allow repeated keys*/
+        FLAG_CUSTOM_NAMES = 1 << 4,   /* Use custom key name config */
+        FLAG_USE_FALLBACK = 1 << 5,   /* Use hardcoded names if config doesn't define a key name */
+        FLAG_INCLUDE_PAD = 1 << 6,   /* Include gamepad inputs */
     };
 
     struct history_settings
@@ -71,29 +70,32 @@ namespace sources
         double m_collect_timer = 0.f;
     public:
         history_settings m_settings;
-        
+
         input_history_source(obs_source_t* source_, obs_data_t* settings);
+
         ~input_history_source();
 
         void clear_history() const;
 
         inline void update(obs_data_t* settings);
+
         inline void tick(float seconds);
+
         inline void render(gs_effect_t* effect) const;
 
-        uint32_t get_width() const { return m_settings.cx; }
-        uint32_t get_height() const { return m_settings.cy; }
+        uint32_t get_width() const
+        { return m_settings.cx; }
+
+        uint32_t get_height() const
+        { return m_settings.cy; }
     };
 
     /* Util for registering the source */
-    static bool clear_history(obs_properties_t* props, obs_property_t* property,
-        void* data);
+    static bool clear_history(obs_properties_t* props, obs_property_t* property, void* data);
 
-    static bool mode_changed(obs_properties_t* props, obs_property_t* p,
-        obs_data_t* s);
+    static bool mode_changed(obs_properties_t* props, obs_property_t* p, obs_data_t* s);
 
-    static bool include_pad_changed(obs_properties* props, obs_property_t* p,
-        obs_data_t* s);
+    static bool include_pad_changed(obs_properties* props, obs_property_t* p, obs_data_t* s);
 
     static obs_properties_t* get_properties_for_history(void* data);
 

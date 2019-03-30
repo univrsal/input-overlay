@@ -11,8 +11,7 @@
 
 void history_icons::unload_texture()
 {
-    if (m_icon_texture)
-    {
+    if (m_icon_texture) {
         obs_enter_graphics();
         gs_image_file_free(m_icon_texture);
         m_icon_texture = nullptr;
@@ -39,8 +38,7 @@ void history_icons::load_from_file(const char* cfg, const char* img)
     gs_image_file_init_texture(m_icon_texture);
     obs_leave_graphics();
 
-    if (!m_icon_texture->loaded)
-    {
+    if (!m_icon_texture->loaded) {
         blog(LOG_ERROR, "Error: Failed to load key icon image from %s", img);
         unload_texture();
         return;
@@ -49,19 +47,16 @@ void history_icons::load_from_file(const char* cfg, const char* img)
     auto cfg_loaded = false;
     auto ccl = ccl_config(cfg, "");
 
-    if (!ccl.is_empty())
-    {
+    if (!ccl.is_empty()) {
         cfg_loaded = true;
         m_icon_count = ccl.get_int("icon_count");
         m_icon_w = ccl.get_int("icon_w");
         m_icon_h = ccl.get_int("icon_h");
         const auto node = ccl.get_node("icon_order");
 
-        if (node)
-        {
+        if (node) {
             auto icon_order = node->get_value();
-            for (auto i = 0; i < m_icon_count; i++)
-            {
+            for (auto i = 0; i < m_icon_count; i++) {
                 icon ico{};
                 /* TODO: Alternative? */
                 const auto vc = 0x00f;// util_read_hex(icon_order);
@@ -70,17 +65,13 @@ void history_icons::load_from_file(const char* cfg, const char* img)
 
                 m_icons[vc] = ico;
 
-                if (icon_order.empty())
-                {
+                if (icon_order.empty()) {
                     m_icon_count = i;
                     break;
                 }
             }
-        }
-        else
-        {
-            blog(LOG_ERROR, "Loading key icons from %s failed. No ccl data!",
-                cfg);
+        } else {
+            blog(LOG_ERROR, "Loading key icons from %s failed. No ccl data!", cfg);
         }
     }
 

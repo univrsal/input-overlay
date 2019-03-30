@@ -5,34 +5,28 @@
  * github.com/univrsal/input-overlay
  */
 
-#include <obs-frontend-api.h>
-#include <util/platform.h>
-#include <util/config-file.h>
 #include "io_settings_dialog.hpp"
 #include "network/remote_connection.hpp"
 #include "network/io_server.hpp"
 #include "util/util.hpp"
+#include <obs-frontend-api.h>
+#include <util/platform.h>
+#include <util/config-file.h>
 
 input_filter io_window_filters; /* Global filters */
 std::mutex filter_mutex;        /* Thread safety for writing/reading filters */
 
-io_settings_dialog::io_settings_dialog(QWidget* parent)
-    : QDialog(parent, Qt::Dialog),
-    ui(new Ui::io_config_dialog)
+io_settings_dialog::io_settings_dialog(QWidget* parent) : QDialog(parent, Qt::Dialog), ui(new Ui::io_config_dialog)
 {
     ui->setupUi(this);
 
-    connect(ui->button_box, &QDialogButtonBox::accepted,
-        this, &io_settings_dialog::FormAccepted);
+    connect(ui->button_box, &QDialogButtonBox::accepted, this, &io_settings_dialog::FormAccepted);
 
-	connect(ui->cb_enable_remote, &QCheckBox::stateChanged,
-		this, &io_settings_dialog::CbRemoteStateChanged);
+    connect(ui->cb_enable_remote, &QCheckBox::stateChanged, this, &io_settings_dialog::CbRemoteStateChanged);
 
-    connect(ui->btn_refresh, &QPushButton::clicked,
-        this, &io_settings_dialog::PingClients);
+    connect(ui->btn_refresh, &QPushButton::clicked, this, &io_settings_dialog::PingClients);
 
-    connect(ui->cb_enable_control, &QCheckBox::stateChanged,
-        this, &io_settings_dialog::CbInputControlStateChanged);
+    connect(ui->cb_enable_control, &QCheckBox::stateChanged, this, &io_settings_dialog::CbInputControlStateChanged);
     connect(ui->btn_refresh_cb, &QPushButton::clicked, this, &io_settings_dialog::RefreshWindowList);
     connect(ui->btn_add, &QPushButton::clicked, this, &io_settings_dialog::AddFilter);
     connect(ui->btn_remove, &QPushButton::clicked, this, &io_settings_dialog::RemoveFilter);
@@ -60,20 +54,20 @@ io_settings_dialog::io_settings_dialog(QWidget* parent)
     CbRemoteStateChanged(config_get_bool(cfg, S_REGION, S_REMOTE));
     CbInputControlStateChanged(config_get_bool(cfg, S_REGION, S_CONTROL));
 
-	auto text = ui->lbl_status->text().toStdString();
-	auto pos = text.find("%s");
+    auto text = ui->lbl_status->text().toStdString();
+    auto pos = text.find("%s");
     if (pos != std::string::npos)
-	    text.replace(pos, strlen("%s"), network::get_status());
-	pos = text.find("%s");
-	if (pos != std::string::npos)
-		text.replace(pos, strlen("%s"), network::local_ip);
-	ui->lbl_status->setText(text.c_str());
+        text.replace(pos, strlen("%s"), network::get_status());
+    pos = text.find("%s");
+    if (pos != std::string::npos)
+        text.replace(pos, strlen("%s"), network::local_ip);
+    ui->lbl_status->setText(text.c_str());
 
 
     /* Check for new connections every 250ms */
-	m_refresh = new QTimer(this);
-	connect(m_refresh, SIGNAL(timeout()), SLOT(RefreshConnectionsList()));
-	m_refresh->start(250);
+    m_refresh = new QTimer(this);
+    connect(m_refresh, SIGNAL(timeout()), SLOT(RefreshConnectionsList()));
+    m_refresh->start(250);
 
     /* Add current open windows to filter list */
     RefreshWindowList();
@@ -82,7 +76,7 @@ io_settings_dialog::io_settings_dialog(QWidget* parent)
 
 void io_settings_dialog::showEvent(QShowEvent* event)
 {
-    Q_UNUSED(event);
+    Q_UNUSED(event)
     RefreshConnectionsList();
 }
 
@@ -93,28 +87,27 @@ void io_settings_dialog::toggleShowHide()
 
 void io_settings_dialog::RefreshConnectionsList()
 {
-	/* Populate client list */
-	if (network::network_flag && network::server_instance && network::server_instance->clients_changed())
-	{
-		ui->box_connections->clear();
-		QStringList list;
-		std::vector<const char*> names;
+    /* Populate client list */
+    if (network::network_flag && network::server_instance && network::server_instance->clients_changed()) {
+        ui->box_connections->clear();
+        QStringList list;
+        std::vector<const char*> names;
         /* I'd do it differently, but including Qt headers and obs headers
          * creates conflicts with LOG_WARNING...
          */
-		network::server_instance->get_clients(names);
+        network::server_instance->get_clients(names);
 
-		for (auto& name : names)
-			list.append(name);
-		ui->box_connections->addItems(list);
-	}
+        for (auto &name : names)
+            list.append(name);
+        ui->box_connections->addItems(list);
+    }
 }
 
 void io_settings_dialog::CbRemoteStateChanged(int state)
 {
-	ui->cb_log->setEnabled(state);
-	ui->box_port->setEnabled(state);
-	ui->box_connections->setEnabled(state);
+    ui->cb_log->setEnabled(state);
+    ui->box_port->setEnabled(state);
+    ui->box_connections->setEnabled(state);
     ui->btn_refresh->setEnabled(state);
     ui->box_refresh_rate->setEnabled(state);
     ui->cb_regex->setEnabled(state);
@@ -148,7 +141,7 @@ void io_settings_dialog::RefreshWindowList()
 
     for (auto window : windows)
         ui->cb_text->addItem(window.c_str());
-    
+
 }
 
 void io_settings_dialog::AddFilter()
@@ -159,8 +152,7 @@ void io_settings_dialog::AddFilter()
 
 void io_settings_dialog::RemoveFilter()
 {
-    if (ui->list_filters->selectedItems().size() > 0)
-    {
+    if (ui->list_filters->selectedItems().size() > 0) {
         io_window_filters.remove_filter(ui->list_filters->currentIndex().row());
         ui->list_filters->removeItemWidget(ui->list_filters->currentItem());
     }
@@ -179,7 +171,7 @@ void io_settings_dialog::FormAccepted()
     config_set_bool(cfg, S_REGION, S_GAMEPAD, ui->cb_gamepad_hook->isChecked());
     config_set_bool(cfg, S_REGION, S_OVERLAY, ui->cb_enable_overlay->isChecked());
     config_set_bool(cfg, S_REGION, S_HISTORY, ui->cb_enable_history->isChecked());
-    
+
     config_set_bool(cfg, S_REGION, S_REMOTE, ui->cb_enable_remote->isChecked());
     config_set_bool(cfg, S_REGION, S_LOGGING, ui->cb_log->isChecked());
     config_set_int(cfg, S_REGION, S_PORT, ui->box_port->value());
@@ -208,9 +200,8 @@ void input_filter::read_from_config(config_t* cfg)
     m_regex = config_get_bool(cfg, S_REGION, S_REGEX);
     m_whitelist = config_get_int(cfg, S_REGION, S_CONTROL_MODE) == 0;
     const int filter_count = config_get_int(cfg, S_REGION, S_FILTER_COUNT);
-    
-    for (auto i = 0; i < filter_count; i++)
-    {
+
+    for (auto i = 0; i < filter_count; i++) {
         const auto str = config_get_string(cfg, S_REGION, (base_id + std::to_string(i)).c_str());
         if (str && strlen(str) > 0)
             m_filters.append(str);
@@ -224,10 +215,8 @@ void input_filter::write_to_config(config_t* cfg)
 
     config_set_int(cfg, S_REGION, S_FILTER_COUNT, m_filters.size());
 
-    for (auto i = 0; i < m_filters.size(); i++)
-    {
-        config_set_string(cfg, S_REGION, (base_id + std::to_string(i)).c_str(),
-            m_filters[i].toStdString().c_str());
+    for (auto i = 0; i < m_filters.size(); i++) {
+        config_set_string(cfg, S_REGION, (base_id + std::to_string(i)).c_str(), m_filters[i].toStdString().c_str());
     }
 
     filter_mutex.unlock();
@@ -263,19 +252,15 @@ bool input_filter::input_blocked()
     auto flag = false;
     GetCurrentWindowTitle(current_window);
 
-    for (auto filter : m_filters)
-    {
-        if (filter == current_window.c_str())
-        {
+    for (auto filter : m_filters) {
+        if (filter == current_window.c_str()) {
             flag = !m_whitelist;
             break;
         }
 
-        if (m_regex)
-        {
+        if (m_regex) {
             QRegExp regex(filter);
-            if (regex.isValid() && regex.exactMatch(current_window.c_str()))
-            {
+            if (regex.isValid() && regex.exactMatch(current_window.c_str())) {
                 flag = !m_whitelist;
                 break;
             }

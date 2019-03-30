@@ -6,6 +6,7 @@
  */
 
 #pragma once
+
 #include <cstdint>
 #include <vector>
 #include <memory>
@@ -13,11 +14,13 @@
 
 class key_names;
 
-namespace sources {
+namespace sources
+{
     struct history_settings;
 }
 
 class effect;
+
 class element_data_holder;
 
 class input_entry
@@ -34,28 +37,41 @@ class input_entry
     obs_source_t* m_text_source = nullptr; /* Only used in text mode */
 public:
     explicit input_entry(obs_source_t* source);
+
     input_entry();
+
     ~input_entry();
 
     uint16_t get_width() const;
+
     uint16_t get_height() const;
 
     vec2* get_pos();
+
     std::string build_string(key_names* names, bool use_fallback);
-    
+
     void set_pos(float x, float y);
+
     void set_text(const char* text, obs_data_t* settings);
 
     void collect_inputs(sources::history_settings* settings);
+
     void tick(float seconds);
+
     void add_effect(effect* e);
+
     void render_text();
+
     void render_icons(sources::history_settings* settings);
+
     void clear();
+
     void mark_for_removal();
-    
+
     bool finished() const;
+
     bool effects_finished() const;
+
     bool empty() const;
 
     void test();

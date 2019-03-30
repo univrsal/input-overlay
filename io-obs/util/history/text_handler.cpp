@@ -10,52 +10,45 @@
 #include "input_entry.hpp"
 #include "key_names.hpp"
 
-
 #ifdef _WIN32
 #define TEXT_SOURCE "text_gdiplus\0"
 #else
 #define TEXT_SOURCE "text_ft2_source\0"
 #endif
 
-void text_handler::make_body_text(std::string& str)
+void text_handler::make_body_text(std::string &str)
 {
-    switch(m_settings->dir)
-    {
-    case DIR_DOWN:
-    case DIR_LEFT:
-        for (const auto& line : m_values)
-        {
-            str += line->keys;
-            if (line->repeat > 1)
-                str += " (x" + std::to_string(line->repeat) + ")\n";
-            else
-                str += "\n";
-        }
-        break;
-    default:;
-        for (auto line = m_values.rbegin(); line != m_values.rend(); ++line)
-        {
-            str += line->get()->keys;
-            if (line->get()->repeat > 1)
-                str += " (x" + std::to_string(line->get()->repeat) + ")\n";
-            else
-                str += "\n";
-        }
+    switch (m_settings->dir) {
+        case DIR_DOWN:
+        case DIR_LEFT:
+            for (const auto &line : m_values) {
+                str += line->keys;
+                if (line->repeat > 1)
+                    str += " (x" + std::to_string(line->repeat) + ")\n";
+                else
+                    str += "\n";
+            }
+            break;
+        default:;
+            for (auto line = m_values.rbegin(); line != m_values.rend(); ++line) {
+                str += line->get()->keys;
+                if (line->get()->repeat > 1)
+                    str += " (x" + std::to_string(line->get()->repeat) + ")\n";
+                else
+                    str += "\n";
+            }
     }
- 
-    if (ends_with(str, "\n"))
-    {
+
+    if (ends_with(str, "\n")) {
         str.pop_back(); /* Get rid of last '\n' */
     }
 }
 
-text_handler::text_handler(sources::history_settings* settings)
-    : m_settings(settings)
+text_handler::text_handler(sources::history_settings* settings) : m_settings(settings)
 {
 
     /* The body source uses the input-history settings */
-    m_text_source = obs_source_create(TEXT_SOURCE, "history-fade-out-text",
-        settings->settings, nullptr);
+    m_text_source = obs_source_create(TEXT_SOURCE, "history-fade-out-text", settings->settings, nullptr);
     obs_source_add_active_child(settings->source, m_text_source);
     m_display = new input_entry(m_text_source);
 }
@@ -77,14 +70,13 @@ void text_handler::load_names(const char* cfg)
 
 void text_handler::update()
 {
-    switch(m_settings->dir)
-    {
-    case DIR_LEFT:
-    case DIR_RIGHT:
-        obs_data_set_bool(m_settings->settings, "vertical", true);
-        break;
-    default:
-        obs_data_set_bool(m_settings->settings, "vertical", false);
+    switch (m_settings->dir) {
+        case DIR_LEFT:
+        case DIR_RIGHT:
+            obs_data_set_bool(m_settings->settings, "vertical", true);
+            break;
+        default:
+            obs_data_set_bool(m_settings->settings, "vertical", false);
     }
 
     obs_source_update(m_text_source, m_settings->settings);
@@ -98,16 +90,12 @@ void text_handler::tick(const float seconds)
 
 void text_handler::swap(input_entry* current)
 {
-    auto new_line = current->build_string(&m_names,
-        m_settings->flags & sources::FLAG_USE_FALLBACK);
+    auto new_line = current->build_string(&m_names, m_settings->flags & sources::FLAG_USE_FALLBACK);
 
-    if (!m_values.empty() && m_values.begin()->get()->keys == new_line)
-    {
+    if (!m_values.empty() && m_values.begin()->get()->keys == new_line) {
         if (m_settings->flags & sources::FLAG_REPEAT_KEYS)
             m_values.begin()->get()->repeat++;
-    }
-    else
-    {
+    } else {
         m_values.insert(m_values.begin(), std::make_unique<key_combination>(new_line));
     }
 

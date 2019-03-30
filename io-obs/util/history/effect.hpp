@@ -13,6 +13,7 @@ class effect
     float m_time;
 public:
     effect(float duration);
+
     virtual ~effect() = default;
 
     virtual void tick(float seconds);

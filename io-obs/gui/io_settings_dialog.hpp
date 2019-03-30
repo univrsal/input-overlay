@@ -20,13 +20,19 @@ class input_filter
     bool m_whitelist = false;
 public:
     ~input_filter();
+
     void read_from_config(config_t* cfg);
+
     void write_to_config(config_t* cfg);
 
     void add_filter(const char* filter);
+
     void remove_filter(int index);
+
     void set_regex(bool enabled);
+
     void set_whitelist(bool wl);
+
     bool input_blocked();
 };
 
@@ -37,26 +43,37 @@ Q_OBJECT
 
 public:
     explicit io_settings_dialog(QWidget* parent = nullptr);
+
     ~io_settings_dialog();
 
     void showEvent(QShowEvent* event) override;
+
     void toggleShowHide();
-	
+
 private Q_SLOTS:
+
     void RefreshConnectionsList();
+
     void FormAccepted();
-	void CbRemoteStateChanged(int state);
+
+    void CbRemoteStateChanged(int state);
+
     void CbInputControlStateChanged(int state);
+
     void PingClients();
+
     void BoxRefreshChanged(int value);
+
     void RefreshWindowList();
+
     void AddFilter();
+
     void RemoveFilter();
-   
+
 private:
     Ui::io_config_dialog* ui;
-	QTimer* m_refresh;
-    
+    QTimer* m_refresh;
+
 };
 
 static io_settings_dialog* settings_dialog = nullptr;

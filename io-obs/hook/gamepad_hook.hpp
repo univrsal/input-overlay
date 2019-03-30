@@ -16,10 +16,12 @@ namespace gamepad
 {
     /* Linux implementation */
 #ifdef LINUX
+
 #include <stdlib.h>
 #include <string>
 #include <malloc.h>
 #include <unistd.h>
+
 #define ID_TYPE         6
 #define ID_BUTTON       1
 #define ID_STATE_1      4
@@ -34,60 +36,63 @@ namespace gamepad
 #define ID_R_ANALOG_Y   4
 #define ID_R_TRIGGER    5
 
-struct GamepadState
-{
-	~GamepadState()
-	{
-		unload();
-	}
+    struct GamepadState
+    {
+        ~GamepadState()
+        {
+            unload();
+        }
 
-	void unload()
-	{
-		if (m_device_file)
-			fclose(m_device_file);
-		m_device_file = nullptr;
-	}
+        void unload()
+        {
+            if (m_device_file)
+                fclose(m_device_file);
+            m_device_file = nullptr;
+        }
 
-	void load()
-	{
-		m_device_file = fopen(m_path.c_str(), "wb+");
-		if (m_device_file)
-		{
-			void * tmp = malloc(8 * 12 * sizeof(char));
-			fread(tmp, sizeof(char) * 8 * 12, 1, m_device_file);
-			free(tmp);
-		}
-		
+        void load()
+        {
+            m_device_file = fopen(m_path.c_str(), "wb+");
+            if (m_device_file) {
+                void* tmp = malloc(8 * 12 * sizeof(char));
+                fread(tmp, sizeof(char) * 8 * 12, 1, m_device_file);
+                free(tmp);
+            }
+
 #if _DEBUG
-		blog(LOG_INFO, "Gamepad %i present: %s", m_pad_id, m_device_file ? "true" : "false");
+            blog(LOG_INFO, "Gamepad %i present: %s", m_pad_id, m_device_file ? "true" : "false");
 #endif
-	}
+        }
 
-	bool valid() { return m_device_file != nullptr && m_pad_id >= 0; }
+        bool valid()
+        { return m_device_file != nullptr && m_pad_id >= 0; }
 
-	void init(uint8_t pad_id)
-	{
-	    unload();
-	    m_pad_id = pad_id;
-		m_path.clear();
-		m_path = "/dev/input/js";
-		m_path.append(std::to_string(pad_id));
-		load();
-	}
+        void init(uint8_t pad_id)
+        {
+            unload();
+            m_pad_id = pad_id;
+            m_path.clear();
+            m_path = "/dev/input/js";
+            m_path.append(std::to_string(pad_id));
+            load();
+        }
 
-	FILE * dev() { return m_device_file; }
+        FILE* dev()
+        { return m_device_file; }
 
-	uint8_t get_id() const { return static_cast<uint8_t>(m_pad_id); }
-private:
-	FILE * m_device_file = nullptr;
-	std::string m_path;
-	int8_t m_pad_id = -1;
-};
+        uint8_t get_id() const
+        { return static_cast<uint8_t>(m_pad_id); }
+
+    private:
+        FILE* m_device_file = nullptr;
+        std::string m_path;
+        int8_t m_pad_id = -1;
+    };
+
 #endif /* LINUX */
 
     /* Windows implementation */
 #ifdef _WIN32
-
     struct GamepadState
     {
         ~GamepadState()
@@ -167,5 +172,4 @@ private:
     /* Init state of hook */
     extern bool gamepad_hook_state;
     /* False will end thread */
-    extern bool gamepad_hook_run_flag;
-}
+    extern bool gamepad_hook_run_flag; }

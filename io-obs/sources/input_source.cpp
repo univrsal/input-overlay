@@ -5,7 +5,6 @@
  * github.com/univrsal/input-overlay
  */
 
-#include <obs-frontend-api.h>
 #include "input_source.hpp"
 #include "../hook/hook_helper.hpp"
 #include "../hook/gamepad_hook.hpp"
@@ -16,6 +15,7 @@
 #include "util/config-file.h"
 #include "network/remote_connection.hpp"
 #include "network/io_server.hpp"
+#include <obs-frontend-api.h>
 
 namespace sources
 {
@@ -31,7 +31,7 @@ namespace sources
             m_settings.layout_file = config;
             m_overlay->load();
         }
-        
+
         m_settings.gamepad = obs_data_get_int(settings, S_CONTROLLER_ID);
 #ifdef _WIN32
         m_settings.left_dz = obs_data_get_int(settings, S_CONTROLLER_L_DEAD_ZONE) / STICK_MAX_VAL;
@@ -39,8 +39,7 @@ namespace sources
 #endif
         m_settings.mouse_sens = obs_data_get_int(settings, S_MOUSE_SENS);
 
-        if ((m_settings.use_center = obs_data_get_bool(settings, S_MONITOR_USE_CENTER)))
-        {        
+        if ((m_settings.use_center = obs_data_get_bool(settings, S_MONITOR_USE_CENTER))) {
             m_settings.monitor_h = obs_data_get_int(settings, S_MONITOR_H_CENTER);
             m_settings.monitor_w = obs_data_get_int(settings, S_MONITOR_V_CENTER);
             m_settings.mouse_deadzone = obs_data_get_int(settings, S_MOUSE_DEAD_ZONE);
@@ -50,8 +49,7 @@ namespace sources
     inline void input_source::tick(float seconds)
     {
         UNUSED_PARAMETER(seconds);
-        if (m_overlay->is_loaded())
-        {
+        if (m_overlay->is_loaded()) {
             m_overlay->refresh_data();
         }
     }
@@ -61,20 +59,15 @@ namespace sources
         if (!m_overlay->get_texture() || !m_overlay->get_texture()->texture)
             return;
 
-        if (m_settings.layout_file.empty() || !m_overlay->is_loaded())
-        {
-            gs_effect_set_texture(gs_effect_get_param_by_name(effect, "image"),
-                m_overlay->get_texture()->texture);
+        if (m_settings.layout_file.empty() || !m_overlay->is_loaded()) {
+            gs_effect_set_texture(gs_effect_get_param_by_name(effect, "image"), m_overlay->get_texture()->texture);
             gs_draw_sprite(m_overlay->get_texture()->texture, 0, cx, cy);
-        }
-        else
-        {
+        } else {
             m_overlay->draw(effect);
         }
     }
 
-    bool path_changed(obs_properties_t* props, obs_property_t* p,
-        obs_data_t* s)
+    bool path_changed(obs_properties_t* props, obs_property_t* p, obs_data_t* s)
     {
         UNUSED_PARAMETER(p);
         const std::string cfg = obs_data_get_string(s, S_LAYOUT_FILE);
@@ -84,8 +77,8 @@ namespace sources
 
         obs_property_set_visible(GET_PROPS(S_CONTROLLER_L_DEAD_ZONE), flags & FLAG_LEFT_STICK);
         obs_property_set_visible(GET_PROPS(S_CONTROLLER_R_DEAD_ZONE), flags & FLAG_RIGHT_STICK);
-        obs_property_set_visible(GET_PROPS(S_CONTROLLER_ID), flags & FLAG_GAMEPAD
-            || (flags & FLAG_LEFT_STICK || flags & FLAG_RIGHT_STICK));
+        obs_property_set_visible(GET_PROPS(S_CONTROLLER_ID),
+                                 flags & FLAG_GAMEPAD || (flags & FLAG_LEFT_STICK || flags & FLAG_RIGHT_STICK));
         obs_property_set_visible(GET_PROPS(S_MOUSE_SENS), flags & FLAG_MOUSE);
         obs_property_set_visible(GET_PROPS(S_MONITOR_USE_CENTER), flags & FLAG_MOUSE);
         obs_property_set_visible(GET_PROPS(S_MOUSE_DEAD_ZONE), flags & FLAG_MOUSE);
@@ -107,16 +100,15 @@ namespace sources
         UNUSED_PARAMETER(property);
         UNUSED_PARAMETER(data);
 
-		auto connection_list = obs_properties_get(props, S_INPUT_SOURCE);
+        auto connection_list = obs_properties_get(props, S_INPUT_SOURCE);
 
         if (connection_list)
-			network::server_instance->get_clients(connection_list, network::local_input);
+            network::server_instance->get_clients(connection_list, network::local_input);
 
-		return true;
+        return true;
     }
 
-    bool reload_pads(obs_properties_t* props, obs_property_t* property,
-        void* data)
+    bool reload_pads(obs_properties_t* props, obs_property_t* property, void* data)
     {
         UNUSED_PARAMETER(props);
         UNUSED_PARAMETER(property);
@@ -135,50 +127,42 @@ namespace sources
         const auto props = obs_properties_create();
 
         /* If enabled add dropdown to select input source */
-        if (config_get_bool(config, S_REGION, S_REMOTE))
-        {
-			auto list = obs_properties_add_list(props, S_INPUT_SOURCE, T_INPUT_SOURCE, OBS_COMBO_TYPE_LIST, OBS_COMBO_FORMAT_INT);
-			obs_properties_add_button(props, S_RELOAD_CONNECTIONS, T_RELOAD_CONNECTIONS, reload_connections);
-            if (network::network_flag)
-            {
-				network::server_instance->get_clients(list, network::local_input);
+        if (config_get_bool(config, S_REGION, S_REMOTE)) {
+            auto list = obs_properties_add_list(props, S_INPUT_SOURCE, T_INPUT_SOURCE, OBS_COMBO_TYPE_LIST,
+                                                OBS_COMBO_FORMAT_INT);
+            obs_properties_add_button(props, S_RELOAD_CONNECTIONS, T_RELOAD_CONNECTIONS, reload_connections);
+            if (network::network_flag) {
+                network::server_instance->get_clients(list, network::local_input);
             }
         }
 
-        auto filter_img = util_file_filter(
-            T_FILTER_IMAGE_FILES, "*.jpg *.png *.bmp");
+        auto filter_img = util_file_filter(T_FILTER_IMAGE_FILES, "*.jpg *.png *.bmp");
         auto filter_text = util_file_filter(T_FILTER_TEXT_FILES, "*.ini");
 
         /* Config and texture file path */
-        obs_properties_add_path(props, S_OVERLAY_FILE, T_TEXTURE_FILE,
-            OBS_PATH_FILE,
-            filter_img.c_str(), img_path.c_str());
+        obs_properties_add_path(props, S_OVERLAY_FILE, T_TEXTURE_FILE, OBS_PATH_FILE, filter_img.c_str(),
+                                img_path.c_str());
 
-        const auto cfg = obs_properties_add_path(props, S_LAYOUT_FILE, T_LAYOUT_FILE,
-            OBS_PATH_FILE,
-            filter_text.c_str(), layout_path.c_str());
+        const auto cfg = obs_properties_add_path(props, S_LAYOUT_FILE, T_LAYOUT_FILE, OBS_PATH_FILE,
+                                                 filter_text.c_str(), layout_path.c_str());
 
         obs_property_set_modified_callback(cfg, path_changed);
 
         /* Mouse stuff */
-        obs_property_set_visible(obs_properties_add_int_slider(props,
-            S_MOUSE_SENS, T_MOUSE_SENS, 1, 500, 1), false);
+        obs_property_set_visible(obs_properties_add_int_slider(props, S_MOUSE_SENS, T_MOUSE_SENS, 1, 500, 1), false);
 
-        const auto use_center = obs_properties_add_bool(
-            props, S_MONITOR_USE_CENTER, T_MONITOR_USE_CENTER);
-        obs_property_set_modified_callback(use_center,
-            use_monitor_center_changed);
+        const auto use_center = obs_properties_add_bool(props, S_MONITOR_USE_CENTER, T_MONITOR_USE_CENTER);
+        obs_property_set_modified_callback(use_center, use_monitor_center_changed);
 
-        obs_property_set_visible(obs_properties_add_int(props, S_MONITOR_H_CENTER, T_MONITOR_H_CENTER,
-            -9999, 9999, 1), false);
-        obs_property_set_visible(obs_properties_add_int(props, S_MONITOR_V_CENTER, T_MONITOR_V_CENTER,
-            -9999, 9999, 1), false);
-        obs_property_set_visible(obs_properties_add_int_slider(props, S_MOUSE_DEAD_ZONE, T_MOUSE_DEAD_ZONE,
-            0, 500, 1), false);
+        obs_property_set_visible(obs_properties_add_int(props, S_MONITOR_H_CENTER, T_MONITOR_H_CENTER, -9999, 9999, 1),
+                                 false);
+        obs_property_set_visible(obs_properties_add_int(props, S_MONITOR_V_CENTER, T_MONITOR_V_CENTER, -9999, 9999, 1),
+                                 false);
+        obs_property_set_visible(obs_properties_add_int_slider(props, S_MOUSE_DEAD_ZONE, T_MOUSE_DEAD_ZONE, 0, 500, 1),
+                                 false);
 
         /* Gamepad stuff */
-        obs_property_set_visible(obs_properties_add_int(props, S_CONTROLLER_ID,
-            T_CONTROLLER_ID, 0, 3, 1), false);
+        obs_property_set_visible(obs_properties_add_int(props, S_CONTROLLER_ID, T_CONTROLLER_ID, 0, 3, 1), false);
 
 #if _WIN32 /* Linux only allows analog stick values 0 - 127 -> No reason for a deadzone */
         obs_property_set_visible(obs_properties_add_int_slider(props, S_CONTROLLER_L_DEAD_ZONE,
@@ -203,10 +187,11 @@ namespace sources
         si.output_flags = OBS_SOURCE_VIDEO;
         si.get_properties = get_properties_for_overlay;
 
-        si.get_name = [](void*) { return obs_module_text("InputOverlay"); };
+        si.get_name = [](void*)
+        { return obs_module_text("InputOverlay"); };
         si.create = [](obs_data_t* settings, obs_source_t* source)
         {
-            return (void*)new input_source(source, settings);
+            return (void*) new input_source(source, settings);
         };
         si.destroy = [](void* data)
         {

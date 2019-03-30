@@ -11,14 +11,13 @@ extern "C" {
 #include <graphics/graphics.h>
 }
 
-scale_effect::scale_effect(const float duration, const float scale)
-    : effect(duration), m_scale(0.f)
+scale_effect::scale_effect(const float duration, const float scale) : effect(duration), m_scale(0.f)
 {
     m_delta = scale / duration;
 }
 
-scale_effect::scale_effect(const float duration, const float scale, const float start)
-    : effect(duration), m_scale(start)
+scale_effect::scale_effect(const float duration, const float scale, const float start) : effect(duration),
+                                                                                         m_scale(start)
 {
     m_delta = scale / duration;
 }

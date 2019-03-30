@@ -11,21 +11,17 @@
 
 void element_data_button::merge(element_data* other)
 {
-    if (other && other->get_type() == BUTTON)
-    {
+    if (other && other->get_type() == BUTTON) {
         const auto other_btn = dynamic_cast<element_data_button*>(other);
-        if (other_btn)
-        {
+        if (other_btn) {
             m_state = other_btn->m_state;
         }
-    }
-    else
-    {
+    } else {
         m_state = STATE_RELEASED;
     }
 }
 
-void element_button::load(ccl_config* cfg, const std::string& id)
+void element_button::load(ccl_config* cfg, const std::string &id)
 {
     element_texture::load(cfg, id);
     m_keycode = cfg->get_int(id + CFG_KEY_CODE);
@@ -35,26 +31,19 @@ void element_button::load(ccl_config* cfg, const std::string& id)
     is_gamepad = (m_keycode >> 8) == (VC_PAD_MASK >> 8);
 }
 
-void element_button::draw(gs_effect_t* effect, gs_image_file_t* image,
-    element_data* data, sources::overlay_settings* settings)
+void element_button::draw(gs_effect_t* effect, gs_image_file_t* image, element_data* data,
+                          sources::overlay_settings* settings)
 {
-    if (data)
-    {
+    if (data) {
         const auto button = dynamic_cast<element_data_button*>(data);
-        if (button)
-        {
-            if (button->get_state() == STATE_PRESSED)
-            {
+        if (button) {
+            if (button->get_state() == STATE_PRESSED) {
                 element_texture::draw(effect, image, &m_pressed);
-            }
-            else
-            {
+            } else {
                 element_texture::draw(effect, image, nullptr);
             }
         }
-    }
-    else
-    {
+    } else {
         element_texture::draw(effect, image, nullptr);
     }
 }

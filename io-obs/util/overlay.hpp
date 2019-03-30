@@ -8,21 +8,22 @@
 #pragma once
 
 #ifdef LINUX
+
 #include <stdint.h>
+
 #endif
+
 #include <memory>
 #include <vector>
 #include <map>
 #include "element/element.hpp"
-
 #include "../hook/hook_helper.hpp"
 
 class ccl_config;
+
 class element_data;
 
 typedef struct gs_image_file gs_image_file_t;
-
-//namespace Data {
 
 class overlay
 {
@@ -31,7 +32,7 @@ public:
 
     ~overlay();
 
-    overlay(sources::overlay_settings* settings);
+    explicit overlay(sources::overlay_settings* settings);
 
     bool load();
 
@@ -53,10 +54,14 @@ public:
 
 private:
     bool load_cfg();
+
     bool load_texture();
+
     void unload_texture() const;
+
     void unload_elements();
-    void load_element(ccl_config* cfg, const std::string& id, bool debug);
+
+    void load_element(ccl_config* cfg, const std::string &id, bool debug);
 
     static const char* element_type_to_string(element_type t);
 

@@ -5,26 +5,23 @@
  * github.com/univrsal/input-overlay
  */
 
-#include <obs-module.h>
 #include "key_names.hpp"
 #include "../../../ccl/ccl.hpp"
+#include <obs-module.h>
 
 void key_names::load_from_file(const char* path)
 {
     m_names.clear();
     auto cfg = ccl_config(path, "");
 
-    if (!cfg.is_empty())
-    {
+    if (!cfg.is_empty()) {
         auto node = cfg.get_first();
 
         if (!node)
             return;
 
-        do
-        {
-            if (node->get_type() == ccl_type_string)
-            {
+        do {
+            if (node->get_type() == ccl_type_string) {
                 auto val = node->get_id();
                 uint16_t key_code = std::stoul(val, nullptr, 16);
                 m_names[key_code] = node->get_value();

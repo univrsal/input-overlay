@@ -16,10 +16,10 @@ class element_gamepad_id : public element_texture
 public:
     element_gamepad_id();
 
-    void load(ccl_config* cfg, const std::string& id) override;
+    void load(ccl_config* cfg, const std::string &id) override;
 
-    void draw(gs_effect_t* effect, gs_image_file_t* image,
-        element_data* data, sources::overlay_settings* settings) override;
+    void
+    draw(gs_effect_t* effect, gs_image_file_t* image, element_data* data, sources::overlay_settings* settings) override;
 
     data_source get_source() override;
 

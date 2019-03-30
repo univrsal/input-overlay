@@ -6,22 +6,24 @@
  */
 
 #pragma once
+
+#include "key_names.hpp"
+#include "handler.hpp"
 #include <string>
 #include <vector>
 #include <obs-module.h>
 #include <memory>
-#include "key_names.hpp"
-#include "handler.hpp"
 
 class input_entry;
 
-namespace sources {
+namespace sources
+{
     struct history_settings;
 }
 
 struct key_combination
 {
-    key_combination(const std::string str)
+    explicit key_combination(const std::string str)
     {
         repeat = 1;
         keys = str;
@@ -31,8 +33,7 @@ struct key_combination
     uint8_t repeat;
 };
 
-class text_handler
-    : public handler
+class text_handler : public handler
 {
     std::vector<std::unique_ptr<key_combination>> m_values;  /* Text body (All key combinations in order) */
 
@@ -40,16 +41,24 @@ class text_handler
     input_entry* m_display = nullptr;
     sources::history_settings* m_settings = nullptr;
     obs_source_t* m_text_source = nullptr;
-    void make_body_text(std::string& str);
+
+    void make_body_text(std::string &str);
+
 public:
-    text_handler(sources::history_settings* settings);
-    ~text_handler();
+    explicit text_handler(sources::history_settings* settings);
+
+    ~text_handler() override;
 
     void load_names(const char* cfg);
+
     void update() override;
+
     void tick(float seconds) override;
+
     void swap(input_entry* current) override;
+
     void render() override;
+
     void clear() override;
 
     obs_source_t* get_text_source() const; /* Used to add the text properties in get_properties_for_history */

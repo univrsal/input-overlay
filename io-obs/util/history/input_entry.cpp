@@ -11,13 +11,13 @@
 #include "../element/element_data_holder.hpp"
 #include "key_names.hpp"
 #include "history_icons.hpp"
-#include <algorithm>
 #include "network/io_server.hpp"
+#include <algorithm>
 
 input_entry::input_entry(obs_source_t* source)
 {
     m_text_source = source;
-    m_position = { 0.f, 0.f };
+    m_position = {0.f, 0.f};
 
     m_width = obs_source_get_width(source);
     m_height = obs_source_get_height(source);
@@ -25,7 +25,7 @@ input_entry::input_entry(obs_source_t* source)
 
 input_entry::input_entry()
 {
-    m_position = { 0.f, 0.f };
+    m_position = {0.f, 0.f};
 }
 
 input_entry::~input_entry()
@@ -50,13 +50,12 @@ vec2* input_entry::get_pos()
 
 void input_entry::set_pos(float x, float y)
 {
-    m_position = { x, y };
+    m_position = {x, y};
 }
 
 void input_entry::set_text(const char* text, obs_data_t* settings)
 {
-    if (m_text_source)
-    {
+    if (m_text_source) {
         obs_data_set_string(settings, "text", text);
         obs_source_update(m_text_source, settings);
     }
@@ -64,8 +63,7 @@ void input_entry::set_text(const char* text, obs_data_t* settings)
 
 void input_entry::collect_inputs(sources::history_settings* settings)
 {
-    if (settings->data)
-    {
+    if (settings->data) {
         std::lock_guard<std::mutex> lck1(hook::mutex);
         std::lock_guard<std::mutex> lck2(network::mutex);
         if (settings->flags & FLAG_GAMEPAD)
@@ -81,8 +79,7 @@ std::string input_entry::build_string(key_names* names, const bool use_fallback)
     std::string result;
     const char* name = nullptr;
 
-    for (const auto& key : m_inputs)
-    {
+    for (const auto &key : m_inputs) {
         if (!names->empty() && (name = names->get_name(key)))
             result += name + plus;
         else if (use_fallback || names->empty() && (name = key_to_text(key)))
@@ -98,17 +95,14 @@ std::string input_entry::build_string(key_names* names, const bool use_fallback)
 
 void input_entry::tick(const float seconds)
 {
-    for (auto& effect : m_effects)
+    for (auto &effect : m_effects)
         effect->tick(seconds);
 
     /* Remove all finished effects safely */
-    m_effects.erase(std::remove_if(
-        m_effects.begin(), m_effects.end(),
-        [](const std::unique_ptr<effect>& o)
+    m_effects.erase(std::remove_if(m_effects.begin(), m_effects.end(), [](const std::unique_ptr<effect> &o)
     {
         return o->done();
-    }
-    ), m_effects.end());
+    }), m_effects.end());
 }
 
 void input_entry::add_effect(effect* e)
@@ -138,8 +132,8 @@ void input_entry::render_icons(sources::history_settings* settings)
     //    else        
     //        temp.y += i++ * (settings->v_space + settings->icons->get_h());
     //}
-    
-    for (auto& effect : m_effects)
+
+    for (auto &effect : m_effects)
         effect->render();
     gs_matrix_pop();
 }
@@ -172,6 +166,6 @@ bool input_entry::empty() const
 
 void input_entry::test()
 {
-    for (auto& input : m_inputs)
+    for (auto &input : m_inputs)
         blog(LOG_INFO, "0x%X ", input);
 }

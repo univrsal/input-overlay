@@ -30,8 +30,7 @@ void input_queue::free_handler()
 }
 
 
-input_queue::input_queue(sources::history_settings* settings)
-    : m_settings(settings)
+input_queue::input_queue(sources::history_settings* settings) : m_settings(settings)
 {
     m_queued_entry = new input_entry();
 }
@@ -44,16 +43,14 @@ input_queue::~input_queue()
 
 void input_queue::update(const sources::history_mode new_mode)
 {
-    if (new_mode != m_settings->mode || !m_current_handler)
-    {
-        switch (m_settings->mode)
-        {
-        default:
-        case sources::MODE_TEXT:
-            init_text();
-            break;
-        case sources::MODE_ICONS:
-            init_icon();
+    if (new_mode != m_settings->mode || !m_current_handler) {
+        switch (m_settings->mode) {
+            default:
+            case sources::MODE_TEXT:
+                init_text();
+                break;
+            case sources::MODE_ICONS:
+                init_icon();
         }
     }
 
@@ -73,8 +70,7 @@ void input_queue::collect_input() const
 
 void input_queue::swap() const
 {
-    if (!m_queued_entry->empty())
-    {
+    if (!m_queued_entry->empty()) {
         m_current_handler->swap(m_queued_entry);
         m_queued_entry->clear();
     }

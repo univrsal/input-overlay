@@ -44,7 +44,7 @@ data_source element::get_source()
     return NONE;
 }
 
-void element::read_mapping(ccl_config* cfg, const std::string& id)
+void element::read_mapping(ccl_config* cfg, const std::string &id)
 {
     const auto r = cfg->get_rect(id + CFG_MAPPING);
     m_mapping.x = r.x;
@@ -53,7 +53,7 @@ void element::read_mapping(ccl_config* cfg, const std::string& id)
     m_mapping.cy = r.h;
 }
 
-void element::read_pos(ccl_config* cfg, const std::string& id)
+void element::read_pos(ccl_config* cfg, const std::string &id)
 {
     const auto p = cfg->get_point(id + CFG_POS);
     m_pos.x = p.x;

@@ -65,11 +65,7 @@
 
 enum overlay_flags
 {
-    FLAG_LEFT_STICK = 1 << 0,
-    FLAG_RIGHT_STICK = 1 << 1,
-    FLAG_GAMEPAD = 1 << 2,
-    FLAG_MOUSE = 1 << 3,
-    FLAG_TEXT = 1 << 4
+    FLAG_LEFT_STICK = 1 << 0, FLAG_RIGHT_STICK = 1 << 1, FLAG_GAMEPAD = 1 << 2, FLAG_MOUSE = 1 << 3, FLAG_TEXT = 1 << 4
 };
 
 enum dpad_direction
@@ -87,57 +83,37 @@ enum dpad_direction
 
 enum mouse_movement_type
 {
-    DOT,
-    ARROW
+    DOT, ARROW
 };
 
 enum element_side
 {
-    SIDE_INVALID = -1,
-    SIDE_LEFT,
-    SIDE_RIGHT
+    SIDE_INVALID = -1, SIDE_LEFT, SIDE_RIGHT
 };
 
 enum trigger_direction
 {
-    TRIGGER_UP,
-    TRIGGER_DOWN,
-    TRIGGER_LEFT,
-    TRIGGER_RIGHT
+    TRIGGER_UP, TRIGGER_DOWN, TRIGGER_LEFT, TRIGGER_RIGHT
 };
 
 enum history_direction
 {
-    DIR_DOWN,
-    DIR_UP,
-    DIR_LEFT,
-    DIR_RIGHT
+    DIR_DOWN, DIR_UP, DIR_LEFT, DIR_RIGHT
 };
 
 enum button_state
 {
-    STATE_RELEASED,
-    STATE_PRESSED,
+    STATE_RELEASED, STATE_PRESSED,
 };
 
 enum wheel_direction
 {
-    WHEEL_DIR_UP = -1,
-    WHEEL_DIR_NONE = 0,
-    WHEEL_DIR_DOWN = 1
+    WHEEL_DIR_UP = -1, WHEEL_DIR_NONE = 0, WHEEL_DIR_DOWN = 1
 };
 
 enum element_type
 {
-    INVALID = -1,
-    TEXTURE,
-    BUTTON,
-    /* MOUSE_WHEEL was taken :( */
-    MOUSE_SCROLLWHEEL,
-    MOUSE_STATS,
-    ANALOG_STICK,
-    TRIGGER,
-    /* Shows game pad number 1 through 4 */
-    GAMEPAD_ID,
-    DPAD_STICK,
+    INVALID = -1, TEXTURE, BUTTON, /* MOUSE_WHEEL was taken :( */
+            MOUSE_SCROLLWHEEL, MOUSE_STATS, ANALOG_STICK, TRIGGER, /* Shows game pad number 1 through 4 */
+            GAMEPAD_ID, DPAD_STICK,
 };

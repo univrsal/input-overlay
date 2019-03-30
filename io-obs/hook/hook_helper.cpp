@@ -5,14 +5,14 @@
  * github.com/univrsal/input-overlay
  */
 
-#include <cstdarg>
-#include <util/platform.h>
 #include "hook_helper.hpp"
 #include "../util/overlay.hpp"
 #include "../util/element/element_data_holder.hpp"
 #include "../util/element/element_mouse_wheel.hpp"
 #include "../util/element/element_button.hpp"
 #include "util/element/element_mouse_movement.hpp"
+#include <cstdarg>
+#include <util/platform.h>
 
 namespace hook
 {
@@ -25,10 +25,9 @@ namespace hook
     uint64_t last_wheel = 0; /* System time at last scroll event */
     element_data_holder* input_data = nullptr; /* Data for local input events */
     wint_t last_character;
-    int16_t mouse_x, mouse_y, mouse_x_smooth, mouse_y_smooth, mouse_last_x,
-            mouse_last_y;
+    int16_t mouse_x, mouse_y, mouse_x_smooth, mouse_y_smooth, mouse_last_x, mouse_last_y;
     bool hook_initialized = false;
-	bool data_initialized = false;
+    bool data_initialized = false;
     std::mutex mutex;
 
 
@@ -38,35 +37,34 @@ namespace hook
     static HANDLE hook_control_mutex;
     static HANDLE hook_control_cond;
 #else
-	static pthread_t hook_thread;
-	static pthread_mutex_t hook_running_mutex;
-	static pthread_mutex_t hook_control_mutex;
-	static pthread_cond_t hook_control_cond;
+    static pthread_t hook_thread;
+    static pthread_mutex_t hook_running_mutex;
+    static pthread_mutex_t hook_control_mutex;
+    static pthread_cond_t hook_control_cond;
 #endif
 
     void dispatch_proc(uiohook_event* const event)
     {
-        switch (event->type)
-        {
-        case EVENT_HOOK_ENABLED:
+        switch (event->type) {
+            case EVENT_HOOK_ENABLED:
 #ifdef _WIN32
-            WaitForSingleObject(hook_running_mutex, INFINITE);
+                WaitForSingleObject(hook_running_mutex, INFINITE);
 #else
-			pthread_mutex_lock(&hook_running_mutex);
+                pthread_mutex_lock(&hook_running_mutex);
 #endif
 
 #ifdef _WIN32
-            SetEvent(hook_control_cond);
+                SetEvent(hook_control_cond);
 #else
-			pthread_cond_signal(&hook_control_cond);
-			pthread_mutex_unlock(&hook_control_mutex);
+                pthread_cond_signal(&hook_control_cond);
+                pthread_mutex_unlock(&hook_control_mutex);
 #endif
-            break;
-        case EVENT_HOOK_DISABLED:
+                break;
+            case EVENT_HOOK_DISABLED:
 #ifdef _WIN32
-            WaitForSingleObject(hook_control_mutex, INFINITE);
+                WaitForSingleObject(hook_control_mutex, INFINITE);
 #else
-			pthread_mutex_lock(&hook_control_mutex);
+                pthread_mutex_lock(&hook_control_mutex);
 #endif
 
 #ifdef _WIN32
@@ -75,11 +73,11 @@ namespace hook
         default: ;
 #else
 #if defined(__APPLE__) && defined(__MACH__)
-			CFRunLoopStop(CFRunLoopGetMain());
+                CFRunLoopStop(CFRunLoopGetMain());
 #endif
-			pthread_mutex_unlock(&hook_running_mutex);
+                pthread_mutex_unlock(&hook_running_mutex);
 #endif
-            default: ; /* Prevent missing case error */
+            default:; /* Prevent missing case error */
         }
         process_event(event);
     }
@@ -99,46 +97,47 @@ namespace hook
         return status;
     }
 #else
-	void *hook_thread_proc(void *arg)
-	{
-		int status = hook_run();
-		if (status != UIOHOOK_SUCCESS) {
-			*(int *)arg = status;
-		}
-		pthread_cond_signal(&hook_control_cond);
-		pthread_mutex_unlock(&hook_control_mutex);
 
-		return arg;
-	}
+    void* hook_thread_proc(void* arg)
+    {
+        int status = hook_run();
+        if (status != UIOHOOK_SUCCESS) {
+            *(int*) arg = status;
+        }
+        pthread_cond_signal(&hook_control_cond);
+        pthread_mutex_unlock(&hook_control_mutex);
+
+        return arg;
+    }
+
 #endif
 
     bool logger_proc(const unsigned int level, const char* format, ...)
     {
         va_list args;
         std::string f;
-        switch (level)
-        {
-        case LOG_LEVEL_WARN:
-        case LOG_LEVEL_ERROR:
-            va_start(args, format);
-            f = std::string(format);
-            f.insert(0, "[input-overlay] ");
-            blog(LOG_WARNING, f.c_str(), args);
-            va_end(args);
-        default: ;
+        switch (level) {
+            case LOG_LEVEL_WARN:
+            case LOG_LEVEL_ERROR:
+                va_start(args, format);
+                f = std::string(format);
+                f.insert(0, "[input-overlay] ");
+                blog(LOG_WARNING, f.c_str(), args);
+                va_end(args);
+            default:;
         }
         return true;
     }
 
-	void init_data_holder()
-	{
-		input_data = new element_data_holder();
+    void init_data_holder()
+    {
+        input_data = new element_data_holder();
         data_initialized = input_data;
 #ifdef _DEBUG
-		blog(LOG_INFO, "[input-overlay] libuiohook init start... Dataholder@0x%lX\n",
-			reinterpret_cast<uint64_t>(input_data));
+        blog(LOG_INFO, "[input-overlay] libuiohook init start... Dataholder@0x%lX\n",
+             reinterpret_cast<uint64_t>(input_data));
 #endif
-	}
+    }
 
     void end_hook()
     {
@@ -149,9 +148,9 @@ namespace hook
         CloseHandle(hook_control_mutex);
         CloseHandle(hook_control_cond);
 #else
-		pthread_mutex_destroy(&hook_running_mutex);
-		pthread_mutex_destroy(&hook_control_mutex);
-		pthread_cond_destroy(&hook_control_cond);
+        pthread_mutex_destroy(&hook_running_mutex);
+        pthread_mutex_destroy(&hook_control_mutex);
+        pthread_cond_destroy(&hook_control_cond);
 #endif
         hook_stop();
         delete input_data;
@@ -168,9 +167,9 @@ namespace hook
         hook_control_cond = CreateEvent(nullptr, TRUE, FALSE,
             TEXT("hook_control_cond"));
 #else
-		pthread_mutex_init(&hook_running_mutex, nullptr);
-		pthread_mutex_init(&hook_control_mutex, nullptr);
-		pthread_cond_init(&hook_control_cond, nullptr);
+        pthread_mutex_init(&hook_running_mutex, nullptr);
+        pthread_mutex_init(&hook_control_mutex, nullptr);
+        pthread_cond_init(&hook_control_cond, nullptr);
 #endif
 
         /* Set the logger callback for library output. */
@@ -180,71 +179,48 @@ namespace hook
         hook_set_dispatch_proc(&dispatch_proc);
 
         const auto status = hook_enable();
-        switch (status)
-        {
-        case UIOHOOK_SUCCESS:
-            /* We no longer block, so we need to explicitly wait for the thread to die. */
-            hook_initialized = true;
-            break;
-        case UIOHOOK_ERROR_OUT_OF_MEMORY:
-            blog(LOG_ERROR, "[input-overlay] Failed to allocate memory. (%#X)\n",
-                status);
-            break;
-        case UIOHOOK_ERROR_X_OPEN_DISPLAY:
-            blog(LOG_ERROR, "[input-overlay] Failed to open X11 display. (%#X)\n",
-                status);
-            break;
-        case UIOHOOK_ERROR_X_RECORD_NOT_FOUND:
-            blog(LOG_ERROR,
-                "[input-overlay] Unable to locate XRecord extension. (%#X)\n",
-                status);
-            break;
-        case UIOHOOK_ERROR_X_RECORD_ALLOC_RANGE:
-            blog(LOG_ERROR,
-                "[input-overlay] Unable to allocate XRecord range. (%#X)\n",
-                status);
-            break;
-        case UIOHOOK_ERROR_X_RECORD_CREATE_CONTEXT:
-            blog(LOG_ERROR,
-                "[input-overlay] Unable to allocate XRecord context. (%#X)\n",
-                status);
-            break;
-        case UIOHOOK_ERROR_X_RECORD_ENABLE_CONTEXT:
-            blog(LOG_ERROR,
-                "[input-overlay] Failed to enable XRecord context. (%#X)\n",
-                status);
-            break;
-        case UIOHOOK_ERROR_SET_WINDOWS_HOOK_EX:
-            blog(LOG_ERROR,
-                "[input-overlay] Failed to register low level windows hook. (%#X)\n",
-                status);
-            break;
-        case UIOHOOK_ERROR_CREATE_EVENT_PORT:
-            blog(LOG_ERROR,
-                "[input-overlay] Failed to create apple event port. (%#X)\n",
-                status);
-            break;
-        case UIOHOOK_ERROR_CREATE_RUN_LOOP_SOURCE:
-            blog(LOG_ERROR,
-                "[input-overlay] Failed to create apple run loop source. (%#X)\n",
-                status);
-            break;
-        case UIOHOOK_ERROR_GET_RUNLOOP:
-            blog(LOG_ERROR,
-                "[input-overlay] Failed to acquire apple run loop. (%#X)\n",
-                status);
-            break;
-        case UIOHOOK_ERROR_CREATE_OBSERVER:
-            blog(LOG_ERROR,
-                "[input-overlay] Failed to create apple run loop observer. (%#X)\n",
-                status);
-            break;
-        case UIOHOOK_FAILURE:
-        default:
-            blog(LOG_ERROR,
-                "[input-overlay] An unknown hook error occurred. (%#X)\n",
-                status);
-            break;
+        switch (status) {
+            case UIOHOOK_SUCCESS:
+                /* We no longer block, so we need to explicitly wait for the thread to die. */
+                hook_initialized = true;
+                break;
+            case UIOHOOK_ERROR_OUT_OF_MEMORY:
+                blog(LOG_ERROR, "[input-overlay] Failed to allocate memory. (%#X)\n", status);
+                break;
+            case UIOHOOK_ERROR_X_OPEN_DISPLAY:
+                blog(LOG_ERROR, "[input-overlay] Failed to open X11 display. (%#X)\n", status);
+                break;
+            case UIOHOOK_ERROR_X_RECORD_NOT_FOUND:
+                blog(LOG_ERROR, "[input-overlay] Unable to locate XRecord extension. (%#X)\n", status);
+                break;
+            case UIOHOOK_ERROR_X_RECORD_ALLOC_RANGE:
+                blog(LOG_ERROR, "[input-overlay] Unable to allocate XRecord range. (%#X)\n", status);
+                break;
+            case UIOHOOK_ERROR_X_RECORD_CREATE_CONTEXT:
+                blog(LOG_ERROR, "[input-overlay] Unable to allocate XRecord context. (%#X)\n", status);
+                break;
+            case UIOHOOK_ERROR_X_RECORD_ENABLE_CONTEXT:
+                blog(LOG_ERROR, "[input-overlay] Failed to enable XRecord context. (%#X)\n", status);
+                break;
+            case UIOHOOK_ERROR_SET_WINDOWS_HOOK_EX:
+                blog(LOG_ERROR, "[input-overlay] Failed to register low level windows hook. (%#X)\n", status);
+                break;
+            case UIOHOOK_ERROR_CREATE_EVENT_PORT:
+                blog(LOG_ERROR, "[input-overlay] Failed to create apple event port. (%#X)\n", status);
+                break;
+            case UIOHOOK_ERROR_CREATE_RUN_LOOP_SOURCE:
+                blog(LOG_ERROR, "[input-overlay] Failed to create apple run loop source. (%#X)\n", status);
+                break;
+            case UIOHOOK_ERROR_GET_RUNLOOP:
+                blog(LOG_ERROR, "[input-overlay] Failed to acquire apple run loop. (%#X)\n", status);
+                break;
+            case UIOHOOK_ERROR_CREATE_OBSERVER:
+                blog(LOG_ERROR, "[input-overlay] Failed to create apple run loop observer. (%#X)\n", status);
+                break;
+            case UIOHOOK_FAILURE:
+            default:
+                blog(LOG_ERROR, "[input-overlay] An unknown hook error occurred. (%#X)\n", status);
+                break;
         }
     }
 
@@ -256,68 +232,61 @@ namespace hook
         element_data_wheel* wheel = nullptr;
         wheel_direction dir;
 
-        if ( os_gettime_ns() - hook::last_wheel >= SCROLL_TIMEOUT)
-        {
+        if (os_gettime_ns() - hook::last_wheel >= SCROLL_TIMEOUT) {
             if (input_data) d = input_data->get_by_code(VC_MOUSE_WHEEL);
             if (d) wheel = dynamic_cast<element_data_wheel*>(d);
             if (wheel) wheel->set_dir(WHEEL_DIR_NONE);
         }
 
-        switch (event->type)
-        {
-        case EVENT_KEY_PRESSED: 
-        case EVENT_KEY_RELEASED:/* Fallthrough */
-            input_data->add_data(event->data.keyboard.keycode,
-                new element_data_button(event->type == EVENT_KEY_PRESSED ? STATE_PRESSED : STATE_RELEASED ));
-            break;
-        case EVENT_MOUSE_WHEEL:
-            last_wheel = os_gettime_ns();
-            if (event->data.wheel.rotation >= WHEEL_DOWN)
-                dir = WHEEL_DIR_DOWN;
-            else
-                dir = WHEEL_DIR_UP;
-
-            input_data->add_data(
-                VC_MOUSE_WHEEL, new element_data_wheel(dir));
-            input_data->add_data(
-                VC_MOUSE_DATA, new element_data_mouse_stats(event->data.wheel.amount, dir, false));
-            break;
-        case EVENT_MOUSE_PRESSED:
-        case EVENT_MOUSE_RELEASED:
-            if (util_mouse_to_vc(event->data.mouse.button) == VC_MOUSE_BUTTON3)
-                /* Special case :/ */
-                input_data->add_data(VC_MOUSE_WHEEL,
-                    new element_data_wheel(event->type == EVENT_MOUSE_PRESSED ? STATE_PRESSED : STATE_RELEASED));
-            else
-                input_data->add_data(util_mouse_to_vc(event->data.mouse.button),
-                    new element_data_button(event->type == EVENT_MOUSE_PRESSED ? STATE_PRESSED : STATE_RELEASED));
-
-            switch(event->data.mouse.button)
-            {
-            case MOUSE_BUTTON1:
-                input_data->add_data(
-                    VC_MOUSE_DATA, new element_data_mouse_stats(stat_lmb));
+        switch (event->type) {
+            case EVENT_KEY_PRESSED:
+            case EVENT_KEY_RELEASED:/* Fallthrough */
+                input_data->add_data(event->data.keyboard.keycode, new element_data_button(
+                        event->type == EVENT_KEY_PRESSED ? STATE_PRESSED : STATE_RELEASED));
                 break;
-            case MOUSE_BUTTON2:
-                input_data->add_data(
-                    VC_MOUSE_DATA, new element_data_mouse_stats(stat_rmb));
+            case EVENT_MOUSE_WHEEL:
+                last_wheel = os_gettime_ns();
+                if (event->data.wheel.rotation >= WHEEL_DOWN)
+                    dir = WHEEL_DIR_DOWN;
+                else
+                    dir = WHEEL_DIR_UP;
+
+                input_data->add_data(VC_MOUSE_WHEEL, new element_data_wheel(dir));
+                input_data->add_data(VC_MOUSE_DATA, new element_data_mouse_stats(event->data.wheel.amount, dir, false));
                 break;
-            case MOUSE_BUTTON3:
-                input_data->add_data(
-                    VC_MOUSE_DATA, new element_data_mouse_stats(stat_mmb));
+            case EVENT_MOUSE_PRESSED:
+            case EVENT_MOUSE_RELEASED:
+                if (util_mouse_to_vc(event->data.mouse.button) == VC_MOUSE_BUTTON3)
+                    /* Special case :/ */
+                    input_data->add_data(VC_MOUSE_WHEEL, new element_data_wheel(
+                            event->type == EVENT_MOUSE_PRESSED ? STATE_PRESSED : STATE_RELEASED));
+                else
+                    input_data->add_data(util_mouse_to_vc(event->data.mouse.button), new element_data_button(
+                            event->type == EVENT_MOUSE_PRESSED ? STATE_PRESSED : STATE_RELEASED));
+
+                switch (event->data.mouse.button) {
+                    case MOUSE_BUTTON1:
+                        input_data->add_data(VC_MOUSE_DATA, new element_data_mouse_stats(stat_lmb));
+                        break;
+                    case MOUSE_BUTTON2:
+                        input_data->add_data(VC_MOUSE_DATA, new element_data_mouse_stats(stat_rmb));
+                        break;
+                    case MOUSE_BUTTON3:
+                        input_data->add_data(VC_MOUSE_DATA, new element_data_mouse_stats(stat_mmb));
+                        break;
+                    default:;
+                }
+
+                break;
+            case EVENT_KEY_TYPED:
+                last_character = event->data.keyboard.keychar;
+                break;
+            case EVENT_MOUSE_DRAGGED:
+            case EVENT_MOUSE_MOVED:
+                input_data->add_data(VC_MOUSE_DATA,
+                                     new element_data_mouse_stats(event->data.mouse.x, event->data.mouse.y));
                 break;
             default:;
-            }
-
-            break;
-        case EVENT_KEY_TYPED:
-            last_character = event->data.keyboard.keychar;
-            break;
-        case EVENT_MOUSE_DRAGGED:
-        case EVENT_MOUSE_MOVED:
-            input_data->add_data(VC_MOUSE_DATA, new element_data_mouse_stats(event->data.mouse.x, event->data.mouse.y));
-            break;
-        default: ;
         }
 
         mutex.unlock();
@@ -330,21 +299,21 @@ namespace hook
 #ifdef _WIN32
         WaitForSingleObject(hook_control_mutex, INFINITE);
 #else
-		pthread_mutex_lock(&hook_control_mutex);
+        pthread_mutex_lock(&hook_control_mutex);
 #endif
 
         /* Set the initial status. */
         int status = UIOHOOK_FAILURE;
 
 #ifndef _WIN32
-		/* Create the thread attribute. */
-		pthread_attr_t hook_thread_attr;
-		pthread_attr_init(&hook_thread_attr);
+        /* Create the thread attribute. */
+        pthread_attr_t hook_thread_attr;
+        pthread_attr_init(&hook_thread_attr);
 
-		/* Get the policy and priority for the thread attr. */
-		int policy;
-		pthread_attr_getschedpolicy(&hook_thread_attr, &policy);
-		int priority = sched_get_priority_max(policy);
+        /* Get the policy and priority for the thread attr. */
+        int policy;
+        pthread_attr_getschedpolicy(&hook_thread_attr, &policy);
+        int priority = sched_get_priority_max(policy);
 #endif
 
 #if defined(_WIN32)
@@ -357,9 +326,8 @@ namespace hook
         if (hook_thread != INVALID_HANDLE_VALUE)
         {
 #else
-		int *hook_thread_status = (int*)malloc(sizeof(int));
-		if (pthread_create(&hook_thread, &hook_thread_attr, hook_thread_proc, hook_thread_status) == 0)
-		{
+        int* hook_thread_status = (int*) malloc(sizeof(int));
+        if (pthread_create(&hook_thread, &hook_thread_attr, hook_thread_proc, hook_thread_status) == 0) {
 #endif
 #if defined(_WIN32)
             /* Attempt to set the thread priority to time critical. */
@@ -373,21 +341,20 @@ namespace hook
                     (unsigned long)GetLastError());
             }
 #elif (defined(__APPLE__) && defined(__MACH__)) || _POSIX_C_SOURCE >= 200112L
-			/* Some POSIX revisions do not support pthread_setschedprio so we will
-			   use pthread_setschedparam instead. */
-			struct sched_param param = { .sched_priority = priority };
-			if (pthread_setschedparam(hook_thread, SCHED_OTHER, &param) != 0)
-			{
-				blog(LOG_WARNING, "[input-overlay] %s [%u]: Could not set thread priority %i for thread 0x%lX!\n",
-					__FUNCTION__, __LINE__, priority, (unsigned long)hook_thread);
-			}
+            /* Some POSIX revisions do not support pthread_setschedprio so we will
+               use pthread_setschedparam instead. */
+            struct sched_param param = {.sched_priority = priority};
+            if (pthread_setschedparam(hook_thread, SCHED_OTHER, &param) != 0) {
+                blog(LOG_WARNING, "[input-overlay] %s [%u]: Could not set thread priority %i for thread 0x%lX!\n",
+                     __FUNCTION__, __LINE__, priority, (unsigned long) hook_thread);
+            }
 #else
-			/* Raise the thread priority using glibc pthread_setschedprio. */
-			if (pthread_setschedprio(hook_thread, priority) != 0)
-			{
-				blog(LOG_WARNING, "[input-overlay] %s [%u]: Could not set thread priority %i for thread 0x%lX!\n",
-					__FUNCTION__, __LINE__, priority, (unsigned long)hook_thread);
-			}
+            /* Raise the thread priority using glibc pthread_setschedprio. */
+            if (pthread_setschedprio(hook_thread, priority) != 0)
+            {
+                blog(LOG_WARNING, "[input-overlay] %s [%u]: Could not set thread priority %i for thread 0x%lX!\n",
+                    __FUNCTION__, __LINE__, priority, (unsigned long)hook_thread);
+            }
 #endif
             /* Wait for the thread to indicate that it has passed the
 			   initialization portion by blocking until either a EVENT_HOOK_ENABLED
@@ -397,15 +364,14 @@ namespace hook
 #ifdef _WIN32
             WaitForSingleObject(hook_control_cond, INFINITE);
 #else
-			pthread_cond_wait(&hook_control_cond, &hook_control_mutex);
+            pthread_cond_wait(&hook_control_cond, &hook_control_mutex);
 #endif
 
 #ifdef _WIN32
             if (WaitForSingleObject(hook_running_mutex, 0) != WAIT_TIMEOUT)
             {
 #else
-			if (pthread_mutex_trylock(&hook_running_mutex) == 0)
-			{
+            if (pthread_mutex_trylock(&hook_running_mutex) == 0) {
 #endif
                 /* Lock Successful; The hook is not running but the hook_control_cond
                    was signaled!  This indicates that there was a startup problem!
@@ -414,12 +380,10 @@ namespace hook
                 WaitForSingleObject(hook_thread, INFINITE);
                 GetExitCodeThread(hook_thread, hook_thread_status);
 #else
-				pthread_join(hook_thread, (void **)&hook_thread_status);
-				status = *hook_thread_status;
+                pthread_join(hook_thread, (void**) &hook_thread_status);
+                status = *hook_thread_status;
 #endif
-            }
-            else
-            {
+            } else {
                 /* Lock Failure; The hook is currently running and wait was signaled
                    indicating that we have passed all possible start checks.  We can
                    always assume a successful startup at this point. */
@@ -428,11 +392,8 @@ namespace hook
 
             free(hook_thread_status);
 
-            blog(LOG_DEBUG, "[input-overlay] %s [%u]: Thread Result: (%#X).\n",
-                __FUNCTION__, __LINE__, status);
-        }
-        else
-        {
+            blog(LOG_DEBUG, "[input-overlay] %s [%u]: Thread Result: (%#X).\n", __FUNCTION__, __LINE__, status);
+        } else {
             status = -1;
         }
 
@@ -440,7 +401,7 @@ namespace hook
 #ifdef _WIN32
         ReleaseMutex(hook_control_mutex);
 #else
-		pthread_mutex_unlock(&hook_control_mutex);
+        pthread_mutex_unlock(&hook_control_mutex);
 #endif
 
         return status;

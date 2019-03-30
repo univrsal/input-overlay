@@ -14,8 +14,7 @@
 class element_data_button : public element_data
 {
 public:
-    element_data_button(const button_state state)
-        : element_data(BUTTON)
+    element_data_button(const button_state state) : element_data(BUTTON)
     {
         m_state = state;
     }
@@ -38,11 +37,14 @@ public:
     {
     }
 
-    void load(ccl_config* cfg, const std::string& id) override;
-    void draw(gs_effect_t* effect, gs_image_file_t* image,
-        element_data* data, sources::overlay_settings* settings) override;
+    void load(ccl_config* cfg, const std::string &id) override;
 
-    data_source get_source() override { return is_gamepad ? GAMEPAD : DEFAULT; }
+    void
+    draw(gs_effect_t* effect, gs_image_file_t* image, element_data* data, sources::overlay_settings* settings) override;
+
+    data_source get_source() override
+    { return is_gamepad ? GAMEPAD : DEFAULT; }
+
 private:
     bool is_gamepad = false;
     gs_rect m_pressed;

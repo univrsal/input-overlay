@@ -11,4 +11,5 @@
 #include <vector>
 
 void GetWindowList(std::vector<std::string> &windows);
+
 void GetCurrentWindowTitle(std::string &title);

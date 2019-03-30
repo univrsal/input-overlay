@@ -7,10 +7,10 @@
 
 #pragma once
 
+#include "../util/overlay.hpp"
 #include <obs-module.h>
 #include <string>
 #include <uiohook.h>
-#include "../util/overlay.hpp"
 
 extern "C" {
 #include <graphics/image-file.h>
@@ -36,7 +36,7 @@ namespace sources
 #ifdef _WIN32
         float left_dz = 0.f, right_dz = 0.f;    /* Windows gamepad analog sticks deadzone  (in %)*/
 #endif
-		uint8_t selected_source = 0;            /* 0 = Local input */
+        uint8_t selected_source = 0;            /* 0 = Local input */
         uint8_t layout_flags = 0;               /* See overlay_flags in layout_constants.hpp */
         obs_data_t* data = nullptr;             /* Pointer to source property data */
     };
@@ -45,13 +45,12 @@ namespace sources
     {
     public:
         obs_source_t* m_source = nullptr;
-        
+
         uint32_t cx = 0, cy = 0;
         std::unique_ptr<overlay> m_overlay{};
         overlay_settings m_settings;
-        
-        input_source(obs_source_t* source, obs_data_t* settings) :
-            m_source(source)
+
+        input_source(obs_source_t* source, obs_data_t* settings) : m_source(source)
         {
             m_overlay = std::make_unique<overlay>(&m_settings);
             m_settings.data = settings;
@@ -61,15 +60,19 @@ namespace sources
         ~input_source() = default;
 
         inline void update(obs_data_t* settings);
+
         inline void tick(float seconds);
+
         inline void render(gs_effect_t* effect) const;
     };
 
     /* Event handlers */
     static bool use_monitor_center_changed(obs_properties_t* props, obs_property_t* p, obs_data_t* data);
-	static bool reload_connections(obs_properties_t* props, obs_property_t* property, void* data);
-    
+
+    static bool reload_connections(obs_properties_t* props, obs_property_t* property, void* data);
+
     /* For registering */
     static obs_properties_t* get_properties_for_overlay(void* data);
+
     void register_overlay_source();
 }

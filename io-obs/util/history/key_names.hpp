@@ -6,6 +6,7 @@
  */
 
 #pragma once
+
 #include <string>
 #include <map>
 
@@ -15,9 +16,12 @@ class key_names
 
 public:
     key_names() = default;
+
     ~key_names() = default;
 
     void load_from_file(const char* path);
+
     bool empty() const;
-    const char* get_name(const uint16_t vc);
+
+    const char* get_name(uint16_t vc);
 };
