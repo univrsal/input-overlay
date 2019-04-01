@@ -9,22 +9,21 @@
 
 #include "Element.hpp"
 
-class ElementTexture
-    : public Element
+class ElementTexture : public Element
 {
 public:
     ElementTexture()
     {
         /* NO-OP */
     };
-    ElementTexture(
-    const std::string& id, SDL_Point pos, SDL_Rect mapping, uint8_t z);
+
+    ElementTexture(const std::string &id, SDL_Point pos, SDL_Rect mapping, uint8_t z);
 
     ElementError is_valid(Notifier* n, SDL_Helper* h) override;
 
     void draw(Texture* atlas, CoordinateSystem* cs, bool selected, bool alpha) override;
 
-    void write_to_file(ccl_config* cfg, SDL_Point* default_dim, uint8_t& layout_flags) override;
+    void write_to_file(ccl_config* cfg, SDL_Point* default_dim, uint8_t &layout_flags) override;
 
     void update_settings(DialogNewElement* dialog) override;
 
@@ -35,8 +34,8 @@ public:
         /* NO-OP */
     };
 
-    static ElementTexture* read_from_file(ccl_config* file, const std::string& id, SDL_Point* default_dim);
+    static ElementTexture* read_from_file(ccl_config* file, const std::string &id, SDL_Point* default_dim);
 
 protected:
-    ElementTexture(element_type t, const std::string& id, SDL_Point pos, SDL_Rect mapping, uint8_t z);
+    ElementTexture(element_type t, const std::string &id, SDL_Point pos, SDL_Rect mapping, uint8_t z);
 };

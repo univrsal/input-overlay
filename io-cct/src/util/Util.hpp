@@ -6,6 +6,7 @@
  */
 
 #pragma once
+
 #include <SDL.h>
 #include <string>
 
@@ -14,8 +15,8 @@
 #define TO_PAD_MASK(a)      (a | SDL_PAD_MASK)
 #define TO_MOUSE_MASK(a)    (a | SDL_MOUSE_MASK)
 
-#define UTIL_MAX(a,b)               (((a) > (b)) ? (a) : (b))
-#define UTIL_MIN(a,b)               (((a) < (b)) ? (a) : (b))
+#define UTIL_MAX(a, b)               (((a) > (b)) ? (a) : (b))
+#define UTIL_MIN(a, b)               (((a) < (b)) ? (a) : (b))
 #define UTIL_CLAMP(lower, x, upper) (UTIL_MIN(upper, UTIL_MAX(x, lower)))
 
 SDL_bool util_move_element(int* x, int* y, SDL_Keycode key);
@@ -23,7 +24,8 @@ SDL_bool util_move_element(int* x, int* y, SDL_Keycode key);
 class Timer
 {
 public:
-    Timer() { start(); };
+    Timer()
+    { start(); };
 
     void start()
     {
@@ -38,11 +40,15 @@ public:
         m_started = true;
     }
 
-    bool started() const { return m_started; }
+    bool started() const
+    { return m_started; }
 
-    uint32_t get_delta() const { return m_end_ticks - m_start_ticks; }
+    uint32_t get_delta() const
+    { return m_end_ticks - m_start_ticks; }
 
-    uint32_t get_time() const { return SDL_GetTicks() - m_start_ticks; }
+    uint32_t get_time() const
+    { return SDL_GetTicks() - m_start_ticks; }
+
 private:
     uint32_t m_start_ticks = 0;
     uint32_t m_end_ticks = 0;
@@ -51,5 +57,5 @@ private:
 
 namespace util
 {
-    extern void replace(std::string& str, const char* find, const char* replace);
+    extern void replace(std::string &str, const char* find, const char* replace);
 }

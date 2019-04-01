@@ -27,8 +27,7 @@ Palette::Palette()
     m_light_gray = {80, 80, 80, 255};
 }
 
-Palette::~Palette()
-= default;
+Palette::~Palette() = default;
 
 SDL_Color* Palette::get_bg()
 {

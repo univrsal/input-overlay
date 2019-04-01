@@ -12,17 +12,15 @@
 #include "ElementTexture.hpp"
 #include "../util/Util.hpp"
 
-class ElementAnalogStick
-    : public ElementTexture
+class ElementAnalogStick : public ElementTexture
 {
 public:
-    ElementAnalogStick() : 
-    ElementTexture(), m_static_scaled(), m_stick()
+    ElementAnalogStick() : ElementTexture(), m_static_scaled(), m_stick()
     {
         /* NO-OP */
     }
 
-    ElementAnalogStick(std::string id, SDL_Point pos, SDL_Rect mapping, element_side side, uint8_t radius, uint8_t z);
+    ElementAnalogStick(const std::string& id, SDL_Point pos, SDL_Rect mapping, element_side side, uint8_t radius, uint8_t z);
 
     SDL_Rect* get_abs_dim(CoordinateSystem* cs) override;
 
@@ -30,7 +28,7 @@ public:
 
     void draw(Texture* atlas, CoordinateSystem* cs, bool selected, bool alpha) override;
 
-    void write_to_file(ccl_config* cfg, SDL_Point* default_dim, uint8_t& flags) override;
+    void write_to_file(ccl_config* cfg, SDL_Point* default_dim, uint8_t &flags) override;
 
     void update_settings(DialogNewElement* dialog) override;
 
@@ -38,11 +36,14 @@ public:
 
     void handle_event(SDL_Event* event, SDL_Helper* helper) override;
 
-    element_side get_stick() const { return m_stick; }
+    element_side get_stick() const
+    { return m_stick; }
 
-    uint16_t get_radius() const { return m_radius; }
+    uint16_t get_radius() const
+    { return m_radius; }
 
-    static ElementAnalogStick* read_from_file(ccl_config* file, const std::string& id, SDL_Point* default_dim);
+    static ElementAnalogStick* read_from_file(ccl_config* file, const std::string &id, SDL_Point* default_dim);
+
 private:
     SDL_Rect m_static_scaled; /* Position without input movement for display */
     element_side m_stick;

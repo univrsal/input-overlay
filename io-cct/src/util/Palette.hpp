@@ -17,17 +17,29 @@ public:
     ~Palette();
 
     SDL_Color* get_bg();
+
     SDL_Color* get_fg();
+
     SDL_Color* get_accent();
+
     SDL_Color* get_tooltip_body();
+
     SDL_Color* white();
+
     SDL_Color* black();
+
     SDL_Color* gray();
+
     SDL_Color* dark_gray();
+
     SDL_Color* light_gray();
+
     SDL_Color* blue();
+
     SDL_Color* red();
+
     SDL_Color* green();
+
     SDL_Color* orange();
 
 private:

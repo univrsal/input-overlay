@@ -16,7 +16,7 @@
 #include "../../../ccl/ccl.hpp"
 #include "../../../io-obs/util/util.hpp"
 
-ElementButton::ElementButton(const const std::string& id, const SDL_Point pos, const SDL_Rect mapping, const uint16_t vc, const uint8_t z)
+ElementButton::ElementButton(const std::string& id, const SDL_Point pos, const SDL_Rect mapping, const uint16_t vc, const uint8_t z)
     : ElementTexture(BUTTON, id, pos, mapping, z)
 {
     m_keycode = vc;

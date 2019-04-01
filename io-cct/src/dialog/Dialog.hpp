@@ -29,8 +29,9 @@ class GuiElement;
 class Dialog
 {
 public:
-    Dialog(SDL_Helper* sdl, SDL_Rect size, const std::string& title);
-    Dialog(SDL_Helper* sdl, SDL_Point size, const std::string& title);
+    Dialog(SDL_Helper* sdl, SDL_Rect size, const std::string &title);
+
+    Dialog(SDL_Helper* sdl, SDL_Point size, const std::string &title);
 
     virtual ~Dialog();
 
@@ -67,6 +68,7 @@ public:
     int get_right() const;
 
     int get_bottom() const;
+
 protected:
     /* Tab handling */
     GuiElement* m_focused_element = nullptr;

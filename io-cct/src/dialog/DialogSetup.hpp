@@ -23,8 +23,7 @@ class Notifier;
 class DialogSetup : public Dialog
 {
 public:
-    DialogSetup(SDL_Helper* sdl, Notifier* notifier, Tool* t)
-        : Dialog(sdl, SDL_Point{500, 280}, LANG_DIALOG_SETUP)
+    DialogSetup(SDL_Helper* sdl, Notifier* notifier, Tool* t) : Dialog(sdl, SDL_Point{500, 280}, LANG_DIALOG_SETUP)
     {
         m_notifier = notifier;
         m_tool = t;
@@ -43,6 +42,7 @@ public:
     const char* get_config_path() const;
 
     const char* get_texture_path() const;
+
 private:
     Notifier* m_notifier = nullptr;
 

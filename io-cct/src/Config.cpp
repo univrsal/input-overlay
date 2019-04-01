@@ -14,8 +14,6 @@
 #include "../../ccl/ccl.hpp"
 #include "element/ElementAnalogStick.hpp"
 
-
-
 Config::Config(const char* texture, const char* config, const SDL_Point def_dim, const SDL_Point space, SDL_Helper* h,
                DialogElementSettings* s)
 {

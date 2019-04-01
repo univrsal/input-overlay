@@ -10,8 +10,8 @@
 #include "elements/Button.hpp"
 #include "../Tool.hpp"
 
-DialogElementType::DialogElementType(SDL_Helper* sdl, Tool* tool)
-    : Dialog(sdl, SDL_Point{350, 120}, LANG_DIALOG_ELEMENT_TYPE)
+DialogElementType::DialogElementType(SDL_Helper* sdl, Tool* tool) : Dialog(sdl, SDL_Point{350, 120},
+                                                                           LANG_DIALOG_ELEMENT_TYPE)
 {
     m_tool = tool;
 }
@@ -41,15 +41,14 @@ void DialogElementType::init()
 
 void DialogElementType::action_performed(const int8_t action_id)
 {
-    switch (action_id)
-    {
-    case ACTION_CANCEL:
-        m_tool->queue_dialog_close();
-        break;
-    case ACTION_OK:
-        m_tool->set_new_element_type(static_cast<element_type>(m_type->get_selected()));
-        m_tool->queue_dialog_open(NEW_ELEMENT);
-        break;
-    default: ;
+    switch (action_id) {
+        case ACTION_CANCEL:
+            m_tool->queue_dialog_close();
+            break;
+        case ACTION_OK:
+            m_tool->set_new_element_type(static_cast<element_type>(m_type->get_selected()));
+            m_tool->queue_dialog_open(NEW_ELEMENT);
+            break;
+        default:;
     }
 }

@@ -28,7 +28,8 @@ void DialogSetup::init()
     auto info = std::string(LABEL_BUILD);
     info.append(std::to_string(BUILD_NUMBER));
 
-    add(new Label(id++, 8, 22, info.c_str(), FONT_WSTRING_LARGE, this, ELEMENT_UNLOCALIZED | ELEMENT_ABSOLUTE_POSITION));
+    add(new Label(id++, 8, 22, info.c_str(), FONT_WSTRING_LARGE, this,
+                  ELEMENT_UNLOCALIZED | ELEMENT_ABSOLUTE_POSITION));
     add(new Label(id++, 8, 50, LANG_LABEL_INFO, this, ELEMENT_ABSOLUTE_POSITION));
 
     add(new Label(id++, 8, 35, LANG_LABEL_TEXTURE_PATH, this));
@@ -65,8 +66,7 @@ void DialogSetup::init()
 
     const auto files = m_helper->localization()->get_languages();
 
-    for (auto const& f : *files)
-    {
+    for (auto const &f : *files) {
         m_lang_box->add_item(f->language);
     }
 
@@ -88,64 +88,57 @@ void DialogSetup::action_performed(const int8_t action_id)
     auto empty_config = false;
     ccl_config* cfg = nullptr;
 
-    switch (action_id)
-    {
-    case ACTION_OK:
-        valid_texture = m_helper->util_check_texture_path(m_texture_path->get_text()->c_str());
-        cfg = new ccl_config(*m_config_path->get_text(), "");
-        m_load_cfg = cfg->can_write();
-        empty_config = cfg->is_empty();
+    switch (action_id) {
+        case ACTION_OK:
+            valid_texture = m_helper->util_check_texture_path(m_texture_path->get_text()->c_str());
+            cfg = new ccl_config(*m_config_path->get_text(), "");
+            m_load_cfg = cfg->can_write();
+            empty_config = cfg->is_empty();
 
-        if (!m_texture_path->get_text()->empty() && !m_config_path->get_text()->empty() && valid_texture && m_load_cfg)
-        {
-            m_tool->action_performed(TOOL_ACTION_SETUP_EXIT);
-        }
-        else
-        {
-            if (m_texture_path->get_text()->empty() || !valid_texture)
-            {
-                m_texture_path->set_alert(true);
-                m_notifier->add_msg(MESSAGE_ERROR, m_helper->loc(LANG_ERROR_INVALID_TEXTURE_PATH));
+            if (!m_texture_path->get_text()->empty() && !m_config_path->get_text()->empty() && valid_texture &&
+                m_load_cfg) {
+                m_tool->action_performed(TOOL_ACTION_SETUP_EXIT);
+            } else {
+                if (m_texture_path->get_text()->empty() || !valid_texture) {
+                    m_texture_path->set_alert(true);
+                    m_notifier->add_msg(MESSAGE_ERROR, m_helper->loc(LANG_ERROR_INVALID_TEXTURE_PATH));
+                }
+
+                if (m_config_path->get_text()->empty() || !m_load_cfg) {
+                    m_config_path->set_alert(true);
+                    m_notifier->add_msg(MESSAGE_ERROR, m_helper->loc(LANG_ERROR_INVALID_CONFIG_PATH));
+                }
             }
+            break;
+        case ACTION_CANCEL:
+            m_helper->exit_loop();
+            break;
+        case ACTION_FILE_DROPPED:
+            cfg = new ccl_config(*m_config_path->get_text(), "");
+            if (!cfg->is_empty()) {
+                const auto def_w = cfg->get_node(CFG_DEFAULT_WIDTH, true);
+                const auto def_h = cfg->get_node(CFG_DEFAULT_HEIGHT, true);
+                const auto space_h = cfg->get_node(CFG_H_SPACE, true);
+                const auto space_v = cfg->get_node(CFG_V_SPACE, true);
 
-            if (m_config_path->get_text()->empty() || !m_load_cfg)
-            {
-                m_config_path->set_alert(true);
-                m_notifier->add_msg(MESSAGE_ERROR, m_helper->loc(LANG_ERROR_INVALID_CONFIG_PATH));
+                if (def_w)
+                    m_def_w->set_text(def_w->get_value());
+                if (def_h)
+                    m_def_h->set_text(def_h->get_value());
+                if (space_h)
+                    m_h_space->set_text(space_h->get_value());
+                if (space_v)
+                    m_v_space->set_text(space_v->get_value());
             }
-        }
-        break;
-    case ACTION_CANCEL:
-        m_helper->exit_loop();
-        break;
-    case ACTION_FILE_DROPPED:
-        cfg = new ccl_config(*m_config_path->get_text(), "");
-        if (!cfg->is_empty())
-        {
-            const auto def_w = cfg->get_node(CFG_DEFAULT_WIDTH, true);
-            const auto def_h = cfg->get_node(CFG_DEFAULT_HEIGHT, true);
-            const auto space_h = cfg->get_node(CFG_H_SPACE, true);
-            const auto space_v = cfg->get_node(CFG_V_SPACE, true);
-
-            if (def_w)
-                m_def_w->set_text(def_w->get_value());
-            if (def_h)
-                m_def_h->set_text(def_h->get_value());
-            if (space_h)
-                m_h_space->set_text(space_h->get_value());
-            if (space_v)
-                m_v_space->set_text(space_v->get_value());
-        }
-        break;
-    case ACTION_COMBO_ITEM_SELECTED:
-        m_helper->localization()->load_lang_by_id(m_lang_box->get_selected());
-        reload_lang();
-        break;
-    default: ;
+            break;
+        case ACTION_COMBO_ITEM_SELECTED:
+            m_helper->localization()->load_lang_by_id(m_lang_box->get_selected());
+            reload_lang();
+            break;
+        default:;
     }
 
-    if (cfg)
-    {
+    if (cfg) {
         delete cfg;
         cfg = nullptr;
     }
@@ -163,18 +156,12 @@ const char* DialogSetup::get_texture_path() const
 
 SDL_Point DialogSetup::get_rulers() const
 {
-    return SDL_Point{
-        std::stoi(m_h_space->get_text()->c_str()),
-        std::stoi(m_v_space->get_text()->c_str())
-    };
+    return SDL_Point{std::stoi(m_h_space->get_text()->c_str()), std::stoi(m_v_space->get_text()->c_str())};
 }
 
 SDL_Point DialogSetup::get_default_dim() const
 {
-    return SDL_Point{
-        std::stoi(m_def_w->get_text()->c_str()),
-        std::stoi(m_def_h->get_text()->c_str())
-    };
+    return SDL_Point{std::stoi(m_def_w->get_text()->c_str()), std::stoi(m_def_h->get_text()->c_str())};
 }
 
 bool DialogSetup::should_load_cfg() const

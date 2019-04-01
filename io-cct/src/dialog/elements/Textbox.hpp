@@ -40,7 +40,7 @@ public:
 
     void set_hex_int(uint16_t i);
 
-    void append_text(const std::string& s);
+    void append_text(const std::string &s);
 
     const std::string* get_text();
 
@@ -49,20 +49,21 @@ public:
     void set_alert(bool state);
 
     void set_cutoff(uint8_t c);
+
 private:
-    static inline bool is_numeric(const std::string& s);
+    static inline bool is_numeric(const std::string &s);
 
-    static inline bool is_alpha_numeric(const std::string& s);
+    static inline bool is_alpha_numeric(const std::string &s);
 
-    static inline bool is_space_free(const std::string& s);
+    static inline bool is_space_free(const std::string &s);
 
-    static inline bool is_hex(const std::string& s);
+    static inline bool is_hex(const std::string &s);
 
     /*
         Properly deletes last character in
         unicode utf8 strings
     */
-    static void pop_back(std::string& s);
+    static void pop_back(std::string &s);
 
     std::string m_text;
     std::string m_composition;

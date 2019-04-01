@@ -37,13 +37,18 @@ public:
     Localization(const char* lang_folder, SDL_Helper* helper);
 
     void load_lang_by_id(uint8_t id);
-    const std::vector<std::unique_ptr<LangFile>>* get_languages() const { return &m_langfiles; }
+
+    const std::vector<std::unique_ptr<LangFile>>* get_languages() const
+    { return &m_langfiles; }
 
     std::string localize(const char* id) const;
-    uint8_t get_english_id() const { return m_english_id; }
+
+    uint8_t get_english_id() const
+    { return m_english_id; }
 
 private:
     void scan_lang_folder();
+
     void load_default_language();
 
     bool m_valid = false;

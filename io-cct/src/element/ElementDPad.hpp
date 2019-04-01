@@ -9,8 +9,7 @@
 
 #include "ElementTexture.hpp"
 
-class ElementDPad
-    : public ElementTexture
+class ElementDPad : public ElementTexture
 {
 public:
     ElementDPad()
@@ -18,16 +17,18 @@ public:
         /* NO-OP */
     };
 
-    ElementDPad(const std::string& id, const SDL_Point pos, const SDL_Rect mapping, const uint8_t z)
-        : ElementTexture(id, pos, mapping, z) { /* NO-OP */ }
+    ElementDPad(const std::string &id, const SDL_Point pos, const SDL_Rect mapping, const uint8_t z) : ElementTexture(
+            id, pos, mapping, z)
+    { /* NO-OP */ }
 
     void draw(Texture* atlas, CoordinateSystem* cs, bool selected, bool alpha) override;
 
     void handle_event(SDL_Event* event, SDL_Helper* helper) override;
 
-    static ElementDPad* read_from_file(ccl_config* file, const std::string& id, SDL_Point* default_dim);
+    static ElementDPad* read_from_file(ccl_config* file, const std::string &id, SDL_Point* default_dim);
 
-    void write_to_file(ccl_config* cfg, SDL_Point* default_dim, uint8_t& layout_flags) override;
+    void write_to_file(ccl_config* cfg, SDL_Point* default_dim, uint8_t &layout_flags) override;
+
 private:
     dpad_direction m_dir = DPAD_CENTER;
     int8_t m_last_button = SDL_CONTROLLER_BUTTON_INVALID;

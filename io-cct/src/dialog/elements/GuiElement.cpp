@@ -74,7 +74,7 @@ void GuiElement::init(Dialog* parent, const SDL_Rect dim, const int8_t id)
     m_element_id = id;
 }
 
-bool GuiElement::is_mouse_over(const SDL_Point * p)
+bool GuiElement::is_mouse_over(const SDL_Point* p)
 {
     if (!p)
         p = m_parent_dialog->helper()->util_mouse_pos();

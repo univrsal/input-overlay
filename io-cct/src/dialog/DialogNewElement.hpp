@@ -30,8 +30,9 @@ enum element_type;
 class DialogNewElement : public Dialog
 {
 public:
-    DialogNewElement(SDL_Helper* sdl, const std::string& title, Tool* tool, element_type type)
-        : Dialog(sdl, SDL_Point{}, title)
+    DialogNewElement(SDL_Helper* sdl, const std::string &title, Tool* tool, element_type type) : Dialog(sdl,
+                                                                                                        SDL_Point{},
+                                                                                                        title)
     {
         m_tool = tool;
         m_type = type;
@@ -69,11 +70,13 @@ public:
 
     void set_default_dim(int w, int h);
 
-    bool get_trigger_mode() const { return m_trigger_mode ? m_trigger_mode->get_state() : false; }
+    bool get_trigger_mode() const
+    { return m_trigger_mode ? m_trigger_mode->get_state() : false; }
 
     const std::string* get_text() const;
 
     bool get_text_reset() const;
+
 private:
     void handle_error(ElementError e) const;
 

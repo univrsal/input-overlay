@@ -12,8 +12,7 @@
 
 #define ITEM_V_SPACE 4
 
-class Combobox :
-    public GuiElement
+class Combobox : public GuiElement
 {
 public:
     Combobox(int8_t id, int x, int y, int w, int h, Dialog* parent, uint16_t flags = 0x0);
@@ -31,13 +30,12 @@ public:
         else
             m_items.emplace_back(get_helper()->loc(item.c_str()));
 
-        m_item_box = {
-            get_left(), get_bottom() - 1, get_width(),
-            static_cast<int>(m_items.size() * m_item_v_space + ITEM_V_SPACE)
-        };
+        m_item_box = {get_left(), get_bottom() - 1, get_width(),
+                      static_cast<int>(m_items.size() * m_item_v_space + ITEM_V_SPACE)};
     };
 
-    uint8_t get_selected() const { return m_selected_id; }
+    uint8_t get_selected() const
+    { return m_selected_id; }
 
     void select_item(const uint8_t id)
     {
@@ -62,6 +60,7 @@ public:
     void cycle_down(bool select);
 
     void resize() override;
+
 private:
     std::vector<std::string> m_items;
     SDL_Rect m_item_box;

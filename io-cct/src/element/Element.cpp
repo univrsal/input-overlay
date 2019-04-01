@@ -24,27 +24,26 @@
 #include "../util/SDL_Helper.hpp"
 #include "../../../ccl/ccl.hpp"
 
-Element* Element::read_from_file(ccl_config* file, const std::string& id, const element_type t, SDL_Point* default_dim)
+Element* Element::read_from_file(ccl_config* file, const std::string &id, const element_type t, SDL_Point* default_dim)
 {
-    switch (t)
-    {
-    case TEXTURE:
-        return ElementTexture::read_from_file(file, id, default_dim);
-    case BUTTON:
-        return ElementButton::read_from_file(file, id, default_dim);
-    case MOUSE_SCROLLWHEEL:
-        return ElementScrollWheel::read_from_file(file, id, default_dim);
-    case MOUSE_STATS:
-        return ElementMouseMovement::read_from_file(file, id, default_dim);
-    case ANALOG_STICK:
-        return ElementAnalogStick::read_from_file(file, id, default_dim);
-    case TRIGGER:
-        return ElementTrigger::read_from_file(file, id, default_dim);
-    case DPAD_STICK:
-        return ElementDPad::read_from_file(file, id, default_dim);
-    case GAMEPAD_ID:
-        return ElementGamepadID::read_from_file(file, id, default_dim);
-    default: ;
+    switch (t) {
+        case TEXTURE:
+            return ElementTexture::read_from_file(file, id, default_dim);
+        case BUTTON:
+            return ElementButton::read_from_file(file, id, default_dim);
+        case MOUSE_SCROLLWHEEL:
+            return ElementScrollWheel::read_from_file(file, id, default_dim);
+        case MOUSE_STATS:
+            return ElementMouseMovement::read_from_file(file, id, default_dim);
+        case ANALOG_STICK:
+            return ElementAnalogStick::read_from_file(file, id, default_dim);
+        case TRIGGER:
+            return ElementTrigger::read_from_file(file, id, default_dim);
+        case DPAD_STICK:
+            return ElementDPad::read_from_file(file, id, default_dim);
+        case GAMEPAD_ID:
+            return ElementGamepadID::read_from_file(file, id, default_dim);
+        default:;
     }
     return nullptr;
 }
@@ -52,37 +51,35 @@ Element* Element::read_from_file(ccl_config* file, const std::string& id, const 
 Element* Element::from_dialog(DialogNewElement* dialog)
 {
     Element* e = nullptr;
-    switch (dialog->get_type())
-    {
-    case BUTTON:
-        e = new ElementButton();
-        break;
-    case TEXTURE:
-        e = new ElementTexture();
-        break;
-    case TRIGGER:
-        e = new ElementTrigger();
-        break;
-    case MOUSE_SCROLLWHEEL:
-        e = new ElementScrollWheel();
-        break;
-    case DPAD_STICK:
-        e = new ElementDPad();
-        break;
-    case MOUSE_STATS:
-        e = new ElementMouseMovement();
-        break;
-    case ANALOG_STICK:
-        e = new ElementAnalogStick();
-        break;
-    case GAMEPAD_ID:
-        e = new ElementGamepadID();
-        break;     
-    default: ;
+    switch (dialog->get_type()) {
+        case BUTTON:
+            e = new ElementButton();
+            break;
+        case TEXTURE:
+            e = new ElementTexture();
+            break;
+        case TRIGGER:
+            e = new ElementTrigger();
+            break;
+        case MOUSE_SCROLLWHEEL:
+            e = new ElementScrollWheel();
+            break;
+        case DPAD_STICK:
+            e = new ElementDPad();
+            break;
+        case MOUSE_STATS:
+            e = new ElementMouseMovement();
+            break;
+        case ANALOG_STICK:
+            e = new ElementAnalogStick();
+            break;
+        case GAMEPAD_ID:
+            e = new ElementGamepadID();
+            break;
+        default:;
     }
 
-    if (e)
-    {
+    if (e) {
         e->m_type = dialog->get_type();
         e->update_settings(dialog);
     }
@@ -91,18 +88,17 @@ Element* Element::from_dialog(DialogNewElement* dialog)
 
 bool Element::valid_type(const int t)
 {
-    switch (t)
-    {
-    case ANALOG_STICK:
-    case BUTTON:
-    case DPAD_STICK:
-    case MOUSE_STATS:
-    case MOUSE_SCROLLWHEEL:
-    case TEXTURE:
-    case TRIGGER:
-    case GAMEPAD_ID:
-        return true;
-    default: ;
+    switch (t) {
+        case ANALOG_STICK:
+        case BUTTON:
+        case DPAD_STICK:
+        case MOUSE_STATS:
+        case MOUSE_SCROLLWHEEL:
+        case TEXTURE:
+        case TRIGGER:
+        case GAMEPAD_ID:
+            return true;
+        default:;
     }
     return false;
 }
@@ -121,12 +117,12 @@ Element::Element(const element_type t, std::string id, const SDL_Point pos, cons
     m_mapping = {};
     m_dimensions_scaled = {};
     m_type = t;
-    m_position = {pos.x, pos.y };
+    m_position = {pos.x, pos.y};
     m_id = std::move(id);
     m_z_level = z;
 }
 
-void Element::write_to_file(ccl_config* cfg, SDL_Point* default_dim, uint8_t& layout_flags)
+void Element::write_to_file(ccl_config* cfg, SDL_Point* default_dim, uint8_t &layout_flags)
 {
     /* Write commonly shared values */
     auto comment = "Z position (Layer) of " + m_id;
@@ -142,12 +138,9 @@ void Element::write_to_file(ccl_config* cfg, SDL_Point* default_dim, uint8_t& la
 SDL_Rect* Element::get_abs_dim(CoordinateSystem* cs)
 {
     m_scale = cs->get_scale();
-    m_dimensions_scaled = {
-        m_position.x * cs->get_scale() + cs->get_origin_x(),
-        m_position.y * cs->get_scale() + cs->get_origin_y(),
-        m_mapping.w * cs->get_scale(),
-        m_mapping.h * cs->get_scale()
-    };
+    m_dimensions_scaled = {m_position.x * cs->get_scale() + cs->get_origin_x(),
+                           m_position.y * cs->get_scale() + cs->get_origin_y(), m_mapping.w * cs->get_scale(),
+                           m_mapping.h * cs->get_scale()};
     return &m_dimensions_scaled;
 }
 
@@ -172,14 +165,12 @@ ElementError Element::is_valid(Notifier* n, SDL_Helper* h)
 {
     auto result = VALID;
 
-    if (m_id.empty())
-    {
+    if (m_id.empty()) {
         n->add_msg(MESSAGE_ERROR, h->loc(LANG_ERROR_ID_EMPTY));
         result = ID_EMPTY;
     }
 
-    if (m_type == INVALID)
-    {
+    if (m_type == INVALID) {
         n->add_msg(MESSAGE_ERROR, h->loc(LANG_ERROR_TYPE_INVALID));
         result = TYPE_INVALID;
     }
@@ -199,24 +190,24 @@ void Element::set_pos(const int x, const int y)
     m_scale = 0; /* Forces a rescale at next draw */
 }
 
-SDL_Rect Element::read_mapping(ccl_config* file, const std::string& id, SDL_Point* default_dim)
+SDL_Rect Element::read_mapping(ccl_config* file, const std::string &id, SDL_Point* default_dim)
 {
     const auto temp = file->get_rect(id + CFG_MAPPING);
-    return SDL_Rect { temp.x, temp.y, temp.w, temp.h };
+    return SDL_Rect{temp.x, temp.y, temp.w, temp.h};
 }
 
-SDL_Point Element::read_position(ccl_config* file, const std::string& id)
+SDL_Point Element::read_position(ccl_config* file, const std::string &id)
 {
     const auto pos = file->get_point(id + CFG_POS);
-    return { pos.x, pos.y };
+    return {pos.x, pos.y};
 }
 
-uint8_t Element::read_layer(ccl_config* file, const std::string& id)
+uint8_t Element::read_layer(ccl_config* file, const std::string &id)
 {
     return file->get_int(id + CFG_Z_LEVEL);
 }
 
-element_side Element::read_side(ccl_config* file, const std::string& id)
+element_side Element::read_side(ccl_config* file, const std::string &id)
 {
     auto s = SIDE_LEFT;
     if (file->get_int(id + CFG_SIDE) != 0)

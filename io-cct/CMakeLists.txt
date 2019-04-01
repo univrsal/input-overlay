@@ -4,6 +4,10 @@ project(io-cct)
 file (STRINGS "build.txt" BUILD_NUMBER_)
 add_definitions(-DBUILD_NUMBER=${BUILD_NUMBER_})
 
+if(DEBUG)
+	add_compile_definitions(_DEBUG)
+endif()
+
 macro(use_cxx14)
   if (CMAKE_VERSION VERSION_LESS "3.1")
     if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")

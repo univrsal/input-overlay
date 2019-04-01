@@ -6,6 +6,7 @@
  */
 
 #pragma once
+
 #include "Dialog.hpp"
 #include "../util/SDL_Helper.hpp"
 
@@ -19,8 +20,11 @@ class DialogElementType : public Dialog
 {
 public:
     DialogElementType(SDL_Helper* sdl, Tool* tool);
+
     void init() override;
+
     void action_performed(int8_t action_id) override;
+
 private:
     Tool* m_tool;
     Combobox* m_type = nullptr;

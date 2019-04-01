@@ -17,12 +17,13 @@ class Dialog;
 
 class GuiElement;
 
-class Label :
-    public GuiElement
+class Label : public GuiElement
 {
 public:
     Label(int8_t id, int x, int y, const char* text, Dialog* parent, uint16_t flags = 0x0);
+
     Label(int8_t id, int x, int y, const char* text, uint8_t font, Dialog* parent, uint16_t flags = 0x0);
+
     Label(int8_t id, int x, int y, const char* text, Dialog* parent, SDL_Color* color);
 
     ~Label();
@@ -39,7 +40,8 @@ public:
 
     void refresh() override;
 
-    void set_font(const uint8_t font) { m_font = UTIL_CLAMP(FONT_WSTRING, font, FONT_WSTRING_LARGE); }
+    void set_font(const uint8_t font)
+    { m_font = UTIL_CLAMP(FONT_WSTRING, font, FONT_WSTRING_LARGE); }
 
 private:
     std::string m_unlocalized_text;

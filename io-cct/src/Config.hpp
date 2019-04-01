@@ -32,6 +32,7 @@ class Config
 public:
     Config(const char* texture, const char* config, SDL_Point def_dim, SDL_Point space, SDL_Helper* h,
            DialogElementSettings* s);
+
     ~Config();
 
     void draw_elements();
@@ -42,6 +43,7 @@ public:
     std::string m_config_path;
 
     void write_config(Notifier* n);
+
     void read_config(Notifier* n);
 
     Texture* get_texture() const;
@@ -56,13 +58,18 @@ public:
 
     std::vector<std::unique_ptr<Element>> m_elements;
 
-    Element* selected() const { return m_selected; }
-    uint16_t selected_id() const { return m_selected_id; }
+    Element* selected() const
+    { return m_selected; }
+
+    uint16_t selected_id() const
+    { return m_selected_id; }
 
     void reset_selection();
+
 private:
     /* Move selected elements*/
     void move_elements(int new_x, int new_y);
+
     inline void move_element(int mouse_x, int mouse_y);
 
     static inline bool is_rect_in_rect(const SDL_Rect* a, const SDL_Rect* b);

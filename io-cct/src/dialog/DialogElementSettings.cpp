@@ -71,79 +71,67 @@ void DialogElementSettings::init()
 
 void DialogElementSettings::action_performed(const int8_t action_id)
 {
-    switch (action_id)
-    {
-    case ACTION_OK:
-        if (m_tool->get_selected())
-        {
-            auto const new_id = strcmp(m_element_id->c_str(), m_tool->get_selected()->get_id()->c_str()) != 0;
-            if (new_id && !m_tool->element_id_unique(m_element_id->c_str()))
-            {
-                m_element_id->set_alert(true);
+    switch (action_id) {
+        case ACTION_OK:
+            if (m_tool->get_selected()) {
+                auto const new_id = strcmp(m_element_id->c_str(), m_tool->get_selected()->get_id()->c_str()) != 0;
+                if (new_id && !m_tool->element_id_unique(m_element_id->c_str())) {
+                    m_element_id->set_alert(true);
+                } else {
+                    m_tool->get_selected()->update_settings(this);
+                }
             }
-            else
-			{
-                m_tool->get_selected()->update_settings(this);
+            break;
+        case ACTION_DEL_ELEMENT:
+            if (m_tool->get_selected() && m_tool->get_selected_id() >= 0) {
+                m_tool->delete_element(m_tool->get_selected_id());
             }
-        }
-        break;
-    case ACTION_DEL_ELEMENT:
-        if (m_tool->get_selected() && m_tool->get_selected_id() >= 0)
-        {
-            m_tool->delete_element(m_tool->get_selected_id());
-        }
-        break;
-    case ACTION_MOD_ELEMENT:
-        m_tool->queue_dialog_open(MOD_ELEMENT);
-        break;
-    case ACTION_HELP_BUTTON:
-        m_tool->queue_dialog_open(HELP);
-        break;
-    case ACTION_NEW_ELEMENT:
-        m_tool->queue_dialog_open(SELECECT_TYPE);
-        break;
-    case ACTION_SAVE_CONFIG:
-        m_tool->action_performed(TOOL_ACTION_SAVE_CONFIG);
-        break;
-    default: ;
+            break;
+        case ACTION_MOD_ELEMENT:
+            m_tool->queue_dialog_open(MOD_ELEMENT);
+            break;
+        case ACTION_HELP_BUTTON:
+            m_tool->queue_dialog_open(HELP);
+            break;
+        case ACTION_NEW_ELEMENT:
+            m_tool->queue_dialog_open(SELECECT_TYPE);
+            break;
+        case ACTION_SAVE_CONFIG:
+            m_tool->action_performed(TOOL_ACTION_SAVE_CONFIG);
+            break;
+        default:;
     }
 }
 
 void DialogElementSettings::set_wh(const int w, const int h) const
 {
-    if (w >= 0)
-    {
+    if (w >= 0) {
         m_element_width->set_text(std::to_string(w));
     }
 
-    if (h >= 0)
-    {
+    if (h >= 0) {
         m_element_height->set_text(std::to_string(h));
     }
 }
 
 void DialogElementSettings::set_xy(const int x, const int y) const
 {
-    if (x >= 0)
-    {
+    if (x >= 0) {
         m_element_x->set_text(std::to_string(x));
     }
 
-    if (y >= 0)
-    {
+    if (y >= 0) {
         m_element_y->set_text(std::to_string(y));
     }
 }
 
 void DialogElementSettings::set_uv(const int u, const int v) const
 {
-    if (u >= 0)
-    {
+    if (u >= 0) {
         m_element_u->set_text(std::to_string(u));
     }
 
-    if (v >= 0)
-    {
+    if (v >= 0) {
         m_element_v->set_text(std::to_string(v));
     }
 }
@@ -165,8 +153,7 @@ void DialogElementSettings::set_z_level(const uint8_t z) const
 
 void DialogElementSettings::select_element(Element* e) const
 {
-    if (e)
-    {
+    if (e) {
         set_id(*e->get_id());
         set_uv(e->get_u(), e->get_v());
         set_xy(e->get_x(), e->get_y());

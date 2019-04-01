@@ -1,19 +1,21 @@
+#ifdef _WIN32
 #define SDL_MAIN_HANDLED
+#endif
 
 #include <SDL.h>
 #include <iostream>
 #include "src/util/SDL_Helper.hpp"
 #include "src/Tool.hpp"
 
-SDL_Helper * helper = new SDL_Helper();
+SDL_Helper* helper = new SDL_Helper();
 Tool tool;
 
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
-    if (!helper->init())
-    {
+    if (!helper->init()) {
         printf("Initialization failed!\n");
-        printf("If loading of resources failed make sure that the following files are located inside the folder '.\res':\n");
+        printf("If loading of resources failed make sure that the following files are located inside the folder '"
+               ".\\res':\n");
         printf(" unifont.ttf\n icon.png\n");
         printf("<press any key to exit>\n");
         getchar();
@@ -22,15 +24,14 @@ int main(int argc, char **argv)
 
     auto texture = "";
     auto config = "";
-	if (argc > 2)
-	{
-	    texture = argv[1];
-	    config = argv[2];
-	}
+    if (argc > 2) {
+        texture = argv[1];
+        config = argv[2];
+    }
 
     tool = Tool(helper, texture, config);
     tool.program_loop();
-    
+
 
     helper->close();
     delete helper;

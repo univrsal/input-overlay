@@ -12,22 +12,26 @@
 #include "element/Element.hpp"
 
 class Dialog;
+
 class Notifier;
+
 class SDL_Helper;
+
 class Element;
+
 class Config;
+
 class DialogElementSettings;
+
 class DialogHelp;
+
 class DialogNewElement;
+
 class Texture;
 
 enum ToolState
 {
-    IN_SETUP,
-    IN_BUILD,
-    IN_HELP,
-    IN_ELEMENT_TYPE,
-    IN_NEW_ELEMENT
+    IN_SETUP, IN_BUILD, IN_HELP, IN_ELEMENT_TYPE, IN_NEW_ELEMENT
 };
 
 #define TOOL_ACTION_NEW_ELEMENT_ADD 4
@@ -37,18 +41,17 @@ enum ToolState
 
 enum DialogID
 {
-    NONE,
-    HELP,
-    NEW_ELEMENT,
-    MOD_ELEMENT,
-    SELECECT_TYPE
+    NONE, HELP, NEW_ELEMENT, MOD_ELEMENT, SELECECT_TYPE
 };
 
 class Tool
 {
 public:
-    Tool() { m_helper = nullptr; }
+    Tool()
+    { m_helper = nullptr; }
+
     Tool(SDL_Helper* helper, const char* texture, const char* config);
+
     ~Tool();
 
     void program_loop();
@@ -63,7 +66,8 @@ public:
 
     void delete_element(uint16_t id) const;
 
-    void set_new_element_type(const element_type type) { m_new_element_type = type; }
+    void set_new_element_type(const element_type type)
+    { m_new_element_type = type; }
 
     void queue_dialog_open(DialogID id);
 
@@ -72,15 +76,20 @@ public:
     bool element_id_unique(const char* id) const;
 
     ElementError verify_element(DialogNewElement* d, bool modify_mode) const;
-    
-    const char* get_texture_path() const { return m_texture_path; }
 
-    const char* get_config_path() const { return m_config_path; }
+    const char* get_texture_path() const
+    { return m_texture_path; }
+
+    const char* get_config_path() const
+    { return m_config_path; }
+
 private:
     void add_element(Element* e) const;
 
     void close_top_level();
+
     void handle_input();
+
     bool m_run_flag = true;
 
     bool m_queue_close = false; /* True when top level dialog should be closed */

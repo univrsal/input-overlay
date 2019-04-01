@@ -10,8 +10,8 @@
 #include "../util/Texture.hpp"
 #include "../util/CoordinateSystem.hpp"
 
-ElementScrollWheel::ElementScrollWheel(const std::string& id, const SDL_Point pos, const SDL_Rect mapping, const uint8_t z)
-    : ElementTexture(MOUSE_SCROLLWHEEL, id, pos, mapping, z)
+ElementScrollWheel::ElementScrollWheel(const std::string &id, const SDL_Point pos, const SDL_Rect mapping,
+                                       const uint8_t z) : ElementTexture(MOUSE_SCROLLWHEEL, id, pos, mapping, z)
 {
     refresh_mappings();
 }
@@ -21,25 +21,24 @@ void ElementScrollWheel::draw(Texture* atlas, CoordinateSystem* cs, const bool s
     get_abs_dim(cs);
 
     if (m_pressed)
-        atlas->draw(cs->get_helper()->renderer(),
-            &m_dimensions_scaled, &m_mapping_pressed, (alpha && !selected) ? ELEMENT_HIDE_ALPHA : 255);
+        atlas->draw(cs->get_helper()->renderer(), &m_dimensions_scaled, &m_mapping_pressed,
+                    (alpha && !selected) ? ELEMENT_HIDE_ALPHA : 255);
 
     if (m_down)
-        atlas->draw(cs->get_helper()->renderer(),
-            &m_dimensions_scaled, &m_mapping_down, (alpha && !selected) ? ELEMENT_HIDE_ALPHA : 255);
+        atlas->draw(cs->get_helper()->renderer(), &m_dimensions_scaled, &m_mapping_down,
+                    (alpha && !selected) ? ELEMENT_HIDE_ALPHA : 255);
 
     if (m_up)
-        atlas->draw(cs->get_helper()->renderer(),
-            &m_dimensions_scaled, &m_mapping_up, (alpha && !selected) ? ELEMENT_HIDE_ALPHA : 255);
-    
+        atlas->draw(cs->get_helper()->renderer(), &m_dimensions_scaled, &m_mapping_up,
+                    (alpha && !selected) ? ELEMENT_HIDE_ALPHA : 255);
+
     atlas->draw(cs->get_helper()->renderer(), &m_dimensions_scaled, &m_mapping,
-        (alpha && !selected) ? ELEMENT_HIDE_ALPHA : 255);
+                (alpha && !selected) ? ELEMENT_HIDE_ALPHA : 255);
 
     if (selected)
         cs->get_helper()->util_draw_rect(&m_dimensions_scaled, cs->get_helper()->palette()->red());
 
-    if (m_wheel_reset.started() && m_wheel_reset.get_time() >= WHEEL_RESET)
-    {
+    if (m_wheel_reset.started() && m_wheel_reset.get_time() >= WHEEL_RESET) {
         m_wheel_reset.stop();
         m_up = false;
         m_down = false;
@@ -48,23 +47,17 @@ void ElementScrollWheel::draw(Texture* atlas, CoordinateSystem* cs, const bool s
 
 void ElementScrollWheel::handle_event(SDL_Event* event, SDL_Helper* helper)
 {
-    if (event->type == SDL_MOUSEWHEEL)
-    {
+    if (event->type == SDL_MOUSEWHEEL) {
         if (event->wheel.y > 0) /* TRIGGER_UP */
         {
             m_up = true;
             m_down = false;
-        }
-        else
-        {
+        } else {
             m_down = true;
             m_up = false;
         }
         m_wheel_reset.start();
-    }
-    else if (event->type == SDL_MOUSEBUTTONDOWN
-        || event->type == SDL_MOUSEBUTTONUP)
-    {
+    } else if (event->type == SDL_MOUSEBUTTONDOWN || event->type == SDL_MOUSEBUTTONUP) {
         if (event->button.button == SDL_BUTTON_MIDDLE)
             m_pressed = event->type == SDL_MOUSEBUTTONDOWN;
     }
@@ -93,8 +86,8 @@ void ElementScrollWheel::update_settings(DialogElementSettings* dialog)
     refresh_mappings();
 }
 
-ElementScrollWheel* ElementScrollWheel::read_from_file(ccl_config* file, const std::string& id, SDL_Point* default_dim)
+ElementScrollWheel* ElementScrollWheel::read_from_file(ccl_config* file, const std::string &id, SDL_Point* default_dim)
 {
-    return new ElementScrollWheel(id, read_position(file, id),
-        read_mapping(file, id, default_dim), read_layer(file, id));
+    return new ElementScrollWheel(id, read_position(file, id), read_mapping(file, id, default_dim),
+                                  read_layer(file, id));
 }

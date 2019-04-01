@@ -16,15 +16,14 @@ void DialogHelp::init()
 
 void DialogHelp::action_performed(const int8_t action_id)
 {
-    switch (action_id)
-    {
-    case ACTION_OK:
-        if (m_tool)
-            m_tool->queue_dialog_close();
-        break;
-    case 2:
-        SDL_Helper::util_open_url("https://github.com/univrsal/input-overlay");
-        break;
-    default: ;
+    switch (action_id) {
+        case ACTION_OK:
+            if (m_tool)
+                m_tool->queue_dialog_close();
+            break;
+        case 2:
+            SDL_Helper::util_open_url("https://github.com/univrsal/input-overlay");
+            break;
+        default:;
     }
 }

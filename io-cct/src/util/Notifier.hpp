@@ -23,7 +23,7 @@ class SDL_Helper;
 struct Message
 {
 public:
-    Message(const uint8_t type, const std::string& msg, SDL_Helper* h)
+    Message(const uint8_t type, const std::string &msg, SDL_Helper* h)
     {
         h->format_text(&msg, m_message_lines, m_dim);
         m_type = type;
@@ -62,9 +62,10 @@ public:
 
     void resize();
 
-    void add_msg(uint8_t type, const std::string& msg);
+    void add_msg(uint8_t type, const std::string &msg);
 
     void draw();
+
 private:
     std::string m_last_message = "";
     std::vector<std::unique_ptr<Message>> m_messages;

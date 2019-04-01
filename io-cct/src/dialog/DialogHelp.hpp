@@ -20,8 +20,7 @@ class Tool;
 class DialogHelp : public Dialog
 {
 public:
-    DialogHelp(SDL_Helper* sdl, Tool* tool)
-        : Dialog(sdl, SDL_Point{380, 485}, LANG_DIALOG_HELP)
+    DialogHelp(SDL_Helper* sdl, Tool* tool) : Dialog(sdl, SDL_Point{380, 485}, LANG_DIALOG_HELP)
     {
         m_tool = tool;
     };
@@ -29,6 +28,7 @@ public:
     void init() override;
 
     void action_performed(int8_t action_id) override;
+
 private:
     Tool* m_tool = nullptr;
 };

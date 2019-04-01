@@ -1,6 +1,7 @@
 #include "AtlasSelector.hpp"
 
-AtlasSelector::AtlasSelector(const int8_t id, const int x, const int y, const int w, const int h, Texture* t, Dialog* parent)
+AtlasSelector::AtlasSelector(const int8_t id, const int x, const int y, const int w, const int h, Texture* t,
+                             Dialog* parent)
 {
     const SDL_Rect temp = {x, y, w, h};
     AtlasSelector::init(parent, temp, id);

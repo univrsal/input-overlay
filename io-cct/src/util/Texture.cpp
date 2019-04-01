@@ -41,16 +41,14 @@ bool Texture::load(const char* path, SDL_Renderer* renderer)
 
     const auto surface = IMG_Load(path);
 
-    if (surface == nullptr)
-    {
+    if (surface == nullptr) {
         printf(SDL_IMAGE_TO_SURFACE, path, SDL_GetError());
         return false;
     }
 
     m_sdl_texture = SDL_CreateTextureFromSurface(renderer, surface);
 
-    if (m_sdl_texture == nullptr)
-    {
+    if (m_sdl_texture == nullptr) {
         printf(SDL_SURFACE_TO_TEXTURE_FAILED, path, SDL_GetError());
         return false;
     }
@@ -96,10 +94,8 @@ void Texture::draw_tiling(SDL_Renderer* renderer, const SDL_Rect* target, const 
     else
         y_tiles = target->h / dim_temp.h;
 
-    for (auto x = 0; x < x_tiles; x++)
-    {
-        for (auto y = 0; y < y_tiles; y++)
-        {
+    for (auto x = 0; x < x_tiles; x++) {
+        for (auto y = 0; y < y_tiles; y++) {
             draw(renderer, target->x + x * dim_temp.w, target->y + y * dim_temp.h);
         }
     }
@@ -114,8 +110,7 @@ void Texture::draw(SDL_Renderer* renderer, const int x, const int y) const
 {
     SDL_Rect temp_rect = {x, y, m_dimensions.w, m_dimensions.h};
 
-    if (m_scale != nullptr)
-    {
+    if (m_scale != nullptr) {
         temp_rect.w *= static_cast<int>(*m_scale);
         temp_rect.h *= static_cast<int>(*m_scale);
     }
@@ -127,8 +122,7 @@ void Texture::draw(SDL_Renderer* renderer, const SDL_Point* p) const
 {
     SDL_Rect temp_rect = {p->x, p->y, m_dimensions.w, m_dimensions.h};
 
-    if (m_scale != nullptr)
-    {
+    if (m_scale != nullptr) {
         temp_rect.w *= static_cast<int>(*m_scale);
         temp_rect.h *= static_cast<int>(*m_scale);
     }
@@ -136,13 +130,12 @@ void Texture::draw(SDL_Renderer* renderer, const SDL_Point* p) const
     SDL_RenderCopy(renderer, m_sdl_texture, nullptr, &temp_rect);
 }
 
-void Texture::draw(SDL_Renderer* renderer, const SDL_Point* p,
-    const int scaled_offset_x, const int scaled_offset_y) const
+void
+Texture::draw(SDL_Renderer* renderer, const SDL_Point* p, const int scaled_offset_x, const int scaled_offset_y) const
 {
     SDL_Rect temp_rect = {p->x, p->y, m_dimensions.w, m_dimensions.h};
 
-    if (m_scale != nullptr)
-    {
+    if (m_scale != nullptr) {
         temp_rect.w *= static_cast<int>(*m_scale);
         temp_rect.h *= static_cast<int>(*m_scale);
         temp_rect.x += scaled_offset_x * static_cast<int>(*m_scale);
@@ -164,16 +157,14 @@ void Texture::draw(SDL_Renderer* renderer, const int x, const int y, const uint8
     SDL_SetTextureAlphaMod(m_sdl_texture, 255);
 }
 
-void Texture::draw(SDL_Renderer* renderer, const SDL_Rect* target_dim, const SDL_Rect* cutout, const uint8_t alpha) const
+void
+Texture::draw(SDL_Renderer* renderer, const SDL_Rect* target_dim, const SDL_Rect* cutout, const uint8_t alpha) const
 {
-    if (alpha < 255)
-    {
+    if (alpha < 255) {
         SDL_SetTextureAlphaMod(m_sdl_texture, alpha);
         draw(renderer, target_dim, cutout);
         SDL_SetTextureAlphaMod(m_sdl_texture, 255);
-    }
-    else
-    {
+    } else {
         draw(renderer, target_dim, cutout);
     }
 }

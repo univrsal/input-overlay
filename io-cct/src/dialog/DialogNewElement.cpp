@@ -6,10 +6,8 @@
 
 void DialogNewElement::load_from_element(Element* e)
 {
-    if (e)
-    {
-        if (m_u && m_v && m_w && m_h)
-        {
+    if (e) {
+        if (m_u && m_v && m_w && m_h) {
             m_u->set_text(std::to_string(e->get_u()));
             m_v->set_text(std::to_string(e->get_v()));
 
@@ -37,25 +35,24 @@ void DialogNewElement::load_from_element(Element* e)
         ElementMouseMovement* mouse = nullptr;
         ElementTrigger* trigger = nullptr;
 
-        switch (e->get_type())
-        {
-        case ANALOG_STICK:
-            stick = dynamic_cast<ElementAnalogStick*>(e);
-            m_binary_choice->select_item(stick->get_stick());
-            m_radius->set_text(std::to_string(stick->get_radius()));
-            break;
-        case MOUSE_STATS:
-            mouse = dynamic_cast<ElementMouseMovement*>(e);
-            m_binary_choice->select_item(mouse->get_mouse_type());
-            m_radius->set_text(std::to_string(mouse->get_radius()));
-            break;
-        case TRIGGER:
-            trigger = dynamic_cast<ElementTrigger*>(e);
-            m_binary_choice->select_item(trigger->get_side());
-            m_direction->select_item(trigger->get_direction());
-            m_trigger_mode->set_checked(trigger->get_mode());
-            break;
-        default: ;
+        switch (e->get_type()) {
+            case ANALOG_STICK:
+                stick = dynamic_cast<ElementAnalogStick*>(e);
+                m_binary_choice->select_item(stick->get_stick());
+                m_radius->set_text(std::to_string(stick->get_radius()));
+                break;
+            case MOUSE_STATS:
+                mouse = dynamic_cast<ElementMouseMovement*>(e);
+                m_binary_choice->select_item(mouse->get_mouse_type());
+                m_radius->set_text(std::to_string(mouse->get_radius()));
+                break;
+            case TRIGGER:
+                trigger = dynamic_cast<ElementTrigger*>(e);
+                m_binary_choice->select_item(trigger->get_side());
+                m_direction->select_item(trigger->get_direction());
+                m_trigger_mode->set_checked(trigger->get_mode());
+                break;
+            default:;
         }
     }
 }
@@ -63,7 +60,7 @@ void DialogNewElement::load_from_element(Element* e)
 void DialogNewElement::init()
 {
     set_flags(DIALOG_TOP_MOST | DIALOG_FLUID);
-    
+
 
     Dialog::init();
     m_element_y = 30;
@@ -78,8 +75,7 @@ void DialogNewElement::init()
     else if (m_type == MOUSE_SCROLLWHEEL)
         add_info(LANG_LABEL_WHEEL_INFO);
     else if (m_type == MOUSE_STATS)
-        add_mouse_or_analog_stick(LANG_LABEL_MOUSE_TYPE,
-                                  LANG_ITEM_MOUSE_TYPE_DOT, LANG_ITEM_MOUSE_TYPE_ARROW);
+        add_mouse_or_analog_stick(LANG_LABEL_MOUSE_TYPE, LANG_ITEM_MOUSE_TYPE_DOT, LANG_ITEM_MOUSE_TYPE_ARROW);
     else if (m_type == TRIGGER)
         add_trigger();
     else if (m_type == GAMEPAD_ID)
@@ -87,24 +83,22 @@ void DialogNewElement::init()
     else if (m_type == DPAD_STICK)
         add_info(LANG_LABEL_DPAD_INFO);
 
-    switch (m_type)
-    {
-    case ANALOG_STICK:
-    case BUTTON:
-    case TEXTURE:
-    case MOUSE_SCROLLWHEEL:
-    case MOUSE_STATS:
-    case TRIGGER:
-    case GAMEPAD_ID:
-    case DPAD_STICK:
-        add(m_selector = new AtlasSelector(m_id++, get_left() + 270,
-                                           get_top() + 30, m_dimensions.w - 278, m_dimensions.h - 38,
-                                           m_tool->get_atlas(), this));
-        m_selector->set_selection(&m_selection);
-        add_selection_elements();
-        break;
-    case INVALID:
-    default: ;
+    switch (m_type) {
+        case ANALOG_STICK:
+        case BUTTON:
+        case TEXTURE:
+        case MOUSE_SCROLLWHEEL:
+        case MOUSE_STATS:
+        case TRIGGER:
+        case GAMEPAD_ID:
+        case DPAD_STICK:
+            add(m_selector = new AtlasSelector(m_id++, get_left() + 270, get_top() + 30, m_dimensions.w - 278,
+                                               m_dimensions.h - 38, m_tool->get_atlas(), this));
+            m_selector->set_selection(&m_selection);
+            add_selection_elements();
+            break;
+        case INVALID:
+        default:;
     }
 
     add(m_ok = new Button(ACTION_OK, 8, m_dimensions.h - 32, LANG_BUTTON_OK, this));
@@ -116,43 +110,36 @@ void DialogNewElement::action_performed(const int8_t action_id)
     ElementError error;
     const auto name_unmodified = m_initial_name == m_element_id->c_str();
 
-    switch (action_id)
-    {
-    case ACTION_OK:
-        error = m_tool->verify_element(this, m_modify_mode && name_unmodified);
-        if (error == VALID)
-        {
-            if (m_modify_mode)
-                m_tool->action_performed(TOOL_ACTION_MOD_ELEMENT_APPLY);
-            else
-                m_tool->action_performed(TOOL_ACTION_NEW_ELEMENT_ADD);
-        }
-        else
-        {
-            handle_error(error);
-        }
-        break;
-    case ACTION_CANCEL:
-        m_tool->queue_dialog_close();
-        break;
-    case ACTION_TEXT_TYPED:
-        if (m_selector && !m_selector->selection_changing() &&
-            m_u && m_v && m_w && m_h)
-        {
-            m_selection.x = SDL_strtol(m_u->c_str(), nullptr, 10);
-            m_selection.y = SDL_strtol(m_v->c_str(), nullptr, 10);
-            m_selection.w = SDL_strtol(m_w->c_str(), nullptr, 10);
-            m_selection.h = SDL_strtol(m_h->c_str(), nullptr, 10);
-        }
-        break;
-    default:
-        if (m_read_keybind)
-        {
-            if (m_read_keybind->get_state())
-                m_keycode->set_flags(TEXTBOX_HEX | TEXTBOX_KEYBIND);
-            else
-                m_keycode->set_flags(TEXTBOX_HEX);
-        }
+    switch (action_id) {
+        case ACTION_OK:
+            error = m_tool->verify_element(this, m_modify_mode && name_unmodified);
+            if (error == VALID) {
+                if (m_modify_mode)
+                    m_tool->action_performed(TOOL_ACTION_MOD_ELEMENT_APPLY);
+                else
+                    m_tool->action_performed(TOOL_ACTION_NEW_ELEMENT_ADD);
+            } else {
+                handle_error(error);
+            }
+            break;
+        case ACTION_CANCEL:
+            m_tool->queue_dialog_close();
+            break;
+        case ACTION_TEXT_TYPED:
+            if (m_selector && !m_selector->selection_changing() && m_u && m_v && m_w && m_h) {
+                m_selection.x = SDL_strtol(m_u->c_str(), nullptr, 10);
+                m_selection.y = SDL_strtol(m_v->c_str(), nullptr, 10);
+                m_selection.w = SDL_strtol(m_w->c_str(), nullptr, 10);
+                m_selection.h = SDL_strtol(m_h->c_str(), nullptr, 10);
+            }
+            break;
+        default:
+            if (m_read_keybind) {
+                if (m_read_keybind->get_state())
+                    m_keycode->set_flags(TEXTBOX_HEX | TEXTBOX_KEYBIND);
+                else
+                    m_keycode->set_flags(TEXTBOX_HEX);
+            }
     }
 }
 
@@ -172,40 +159,34 @@ bool DialogNewElement::handle_events(SDL_Event* event)
     if (Dialog::handle_events(event))
         was_handled = true;
 
-    switch (m_type)
-    {
-    case TEXTURE:
-    case BUTTON:
-    case MOUSE_STATS:
-    case ANALOG_STICK:
-    case MOUSE_SCROLLWHEEL:
-    case GAMEPAD_ID:
-    case TRIGGER:
-    case DPAD_STICK:
-        if (event->type == SDL_WINDOWEVENT)
-        {
-            if (event->window.event == SDL_WINDOWEVENT_SIZE_CHANGED)
-            {
-                const struct SDL_Rect t = {
-                    get_left() + 270,
-                    get_top() + 30, m_dimensions.w - 278, m_dimensions.h - 38
-                };
-                m_selector->set_dim(t);
-                m_ok->set_pos(8, m_dimensions.h - 32);
-                m_cancel->set_pos(124, m_dimensions.h - 32);
+    switch (m_type) {
+        case TEXTURE:
+        case BUTTON:
+        case MOUSE_STATS:
+        case ANALOG_STICK:
+        case MOUSE_SCROLLWHEEL:
+        case GAMEPAD_ID:
+        case TRIGGER:
+        case DPAD_STICK:
+            if (event->type == SDL_WINDOWEVENT) {
+                if (event->window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
+                    const struct SDL_Rect t = {get_left() + 270, get_top() + 30, m_dimensions.w - 278,
+                                               m_dimensions.h - 38};
+                    m_selector->set_dim(t);
+                    m_ok->set_pos(8, m_dimensions.h - 32);
+                    m_cancel->set_pos(124, m_dimensions.h - 32);
+                }
             }
-        }
 
-        if (!m_selector->selection_changing())
-        {
-            m_h->set_text(std::to_string(m_selection.h));
-            m_w->set_text(std::to_string(m_selection.w));
-            m_u->set_text(std::to_string(m_selection.x));
-            m_v->set_text(std::to_string(m_selection.y));   
-        }
+            if (!m_selector->selection_changing()) {
+                m_h->set_text(std::to_string(m_selection.h));
+                m_w->set_text(std::to_string(m_selection.w));
+                m_u->set_text(std::to_string(m_selection.x));
+                m_v->set_text(std::to_string(m_selection.y));
+            }
 
-        break;
-    default: ;
+            break;
+        default:;
     }
 
     return was_handled;
@@ -225,10 +206,8 @@ uint16_t DialogNewElement::get_vc() const
 {
     uint16_t t = 0x0;
 
-    if (m_keycode)
-    {
-        t = static_cast<uint16_t>(strtoul(m_keycode->get_text()->c_str(),
-                                          nullptr, 16));
+    if (m_keycode) {
+        t = static_cast<uint16_t>(strtoul(m_keycode->get_text()->c_str(), nullptr, 16));
     }
 
     return t;
@@ -241,14 +220,12 @@ uint8_t DialogNewElement::get_z_level() const
 
 element_side DialogNewElement::get_side() const
 {
-    if (m_binary_choice)
-    {
-        switch (m_binary_choice->get_selected())
-        {
-        case SIDE_RIGHT:
-            return SIDE_RIGHT;
-        default:
-            return SIDE_LEFT;
+    if (m_binary_choice) {
+        switch (m_binary_choice->get_selected()) {
+            case SIDE_RIGHT:
+                return SIDE_RIGHT;
+            default:
+                return SIDE_LEFT;
         }
     }
     return SIDE_LEFT;
@@ -256,19 +233,17 @@ element_side DialogNewElement::get_side() const
 
 trigger_direction DialogNewElement::get_direction() const
 {
-    if (m_direction)
-    {
-        switch (m_direction->get_selected())
-        {
-        default:
-        case TRIGGER_UP:
-            return TRIGGER_UP;
-        case TRIGGER_DOWN:
-            return TRIGGER_DOWN;
-        case TRIGGER_LEFT:
-            return TRIGGER_LEFT;
-        case TRIGGER_RIGHT:
-            return TRIGGER_RIGHT;
+    if (m_direction) {
+        switch (m_direction->get_selected()) {
+            default:
+            case TRIGGER_UP:
+                return TRIGGER_UP;
+            case TRIGGER_DOWN:
+                return TRIGGER_DOWN;
+            case TRIGGER_LEFT:
+                return TRIGGER_LEFT;
+            case TRIGGER_RIGHT:
+                return TRIGGER_RIGHT;
         }
     }
     return TRIGGER_UP;
@@ -276,14 +251,12 @@ trigger_direction DialogNewElement::get_direction() const
 
 mouse_movement_type DialogNewElement::get_mouse_type() const
 {
-    if (m_binary_choice)
-    {
-        switch (m_binary_choice->get_selected())
-        {
-        case DOT:
-            return DOT;
-        default:
-            return ARROW;
+    if (m_binary_choice) {
+        switch (m_binary_choice->get_selected()) {
+            case DOT:
+                return DOT;
+            default:
+                return ARROW;
         }
     }
     return DOT;
@@ -308,8 +281,7 @@ void DialogNewElement::set_default_dim(int w, int h)
     m_selection.x = 1;
     m_selection.y = 1;
 
-    if (m_w && m_h && m_u && m_v)
-    {
+    if (m_w && m_h && m_u && m_v) {
         m_w->set_text(std::to_string(w));
         m_h->set_text(std::to_string(h));
         m_u->set_text(std::to_string(1));
@@ -320,25 +292,24 @@ void DialogNewElement::set_default_dim(int w, int h)
 
 void DialogNewElement::handle_error(ElementError e) const
 {
-    switch (e)
-    {
-    case ID_EMPTY:
-    case ID_NOT_UNIQUE:
-        m_element_id->set_alert(true);
-        break;
-    case MAPPING_EMPTY:
-        m_u->set_alert(true);
-        m_v->set_alert(true);
-        m_w->set_alert(true);
-        m_h->set_alert(true);
-        break;
-    case KEYCODE_INVALID:
-        m_keycode->set_alert(true);
-        break;
-    case STICK_RADIUS:
-        m_radius->set_alert(true);
-        break;
-    default: ;
+    switch (e) {
+        case ID_EMPTY:
+        case ID_NOT_UNIQUE:
+            m_element_id->set_alert(true);
+            break;
+        case MAPPING_EMPTY:
+            m_u->set_alert(true);
+            m_v->set_alert(true);
+            m_w->set_alert(true);
+            m_h->set_alert(true);
+            break;
+        case KEYCODE_INVALID:
+            m_keycode->set_alert(true);
+            break;
+        case STICK_RADIUS:
+            m_radius->set_alert(true);
+            break;
+        default:;
     }
 }
 
@@ -411,8 +382,7 @@ void DialogNewElement::add_z_level()
     m_element_y += 40;
 }
 
-void DialogNewElement::add_mouse_or_analog_stick(const char* label,
-                                                 const char* item_a, const char* item_b)
+void DialogNewElement::add_mouse_or_analog_stick(const char* label, const char* item_a, const char* item_b)
 {
     if (m_element_y == 0)
         m_element_y = 30;

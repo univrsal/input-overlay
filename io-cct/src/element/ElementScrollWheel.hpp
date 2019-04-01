@@ -6,6 +6,7 @@
  */
 
 #pragma once
+
 #include "ElementTexture.hpp"
 #include "../util/Util.hpp"
 
@@ -16,17 +17,15 @@
 #define POS_WHEEL_UP        2
 #define POS_WHEEL_DOWN      3
 
-class ElementScrollWheel
-    : public ElementTexture
+class ElementScrollWheel : public ElementTexture
 {
 public:
-    ElementScrollWheel() : 
-        ElementTexture()
+    ElementScrollWheel() : ElementTexture()
     {
         /* NO-OP */
     };
 
-    ElementScrollWheel(const std::string& id, SDL_Point pos, SDL_Rect mapping, uint8_t z);
+    ElementScrollWheel(const std::string &id, SDL_Point pos, SDL_Rect mapping, uint8_t z);
 
     void draw(Texture* atlas, CoordinateSystem* cs, bool selected, bool alpha) override;
 
@@ -38,7 +37,8 @@ public:
 
     void update_settings(DialogElementSettings* dialog) override;
 
-    static ElementScrollWheel* read_from_file(ccl_config* file, const std::string& id, SDL_Point* default_dim);
+    static ElementScrollWheel* read_from_file(ccl_config* file, const std::string &id, SDL_Point* default_dim);
+
 private:
     SDL_Rect m_mapping_pressed = {}, m_mapping_down = {}, m_mapping_up = {};
     Timer m_wheel_reset;
