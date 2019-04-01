@@ -4,11 +4,11 @@
 
 #include <SDL.h>
 #include <iostream>
-#include "src/util/SDL_Helper.hpp"
-#include "src/Tool.hpp"
+#include "src/util/sdl_helper.hpp"
+#include "src/tool.hpp"
 
-SDL_Helper* helper = new SDL_Helper();
-Tool tool;
+sdl_helper* helper = new sdl_helper();
+tool t;
 
 int main(int argc, char** argv)
 {
@@ -29,8 +29,8 @@ int main(int argc, char** argv)
         config = argv[2];
     }
 
-    tool = Tool(helper, texture, config);
-    tool.program_loop();
+    t = tool(helper, texture, config);
+    t.program_loop();
 
 
     helper->close();
