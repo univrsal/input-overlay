@@ -254,7 +254,7 @@ const char* key_to_text(const int key_code)
             return "BACK";
         case PAD_START | VC_PAD_MASK:
             return "START";
-        case PAD_X_BOX_KEY | VC_PAD_MASK:
+        case PAD_GUIDE | VC_PAD_MASK:
             return "X-Box Button";
         case PAD_L_ANALOG | VC_PAD_MASK:
             return "Left Stick";

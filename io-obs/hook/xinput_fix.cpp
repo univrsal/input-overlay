@@ -32,7 +32,7 @@ namespace xinput_fix
             case CODE_DPAD_RIGHT:
                 return PAD_TO_VC(PAD_DPAD_RIGHT);
             case CODE_GUIDE:
-                return PAD_TO_VC(PAD_X_BOX_KEY);
+                return PAD_TO_VC(PAD_GUIDE);
             case CODE_LEFT_SHOULDER:
                 return PAD_TO_VC(PAD_LB);
             case CODE_RIGHT_SHOULDER:

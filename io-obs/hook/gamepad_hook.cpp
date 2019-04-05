@@ -23,6 +23,7 @@ namespace gamepad
 #ifdef _WIN32
     static HANDLE hook_thread;
 #else
+    gamepad_binding bindings;
     static pthread_t game_pad_hook_thread;
 #endif
 
@@ -121,109 +122,7 @@ namespace gamepad
 #else
                 unsigned char m_packet[8];
                 fread(m_packet, sizeof(char) * 8, 1, pad.dev());
-
-                if (m_packet[ID_TYPE] == ID_BUTTON) {
-                    switch (m_packet[ID_KEY_CODE]) {
-                        case PAD_L_ANALOG:
-                            hook::input_data->add_gamepad_data(pad.get_id(), VC_STICK_DATA,
-                                                               new element_data_analog_stick(
-                                                                       m_packet[ID_STATE_1] == ID_PRESSED
-                                                                       ? STATE_PRESSED : STATE_RELEASED, SIDE_LEFT));
-                            break;
-                        case PAD_R_ANALOG:
-                            hook::input_data->add_gamepad_data(pad.get_id(), VC_STICK_DATA,
-                                                               new element_data_analog_stick(
-                                                                       m_packet[ID_STATE_1] == ID_PRESSED
-                                                                       ? STATE_PRESSED : STATE_RELEASED, SIDE_RIGHT));
-                            break;
-                        default:
-                            switch (m_packet[ID_KEY_CODE]) {
-                                case PAD_DPAD_DOWN:
-                                    hook::input_data->add_gamepad_data(pad.get_id(), VC_DPAD_DATA,
-                                                                       new element_data_dpad(DPAD_DOWN,
-                                                                                             m_packet[ID_STATE_1] ==
-                                                                                             ID_PRESSED ? STATE_PRESSED
-                                                                                                        : STATE_RELEASED));
-                                    break;
-                                case PAD_DPAD_UP:
-                                    hook::input_data->add_gamepad_data(pad.get_id(), VC_DPAD_DATA,
-                                                                       new element_data_dpad(DPAD_UP,
-                                                                                             m_packet[ID_STATE_1] ==
-                                                                                             ID_PRESSED ? STATE_PRESSED
-                                                                                                        : STATE_RELEASED));
-                                    break;
-                                case PAD_DPAD_LEFT:
-                                    hook::input_data->add_gamepad_data(pad.get_id(), VC_DPAD_DATA,
-                                                                       new element_data_dpad(DPAD_LEFT,
-                                                                                             m_packet[ID_STATE_1] ==
-                                                                                             ID_PRESSED ? STATE_PRESSED
-                                                                                                        : STATE_RELEASED));
-                                    break;
-                                case PAD_DPAD_RIGHT:
-                                    hook::input_data->add_gamepad_data(pad.get_id(), VC_DPAD_DATA,
-                                                                       new element_data_dpad(DPAD_RIGHT,
-                                                                                             m_packet[ID_STATE_1] ==
-                                                                                             ID_PRESSED ? STATE_PRESSED
-                                                                                                        : STATE_RELEASED));
-                                    break;
-                                default:;
-                            }
-                            hook::input_data->add_gamepad_data(pad.get_id(), PAD_TO_VC(m_packet[ID_KEY_CODE]),
-                                                               new element_data_button(
-                                                                       m_packet[ID_STATE_1] == ID_PRESSED
-                                                                       ? STATE_PRESSED : STATE_RELEASED));
-                    }
-                } else {
-                    float axis;
-                    switch (m_packet[ID_KEY_CODE]) {
-                        case ID_L_TRIGGER:
-                            hook::input_data->add_gamepad_data(pad.get_id(), VC_TRIGGER_DATA,
-                                                               new element_data_trigger(T_DATA_LEFT,
-                                                                                        m_packet[ID_STATE_1] / 255.f));
-                            break;
-                        case ID_R_TRIGGER:
-                            hook::input_data->add_gamepad_data(pad.get_id(), VC_TRIGGER_DATA,
-                                                               new element_data_trigger(T_DATA_RIGHT,
-                                                                                        m_packet[ID_STATE_1] / 255.f));
-                            break;
-                        case ID_R_ANALOG_X:
-                            if (m_packet[ID_STATE_2] < 128)
-                                axis = UTIL_CLAMP(-1.f, (m_packet[ID_STATE_2]) / STICK_MAX_VAL, 1.f);
-                            else
-                                axis = UTIL_CLAMP(-1.f, (m_packet[ID_STATE_2] - 255) / STICK_MAX_VAL, 1.f);
-
-                            hook::input_data->add_gamepad_data(pad.get_id(), VC_STICK_DATA,
-                                                               new element_data_analog_stick(axis, SD_RIGHT_X));
-                            break;
-                        case ID_R_ANALOG_Y:
-                            if (m_packet[ID_STATE_2] < 128)
-                                axis = UTIL_CLAMP(-1.f, (m_packet[ID_STATE_2]) / STICK_MAX_VAL, 1.f);
-                            else
-                                axis = UTIL_CLAMP(-1.f, (m_packet[ID_STATE_2] - 255) / STICK_MAX_VAL, 1.f);
-                            hook::input_data->add_gamepad_data(pad.get_id(), VC_STICK_DATA,
-                                                               new element_data_analog_stick(axis, SD_RIGHT_Y));
-                            break;
-                        case ID_L_ANALOG_X:
-                            if (m_packet[ID_STATE_2] < 128)
-                                axis = UTIL_CLAMP(-1.f, (m_packet[ID_STATE_2]) / STICK_MAX_VAL, 1.f);
-                            else
-                                axis = UTIL_CLAMP(-1.f, (m_packet[ID_STATE_2] - 255) / STICK_MAX_VAL, 1.f);
-
-                            hook::input_data->add_gamepad_data(pad.get_id(), VC_STICK_DATA,
-                                                               new element_data_analog_stick(axis, SD_LEFT_X));
-                            break;
-                        case ID_L_ANALOG_Y:
-                            if (m_packet[ID_STATE_2] < 128)
-                                axis = UTIL_CLAMP(-1.f, ((float) m_packet[ID_STATE_2]) / STICK_MAX_VAL, 1.f);
-                            else
-                                axis = UTIL_CLAMP(-1.f, ((float) m_packet[ID_STATE_2] - 255) / STICK_MAX_VAL, 1.f);
-
-                            hook::input_data->add_gamepad_data(pad.get_id(), VC_STICK_DATA,
-                                                               new element_data_analog_stick(axis, SD_LEFT_Y));
-                            break;
-                        default:;
-                    }
-                }
+                //bindings.handle_packet(&m_packet, hook::input_data, pad.get_id());
 
 #endif /* LINUX */
                 mutex.unlock();

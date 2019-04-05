@@ -246,7 +246,7 @@
 #define PAD_RB                          5
 #define PAD_BACK                        6
 #define PAD_START                       7
-#define PAD_X_BOX_KEY                    8
+#define PAD_GUIDE                   8
 #define PAD_L_ANALOG                    9
 #define PAD_R_ANALOG                    10
 #define PAD_DPAD_LEFT                   11

@@ -9,6 +9,7 @@
 
 #include "xinput_fix.hpp"
 #include "util/util.hpp"
+#include "gamepad_binding.hpp"
 #include <stdio.h>
 #include <mutex>
 
@@ -16,7 +17,7 @@ namespace gamepad
 {
     /* Linux implementation */
 #ifdef LINUX
-
+    extern gamepad_binding bindings;
 #include <stdlib.h>
 #include <string>
 #include <malloc.h>

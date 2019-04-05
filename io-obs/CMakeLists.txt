@@ -22,6 +22,9 @@ if ("${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
     add_definitions(-DLINUX=1)
     add_definitions(-DUNIX=1)
 
+    set(input-overlay_PLATFORM_SOURCES
+            util/window_helper.hpp util/window_helper_nix.cpp hook/gamepad_binding.cpp hook/gamepad_binding.hpp)
+
     if (ENABLE_STATIC_NETLIB)
         message("-- [input-overlay] Using precompiled netlib")
         set(NETLIB_INCLUDE_DIR
@@ -134,7 +137,7 @@ set(input-overlay_SOURCES
         network/io_client.cpp
         network/io_client.hpp
         ../ccl/ccl.cpp
-        ../ccl/ccl.hpp util/window_helper.hpp util/window_helper_nix.cpp)
+        ../ccl/ccl.hpp)
 
 set(io_settings_UI
         gui/io_settings_dialog.ui)
@@ -144,7 +147,8 @@ qt5_wrap_ui(frontend-tools_UI_HEADERS
 
 add_library(input-overlay MODULE
         ${io_settings_UI_HEADERS}
-        ${input-overlay_SOURCES})
+        ${input-overlay_SOURCES}
+        ${input-overlay_PLATFORM_SOURCES})
 
 include_directories(
         ${UIOHOOK_INCLUDE_DIR}
