@@ -13,8 +13,11 @@
 #include <util/platform.h>
 #include <util/config-file.h>
 
-input_filter io_window_filters; /* Global filters */
-std::mutex filter_mutex;        /* Thread safety for writing/reading filters */
+namespace io_config
+{
+    input_filter io_window_filters; /* Global filters */
+    std::mutex filter_mutex;        /* Thread safety for writing/reading filters */
+}
 
 io_settings_dialog::io_settings_dialog(QWidget* parent) : QDialog(parent, Qt::Dialog), ui(new Ui::io_config_dialog)
 {
@@ -30,9 +33,6 @@ io_settings_dialog::io_settings_dialog(QWidget* parent) : QDialog(parent, Qt::Di
     connect(ui->btn_refresh_cb, &QPushButton::clicked, this, &io_settings_dialog::RefreshWindowList);
     connect(ui->btn_add, &QPushButton::clicked, this, &io_settings_dialog::AddFilter);
     connect(ui->btn_remove, &QPushButton::clicked, this, &io_settings_dialog::RemoveFilter);
-
-    /*connect(ui->box_refresh_rate, qOverload<int>(&QSpinBox::valueChanged),
-        this, &io_settings_dialog::BoxRefreshChanged);*/
 
     const auto cfg = obs_frontend_get_global_config();
 
@@ -71,7 +71,11 @@ io_settings_dialog::io_settings_dialog(QWidget* parent) : QDialog(parent, Qt::Di
 
     /* Add current open windows to filter list */
     RefreshWindowList();
-    io_window_filters.read_from_config(cfg);
+
+    for (const auto& filter : io_config::io_window_filters.filters())
+    {
+        ui->list_filters->addItem(filter);
+    }
 }
 
 void io_settings_dialog::showEvent(QShowEvent* event)
@@ -139,22 +143,28 @@ void io_settings_dialog::RefreshWindowList()
     GetWindowList(windows);
     ui->cb_text->clear();
 
-    for (auto window : windows)
+    for (const auto& window : windows)
         ui->cb_text->addItem(window.c_str());
-
 }
 
 void io_settings_dialog::AddFilter()
 {
+    for (int i = 0; i < ui->list_filters->count(); i++)
+        if (ui->list_filters->itemAt(0, i)->text() == ui->cb_text->currentText())
+            return; /* Filter already exists */
+
     ui->list_filters->addItem(ui->cb_text->currentText());
-    io_window_filters.add_filter(ui->cb_text->currentText().toStdString().c_str());
+    io_config::io_window_filters.add_filter(ui->cb_text->currentText().toStdString().c_str());
 }
 
 void io_settings_dialog::RemoveFilter()
 {
-    if (ui->list_filters->selectedItems().size() > 0) {
-        io_window_filters.remove_filter(ui->list_filters->currentIndex().row());
-        ui->list_filters->removeItemWidget(ui->list_filters->currentItem());
+    if (!ui->list_filters->selectedItems().empty()) {
+        auto selected_count = ui->list_filters->selectedItems().size();
+        for (int i = 0; i < selected_count; i++)
+            io_config::io_window_filters.remove_filter(i);
+
+        qDeleteAll(ui->list_filters->selectedItems());
     }
 }
 
@@ -179,9 +189,9 @@ void io_settings_dialog::FormAccepted()
     config_set_bool(cfg, S_REGION, S_CONTROL, ui->cb_enable_control->isChecked());
     config_set_int(cfg, S_REGION, S_CONTROL_MODE, ui->cb_list_mode->currentIndex());
 
-    io_window_filters.set_regex(ui->cb_regex->isChecked());
-    io_window_filters.set_whitelist(ui->cb_list_mode->currentIndex() == 0);
-    io_window_filters.write_to_config(cfg);
+    io_config::io_window_filters.set_regex(ui->cb_regex->isChecked());
+    io_config::io_window_filters.set_whitelist(ui->cb_list_mode->currentIndex() == 0);
+    io_config::io_window_filters.write_to_config(cfg);
 }
 
 
@@ -196,22 +206,22 @@ static std::string base_id = S_FILTER_BASE;
 
 void input_filter::read_from_config(config_t* cfg)
 {
-    filter_mutex.lock();
+    io_config::filter_mutex.lock();
     m_regex = config_get_bool(cfg, S_REGION, S_REGEX);
     m_whitelist = config_get_int(cfg, S_REGION, S_CONTROL_MODE) == 0;
     const int filter_count = config_get_int(cfg, S_REGION, S_FILTER_COUNT);
 
-    for (auto i = 0; i < filter_count; i++) {
+    for (auto i = 0; i < filter_count; ++i) {
         const auto str = config_get_string(cfg, S_REGION, (base_id + std::to_string(i)).c_str());
         if (str && strlen(str) > 0)
             m_filters.append(str);
     }
-    filter_mutex.unlock();
+    io_config::filter_mutex.unlock();
 }
 
 void input_filter::write_to_config(config_t* cfg)
 {
-    filter_mutex.lock();
+    io_config::filter_mutex.lock();
 
     config_set_int(cfg, S_REGION, S_FILTER_COUNT, m_filters.size());
 
@@ -219,19 +229,19 @@ void input_filter::write_to_config(config_t* cfg)
         config_set_string(cfg, S_REGION, (base_id + std::to_string(i)).c_str(), m_filters[i].toStdString().c_str());
     }
 
-    filter_mutex.unlock();
+    io_config::filter_mutex.unlock();
 }
 
 void input_filter::add_filter(const char* filter)
 {
-    filter_mutex.lock();
+    io_config::filter_mutex.lock();
     m_filters.append(filter);
-    filter_mutex.unlock();
+    io_config::filter_mutex.unlock();
 }
 
 void input_filter::remove_filter(const int index)
 {
-    if (index > 0 && index < m_filters.size())
+    if (index >= 0 && index < m_filters.size())
         m_filters.removeAt(index);
 }
 
@@ -247,13 +257,14 @@ void input_filter::set_whitelist(bool wl)
 
 bool input_filter::input_blocked()
 {
-    filter_mutex.lock();
+    io_config::filter_mutex.lock();
     std::string current_window;
-    auto flag = false;
+    auto flag = m_whitelist;
     GetCurrentWindowTitle(current_window);
+    const char* window_str = current_window.c_str();
 
-    for (auto filter : m_filters) {
-        if (filter == current_window.c_str()) {
+    for (const auto& filter : m_filters) {
+        if (filter == window_str) {
             flag = !m_whitelist;
             break;
         }
@@ -266,6 +277,11 @@ bool input_filter::input_blocked()
             }
         }
     }
-    filter_mutex.unlock();
+    io_config::filter_mutex.unlock();
     return flag;
+}
+
+QStringList& input_filter::filters()
+{
+    return m_filters;
 }

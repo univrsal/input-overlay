@@ -34,7 +34,7 @@ void element_texture::draw(gs_effect_t* effect, gs_image_file_t* image, element_
                            sources::overlay_settings* settings)
 {
     UNUSED_PARAMETER(data);
-    UNUSED_PARAMTER(settings);
+    UNUSED_PARAMETER(settings);
     draw(effect, image, &m_mapping, &m_pos);
 }
 

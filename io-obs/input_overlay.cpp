@@ -78,7 +78,7 @@ bool obs_module_load()
 
     /* Input filtering via focused window title */
     if (control)
-        io_window_filters.read_from_config(cfg);
+        io_config::io_window_filters.read_from_config(cfg);
 
     /* UI registration from
     * https://github.com/Palakis/obs-websocket/
@@ -105,6 +105,6 @@ void obs_module_unload()
     if (hook::hook_initialized)
         hook::end_hook();
 #ifdef LINUX
-    cleanupDisplay();
+    //cleanupDisplay();
 #endif
 }

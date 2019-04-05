@@ -5,6 +5,7 @@
  * github.com/univrsal/input-overlay
  */
 
+#include "gui/io_settings_dialog.hpp"
 #include "../../ccl/ccl.hpp"
 #include "overlay.hpp"
 #include "layout_constants.hpp"
@@ -201,7 +202,8 @@ void overlay::refresh_data()
      * while the data is currently inaccessible, because it is being written
      * to by the input thread, resulting in all buttons being unpressed
      */
-
+    if (io_config::io_window_filters.input_blocked())
+        return;
     element_data_holder* source = nullptr;
     std::lock_guard<std::mutex> lck1(hook::mutex);
     std::lock_guard<std::mutex> lck2(network::mutex);

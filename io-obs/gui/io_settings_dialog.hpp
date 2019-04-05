@@ -34,6 +34,8 @@ public:
     void set_whitelist(bool wl);
 
     bool input_blocked();
+
+    QStringList& filters();
 };
 
 
@@ -78,5 +80,7 @@ private:
 
 static io_settings_dialog* settings_dialog = nullptr;
 
-extern input_filter io_window_filters;
-extern std::mutex filter_mutex;
+namespace io_config {
+    extern input_filter io_window_filters;
+    extern std::mutex filter_mutex;
+}
