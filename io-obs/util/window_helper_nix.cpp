@@ -1,7 +1,7 @@
 /**
  * This file is part of obs-studio
- * which is licensed under the MPL 2.0 license
- * See LICENSE or mozilla.org/en-US/MPL/2.0/
+ * which is licensed under the GPL 2.0
+ * See COPYING or https://www.gnu.org/licenses/old-licenses/gpl-2.0.txt
  * github.com/obsproject/obs-studio/blob/master/UI/frontend-plugins/frontend-tools/auto-scene-switcher-nix.cpp
  */
 
