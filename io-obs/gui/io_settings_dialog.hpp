@@ -54,7 +54,7 @@ public:
 
 private Q_SLOTS:
 
-    void RefreshConnectionsList();
+    void RefreshUi();
 
     void FormAccepted();
 
@@ -71,6 +71,8 @@ private Q_SLOTS:
     void AddFilter();
 
     void RemoveFilter();
+
+    void GamepadBinging(const QString& text);
 
 private:
     Ui::io_config_dialog* ui;

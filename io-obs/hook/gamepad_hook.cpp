@@ -24,6 +24,7 @@ namespace gamepad
     static HANDLE hook_thread;
 #else
     gamepad_binding bindings;
+    uint8_t last_input = 0xff;
     static pthread_t game_pad_hook_thread;
 #endif
 
@@ -122,6 +123,8 @@ namespace gamepad
 #else
                 unsigned char m_packet[8];
                 fread(m_packet, sizeof(char) * 8, 1, pad.dev());
+                if (m_packet[ID_STATE_1] == ID_PRESSED)
+                    last_input = m_packet[ID_KEY_CODE];
                 //bindings.handle_packet(&m_packet, hook::input_data, pad.get_id());
 
 #endif /* LINUX */

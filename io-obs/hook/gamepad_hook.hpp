@@ -18,6 +18,7 @@ namespace gamepad
     /* Linux implementation */
 #ifdef LINUX
     extern gamepad_binding bindings;
+    extern uint8_t last_input; /* Used in config screen to bind buttons */
 #include <stdlib.h>
 #include <string>
 #include <malloc.h>

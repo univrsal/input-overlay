@@ -12,6 +12,7 @@
 #include <obs-frontend-api.h>
 #include <util/platform.h>
 #include <util/config-file.h>
+#include <hook/gamepad_hook.hpp>
 
 namespace io_config
 {
@@ -23,6 +24,28 @@ io_settings_dialog::io_settings_dialog(QWidget* parent) : QDialog(parent, Qt::Di
 {
     ui->setupUi(this);
 
+#ifndef LINUX
+    ui->tab_gamepad->setVisible(false);
+#else
+    connect(ui->txt_a, &QLineEdit::textChanged, this, &io_settings_dialog::GamepadBinging);
+    connect(ui->txt_b, &QLineEdit::textChanged, this, &io_settings_dialog::GamepadBinging);
+    connect(ui->txt_x, &QLineEdit::textChanged, this, &io_settings_dialog::GamepadBinging);
+    connect(ui->txt_y, &QLineEdit::textChanged, this, &io_settings_dialog::GamepadBinging);
+    connect(ui->txt_start, &QLineEdit::textChanged, this, &io_settings_dialog::GamepadBinging);
+    connect(ui->txt_back, &QLineEdit::textChanged, this, &io_settings_dialog::GamepadBinging);
+    connect(ui->txt_analog_left, &QLineEdit::textChanged, this, &io_settings_dialog::GamepadBinging);
+    connect(ui->txt_analog_right, &QLineEdit::textChanged, this, &io_settings_dialog::GamepadBinging);
+    connect(ui->txt_rb, &QLineEdit::textChanged, this, &io_settings_dialog::GamepadBinging);
+    connect(ui->txt_lb, &QLineEdit::textChanged, this, &io_settings_dialog::GamepadBinging);
+    connect(ui->txt_lt, &QLineEdit::textChanged, this, &io_settings_dialog::GamepadBinging);
+    connect(ui->txt_rt, &QLineEdit::textChanged, this, &io_settings_dialog::GamepadBinging);
+    connect(ui->txt_guide, &QLineEdit::textChanged, this, &io_settings_dialog::GamepadBinging);
+    connect(ui->txt_rx, &QLineEdit::textChanged, this, &io_settings_dialog::GamepadBinging);
+    connect(ui->txt_ry, &QLineEdit::textChanged, this, &io_settings_dialog::GamepadBinging);
+    connect(ui->txt_lx, &QLineEdit::textChanged, this, &io_settings_dialog::GamepadBinging);
+    connect(ui->txt_ly, &QLineEdit::textChanged, this, &io_settings_dialog::GamepadBinging);
+#endif
+
     connect(ui->button_box, &QDialogButtonBox::accepted, this, &io_settings_dialog::FormAccepted);
 
     connect(ui->cb_enable_remote, &QCheckBox::stateChanged, this, &io_settings_dialog::CbRemoteStateChanged);
@@ -33,6 +56,7 @@ io_settings_dialog::io_settings_dialog(QWidget* parent) : QDialog(parent, Qt::Di
     connect(ui->btn_refresh_cb, &QPushButton::clicked, this, &io_settings_dialog::RefreshWindowList);
     connect(ui->btn_add, &QPushButton::clicked, this, &io_settings_dialog::AddFilter);
     connect(ui->btn_remove, &QPushButton::clicked, this, &io_settings_dialog::RemoveFilter);
+
 
     const auto cfg = obs_frontend_get_global_config();
 
@@ -66,14 +90,13 @@ io_settings_dialog::io_settings_dialog(QWidget* parent) : QDialog(parent, Qt::Di
 
     /* Check for new connections every 250ms */
     m_refresh = new QTimer(this);
-    connect(m_refresh, SIGNAL(timeout()), SLOT(RefreshConnectionsList()));
+    connect(m_refresh, SIGNAL(timeout()), SLOT(RefreshUi()));
     m_refresh->start(250);
 
     /* Add current open windows to filter list */
     RefreshWindowList();
 
-    for (const auto& filter : io_config::io_window_filters.filters())
-    {
+    for (const auto &filter : io_config::io_window_filters.filters()) {
         ui->list_filters->addItem(filter);
     }
 }
@@ -81,7 +104,7 @@ io_settings_dialog::io_settings_dialog(QWidget* parent) : QDialog(parent, Qt::Di
 void io_settings_dialog::showEvent(QShowEvent* event)
 {
     Q_UNUSED(event)
-    RefreshConnectionsList();
+    RefreshUi();
 }
 
 void io_settings_dialog::toggleShowHide()
@@ -89,7 +112,7 @@ void io_settings_dialog::toggleShowHide()
     setVisible(!isVisible());
 }
 
-void io_settings_dialog::RefreshConnectionsList()
+void io_settings_dialog::RefreshUi()
 {
     /* Populate client list */
     if (network::network_flag && network::server_instance && network::server_instance->clients_changed()) {
@@ -105,6 +128,25 @@ void io_settings_dialog::RefreshConnectionsList()
             list.append(name);
         ui->box_connections->addItems(list);
     }
+
+#ifdef LINUX
+    if (gamepad::last_input != 0xff) {
+        auto mylineEdits = this->findChildren<QWidget*>();
+        QListIterator<QWidget*> it(mylineEdits);
+        QWidget* lineEditField;
+        while (it.hasNext()) {
+            lineEditField = it.next();
+            if (auto lineE = qobject_cast<QLineEdit*>(lineEditField)) {
+                if (lineE->hasFocus()) {
+                    /* Set the binding of this textbox */
+                    lineE->setText(QString::number(gamepad::last_input));
+                    gamepad::last_input = 0xff;
+                    break;
+                }
+            }
+        }
+    }
+#endif
 }
 
 void io_settings_dialog::CbRemoteStateChanged(int state)
@@ -143,7 +185,7 @@ void io_settings_dialog::RefreshWindowList()
     GetWindowList(windows);
     ui->cb_text->clear();
 
-    for (const auto& window : windows)
+    for (const auto &window : windows)
         ui->cb_text->addItem(window.c_str());
 }
 
@@ -198,6 +240,7 @@ void io_settings_dialog::FormAccepted()
 io_settings_dialog::~io_settings_dialog()
 {
     delete ui;
+    m_refresh->stop();
     delete m_refresh;
 }
 
@@ -263,7 +306,7 @@ bool input_filter::input_blocked()
     GetCurrentWindowTitle(current_window);
     const char* window_str = current_window.c_str();
 
-    for (const auto& filter : m_filters) {
+    for (const auto &filter : m_filters) {
         if (filter == window_str) {
             flag = !m_whitelist;
             break;
@@ -281,7 +324,7 @@ bool input_filter::input_blocked()
     return flag;
 }
 
-QStringList& input_filter::filters()
+QStringList &input_filter::filters()
 {
     return m_filters;
 }
