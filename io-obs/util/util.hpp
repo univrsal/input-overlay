@@ -10,18 +10,10 @@
 
 #ifndef CCT
 
-#ifndef _WIN32
-#ifndef LINUX
-#define LINUX
-#endif
-#endif /* WINDOWS / LINUX, TODO: do this in Cmake and include macOS */
-
 #ifdef LINUX
 #define STICK_MAX_VAL   127.f
-
 #include <math.h>
-
-#else
+#elif _WIN32
 #define STICK_MAX_VAL       32767.f
 #endif
 
@@ -29,10 +21,8 @@
 
 #include <string>
 
-#ifndef IO_CLIENT
-
+#ifndef IO_CLIENT /* io-client uses this header, but doesn't doesn't use any obs headers */
 #include <obs-module.h>
-
 #define warning(format, ...) blog(LOG_WARNING, "[%s] " format, \
         obs_source_get_name(m_source), ##__VA_ARGS__)
 #define T_(v)                           obs_module_text(v)
@@ -43,19 +33,16 @@
 #endif
 
 #ifdef DEBUG
-
 #include <random>
-
 #endif
-
 #endif /* CCT */
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
 #endif
 
-#define UTIL_MAX(a, b)                   (((a) > (b)) ? (a) : (b))
-#define UTIL_MIN(a, b)                   (((a) < (b)) ? (a) : (b))
+#define UTIL_MAX(a, b)                  (((a) > (b)) ? (a) : (b))
+#define UTIL_MIN(a, b)                  (((a) < (b)) ? (a) : (b))
 #define UTIL_CLAMP(lower, x, upper)     (UTIL_MIN(upper, UTIL_MAX(x, lower)))
 #define UTIL_SWAP_BE16(i)               ((i >> 8) | (i << 8))
 
@@ -76,6 +63,31 @@
 #define S_CONTROL_MODE                  "control_mode"
 #define S_FILTER_COUNT                  "filter_count"
 #define S_FILTER_BASE                   "filter_"
+
+/* Linux gamepad bindings TODO: Maybe for windows as well? */
+#define S_BINDING_A                     "binding_a"
+#define S_BINDING_B                     "binding_b"
+#define S_BINDING_X                     "binding_x"
+#define S_BINDING_Y                     "binding_y"
+#define S_BINDING_START                 "binding_start"
+#define S_BINDING_BACK                  "binding_back"
+#define S_BINDING_GUIDE                 "binding_guide"
+#define S_BINDING_RB                    "binding_rb"
+#define S_BINDING_LB                    "binding_lb"
+#define S_BINDING_RT                    "binding_rt"
+#define S_BINDING_LT                    "binding_lt"
+#define S_BINDING_DPAD_UP               "binding_dpad_up"
+#define S_BINDING_DPAD_DOWN             "binding_dpad_down"
+#define S_BINDING_DPAD_LEFT             "binding_dpad_left"
+#define S_BINDING_DPAD_RIGHT            "binding_dpad_right"
+#define S_BINDING_ANALOG_L              "binding_analog_l"
+#define S_BINDING_ANALOG_R              "binding_analog_r"
+#define S_BINDING_ANALOG_LX             "binding_analog_lx"
+#define S_BINDING_ANALOG_LY             "binding_analog_ly"
+#define S_BINDING_ANALOG_RX             "binding_analog_rx"
+#define S_BINDING_ANALOG_RY             "binding_analog_ry"
+
+/* === Source properties === */
 
 /* Common values */
 #define S_INPUT_SOURCE                  "io.input_source"
@@ -116,7 +128,7 @@
 /* Lang Input History */
 #define S_HISTORY_SIZE                  "io.history_size"
 #define S_HISTORY_FIX_CUTTING           "io.fix_cutting"
-#define S_HISTORY_INCLUDE_MOUSE            "io.include_mouse"
+#define S_HISTORY_INCLUDE_MOUSE         "io.include_mouse"
 #define S_HISTORY_INCLUDE_PAD           "io.include_pad"
 #define S_HISTORY_INTERVAL              "io.interval"
 #define S_HISTORY_CLEAR_HISTORY         "io.clear_history"
@@ -140,7 +152,8 @@
 
 #define S_HISTORY_SHOW_FONT             "io.show_font"
 #define S_HISTORY_FONT                  "io.font"
-/* === These settings are handled by the text source === */
+
+/* === These settings are handled by the text source === TODO: Remove? */
 #define S_HISTORY_FONT_COLOR            "color"
 #define S_HISTORY_OUTLINE               "outline"
 #define S_HISTORY_OUTLINE_SIZE          "outline_size"
@@ -229,32 +242,23 @@
 #define PAD_TO_VC(a)                    (a | VC_PAD_MASK)
 #define PAD_COUNT 4
 
-#define PAD_ICON_COUNT                  22
-#define PAD_BUTTON_COUNT                17
-
-#define PAD_BODY                        17
-#define PAD_PLAYER_1                    18
-#define PAD_PLAYER_2                    19
-#define PAD_PLAYER_3                    20
-#define PAD_PLAYER_4                    21
-
-#define PAD_A                           0
-#define PAD_B                           1
-#define PAD_X                           2
-#define PAD_Y                           3
-#define PAD_LB                          4
-#define PAD_RB                          5
-#define PAD_BACK                        6
-#define PAD_START                       7
-#define PAD_GUIDE                   8
-#define PAD_L_ANALOG                    9
-#define PAD_R_ANALOG                    10
-#define PAD_DPAD_LEFT                   11
-#define PAD_DPAD_RIGHT                  12
-#define PAD_DPAD_UP                     13
-#define PAD_DPAD_DOWN                   14
-#define PAD_LT                          15
-#define PAD_RT                          16
+#define VC_PAD_A                        0 | VC_PAD_MASK
+#define VC_PAD_B                        1 | VC_PAD_MASK
+#define VC_PAD_X                        2 | VC_PAD_MASK
+#define VC_PAD_Y                        3 | VC_PAD_MASK
+#define VC_PAD_LB                       4 | VC_PAD_MASK
+#define VC_PAD_RB                       5 | VC_PAD_MASK
+#define VC_PAD_BACK                     6 | VC_PAD_MASK
+#define VC_PAD_START                    7 | VC_PAD_MASK
+#define VC_PAD_GUIDE                    8 | VC_PAD_MASK
+#define VC_PAD_L_ANALOG                 9 | VC_PAD_MASK
+#define VC_PAD_R_ANALOG                 10 | VC_PAD_MASK
+#define VC_PAD_DPAD_LEFT                11 | VC_PAD_MASK
+#define VC_PAD_DPAD_RIGHT               12 | VC_PAD_MASK
+#define VC_PAD_DPAD_UP                  13 | VC_PAD_MASK
+#define VC_PAD_DPAD_DOWN                14 | VC_PAD_MASK
+#define VC_PAD_LT                       15 | VC_PAD_MASK
+#define VC_PAD_RT                       16 | VC_PAD_MASK
 
 /* Get default key names from a libuiohook keycode */
 const char* key_to_text(int key_code);

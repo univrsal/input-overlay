@@ -40,6 +40,12 @@ void set_defaults(config_t* cfg)
     config_set_default_bool(cfg, S_REGION, S_LOGGING, false);
     config_set_default_int(cfg, S_REGION, S_PORT, 1608);
     config_set_default_int(cfg, S_REGION, S_REFRESH, network::refresh_rate);
+
+    /* Gamepad binding defaults */
+#ifdef LINUX
+    for (const auto& binding : gamepad::default_bindings)
+        config_set_default_int(cfg, S_REGION, binding.setting, binding.default_value);
+#endif
 }
 
 bool obs_module_load()
@@ -83,7 +89,6 @@ bool obs_module_load()
     /* UI registration from
     * https://github.com/Palakis/obs-websocket/
     */
-
     const auto menu_action = static_cast<QAction*>(obs_frontend_add_tools_menu_qaction(T_MENU_OPEN_SETTINGS));
     obs_frontend_push_ui_translation(obs_module_get_string);
     const auto main_window = static_cast<QMainWindow*>(obs_frontend_get_main_window());

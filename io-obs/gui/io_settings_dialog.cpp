@@ -22,28 +22,18 @@ namespace io_config
 
 io_settings_dialog::io_settings_dialog(QWidget* parent) : QDialog(parent, Qt::Dialog), ui(new Ui::io_config_dialog)
 {
+    const auto cfg = obs_frontend_get_global_config();
     ui->setupUi(this);
 
 #ifndef LINUX
     ui->tab_gamepad->setVisible(false);
 #else
-    connect(ui->txt_a, &QLineEdit::textChanged, this, &io_settings_dialog::GamepadBinging);
-    connect(ui->txt_b, &QLineEdit::textChanged, this, &io_settings_dialog::GamepadBinging);
-    connect(ui->txt_x, &QLineEdit::textChanged, this, &io_settings_dialog::GamepadBinging);
-    connect(ui->txt_y, &QLineEdit::textChanged, this, &io_settings_dialog::GamepadBinging);
-    connect(ui->txt_start, &QLineEdit::textChanged, this, &io_settings_dialog::GamepadBinging);
-    connect(ui->txt_back, &QLineEdit::textChanged, this, &io_settings_dialog::GamepadBinging);
-    connect(ui->txt_analog_left, &QLineEdit::textChanged, this, &io_settings_dialog::GamepadBinging);
-    connect(ui->txt_analog_right, &QLineEdit::textChanged, this, &io_settings_dialog::GamepadBinging);
-    connect(ui->txt_rb, &QLineEdit::textChanged, this, &io_settings_dialog::GamepadBinging);
-    connect(ui->txt_lb, &QLineEdit::textChanged, this, &io_settings_dialog::GamepadBinging);
-    connect(ui->txt_lt, &QLineEdit::textChanged, this, &io_settings_dialog::GamepadBinging);
-    connect(ui->txt_rt, &QLineEdit::textChanged, this, &io_settings_dialog::GamepadBinging);
-    connect(ui->txt_guide, &QLineEdit::textChanged, this, &io_settings_dialog::GamepadBinging);
-    connect(ui->txt_rx, &QLineEdit::textChanged, this, &io_settings_dialog::GamepadBinging);
-    connect(ui->txt_ry, &QLineEdit::textChanged, this, &io_settings_dialog::GamepadBinging);
-    connect(ui->txt_lx, &QLineEdit::textChanged, this, &io_settings_dialog::GamepadBinging);
-    connect(ui->txt_ly, &QLineEdit::textChanged, this, &io_settings_dialog::GamepadBinging);
+    for (const auto& binding : gamepad::default_bindings) {
+        auto text_box = findChild<QLineEdit*>(binding.text_box_id);
+        if (text_box) {
+            text_box->setText(QString::number(config_get_int(cfg, S_REGION, binding.setting)));
+        }
+    }
 #endif
 
     connect(ui->button_box, &QDialogButtonBox::accepted, this, &io_settings_dialog::FormAccepted);
@@ -56,9 +46,6 @@ io_settings_dialog::io_settings_dialog(QWidget* parent) : QDialog(parent, Qt::Di
     connect(ui->btn_refresh_cb, &QPushButton::clicked, this, &io_settings_dialog::RefreshWindowList);
     connect(ui->btn_add, &QPushButton::clicked, this, &io_settings_dialog::AddFilter);
     connect(ui->btn_remove, &QPushButton::clicked, this, &io_settings_dialog::RemoveFilter);
-
-
-    const auto cfg = obs_frontend_get_global_config();
 
     /* Load values */
     ui->cb_iohook->setChecked(config_get_bool(cfg, S_REGION, S_IOHOOK));
@@ -174,11 +161,6 @@ void io_settings_dialog::PingClients()
     network::server_instance->ping_clients();
 }
 
-void io_settings_dialog::BoxRefreshChanged(int value)
-{
-    network::refresh_rate = value;
-}
-
 void io_settings_dialog::RefreshWindowList()
 {
     std::vector<std::string> windows;
@@ -234,6 +216,18 @@ void io_settings_dialog::FormAccepted()
     io_config::io_window_filters.set_regex(ui->cb_regex->isChecked());
     io_config::io_window_filters.set_whitelist(ui->cb_list_mode->currentIndex() == 0);
     io_config::io_window_filters.write_to_config(cfg);
+
+#ifdef LINUX
+    for (const auto& binding : gamepad::default_bindings) {
+        auto text_box = findChild<QLineEdit*>(binding.text_box_id);
+        if (text_box) {
+            bool ok = false;
+            int value = text_box->text().toInt(&ok, 10);
+            if (ok)
+                config_set_int(cfg, S_REGION, binding.setting, value);
+        }
+    }
+#endif
 }
 
 

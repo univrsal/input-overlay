@@ -19,10 +19,13 @@ namespace gamepad
 #ifdef LINUX
     extern gamepad_binding bindings;
     extern uint8_t last_input; /* Used in config screen to bind buttons */
+
 #include <stdlib.h>
 #include <string>
 #include <malloc.h>
 #include <unistd.h>
+#include <fcntl.h>
+#include <linux/joystick.h>
 
 #define ID_TYPE         6
 #define ID_BUTTON       1
@@ -31,12 +34,14 @@ namespace gamepad
 #define ID_KEY_CODE     7
 #define ID_PRESSED      1
 
-#define ID_L_ANALOG_X   0
-#define ID_L_ANALOG_Y   1
-#define ID_L_TRIGGER    2
-#define ID_R_ANALOG_X   3
-#define ID_R_ANALOG_Y   4
-#define ID_R_TRIGGER    5
+    /* Utility methods
+       From: https://gist.github.com/jasonwhite/c5b2048c15993d285130
+     */
+
+    struct axis_state
+    {
+        short x, y;
+    };
 
     struct GamepadState
     {
@@ -47,48 +52,48 @@ namespace gamepad
 
         void unload()
         {
-            if (m_device_file)
-                fclose(m_device_file);
-            m_device_file = nullptr;
+            close(m_pad_id);
         }
 
         void load()
         {
-            m_device_file = fopen(m_path.c_str(), "wb+");
-            if (m_device_file) {
-                void* tmp = malloc(8 * 12 * sizeof(char));
-                fread(tmp, sizeof(char) * 8 * 12, 1, m_device_file);
-                free(tmp);
-            }
-
+            m_pad_id = open(m_path.c_str(), O_RDONLY);
 #if _DEBUG
-            blog(LOG_INFO, "Gamepad %i present: %s", m_pad_id, m_device_file ? "true" : "false");
+            blog(LOG_INFO, "Gamepad %i present: %s", m_pad_id, valid() ? "true" : "false");
 #endif
         }
 
         bool valid()
-        { return m_device_file != nullptr && m_pad_id >= 0; }
+        { return m_pad_id >= 0; }
 
         void init(uint8_t pad_id)
         {
             unload();
-            m_pad_id = pad_id;
             m_path.clear();
             m_path = "/dev/input/js";
             m_path.append(std::to_string(pad_id));
             load();
         }
 
-        FILE* dev()
-        { return m_device_file; }
+        int get_id() const
+        { return m_pad_id; }
 
-        uint8_t get_id() const
-        { return static_cast<uint8_t>(m_pad_id); }
+        int read_event()
+        {
+            ssize_t bytes;
+            bytes = read(m_pad_id, &m_event, sizeof(m_event));
+            if (bytes == sizeof(m_event))
+                return 0;
 
+            /* Error, could not read full event. */
+            return -1;
+        }
+
+        struct js_event* get_event() { return &m_event; }
     private:
-        FILE* m_device_file = nullptr;
         std::string m_path;
-        int8_t m_pad_id = -1;
+        int m_pad_id = -1;
+        struct js_event m_event;
     };
 
 #endif /* LINUX */
@@ -160,7 +165,9 @@ namespace gamepad
 #ifdef _WIN32
     DWORD WINAPI hook_method(LPVOID arg);
 #else
+
     void* hook_method(void*);
+
 #endif
 
     void end_pad_hook();

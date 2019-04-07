@@ -64,16 +64,11 @@ private Q_SLOTS:
 
     void PingClients();
 
-    void BoxRefreshChanged(int value);
-
     void RefreshWindowList();
 
     void AddFilter();
 
     void RemoveFilter();
-
-    void GamepadBinging(const QString& text);
-
 private:
     Ui::io_config_dialog* ui;
     QTimer* m_refresh;

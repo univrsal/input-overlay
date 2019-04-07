@@ -13,7 +13,7 @@
 
 element_gamepad_id::element_gamepad_id() : element_texture(GAMEPAD_ID), m_mappings{}
 {
-    m_keycode = PAD_TO_VC(PAD_GUIDE);
+    m_keycode = PAD_TO_VC(VC_PAD_GUIDE);
 }
 
 void element_gamepad_id::load(ccl_config* cfg, const std::string &id)

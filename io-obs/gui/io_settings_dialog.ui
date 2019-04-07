@@ -237,7 +237,7 @@
           <property name="geometry">
            <rect>
             <x>0</x>
-            <y>0</y>
+            <y>-306</y>
             <width>396</width>
             <height>735</height>
            </rect>
@@ -289,7 +289,7 @@
                  </sizepolicy>
                 </property>
                 <property name="inputMask">
-                 <string>09; </string>
+                 <string>009; </string>
                 </property>
                 <property name="readOnly">
                  <bool>false</bool>
@@ -339,7 +339,7 @@
                  </sizepolicy>
                 </property>
                 <property name="inputMask">
-                 <string>09; </string>
+                 <string>009; </string>
                 </property>
                 <property name="readOnly">
                  <bool>false</bool>
@@ -389,7 +389,7 @@
                  </sizepolicy>
                 </property>
                 <property name="inputMask">
-                 <string>09; </string>
+                 <string>009; </string>
                 </property>
                 <property name="readOnly">
                  <bool>false</bool>
@@ -439,7 +439,7 @@
                  </sizepolicy>
                 </property>
                 <property name="inputMask">
-                 <string>09; </string>
+                 <string>009; </string>
                 </property>
                 <property name="readOnly">
                  <bool>false</bool>
@@ -489,7 +489,7 @@
                  </sizepolicy>
                 </property>
                 <property name="inputMask">
-                 <string>09; </string>
+                 <string>009; </string>
                 </property>
                 <property name="readOnly">
                  <bool>false</bool>
@@ -539,7 +539,7 @@
                  </sizepolicy>
                 </property>
                 <property name="inputMask">
-                 <string>09; </string>
+                 <string>009; </string>
                 </property>
                 <property name="readOnly">
                  <bool>false</bool>
@@ -589,7 +589,7 @@
                  </sizepolicy>
                 </property>
                 <property name="inputMask">
-                 <string>09; </string>
+                 <string>009; </string>
                 </property>
                 <property name="readOnly">
                  <bool>false</bool>
@@ -636,7 +636,7 @@
                  </sizepolicy>
                 </property>
                 <property name="inputMask">
-                 <string>09; </string>
+                 <string>009; </string>
                 </property>
                 <property name="readOnly">
                  <bool>false</bool>
@@ -683,7 +683,7 @@
                  </sizepolicy>
                 </property>
                 <property name="inputMask">
-                 <string>09; </string>
+                 <string>009; </string>
                 </property>
                 <property name="readOnly">
                  <bool>false</bool>
@@ -730,7 +730,7 @@
                  </sizepolicy>
                 </property>
                 <property name="inputMask">
-                 <string>09; </string>
+                 <string>009; </string>
                 </property>
                 <property name="readOnly">
                  <bool>false</bool>
@@ -777,7 +777,7 @@
                  </sizepolicy>
                 </property>
                 <property name="inputMask">
-                 <string>09; </string>
+                 <string>009; </string>
                 </property>
                 <property name="readOnly">
                  <bool>false</bool>
@@ -824,7 +824,7 @@
                  </sizepolicy>
                 </property>
                 <property name="inputMask">
-                 <string>09; </string>
+                 <string>009; </string>
                 </property>
                 <property name="readOnly">
                  <bool>false</bool>
@@ -871,7 +871,7 @@
                  </sizepolicy>
                 </property>
                 <property name="inputMask">
-                 <string>09; </string>
+                 <string>009; </string>
                 </property>
                 <property name="readOnly">
                  <bool>false</bool>
@@ -918,7 +918,7 @@
                  </sizepolicy>
                 </property>
                 <property name="inputMask">
-                 <string>09; </string>
+                 <string>009; </string>
                 </property>
                 <property name="readOnly">
                  <bool>false</bool>
@@ -965,7 +965,7 @@
                  </sizepolicy>
                 </property>
                 <property name="inputMask">
-                 <string>09; </string>
+                 <string>009; </string>
                 </property>
                 <property name="readOnly">
                  <bool>false</bool>
@@ -1012,7 +1012,7 @@
                  </sizepolicy>
                 </property>
                 <property name="inputMask">
-                 <string>09; </string>
+                 <string>009; </string>
                 </property>
                 <property name="readOnly">
                  <bool>false</bool>
@@ -1059,7 +1059,7 @@
                  </sizepolicy>
                 </property>
                 <property name="inputMask">
-                 <string>09; </string>
+                 <string>009; </string>
                 </property>
                 <property name="readOnly">
                  <bool>false</bool>
@@ -1106,7 +1106,7 @@
                  </sizepolicy>
                 </property>
                 <property name="inputMask">
-                 <string>09; </string>
+                 <string>009; </string>
                 </property>
                 <property name="readOnly">
                  <bool>false</bool>
@@ -1153,7 +1153,7 @@
                  </sizepolicy>
                 </property>
                 <property name="inputMask">
-                 <string>09; </string>
+                 <string>009; </string>
                 </property>
                 <property name="readOnly">
                  <bool>false</bool>
@@ -1200,7 +1200,7 @@
                  </sizepolicy>
                 </property>
                 <property name="inputMask">
-                 <string>09; </string>
+                 <string>009; </string>
                 </property>
                 <property name="readOnly">
                  <bool>false</bool>
@@ -1247,7 +1247,7 @@
                  </sizepolicy>
                 </property>
                 <property name="inputMask">
-                 <string>09; </string>
+                 <string>009; </string>
                 </property>
                 <property name="readOnly">
                  <bool>false</bool>

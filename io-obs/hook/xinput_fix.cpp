@@ -16,31 +16,31 @@ namespace xinput_fix
     {
         switch (code) {
             case CODE_A:
-                return PAD_TO_VC(PAD_A);
+                return VC_PAD_A;
             case CODE_B:
-                return PAD_TO_VC(PAD_B);
+                return VC_PAD_B;
             case CODE_X:
-                return PAD_TO_VC(PAD_X);
+                return VC_PAD_X;
             case CODE_Y:
-                return PAD_TO_VC(PAD_Y);
+                return VC_PAD_Y;
             case CODE_DPAD_DOWN:
-                return PAD_TO_VC(PAD_DPAD_DOWN);
+                return VC_PAD_DPAD_DOWN;
             case CODE_DPAD_UP:
-                return PAD_TO_VC(PAD_DPAD_UP);
+                return VC_PAD_DPAD_UP;
             case CODE_DPAD_LEFT:
-                return PAD_TO_VC(PAD_DPAD_LEFT);
+                return VC_PAD_DPAD_LEFT;
             case CODE_DPAD_RIGHT:
-                return PAD_TO_VC(PAD_DPAD_RIGHT);
+                return VC_PAD_DPAD_RIGHT;
             case CODE_GUIDE:
-                return PAD_TO_VC(PAD_GUIDE);
+                return VC_PAD_GUIDE;
             case CODE_LEFT_SHOULDER:
-                return PAD_TO_VC(PAD_LB);
+                return VC_PAD_LB;
             case CODE_RIGHT_SHOULDER:
-                return PAD_TO_VC(PAD_RB);
+                return VC_PAD_RB;
             case CODE_START:
-                return PAD_TO_VC(PAD_START);
+                return VC_PAD_START;
             case CODE_BACK:
-                return PAD_TO_VC(PAD_BACK);
+                return VC_PAD_BACK;
             default:
                 return 0xFFFF;
         }

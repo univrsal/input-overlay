@@ -121,11 +121,23 @@ namespace gamepad
                         trigger_l(pad.get_xinput()), trigger_r(pad.get_xinput())
                     ));
 #else
-                unsigned char m_packet[8];
-                fread(m_packet, sizeof(char) * 8, 1, pad.dev());
-                if (m_packet[ID_STATE_1] == ID_PRESSED)
-                    last_input = m_packet[ID_KEY_CODE];
-                //bindings.handle_packet(&m_packet, hook::input_data, pad.get_id());
+                if (!pad.read_event()) {
+                    pad.unload();
+                    continue;
+                }
+                 switch(pad.get_event()->type)
+                {
+                    case JS_EVENT_BUTTON:
+                        if (pad.get_event()->value)
+                            last_input = pad.get_event()->number;
+                        break;
+                    case JS_EVENT_AXIS:
+                        last_input = pad.get_event()->number;
+                        break;
+                    default: ;
+                }
+
+                bindings.handle_event(pad.get_id(), pad.get_event(), hook::input_data);
 
 #endif /* LINUX */
                 mutex.unlock();

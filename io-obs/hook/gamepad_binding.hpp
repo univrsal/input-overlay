@@ -16,56 +16,63 @@
  * map a /dev/js* event to a button identifiable by the plugin
  */
 
+#ifdef LINUX
+
 class element_data_holder;
 
 namespace gamepad
 {
-    enum pad_events
+    struct binding
     {
-        EVENT_INVALID = -1,
-        /* Special buton events */
-        EVENT_L_STICK_PRESSED,
-        EVENT_R_STICK_PRESSED,
-        EVENT_DPAD_DOWN,
-        EVENT_DPAD_UP,
-        EVENT_DPAD_LEFT,
-        EVENT_DPAD_RIGHT,
-        /* Axis events */
-        EVENT_L_TRIGGER,
-        EVENT_R_TRIGGER,
-        EVENT_R_ANALOG_X,
-        EVENT_R_ANALOG_Y,
-        EVENT_L_ANALOG_X,
-        EVENT_L_ANALOG_Y,
+        const char* setting;
+        const char* text_box_id;
+        uint8_t default_value;
+    };
 
-        /* Normal button events */
-        EVENT_A = PAD_A | VC_PAD_MASK,
-        EVENT_B = PAD_B | VC_PAD_MASK,
-        EVENT_X = PAD_X | VC_PAD_MASK,
-        EVENT_Y = PAD_Y | VC_PAD_MASK,
-        EVENT_START = PAD_START | VC_PAD_MASK,
-        EVENT_BACK = PAD_BACK | VC_PAD_MASK,
-        EVENT_RB = PAD_RB | VC_PAD_MASK,
-        EVENT_LB = PAD_LB | VC_PAD_MASK,
-        EVENT_GUIDE = PAD_GUIDE | VC_PAD_MASK
+    extern binding default_bindings[21];
+
+    enum pad_axis_events
+    {
+        PAD_AXIS_INVALID = -1, PAD_LX, PAD_LY, PAD_LT, PAD_RX, PAD_RY, PAD_RT, PAD_AXIS_EVENT_COUNT
+    };
+
+    enum pad_button_events
+    {
+        PAD_BUTTON_INVALID = -1,
+        PAD_A,
+        PAD_B,
+        PAD_X,
+        PAD_Y,
+        PAD_LB,
+        PAD_RB,
+        PAD_BACK,
+        PAD_START,
+        PAD_GUIDE,
+        PAD_L_STICK,
+        PAD_R_STICK,
+        PAD_LEFT,
+        PAD_RIGHT,
+        PAD_UP,
+        PAD_DOWN,
+        PAD_BUTTON_EVENT_COUNT
     };
 
     class gamepad_binding
     {
-        std::map<uint8_t, pad_events> m_axis_bindings;
-        std::map<uint8_t, pad_events> m_button_bindings;
+        std::map<uint8_t, pad_axis_events> m_axis_bindings;
+        std::map<uint8_t, pad_button_events> m_button_bindings;
 
-        pad_events get_button_event_by_id(uint8_t id);
+        pad_button_events get_button_event_by_id(uint8_t id);
 
-        pad_events get_axis_event_by_id(uint8_t id);
+        pad_axis_events get_axis_event_by_id(uint8_t id);
 
     public:
         gamepad_binding();
 
         void init_default();
 
-        void load_from_file(const char* path);
-
-        void handle_packet(unsigned char* packet[8], element_data_holder* data, uint8_t pad_id);
+        void handle_event(uint8_t pad_id, struct js_event* event, element_data_holder* data);
     };
 }
+
+#endif /* LINUX */
