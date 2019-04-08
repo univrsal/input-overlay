@@ -84,6 +84,7 @@ void text_handler::update()
 
 void text_handler::tick(const float seconds)
 {
+    UNUSED_PARAMETER(seconds);
     m_settings->cx = UTIL_MAX(m_display->get_width(), 50);
     m_settings->cy = UTIL_MAX(m_display->get_height(), 50);
 }

@@ -2,12 +2,14 @@
  * This file is part of obs-studio
  * which is licensed under the GPL 2.0
  * See COPYING or https://www.gnu.org/licenses/old-licenses/gpl-2.0.txt
- * github.com/obsproject/obs-studio/blob/master/UI/frontend-plugins/frontend-tools/auto-scene-switcher-nix.cpp
+ * https://github.com/obsproject/obs-studio/blob/master/UI/frontend-plugins/frontend-tools/auto-scene-switcher-nix.cpp
  */
 
+#include "window_helper.hpp"
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
 #include <X11/Xutil.h>
+#include <util/platform.h>
 
 #undef Bool
 #undef CursorShape
@@ -20,9 +22,6 @@
 #undef None
 #undef Status
 #undef Unsorted
-
-#include <util/platform.h>
-#include "window_helper.hpp"
 
 using namespace std;
 

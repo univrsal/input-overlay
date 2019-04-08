@@ -15,17 +15,14 @@
 #endif
 
 #define TIMEOUT_NS  (1000 * 1000 * 1000)
-#define LOG_(lvl, msg, ...) if (log_flag) blog(lvl, "[input-overlay] " msg, ##__VA_ARGS__)
-
 namespace network
 {
     class io_server;
 
     extern bool network_state; /* Initialization state*/
     extern bool network_flag; /* Running state */
-    extern bool log_flag; /* Set in obs_module_load */
+    /* Set in obs_module_load */
     extern bool local_input;
-    extern uint16_t refresh_rate;
     extern char local_ip[16];
 
     const char* get_status();

@@ -23,6 +23,7 @@ namespace gamepad
 #ifdef _WIN32
     static HANDLE hook_thread;
 #else
+
     gamepad_binding bindings;
     uint8_t last_input = 0xff;
     static pthread_t game_pad_hook_thread;
@@ -121,23 +122,26 @@ namespace gamepad
                         trigger_l(pad.get_xinput()), trigger_r(pad.get_xinput())
                     ));
 #else
-                if (!pad.read_event()) {
+                if (pad.read_event() == -1) {
                     pad.unload();
                     continue;
                 }
-                 switch(pad.get_event()->type)
-                {
+
+                /* js_event code from
+                   https://gist.github.com/jasonwhite/c5b2048c15993d285130
+                 */
+                switch (pad.get_event()->type) {
                     case JS_EVENT_BUTTON:
                         if (pad.get_event()->value)
                             last_input = pad.get_event()->number;
+                        bindings.handle_event(pad.get_player(), hook::input_data, pad.get_event());
                         break;
                     case JS_EVENT_AXIS:
                         last_input = pad.get_event()->number;
+                        bindings.handle_event(pad.get_player(), hook::input_data, pad.get_event());
                         break;
-                    default: ;
+                    default:;
                 }
-
-                bindings.handle_event(pad.get_id(), pad.get_event(), hook::input_data);
 
 #endif /* LINUX */
                 mutex.unlock();

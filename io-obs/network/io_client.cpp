@@ -12,6 +12,9 @@
 #include "util/element/element_trigger.hpp"
 #include "util/element/element_mouse_movement.hpp"
 #include "util/element/element_mouse_wheel.hpp"
+#include "hook/xinput_fix.hpp"
+#include "util/util.hpp"
+#include "util/config.hpp"
 #include <uiohook.h>
 
 namespace network
@@ -127,12 +130,12 @@ namespace network
 
                 m_holder.add_gamepad_data(pad_id, VC_TRIGGER_DATA, element_data_trigger::from_buffer(buffer));
             } else {
-                LOG_(LOG_ERROR, "Couldn't read gamepad id from buffer");
+                DEBUG_LOG(LOG_ERROR, "Couldn't read gamepad id from buffer");
             }
         }
 
         if (!flag)
-            LOG_(LOG_ERROR, "Couldn't read event for client %s. Error: %s", name(), netlib_get_error());
+            DEBUG_LOG(LOG_ERROR, "Couldn't read event for client %s. Error: %s", name(), netlib_get_error());
 
         return flag;
     }

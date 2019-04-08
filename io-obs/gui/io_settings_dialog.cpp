@@ -5,21 +5,18 @@
  * github.com/univrsal/input-overlay
  */
 
+
 #include "io_settings_dialog.hpp"
 #include "network/remote_connection.hpp"
 #include "network/io_server.hpp"
 #include "util/util.hpp"
+#include "util/config.hpp"
+#include "hook/gamepad_hook.hpp"
 #include <obs-frontend-api.h>
 #include <util/platform.h>
 #include <util/config-file.h>
-#include <hook/gamepad_hook.hpp>
-
-namespace io_config
-{
-    input_filter io_window_filters; /* Global filters */
-    std::mutex filter_mutex;        /* Thread safety for writing/reading filters */
-}
-
+#include <string>
+#include <obs-module.h>
 io_settings_dialog::io_settings_dialog(QWidget* parent) : QDialog(parent, Qt::Dialog), ui(new Ui::io_config_dialog)
 {
     const auto cfg = obs_frontend_get_global_config();
@@ -28,7 +25,7 @@ io_settings_dialog::io_settings_dialog(QWidget* parent) : QDialog(parent, Qt::Di
 #ifndef LINUX
     ui->tab_gamepad->setVisible(false);
 #else
-    for (const auto& binding : gamepad::default_bindings) {
+    for (const auto &binding : gamepad::default_bindings) {
         auto text_box = findChild<QLineEdit*>(binding.text_box_id);
         if (text_box) {
             text_box->setText(QString::number(config_get_int(cfg, S_REGION, binding.setting)));
@@ -48,22 +45,22 @@ io_settings_dialog::io_settings_dialog(QWidget* parent) : QDialog(parent, Qt::Di
     connect(ui->btn_remove, &QPushButton::clicked, this, &io_settings_dialog::RemoveFilter);
 
     /* Load values */
-    ui->cb_iohook->setChecked(config_get_bool(cfg, S_REGION, S_IOHOOK));
-    ui->cb_gamepad_hook->setChecked(config_get_bool(cfg, S_REGION, S_GAMEPAD));
-    ui->cb_enable_overlay->setChecked(config_get_bool(cfg, S_REGION, S_OVERLAY));
-    ui->cb_enable_history->setChecked(config_get_bool(cfg, S_REGION, S_HISTORY));
-    ui->cb_enable_control->setChecked(config_get_bool(cfg, S_REGION, S_CONTROL));
-    ui->cb_enable_remote->setChecked(config_get_bool(cfg, S_REGION, S_REMOTE));
-    ui->cb_log->setChecked(config_get_bool(cfg, S_REGION, S_LOGGING));
-    ui->box_port->setValue(config_get_int(cfg, S_REGION, S_PORT));
-    ui->cb_regex->setChecked(config_get_bool(cfg, S_REGION, S_REGEX));
+    ui->cb_iohook->setChecked(io_config::uiohook);
+    ui->cb_gamepad_hook->setChecked(io_config::gamepad);
+    ui->cb_enable_overlay->setChecked(io_config::overlay);
+    ui->cb_enable_history->setChecked(io_config::history);
+    ui->cb_enable_control->setChecked(io_config::control);
+    ui->cb_enable_remote->setChecked(io_config::remote);
+    ui->cb_log->setChecked(io_config::log_flag);
+    ui->box_port->setValue(io_config::port);
+    ui->cb_regex->setChecked(io_config::regex);
 
     /* Tooltips aren't translated by obs */
     ui->box_refresh_rate->setToolTip(T_REFRESH_RATE_TOOLTIP);
     ui->lbl_refresh_rate->setToolTip(T_REFRESH_RATE_TOOLTIP);
 
-    CbRemoteStateChanged(config_get_bool(cfg, S_REGION, S_REMOTE));
-    CbInputControlStateChanged(config_get_bool(cfg, S_REGION, S_CONTROL));
+    CbRemoteStateChanged(io_config::remote);
+    CbInputControlStateChanged(io_config::control);
 
     auto text = ui->lbl_status->text().toStdString();
     auto pos = text.find("%s");
@@ -192,33 +189,28 @@ void io_settings_dialog::RemoveFilter()
     }
 }
 
-input_filter::~input_filter()
-{
-    m_filters.clear();
-}
-
 void io_settings_dialog::FormAccepted()
 {
     auto cfg = obs_frontend_get_global_config();
 
-    config_set_bool(cfg, S_REGION, S_IOHOOK, ui->cb_iohook->isChecked());
-    config_set_bool(cfg, S_REGION, S_GAMEPAD, ui->cb_gamepad_hook->isChecked());
-    config_set_bool(cfg, S_REGION, S_OVERLAY, ui->cb_enable_overlay->isChecked());
-    config_set_bool(cfg, S_REGION, S_HISTORY, ui->cb_enable_history->isChecked());
+    io_config::uiohook = ui->cb_iohook->isChecked();
+    io_config::gamepad = ui->cb_gamepad_hook->isChecked();
+    io_config::overlay = ui->cb_enable_overlay->isChecked();
+    io_config::history = ui->cb_enable_history->isChecked();
 
-    config_set_bool(cfg, S_REGION, S_REMOTE, ui->cb_enable_remote->isChecked());
-    config_set_bool(cfg, S_REGION, S_LOGGING, ui->cb_log->isChecked());
-    config_set_int(cfg, S_REGION, S_PORT, ui->box_port->value());
+    io_config::remote = ui->cb_enable_remote->isChecked();
+    io_config::log_flag = ui->cb_log->isChecked();
+    io_config::port = ui->box_port->value();
 
-    config_set_bool(cfg, S_REGION, S_CONTROL, ui->cb_enable_control->isChecked());
-    config_set_int(cfg, S_REGION, S_CONTROL_MODE, ui->cb_list_mode->currentIndex());
+    io_config::control = ui->cb_enable_control->isChecked();
+    io_config::filter_mode = ui->cb_list_mode->currentIndex();
 
     io_config::io_window_filters.set_regex(ui->cb_regex->isChecked());
     io_config::io_window_filters.set_whitelist(ui->cb_list_mode->currentIndex() == 0);
     io_config::io_window_filters.write_to_config(cfg);
 
 #ifdef LINUX
-    for (const auto& binding : gamepad::default_bindings) {
+    for (const auto &binding : gamepad::default_bindings) {
         auto text_box = findChild<QLineEdit*>(binding.text_box_id);
         if (text_box) {
             bool ok = false;
@@ -236,89 +228,4 @@ io_settings_dialog::~io_settings_dialog()
     delete ui;
     m_refresh->stop();
     delete m_refresh;
-}
-
-/* === input_filter === */
-static std::string base_id = S_FILTER_BASE;
-
-void input_filter::read_from_config(config_t* cfg)
-{
-    io_config::filter_mutex.lock();
-    m_regex = config_get_bool(cfg, S_REGION, S_REGEX);
-    m_whitelist = config_get_int(cfg, S_REGION, S_CONTROL_MODE) == 0;
-    const int filter_count = config_get_int(cfg, S_REGION, S_FILTER_COUNT);
-
-    for (auto i = 0; i < filter_count; ++i) {
-        const auto str = config_get_string(cfg, S_REGION, (base_id + std::to_string(i)).c_str());
-        if (str && strlen(str) > 0)
-            m_filters.append(str);
-    }
-    io_config::filter_mutex.unlock();
-}
-
-void input_filter::write_to_config(config_t* cfg)
-{
-    io_config::filter_mutex.lock();
-
-    config_set_int(cfg, S_REGION, S_FILTER_COUNT, m_filters.size());
-
-    for (auto i = 0; i < m_filters.size(); i++) {
-        config_set_string(cfg, S_REGION, (base_id + std::to_string(i)).c_str(), m_filters[i].toStdString().c_str());
-    }
-
-    io_config::filter_mutex.unlock();
-}
-
-void input_filter::add_filter(const char* filter)
-{
-    io_config::filter_mutex.lock();
-    m_filters.append(filter);
-    io_config::filter_mutex.unlock();
-}
-
-void input_filter::remove_filter(const int index)
-{
-    if (index >= 0 && index < m_filters.size())
-        m_filters.removeAt(index);
-}
-
-void input_filter::set_regex(bool enabled)
-{
-    m_regex = enabled;
-}
-
-void input_filter::set_whitelist(bool wl)
-{
-    m_whitelist = wl;
-}
-
-bool input_filter::input_blocked()
-{
-    io_config::filter_mutex.lock();
-    std::string current_window;
-    auto flag = m_whitelist;
-    GetCurrentWindowTitle(current_window);
-    const char* window_str = current_window.c_str();
-
-    for (const auto &filter : m_filters) {
-        if (filter == window_str) {
-            flag = !m_whitelist;
-            break;
-        }
-
-        if (m_regex) {
-            QRegExp regex(filter);
-            if (regex.isValid() && regex.exactMatch(current_window.c_str())) {
-                flag = !m_whitelist;
-                break;
-            }
-        }
-    }
-    io_config::filter_mutex.unlock();
-    return flag;
-}
-
-QStringList &input_filter::filters()
-{
-    return m_filters;
 }

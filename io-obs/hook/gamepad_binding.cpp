@@ -16,34 +16,34 @@
 
 namespace gamepad
 {
-    binding default_bindings[21] = {{S_BINDING_A,          "txt_a",          PAD_A},
-                                    {S_BINDING_B,          "txt_b",          PAD_B},
-                                    {S_BINDING_X,          "txt_x",          PAD_X},
-                                    {S_BINDING_Y,          "txt_y",          PAD_Y},
-                                    {S_BINDING_GUIDE,      "txt_guide",      PAD_GUIDE},
-                                    {S_BINDING_LT,         "txt_lt",         PAD_LT},
-                                    {S_BINDING_RT,         "txt_rt",         PAD_RT},
-                                    {S_BINDING_RB,         "txt_rb",         PAD_RB},
-                                    {S_BINDING_START,      "txt_start",      PAD_START},
-                                    {S_BINDING_BACK,       "txt_back",       PAD_BACK},
-                                    {S_BINDING_DPAD_UP,    "txt_dpad_up",    PAD_UP},
-                                    {S_BINDING_DPAD_DOWN,  "txt_dpad_down",  PAD_DOWN},
-                                    {S_BINDING_DPAD_LEFT,  "txt_dpad_left",  PAD_LEFT},
-                                    {S_BINDING_LB,         "txt_lb",         PAD_LB},
-                                    {S_BINDING_DPAD_RIGHT, "txt_dpad_right", PAD_RIGHT},
-                                    {S_BINDING_ANALOG_L,   "txt_analog_l",   PAD_L_STICK},
-                                    {S_BINDING_ANALOG_R,   "txt_analog_r",   PAD_R_STICK},
-                                    {S_BINDING_ANALOG_LX,  "txt_lx",         PAD_LX},
-                                    {S_BINDING_ANALOG_LY,  "txt_ly",         PAD_LX},
-                                    {S_BINDING_ANALOG_RX,  "txt_rx",         PAD_RX},
-                                    {S_BINDING_ANALOG_RY,  "txt_ry",         PAD_RY},};
+    binding default_bindings[21] = {{S_BINDING_A,          "txt_a",            PAD_A},
+                                    {S_BINDING_B,          "txt_b",            PAD_B},
+                                    {S_BINDING_X,          "txt_x",            PAD_X},
+                                    {S_BINDING_Y,          "txt_y",            PAD_Y},
+                                    {S_BINDING_GUIDE,      "txt_guide",        PAD_GUIDE},
+                                    {S_BINDING_LT,         "txt_lt",           PAD_LT},
+                                    {S_BINDING_RT,         "txt_rt",           PAD_RT},
+                                    {S_BINDING_RB,         "txt_rb",           PAD_RB},
+                                    {S_BINDING_START,      "txt_start",        PAD_START},
+                                    {S_BINDING_BACK,       "txt_back",         PAD_BACK},
+                                    {S_BINDING_DPAD_UP,    "txt_dpad_up",      PAD_UP},
+                                    {S_BINDING_DPAD_DOWN,  "txt_dpad_down",    PAD_DOWN},
+                                    {S_BINDING_DPAD_LEFT,  "txt_dpad_left",    PAD_LEFT},
+                                    {S_BINDING_LB,         "txt_lb",           PAD_LB},
+                                    {S_BINDING_DPAD_RIGHT, "txt_dpad_right",   PAD_RIGHT},
+                                    {S_BINDING_ANALOG_L,   "txt_analog_left",  PAD_L_STICK},
+                                    {S_BINDING_ANALOG_R,   "txt_analog_right", PAD_R_STICK},
+                                    {S_BINDING_ANALOG_LX,  "txt_lx",           PAD_LX},
+                                    {S_BINDING_ANALOG_LY,  "txt_ly",           PAD_LX},
+                                    {S_BINDING_ANALOG_RX,  "txt_rx",           PAD_RX},
+                                    {S_BINDING_ANALOG_RY,  "txt_ry",           PAD_RY},};
 
-    void gamepad_binding::handle_event(uint8_t pad_id, struct js_event* event, element_data_holder* data)
+    void gamepad_binding::handle_event(uint8_t pad_id, element_data_holder* data, js_event* event)
     {
         uint16_t vc = 0;
-        auto state = static_cast<button_state>(event->value);
 
         if (event->type == JS_EVENT_BUTTON) {
+            auto state = event->value ? STATE_PRESSED : STATE_RELEASED;
             vc = get_button_event_by_id(event->number);
             if (vc == PAD_L_STICK)
                 data->add_gamepad_data(pad_id, VC_STICK_DATA, new element_data_analog_stick(state, SIDE_LEFT));
@@ -59,15 +59,19 @@ namespace gamepad
                 data->add_gamepad_data(pad_id, VC_DPAD_DATA, new element_data_dpad(DPAD_RIGHT, state));
             else
                 data->add_gamepad_data(pad_id, PAD_TO_VC(vc), new element_data_button(state));
+            blog(LOG_INFO, "Pad: %i, Event: %i, VC %i (0x%X)", pad_id, event->number, vc, PAD_TO_VC(vc));
         } else if (event->type == JS_EVENT_AXIS) {
             vc = get_axis_event_by_id(event->number);
-            float axis = 0.f;
+            float axis;
 
             if (vc == PAD_LT || vc == PAD_RT) {
                 auto trigger = vc == PAD_LT ? T_DATA_LEFT : T_DATA_RIGHT;
+                /* Trigger data goes from ~ -32000 to +32000, so it's offset by 0x7FFF
+                 * and then divided by 0xffff to convert it to a float (0.0 - 1.0) */
                 axis = event->value + (0xffff / 2) / ((float) 0xffff);
                 data->add_gamepad_data(pad_id, VC_TRIGGER_DATA, new element_data_trigger(trigger, axis));
             } else {
+                axis = event->value / ((float) 0xffff);
                 stick_data_type sd;
                 if (vc == PAD_LY)
                     sd = SD_LEFT_Y;

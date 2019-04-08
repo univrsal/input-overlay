@@ -82,7 +82,7 @@ std::string input_entry::build_string(key_names* names, const bool use_fallback)
     for (const auto &key : m_inputs) {
         if (!names->empty() && (name = names->get_name(key)))
             result += name + plus;
-        else if (use_fallback || names->empty() && (name = key_to_text(key)))
+        else if (use_fallback || (names->empty() && (name = key_to_text(key))))
             result += name + plus;
     }
 
@@ -119,9 +119,10 @@ void input_entry::render_text()
 
 void input_entry::render_icons(sources::history_settings* settings)
 {
+    UNUSED_PARAMETER(settings);
     gs_matrix_push();
-    auto temp = m_position;
-    auto i = 0;
+    //auto temp = m_position;
+    //auto i = 0;
 
     //for (const auto& vc : m_inputs)
     //{

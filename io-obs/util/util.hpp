@@ -23,8 +23,6 @@
 
 #ifndef IO_CLIENT /* io-client uses this header, but doesn't doesn't use any obs headers */
 #include <obs-module.h>
-#define warning(format, ...) blog(LOG_WARNING, "[%s] " format, \
-        obs_source_get_name(m_source), ##__VA_ARGS__)
 #define T_(v)                           obs_module_text(v)
 #define GET_PROPS(S)                    (obs_properties_get(props, S))
 #define GET_BOOL(X)                     (obs_data_get_bool(s, X))
@@ -50,7 +48,7 @@
 
 /* Settings values*/
 #define S_REGION                        "input-overlay"
-#define S_IOHOOK                        "iohook"
+#define S_UIOHOOK                        "iohook"
 #define S_GAMEPAD                       "gamepad"
 #define S_OVERLAY                       "overlay"
 #define S_HISTORY                       "history"
@@ -60,7 +58,7 @@
 #define S_REFRESH                       "refresh_rate"
 #define S_CONTROL                       "control"
 #define S_REGEX                         "regex"
-#define S_CONTROL_MODE                  "control_mode"
+#define S_FILTER_MODE                   "filter_mode"
 #define S_FILTER_COUNT                  "filter_count"
 #define S_FILTER_BASE                   "filter_"
 

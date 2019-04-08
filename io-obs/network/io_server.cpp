@@ -8,6 +8,7 @@
 #include "io_server.hpp"
 #include "remote_connection.hpp"
 #include "util/util.hpp"
+#include "util/config.hpp"
 #include <obs-module.h>
 #include <util/platform.h>
 #include <algorithm>
@@ -39,21 +40,21 @@ namespace network
         auto flag = true;
 
         if (netlib_resolve_host(&m_ip, nullptr, m_ip.port) == -1) {
-            LOG_(LOG_ERROR, "netlib_resolve_host failed: %s.", netlib_get_error());
+            DEBUG_LOG(LOG_ERROR, "netlib_resolve_host failed: %s.", netlib_get_error());
             flag = false;
         } else {
             const auto ipaddr = netlib_swap_BE32(m_ip.host);
-            LOG_(LOG_INFO, "Remote connection open on %d.%d.%d.%d:%hu", ipaddr >> 24, ipaddr >> 16 & 0xff,
+            DEBUG_LOG(LOG_INFO, "Remote connection open on %d.%d.%d.%d:%hu", ipaddr >> 24, ipaddr >> 16 & 0xff,
                  ipaddr >> 8 & 0xff, ipaddr & 0xff, m_ip.port);
 
             m_server = netlib_tcp_open(&m_ip);
             m_buffer = netlib_alloc_byte_buf(BUFFER_SIZE);
 
             if (!m_buffer)
-                LOG_(LOG_ERROR, "netlib_alloc_byte_buf failed; %s", netlib_get_error());
+                DEBUG_LOG(LOG_ERROR, "netlib_alloc_byte_buf failed; %s", netlib_get_error());
 
             if (!m_server) {
-                LOG_(LOG_ERROR, "netlib_tcp_open failed: %s", netlib_get_error());
+                DEBUG_LOG(LOG_ERROR, "netlib_tcp_open failed: %s", netlib_get_error());
                 flag = false;
             }
         }
@@ -82,7 +83,7 @@ namespace network
                 const int read = netlib_tcp_recv_buf(client->socket(), m_buffer);
 
                 if (read < 0) {
-                    LOG_(LOG_ERROR, "Failed to receive buffer from %s. Closed connection", client->name());
+                    DEBUG_LOG(LOG_ERROR, "Failed to receive buffer from %s. Closed connection", client->name());
                     client->mark_invalid();
                     continue;
                 }
@@ -96,7 +97,7 @@ namespace network
                         case MSG_BUTTON_DATA:
                         case MSG_GAMEPAD_DATA:
                             if (!client->read_event(m_buffer, msg))
-                                LOG_(LOG_ERROR, "Failed to receive event data from %s.", client->name());
+                                DEBUG_LOG(LOG_ERROR, "Failed to receive event data from %s.", client->name());
                             break;
                         case MSG_CLIENT_DC:
                             client->mark_invalid();
@@ -155,13 +156,13 @@ namespace network
             {
                 if (!o->valid()) {
                     server_instance->m_num_clients--;
-                    LOG_(LOG_INFO, "%s disconnected.", o->name());
+                    DEBUG_LOG(LOG_INFO, "%s disconnected.", o->name());
                     return true;
                 }
                 return false;
             }), m_clients.end());
 
-            if ((os_gettime_ns() - m_last_refresh) / (1000 * 1000) > network::refresh_rate) {
+            if ((os_gettime_ns() - m_last_refresh) / (1000 * 1000) > io_config::refresh_rate) {
                 for (auto &client : m_clients) {
                     if (!send_message(client->socket(), MSG_REFRESH))
                         client->mark_invalid();
@@ -190,20 +191,20 @@ namespace network
         fix_name(name);
 
         if (!strlen(name)) {
-            LOG_(LOG_INFO, "Disconnected %s: Invalid name", name);
+            DEBUG_LOG(LOG_INFO, "Disconnected %s: Invalid name", name);
             send_message(socket, MSG_NAME_INVALID);
             netlib_tcp_close(socket);
             return;
         }
 
         if (!unique_name(name)) {
-            LOG_(LOG_INFO, "Disconnected %s: Name already in use", name);
+            DEBUG_LOG(LOG_INFO, "Disconnected %s: Name already in use", name);
             send_message(socket, MSG_NAME_NOT_UNIQUE);
             netlib_tcp_close(socket);
             return;
         }
 
-        LOG_(LOG_INFO, "Received connection from '%s'.", name);
+        DEBUG_LOG(LOG_INFO, "Received connection from '%s'.", name);
 
         m_clients_changed = true;
         m_clients.emplace_back(new io_client(name, socket, m_num_clients));
@@ -243,7 +244,7 @@ namespace network
 
         sockets = netlib_alloc_socket_set(m_num_clients + 1);
         if (!sockets) {
-            LOG_(LOG_ERROR, "netlib_alloc_socket_set failed with %i clients.", m_num_clients + 1);
+            DEBUG_LOG(LOG_ERROR, "netlib_alloc_socket_set failed with %i clients.", m_num_clients + 1);
             network_flag = false;
             return false;
         }

@@ -10,7 +10,8 @@ option(ENABLE_STATIC_UIOHOOK "Use packged uiohook version" ON)
 if (MSVC)
     set(input-overlay_PLATFORM_DEPS
             w32-pthreads)
-
+    set(input-overlay_PLATFORM_SOURCES
+            util/window_helper_win.cpp)
     find_path(NETLIB_INCLUDE_DIR netlib.h)
     find_library(NETLIB_LIBRARY netlib)
 
@@ -137,7 +138,7 @@ set(input-overlay_SOURCES
         network/io_client.cpp
         network/io_client.hpp
         ../ccl/ccl.cpp
-        ../ccl/ccl.hpp)
+        ../ccl/ccl.hpp util/config.cpp util/config.hpp util/input_filter.cpp util/input_filter.hpp)
 
 set(io_settings_UI
         gui/io_settings_dialog.ui)

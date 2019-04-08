@@ -118,7 +118,7 @@ void element_data_holder::populate_vector(std::vector<uint16_t> &vec, sources::h
          * Any mouse buttons should only be included if enabled
          */
         if (data.first == VC_MOUSE_DATA ||
-            (data.first >> 8) == (VC_MOUSE_MASK >> 8) && !(settings->flags & sources::FLAG_INCLUDE_MOUSE))
+            ((data.first >> 8) == (VC_MOUSE_MASK >> 8) && !(settings->flags & sources::FLAG_INCLUDE_MOUSE)))
             continue;
 
         blog(LOG_INFO, "vc: 0x%X", data.first);

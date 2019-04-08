@@ -7,9 +7,18 @@
 
 #pragma once
 
+#ifdef _WIN32
 #include "xinput_fix.hpp"
-#include "util/util.hpp"
+#else
 #include "gamepad_binding.hpp"
+#include <stdlib.h>
+#include <string>
+#include <malloc.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <linux/joystick.h>
+#endif
+#include "util/util.hpp"
 #include <stdio.h>
 #include <mutex>
 
@@ -20,28 +29,6 @@ namespace gamepad
     extern gamepad_binding bindings;
     extern uint8_t last_input; /* Used in config screen to bind buttons */
 
-#include <stdlib.h>
-#include <string>
-#include <malloc.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <linux/joystick.h>
-
-#define ID_TYPE         6
-#define ID_BUTTON       1
-#define ID_STATE_1      4
-#define ID_STATE_2      5
-#define ID_KEY_CODE     7
-#define ID_PRESSED      1
-
-    /* Utility methods
-       From: https://gist.github.com/jasonwhite/c5b2048c15993d285130
-     */
-
-    struct axis_state
-    {
-        short x, y;
-    };
 
     struct GamepadState
     {
@@ -52,36 +39,37 @@ namespace gamepad
 
         void unload()
         {
-            close(m_pad_id);
+            close(m_controller_id);
         }
 
         void load()
         {
-            m_pad_id = open(m_path.c_str(), O_RDONLY);
+            m_controller_id = open(m_path.c_str(), O_RDONLY);
 #if _DEBUG
-            blog(LOG_INFO, "Gamepad %i present: %s", m_pad_id, valid() ? "true" : "false");
+            blog(LOG_INFO, "Gamepad %i present: %s", m_controller_id, valid() ? "true" : "false");
 #endif
         }
 
         bool valid()
-        { return m_pad_id >= 0; }
+        { return m_controller_id >= 0; }
 
         void init(uint8_t pad_id)
         {
             unload();
             m_path.clear();
+            m_player = pad_id;
             m_path = "/dev/input/js";
             m_path.append(std::to_string(pad_id));
             load();
         }
 
-        int get_id() const
-        { return m_pad_id; }
+        uint8_t get_player() const
+        { return m_player; }
 
         int read_event()
         {
             ssize_t bytes;
-            bytes = read(m_pad_id, &m_event, sizeof(m_event));
+            bytes = read(m_controller_id, &m_event, sizeof(m_event));
             if (bytes == sizeof(m_event))
                 return 0;
 
@@ -89,11 +77,12 @@ namespace gamepad
             return -1;
         }
 
-        struct js_event* get_event() { return &m_event; }
+        js_event* get_event() { return &m_event; }
     private:
         std::string m_path;
-        int m_pad_id = -1;
-        struct js_event m_event;
+        int m_controller_id = -1; /* Id assigned by the open command */
+        uint8_t m_player; /* 0 - 4 */
+        js_event m_event;
     };
 
 #endif /* LINUX */
@@ -120,7 +109,7 @@ namespace gamepad
 
         void update()
         {
-            if (xinput_fix::update(m_pad_id, &m_xinput) == ERROR_SUCCESS)
+            if (xinput_fix::update(m_controller_id, &m_xinput) == ERROR_SUCCESS)
             {
                 m_valid = true;
             }
@@ -138,13 +127,13 @@ namespace gamepad
 
         void init(const uint8_t pad_id)
         {
-            m_pad_id = pad_id;
+            m_controller_id = pad_id;
             load();
         }
 
         uint8_t get_id() const
         {
-            return m_pad_id;
+            return m_controller_id;
         }
 
         xinput_fix::gamepad* get_xinput()
@@ -155,7 +144,7 @@ namespace gamepad
     private:
         xinput_fix::gamepad m_xinput;
         bool m_valid = false;
-        int8_t m_pad_id = -1;
+        int8_t m_controller_id = -1;
     };
 
 #endif /* HAVE_XINPUT */

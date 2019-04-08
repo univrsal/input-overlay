@@ -6,7 +6,10 @@
  */
 
 #include "io_server.hpp"
+#include "util/config.hpp"
+#include "util/util.hpp"
 #include "remote_connection.hpp"
+#include "util/config.hpp"
 #include <obs-module.h>
 #include <util/platform.h>
 #include <string>
@@ -16,8 +19,6 @@ namespace network
     bool network_state = false;
     bool network_flag = false;
     bool local_input = false; /* True if either of the local hooks is running */
-    bool log_flag = false;
-    uint16_t refresh_rate = 250;
     char local_ip[16] = "127.0.0.1\0";
 
     io_server* server_instance = nullptr;
@@ -64,20 +65,20 @@ namespace network
                 network_state = error == 0;
 #endif
                 if (!network_state) {
-                    LOG_(LOG_ERROR, "Server thread creation failed with code: %i", error);
+                    DEBUG_LOG(LOG_ERROR, "Server thread creation failed with code: %i", error);
                     failed = true;
                 }
             } else {
-                LOG_(LOG_ERROR, "Server init failed");
+                DEBUG_LOG(LOG_ERROR, "Server init failed");
                 failed = true;
             }
         } else {
-            LOG_(LOG_ERROR, "netlib_init failed: %s", netlib_get_error());
+            DEBUG_LOG(LOG_ERROR, "netlib_init failed: %s", netlib_get_error());
             failed = true;
         }
 
         if (failed) {
-            LOG_(LOG_ERROR, "Remote connection disabled due to errors");
+            DEBUG_LOG(LOG_ERROR, "Remote connection disabled due to errors");
             close_network();
         }
     }
@@ -107,7 +108,7 @@ namespace network
             server_instance->listen(numready);
 
             if (numready == -1) {
-                LOG_(LOG_ERROR, "netlib_check_sockets failed: %s", netlib_get_error());
+                DEBUG_LOG(LOG_ERROR, "netlib_check_sockets failed: %s", netlib_get_error());
                 break;
             }
 
@@ -118,18 +119,18 @@ namespace network
 
             if (netlib_socket_ready(server_instance->socket())) {
                 numready--;
-                LOG_(LOG_INFO, "Received connection...");
+                DEBUG_LOG(LOG_INFO, "Received connection...");
 
                 sock = netlib_tcp_accept(server_instance->socket());
 
                 if (sock) {
                     char* name = nullptr;
-                    LOG_(LOG_INFO, "Accepted connection...");
+                    DEBUG_LOG(LOG_INFO, "Accepted connection...");
 
                     if (read_text(sock, &name)) {
                         server_instance->add_client(sock, name);
                     } else {
-                        LOG_(LOG_ERROR, "Failed to receive client name.");
+                        DEBUG_LOG(LOG_ERROR, "Failed to receive client name.");
                         netlib_tcp_close(sock);
                     }
                 }
@@ -153,7 +154,7 @@ namespace network
         const uint32_t result = netlib_tcp_send(sock, &msg_id, sizeof(msg_id));
 
         if (result < sizeof(msg_id)) {
-            LOG_(LOG_ERROR, "netlib_tcp_send: %s\n", netlib_get_error());
+            DEBUG_LOG(LOG_ERROR, "netlib_tcp_send: %s\n", netlib_get_error());
             return 0;
         }
 
@@ -171,7 +172,7 @@ namespace network
 
         result = netlib_tcp_recv(sock, &len, sizeof(len));
         if (result < sizeof(len)) {
-            LOG_(LOG_ERROR, "netlib_tcp_recv: %s\n", netlib_get_error());
+            DEBUG_LOG(LOG_ERROR, "netlib_tcp_recv: %s\n", netlib_get_error());
             return nullptr;
         }
 
@@ -185,7 +186,7 @@ namespace network
 
         result = netlib_tcp_recv(sock, *buf, len);
         if (result < len) {
-            LOG_(LOG_ERROR, "netlib_tcp_recv: %s\n", netlib_get_error());
+            DEBUG_LOG(LOG_ERROR, "netlib_tcp_recv: %s\n", netlib_get_error());
             free(*buf);
             buf = nullptr;
         }
@@ -197,7 +198,7 @@ namespace network
     {
         uint8_t id = 0;
         if (!netlib_read_uint8(buf, &id)) {
-            LOG_(LOG_ERROR, "netlib_read_uint8: %s\n", netlib_get_error());
+            DEBUG_LOG(LOG_ERROR, "netlib_read_uint8: %s\n", netlib_get_error());
             return MSG_READ_ERROR;
         }
 

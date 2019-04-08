@@ -10,34 +10,7 @@
 #include "ui_settings_dialog.hpp"
 #include <QTimer>
 #include <mutex>
-
-typedef struct config_data config_t;
-
-class input_filter
-{
-    QStringList m_filters;
-    bool m_regex = false;
-    bool m_whitelist = false;
-public:
-    ~input_filter();
-
-    void read_from_config(config_t* cfg);
-
-    void write_to_config(config_t* cfg);
-
-    void add_filter(const char* filter);
-
-    void remove_filter(int index);
-
-    void set_regex(bool enabled);
-
-    void set_whitelist(bool wl);
-
-    bool input_blocked();
-
-    QStringList& filters();
-};
-
+#include <netlib.h>
 
 class io_settings_dialog : public QDialog
 {
@@ -69,6 +42,7 @@ private Q_SLOTS:
     void AddFilter();
 
     void RemoveFilter();
+
 private:
     Ui::io_config_dialog* ui;
     QTimer* m_refresh;
@@ -76,8 +50,3 @@ private:
 };
 
 static io_settings_dialog* settings_dialog = nullptr;
-
-namespace io_config {
-    extern input_filter io_window_filters;
-    extern std::mutex filter_mutex;
-}

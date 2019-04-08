@@ -123,7 +123,6 @@ namespace sources
         std::string img_path;
         std::string layout_path;
         const auto config = obs_frontend_get_global_config();
-        const auto s = static_cast<input_source*>(data);
         const auto props = obs_properties_create();
 
         /* If enabled add dropdown to select input source */
@@ -208,6 +207,7 @@ namespace sources
 
         si.get_defaults = [](obs_data_t* settings)
         {
+            UNUSED_PARAMETER(settings);
             /* NO-OP */
         };
 

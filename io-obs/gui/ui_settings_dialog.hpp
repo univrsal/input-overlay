@@ -76,50 +76,26 @@ public:
     QHBoxLayout *horizontalLayout_5;
     QLabel *lbl_y;
     QLineEdit *txt_y;
-    QFrame *start;
-    QHBoxLayout *horizontalLayout_6;
-    QLabel *lbl_start;
-    QLineEdit *txt_start;
-    QFrame *back;
-    QHBoxLayout *horizontalLayout_7;
-    QLabel *lbl_back;
-    QLineEdit *txt_back;
-    QFrame *rb;
-    QHBoxLayout *horizontalLayout_8;
-    QLabel *lbl_rb;
-    QLineEdit *txt_rb;
     QFrame *lb;
     QHBoxLayout *horizontalLayout_9;
     QLabel *lbl_lb;
     QLineEdit *txt_lb;
-    QFrame *lt;
-    QHBoxLayout *horizontalLayout_10;
-    QLabel *lbl_lt;
-    QLineEdit *txt_lt;
-    QFrame *rt;
-    QHBoxLayout *horizontalLayout_11;
-    QLabel *lbl_rt;
-    QLineEdit *txt_rt;
+    QFrame *rb;
+    QHBoxLayout *horizontalLayout_8;
+    QLabel *lbl_rb;
+    QLineEdit *txt_rb;
+    QFrame *back;
+    QHBoxLayout *horizontalLayout_7;
+    QLabel *lbl_back;
+    QLineEdit *txt_back;
+    QFrame *start;
+    QHBoxLayout *horizontalLayout_6;
+    QLabel *lbl_start;
+    QLineEdit *txt_start;
     QFrame *guide;
     QHBoxLayout *horizontalLayout_22;
     QLabel *lbl_guide;
     QLineEdit *txt_guide;
-    QFrame *dpad_up;
-    QHBoxLayout *horizontalLayout_12;
-    QLabel *lbl_dpad_up;
-    QLineEdit *txt_dpad_up;
-    QFrame *dpad_down;
-    QHBoxLayout *horizontalLayout_13;
-    QLabel *lbl_dpad_down;
-    QLineEdit *txt_dpad_down;
-    QFrame *dpad_left;
-    QHBoxLayout *horizontalLayout_14;
-    QLabel *lbl_dpad_left;
-    QLineEdit *txt_dpad_left;
-    QFrame *dpad_right;
-    QHBoxLayout *horizontalLayout_15;
-    QLabel *lbl_dpad_right;
-    QLineEdit *txt_dpad_right;
     QFrame *analog_left;
     QHBoxLayout *horizontalLayout_16;
     QLabel *lbl_analog_left;
@@ -128,14 +104,22 @@ public:
     QHBoxLayout *horizontalLayout_17;
     QLabel *lbl_analog_right;
     QLineEdit *txt_analog_right;
-    QFrame *rx;
-    QHBoxLayout *horizontalLayout_18;
-    QLabel *lbl_rx;
-    QLineEdit *txt_rx;
-    QFrame *ry;
-    QHBoxLayout *horizontalLayout_19;
-    QLabel *lbl_ry;
-    QLineEdit *txt_ry;
+    QFrame *dpad_left;
+    QHBoxLayout *horizontalLayout_14;
+    QLabel *lbl_dpad_left;
+    QLineEdit *txt_dpad_left;
+    QFrame *dpad_right;
+    QHBoxLayout *horizontalLayout_15;
+    QLabel *lbl_dpad_right;
+    QLineEdit *txt_dpad_right;
+    QFrame *dpad_down;
+    QHBoxLayout *horizontalLayout_13;
+    QLabel *lbl_dpad_down;
+    QLineEdit *txt_dpad_down;
+    QFrame *dpad_up;
+    QHBoxLayout *horizontalLayout_12;
+    QLabel *lbl_dpad_up;
+    QLineEdit *txt_dpad_up;
     QFrame *lx;
     QHBoxLayout *horizontalLayout_20;
     QLabel *lbl_lx;
@@ -144,6 +128,22 @@ public:
     QHBoxLayout *horizontalLayout_21;
     QLabel *lbl_ly;
     QLineEdit *txt_ly;
+    QFrame *lt;
+    QHBoxLayout *horizontalLayout_10;
+    QLabel *lbl_lt;
+    QLineEdit *txt_lt;
+    QFrame *rx;
+    QHBoxLayout *horizontalLayout_18;
+    QLabel *lbl_rx;
+    QLineEdit *txt_rx;
+    QFrame *ry;
+    QHBoxLayout *horizontalLayout_19;
+    QLabel *lbl_ry;
+    QLineEdit *txt_ry;
+    QFrame *rt;
+    QHBoxLayout *horizontalLayout_11;
+    QLabel *lbl_rt;
+    QLineEdit *txt_rt;
     QWidget *tab_remote;
     QVBoxLayout *verticalLayout_4;
     QCheckBox *cb_enable_remote;
@@ -162,7 +162,7 @@ public:
     {
         if (io_config_dialog->objectName().isEmpty())
             io_config_dialog->setObjectName(QString::fromUtf8("io_config_dialog"));
-        io_config_dialog->resize(404, 575);
+        io_config_dialog->resize(400, 683);
         QSizePolicy sizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
         sizePolicy.setHorizontalStretch(0);
         sizePolicy.setVerticalStretch(0);
@@ -299,7 +299,7 @@ public:
         scrollArea->setWidgetResizable(true);
         scrollAreaWidgetContents = new QWidget();
         scrollAreaWidgetContents->setObjectName(QString::fromUtf8("scrollAreaWidgetContents"));
-        scrollAreaWidgetContents->setGeometry(QRect(0, -306, 396, 735));
+        scrollAreaWidgetContents->setGeometry(QRect(0, -76, 396, 735));
         verticalLayout_5 = new QVBoxLayout(scrollAreaWidgetContents);
         verticalLayout_5->setSpacing(0);
         verticalLayout_5->setContentsMargins(0, 0, 0, 0);
@@ -403,53 +403,28 @@ public:
 
         verticalLayout_5->addWidget(y);
 
-        start = new QFrame(scrollAreaWidgetContents);
-        start->setObjectName(QString::fromUtf8("start"));
-        start->setFrameShape(QFrame::NoFrame);
-        start->setFrameShadow(QFrame::Raised);
-        horizontalLayout_6 = new QHBoxLayout(start);
-        horizontalLayout_6->setSpacing(4);
-        horizontalLayout_6->setObjectName(QString::fromUtf8("horizontalLayout_6"));
-        horizontalLayout_6->setContentsMargins(4, 2, 4, 2);
-        lbl_start = new QLabel(start);
-        lbl_start->setObjectName(QString::fromUtf8("lbl_start"));
+        lb = new QFrame(scrollAreaWidgetContents);
+        lb->setObjectName(QString::fromUtf8("lb"));
+        lb->setFrameShape(QFrame::NoFrame);
+        lb->setFrameShadow(QFrame::Raised);
+        horizontalLayout_9 = new QHBoxLayout(lb);
+        horizontalLayout_9->setObjectName(QString::fromUtf8("horizontalLayout_9"));
+        horizontalLayout_9->setContentsMargins(4, 2, 4, 2);
+        lbl_lb = new QLabel(lb);
+        lbl_lb->setObjectName(QString::fromUtf8("lbl_lb"));
 
-        horizontalLayout_6->addWidget(lbl_start);
+        horizontalLayout_9->addWidget(lbl_lb);
 
-        txt_start = new QLineEdit(start);
-        txt_start->setObjectName(QString::fromUtf8("txt_start"));
-        sizePolicy2.setHeightForWidth(txt_start->sizePolicy().hasHeightForWidth());
-        txt_start->setSizePolicy(sizePolicy2);
-        txt_start->setReadOnly(false);
+        txt_lb = new QLineEdit(lb);
+        txt_lb->setObjectName(QString::fromUtf8("txt_lb"));
+        sizePolicy2.setHeightForWidth(txt_lb->sizePolicy().hasHeightForWidth());
+        txt_lb->setSizePolicy(sizePolicy2);
+        txt_lb->setReadOnly(false);
 
-        horizontalLayout_6->addWidget(txt_start);
-
-
-        verticalLayout_5->addWidget(start);
-
-        back = new QFrame(scrollAreaWidgetContents);
-        back->setObjectName(QString::fromUtf8("back"));
-        back->setFrameShape(QFrame::NoFrame);
-        back->setFrameShadow(QFrame::Raised);
-        horizontalLayout_7 = new QHBoxLayout(back);
-        horizontalLayout_7->setSpacing(4);
-        horizontalLayout_7->setObjectName(QString::fromUtf8("horizontalLayout_7"));
-        horizontalLayout_7->setContentsMargins(4, 2, 4, 2);
-        lbl_back = new QLabel(back);
-        lbl_back->setObjectName(QString::fromUtf8("lbl_back"));
-
-        horizontalLayout_7->addWidget(lbl_back);
-
-        txt_back = new QLineEdit(back);
-        txt_back->setObjectName(QString::fromUtf8("txt_back"));
-        sizePolicy2.setHeightForWidth(txt_back->sizePolicy().hasHeightForWidth());
-        txt_back->setSizePolicy(sizePolicy2);
-        txt_back->setReadOnly(false);
-
-        horizontalLayout_7->addWidget(txt_back);
+        horizontalLayout_9->addWidget(txt_lb);
 
 
-        verticalLayout_5->addWidget(back);
+        verticalLayout_5->addWidget(lb);
 
         rb = new QFrame(scrollAreaWidgetContents);
         rb->setObjectName(QString::fromUtf8("rb"));
@@ -475,74 +450,53 @@ public:
 
         verticalLayout_5->addWidget(rb);
 
-        lb = new QFrame(scrollAreaWidgetContents);
-        lb->setObjectName(QString::fromUtf8("lb"));
-        lb->setFrameShape(QFrame::NoFrame);
-        lb->setFrameShadow(QFrame::Raised);
-        horizontalLayout_9 = new QHBoxLayout(lb);
-        horizontalLayout_9->setObjectName(QString::fromUtf8("horizontalLayout_9"));
-        horizontalLayout_9->setContentsMargins(4, 2, 4, 2);
-        lbl_lb = new QLabel(lb);
-        lbl_lb->setObjectName(QString::fromUtf8("lbl_lb"));
+        back = new QFrame(scrollAreaWidgetContents);
+        back->setObjectName(QString::fromUtf8("back"));
+        back->setFrameShape(QFrame::NoFrame);
+        back->setFrameShadow(QFrame::Raised);
+        horizontalLayout_7 = new QHBoxLayout(back);
+        horizontalLayout_7->setSpacing(4);
+        horizontalLayout_7->setObjectName(QString::fromUtf8("horizontalLayout_7"));
+        horizontalLayout_7->setContentsMargins(4, 2, 4, 2);
+        lbl_back = new QLabel(back);
+        lbl_back->setObjectName(QString::fromUtf8("lbl_back"));
 
-        horizontalLayout_9->addWidget(lbl_lb);
+        horizontalLayout_7->addWidget(lbl_back);
 
-        txt_lb = new QLineEdit(lb);
-        txt_lb->setObjectName(QString::fromUtf8("txt_lb"));
-        sizePolicy2.setHeightForWidth(txt_lb->sizePolicy().hasHeightForWidth());
-        txt_lb->setSizePolicy(sizePolicy2);
-        txt_lb->setReadOnly(false);
+        txt_back = new QLineEdit(back);
+        txt_back->setObjectName(QString::fromUtf8("txt_back"));
+        sizePolicy2.setHeightForWidth(txt_back->sizePolicy().hasHeightForWidth());
+        txt_back->setSizePolicy(sizePolicy2);
+        txt_back->setReadOnly(false);
 
-        horizontalLayout_9->addWidget(txt_lb);
-
-
-        verticalLayout_5->addWidget(lb);
-
-        lt = new QFrame(scrollAreaWidgetContents);
-        lt->setObjectName(QString::fromUtf8("lt"));
-        lt->setFrameShape(QFrame::NoFrame);
-        lt->setFrameShadow(QFrame::Raised);
-        horizontalLayout_10 = new QHBoxLayout(lt);
-        horizontalLayout_10->setObjectName(QString::fromUtf8("horizontalLayout_10"));
-        horizontalLayout_10->setContentsMargins(4, 2, 4, 2);
-        lbl_lt = new QLabel(lt);
-        lbl_lt->setObjectName(QString::fromUtf8("lbl_lt"));
-
-        horizontalLayout_10->addWidget(lbl_lt);
-
-        txt_lt = new QLineEdit(lt);
-        txt_lt->setObjectName(QString::fromUtf8("txt_lt"));
-        sizePolicy2.setHeightForWidth(txt_lt->sizePolicy().hasHeightForWidth());
-        txt_lt->setSizePolicy(sizePolicy2);
-        txt_lt->setReadOnly(false);
-
-        horizontalLayout_10->addWidget(txt_lt);
+        horizontalLayout_7->addWidget(txt_back);
 
 
-        verticalLayout_5->addWidget(lt);
+        verticalLayout_5->addWidget(back);
 
-        rt = new QFrame(scrollAreaWidgetContents);
-        rt->setObjectName(QString::fromUtf8("rt"));
-        rt->setFrameShape(QFrame::NoFrame);
-        rt->setFrameShadow(QFrame::Raised);
-        horizontalLayout_11 = new QHBoxLayout(rt);
-        horizontalLayout_11->setObjectName(QString::fromUtf8("horizontalLayout_11"));
-        horizontalLayout_11->setContentsMargins(4, 2, 4, 2);
-        lbl_rt = new QLabel(rt);
-        lbl_rt->setObjectName(QString::fromUtf8("lbl_rt"));
+        start = new QFrame(scrollAreaWidgetContents);
+        start->setObjectName(QString::fromUtf8("start"));
+        start->setFrameShape(QFrame::NoFrame);
+        start->setFrameShadow(QFrame::Raised);
+        horizontalLayout_6 = new QHBoxLayout(start);
+        horizontalLayout_6->setSpacing(4);
+        horizontalLayout_6->setObjectName(QString::fromUtf8("horizontalLayout_6"));
+        horizontalLayout_6->setContentsMargins(4, 2, 4, 2);
+        lbl_start = new QLabel(start);
+        lbl_start->setObjectName(QString::fromUtf8("lbl_start"));
 
-        horizontalLayout_11->addWidget(lbl_rt);
+        horizontalLayout_6->addWidget(lbl_start);
 
-        txt_rt = new QLineEdit(rt);
-        txt_rt->setObjectName(QString::fromUtf8("txt_rt"));
-        sizePolicy2.setHeightForWidth(txt_rt->sizePolicy().hasHeightForWidth());
-        txt_rt->setSizePolicy(sizePolicy2);
-        txt_rt->setReadOnly(false);
+        txt_start = new QLineEdit(start);
+        txt_start->setObjectName(QString::fromUtf8("txt_start"));
+        sizePolicy2.setHeightForWidth(txt_start->sizePolicy().hasHeightForWidth());
+        txt_start->setSizePolicy(sizePolicy2);
+        txt_start->setReadOnly(false);
 
-        horizontalLayout_11->addWidget(txt_rt);
+        horizontalLayout_6->addWidget(txt_start);
 
 
-        verticalLayout_5->addWidget(rt);
+        verticalLayout_5->addWidget(start);
 
         guide = new QFrame(scrollAreaWidgetContents);
         guide->setObjectName(QString::fromUtf8("guide"));
@@ -566,98 +520,6 @@ public:
 
 
         verticalLayout_5->addWidget(guide);
-
-        dpad_up = new QFrame(scrollAreaWidgetContents);
-        dpad_up->setObjectName(QString::fromUtf8("dpad_up"));
-        dpad_up->setFrameShape(QFrame::NoFrame);
-        dpad_up->setFrameShadow(QFrame::Raised);
-        horizontalLayout_12 = new QHBoxLayout(dpad_up);
-        horizontalLayout_12->setObjectName(QString::fromUtf8("horizontalLayout_12"));
-        horizontalLayout_12->setContentsMargins(4, 2, 4, 2);
-        lbl_dpad_up = new QLabel(dpad_up);
-        lbl_dpad_up->setObjectName(QString::fromUtf8("lbl_dpad_up"));
-
-        horizontalLayout_12->addWidget(lbl_dpad_up);
-
-        txt_dpad_up = new QLineEdit(dpad_up);
-        txt_dpad_up->setObjectName(QString::fromUtf8("txt_dpad_up"));
-        sizePolicy2.setHeightForWidth(txt_dpad_up->sizePolicy().hasHeightForWidth());
-        txt_dpad_up->setSizePolicy(sizePolicy2);
-        txt_dpad_up->setReadOnly(false);
-
-        horizontalLayout_12->addWidget(txt_dpad_up);
-
-
-        verticalLayout_5->addWidget(dpad_up);
-
-        dpad_down = new QFrame(scrollAreaWidgetContents);
-        dpad_down->setObjectName(QString::fromUtf8("dpad_down"));
-        dpad_down->setFrameShape(QFrame::NoFrame);
-        dpad_down->setFrameShadow(QFrame::Raised);
-        horizontalLayout_13 = new QHBoxLayout(dpad_down);
-        horizontalLayout_13->setObjectName(QString::fromUtf8("horizontalLayout_13"));
-        horizontalLayout_13->setContentsMargins(4, 2, 4, 2);
-        lbl_dpad_down = new QLabel(dpad_down);
-        lbl_dpad_down->setObjectName(QString::fromUtf8("lbl_dpad_down"));
-
-        horizontalLayout_13->addWidget(lbl_dpad_down);
-
-        txt_dpad_down = new QLineEdit(dpad_down);
-        txt_dpad_down->setObjectName(QString::fromUtf8("txt_dpad_down"));
-        sizePolicy2.setHeightForWidth(txt_dpad_down->sizePolicy().hasHeightForWidth());
-        txt_dpad_down->setSizePolicy(sizePolicy2);
-        txt_dpad_down->setReadOnly(false);
-
-        horizontalLayout_13->addWidget(txt_dpad_down);
-
-
-        verticalLayout_5->addWidget(dpad_down);
-
-        dpad_left = new QFrame(scrollAreaWidgetContents);
-        dpad_left->setObjectName(QString::fromUtf8("dpad_left"));
-        dpad_left->setFrameShape(QFrame::NoFrame);
-        dpad_left->setFrameShadow(QFrame::Raised);
-        horizontalLayout_14 = new QHBoxLayout(dpad_left);
-        horizontalLayout_14->setObjectName(QString::fromUtf8("horizontalLayout_14"));
-        horizontalLayout_14->setContentsMargins(4, 2, 4, 2);
-        lbl_dpad_left = new QLabel(dpad_left);
-        lbl_dpad_left->setObjectName(QString::fromUtf8("lbl_dpad_left"));
-
-        horizontalLayout_14->addWidget(lbl_dpad_left);
-
-        txt_dpad_left = new QLineEdit(dpad_left);
-        txt_dpad_left->setObjectName(QString::fromUtf8("txt_dpad_left"));
-        sizePolicy2.setHeightForWidth(txt_dpad_left->sizePolicy().hasHeightForWidth());
-        txt_dpad_left->setSizePolicy(sizePolicy2);
-        txt_dpad_left->setReadOnly(false);
-
-        horizontalLayout_14->addWidget(txt_dpad_left);
-
-
-        verticalLayout_5->addWidget(dpad_left);
-
-        dpad_right = new QFrame(scrollAreaWidgetContents);
-        dpad_right->setObjectName(QString::fromUtf8("dpad_right"));
-        dpad_right->setFrameShape(QFrame::NoFrame);
-        dpad_right->setFrameShadow(QFrame::Raised);
-        horizontalLayout_15 = new QHBoxLayout(dpad_right);
-        horizontalLayout_15->setObjectName(QString::fromUtf8("horizontalLayout_15"));
-        horizontalLayout_15->setContentsMargins(4, 2, 4, 2);
-        lbl_dpad_right = new QLabel(dpad_right);
-        lbl_dpad_right->setObjectName(QString::fromUtf8("lbl_dpad_right"));
-
-        horizontalLayout_15->addWidget(lbl_dpad_right);
-
-        txt_dpad_right = new QLineEdit(dpad_right);
-        txt_dpad_right->setObjectName(QString::fromUtf8("txt_dpad_right"));
-        sizePolicy2.setHeightForWidth(txt_dpad_right->sizePolicy().hasHeightForWidth());
-        txt_dpad_right->setSizePolicy(sizePolicy2);
-        txt_dpad_right->setReadOnly(false);
-
-        horizontalLayout_15->addWidget(txt_dpad_right);
-
-
-        verticalLayout_5->addWidget(dpad_right);
 
         analog_left = new QFrame(scrollAreaWidgetContents);
         analog_left->setObjectName(QString::fromUtf8("analog_left"));
@@ -705,51 +567,97 @@ public:
 
         verticalLayout_5->addWidget(analog_right);
 
-        rx = new QFrame(scrollAreaWidgetContents);
-        rx->setObjectName(QString::fromUtf8("rx"));
-        rx->setFrameShape(QFrame::NoFrame);
-        rx->setFrameShadow(QFrame::Raised);
-        horizontalLayout_18 = new QHBoxLayout(rx);
-        horizontalLayout_18->setObjectName(QString::fromUtf8("horizontalLayout_18"));
-        horizontalLayout_18->setContentsMargins(4, 2, 4, 2);
-        lbl_rx = new QLabel(rx);
-        lbl_rx->setObjectName(QString::fromUtf8("lbl_rx"));
+        dpad_left = new QFrame(scrollAreaWidgetContents);
+        dpad_left->setObjectName(QString::fromUtf8("dpad_left"));
+        dpad_left->setFrameShape(QFrame::NoFrame);
+        dpad_left->setFrameShadow(QFrame::Raised);
+        horizontalLayout_14 = new QHBoxLayout(dpad_left);
+        horizontalLayout_14->setObjectName(QString::fromUtf8("horizontalLayout_14"));
+        horizontalLayout_14->setContentsMargins(4, 2, 4, 2);
+        lbl_dpad_left = new QLabel(dpad_left);
+        lbl_dpad_left->setObjectName(QString::fromUtf8("lbl_dpad_left"));
 
-        horizontalLayout_18->addWidget(lbl_rx);
+        horizontalLayout_14->addWidget(lbl_dpad_left);
 
-        txt_rx = new QLineEdit(rx);
-        txt_rx->setObjectName(QString::fromUtf8("txt_rx"));
-        sizePolicy2.setHeightForWidth(txt_rx->sizePolicy().hasHeightForWidth());
-        txt_rx->setSizePolicy(sizePolicy2);
-        txt_rx->setReadOnly(false);
+        txt_dpad_left = new QLineEdit(dpad_left);
+        txt_dpad_left->setObjectName(QString::fromUtf8("txt_dpad_left"));
+        sizePolicy2.setHeightForWidth(txt_dpad_left->sizePolicy().hasHeightForWidth());
+        txt_dpad_left->setSizePolicy(sizePolicy2);
+        txt_dpad_left->setReadOnly(false);
 
-        horizontalLayout_18->addWidget(txt_rx);
-
-
-        verticalLayout_5->addWidget(rx);
-
-        ry = new QFrame(scrollAreaWidgetContents);
-        ry->setObjectName(QString::fromUtf8("ry"));
-        ry->setFrameShape(QFrame::NoFrame);
-        ry->setFrameShadow(QFrame::Raised);
-        horizontalLayout_19 = new QHBoxLayout(ry);
-        horizontalLayout_19->setObjectName(QString::fromUtf8("horizontalLayout_19"));
-        horizontalLayout_19->setContentsMargins(4, 2, 4, 2);
-        lbl_ry = new QLabel(ry);
-        lbl_ry->setObjectName(QString::fromUtf8("lbl_ry"));
-
-        horizontalLayout_19->addWidget(lbl_ry);
-
-        txt_ry = new QLineEdit(ry);
-        txt_ry->setObjectName(QString::fromUtf8("txt_ry"));
-        sizePolicy2.setHeightForWidth(txt_ry->sizePolicy().hasHeightForWidth());
-        txt_ry->setSizePolicy(sizePolicy2);
-        txt_ry->setReadOnly(false);
-
-        horizontalLayout_19->addWidget(txt_ry);
+        horizontalLayout_14->addWidget(txt_dpad_left);
 
 
-        verticalLayout_5->addWidget(ry);
+        verticalLayout_5->addWidget(dpad_left);
+
+        dpad_right = new QFrame(scrollAreaWidgetContents);
+        dpad_right->setObjectName(QString::fromUtf8("dpad_right"));
+        dpad_right->setFrameShape(QFrame::NoFrame);
+        dpad_right->setFrameShadow(QFrame::Raised);
+        horizontalLayout_15 = new QHBoxLayout(dpad_right);
+        horizontalLayout_15->setObjectName(QString::fromUtf8("horizontalLayout_15"));
+        horizontalLayout_15->setContentsMargins(4, 2, 4, 2);
+        lbl_dpad_right = new QLabel(dpad_right);
+        lbl_dpad_right->setObjectName(QString::fromUtf8("lbl_dpad_right"));
+
+        horizontalLayout_15->addWidget(lbl_dpad_right);
+
+        txt_dpad_right = new QLineEdit(dpad_right);
+        txt_dpad_right->setObjectName(QString::fromUtf8("txt_dpad_right"));
+        sizePolicy2.setHeightForWidth(txt_dpad_right->sizePolicy().hasHeightForWidth());
+        txt_dpad_right->setSizePolicy(sizePolicy2);
+        txt_dpad_right->setReadOnly(false);
+
+        horizontalLayout_15->addWidget(txt_dpad_right);
+
+
+        verticalLayout_5->addWidget(dpad_right);
+
+        dpad_down = new QFrame(scrollAreaWidgetContents);
+        dpad_down->setObjectName(QString::fromUtf8("dpad_down"));
+        dpad_down->setFrameShape(QFrame::NoFrame);
+        dpad_down->setFrameShadow(QFrame::Raised);
+        horizontalLayout_13 = new QHBoxLayout(dpad_down);
+        horizontalLayout_13->setObjectName(QString::fromUtf8("horizontalLayout_13"));
+        horizontalLayout_13->setContentsMargins(4, 2, 4, 2);
+        lbl_dpad_down = new QLabel(dpad_down);
+        lbl_dpad_down->setObjectName(QString::fromUtf8("lbl_dpad_down"));
+
+        horizontalLayout_13->addWidget(lbl_dpad_down);
+
+        txt_dpad_down = new QLineEdit(dpad_down);
+        txt_dpad_down->setObjectName(QString::fromUtf8("txt_dpad_down"));
+        sizePolicy2.setHeightForWidth(txt_dpad_down->sizePolicy().hasHeightForWidth());
+        txt_dpad_down->setSizePolicy(sizePolicy2);
+        txt_dpad_down->setReadOnly(false);
+
+        horizontalLayout_13->addWidget(txt_dpad_down);
+
+
+        verticalLayout_5->addWidget(dpad_down);
+
+        dpad_up = new QFrame(scrollAreaWidgetContents);
+        dpad_up->setObjectName(QString::fromUtf8("dpad_up"));
+        dpad_up->setFrameShape(QFrame::NoFrame);
+        dpad_up->setFrameShadow(QFrame::Raised);
+        horizontalLayout_12 = new QHBoxLayout(dpad_up);
+        horizontalLayout_12->setObjectName(QString::fromUtf8("horizontalLayout_12"));
+        horizontalLayout_12->setContentsMargins(4, 2, 4, 2);
+        lbl_dpad_up = new QLabel(dpad_up);
+        lbl_dpad_up->setObjectName(QString::fromUtf8("lbl_dpad_up"));
+
+        horizontalLayout_12->addWidget(lbl_dpad_up);
+
+        txt_dpad_up = new QLineEdit(dpad_up);
+        txt_dpad_up->setObjectName(QString::fromUtf8("txt_dpad_up"));
+        sizePolicy2.setHeightForWidth(txt_dpad_up->sizePolicy().hasHeightForWidth());
+        txt_dpad_up->setSizePolicy(sizePolicy2);
+        txt_dpad_up->setReadOnly(false);
+
+        horizontalLayout_12->addWidget(txt_dpad_up);
+
+
+        verticalLayout_5->addWidget(dpad_up);
 
         lx = new QFrame(scrollAreaWidgetContents);
         lx->setObjectName(QString::fromUtf8("lx"));
@@ -796,6 +704,98 @@ public:
 
 
         verticalLayout_5->addWidget(ly);
+
+        lt = new QFrame(scrollAreaWidgetContents);
+        lt->setObjectName(QString::fromUtf8("lt"));
+        lt->setFrameShape(QFrame::NoFrame);
+        lt->setFrameShadow(QFrame::Raised);
+        horizontalLayout_10 = new QHBoxLayout(lt);
+        horizontalLayout_10->setObjectName(QString::fromUtf8("horizontalLayout_10"));
+        horizontalLayout_10->setContentsMargins(4, 2, 4, 2);
+        lbl_lt = new QLabel(lt);
+        lbl_lt->setObjectName(QString::fromUtf8("lbl_lt"));
+
+        horizontalLayout_10->addWidget(lbl_lt);
+
+        txt_lt = new QLineEdit(lt);
+        txt_lt->setObjectName(QString::fromUtf8("txt_lt"));
+        sizePolicy2.setHeightForWidth(txt_lt->sizePolicy().hasHeightForWidth());
+        txt_lt->setSizePolicy(sizePolicy2);
+        txt_lt->setReadOnly(false);
+
+        horizontalLayout_10->addWidget(txt_lt);
+
+
+        verticalLayout_5->addWidget(lt);
+
+        rx = new QFrame(scrollAreaWidgetContents);
+        rx->setObjectName(QString::fromUtf8("rx"));
+        rx->setFrameShape(QFrame::NoFrame);
+        rx->setFrameShadow(QFrame::Raised);
+        horizontalLayout_18 = new QHBoxLayout(rx);
+        horizontalLayout_18->setObjectName(QString::fromUtf8("horizontalLayout_18"));
+        horizontalLayout_18->setContentsMargins(4, 2, 4, 2);
+        lbl_rx = new QLabel(rx);
+        lbl_rx->setObjectName(QString::fromUtf8("lbl_rx"));
+
+        horizontalLayout_18->addWidget(lbl_rx);
+
+        txt_rx = new QLineEdit(rx);
+        txt_rx->setObjectName(QString::fromUtf8("txt_rx"));
+        sizePolicy2.setHeightForWidth(txt_rx->sizePolicy().hasHeightForWidth());
+        txt_rx->setSizePolicy(sizePolicy2);
+        txt_rx->setReadOnly(false);
+
+        horizontalLayout_18->addWidget(txt_rx);
+
+
+        verticalLayout_5->addWidget(rx);
+
+        ry = new QFrame(scrollAreaWidgetContents);
+        ry->setObjectName(QString::fromUtf8("ry"));
+        ry->setFrameShape(QFrame::NoFrame);
+        ry->setFrameShadow(QFrame::Raised);
+        horizontalLayout_19 = new QHBoxLayout(ry);
+        horizontalLayout_19->setObjectName(QString::fromUtf8("horizontalLayout_19"));
+        horizontalLayout_19->setContentsMargins(4, 2, 4, 2);
+        lbl_ry = new QLabel(ry);
+        lbl_ry->setObjectName(QString::fromUtf8("lbl_ry"));
+
+        horizontalLayout_19->addWidget(lbl_ry);
+
+        txt_ry = new QLineEdit(ry);
+        txt_ry->setObjectName(QString::fromUtf8("txt_ry"));
+        sizePolicy2.setHeightForWidth(txt_ry->sizePolicy().hasHeightForWidth());
+        txt_ry->setSizePolicy(sizePolicy2);
+        txt_ry->setReadOnly(false);
+
+        horizontalLayout_19->addWidget(txt_ry);
+
+
+        verticalLayout_5->addWidget(ry);
+
+        rt = new QFrame(scrollAreaWidgetContents);
+        rt->setObjectName(QString::fromUtf8("rt"));
+        rt->setFrameShape(QFrame::NoFrame);
+        rt->setFrameShadow(QFrame::Raised);
+        horizontalLayout_11 = new QHBoxLayout(rt);
+        horizontalLayout_11->setObjectName(QString::fromUtf8("horizontalLayout_11"));
+        horizontalLayout_11->setContentsMargins(4, 2, 4, 2);
+        lbl_rt = new QLabel(rt);
+        lbl_rt->setObjectName(QString::fromUtf8("lbl_rt"));
+
+        horizontalLayout_11->addWidget(lbl_rt);
+
+        txt_rt = new QLineEdit(rt);
+        txt_rt->setObjectName(QString::fromUtf8("txt_rt"));
+        sizePolicy2.setHeightForWidth(txt_rt->sizePolicy().hasHeightForWidth());
+        txt_rt->setSizePolicy(sizePolicy2);
+        txt_rt->setReadOnly(false);
+
+        horizontalLayout_11->addWidget(txt_rt);
+
+
+        verticalLayout_5->addWidget(rt);
 
         scrollArea->setWidget(scrollAreaWidgetContents);
 
@@ -902,7 +902,7 @@ public:
         QObject::connect(button_box, SIGNAL(accepted()), io_config_dialog, SLOT(accept()));
         QObject::connect(button_box, SIGNAL(rejected()), io_config_dialog, SLOT(reject()));
 
-        tabs->setCurrentIndex(1);
+        tabs->setCurrentIndex(0);
         cb_list_mode->setCurrentIndex(0);
 
 
@@ -939,40 +939,40 @@ public:
         txt_x->setInputMask(QApplication::translate("io_config_dialog", "009; ", nullptr));
         lbl_y->setText(QApplication::translate("io_config_dialog", "Dialog.Gamepad.Binding.Y", nullptr));
         txt_y->setInputMask(QApplication::translate("io_config_dialog", "009; ", nullptr));
-        lbl_start->setText(QApplication::translate("io_config_dialog", "Dialog.Gamepad.Binding.Start", nullptr));
-        txt_start->setInputMask(QApplication::translate("io_config_dialog", "009; ", nullptr));
-        lbl_back->setText(QApplication::translate("io_config_dialog", "Dialog.Gamepad.Binding.Back", nullptr));
-        txt_back->setInputMask(QApplication::translate("io_config_dialog", "009; ", nullptr));
-        lbl_rb->setText(QApplication::translate("io_config_dialog", "Dialog.Gamepad.Binding.RB", nullptr));
-        txt_rb->setInputMask(QApplication::translate("io_config_dialog", "009; ", nullptr));
         lbl_lb->setText(QApplication::translate("io_config_dialog", "Dialog.Gamepad.Binding.LB", nullptr));
         txt_lb->setInputMask(QApplication::translate("io_config_dialog", "009; ", nullptr));
-        lbl_lt->setText(QApplication::translate("io_config_dialog", "Dialog.Gamepad.Binding.LT", nullptr));
-        txt_lt->setInputMask(QApplication::translate("io_config_dialog", "009; ", nullptr));
-        lbl_rt->setText(QApplication::translate("io_config_dialog", "Dialog.Gamepad.Binding.RT", nullptr));
-        txt_rt->setInputMask(QApplication::translate("io_config_dialog", "009; ", nullptr));
+        lbl_rb->setText(QApplication::translate("io_config_dialog", "Dialog.Gamepad.Binding.RB", nullptr));
+        txt_rb->setInputMask(QApplication::translate("io_config_dialog", "009; ", nullptr));
+        lbl_back->setText(QApplication::translate("io_config_dialog", "Dialog.Gamepad.Binding.Back", nullptr));
+        txt_back->setInputMask(QApplication::translate("io_config_dialog", "009; ", nullptr));
+        lbl_start->setText(QApplication::translate("io_config_dialog", "Dialog.Gamepad.Binding.Start", nullptr));
+        txt_start->setInputMask(QApplication::translate("io_config_dialog", "009; ", nullptr));
         lbl_guide->setText(QApplication::translate("io_config_dialog", "Dialog.Gamepad.Binding.Guide", nullptr));
         txt_guide->setInputMask(QApplication::translate("io_config_dialog", "009; ", nullptr));
-        lbl_dpad_up->setText(QApplication::translate("io_config_dialog", "Dialog.Gamepad.Binding.Dpad.Up", nullptr));
-        txt_dpad_up->setInputMask(QApplication::translate("io_config_dialog", "009; ", nullptr));
-        lbl_dpad_down->setText(QApplication::translate("io_config_dialog", "Dialog.Gamepad.Binding.Dpad.Down", nullptr));
-        txt_dpad_down->setInputMask(QApplication::translate("io_config_dialog", "009; ", nullptr));
-        lbl_dpad_left->setText(QApplication::translate("io_config_dialog", "Dialog.Gamepad.Binding.Dpad.Left", nullptr));
-        txt_dpad_left->setInputMask(QApplication::translate("io_config_dialog", "009; ", nullptr));
-        lbl_dpad_right->setText(QApplication::translate("io_config_dialog", "Dialog.Gamepad.Binding.Dpad.Right", nullptr));
-        txt_dpad_right->setInputMask(QApplication::translate("io_config_dialog", "009; ", nullptr));
         lbl_analog_left->setText(QApplication::translate("io_config_dialog", "Dialog.Gamepad.Binding.Analog.Left", nullptr));
         txt_analog_left->setInputMask(QApplication::translate("io_config_dialog", "009; ", nullptr));
         lbl_analog_right->setText(QApplication::translate("io_config_dialog", "Dialog.Gamepad.Binding.Analog.Right", nullptr));
         txt_analog_right->setInputMask(QApplication::translate("io_config_dialog", "009; ", nullptr));
-        lbl_rx->setText(QApplication::translate("io_config_dialog", "Dialog.Gamepad.Binding.Analog.RX", nullptr));
-        txt_rx->setInputMask(QApplication::translate("io_config_dialog", "009; ", nullptr));
-        lbl_ry->setText(QApplication::translate("io_config_dialog", "Dialog.Gamepad.Binding.Analog.RY", nullptr));
-        txt_ry->setInputMask(QApplication::translate("io_config_dialog", "009; ", nullptr));
+        lbl_dpad_left->setText(QApplication::translate("io_config_dialog", "Dialog.Gamepad.Binding.Dpad.Left", nullptr));
+        txt_dpad_left->setInputMask(QApplication::translate("io_config_dialog", "009; ", nullptr));
+        lbl_dpad_right->setText(QApplication::translate("io_config_dialog", "Dialog.Gamepad.Binding.Dpad.Right", nullptr));
+        txt_dpad_right->setInputMask(QApplication::translate("io_config_dialog", "009; ", nullptr));
+        lbl_dpad_down->setText(QApplication::translate("io_config_dialog", "Dialog.Gamepad.Binding.Dpad.Down", nullptr));
+        txt_dpad_down->setInputMask(QApplication::translate("io_config_dialog", "009; ", nullptr));
+        lbl_dpad_up->setText(QApplication::translate("io_config_dialog", "Dialog.Gamepad.Binding.Dpad.Up", nullptr));
+        txt_dpad_up->setInputMask(QApplication::translate("io_config_dialog", "009; ", nullptr));
         lbl_lx->setText(QApplication::translate("io_config_dialog", "Dialog.Gamepad.Binding.Analog.LX", nullptr));
         txt_lx->setInputMask(QApplication::translate("io_config_dialog", "009; ", nullptr));
         lbl_ly->setText(QApplication::translate("io_config_dialog", "Dialog.Gamepad.Binding.Analog.LY", nullptr));
         txt_ly->setInputMask(QApplication::translate("io_config_dialog", "009; ", nullptr));
+        lbl_lt->setText(QApplication::translate("io_config_dialog", "Dialog.Gamepad.Binding.LT", nullptr));
+        txt_lt->setInputMask(QApplication::translate("io_config_dialog", "009; ", nullptr));
+        lbl_rx->setText(QApplication::translate("io_config_dialog", "Dialog.Gamepad.Binding.Analog.RX", nullptr));
+        txt_rx->setInputMask(QApplication::translate("io_config_dialog", "009; ", nullptr));
+        lbl_ry->setText(QApplication::translate("io_config_dialog", "Dialog.Gamepad.Binding.Analog.RY", nullptr));
+        txt_ry->setInputMask(QApplication::translate("io_config_dialog", "009; ", nullptr));
+        lbl_rt->setText(QApplication::translate("io_config_dialog", "Dialog.Gamepad.Binding.RT", nullptr));
+        txt_rt->setInputMask(QApplication::translate("io_config_dialog", "009; ", nullptr));
         tabs->setTabText(tabs->indexOf(tab_gamepad), QApplication::translate("io_config_dialog", "Dialog.Gamepad", nullptr));
         cb_enable_remote->setText(QApplication::translate("io_config_dialog", "Dialog.Remote.Enable", nullptr));
         cb_log->setText(QApplication::translate("io_config_dialog", "Dialog.Remote.Logging", nullptr));

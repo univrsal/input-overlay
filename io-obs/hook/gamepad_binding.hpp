@@ -16,9 +16,8 @@
  * map a /dev/js* event to a button identifiable by the plugin
  */
 
-#ifdef LINUX
-
 class element_data_holder;
+struct js_event;
 
 namespace gamepad
 {
@@ -71,8 +70,7 @@ namespace gamepad
 
         void init_default();
 
-        void handle_event(uint8_t pad_id, struct js_event* event, element_data_holder* data);
+        //void handle_event(uint8_t pad_id, js_event* event, element_data_holder* data);
+        void handle_event(uint8_t pad_id, element_data_holder* data, js_event* event);
     };
 }
-
-#endif /* LINUX */

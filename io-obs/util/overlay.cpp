@@ -21,6 +21,7 @@
 #include "network/remote_connection.hpp"
 #include "network/io_server.hpp"
 #include "element/element_mouse_movement.hpp"
+#include "config.hpp"
 
 extern "C" {
 #include <graphics/image-file.h>
@@ -278,12 +279,11 @@ void overlay::load_element(ccl_config* cfg, const std::string &id, const bool de
         m_elements.emplace_back(new_element);
 
 #ifndef _DEBUG
-        if (debug)
-        {
+        if (debug) {
 #else
         {
 #endif
-            blog(LOG_INFO, "[input-overlay]  Type: %14s, KEYCODE: 0x%4X ID: %s",
+            blog(LOG_INFO, "[input-overlay]  Type: %14s, KEYCODE: 0x%04X ID: %s",
                  element_type_to_string(static_cast<element_type>(type)), new_element->get_keycode(), id.c_str());
         }
     }

@@ -12,6 +12,7 @@
 #include <util/config-file.h>
 
 #include "util/util.hpp"
+#include "util/config.hpp"
 #include "sources/input_source.hpp"
 #include "sources/input_history.hpp"
 #include "hook/hook_helper.hpp"
@@ -26,64 +27,34 @@ extern void cleanupDisplay();
 #endif
 
 OBS_DECLARE_MODULE()
-
 OBS_MODULE_USE_DEFAULT_LOCALE("input-overlay", "en-US")
-
-void set_defaults(config_t* cfg)
-{
-    config_set_default_bool(cfg, S_REGION, S_IOHOOK, true);
-    config_set_default_bool(cfg, S_REGION, S_GAMEPAD, true);
-    config_set_default_bool(cfg, S_REGION, S_OVERLAY, true);
-    config_set_default_bool(cfg, S_REGION, S_HISTORY, true);
-
-    config_set_default_bool(cfg, S_REGION, S_REMOTE, false);
-    config_set_default_bool(cfg, S_REGION, S_LOGGING, false);
-    config_set_default_int(cfg, S_REGION, S_PORT, 1608);
-    config_set_default_int(cfg, S_REGION, S_REFRESH, network::refresh_rate);
-
-    /* Gamepad binding defaults */
-#ifdef LINUX
-    for (const auto& binding : gamepad::default_bindings)
-        config_set_default_int(cfg, S_REGION, binding.setting, binding.default_value);
-#endif
-}
 
 bool obs_module_load()
 {
-
     auto cfg = obs_frontend_get_global_config();
-    set_defaults(cfg);
+    io_config::set_defaults(cfg);
+    io_config::load(cfg);
 
-    if (config_get_bool(cfg, S_REGION, S_HISTORY))
-        sources::register_history();
+    if (io_config::history) sources::register_history();
+    if (io_config::overlay) sources::register_overlay_source();
 
-    if (config_get_bool(cfg, S_REGION, S_OVERLAY))
-        sources::register_overlay_source();
 
-    const auto iohook = config_get_bool(cfg, S_REGION, S_IOHOOK);
-    const auto gamepad = config_get_bool(cfg, S_REGION, S_GAMEPAD);
-    const auto remote = config_get_bool(cfg, S_REGION, S_REMOTE);
-    const auto control = config_get_bool(cfg, S_REGION, S_CONTROL);
-
-    if (iohook || gamepad)
+    if (io_config::uiohook || io_config::gamepad)
         hook::init_data_holder();
 
-    if (iohook)
+    if (io_config::uiohook)
         hook::start_hook();
 
-    if (gamepad)
+    if (io_config::gamepad)
         gamepad::start_pad_hook();
 
-    if (remote) {
-        const uint16_t port = config_get_int(cfg, S_REGION, S_PORT);
-        network::local_input = gamepad || iohook;
-        network::log_flag = config_get_bool(cfg, S_REGION, S_LOGGING);
-        network::start_network(port);
-        network::refresh_rate = config_get_int(cfg, S_REGION, S_REFRESH);
+    if (io_config::remote) {
+        network::local_input = io_config::gamepad || io_config::uiohook;
+        network::start_network(io_config::port);
     }
 
     /* Input filtering via focused window title */
-    if (control)
+    if (io_config::control)
         io_config::io_window_filters.read_from_config(cfg);
 
     /* UI registration from
@@ -104,11 +75,16 @@ bool obs_module_load()
 
 void obs_module_unload()
 {
+    /* Save config values again */
+    auto cfg = obs_frontend_get_global_config();
+    io_config::save(cfg);
+
     if (gamepad::gamepad_hook_state)
         gamepad::end_pad_hook();
 
     if (hook::hook_initialized)
         hook::end_hook();
+
 #ifdef LINUX
     //cleanupDisplay();
 #endif
