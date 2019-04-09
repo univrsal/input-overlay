@@ -49,7 +49,7 @@ data_source element_dpad::get_source()
 
 element_data_dpad::element_data_dpad(const dpad_direction a, const dpad_direction b) : element_data(DPAD_STICK)
 {
-    m_direction = merge_directions(a, b);
+    m_direction = a | b;
 }
 
 element_data_dpad::element_data_dpad(const dpad_direction d, const button_state state) : element_data(DPAD_STICK)
@@ -74,113 +74,32 @@ void element_data_dpad::merge(element_data* other)
 #else
     if (d) {
         if (d->get_state() == STATE_PRESSED) {
-            m_direction = merge_directions(m_direction, d->m_direction);
+            m_direction |= d->m_direction;
         } else {
-            if (m_direction == d->m_direction) {
-                m_direction = DPAD_CENTER;
-            } else {
-                switch (m_direction) {
-                    case DPAD_TOP_LEFT:
-                        switch (d->m_direction) {
-                            case DPAD_LEFT:
-                                m_direction = DPAD_UP;
-                                break;
-                            case DPAD_UP:
-                                m_direction = DPAD_LEFT;
-                                break;
-                            default:;
-                        }
-                        break;
-                    case DPAD_TOP_RIGHT:
-                        switch (d->m_direction) {
-                            case DPAD_UP:
-                                m_direction = DPAD_RIGHT;
-                                break;
-                            case DPAD_RIGHT:
-                                m_direction = DPAD_UP;
-                                break;
-                            default:;
-                        }
-                        break;
-                    case DPAD_BOTTOM_LEFT:
-                        switch (d->m_direction) {
-                            case DPAD_LEFT:
-                                m_direction = DPAD_DOWN;
-                                break;
-                            case DPAD_DOWN:
-                                m_direction = DPAD_LEFT;
-                                break;
-                            default:;
-                        }
-                        break;
-                    case DPAD_BOTTOM_RIGHT:
-                        switch (d->m_direction) {
-                            case DPAD_RIGHT:
-                                m_direction = DPAD_DOWN;
-                                break;
-                            case DPAD_DOWN:
-                                m_direction = DPAD_RIGHT;
-                                break;
-                            default:;
-                        }
-                        break;
-                    default:;
-                }
-            }
+            m_direction &= ~d->m_direction;
         }
     }
 #endif /* !WINDOWS*/
 }
 
-dpad_direction element_data_dpad::merge_directions(const dpad_direction a, const dpad_direction b)
+dpad_texture element_data_dpad::get_direction() const
 {
-    switch (a) {
-        case DPAD_UP:
-            switch (b) {
-                case DPAD_LEFT:
-                    return DPAD_TOP_LEFT;
-                case DPAD_RIGHT:
-                    return DPAD_TOP_RIGHT;
-                default:
-                    return DPAD_UP;
-            }
-        case DPAD_DOWN:
-            switch (b) {
-                case DPAD_LEFT:
-                    return DPAD_BOTTOM_LEFT;
-                case DPAD_RIGHT:
-                    return DPAD_BOTTOM_RIGHT;
-                default:
-                    return DPAD_DOWN;
-            }
-        case DPAD_LEFT:
-            switch (b) {
-                case DPAD_UP:
-                    return DPAD_TOP_LEFT;
-
-                case DPAD_DOWN:
-                    return DPAD_BOTTOM_LEFT;
-
-                default:
-                    return DPAD_LEFT;
-            }
-        case DPAD_RIGHT:
-            switch (b) {
-                case DPAD_UP:
-                    return DPAD_TOP_RIGHT;
-                case DPAD_DOWN:
-                    return DPAD_BOTTOM_RIGHT;
-                default:
-                    return DPAD_RIGHT;
-            }
-        default:;
-            return a;
-    }
-}
-
-dpad_direction element_data_dpad::get_direction() const
-{
-    return m_direction;
+    if (m_direction & DPAD_UP && m_direction & DPAD_LEFT)
+        return DPAD_TEXTURE_TOP_LEFT;
+    else if (m_direction & DPAD_UP && m_direction & DPAD_RIGHT)
+        return DPAD_TEXTURE_TOP_RIGHT;
+    else if (m_direction & DPAD_DOWN && m_direction & DPAD_LEFT)
+        return DPAD_TEXTURE_BOTTOM_LEFT;
+    else if (m_direction & DPAD_DOWN && m_direction & DPAD_RIGHT)
+        return DPAD_TEXTURE_BOTTOM_RIGHT;
+    else if (m_direction & DPAD_UP)
+        return DPAD_TEXTURE_UP;
+    else if (m_direction & DPAD_DOWN)
+        return DPAD_TEXTURE_DOWN;
+    else if (m_direction & DPAD_LEFT)
+        return DPAD_TEXTURE_LEFT;
+    else
+        return DPAD_TEXTURE_RIGHT;
 }
 
 button_state element_data_dpad::get_state() const

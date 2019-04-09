@@ -90,21 +90,27 @@ void element_data_analog_stick::merge(element_data* other)
                     break;
                 case SD_PRESSED_STATE_LEFT:
                     m_left_state = other_stick->m_left_state;
+                    if (m_data_type != SD_PRESSED_STATE_LEFT) m_data_type = SD_BOTH;
                     break;
                 case SD_PRESSED_STATE_RIGHT:
                     m_right_state = other_stick->m_right_state;
+                    if (m_data_type != SD_PRESSED_STATE_RIGHT) m_data_type = SD_BOTH;
                     break;
                 case SD_LEFT_X:
                     m_left_stick.x = other_stick->m_left_stick.x;
+                    if (m_data_type != SD_LEFT_X) m_data_type = SD_BOTH;
                     break;
                 case SD_LEFT_Y:
                     m_left_stick.y = other_stick->m_left_stick.y;
+                    if (m_data_type != SD_LEFT_Y) m_data_type = SD_BOTH;
                     break;
                 case SD_RIGHT_X:
                     m_right_stick.x = other_stick->m_right_stick.x;
+                    if (m_data_type != SD_RIGHT_X) m_data_type = SD_BOTH;
                     break;
                 case SD_RIGHT_Y:
                     m_right_stick.y = other_stick->m_right_stick.y;
+                    if (m_data_type != SD_RIGHT_Y) m_data_type = SD_BOTH;
                     break;
                 default:;
             }

@@ -59,7 +59,6 @@ namespace gamepad
                 data->add_gamepad_data(pad_id, VC_DPAD_DATA, new element_data_dpad(DPAD_RIGHT, state));
             else
                 data->add_gamepad_data(pad_id, PAD_TO_VC(vc), new element_data_button(state));
-            blog(LOG_INFO, "Pad: %i, Event: %i, VC %i (0x%X)", pad_id, event->number, vc, PAD_TO_VC(vc));
         } else if (event->type == JS_EVENT_AXIS) {
             vc = get_axis_event_by_id(event->number);
             float axis;
@@ -68,7 +67,7 @@ namespace gamepad
                 auto trigger = vc == PAD_LT ? T_DATA_LEFT : T_DATA_RIGHT;
                 /* Trigger data goes from ~ -32000 to +32000, so it's offset by 0x7FFF
                  * and then divided by 0xffff to convert it to a float (0.0 - 1.0) */
-                axis = event->value + (0xffff / 2) / ((float) 0xffff);
+                axis = (event->value + (0xffff / 2)) / ((float) 0xffff);
                 data->add_gamepad_data(pad_id, VC_TRIGGER_DATA, new element_data_trigger(trigger, axis));
             } else {
                 axis = event->value / ((float) 0xffff);

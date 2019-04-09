@@ -138,9 +138,13 @@ void element_data_trigger::merge(element_data* other)
                     break;
                 case T_DATA_LEFT:
                     m_left_trigger = trigger->m_left_trigger;
+                    if (m_data_type == T_DATA_RIGHT) /* Left merged with right = now contains both sides */
+                        m_data_type = T_DATA_BOTH;
                     break;
                 case T_DATA_RIGHT:
                     m_right_trigger = trigger->m_right_trigger;
+                    if (m_data_type == T_DATA_LEFT) /* Left merged with right = now contains both sides */
+                        m_data_type = T_DATA_BOTH;
                     break;
                 default:;
             }

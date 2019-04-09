@@ -65,6 +65,9 @@ void input_filter::set_whitelist(bool wl)
 
 bool input_filter::input_blocked()
 {
+    if (!io_config::control)
+        return false;
+
     io_config::filter_mutex.lock();
     std::string current_window;
     auto flag = m_whitelist;

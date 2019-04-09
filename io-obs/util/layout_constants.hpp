@@ -65,20 +65,29 @@
 
 enum overlay_flags
 {
-    FLAG_LEFT_STICK = 1 << 0, FLAG_RIGHT_STICK = 1 << 1, FLAG_GAMEPAD = 1 << 2, FLAG_MOUSE = 1 << 3, FLAG_TEXT = 1 << 4
+    FLAG_LEFT_STICK = 1 << 0, FLAG_RIGHT_STICK = 1 << 1, FLAG_GAMEPAD = 1 << 2, FLAG_MOUSE = 1 << 3
+};
+
+enum dpad_texture
+{
+    DPAD_TEXTURE_CENTER,
+    DPAD_TEXTURE_LEFT,
+    DPAD_TEXTURE_RIGHT,
+    DPAD_TEXTURE_UP,
+    DPAD_TEXTURE_DOWN,
+    DPAD_TEXTURE_TOP_LEFT,
+    DPAD_TEXTURE_TOP_RIGHT,
+    DPAD_TEXTURE_BOTTOM_LEFT,
+    DPAD_TEXTURE_BOTTOM_RIGHT
 };
 
 enum dpad_direction
 {
-    DPAD_CENTER,
-    DPAD_LEFT,
-    DPAD_RIGHT,
-    DPAD_UP,
-    DPAD_DOWN,
-    DPAD_TOP_LEFT,
-    DPAD_TOP_RIGHT,
-    DPAD_BOTTOM_LEFT,
-    DPAD_BOTTOM_RIGHT
+    DPAD_CENTER = 1 << 0,
+    DPAD_LEFT = 1 << 1,
+    DPAD_RIGHT = 1 << 2,
+    DPAD_UP = 1 << 3,
+    DPAD_DOWN = 1 << 4,
 };
 
 enum mouse_movement_type
@@ -114,6 +123,6 @@ enum wheel_direction
 enum element_type
 {
     INVALID = -1, TEXTURE, BUTTON, /* MOUSE_WHEEL was taken :( */
-            MOUSE_SCROLLWHEEL, MOUSE_STATS, ANALOG_STICK, TRIGGER, /* Shows game pad number 1 through 4 */
-            GAMEPAD_ID, DPAD_STICK,
+    MOUSE_SCROLLWHEEL, MOUSE_STATS, ANALOG_STICK, TRIGGER, /* Shows game pad number 1 through 4 */
+    GAMEPAD_ID, DPAD_STICK,
 };

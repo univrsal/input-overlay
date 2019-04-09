@@ -153,11 +153,11 @@ void element_data_holder::populate_vector(std::vector<uint16_t> &vec, sources::h
                     case ANALOG_STICK:
                         stick = dynamic_cast<element_data_analog_stick*>(data.second.get());
                         if (stick) {
-                            if (stick->left_pressed() && is_new_key(vec, VC_PAD_L_ANALOG | VC_PAD_MASK))
-                                vec.emplace_back(VC_PAD_L_ANALOG | VC_PAD_MASK);
+                            if (stick->left_pressed() && is_new_key(vec, VC_PAD_L_ANALOG))
+                                vec.emplace_back(VC_PAD_L_ANALOG);
 
-                            if (stick->right_pressed() && is_new_key(vec, VC_PAD_R_ANALOG | VC_PAD_MASK))
-                                vec.emplace_back(VC_PAD_R_ANALOG | VC_PAD_MASK);
+                            if (stick->right_pressed() && is_new_key(vec, VC_PAD_R_ANALOG))
+                                vec.emplace_back(VC_PAD_R_ANALOG);
                             add = false;
                         }
                         break;
@@ -165,11 +165,11 @@ void element_data_holder::populate_vector(std::vector<uint16_t> &vec, sources::h
                         trigger = dynamic_cast<element_data_trigger*>(data.second.get());
 
                         if (trigger) {
-                            if (trigger->get_left() > TRIGGER_THRESHOLD && is_new_key(vec, VC_PAD_LT | VC_PAD_MASK))
-                                vec.emplace_back(VC_PAD_LT | VC_PAD_MASK);
+                            if (trigger->get_left() > TRIGGER_THRESHOLD && is_new_key(vec, VC_PAD_LT))
+                                vec.emplace_back(VC_PAD_LT);
 
-                            if (trigger->get_right() > TRIGGER_THRESHOLD && is_new_key(vec, VC_PAD_RT | VC_PAD_MASK))
-                                vec.emplace_back(VC_PAD_RT | VC_PAD_MASK);
+                            if (trigger->get_right() > TRIGGER_THRESHOLD && is_new_key(vec, VC_PAD_RT))
+                                vec.emplace_back(VC_PAD_RT);
                             add = false;
                         }
                     default:;

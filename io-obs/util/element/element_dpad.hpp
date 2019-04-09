@@ -30,14 +30,12 @@ public:
 
     void merge(element_data* other) override;
 
-    static dpad_direction merge_directions(dpad_direction a, dpad_direction b);
-
-    dpad_direction get_direction() const;
+    dpad_texture get_direction() const;
 
     button_state get_state() const;
 
 private:
-    dpad_direction m_direction;
+    uint16_t m_direction;
     button_state m_state;
 };
 
