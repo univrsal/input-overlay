@@ -16,8 +16,6 @@ void element_data_button::merge(element_data* other)
         if (other_btn) {
             m_state = other_btn->m_state;
         }
-    } else {
-        m_state = STATE_RELEASED;
     }
 }
 

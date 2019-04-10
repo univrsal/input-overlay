@@ -112,6 +112,7 @@ bool overlay::load_cfg()
                 element_data* data = nullptr;
 
                 switch (element->get_type()) {
+                    case GAMEPAD_ID: /* Acts just like a button */
                     case BUTTON:
                         data = new element_data_button(STATE_RELEASED);
                         break;
@@ -221,17 +222,16 @@ void overlay::refresh_data()
         for (auto const &element : m_elements) {
             element_data* data = nullptr;
 
-            if (m_data[element->get_keycode()] != nullptr) {
+             if (m_data[element->get_keycode()] != nullptr) {
                 switch (element->get_source()) {
                     case GAMEPAD:
                         data = source->get_by_gamepad(m_settings->gamepad, element->get_keycode());
                         break;
                     default:
-                    case MOUSE_POS:;
+                    case MOUSE_POS:
                     case DEFAULT:
                         data = source->get_by_code(element->get_keycode());
                         break;
-                    case NONE:;
                 }
                 m_data[element->get_keycode()]->merge(data);
             }

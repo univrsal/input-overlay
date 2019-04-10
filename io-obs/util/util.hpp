@@ -240,23 +240,23 @@
 #define PAD_TO_VC(a)                    (a | VC_PAD_MASK)
 #define PAD_COUNT 4
 
-#define VC_PAD_A                        0 | VC_PAD_MASK
-#define VC_PAD_B                        1 | VC_PAD_MASK
-#define VC_PAD_X                        2 | VC_PAD_MASK
-#define VC_PAD_Y                        3 | VC_PAD_MASK
-#define VC_PAD_LB                       4 | VC_PAD_MASK
-#define VC_PAD_RB                       5 | VC_PAD_MASK
-#define VC_PAD_BACK                     6 | VC_PAD_MASK
-#define VC_PAD_START                    7 | VC_PAD_MASK
-#define VC_PAD_GUIDE                    8 | VC_PAD_MASK
-#define VC_PAD_L_ANALOG                 9 | VC_PAD_MASK
-#define VC_PAD_R_ANALOG                 10 | VC_PAD_MASK
-#define VC_PAD_DPAD_LEFT                11 | VC_PAD_MASK
-#define VC_PAD_DPAD_RIGHT               12 | VC_PAD_MASK
-#define VC_PAD_DPAD_UP                  13 | VC_PAD_MASK
-#define VC_PAD_DPAD_DOWN                14 | VC_PAD_MASK
-#define VC_PAD_LT                       15 | VC_PAD_MASK
-#define VC_PAD_RT                       16 | VC_PAD_MASK
+#define VC_PAD_A                        ( 0 | VC_PAD_MASK)
+#define VC_PAD_B                        ( 1 | VC_PAD_MASK)
+#define VC_PAD_X                        ( 2 | VC_PAD_MASK)
+#define VC_PAD_Y                        ( 3 | VC_PAD_MASK)
+#define VC_PAD_LB                       ( 4 | VC_PAD_MASK)
+#define VC_PAD_RB                       ( 5 | VC_PAD_MASK)
+#define VC_PAD_BACK                     ( 6 | VC_PAD_MASK)
+#define VC_PAD_START                    ( 7 | VC_PAD_MASK)
+#define VC_PAD_GUIDE                    ( 8 | VC_PAD_MASK)
+#define VC_PAD_L_ANALOG                 ( 9 | VC_PAD_MASK)
+#define VC_PAD_R_ANALOG                 (10 | VC_PAD_MASK)
+#define VC_PAD_DPAD_LEFT                (11 | VC_PAD_MASK)
+#define VC_PAD_DPAD_RIGHT               (12 | VC_PAD_MASK)
+#define VC_PAD_DPAD_UP                  (13 | VC_PAD_MASK)
+#define VC_PAD_DPAD_DOWN                (14 | VC_PAD_MASK)
+#define VC_PAD_LT                       (15 | VC_PAD_MASK)
+#define VC_PAD_RT                       (16 | VC_PAD_MASK)
 
 /* Get default key names from a libuiohook keycode */
 const char* key_to_text(int key_code);

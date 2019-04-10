@@ -45,6 +45,7 @@ namespace gamepad
         if (event->type == JS_EVENT_BUTTON) {
             auto state = event->value ? STATE_PRESSED : STATE_RELEASED;
             vc = get_button_event_by_id(event->number);
+
             if (vc == PAD_L_STICK)
                 data->add_gamepad_data(pad_id, VC_STICK_DATA, new element_data_analog_stick(state, SIDE_LEFT));
             else if (vc == PAD_R_STICK)
@@ -57,8 +58,10 @@ namespace gamepad
                 data->add_gamepad_data(pad_id, VC_DPAD_DATA, new element_data_dpad(DPAD_LEFT, state));
             else if (vc == PAD_RIGHT)
                 data->add_gamepad_data(pad_id, VC_DPAD_DATA, new element_data_dpad(DPAD_RIGHT, state));
-            else
+
+            if (vc != PAD_L_STICK && vc != PAD_R_STICK)
                 data->add_gamepad_data(pad_id, PAD_TO_VC(vc), new element_data_button(state));
+
         } else if (event->type == JS_EVENT_AXIS) {
             vc = get_axis_event_by_id(event->number);
             float axis;

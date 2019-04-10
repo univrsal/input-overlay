@@ -13,7 +13,7 @@
 
 element_gamepad_id::element_gamepad_id() : element_texture(GAMEPAD_ID), m_mappings{}
 {
-    m_keycode = PAD_TO_VC(VC_PAD_GUIDE);
+    m_keycode = VC_PAD_GUIDE;
 }
 
 void element_gamepad_id::load(ccl_config* cfg, const std::string &id)
@@ -32,7 +32,7 @@ void element_gamepad_id::draw(gs_effect_t* effect, gs_image_file_t* image, eleme
     if (data) {
         const auto d = dynamic_cast<element_data_button*>(data);
         if (d && d->get_state()) {
-            element_texture::draw(effect, image, &m_mappings[3]);
+            element_texture::draw(effect, image, &m_mappings[ID_PRESSED]);
         }
     }
 
@@ -45,5 +45,5 @@ void element_gamepad_id::draw(gs_effect_t* effect, gs_image_file_t* image, eleme
 
 data_source element_gamepad_id::get_source()
 {
-    return NONE;
+    return GAMEPAD;
 }

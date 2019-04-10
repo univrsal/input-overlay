@@ -73,11 +73,14 @@ void element_data_dpad::merge(element_data* other)
     }
 #else
     if (d) {
+        auto dir = get_direction();
         if (d->get_state() == STATE_PRESSED) {
             m_direction |= d->m_direction;
         } else {
             m_direction &= ~d->m_direction;
         }
+        dir = get_direction();
+        UNUSED_PARAMETER(dir);
     }
 #endif /* !WINDOWS*/
 }
