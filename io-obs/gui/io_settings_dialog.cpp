@@ -17,6 +17,7 @@
 #include <util/config-file.h>
 #include <string>
 #include <obs-module.h>
+#include <QDesktopServices>
 
 io_settings_dialog::io_settings_dialog(QWidget* parent) : QDialog(parent, Qt::Dialog), ui(new Ui::io_config_dialog)
 {
@@ -33,13 +34,12 @@ io_settings_dialog::io_settings_dialog(QWidget* parent) : QDialog(parent, Qt::Di
         }
     }
 #endif
-
+    /* Connect QSlots */
+    connect(ui->btn_github, &QPushButton::clicked, this, &io_settings_dialog::OpenGitHub);
+    connect(ui->btn_forums, &QPushButton::clicked, this, &io_settings_dialog::OpenForums);
     connect(ui->button_box, &QDialogButtonBox::accepted, this, &io_settings_dialog::FormAccepted);
-
     connect(ui->cb_enable_remote, &QCheckBox::stateChanged, this, &io_settings_dialog::CbRemoteStateChanged);
-
     connect(ui->btn_refresh, &QPushButton::clicked, this, &io_settings_dialog::PingClients);
-
     connect(ui->cb_enable_control, &QCheckBox::stateChanged, this, &io_settings_dialog::CbInputControlStateChanged);
     connect(ui->btn_refresh_cb, &QPushButton::clicked, this, &io_settings_dialog::RefreshWindowList);
     connect(ui->btn_add, &QPushButton::clicked, this, &io_settings_dialog::AddFilter);
@@ -233,4 +233,14 @@ io_settings_dialog::~io_settings_dialog()
     delete ui;
     m_refresh->stop();
     delete m_refresh;
+}
+
+void io_settings_dialog::OpenGitHub()
+{
+    QDesktopServices::openUrl(QUrl("https://github.com/univrsal/input-overlay"));
+}
+
+void io_settings_dialog::OpenForums()
+{
+    QDesktopServices::openUrl(QUrl("https://obsproject.com/forum/resources/input-overlay.552/"));
 }

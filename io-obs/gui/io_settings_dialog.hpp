@@ -43,6 +43,9 @@ private Q_SLOTS:
 
     void RemoveFilter();
 
+    void OpenGitHub();
+
+    void OpenForums();
 private:
     Ui::io_config_dialog* ui;
     QTimer* m_refresh = nullptr;
