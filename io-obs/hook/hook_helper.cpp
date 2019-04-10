@@ -68,9 +68,8 @@ namespace hook
 #endif
 
 #ifdef _WIN32
-            ReleaseMutex(hook_running_mutex);
-            ResetEvent(hook_control_cond);
-        default: ;
+                ReleaseMutex(hook_running_mutex);
+                ResetEvent(hook_control_cond);
 #else
 #if defined(__APPLE__) && defined(__MACH__)
                 CFRunLoopStop(CFRunLoopGetMain());
@@ -97,7 +96,6 @@ namespace hook
         return status;
     }
 #else
-
     void* hook_thread_proc(void* arg)
     {
         int status = hook_run();
@@ -109,7 +107,6 @@ namespace hook
 
         return arg;
     }
-
 #endif
 
     bool logger_proc(const unsigned int level, const char* format, ...)
@@ -141,6 +138,7 @@ namespace hook
 
     void end_hook()
     {
+        mutex.lock();
 #ifdef _WIN32
         /* Create event handles for the thread hook. */
         CloseHandle(hook_thread);
@@ -152,9 +150,9 @@ namespace hook
         pthread_mutex_destroy(&hook_control_mutex);
         pthread_cond_destroy(&hook_control_cond);
 #endif
-        hook_stop();
         delete input_data;
         input_data = nullptr;
+        mutex.unlock();
     }
 
     void start_hook()
@@ -226,6 +224,8 @@ namespace hook
 
     void process_event(uiohook_event* const event)
     {
+        if (!input_data)
+            return;
         mutex.lock();
 
         element_data* d = nullptr;
@@ -406,4 +406,4 @@ namespace hook
 
         return status;
     }
-};
+}
