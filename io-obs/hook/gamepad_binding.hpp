@@ -1,7 +1,7 @@
 /**
  * This file is part of input-overlay
- * which is licensed under the MPL 2.0 license
- * See LICENSE or mozilla.org/en-US/MPL/2.0/
+ * which is licensed under the GPL v2.0
+ * See LICENSE or http://www.gnu.org/licenses
  * github.com/univrsal/input-overlay
  */
 
@@ -17,6 +17,7 @@
  */
 
 class element_data_holder;
+
 struct js_event;
 
 namespace gamepad
@@ -26,6 +27,7 @@ namespace gamepad
         const char* setting;
         const char* text_box_id;
         uint8_t default_value;
+        bool axis_event; /* true if axis event */
     };
 
     extern binding default_bindings[21];
@@ -70,7 +72,8 @@ namespace gamepad
 
         void init_default();
 
-        //void handle_event(uint8_t pad_id, js_event* event, element_data_holder* data);
+        void set_binding(uint8_t id, uint8_t binding, bool axis_event);
+
         void handle_event(uint8_t pad_id, element_data_holder* data, js_event* event);
     };
 }

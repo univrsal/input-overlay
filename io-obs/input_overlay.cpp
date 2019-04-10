@@ -1,7 +1,7 @@
 /**
  * This file is part of input-overlay
- * which is licensed under the MPL 2.0 license
- * See LICENSE or mozilla.org/en-US/MPL/2.0/
+ * which is licensed under the GPL v2.0
+ * See LICENSE or http://www.gnu.org/licenses
  * github.com/univrsal/input-overlay
  */
 
@@ -37,7 +37,6 @@ bool obs_module_load()
 
     if (io_config::history) sources::register_history();
     if (io_config::overlay) sources::register_overlay_source();
-
 
     if (io_config::uiohook || io_config::gamepad)
         hook::init_data_holder();
@@ -86,6 +85,6 @@ void obs_module_unload()
         hook::end_hook();
 
 #ifdef LINUX
-    //cleanupDisplay();
+    cleanupDisplay();
 #endif
 }

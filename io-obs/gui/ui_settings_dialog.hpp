@@ -24,6 +24,7 @@
 #include <QtWidgets/QScrollArea>
 #include <QtWidgets/QSpinBox>
 #include <QtWidgets/QTabWidget>
+#include <QtWidgets/QTextEdit>
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
 
@@ -156,6 +157,11 @@ public:
     QLabel *lbl_connections;
     QListWidget *box_connections;
     QPushButton *btn_refresh;
+    QWidget *tab_about;
+    QVBoxLayout *verticalLayout_6;
+    QFrame *frame;
+    QHBoxLayout *horizontalLayout_24;
+    QTextEdit *txt_about;
     QDialogButtonBox *button_box;
 
     void setupUi(QDialog *io_config_dialog)
@@ -299,7 +305,7 @@ public:
         scrollArea->setWidgetResizable(true);
         scrollAreaWidgetContents = new QWidget();
         scrollAreaWidgetContents->setObjectName(QString::fromUtf8("scrollAreaWidgetContents"));
-        scrollAreaWidgetContents->setGeometry(QRect(0, -76, 396, 735));
+        scrollAreaWidgetContents->setGeometry(QRect(0, 0, 396, 735));
         verticalLayout_5 = new QVBoxLayout(scrollAreaWidgetContents);
         verticalLayout_5->setSpacing(0);
         verticalLayout_5->setContentsMargins(0, 0, 0, 0);
@@ -881,6 +887,25 @@ public:
         verticalLayout_4->addWidget(btn_refresh);
 
         tabs->addTab(tab_remote, QString());
+        tab_about = new QWidget();
+        tab_about->setObjectName(QString::fromUtf8("tab_about"));
+        verticalLayout_6 = new QVBoxLayout(tab_about);
+        verticalLayout_6->setObjectName(QString::fromUtf8("verticalLayout_6"));
+        frame = new QFrame(tab_about);
+        frame->setObjectName(QString::fromUtf8("frame"));
+        frame->setFrameShape(QFrame::StyledPanel);
+        frame->setFrameShadow(QFrame::Raised);
+        horizontalLayout_24 = new QHBoxLayout(frame);
+        horizontalLayout_24->setObjectName(QString::fromUtf8("horizontalLayout_24"));
+        txt_about = new QTextEdit(frame);
+        txt_about->setObjectName(QString::fromUtf8("txt_about"));
+
+        horizontalLayout_24->addWidget(txt_about);
+
+
+        verticalLayout_6->addWidget(frame);
+
+        tabs->addTab(tab_about, QString());
 
         verticalLayout->addWidget(tabs);
 
@@ -902,7 +927,7 @@ public:
         QObject::connect(button_box, SIGNAL(accepted()), io_config_dialog, SLOT(accept()));
         QObject::connect(button_box, SIGNAL(rejected()), io_config_dialog, SLOT(reject()));
 
-        tabs->setCurrentIndex(0);
+        tabs->setCurrentIndex(3);
         cb_list_mode->setCurrentIndex(0);
 
 
@@ -988,6 +1013,29 @@ public:
         lbl_connections->setText(QApplication::translate("io_config_dialog", "Dialog.Remote.Connections", nullptr));
         btn_refresh->setText(QApplication::translate("io_config_dialog", "Source.InputSource.Reload", nullptr));
         tabs->setTabText(tabs->indexOf(tab_remote), QApplication::translate("io_config_dialog", "Dialog.RemoteConnection", nullptr));
+        txt_about->setHtml(QApplication::translate("io_config_dialog", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:'Noto Sans'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
+"<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:14pt; font-weight:600;\">input-overlay</span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">licensed under the GPL v2.0</p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">created by univrsal &lt;<a href=\"mailto:universailp@web.de\"><span style=\" text-decoration: underline; color:#0000ff;\">universailp@web.de</span></a>&gt;</p>\n"
+"<p style=\"-qt-paragraph-type"
+                        ":empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-weight:600;\">Credits:</span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">libuiohook licensed under the GPL v3.0 by</p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Alex Barker &lt;<a href=\"mailto:alex@1stleg.com\"><span style=\" text-decoration: underline; color:#0000ff;\">alex@1stleg.com</span></a>&gt;</p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-inde"
+                        "nt:0px;\"><span style=\" font-weight:600;\">Translators:</span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">- JellyBrick (Korean)</p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">- hyrious (Chinese)</p>\n"
+"<p style=\" margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">- rashid (Russian)</p>\n"
+"<p style=\" margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-weight:600;\">Further information:</span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Github &lt;<a href=\"https://github.com/univrsal/input-overlay\"><span style=\" text-decoration: underline; color:#0000ff;\">github.com/univrsal/input-overlay</span></a>&gt;</p>\n"
+"<p style"
+                        "=\" margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">OBS Forums &lt;<a href=\"https://obsproject.com/forum/resources/input-overlay.552/\"><span style=\" text-decoration: underline; color:#0000ff;\">obsproject.com/forum/resources/input-overlay.552/</span></a>&gt;</p></body></html>", nullptr));
+        tabs->setTabText(tabs->indexOf(tab_about), QApplication::translate("io_config_dialog", "Dialog.About", nullptr));
     } // retranslateUi
 
 };

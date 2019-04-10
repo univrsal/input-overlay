@@ -1,7 +1,7 @@
 /**
  * This file is part of input-overlay
- * which is licensed under the MPL 2.0 license
- * See LICENSE or mozilla.org/en-US/MPL/2.0/
+ * which is licensed under the GPL v2.0
+ * See LICENSE or http://www.gnu.org/licenses
  * github.com/univrsal/input-overlay
  */
 
@@ -17,6 +17,7 @@
 #include <util/config-file.h>
 #include <string>
 #include <obs-module.h>
+
 io_settings_dialog::io_settings_dialog(QWidget* parent) : QDialog(parent, Qt::Dialog), ui(new Ui::io_config_dialog)
 {
     const auto cfg = obs_frontend_get_global_config();
@@ -62,6 +63,7 @@ io_settings_dialog::io_settings_dialog(QWidget* parent) : QDialog(parent, Qt::Di
     CbRemoteStateChanged(io_config::remote);
     CbInputControlStateChanged(io_config::control);
 
+    /* Sets up remote connection status label */
     auto text = ui->lbl_status->text().toStdString();
     auto pos = text.find("%s");
     if (pos != std::string::npos)
@@ -78,7 +80,8 @@ io_settings_dialog::io_settings_dialog(QWidget* parent) : QDialog(parent, Qt::Di
     m_refresh->start(250);
 
     /* Add current open windows to filter list */
-    RefreshWindowList();
+    if (io_config::control)
+        RefreshWindowList();
 
     for (const auto &filter : io_config::io_window_filters.filters()) {
         ui->list_filters->addItem(filter);
@@ -215,8 +218,10 @@ void io_settings_dialog::FormAccepted()
         if (text_box) {
             bool ok = false;
             int value = text_box->text().toInt(&ok, 10);
-            if (ok)
+            if (ok) {
                 config_set_int(cfg, S_REGION, binding.setting, value);
+                gamepad::bindings.set_binding(binding.default_value, value, binding.axis_event);
+            }
         }
     }
 #endif

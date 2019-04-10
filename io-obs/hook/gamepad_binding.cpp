@@ -1,7 +1,7 @@
 /**
  * This file is part of input-overlay
- * which is licensed under the MPL 2.0 license
- * See LICENSE or mozilla.org/en-US/MPL/2.0/
+ * which is licensed under the GPL v2.0
+ * See LICENSE or http://www.gnu.org/licenses
  * github.com/univrsal/input-overlay
  */
 
@@ -16,27 +16,24 @@
 
 namespace gamepad
 {
-    binding default_bindings[21] = {{S_BINDING_A,          "txt_a",            PAD_A},
-                                    {S_BINDING_B,          "txt_b",            PAD_B},
-                                    {S_BINDING_X,          "txt_x",            PAD_X},
-                                    {S_BINDING_Y,          "txt_y",            PAD_Y},
-                                    {S_BINDING_GUIDE,      "txt_guide",        PAD_GUIDE},
-                                    {S_BINDING_LT,         "txt_lt",           PAD_LT},
-                                    {S_BINDING_RT,         "txt_rt",           PAD_RT},
-                                    {S_BINDING_RB,         "txt_rb",           PAD_RB},
-                                    {S_BINDING_START,      "txt_start",        PAD_START},
-                                    {S_BINDING_BACK,       "txt_back",         PAD_BACK},
-                                    {S_BINDING_DPAD_UP,    "txt_dpad_up",      PAD_UP},
-                                    {S_BINDING_DPAD_DOWN,  "txt_dpad_down",    PAD_DOWN},
-                                    {S_BINDING_DPAD_LEFT,  "txt_dpad_left",    PAD_LEFT},
-                                    {S_BINDING_LB,         "txt_lb",           PAD_LB},
-                                    {S_BINDING_DPAD_RIGHT, "txt_dpad_right",   PAD_RIGHT},
-                                    {S_BINDING_ANALOG_L,   "txt_analog_left",  PAD_L_STICK},
-                                    {S_BINDING_ANALOG_R,   "txt_analog_right", PAD_R_STICK},
-                                    {S_BINDING_ANALOG_LX,  "txt_lx",           PAD_LX},
-                                    {S_BINDING_ANALOG_LY,  "txt_ly",           PAD_LX},
-                                    {S_BINDING_ANALOG_RX,  "txt_rx",           PAD_RX},
-                                    {S_BINDING_ANALOG_RY,  "txt_ry",           PAD_RY},};
+    binding default_bindings[21] = {{S_BINDING_A, "txt_a", PAD_A, false}, {S_BINDING_B, "txt_b", PAD_B, false},
+                                    {S_BINDING_X, "txt_x", PAD_X, false}, {S_BINDING_Y, "txt_y", PAD_Y, false},
+                                    {S_BINDING_GUIDE, "txt_guide", PAD_GUIDE, false},
+                                    {S_BINDING_LT, "txt_lt", PAD_LT, true}, {S_BINDING_RT, "txt_rt", PAD_RT, true},
+                                    {S_BINDING_RB, "txt_rb", PAD_RB, false},
+                                    {S_BINDING_START, "txt_start", PAD_START, false},
+                                    {S_BINDING_BACK, "txt_back", PAD_BACK, false},
+                                    {S_BINDING_DPAD_UP, "txt_dpad_up", PAD_UP, false},
+                                    {S_BINDING_DPAD_DOWN, "txt_dpad_down", PAD_DOWN, false},
+                                    {S_BINDING_DPAD_LEFT, "txt_dpad_left", PAD_LEFT, false},
+                                    {S_BINDING_LB, "txt_lb", PAD_LB, false},
+                                    {S_BINDING_DPAD_RIGHT, "txt_dpad_right", PAD_RIGHT, false},
+                                    {S_BINDING_ANALOG_L, "txt_analog_left", PAD_L_STICK, false},
+                                    {S_BINDING_ANALOG_R, "txt_analog_right", PAD_R_STICK, false},
+                                    {S_BINDING_ANALOG_LX, "txt_lx", PAD_LX, true},
+                                    {S_BINDING_ANALOG_LY, "txt_ly", PAD_LX, true},
+                                    {S_BINDING_ANALOG_RX, "txt_rx", PAD_RX, true},
+                                    {S_BINDING_ANALOG_RY, "txt_ry", PAD_RY, true}};
 
     void gamepad_binding::handle_event(uint8_t pad_id, element_data_holder* data, js_event* event)
     {
@@ -119,5 +116,16 @@ namespace gamepad
             m_axis_bindings[i] = static_cast<pad_axis_events>(i);
         for (i = 0; i < PAD_BUTTON_EVENT_COUNT; i++)
             m_button_bindings[i] = static_cast<pad_button_events>(i);
+    }
+
+    void gamepad_binding::set_binding(uint8_t id, uint8_t binding, bool axis_event)
+    {
+        if (axis_event) {
+            if (binding < PAD_AXIS_EVENT_COUNT)
+                m_axis_bindings[id] = static_cast<pad_axis_events>(binding);
+        } else {
+            if (binding < PAD_BUTTON_EVENT_COUNT)
+                m_button_bindings[id] = static_cast<pad_button_events>(binding);
+        }
     }
 }
