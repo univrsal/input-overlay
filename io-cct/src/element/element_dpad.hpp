@@ -30,6 +30,6 @@ public:
     void write_to_file(ccl_config* cfg, SDL_Point* default_dim, uint8_t &layout_flags) override;
 
 private:
-    dpad_direction m_dir = DPAD_CENTER;
+    uint8_t m_dir = DPAD_CENTER;
     int8_t m_last_button = SDL_CONTROLLER_BUTTON_INVALID;
 };

@@ -121,8 +121,6 @@ void element_data_holder::populate_vector(std::vector<uint16_t> &vec, sources::h
             ((data.first >> 8) == (VC_MOUSE_MASK >> 8) && !(settings->flags & sources::FLAG_INCLUDE_MOUSE)))
             continue;
 
-        blog(LOG_INFO, "vc: 0x%X", data.first);
-
         if (data.second->get_type() == BUTTON) {
             if (dynamic_cast<element_data_button*>(data.second.get())->get_state() == STATE_RELEASED)
                 continue;

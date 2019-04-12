@@ -33,116 +33,36 @@ void ElementDPad::draw(texture* atlas, coordinate_system* cs, const bool selecte
 void ElementDPad::handle_event(SDL_Event* event, sdl_helper* helper)
 {
     if (event->type == SDL_CONTROLLERBUTTONDOWN) {
-        bool flag = false;
         switch (event->cbutton.button) {
             case SDL_CONTROLLER_BUTTON_DPAD_UP:
-                switch (m_last_button) {
-                    case SDL_CONTROLLER_BUTTON_DPAD_LEFT:
-                        m_dir = DPAD_TOP_LEFT;
-                        break;
-                    case SDL_CONTROLLER_BUTTON_DPAD_RIGHT:
-                        m_dir = DPAD_TOP_RIGHT;
-                        break;
-                    default:
-                        m_dir = DPAD_UP;
-                }
-                flag = true;
+                m_dir |= DPAD_UP;
                 break;
             case SDL_CONTROLLER_BUTTON_DPAD_DOWN:
-                switch (m_last_button) {
-                    case SDL_CONTROLLER_BUTTON_DPAD_LEFT:
-                        m_dir = DPAD_BOTTOM_LEFT;
-                        break;
-                    case SDL_CONTROLLER_BUTTON_DPAD_RIGHT:
-                        m_dir = DPAD_BOTTOM_RIGHT;
-                        break;
-                    default:
-                        m_dir = DPAD_DOWN;
-                }
-                flag = true;
+                m_dir |= DPAD_DOWN;
                 break;
             case SDL_CONTROLLER_BUTTON_DPAD_LEFT:
-                switch (m_last_button) {
-                    case SDL_CONTROLLER_BUTTON_DPAD_UP:
-                        m_dir = DPAD_TOP_LEFT;
-                        break;
-                    case SDL_CONTROLLER_BUTTON_DPAD_DOWN:
-                        m_dir = DPAD_BOTTOM_LEFT;
-                        break;
-                    default:
-                        m_dir = DPAD_LEFT;
-                }
-                flag = true;
+                m_dir |= DPAD_LEFT;
                 break;
             case SDL_CONTROLLER_BUTTON_DPAD_RIGHT:
-                switch (m_last_button) {
-                    case SDL_CONTROLLER_BUTTON_DPAD_UP:
-                        m_dir = DPAD_TOP_RIGHT;
-                        break;
-                    case SDL_CONTROLLER_BUTTON_DPAD_DOWN:
-                        m_dir = DPAD_BOTTOM_RIGHT;
-                        break;
-                    default:
-                        m_dir = DPAD_RIGHT;
-                }
-                flag = true;
+                m_dir |= DPAD_RIGHT;
                 break;
             default:;
         }
-        if (flag)
-            m_last_button = event->cbutton.button;
     } else if (event->type == SDL_CONTROLLERBUTTONUP) {
-        if (event->cbutton.button == m_last_button) {
-            m_last_button = SDL_CONTROLLER_BUTTON_INVALID;
-            m_dir = DPAD_CENTER;
-        } else {
-            switch (m_dir) {
-                case DPAD_TOP_LEFT:
-                    switch (event->cbutton.button) {
-                        case SDL_CONTROLLER_BUTTON_DPAD_LEFT:
-                            m_dir = DPAD_UP;
-                            break;
-                        case SDL_CONTROLLER_BUTTON_DPAD_UP:
-                            m_dir = DPAD_LEFT;
-                            break;
-                        default:;
-                    }
-                    break;
-                case DPAD_TOP_RIGHT:
-                    switch (event->cbutton.button) {
-                        case SDL_CONTROLLER_BUTTON_DPAD_RIGHT:
-                            m_dir = DPAD_UP;
-                            break;
-                        case SDL_CONTROLLER_BUTTON_DPAD_UP:
-                            m_dir = DPAD_RIGHT;
-                            break;
-                        default:;
-                    }
-                    break;
-                case DPAD_BOTTOM_LEFT:
-                    switch (event->cbutton.button) {
-                        case SDL_CONTROLLER_BUTTON_DPAD_LEFT:
-                            m_dir = DPAD_DOWN;
-                            break;
-                        case SDL_CONTROLLER_BUTTON_DPAD_DOWN:
-                            m_dir = DPAD_LEFT;
-                            break;
-                        default:;
-                    }
-                    break;
-                case DPAD_BOTTOM_RIGHT:
-                    switch (event->cbutton.button) {
-                        case SDL_CONTROLLER_BUTTON_DPAD_RIGHT:
-                            m_dir = DPAD_DOWN;
-                            break;
-                        case SDL_CONTROLLER_BUTTON_DPAD_DOWN:
-                            m_dir = DPAD_RIGHT;
-                            break;
-                        default:;
-                    }
-                    break;
-                default:;
-            }
+        switch (event->cbutton.button) {
+            case SDL_CONTROLLER_BUTTON_DPAD_UP:
+                m_dir &= ~DPAD_UP;
+                break;
+            case SDL_CONTROLLER_BUTTON_DPAD_DOWN:
+                m_dir &= ~DPAD_DOWN;
+                break;
+            case SDL_CONTROLLER_BUTTON_DPAD_LEFT:
+                m_dir &= ~DPAD_LEFT;
+                break;
+            case SDL_CONTROLLER_BUTTON_DPAD_RIGHT:
+                m_dir &= ~DPAD_RIGHT;
+                break;
+            default:;
         }
     }
 }
