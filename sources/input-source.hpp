@@ -61,7 +61,7 @@ struct InputSource
     WindowsGamepad * m_gamepad = nullptr;
 #endif
 
-#ifdef LINUX_INPUT
+#ifdef LINUX
     LinuxGamepad* m_gamepad = nullptr;
 #endif
 
