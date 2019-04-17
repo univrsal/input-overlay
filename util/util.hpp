@@ -3,8 +3,8 @@
 
 /**
  * This file is part of input-overlay
- * which is licenced under the MIT licence.
- * See LICENCE or https://mit-license.org
+ * which is licensed under the GPL v2.0
+ * See LICENSE or http://www.gnu.org/licenses
  * github.com/univrsal/input-overlay
  */
 
@@ -24,15 +24,21 @@
 #endif
 
 #include <uiohook.h>
+
 #ifdef LINUX
+
 #include <math.h>
+
 #endif
+
 #include <string>
 #include <obs-module.h>
 #include <algorithm>
 
 #ifdef DEBUG
+
 #include <random>
+
 #endif
 
 #ifndef M_PI
@@ -41,15 +47,15 @@
 
 #define GET_PROPS(S)    (obs_properties_get(props, S))
 
-#define UTIL_MAX(a,b)               (((a) > (b)) ? (a) : (b))
-#define UTIL_MIN(a,b)               (((a) < (b)) ? (a) : (b))
+#define UTIL_MAX(a, b)               (((a) > (b)) ? (a) : (b))
+#define UTIL_MIN(a, b)               (((a) < (b)) ? (a) : (b))
 #define UTIL_CLAMP(lower, x, upper) (UTIL_MIN(upper, UTIL_MAX(x, lower)))
 
 #define DEAD_ZONE(x, dz) ((x < dz) && (x > -dz))
 #define X_PRESSED(b) ((m_xinput.Gamepad.wButtons & b) != 0)
 
 #define warning(format, ...) blog(LOG_WARNING, "[%s] " format, \
-		obs_source_get_name(m_source), ##__VA_ARGS__)
+        obs_source_get_name(m_source), ##__VA_ARGS__)
 
 // Lang Input Overlay
 #define S_OVERLAY_FILE              "overlay_image"
@@ -85,7 +91,7 @@
 // Lang Input History
 #define S_OVERLAY_HISTORY_SIZE          "history_size"
 #define S_OVERLAY_FIX_CUTTING           "fix_cutting"
-#define S_OVERLAY_INCLUDE_MOUSE	        "include_mouse"
+#define S_OVERLAY_INCLUDE_MOUSE            "include_mouse"
 #define S_OVERLAY_INTERVAL              "interval"
 #define S_OVERLAY_CLEAR_HISTORY         "clear_history"
 #define S_OVERLAY_ENABLE_REPEAT_KEYS    "repeat_keys"
@@ -166,7 +172,7 @@
 // Gamepad constants
 #define PAD_STICK_MAX_VAL   32767
 #define PAD_ICON_COUNT      22
-#define PAD_BUTTON_COUNT	17
+#define PAD_BUTTON_COUNT    17
 
 #define PAD_BODY            17
 #define PAD_PLAYER_1        18
@@ -182,7 +188,7 @@
 #define PAD_RB              5
 #define PAD_BACK            6
 #define PAD_START           7
-#define PAD_X_BOX_KEY		8
+#define PAD_X_BOX_KEY        8
 #define PAD_L_ANALOG        9
 #define PAD_R_ANALOG        10
 #define PAD_DPAD_LEFT       11
@@ -193,37 +199,41 @@
 #define PAD_RT              16
 
 // Get default keynames from a libuiohook keycode
-const char * key_to_text(int key_code);
+const char* key_to_text(int key_code);
 
 // Reads first integer off of csv string
-uint16_t util_read_int(std::string & l);
+uint16_t util_read_int(std::string &l);
 
 // Reads first hex code off of csv string and converts it to int
-uint16_t util_read_hex(std::string & l);
+uint16_t util_read_hex(std::string &l);
 
 // Creates string for obs to use as accepted files for a file dialog
-std::string util_file_filter(const char * display, const char * formats);
+std::string util_file_filter(const char* display, const char* formats);
 
 // Changes slashes in path to fit unix formatting
-void util_format_path(std::string & path);
+void util_format_path(std::string &path);
 
-void util_enable_mask(uint8_t& masks, uint8_t mask);
-void util_disable_mask(uint8_t& masks, uint8_t mask);
-void util_set_mask(uint8_t& masks, uint8_t mask, bool state);
+void util_enable_mask(uint8_t &masks, uint8_t mask);
+
+void util_disable_mask(uint8_t &masks, uint8_t mask);
+
+void util_set_mask(uint8_t &masks, uint8_t mask, bool state);
 
 uint16_t util_mouse_to_vc(int m);
 
 #ifdef DEBUG
+
 uint16_t random_vc(void);
+
 #endif
 
 #ifndef WINDOWS
 // uiohook doesn't define these on linux
 // and I don't want to header guard them
 // in the switch case...
-#define VC_KP_UP 	0xEE48
-#define VC_KP_DOWN 	0xEE4B
-#define VC_KP_LEFT	0xEE4D
-#define VC_KP_RIGHT	0xEE50
+#define VC_KP_UP    0xEE48
+#define VC_KP_DOWN    0xEE4B
+#define VC_KP_LEFT    0xEE4D
+#define VC_KP_RIGHT    0xEE50
 #endif
 #endif

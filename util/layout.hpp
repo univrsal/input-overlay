@@ -2,20 +2,24 @@
 #define LAYOUT_HPP
 
 #ifdef LINUX
+
 #include <stdint.h>
+
 #endif
+
 #include <vector>
 
 #include "layouttype.hpp"
 
 /**
  * This file is part of input-overlay
- * which is licenced under the MIT licence.
- * See LICENCE or https://mit-license.org
+ * which is licensed under the GPL v2.0
+ * See LICENSE or http://www.gnu.org/licenses
  * github.com/univrsal/input-overlay
  */
 
-struct InputKey {
+struct InputKey
+{
     uint16_t m_key_code = 0x0;
     bool m_pressed = false;
     uint16_t texture_u = 0x0, texture_v = 0x0;
@@ -25,7 +29,8 @@ struct InputKey {
     uint16_t row = 0x0, column = 0x0; // On screen location (in pixels for mouse/controller layouts)
 };
 
-struct OverlayLayout {
+struct OverlayLayout
+{
     LayoutType m_type;
     uint8_t m_key_count;
     int16_t m_key_space_v, m_key_space_h;

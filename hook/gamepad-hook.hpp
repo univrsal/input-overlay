@@ -1,7 +1,15 @@
+/**
+ * This file is part of input-overlay
+ * which is licensed under the GPL v2.0
+ * See LICENSE or http://www.gnu.org/licenses
+ * github.com/univrsal/input-overlay
+ */
+
 #ifndef GAMEPAD_HOOK_HPP
 #define GAMEPAD_HOOK_HPP
 
 #ifdef LINUX
+
 #include "../util/util.hpp"
 #include <unistd.h>
 #include <stdio.h>
@@ -11,16 +19,9 @@
 
 #define PAD_COUNT 4
 
-/**
- * This file is part of input-overlay
- * which is licenced under the MIT licence.
- * See LICENCE or https://mit-license.org
- * github.com/univrsal/input-overlay
- */
-
 struct GamepadState
 {
-   ~GamepadState()
+    ~GamepadState()
     {
         unload();
     }
@@ -34,9 +35,8 @@ struct GamepadState
     void load()
     {
         m_device_file = fopen(m_path.c_str(), "wb+");
-        if (m_device_file)
-        {
-            void * tmp = malloc(8 * 12 * sizeof(char));
+        if (m_device_file) {
+            void* tmp = malloc(8 * 12 * sizeof(char));
             fread(tmp, sizeof(char) * 8 * 12, 1, m_device_file);
             free(tmp);
         }
@@ -48,11 +48,17 @@ struct GamepadState
             m_keys[id] = state;
     }
 
-    bool valid() { return m_device_file != NULL; }
+    bool valid()
+    { return m_device_file != NULL; }
 
-    void set_path(std::string path) { m_path = path; load(); }
+    void set_path(std::string path)
+    {
+        m_path = path;
+        load();
+    }
 
-    FILE * dev() { return m_device_file; }
+    FILE* dev()
+    { return m_device_file; }
 
     float l_x, l_y, r_x, r_y;
 
@@ -62,8 +68,9 @@ struct GamepadState
             return m_keys[id];
         return false;
     }
+
 private:
-    FILE * m_device_file = nullptr;
+    FILE* m_device_file = nullptr;
     std::string m_path;
     bool m_keys[PAD_BUTTON_COUNT];
 
@@ -73,9 +80,12 @@ extern GamepadState pad_states[PAD_COUNT]; // Only monitor four gamepads, I mean
 extern bool gamepad_hook_state;
 
 void start_pad_hook(void);
-void * hook_method(void *);
+
+void* hook_method(void*);
+
 void end_pad_hook(void);
 
 void init_pad_devices(void);
+
 #endif // LINUX
 #endif // GAMEPAD_HOOK_HPP

@@ -1,23 +1,20 @@
+/**
+ * This file is part of input-overlay
+ * which is licensed under the GPL v2.0
+ * See LICENSE or http://www.gnu.org/licenses
+ * github.com/univrsal/input-overlay
+ */
+
 #include "windows-gamepad.hpp"
 
 #if HAVE_XINPUT
 
-/**
- * This file is part of input-overlay
- * which is licenced under the MIT licence.
- * See LICENCE or https://mit-license.org
- * github.com/univrsal/input-overlay
- */
-
 void WindowsGamepad::load()
 {
     unload();
-    if (XInputGetState(m_pad_id, &m_xinput) == ERROR_SUCCESS)
-    {
+    if (XInputGetState(m_pad_id, &m_xinput) == ERROR_SUCCESS) {
         m_valid = true;
-    }
-    else
-    {
+    } else {
         m_valid = false;
     }
 }
@@ -38,8 +35,7 @@ void WindowsGamepad::update(uint8_t id, uint16_t r_dz, uint16_t l_dz)
 void WindowsGamepad::check_keys()
 {
     load();
-    if (m_valid)
-    {
+    if (m_valid) {
         (*m_keys)[PAD_L_ANALOG].m_pressed = X_PRESSED(XINPUT_GAMEPAD_LEFT_THUMB);
         (*m_keys)[PAD_R_ANALOG].m_pressed = X_PRESSED(XINPUT_GAMEPAD_RIGHT_THUMB);
 
@@ -61,24 +57,24 @@ void WindowsGamepad::check_keys()
         (*m_keys)[PAD_DPAD_DOWN].m_pressed = X_PRESSED(XINPUT_GAMEPAD_DPAD_DOWN);
         (*m_keys)[PAD_DPAD_LEFT].m_pressed = X_PRESSED(XINPUT_GAMEPAD_DPAD_LEFT);
         (*m_keys)[PAD_DPAD_RIGHT].m_pressed = X_PRESSED(XINPUT_GAMEPAD_DPAD_RIGHT);
-    
+
         if (!DEAD_ZONE(m_xinput.Gamepad.sThumbLX, m_l_dead_zone))
-            m_l_stick_x = fmaxf(-1, (float)m_xinput.Gamepad.sThumbLX / PAD_STICK_MAX_VAL);
+            m_l_stick_x = fmaxf(-1, (float) m_xinput.Gamepad.sThumbLX / PAD_STICK_MAX_VAL);
         else
             m_l_stick_x = 0.f;
 
         if (!DEAD_ZONE(m_xinput.Gamepad.sThumbLY, m_l_dead_zone))
-            m_l_stick_y = fmaxf(-1, (float)m_xinput.Gamepad.sThumbLY / PAD_STICK_MAX_VAL);
+            m_l_stick_y = fmaxf(-1, (float) m_xinput.Gamepad.sThumbLY / PAD_STICK_MAX_VAL);
         else
             m_l_stick_y = 0.f;
 
         if (!DEAD_ZONE(m_xinput.Gamepad.sThumbRX, m_r_dead_zone))
-            m_r_stick_x = fmaxf(-1, (float)m_xinput.Gamepad.sThumbRX / PAD_STICK_MAX_VAL);
+            m_r_stick_x = fmaxf(-1, (float) m_xinput.Gamepad.sThumbRX / PAD_STICK_MAX_VAL);
         else
             m_r_stick_x = 0.f;
 
         if (!DEAD_ZONE(m_xinput.Gamepad.sThumbRY, m_r_dead_zone))
-            m_r_stick_y = fmaxf(-1, (float)m_xinput.Gamepad.sThumbRY / PAD_STICK_MAX_VAL);
+            m_r_stick_y = fmaxf(-1, (float) m_xinput.Gamepad.sThumbRY / PAD_STICK_MAX_VAL);
         else
             m_r_stick_y = 0.f;
     }

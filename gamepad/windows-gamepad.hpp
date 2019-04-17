@@ -1,3 +1,10 @@
+/**
+ * This file is part of input-overlay
+ * which is licensed under the GPL v2.0
+ * See LICENSE or http://www.gnu.org/licenses
+ * github.com/univrsal/input-overlay
+ */
+
 #ifndef WINDOWS_GAMEPAD_HPP
 #define WINDOWS_GAMEPAD_HPP
 #if HAVE_XINPUT
@@ -11,17 +18,10 @@
 #include <Xinput.h>
 #include <windows.h>
 
-/**
- * This file is part of input-overlay
- * which is licenced under the MIT licence.
- * See LICENCE or https://mit-license.org
- * github.com/univrsal/input-overlay
- */
-
 struct WindowsGamepad
 {
 public:
-    WindowsGamepad(uint8_t id, std::vector<InputKey> * keys)
+    WindowsGamepad(uint8_t id, std::vector<InputKey>* keys)
     {
         m_pad_id = id;
         m_keys = keys;
@@ -34,31 +34,43 @@ public:
     }
 
     void load();
+
     void unload();
+
     void update(uint8_t id, uint16_t r_dz, uint16_t l_dz);
 
     void check_keys();
 
-    bool is_valid() { return m_valid; }
-    
-    uint8_t get_id() { return m_pad_id; }
+    bool is_valid()
+    { return m_valid; }
 
-    float left_stick_x() { return m_l_stick_x; }
-    float left_stick_y() { return m_l_stick_y; }
+    uint8_t get_id()
+    { return m_pad_id; }
 
-    float right_stick_x() { return m_r_stick_x; }
-    float right_stick_y() { return m_r_stick_y; }
+    float left_stick_x()
+    { return m_l_stick_x; }
+
+    float left_stick_y()
+    { return m_l_stick_y; }
+
+    float right_stick_x()
+    { return m_r_stick_x; }
+
+    float right_stick_y()
+    { return m_r_stick_y; }
+
 private:
     uint8_t m_pad_id = 0;
     XINPUT_STATE m_xinput;
-    
-	/* Data */
-	std::vector<InputKey> * m_keys;
-	float m_l_stick_x = 0.f, m_l_stick_y = 0.f;
-	float m_r_stick_x = 0.f, m_r_stick_y = 0.f;
-	uint16_t m_r_dead_zone = 0, m_l_dead_zone = 0;
+
+    /* Data */
+    std::vector<InputKey>* m_keys;
+    float m_l_stick_x = 0.f, m_l_stick_y = 0.f;
+    float m_r_stick_x = 0.f, m_r_stick_y = 0.f;
+    uint16_t m_r_dead_zone = 0, m_l_dead_zone = 0;
 
     bool m_valid = false;
 };
+
 #endif // HAVE_XINPUT
 #endif // WINDOWS_GAMEPAD_HPP

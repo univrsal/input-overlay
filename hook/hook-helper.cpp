@@ -1,11 +1,11 @@
-#include "hook-helper.hpp"
-
 /**
  * This file is part of input-overlay
- * which is licenced under the MIT licence.
- * See LICENCE or https://mit-license.org
+ * which is licensed under the GPL v2.0
+ * See LICENSE or http://www.gnu.org/licenses
  * github.com/univrsal/input-overlay
  */
+
+#include "hook-helper.hpp"
 
 void util_clear_pressed(void)
 {
@@ -15,8 +15,7 @@ void util_clear_pressed(void)
 
 bool util_pressed_empty(void)
 {
-    for (int i = 0; i < MAX_SIMULTANEOUS_KEYS; i++)
-    {
+    for (int i = 0; i < MAX_SIMULTANEOUS_KEYS; i++) {
         if (pressed_keys[i] > 0)
             return false;
     }
@@ -25,8 +24,7 @@ bool util_pressed_empty(void)
 
 bool util_key_exists(uint16_t vc)
 {
-    for (int i = 0; i < MAX_SIMULTANEOUS_KEYS; i++)
-    {
+    for (int i = 0; i < MAX_SIMULTANEOUS_KEYS; i++) {
         if (pressed_keys[i] == vc)
             return true;
     }
@@ -35,12 +33,9 @@ bool util_key_exists(uint16_t vc)
 
 void util_add_pressed(uint16_t vc)
 {
-    if (!util_key_exists(vc))
-    {
-        for (int i = 0; i < MAX_SIMULTANEOUS_KEYS; i++)
-        {
-            if (pressed_keys[i] == 0)
-            {
+    if (!util_key_exists(vc)) {
+        for (int i = 0; i < MAX_SIMULTANEOUS_KEYS; i++) {
+            if (pressed_keys[i] == 0) {
                 pressed_keys[i] = vc;
                 break;
             }
@@ -50,10 +45,8 @@ void util_add_pressed(uint16_t vc)
 
 void util_remove_pressed(uint16_t vc)
 {
-    for (int i = 0; i < MAX_SIMULTANEOUS_KEYS; i++)
-    {
-        if (pressed_keys[i] == vc)
-        {
+    for (int i = 0; i < MAX_SIMULTANEOUS_KEYS; i++) {
+        if (pressed_keys[i] == vc) {
             pressed_keys[i] = VC_UNDEFINED;
             break;
         }
@@ -82,10 +75,9 @@ static pthread_mutex_t hook_control_mutex;
 static pthread_cond_t hook_control_cond;
 #endif
 
-void dispatch_proc(uiohook_event * const event)
+void dispatch_proc(uiohook_event* const event)
 {
-    switch (event->type)
-    {
+    switch (event->type) {
         case EVENT_HOOK_ENABLED:
 #ifdef WINDOWS
             WaitForSingleObject(hook_running_mutex, INFINITE);
@@ -108,8 +100,8 @@ void dispatch_proc(uiohook_event * const event)
 #endif
 
 #ifdef WINDOWS
-            ReleaseMutex(hook_running_mutex);
-            ResetEvent(hook_control_cond);
+        ReleaseMutex(hook_running_mutex);
+        ResetEvent(hook_control_cond);
 #else
 #if defined(__APPLE__) && defined(__MACH__)
             CFRunLoopStop(CFRunLoopGetMain());
@@ -134,24 +126,25 @@ DWORD WINAPI hook_thread_proc(LPVOID arg)
     return status;
 }
 #else
-void *hook_thread_proc(void *arg)
+
+void* hook_thread_proc(void* arg)
 {
     int status = hook_run();
     if (status != UIOHOOK_SUCCESS) {
-        *(int *)arg = status;
+        *(int*) arg = status;
     }
     pthread_cond_signal(&hook_control_cond);
     pthread_mutex_unlock(&hook_control_mutex);
 
     return arg;
 }
+
 #endif
 
-bool logger_proc(unsigned int level, const char * format, ...)
+bool logger_proc(unsigned int level, const char* format, ...)
 {
     va_list args;
-    switch (level)
-    {
+    switch (level) {
         case LOG_LEVEL_WARN:
         case LOG_LEVEL_ERROR:
             va_start(args, format);
@@ -243,13 +236,12 @@ void start_hook(void)
     }
 }
 
-void proccess_event(uiohook_event * const event)
+void proccess_event(uiohook_event* const event)
 {
     util_remove_pressed(VC_MOUSE_WHEEL_UP);
     util_remove_pressed(VC_MOUSE_WHEEL_DOWN);
 
-    switch (event->type)
-    {
+    switch (event->type) {
         case EVENT_KEY_PRESSED:
             if (!util_key_exists(event->data.keyboard.keycode))
                 util_add_pressed(event->data.keyboard.keycode);
@@ -267,17 +259,12 @@ void proccess_event(uiohook_event * const event)
                 util_remove_pressed(util_mouse_to_vc(event->data.mouse.button));
             break;
         case EVENT_MOUSE_WHEEL:
-            if (event->data.wheel.rotation == WHEEL_UP)
-            {
-                if (!util_key_exists(VC_MOUSE_WHEEL_UP))
-                {
+            if (event->data.wheel.rotation == WHEEL_UP) {
+                if (!util_key_exists(VC_MOUSE_WHEEL_UP)) {
                     util_add_pressed(VC_MOUSE_WHEEL_UP);
                 }
-            }
-            else if (event->data.wheel.rotation == WHEEL_DOWN)
-            {
-                if (!util_key_exists(VC_MOUSE_WHEEL_DOWN))
-                {
+            } else if (event->data.wheel.rotation == WHEEL_DOWN) {
+                if (!util_key_exists(VC_MOUSE_WHEEL_DOWN)) {
                     util_add_pressed(VC_MOUSE_WHEEL_DOWN);
                 }
             }
@@ -288,8 +275,8 @@ void proccess_event(uiohook_event * const event)
             mouse_last_y = mouse_y;
             mouse_x = event->data.mouse.x;
             mouse_y = event->data.mouse.y;
-            mouse_x_smooth = (uint16_t) ((mouse_last_x * 4 + mouse_x + 4) / 5);
-            mouse_y_smooth = (uint16_t) ((mouse_last_y * 4 + mouse_y + 4) / 5);
+            mouse_x_smooth = (uint16_t)((mouse_last_x * 4 + mouse_x + 4) / 5);
+            mouse_y_smooth = (uint16_t)((mouse_last_y * 4 + mouse_y + 4) / 5);
             break;
     }
 }
@@ -325,9 +312,8 @@ int hook_enable(void)
     if (hook_thread != INVALID_HANDLE_VALUE)
     {
 #else
-    int *hook_thread_status = (int*) malloc(sizeof(int));
-    if (pthread_create(&hook_thread, &hook_thread_attr, hook_thread_proc, hook_thread_status) == 0)
-    {
+    int* hook_thread_status = (int*) malloc(sizeof(int));
+    if (pthread_create(&hook_thread, &hook_thread_attr, hook_thread_proc, hook_thread_status) == 0) {
 #endif
 #if defined(WINDOWS)
         // Attempt to set the thread priority to time critical.
@@ -339,11 +325,10 @@ int hook_enable(void)
 #elif (defined(__APPLE__) && defined(__MACH__)) || _POSIX_C_SOURCE >= 200112L
         // Some POSIX revisions do not support pthread_setschedprio so we will
         // use pthread_setschedparam instead.
-        struct sched_param param = { .sched_priority = priority };
-        if (pthread_setschedparam(hook_thread, SCHED_OTHER, &param) != 0)
-        {
+        struct sched_param param = {.sched_priority = priority};
+        if (pthread_setschedparam(hook_thread, SCHED_OTHER, &param) != 0) {
             blog(LOG_WARNING, "[input-overlay] %s [%u]: Could not set thread priority %i for thread 0x%lX!\n",
-                 __FUNCTION__, __LINE__, priority, (unsigned long)hook_thread);
+                 __FUNCTION__, __LINE__, priority, (unsigned long) hook_thread);
         }
 #else
         // Raise the thread priority using glibc pthread_setschedprio.
@@ -367,8 +352,7 @@ int hook_enable(void)
         if (WaitForSingleObject(hook_running_mutex, 0) != WAIT_TIMEOUT)
         {
 #else
-        if (pthread_mutex_trylock(&hook_running_mutex) == 0)
-        {
+        if (pthread_mutex_trylock(&hook_running_mutex) == 0) {
 #endif
             // Lock Successful; The hook is not running but the hook_control_cond
             // was signaled!  This indicates that there was a startup problem!
@@ -378,12 +362,10 @@ int hook_enable(void)
             WaitForSingleObject(hook_thread, INFINITE);
             GetExitCodeThread(hook_thread, hook_thread_status);
 #else
-            pthread_join(hook_thread, (void **)&hook_thread_status);
+            pthread_join(hook_thread, (void**) &hook_thread_status);
             status = *hook_thread_status;
 #endif
-        }
-        else
-        {
+        } else {
             // Lock Failure; The hook is currently running and wait was signaled
             // indicating that we have passed all possible start checks.  We can
             // always assume a successful startup at this point.
@@ -392,11 +374,8 @@ int hook_enable(void)
 
         free(hook_thread_status);
 
-        blog(LOG_DEBUG, "[input-overlay] %s [%u]: Thread Result: (%#X).\n",
-             __FUNCTION__, __LINE__, status);
-    }
-    else
-    {
+        blog(LOG_DEBUG, "[input-overlay] %s [%u]: Thread Result: (%#X).\n", __FUNCTION__, __LINE__, status);
+    } else {
         status = -1;
     }
 

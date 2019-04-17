@@ -3,8 +3,8 @@
 
 /**
  * This file is part of input-overlay
- * which is licenced under the MIT licence.
- * See LICENCE or https://mit-license.org
+ * which is licensed under the GPL v2.0
+ * See LICENSE or http://www.gnu.org/licenses
  * github.com/univrsal/input-overlay
  */
 
@@ -30,16 +30,18 @@ extern "C" {
 #include "../gamepad/windows-gamepad.hpp"
 #endif
 
-#if LINUX_INPUT
+#if LINUX
+
 #include "../gamepad/linux-gamepad.hpp"
+
 #endif
 
 #include "../hook/hook-helper.hpp"
 
 struct InputSource
 {
-    obs_source_t *m_source = nullptr;
-    gs_image_file_t *m_image = nullptr;
+    obs_source_t* m_source = nullptr;
+    gs_image_file_t* m_image = nullptr;
     uint32_t cx = 0;
     uint32_t cy = 0;
 
@@ -60,11 +62,10 @@ struct InputSource
 #endif
 
 #ifdef LINUX_INPUT
-    LinuxGamepad * m_gamepad = nullptr;
+    LinuxGamepad* m_gamepad = nullptr;
 #endif
 
-    inline InputSource(obs_source_t *source_, obs_data_t *settings) :
-        m_source(source_)
+    inline InputSource(obs_source_t* source_, obs_data_t* settings) : m_source(source_)
     {
         obs_source_update(m_source, settings);
     }
@@ -73,38 +74,44 @@ struct InputSource
     {
         unload_texture();
         unload_layout();
-        
-        if (m_gamepad)
-        {
+
+        if (m_gamepad) {
             delete m_gamepad;
             m_gamepad = nullptr;
         }
     }
 
     void load_texture(void);
+
     void load_layout(void);
+
     void unload_layout(void);
+
     void unload_texture(void);
 
-    void draw_key(gs_effect_t * effect, InputKey * key, uint16_t x, uint16_t y, bool rot, float angle);
-    void draw_key(gs_effect_t * effect, InputKey * key, uint16_t x, uint16_t y);
-    void draw_key(gs_effect_t * effect, InputKey * key);
+    void draw_key(gs_effect_t* effect, InputKey* key, uint16_t x, uint16_t y, bool rot, float angle);
+
+    void draw_key(gs_effect_t* effect, InputKey* key, uint16_t x, uint16_t y);
+
+    void draw_key(gs_effect_t* effect, InputKey* key);
 
     void check_keys(void);
 
-    inline void Update(obs_data_t *settings);
+    inline void Update(obs_data_t* settings);
+
     inline void Tick(float seconds);
-    inline void Render(gs_effect_t *effect);
+
+    inline void Render(gs_effect_t* effect);
 };
 
-static bool is_controller_changed(obs_properties_t * props, obs_property_t *p, obs_data_t * s);
+static bool is_controller_changed(obs_properties_t* props, obs_property_t* p, obs_data_t* s);
 
-static bool is_mouse_changed(obs_properties_t * props, obs_property_t * p, obs_data_t * s);
+static bool is_mouse_changed(obs_properties_t* props, obs_property_t* p, obs_data_t* s);
 
-static bool use_monitor_center_changed(obs_properties_t * props, obs_property_t *p, obs_data_t * s);
+static bool use_monitor_center_changed(obs_properties_t* props, obs_property_t* p, obs_data_t* s);
 
 // For registering
-static obs_properties_t *get_properties_for_overlay(void *data);
+static obs_properties_t* get_properties_for_overlay(void* data);
 
 void register_overlay_source();
 
