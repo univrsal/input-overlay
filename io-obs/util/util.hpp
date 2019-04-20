@@ -20,6 +20,7 @@
 #define TRIGGER_MAX_VAL     256.f
 
 #include <string>
+#include <vector>
 
 #ifndef IO_CLIENT /* io-client uses this header, but doesn't doesn't use any obs headers */
 #include <obs-module.h>
