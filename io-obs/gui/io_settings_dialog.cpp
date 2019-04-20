@@ -19,6 +19,8 @@
 #include <obs-module.h>
 #include <QDesktopServices>
 
+io_settings_dialog* settings_dialog = nullptr;
+
 io_settings_dialog::io_settings_dialog(QWidget* parent) : QDialog(parent, Qt::Dialog), ui(new Ui::io_config_dialog)
 {
     const auto cfg = obs_frontend_get_global_config();

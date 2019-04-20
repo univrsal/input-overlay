@@ -46,7 +46,6 @@ void text_handler::make_body_text(std::string &str)
 
 text_handler::text_handler(sources::history_settings* settings) : m_settings(settings)
 {
-
     /* The body source uses the input-history settings */
     m_text_source = obs_source_create(TEXT_SOURCE, "history-fade-out-text", settings->settings, nullptr);
     obs_source_add_active_child(settings->source, m_text_source);
@@ -78,6 +77,8 @@ void text_handler::update()
         default:
             obs_data_set_bool(m_settings->settings, "vertical", false);
     }
+    if (m_settings->icon_cfg_path && strlen(m_settings->icon_cfg_path) > 0)
+        load_names(m_settings->icon_cfg_path);
 
     obs_source_update(m_text_source, m_settings->settings);
 }

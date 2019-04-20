@@ -1,7 +1,6 @@
 /**
  * This file is part of input-overlay
- * which is licenced under the
- * MOZILLA PUBLIC LICENCE 2.0
+ * which is licensed under the GPL v2.0
  * See LICENSE or http://www.gnu.org/licenses
  * github.com/univrsal/input-overlay
  */
@@ -49,7 +48,7 @@
 
 /* Settings values*/
 #define S_REGION                        "input-overlay"
-#define S_UIOHOOK                        "iohook"
+#define S_UIOHOOK                       "iohook"
 #define S_GAMEPAD                       "gamepad"
 #define S_OVERLAY                       "overlay"
 #define S_HISTORY                       "history"
@@ -150,19 +149,6 @@
 #define S_HISTORY_KEY_ICON_CONFIG_PATH  "io.key_icon_config"
 
 #define S_HISTORY_SHOW_FONT             "io.show_font"
-#define S_HISTORY_FONT                  "io.font"
-
-/* === These settings are handled by the text source === TODO: Remove? */
-#define S_HISTORY_FONT_COLOR            "color"
-#define S_HISTORY_OUTLINE               "outline"
-#define S_HISTORY_OUTLINE_SIZE          "outline_size"
-#define S_HISTORY_OUTLINE_COLOR         "outline_color"
-#define S_HISTORY_OUTLINE_OPACITY       "outline_opacity"
-#define S_HISTORY_OPACITY               "opacity"
-#define S_HISTORY_OUTLINE               "outline"
-#define S_HISTORY_OUTLINE_SIZE          "outline_size"
-#define S_HISTORY_OUTLINE_COLOR         "outline_color"
-#define S_HISTORY_OUTLINE_OPACITY       "outline_opacity"
 
 #define T_HISTORY_USE_FALLBACK_NAMES    T_("History.UseFallbackNames")
 #define T_HISTORY_KEY_NAME_PATH         T_("History.Path.KeyNames")
@@ -174,7 +160,7 @@
 #define T_HISTORY_MODE                  T_("History.Mode")
 #define T_HISTORY_MODE_TEXT             T_("History.Mode.Text")
 #define T_HISTORY_MODE_ICON             T_("History.Mode.Icons")
-#define T_HISTORY_COMMAND_MODE          T_("History.Mode.Commands")
+#define T_HISTORY_COMMAND_MODE          T_("History.Mode.Commands") /* TODO: reimplement? */
 #define T_HISTORY_DIRECTION             T_("History.Direction")
 #define T_HISTORY_DIRECTION_UP          T_("History.Direction.Up")
 #define T_HISTORY_DIRECTION_DOWN        T_("History.Direction.Down")
@@ -182,17 +168,6 @@
 #define T_HISTORY_DIRECTION_RIGHT       T_("History.Direction.Right")
 
 #define T_HISTORY_SHOW_FONT             T_("History.Font.Show")
-#define T_HISTORY_FONT                  T_("History.Font")
-#define T_HISTORY_FONT_COLOR            T_("History.Font.Color")
-#define T_HISTORY_OPACITY               T_("History.Font.Opacity")
-#define T_HISTORY_OUTLINE               T_("History.Font.Outline")
-#define T_HISTORY_OUTLINE_SIZE          T_("History.Font.Outline.Size")
-#define T_HISTORY_OUTLINE_COLOR         T_("History.Font.Outline.Color")
-#define T_HISTORY_OUTLINE_OPACITY       T_("History.Font.Outline.Opacity")
-#define T_HISTORY_GRADIENT              T_("History.Font.Gradient")
-#define T_HISTORY_GRADIENT_COLOR        T_("History.Font.Gradient.Color")
-#define T_HISTORY_GRADIENT_DIRECTION    T_("History.Font.Gradient.Direction")
-
 
 #define T_HISTORY_DIRECTION             T_("History.Direction")
 #define T_HISTORY_HISTORY_SIZE          T_("History.Size")
@@ -213,14 +188,14 @@
 #define WHEEL_DOWN      1
 
 /* These were free in uiohook.h */
-#define VC_NONE                         0xFFFF
+#define VC_NONE                         0xFFFFu
 
-#define VC_MOUSE_MASK                   0xED00
-#define VC_MOUSE_WHEEL_UP               0xED11
-#define VC_MOUSE_WHEEL_DOWN             0xED12
-#define VC_MOUSE_WHEEL                    0xED13
+#define VC_MOUSE_MASK                   0xED00u /* 'u' for unsigned to fix clang tidy warning */
+#define VC_MOUSE_WHEEL_UP               0xED11u
+#define VC_MOUSE_WHEEL_DOWN             0xED12u
+#define VC_MOUSE_WHEEL                  0xED13u
 /* Contains mouse position, click count and wheel motion */
-#define VC_MOUSE_DATA                   0xED14
+#define VC_MOUSE_DATA                   0xED14u
 
 #define VC_MOUSE_BUTTON1                (MOUSE_BUTTON1 | VC_MOUSE_MASK)
 #define VC_MOUSE_BUTTON2                (MOUSE_BUTTON2 | VC_MOUSE_MASK)
@@ -233,31 +208,31 @@
 #define CHAR_ENTER                      0xD
 
 /* Gamepad constants */
-#define VC_PAD_MASK                     0xEC00
-#define VC_STICK_DATA                   0xEC30
-#define VC_TRIGGER_DATA                 0xEC31
-#define VC_DPAD_DATA                    0xEC32
+#define VC_PAD_MASK                     0xEC00u /* 'u' for unsigned to fix clang tidy warning */
+#define VC_STICK_DATA                   0xEC30u
+#define VC_TRIGGER_DATA                 0xEC31u
+#define VC_DPAD_DATA                    0xEC32u
 
 #define PAD_TO_VC(a)                    (a | VC_PAD_MASK)
 #define PAD_COUNT 4
 
-#define VC_PAD_A                        ( 0 | VC_PAD_MASK)
-#define VC_PAD_B                        ( 1 | VC_PAD_MASK)
-#define VC_PAD_X                        ( 2 | VC_PAD_MASK)
-#define VC_PAD_Y                        ( 3 | VC_PAD_MASK)
-#define VC_PAD_LB                       ( 4 | VC_PAD_MASK)
-#define VC_PAD_RB                       ( 5 | VC_PAD_MASK)
-#define VC_PAD_BACK                     ( 6 | VC_PAD_MASK)
-#define VC_PAD_START                    ( 7 | VC_PAD_MASK)
-#define VC_PAD_GUIDE                    ( 8 | VC_PAD_MASK)
-#define VC_PAD_L_ANALOG                 ( 9 | VC_PAD_MASK)
-#define VC_PAD_R_ANALOG                 (10 | VC_PAD_MASK)
-#define VC_PAD_DPAD_LEFT                (11 | VC_PAD_MASK)
-#define VC_PAD_DPAD_RIGHT               (12 | VC_PAD_MASK)
-#define VC_PAD_DPAD_UP                  (13 | VC_PAD_MASK)
-#define VC_PAD_DPAD_DOWN                (14 | VC_PAD_MASK)
-#define VC_PAD_LT                       (15 | VC_PAD_MASK)
-#define VC_PAD_RT                       (16 | VC_PAD_MASK)
+#define VC_PAD_A                        ( 0u | VC_PAD_MASK)
+#define VC_PAD_B                        ( 1u | VC_PAD_MASK)
+#define VC_PAD_X                        ( 2u | VC_PAD_MASK)
+#define VC_PAD_Y                        ( 3u | VC_PAD_MASK)
+#define VC_PAD_LB                       ( 4u | VC_PAD_MASK)
+#define VC_PAD_RB                       ( 5u | VC_PAD_MASK)
+#define VC_PAD_BACK                     ( 6u | VC_PAD_MASK)
+#define VC_PAD_START                    ( 7u | VC_PAD_MASK)
+#define VC_PAD_GUIDE                    ( 8u | VC_PAD_MASK)
+#define VC_PAD_L_ANALOG                 ( 9u | VC_PAD_MASK)
+#define VC_PAD_R_ANALOG                 (10u | VC_PAD_MASK)
+#define VC_PAD_DPAD_LEFT                (11u | VC_PAD_MASK)
+#define VC_PAD_DPAD_RIGHT               (12u | VC_PAD_MASK)
+#define VC_PAD_DPAD_UP                  (13u | VC_PAD_MASK)
+#define VC_PAD_DPAD_DOWN                (14u | VC_PAD_MASK)
+#define VC_PAD_LT                       (15u | VC_PAD_MASK)
+#define VC_PAD_RT                       (16u | VC_PAD_MASK)
 
 /* Get default key names from a libuiohook keycode */
 const char* key_to_text(int key_code);

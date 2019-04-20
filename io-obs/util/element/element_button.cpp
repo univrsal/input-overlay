@@ -32,6 +32,7 @@ void element_button::load(ccl_config* cfg, const std::string &id)
 void element_button::draw(gs_effect_t* effect, gs_image_file_t* image, element_data* data,
                           sources::overlay_settings* settings)
 {
+    UNUSED_PARAMETER(settings);
     if (data) {
         const auto button = dynamic_cast<element_data_button*>(data);
         if (button) {

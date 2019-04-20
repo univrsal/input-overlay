@@ -103,7 +103,7 @@ namespace network
         tcp_socket sock;
 
         while (network_flag) {
-            int numready, i;
+            int numready;
             server_instance->roundtrip();
             server_instance->listen(numready);
 
@@ -202,7 +202,7 @@ namespace network
             return MSG_READ_ERROR;
         }
 
-        if (id >= 0 && id <= MSG_LAST)
+        if (id <= MSG_LAST)
             return message(id);
         return MSG_INVALID;
     }

@@ -1,7 +1,6 @@
 /**
  * This file is part of input-overlay
- * which is licensed under the
- * MOZILLA PUBLIC LICENCE 2.0 - http://www.gnu.org/licenses
+ * which is licensed under the GPL v2.0
  * See LICENSE or http://www.gnu.org/licenses
  * github.com/univrsal/input-overlay
  */
@@ -16,6 +15,7 @@
 #include "network/io_server.hpp"
 #include <iomanip>
 #include <obs-frontend-api.h>
+#include <util/config.hpp>
 
 namespace sources
 {
@@ -192,7 +192,6 @@ namespace sources
     {
         const auto s = reinterpret_cast<input_history_source*>(data);
         obs_properties_t* props = nullptr;
-        auto cfg = obs_frontend_get_global_config();
 
         if (s->m_settings.mode != MODE_ICONS)
             props = obs_source_properties(s->m_settings.queue->get_fade_in()); /* Reuse text properties */
@@ -209,7 +208,7 @@ namespace sources
         obs_property_set_modified_callback(font_settings, toggle_font_settings);
 
         /* If enabled add dropdown to select input source */
-        if (config_get_bool(cfg, S_REGION, S_REMOTE)) {
+        if (io_config::remote) {
             auto list = obs_properties_add_list(props, S_INPUT_SOURCE, T_INPUT_SOURCE, OBS_COMBO_TYPE_LIST,
                                                 OBS_COMBO_FORMAT_INT);
             obs_properties_add_button(props, S_RELOAD_CONNECTIONS, T_RELOAD_CONNECTIONS, reload_connections);
@@ -266,11 +265,12 @@ namespace sources
 
         obs_property_list_add_int(icon_dir_list, T_HISTORY_DIRECTION_DOWN, 0);
         obs_property_list_add_int(icon_dir_list, T_HISTORY_DIRECTION_UP, 1);
+#ifdef WIN32 /* Freetype doesn't offer vertical text direction */
         obs_property_list_add_int(icon_dir_list, T_HISTORY_DIRECTION_LEFT, 2);
         obs_property_list_add_int(icon_dir_list, T_HISTORY_DIRECTION_RIGHT, 3);
-
+#endif
         /* gamepad */
-        if (config_get_bool(cfg, S_REGION, S_GAMEPAD)) {
+        if (io_config::gamepad) {
             const auto include_pad = obs_properties_add_bool(props, S_HISTORY_INCLUDE_PAD, T_HISTORY_INCLUDE_PAD);
             obs_property_set_modified_callback(include_pad, include_pad_changed);
             obs_properties_add_int(props, S_CONTROLLER_ID, T_CONTROLLER_ID, 0, 3, 1);

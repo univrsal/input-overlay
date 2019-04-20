@@ -23,10 +23,10 @@ namespace sources
 
 struct key_combination
 {
-    explicit key_combination(const std::string str)
+    explicit key_combination(std::string& str)
     {
-        repeat = 1;
         keys = str;
+        repeat = 0;
     }
 
     std::string keys;

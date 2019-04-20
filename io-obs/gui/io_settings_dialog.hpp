@@ -52,4 +52,4 @@ private:
 
 };
 
-static io_settings_dialog* settings_dialog = nullptr;
+extern io_settings_dialog* settings_dialog;

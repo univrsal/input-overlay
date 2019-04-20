@@ -12,6 +12,10 @@
 
 namespace xinput_fix
 {
+    gamepad_codes all_codes[13] = {CODE_A, CODE_B, CODE_X, CODE_Y, CODE_GUIDE, CODE_DPAD_DOWN, CODE_DPAD_UP,
+                                   CODE_DPAD_LEFT, CODE_DPAD_RIGHT, CODE_LEFT_SHOULDER, CODE_RIGHT_SHOULDER, CODE_START,
+                                   CODE_BACK};
+
     uint16_t to_vc(const gamepad_codes code)
     {
         switch (code) {
@@ -42,7 +46,7 @@ namespace xinput_fix
             case CODE_BACK:
                 return VC_PAD_BACK;
             default:
-                return 0xFFFF;
+                return VC_NONE;
         }
     }
 

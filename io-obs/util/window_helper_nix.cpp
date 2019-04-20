@@ -25,7 +25,7 @@
 
 using namespace std;
 
-static Display* xdisplay = 0;
+static Display* xdisplay = nullptr;
 
 Display* disp()
 {
@@ -41,7 +41,7 @@ void cleanupDisplay()
         return;
 
     XCloseDisplay(xdisplay);
-    xdisplay = 0;
+    xdisplay = nullptr;
 }
 
 static bool ewmhIsSupported()

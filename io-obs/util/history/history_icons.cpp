@@ -86,5 +86,7 @@ void history_icons::load_from_file(const char* cfg, const char* img)
 
 void history_icons::draw(uint16_t vc, vec2* pos)
 {
+    UNUSED_PARAMETER(vc);
+    UNUSED_PARAMETER(pos);
 
 }

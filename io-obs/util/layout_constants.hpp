@@ -37,8 +37,6 @@
 #define CFG_MOUSE_TYPE      "_mouse_type"
 #define CFG_DIRECTION       "_direction"
 #define CFG_TRIGGER_MODE    "_trigger_mode"
-#define CFG_TEXT            "_text"
-#define CFG_TEXT_RESET      "_reset_text"
 
 /* Misc */
 #define AXIS_MAX_AMPLITUDE  32767

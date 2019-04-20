@@ -120,6 +120,7 @@ namespace sources
 
     obs_properties_t* get_properties_for_overlay(void* data)
     {
+        UNUSED_PARAMETER(data);
         std::string img_path;
         std::string layout_path;
         const auto config = obs_frontend_get_global_config();

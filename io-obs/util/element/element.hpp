@@ -40,6 +40,7 @@ class element_data
 {
 public:
     explicit element_data(element_type type);
+    virtual ~element_data() = default;
 
     element_type get_type() const;
 

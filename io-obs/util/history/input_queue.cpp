@@ -1,7 +1,6 @@
 /**
  * This file is part of input-overlay
- * which is licenced under the
- * MOZILLA PUBLIC LICENCE 2.0
+ * which is licensed under the GPL v2.0
  * See LICENSE or http://www.gnu.org/licenses
  * github.com/univrsal/input-overlay
  */

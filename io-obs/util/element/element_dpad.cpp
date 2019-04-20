@@ -32,7 +32,7 @@ element_dpad::draw(gs_effect_t* effect, gs_image_file_t* image, element_data* da
 {
     const auto d = dynamic_cast<element_data_dpad*>(data);
 
-    if (d && d->get_direction() != DPAD_CENTER) {
+    if (d && d->get_direction() != DPAD_TEXTURE_CENTER) {
         /* Enum starts at one (Center doesn't count)*/
         const auto map = &m_mappings[d->get_direction() - 1];
         element_texture::draw(effect, image, map);
@@ -50,6 +50,7 @@ data_source element_dpad::get_source()
 element_data_dpad::element_data_dpad(const dpad_direction a, const dpad_direction b) : element_data(DPAD_STICK)
 {
     m_direction = a | b;
+    m_state = STATE_RELEASED;
 }
 
 element_data_dpad::element_data_dpad(const dpad_direction d, const button_state state) : element_data(DPAD_STICK)
@@ -73,14 +74,11 @@ void element_data_dpad::merge(element_data* other)
     }
 #else
     if (d) {
-        auto dir = get_direction();
         if (d->get_state() == STATE_PRESSED) {
             m_direction |= d->m_direction;
         } else {
             m_direction &= ~d->m_direction;
         }
-        dir = get_direction();
-        UNUSED_PARAMETER(dir);
     }
 #endif /* !WINDOWS*/
 }

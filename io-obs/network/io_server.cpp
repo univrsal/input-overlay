@@ -179,7 +179,7 @@ namespace network
 
     io_client* io_server::get_client(const uint8_t id)
     {
-        if (id >= 0 && id < m_clients.size())
+        if (id < m_clients.size())
             return m_clients[id].get();
         return nullptr;
     }
@@ -238,7 +238,6 @@ namespace network
 
     bool io_server::create_sockets()
     {
-        int i;
         if (sockets)
             netlib_free_socket_set(sockets);
 
