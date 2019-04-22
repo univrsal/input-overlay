@@ -13,7 +13,7 @@
 void input_queue::init_icon()
 {
     free_handler();
-    m_current_handler = new icon_handler();
+    m_current_handler = new icon_handler(m_settings);
 }
 
 void input_queue::init_text()
@@ -24,26 +24,26 @@ void input_queue::init_text()
 
 void input_queue::free_handler()
 {
+    m_handler_mutex.lock();
     delete m_current_handler;
     m_current_handler = nullptr;
+    m_handler_mutex.unlock();
 }
-
 
 input_queue::input_queue(sources::history_settings* settings) : m_settings(settings)
 {
-    m_queued_entry = new input_entry();
+    /* NO-OP */
 }
 
 input_queue::~input_queue()
 {
     free_handler();
-    delete m_queued_entry;
 }
 
 void input_queue::update(const sources::history_mode new_mode)
 {
     if (new_mode != m_settings->mode || !m_current_handler) {
-        switch (m_settings->mode) {
+        switch (new_mode) {
             default:
             case sources::MODE_TEXT:
                 init_text();
@@ -62,28 +62,33 @@ obs_source_t* input_queue::get_fade_in() const
     return h ? h->get_text_source() : nullptr;
 }
 
-void input_queue::collect_input() const
+void input_queue::collect_input()
 {
-    m_queued_entry->collect_inputs(m_settings);
+    m_queued_entry.collect_inputs(m_settings);
 }
 
-void input_queue::swap() const
+void input_queue::swap()
 {
-    if (!m_queued_entry->empty()) {
+    if (!m_queued_entry.empty() && m_current_handler) {
         m_current_handler->swap(m_queued_entry);
-        m_queued_entry->clear();
+        m_queued_entry.clear();
     }
 }
 
-void input_queue::tick(const float seconds) const
+void input_queue::tick(const float seconds)
 {
-    m_current_handler->tick(seconds);
+    m_handler_mutex.lock();
+    if (m_current_handler)
+        m_current_handler->tick(seconds);
+    m_handler_mutex.unlock();
 }
 
-void input_queue::render(gs_effect_t* effect) const
+void input_queue::render(gs_effect_t* effect)
 {
-    UNUSED_PARAMETER(effect);
-    m_current_handler->render();
+    m_handler_mutex.lock();
+    if (m_current_handler)
+        m_current_handler->render(effect);
+    m_handler_mutex.unlock();
 }
 
 void input_queue::clear()

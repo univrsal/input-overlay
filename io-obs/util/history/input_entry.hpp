@@ -11,6 +11,7 @@
 #include <vector>
 #include <memory>
 #include <obs.hpp>
+#include "history_icons.hpp"
 
 class key_names;
 
@@ -31,12 +32,15 @@ class input_entry
     std::vector<std::unique_ptr<effect>> m_effects;
 
     vec2 m_position{};
+    /* Only used in text mode */
     uint16_t m_height = 0, m_width = 0;
 
     bool m_remove = false; /* Set to true once this entry is the last in the list */
     obs_source_t* m_text_source = nullptr; /* Only used in text mode */
 public:
     explicit input_entry(obs_source_t* source);
+
+    input_entry(input_entry& e);
 
     input_entry();
 
@@ -45,6 +49,8 @@ public:
     uint16_t get_width() const;
 
     uint16_t get_height() const;
+
+    uint16_t get_input_count() const;
 
     vec2* get_pos();
 
@@ -62,7 +68,9 @@ public:
 
     void render_text();
 
-    void render_icons(sources::history_settings* settings);
+    void clear_effects();
+
+    void render_icons(sources::history_settings* settings, history_icons* icons);
 
     void clear();
 
@@ -70,9 +78,9 @@ public:
 
     bool finished() const;
 
-    bool effects_finished() const;
-
     bool empty() const;
 
     void test();
+
+
 };

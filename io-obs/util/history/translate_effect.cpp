@@ -15,11 +15,14 @@ translate_effect::translate_effect(const float duration, vec2 &direction, vec2* 
         duration), m_direction(direction), m_translate(translate)
 {
     m_pos = target;
+    m_original = *target;
 }
 
 void translate_effect::tick(const float seconds)
 {
     effect::tick(seconds);
+    m_pos->x = m_original.x;
+    m_pos->y = m_original.y;
     vec2_mulf(m_pos, &m_direction, get_progress());
 }
 

@@ -25,6 +25,18 @@ history_icons::~history_icons()
     unload_texture();
 }
 
+uint16_t util_read_hex(std::string &l)
+{
+    std::string temp = l.substr(0, l.find(','));
+    l = l.substr(l.find(',') + 1, l.size());
+
+    if (temp.find("0x") != std::string::npos) {
+        return std::stoul(temp, nullptr, 16);
+    } else {
+        return (uint16_t) 0x0;
+    }
+}
+
 void history_icons::load_from_file(const char* cfg, const char* img)
 {
     unload_texture();
@@ -59,7 +71,10 @@ void history_icons::load_from_file(const char* cfg, const char* img)
             for (auto i = 0; i < m_icon_count; i++) {
                 icon ico{};
                 /* TODO: Alternative? */
-                const auto vc = 0x00f;// util_read_hex(icon_order);
+                const auto vc = util_read_hex(icon_order);
+#ifdef DEBUG
+                blog(LOG_DEBUG, "Loaded icon with code 0x%X", vc);
+#endif
                 ico.u = (m_icon_w + 3) * i + 1;
                 ico.v = 1;
 
@@ -86,7 +101,16 @@ void history_icons::load_from_file(const char* cfg, const char* img)
 
 void history_icons::draw(uint16_t vc, vec2* pos)
 {
-    UNUSED_PARAMETER(vc);
-    UNUSED_PARAMETER(pos);
+    if (m_icons.find(vc) != m_icons.end()) {
+        auto icon = m_icons[vc];
+        gs_matrix_push();
+        gs_matrix_translate3f(pos->x, pos->y, 1.f);
+        gs_draw_sprite_subregion(m_icon_texture->texture, 0, icon.u, icon.v, m_icon_w + 1, m_icon_h + 1);
+        gs_matrix_pop();
+    }
+}
 
+gs_image_file_t* history_icons::image_file()
+{
+    return m_icon_texture;
 }

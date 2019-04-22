@@ -21,7 +21,7 @@
 #include <string>
 #include <vector>
 
-#ifndef IO_CLIENT /* io-client uses this header, but doesn't doesn't use any obs headers */
+#ifndef IO_CLIENT /* io-client uses this header, but doesn't use any obs headers */
 #include <obs-module.h>
 #define T_(v)                           obs_module_text(v)
 #define GET_PROPS(S)                    (obs_properties_get(props, S))

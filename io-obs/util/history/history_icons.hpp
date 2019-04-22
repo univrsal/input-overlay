@@ -36,6 +36,8 @@ public:
 
     void draw(uint16_t vc, vec2* pos);
 
+    gs_image_file_t* image_file();
+
     uint16_t get_w() const
     { return m_icon_w; }
 

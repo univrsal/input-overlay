@@ -11,7 +11,6 @@
 #include "handler.hpp"
 #include <string>
 #include <vector>
-#include <obs-module.h>
 #include <memory>
 
 class input_entry;
@@ -23,6 +22,7 @@ namespace sources
 
 struct key_combination
 {
+    /* Contructor is used by make_unique */
     explicit key_combination(std::string& str)
     {
         keys = str;
@@ -36,10 +36,8 @@ struct key_combination
 class text_handler : public handler
 {
     std::vector<std::unique_ptr<key_combination>> m_values;  /* Text body (All key combinations in order) */
-
     key_names m_names; /* Contains custom key names */
     input_entry* m_display = nullptr;
-    sources::history_settings* m_settings = nullptr;
     obs_source_t* m_text_source = nullptr;
 
     void make_body_text(std::string &str);
@@ -55,9 +53,9 @@ public:
 
     void tick(float seconds) override;
 
-    void swap(input_entry* current) override;
+    void swap(input_entry& current) override;
 
-    void render() override;
+    void render(const gs_effect_t* effect) override;
 
     void clear() override;
 

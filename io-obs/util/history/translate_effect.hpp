@@ -13,7 +13,7 @@
 
 class translate_effect : public effect
 {
-    vec2 m_direction;
+    vec2 m_direction, m_original; /* Original contains a copy of m_pos, which is used for the modification */
     vec2* m_pos = nullptr; /* This vector will be modified over time by tick() */
     /* If set to false this effect will only modify the position vector
      * without performing any matrix translation

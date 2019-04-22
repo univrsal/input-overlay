@@ -13,6 +13,7 @@
 #include "history_icons.hpp"
 #include "network/io_server.hpp"
 #include <algorithm>
+#include <sstream>
 
 input_entry::input_entry(obs_source_t* source)
 {
@@ -31,6 +32,7 @@ input_entry::input_entry()
 input_entry::~input_entry()
 {
     m_inputs.clear();
+    m_effects.clear();
 }
 
 uint16_t input_entry::get_width() const
@@ -117,23 +119,22 @@ void input_entry::render_text()
     m_height = obs_source_get_height(m_text_source);
 }
 
-void input_entry::render_icons(sources::history_settings* settings)
+void input_entry::render_icons(sources::history_settings* settings, history_icons* icons)
 {
-    UNUSED_PARAMETER(settings);
+    auto temp = m_position;
+    auto i = 0;
+
+    for (const auto& vc : m_inputs)
+    {
+        icons->draw(vc, &temp);
+
+        if (settings->dir == DIR_DOWN || settings->dir == DIR_UP)
+            temp.x += ++i * (settings->h_space + icons->get_w());
+        else
+            temp.y += ++i * (settings->v_space + icons->get_h());
+    }
+
     gs_matrix_push();
-    //auto temp = m_position;
-    //auto i = 0;
-
-    //for (const auto& vc : m_inputs)
-    //{
-    //    settings->icons->draw(vc, &temp);
-
-    //    if (settings->dir == DIR_DOWN || settings->dir == DIR_UP)
-    //        temp.x += i++ * (settings->h_space + settings->icons->get_w());
-    //    else        
-    //        temp.y += i++ * (settings->v_space + settings->icons->get_h());
-    //}
-
     for (auto &effect : m_effects)
         effect->render();
     gs_matrix_pop();
@@ -155,11 +156,6 @@ bool input_entry::finished() const
     return m_effects.empty() && m_remove;
 }
 
-bool input_entry::effects_finished() const
-{
-    return m_effects.empty();
-}
-
 bool input_entry::empty() const
 {
     return m_inputs.empty();
@@ -167,6 +163,23 @@ bool input_entry::empty() const
 
 void input_entry::test()
 {
+    std::stringstream buf;
     for (auto &input : m_inputs)
-        blog(LOG_INFO, "0x%X ", input);
+        buf << "0x" << std::hex << input << ", ";
+    blog(LOG_INFO, "%s", buf.str().c_str());
+}
+
+input_entry::input_entry(input_entry &e)
+{
+    m_inputs = e.m_inputs;
+}
+
+void input_entry::clear_effects()
+{
+    m_effects.clear();
+}
+
+uint16_t input_entry::get_input_count() const
+{
+    return m_inputs.size();
 }
