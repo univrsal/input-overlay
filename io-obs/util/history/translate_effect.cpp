@@ -24,10 +24,19 @@ void translate_effect::tick(const float seconds)
     m_pos->x = m_original.x;
     m_pos->y = m_original.y;
     vec2_mulf(m_pos, &m_direction, get_progress());
+    vec2_add(m_pos, &m_original, m_pos);
 }
 
 void translate_effect::render()
 {
     if (m_translate)
-        gs_matrix_translate3f(m_pos->x, m_pos->y, 0.f);
+        gs_matrix_translate3f(m_pos->x, m_pos->y, 1.f);
+}
+
+translate_effect::~translate_effect()
+{
+    /* Make sure new position is applied */
+    m_pos->x = m_original.x;
+    m_pos->y = m_original.y;
+    vec2_add(m_pos, m_pos, &m_direction);
 }

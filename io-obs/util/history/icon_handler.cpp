@@ -67,7 +67,6 @@ void icon_handler::swap(input_entry &current)
         /* Clear effects etc. */
         for (auto& entry : m_entries)
             entry->clear_effects();
-
     }
 
     m_state = STATE_BLENDING;
@@ -95,6 +94,7 @@ void icon_handler::render(const gs_effect_t* effect)
 {
     if (m_entries.empty())
         return;
+
     gs_effect_set_texture(gs_effect_get_param_by_name(effect, "image"),
                           m_icons.image_file()->texture);
     int max_icon_count = 0;
@@ -131,4 +131,3 @@ icon_handler::icon_handler(sources::history_settings* settings) : handler(settin
 {
 
 }
-

@@ -20,7 +20,8 @@ class translate_effect : public effect
      */
     bool m_translate = true;
 public:
-    translate_effect(float duration, vec2 &direction, vec2* target, bool translate);
+    translate_effect(float duration, vec2& direction, vec2* target, bool translate);
+    ~translate_effect() override;
 
     void tick(float seconds) override;
 

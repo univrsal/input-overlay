@@ -5,6 +5,7 @@
  * github.com/univrsal/input-overlay
  */
 
+#include "util/util.hpp"
 #include "effect.hpp"
 
 effect::effect(const float duration)
@@ -25,5 +26,5 @@ bool effect::done()
 
 float effect::get_progress() const
 {
-    return m_time / m_duration;
+    return UTIL_MIN(m_time / m_duration, 1.f);
 }
