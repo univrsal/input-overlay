@@ -134,10 +134,10 @@ void input_entry::render_icons(sources::history_settings* settings, history_icon
             temp.y += ++i * (settings->v_space + icons->get_h());
     }
 
-//    gs_matrix_push();
-//    for (auto &effect : m_effects)
-//        effect->render();
-//    gs_matrix_pop();
+    gs_matrix_push();
+    for (auto &effect : m_effects)
+        effect->render();
+    gs_matrix_pop();
 }
 
 void input_entry::clear()
