@@ -76,9 +76,6 @@ void icon_handler::swap(input_entry &current)
     m_entries.push_front(std::unique_ptr<input_entry>(new_entry));
 
     for (auto& entry : m_entries) {
-#ifdef DEBUG
-        entry->test();
-#endif
         entry->add_effect(new translate_effect(0.5f, m_translate_dir, entry->get_pos(), true));
     }
 #ifdef DEBUG
@@ -103,7 +100,9 @@ void icon_handler::render(const gs_effect_t* effect)
         max_icon_count = UTIL_MAX(max_icon_count, entry->get_input_count());
     }
 
-    if (max_icon_count != m_old_icon_count) {
+    if (max_icon_count > m_old_icon_count) {
+        /* Only resize if size would increase, resizing when size would decrease
+         * would result in source constantly moving around */
         switch (m_settings->dir) {
             case DIR_DOWN:
             case DIR_UP:

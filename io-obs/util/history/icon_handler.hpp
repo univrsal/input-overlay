@@ -26,6 +26,7 @@ class icon_handler : public handler
     vec2 m_translate_dir = { 0.f, 1.f }; /* Direction the entries move */
     vec2 m_start_pos = { 0.f, 0.f };     /* Position, where new entries start (depends on history direction) */
     int m_old_icon_count = 0;            /* Used to calculate and update source size */
+
 public:
     icon_handler(sources::history_settings* settings);
 
