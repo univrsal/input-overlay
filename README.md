@@ -14,7 +14,14 @@ Always download the latest release and NOT the sourcecode!
 #### On windows there's a chance that you'll need to install [Visual C++ 2015 Redistributable](https://www.microsoft.com/en-us/download/details.aspx?id=52685) because the plugin won't load otherwise
 
 ## Credits
-input-overlay depends on [libuiohook](https://github.com/kwhat/libuiohook) by [kwhat](https://github.com/kwhat) licenced under the [GNU General Public Licence v3.0](https://www.gnu.org/licenses/gpl-3.0.txt)
+input-overlay depends on [libuiohook](https://github.com/kwhat/libuiohook) by [kwhat](https://github.com/kwhat) licensed under the [GNU General Public License v3.0](https://www.gnu.org/licenses/gpl-3.0.txt) and my SDL_net fork [netlib](https://github.com/univrsal/netlib) licensed under the [zlib license](https://www.zlib.net/zlib_license.html).
+
+The config editing tool io-cct depends on
+- [SDL2](https://www.libsdl.org/)
+- [SDL2_TTF](https://www.libsdl.org/projects/SDL_ttf/)
+- [SDL2_IMG](https://www.libsdl.org/projects/SDL_image/)
+
+all licensed under the [zlib license](https://www.zlib.net/zlib_license.html).
 
 More Information:
 - [OBS resource page](https://obsproject.com/forum/resources/input-overlay.552/)
