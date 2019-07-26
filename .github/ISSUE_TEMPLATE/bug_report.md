@@ -18,7 +18,7 @@ If applicable, add screenshots to help explain your problem.
 
 **Additional information:**
 - Plugin version
-- Full OBS Studio log
+- Full OBS Studio write_log
 
 **Additional context**
 Add any other context about the problem here.
