@@ -216,6 +216,7 @@ private:
     uint8_t m_large_font_height = 0;
     uint8_t m_wstring_font_height = 0;
 
+    bool m_focused = true; /* If false, slow down rendering to save resources */
     bool m_init_success = true;
     bool m_windows = true;
     bool* m_runflag = nullptr;

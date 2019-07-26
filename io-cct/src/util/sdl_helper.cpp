@@ -401,6 +401,12 @@ void sdl_helper::handle_events(SDL_Event* event)
     } else if (event->type == SDL_WINDOWEVENT) {
         if (event->window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
             SDL_GetWindowSize(m_sdl_window, &m_window_size.x, &m_window_size.y);
+        } else  if (event->window.event == SDL_WINDOWEVENT_FOCUS_GAINED || event->window.event == SDL_WINDOWEVENT_ENTER) {
+            m_focused = true;
+            printf("GAINED\n");
+        } else if (event->window.event == SDL_WINDOWEVENT_FOCUS_LOST || event->window.event == SDL_WINDOWEVENT_LEAVE) {
+            m_focused = false;
+            printf("Lost\n");
         }
     } else if (event->type == SDL_MOUSEMOTION) {
         m_mouse_pos = {event->motion.x, event->motion.y};
@@ -420,7 +426,6 @@ uint8_t sdl_helper::util_font_height(const uint8_t font) const
 
 bool sdl_helper::handle_controller_disconnect(const int32_t id)
 {
-    printf("id: %i\n", id);
     auto flag = false;
     if (id < 0)
         return false; /* Negative IDs shouldn't happen, I think */
@@ -484,10 +489,12 @@ void sdl_helper::end_frame()
     }
 }
 
+#define TPF         (m_focused ? SDL_WINDOW_TPF : SDL_WINDOW_UNFOCUSED_TPF)
+
 void sdl_helper::cap_frame() const
 {
-    if (m_frame_cap_timer.get_delta() < SDL_WINDOW_TPF)
-        SDL_Delay(SDL_WINDOW_TPF - m_frame_cap_timer.get_time());
+    if (m_frame_cap_timer.get_delta() < TPF)
+        SDL_Delay(TPF - m_frame_cap_timer.get_time());
 }
 
 float sdl_helper::util_get_fps() const

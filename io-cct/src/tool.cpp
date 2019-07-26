@@ -73,7 +73,6 @@ void tool::program_loop()
                     }
                     break;
             }
-
             m_notify->draw(); /* Notifications have top priority */
             m_helper->repaint();
         }
