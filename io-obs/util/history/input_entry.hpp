@@ -70,6 +70,8 @@ public:
 
     void clear_effects();
 
+    void render_effects();
+
     void render_icons(sources::history_settings* settings, history_icons* icons);
 
     void clear();

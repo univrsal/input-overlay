@@ -88,6 +88,10 @@ io_settings_dialog::io_settings_dialog(QWidget* parent) : QDialog(parent, Qt::Di
     for (const auto &filter : io_config::io_window_filters.filters()) {
         ui->list_filters->addItem(filter);
     }
+
+    /* Set red color on label so people don't miss it */
+    ui->lbl_local_features->setStyleSheet("QLabel { color: red; "
+                                          "font-weight: bold;}");
 }
 
 void io_settings_dialog::showEvent(QShowEvent* event)
@@ -156,6 +160,7 @@ void io_settings_dialog::CbInputControlStateChanged(int state)
     ui->btn_remove->setEnabled(state);
     ui->list_filters->setEnabled(state);
     ui->btn_refresh_cb->setEnabled(state);
+    ui->cb_regex->setEnabled(state);
 }
 
 void io_settings_dialog::PingClients()

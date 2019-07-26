@@ -5,6 +5,7 @@
  * github.com/univrsal/input-overlay
  */
 
+#include <graphics/matrix4.h>
 #include "icon_handler.hpp"
 #include "sources/input_history.hpp"
 #include "input_entry.hpp"
@@ -95,6 +96,7 @@ void icon_handler::render(const gs_effect_t* effect)
     gs_effect_set_texture(gs_effect_get_param_by_name(effect, "image"),
                           m_icons.image_file()->texture);
     int max_icon_count = 0;
+
     for (auto &entry : m_entries) {
         entry->render_icons(m_settings, &m_icons);
         max_icon_count = UTIL_MAX(max_icon_count, entry->get_input_count());

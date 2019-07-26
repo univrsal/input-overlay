@@ -28,3 +28,8 @@ float effect::get_progress() const
 {
     return UTIL_MIN(m_time / m_duration, 1.f);
 }
+
+unsigned char effect::get_priority()
+{
+    return 0;
+}

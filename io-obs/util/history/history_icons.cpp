@@ -6,6 +6,7 @@
  */
 
 #include <obs-module.h>
+#include "input_entry.hpp"
 #include "history_icons.hpp"
 #include "../../../ccl/ccl.hpp"
 
@@ -99,12 +100,13 @@ void history_icons::load_from_file(const char* cfg, const char* img)
         blog(LOG_WARNING, "[input-overlay] %s", ccl.get_error_message().c_str());
 }
 
-void history_icons::draw(uint16_t vc, vec2* pos)
+void history_icons::draw(uint16_t vc, vec2* pos, input_entry* parent)
 {
     if (m_icons.find(vc) != m_icons.end()) {
         auto icon = m_icons[vc];
         gs_matrix_push();
-        gs_matrix_translate3f(pos->x, pos->y, 1.f);
+        gs_matrix_translate3f(pos->x, pos->y, 0.f);
+        parent->render_effects();
         gs_draw_sprite_subregion(m_icon_texture->texture, 0, icon.u, icon.v, m_icon_w + 1, m_icon_h + 1);
         gs_matrix_pop();
     }

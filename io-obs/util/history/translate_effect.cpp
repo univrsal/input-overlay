@@ -29,8 +29,11 @@ void translate_effect::tick(const float seconds)
 
 void translate_effect::render()
 {
-    if (m_translate)
+    if (m_translate) {
+        gs_matrix_push();
         gs_matrix_translate3f(m_pos->x, m_pos->y, 1.f);
+        gs_matrix_pop();
+    }
 }
 
 translate_effect::~translate_effect()
@@ -39,4 +42,9 @@ translate_effect::~translate_effect()
     m_pos->x = m_original.x;
     m_pos->y = m_original.y;
     vec2_add(m_pos, m_pos, &m_direction);
+}
+
+uint8_t translate_effect::get_priority()
+{
+    return 5;
 }

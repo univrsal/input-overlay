@@ -18,6 +18,8 @@ struct icon
     uint16_t u, v;
 };
 
+class input_entry;
+
 class history_icons
 {
     bool m_loaded = false;
@@ -34,7 +36,7 @@ public:
 
     void load_from_file(const char* cfg, const char* img);
 
-    void draw(uint16_t vc, vec2* pos);
+    void draw(uint16_t vc, vec2* pos, input_entry* parent);
 
     gs_image_file_t* image_file();
 

@@ -30,7 +30,5 @@ void scale_effect::tick(const float seconds)
 
 void scale_effect::render()
 {
-    gs_matrix_push();
-    gs_matrix_scale3f(m_scale, m_scale, 1.f);
-    gs_matrix_pop();
+    gs_matrix_scale3f(m_scale, m_scale, m_scale);
 }

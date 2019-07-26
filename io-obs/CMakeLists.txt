@@ -1,11 +1,16 @@
+cmake_minimum_required(VERSION 3.5)
 project(input-overlay)
 
 set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 
 option(ENABLE_STATIC_NETLIB "Use packaged netlib version" ON)
 option(ENABLE_STATIC_UIOHOOK "Use packged uiohook version" ON)
+
+set(input-overlay_UI
+        gui/io_settings_dialog.ui)
 
 if (MSVC)
     set(input-overlay_PLATFORM_DEPS
@@ -138,17 +143,15 @@ set(input-overlay_SOURCES
         network/io_client.cpp
         network/io_client.hpp
         ../ccl/ccl.cpp
-        ../ccl/ccl.hpp util/config.cpp util/config.hpp util/input_filter.cpp util/input_filter.hpp)
-
-set(io_settings_UI
-        gui/io_settings_dialog.ui)
-
-qt5_wrap_ui(frontend-tools_UI_HEADERS
-        ${io_settings_UI})
+        ../ccl/ccl.hpp
+        util/config.cpp
+        util/config.hpp
+        util/input_filter.cpp
+        util/input_filter.hpp)
 
 add_library(input-overlay MODULE
-        ${io_settings_UI_HEADERS}
         ${input-overlay_SOURCES}
+        ${input-overlay_UI}
         ${input-overlay_PLATFORM_SOURCES})
 
 include_directories(

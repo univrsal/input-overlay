@@ -49,7 +49,7 @@
      <property name="movable">
       <bool>false</bool>
      </property>
-     <property name="tabBarAutoHide" stdset="0">
+     <property name="tabBarAutoHide">
       <bool>false</bool>
      </property>
      <widget class="QWidget" name="tab_local">
@@ -118,7 +118,7 @@
        </item>
        <item>
         <widget class="QComboBox" name="cb_list_mode">
-         <property name="currentText" stdset="0">
+         <property name="currentText">
           <string>Dialog.InputControl.Mode.Whitelist</string>
          </property>
          <property name="currentIndex">
@@ -238,15 +238,24 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>427</width>
-            <height>735</height>
+            <width>426</width>
+            <height>630</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_5">
            <property name="spacing">
             <number>0</number>
            </property>
-           <property name="margin">
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
             <number>0</number>
            </property>
            <item>
@@ -289,7 +298,7 @@
                  </sizepolicy>
                 </property>
                 <property name="inputMask">
-                 <string>009; </string>
+                 <string>009</string>
                 </property>
                 <property name="readOnly">
                  <bool>false</bool>
@@ -339,7 +348,7 @@
                  </sizepolicy>
                 </property>
                 <property name="inputMask">
-                 <string>009; </string>
+                 <string>009</string>
                 </property>
                 <property name="readOnly">
                  <bool>false</bool>
@@ -389,7 +398,7 @@
                  </sizepolicy>
                 </property>
                 <property name="inputMask">
-                 <string>009; </string>
+                 <string>009</string>
                 </property>
                 <property name="readOnly">
                  <bool>false</bool>
@@ -439,7 +448,7 @@
                  </sizepolicy>
                 </property>
                 <property name="inputMask">
-                 <string>009; </string>
+                 <string>009</string>
                 </property>
                 <property name="readOnly">
                  <bool>false</bool>
@@ -486,7 +495,7 @@
                  </sizepolicy>
                 </property>
                 <property name="inputMask">
-                 <string>009; </string>
+                 <string>009</string>
                 </property>
                 <property name="readOnly">
                  <bool>false</bool>
@@ -536,7 +545,7 @@
                  </sizepolicy>
                 </property>
                 <property name="inputMask">
-                 <string>009; </string>
+                 <string>009</string>
                 </property>
                 <property name="readOnly">
                  <bool>false</bool>
@@ -586,7 +595,7 @@
                  </sizepolicy>
                 </property>
                 <property name="inputMask">
-                 <string>009; </string>
+                 <string>009</string>
                 </property>
                 <property name="readOnly">
                  <bool>false</bool>
@@ -636,7 +645,7 @@
                  </sizepolicy>
                 </property>
                 <property name="inputMask">
-                 <string>009; </string>
+                 <string>009</string>
                 </property>
                 <property name="readOnly">
                  <bool>false</bool>
@@ -683,7 +692,7 @@
                  </sizepolicy>
                 </property>
                 <property name="inputMask">
-                 <string>009; </string>
+                 <string>009</string>
                 </property>
                 <property name="readOnly">
                  <bool>false</bool>
@@ -730,7 +739,7 @@
                  </sizepolicy>
                 </property>
                 <property name="inputMask">
-                 <string>009; </string>
+                 <string>009</string>
                 </property>
                 <property name="readOnly">
                  <bool>false</bool>
@@ -777,7 +786,7 @@
                  </sizepolicy>
                 </property>
                 <property name="inputMask">
-                 <string>009; </string>
+                 <string>009</string>
                 </property>
                 <property name="readOnly">
                  <bool>false</bool>
@@ -824,7 +833,7 @@
                  </sizepolicy>
                 </property>
                 <property name="inputMask">
-                 <string>009; </string>
+                 <string>009</string>
                 </property>
                 <property name="readOnly">
                  <bool>false</bool>
@@ -871,7 +880,7 @@
                  </sizepolicy>
                 </property>
                 <property name="inputMask">
-                 <string>009; </string>
+                 <string>009</string>
                 </property>
                 <property name="readOnly">
                  <bool>false</bool>
@@ -918,7 +927,7 @@
                  </sizepolicy>
                 </property>
                 <property name="inputMask">
-                 <string>009; </string>
+                 <string>009</string>
                 </property>
                 <property name="readOnly">
                  <bool>false</bool>
@@ -965,7 +974,7 @@
                  </sizepolicy>
                 </property>
                 <property name="inputMask">
-                 <string>009; </string>
+                 <string>009</string>
                 </property>
                 <property name="readOnly">
                  <bool>false</bool>
@@ -1012,7 +1021,7 @@
                  </sizepolicy>
                 </property>
                 <property name="inputMask">
-                 <string>009; </string>
+                 <string>009</string>
                 </property>
                 <property name="readOnly">
                  <bool>false</bool>
@@ -1059,7 +1068,7 @@
                  </sizepolicy>
                 </property>
                 <property name="inputMask">
-                 <string>009; </string>
+                 <string>009</string>
                 </property>
                 <property name="readOnly">
                  <bool>false</bool>
@@ -1106,7 +1115,7 @@
                  </sizepolicy>
                 </property>
                 <property name="inputMask">
-                 <string>009; </string>
+                 <string>009</string>
                 </property>
                 <property name="readOnly">
                  <bool>false</bool>
@@ -1153,7 +1162,7 @@
                  </sizepolicy>
                 </property>
                 <property name="inputMask">
-                 <string>009; </string>
+                 <string>009</string>
                 </property>
                 <property name="readOnly">
                  <bool>false</bool>
@@ -1200,7 +1209,7 @@
                  </sizepolicy>
                 </property>
                 <property name="inputMask">
-                 <string>009; </string>
+                 <string>009</string>
                 </property>
                 <property name="readOnly">
                  <bool>false</bool>
@@ -1247,7 +1256,7 @@
                  </sizepolicy>
                 </property>
                 <property name="inputMask">
-                 <string>009; </string>
+                 <string>009</string>
                 </property>
                 <property name="readOnly">
                  <bool>false</bool>
@@ -1313,14 +1322,14 @@
          <property name="buttonSymbols">
           <enum>QAbstractSpinBox::NoButtons</enum>
          </property>
+         <property name="showGroupSeparator" stdset="0">
+          <bool>false</bool>
+         </property>
          <property name="maximum">
           <number>65535</number>
          </property>
          <property name="value">
           <number>1608</number>
-         </property>
-         <property name="showGroupSeparator" stdset="0">
-          <bool>false</bool>
          </property>
         </widget>
        </item>
@@ -1405,6 +1414,11 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;libuiohook licensed under the GPL v3.0 by&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Alex Barker &amp;lt;alex@1stleg.com&amp;gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;SDL_net 2.0 (ported as netlib) licensed under the zlib license by&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Sam Lantinga &amp;lt;slouken@libsdl.org&amp;gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Roy Wood &amp;lt;roy@centricsystems.ca&amp;gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Masahiro Minami &amp;lt;elsur@aaa.letter.co.jp&amp;gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Translators:&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;- JellyBrick (Korean)&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;- hyrious (Chinese)&lt;/p&gt;
@@ -1421,7 +1435,16 @@ p, li { white-space: pre-wrap; }
           <enum>QFrame::Plain</enum>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_23">
-          <property name="margin">
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
            <number>0</number>
           </property>
           <item>

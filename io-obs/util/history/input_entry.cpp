@@ -124,21 +124,14 @@ void input_entry::render_icons(sources::history_settings* settings, history_icon
     auto temp = m_position;
     auto i = 0;
 
-
     for (const auto& vc : m_inputs)
     {
         if (settings->dir == DIR_DOWN || settings->dir == DIR_UP)
             temp.x = m_position.x + (i++) * (settings->h_space + icons->get_w());
         else
             temp.y = m_position.y + (i++) * (settings->v_space + icons->get_h());
-        icons->draw(vc, &temp);
+        icons->draw(vc, &temp, this);
     }
-
-    gs_matrix_push();
-    for (auto &effect : m_effects)
-        effect->render();
-    gs_matrix_pop();
-
 }
 
 void input_entry::clear()
@@ -167,7 +160,7 @@ void input_entry::test()
     std::stringstream buf;
     for (auto &input : m_inputs)
         buf << "0x" << std::hex << input << ", ";
-    blog(LOG_INFO, "%s", buf.str().c_str());
+    blog(LOG_DEBUG, "%s", buf.str().c_str());
 }
 
 input_entry::input_entry(input_entry &e)
@@ -183,4 +176,19 @@ void input_entry::clear_effects()
 uint16_t input_entry::get_input_count() const
 {
     return m_inputs.size();
+}
+
+void input_entry::render_effects()
+{
+    unsigned int rendered = 0;
+    for (int priority = EFFECT_MAX_PRIORITY; priority >= 0; priority--) {
+        for (auto &effect : m_effects) {
+            if (effect->get_priority() >= priority) {
+                effect->render();
+                rendered++;
+            }
+        }
+        if (rendered >= m_effects.size())
+            break;
+    }
 }

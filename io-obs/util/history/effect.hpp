@@ -6,7 +6,7 @@
  */
 
 #pragma once
-
+#define EFFECT_MAX_PRIORITY 10
 class effect
 {
     float m_duration;
@@ -23,4 +23,6 @@ public:
     virtual bool done();
 
     float get_progress() const;
+
+    virtual unsigned char get_priority();
 };

@@ -26,4 +26,6 @@ public:
     void tick(float seconds) override;
 
     void render() override;
+
+    uint8_t get_priority() override;
 };

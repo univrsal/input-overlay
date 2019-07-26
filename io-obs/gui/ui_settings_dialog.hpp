@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'io_settings_dialog.ui'
 **
-** Created by: Qt User Interface Compiler version 5.12.2
+** Created by: Qt User Interface Compiler version 5.13.0
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -187,7 +187,7 @@ public:
         tabs->setDocumentMode(false);
         tabs->setTabsClosable(false);
         tabs->setMovable(false);
-        tabs->setProperty("tabBarAutoHide", QVariant(false));
+        tabs->setTabBarAutoHide(false);
         tab_local = new QWidget();
         tab_local->setObjectName(QString::fromUtf8("tab_local"));
         verticalLayout_2 = new QVBoxLayout(tab_local);
@@ -307,11 +307,11 @@ public:
         scrollArea->setWidgetResizable(true);
         scrollAreaWidgetContents = new QWidget();
         scrollAreaWidgetContents->setObjectName(QString::fromUtf8("scrollAreaWidgetContents"));
-        scrollAreaWidgetContents->setGeometry(QRect(0, 0, 427, 735));
+        scrollAreaWidgetContents->setGeometry(QRect(0, 0, 426, 630));
         verticalLayout_5 = new QVBoxLayout(scrollAreaWidgetContents);
         verticalLayout_5->setSpacing(0);
-        verticalLayout_5->setContentsMargins(0, 0, 0, 0);
         verticalLayout_5->setObjectName(QString::fromUtf8("verticalLayout_5"));
+        verticalLayout_5->setContentsMargins(0, 0, 0, 0);
         a = new QFrame(scrollAreaWidgetContents);
         a->setObjectName(QString::fromUtf8("a"));
         a->setFrameShape(QFrame::NoFrame);
@@ -843,9 +843,9 @@ public:
         box_port = new QSpinBox(tab_remote);
         box_port->setObjectName(QString::fromUtf8("box_port"));
         box_port->setButtonSymbols(QAbstractSpinBox::NoButtons);
+        box_port->setProperty("showGroupSeparator", QVariant(false));
         box_port->setMaximum(65535);
         box_port->setValue(1608);
-        box_port->setProperty("showGroupSeparator", QVariant(false));
 
         verticalLayout_4->addWidget(box_port);
 
@@ -903,8 +903,8 @@ public:
         frame_about->setFrameShape(QFrame::NoFrame);
         frame_about->setFrameShadow(QFrame::Plain);
         horizontalLayout_23 = new QHBoxLayout(frame_about);
-        horizontalLayout_23->setContentsMargins(0, 0, 0, 0);
         horizontalLayout_23->setObjectName(QString::fromUtf8("horizontalLayout_23"));
+        horizontalLayout_23->setContentsMargins(0, 0, 0, 0);
         btn_github = new QPushButton(frame_about);
         btn_github->setObjectName(QString::fromUtf8("btn_github"));
 
@@ -949,84 +949,84 @@ public:
 
     void retranslateUi(QDialog *io_config_dialog)
     {
-        io_config_dialog->setWindowTitle(QApplication::translate("io_config_dialog", "Dialog.Title", nullptr));
-        lbl_local_features->setText(QApplication::translate("io_config_dialog", "Dialog.LocalFeatures.Info", nullptr));
-        cb_iohook->setText(QApplication::translate("io_config_dialog", "Dialog.Uiohook.Enable", nullptr));
-        cb_gamepad_hook->setText(QApplication::translate("io_config_dialog", "Dialog.GamepadHook.Enable", nullptr));
-        cb_enable_overlay->setText(QApplication::translate("io_config_dialog", "Dialog.InputOverlay.Enable", nullptr));
-        cb_enable_history->setText(QApplication::translate("io_config_dialog", "Dialog.InputHistory.Enable", nullptr));
-        cb_enable_control->setText(QApplication::translate("io_config_dialog", "Dialog.InputControl.Enable", nullptr));
-        cb_regex->setText(QApplication::translate("io_config_dialog", "Dialog.InputControl.Regex.Enable", nullptr));
-        lbl_mode->setText(QApplication::translate("io_config_dialog", "Dialog.InputControl.Mode", nullptr));
-        cb_list_mode->setItemText(0, QApplication::translate("io_config_dialog", "Dialog.InputControl.Mode.Whitelist", nullptr));
-        cb_list_mode->setItemText(1, QApplication::translate("io_config_dialog", "Dialog.InputControl.Mode.Blacklist", nullptr));
+        io_config_dialog->setWindowTitle(QCoreApplication::translate("io_config_dialog", "Dialog.Title", nullptr));
+        lbl_local_features->setText(QCoreApplication::translate("io_config_dialog", "Dialog.LocalFeatures.Info", nullptr));
+        cb_iohook->setText(QCoreApplication::translate("io_config_dialog", "Dialog.Uiohook.Enable", nullptr));
+        cb_gamepad_hook->setText(QCoreApplication::translate("io_config_dialog", "Dialog.GamepadHook.Enable", nullptr));
+        cb_enable_overlay->setText(QCoreApplication::translate("io_config_dialog", "Dialog.InputOverlay.Enable", nullptr));
+        cb_enable_history->setText(QCoreApplication::translate("io_config_dialog", "Dialog.InputHistory.Enable", nullptr));
+        cb_enable_control->setText(QCoreApplication::translate("io_config_dialog", "Dialog.InputControl.Enable", nullptr));
+        cb_regex->setText(QCoreApplication::translate("io_config_dialog", "Dialog.InputControl.Regex.Enable", nullptr));
+        lbl_mode->setText(QCoreApplication::translate("io_config_dialog", "Dialog.InputControl.Mode", nullptr));
+        cb_list_mode->setItemText(0, QCoreApplication::translate("io_config_dialog", "Dialog.InputControl.Mode.Whitelist", nullptr));
+        cb_list_mode->setItemText(1, QCoreApplication::translate("io_config_dialog", "Dialog.InputControl.Mode.Blacklist", nullptr));
 
-        cb_list_mode->setProperty("currentText", QVariant(QApplication::translate("io_config_dialog", "Dialog.InputControl.Mode.Whitelist", nullptr)));
-        lbl_new_entry->setText(QApplication::translate("io_config_dialog", "Dialog.InputControl.NewEntry", nullptr));
-        btn_refresh_cb->setText(QApplication::translate("io_config_dialog", "Source.InputSource.Reload", nullptr));
-        btn_add->setText(QApplication::translate("io_config_dialog", "Dialog.InputControl.Add", nullptr));
-        lbl_list->setText(QApplication::translate("io_config_dialog", "Dialog.InputControl.List", nullptr));
-        btn_remove->setText(QApplication::translate("io_config_dialog", "Dialog.InputControl.Remove", nullptr));
-        tabs->setTabText(tabs->indexOf(tab_local), QApplication::translate("io_config_dialog", "Dialog.LocalFeatures", nullptr));
-        lbl_bindings->setText(QApplication::translate("io_config_dialog", "Dialog.Gamepad.Info", nullptr));
-        lbl_a->setText(QApplication::translate("io_config_dialog", "Dialog.Gamepad.Binding.A", nullptr));
-        txt_a->setInputMask(QApplication::translate("io_config_dialog", "009; ", nullptr));
-        lbl_b->setText(QApplication::translate("io_config_dialog", "Dialog.Gamepad.Binding.B", nullptr));
-        txt_b->setInputMask(QApplication::translate("io_config_dialog", "009; ", nullptr));
-        lbl_x->setText(QApplication::translate("io_config_dialog", "Dialog.Gamepad.Binding.X", nullptr));
-        txt_x->setInputMask(QApplication::translate("io_config_dialog", "009; ", nullptr));
-        lbl_y->setText(QApplication::translate("io_config_dialog", "Dialog.Gamepad.Binding.Y", nullptr));
-        txt_y->setInputMask(QApplication::translate("io_config_dialog", "009; ", nullptr));
-        lbl_lb->setText(QApplication::translate("io_config_dialog", "Dialog.Gamepad.Binding.LB", nullptr));
-        txt_lb->setInputMask(QApplication::translate("io_config_dialog", "009; ", nullptr));
-        lbl_rb->setText(QApplication::translate("io_config_dialog", "Dialog.Gamepad.Binding.RB", nullptr));
-        txt_rb->setInputMask(QApplication::translate("io_config_dialog", "009; ", nullptr));
-        lbl_back->setText(QApplication::translate("io_config_dialog", "Dialog.Gamepad.Binding.Back", nullptr));
-        txt_back->setInputMask(QApplication::translate("io_config_dialog", "009; ", nullptr));
-        lbl_start->setText(QApplication::translate("io_config_dialog", "Dialog.Gamepad.Binding.Start", nullptr));
-        txt_start->setInputMask(QApplication::translate("io_config_dialog", "009; ", nullptr));
-        lbl_guide->setText(QApplication::translate("io_config_dialog", "Dialog.Gamepad.Binding.Guide", nullptr));
-        txt_guide->setInputMask(QApplication::translate("io_config_dialog", "009; ", nullptr));
-        lbl_analog_left->setText(QApplication::translate("io_config_dialog", "Dialog.Gamepad.Binding.Analog.Left", nullptr));
-        txt_analog_left->setInputMask(QApplication::translate("io_config_dialog", "009; ", nullptr));
-        lbl_analog_right->setText(QApplication::translate("io_config_dialog", "Dialog.Gamepad.Binding.Analog.Right", nullptr));
-        txt_analog_right->setInputMask(QApplication::translate("io_config_dialog", "009; ", nullptr));
-        lbl_dpad_left->setText(QApplication::translate("io_config_dialog", "Dialog.Gamepad.Binding.Dpad.Left", nullptr));
-        txt_dpad_left->setInputMask(QApplication::translate("io_config_dialog", "009; ", nullptr));
-        lbl_dpad_right->setText(QApplication::translate("io_config_dialog", "Dialog.Gamepad.Binding.Dpad.Right", nullptr));
-        txt_dpad_right->setInputMask(QApplication::translate("io_config_dialog", "009; ", nullptr));
-        lbl_dpad_down->setText(QApplication::translate("io_config_dialog", "Dialog.Gamepad.Binding.Dpad.Down", nullptr));
-        txt_dpad_down->setInputMask(QApplication::translate("io_config_dialog", "009; ", nullptr));
-        lbl_dpad_up->setText(QApplication::translate("io_config_dialog", "Dialog.Gamepad.Binding.Dpad.Up", nullptr));
-        txt_dpad_up->setInputMask(QApplication::translate("io_config_dialog", "009; ", nullptr));
-        lbl_lx->setText(QApplication::translate("io_config_dialog", "Dialog.Gamepad.Binding.Analog.LX", nullptr));
-        txt_lx->setInputMask(QApplication::translate("io_config_dialog", "009; ", nullptr));
-        lbl_ly->setText(QApplication::translate("io_config_dialog", "Dialog.Gamepad.Binding.Analog.LY", nullptr));
-        txt_ly->setInputMask(QApplication::translate("io_config_dialog", "009; ", nullptr));
-        lbl_lt->setText(QApplication::translate("io_config_dialog", "Dialog.Gamepad.Binding.LT", nullptr));
-        txt_lt->setInputMask(QApplication::translate("io_config_dialog", "009; ", nullptr));
-        lbl_rx->setText(QApplication::translate("io_config_dialog", "Dialog.Gamepad.Binding.Analog.RX", nullptr));
-        txt_rx->setInputMask(QApplication::translate("io_config_dialog", "009; ", nullptr));
-        lbl_ry->setText(QApplication::translate("io_config_dialog", "Dialog.Gamepad.Binding.Analog.RY", nullptr));
-        txt_ry->setInputMask(QApplication::translate("io_config_dialog", "009; ", nullptr));
-        lbl_rt->setText(QApplication::translate("io_config_dialog", "Dialog.Gamepad.Binding.RT", nullptr));
-        txt_rt->setInputMask(QApplication::translate("io_config_dialog", "009; ", nullptr));
-        tabs->setTabText(tabs->indexOf(tab_gamepad), QApplication::translate("io_config_dialog", "Dialog.Gamepad", nullptr));
-        cb_enable_remote->setText(QApplication::translate("io_config_dialog", "Dialog.Remote.Enable", nullptr));
-        cb_log->setText(QApplication::translate("io_config_dialog", "Dialog.Remote.Logging", nullptr));
-        lbl_status->setText(QApplication::translate("io_config_dialog", "Dialog.Remote.Status", nullptr));
-        lbl_port->setText(QApplication::translate("io_config_dialog", "Dialog.Remote.Port", nullptr));
-#ifndef QT_NO_TOOLTIP
-        lbl_refresh_rate->setToolTip(QApplication::translate("io_config_dialog", "<html><head/><body><p>Dialog.InputOverlay.RemoteRefreshRate.Tooltip</p></body></html>", nullptr));
-#endif // QT_NO_TOOLTIP
-        lbl_refresh_rate->setText(QApplication::translate("io_config_dialog", "Dialog.Remote.RefreshRate", nullptr));
-#ifndef QT_NO_TOOLTIP
-        box_refresh_rate->setToolTip(QApplication::translate("io_config_dialog", "<html><head/><body><p>Dialog.InputOverlay.RemoteRefreshRate.Tooltip</p></body></html>", nullptr));
-#endif // QT_NO_TOOLTIP
-        lbl_connections->setText(QApplication::translate("io_config_dialog", "Dialog.Remote.Connections", nullptr));
-        btn_refresh->setText(QApplication::translate("io_config_dialog", "Source.InputSource.Reload", nullptr));
-        tabs->setTabText(tabs->indexOf(tab_remote), QApplication::translate("io_config_dialog", "Dialog.RemoteConnection", nullptr));
-        txt_about->setHtml(QApplication::translate("io_config_dialog", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+        cb_list_mode->setCurrentText(QCoreApplication::translate("io_config_dialog", "Dialog.InputControl.Mode.Whitelist", nullptr));
+        lbl_new_entry->setText(QCoreApplication::translate("io_config_dialog", "Dialog.InputControl.NewEntry", nullptr));
+        btn_refresh_cb->setText(QCoreApplication::translate("io_config_dialog", "Source.InputSource.Reload", nullptr));
+        btn_add->setText(QCoreApplication::translate("io_config_dialog", "Dialog.InputControl.Add", nullptr));
+        lbl_list->setText(QCoreApplication::translate("io_config_dialog", "Dialog.InputControl.List", nullptr));
+        btn_remove->setText(QCoreApplication::translate("io_config_dialog", "Dialog.InputControl.Remove", nullptr));
+        tabs->setTabText(tabs->indexOf(tab_local), QCoreApplication::translate("io_config_dialog", "Dialog.LocalFeatures", nullptr));
+        lbl_bindings->setText(QCoreApplication::translate("io_config_dialog", "Dialog.Gamepad.Info", nullptr));
+        lbl_a->setText(QCoreApplication::translate("io_config_dialog", "Dialog.Gamepad.Binding.A", nullptr));
+        txt_a->setInputMask(QCoreApplication::translate("io_config_dialog", "009", nullptr));
+        lbl_b->setText(QCoreApplication::translate("io_config_dialog", "Dialog.Gamepad.Binding.B", nullptr));
+        txt_b->setInputMask(QCoreApplication::translate("io_config_dialog", "009", nullptr));
+        lbl_x->setText(QCoreApplication::translate("io_config_dialog", "Dialog.Gamepad.Binding.X", nullptr));
+        txt_x->setInputMask(QCoreApplication::translate("io_config_dialog", "009", nullptr));
+        lbl_y->setText(QCoreApplication::translate("io_config_dialog", "Dialog.Gamepad.Binding.Y", nullptr));
+        txt_y->setInputMask(QCoreApplication::translate("io_config_dialog", "009", nullptr));
+        lbl_lb->setText(QCoreApplication::translate("io_config_dialog", "Dialog.Gamepad.Binding.LB", nullptr));
+        txt_lb->setInputMask(QCoreApplication::translate("io_config_dialog", "009", nullptr));
+        lbl_rb->setText(QCoreApplication::translate("io_config_dialog", "Dialog.Gamepad.Binding.RB", nullptr));
+        txt_rb->setInputMask(QCoreApplication::translate("io_config_dialog", "009", nullptr));
+        lbl_back->setText(QCoreApplication::translate("io_config_dialog", "Dialog.Gamepad.Binding.Back", nullptr));
+        txt_back->setInputMask(QCoreApplication::translate("io_config_dialog", "009", nullptr));
+        lbl_start->setText(QCoreApplication::translate("io_config_dialog", "Dialog.Gamepad.Binding.Start", nullptr));
+        txt_start->setInputMask(QCoreApplication::translate("io_config_dialog", "009", nullptr));
+        lbl_guide->setText(QCoreApplication::translate("io_config_dialog", "Dialog.Gamepad.Binding.Guide", nullptr));
+        txt_guide->setInputMask(QCoreApplication::translate("io_config_dialog", "009", nullptr));
+        lbl_analog_left->setText(QCoreApplication::translate("io_config_dialog", "Dialog.Gamepad.Binding.Analog.Left", nullptr));
+        txt_analog_left->setInputMask(QCoreApplication::translate("io_config_dialog", "009", nullptr));
+        lbl_analog_right->setText(QCoreApplication::translate("io_config_dialog", "Dialog.Gamepad.Binding.Analog.Right", nullptr));
+        txt_analog_right->setInputMask(QCoreApplication::translate("io_config_dialog", "009", nullptr));
+        lbl_dpad_left->setText(QCoreApplication::translate("io_config_dialog", "Dialog.Gamepad.Binding.Dpad.Left", nullptr));
+        txt_dpad_left->setInputMask(QCoreApplication::translate("io_config_dialog", "009", nullptr));
+        lbl_dpad_right->setText(QCoreApplication::translate("io_config_dialog", "Dialog.Gamepad.Binding.Dpad.Right", nullptr));
+        txt_dpad_right->setInputMask(QCoreApplication::translate("io_config_dialog", "009", nullptr));
+        lbl_dpad_down->setText(QCoreApplication::translate("io_config_dialog", "Dialog.Gamepad.Binding.Dpad.Down", nullptr));
+        txt_dpad_down->setInputMask(QCoreApplication::translate("io_config_dialog", "009", nullptr));
+        lbl_dpad_up->setText(QCoreApplication::translate("io_config_dialog", "Dialog.Gamepad.Binding.Dpad.Up", nullptr));
+        txt_dpad_up->setInputMask(QCoreApplication::translate("io_config_dialog", "009", nullptr));
+        lbl_lx->setText(QCoreApplication::translate("io_config_dialog", "Dialog.Gamepad.Binding.Analog.LX", nullptr));
+        txt_lx->setInputMask(QCoreApplication::translate("io_config_dialog", "009", nullptr));
+        lbl_ly->setText(QCoreApplication::translate("io_config_dialog", "Dialog.Gamepad.Binding.Analog.LY", nullptr));
+        txt_ly->setInputMask(QCoreApplication::translate("io_config_dialog", "009", nullptr));
+        lbl_lt->setText(QCoreApplication::translate("io_config_dialog", "Dialog.Gamepad.Binding.LT", nullptr));
+        txt_lt->setInputMask(QCoreApplication::translate("io_config_dialog", "009", nullptr));
+        lbl_rx->setText(QCoreApplication::translate("io_config_dialog", "Dialog.Gamepad.Binding.Analog.RX", nullptr));
+        txt_rx->setInputMask(QCoreApplication::translate("io_config_dialog", "009", nullptr));
+        lbl_ry->setText(QCoreApplication::translate("io_config_dialog", "Dialog.Gamepad.Binding.Analog.RY", nullptr));
+        txt_ry->setInputMask(QCoreApplication::translate("io_config_dialog", "009", nullptr));
+        lbl_rt->setText(QCoreApplication::translate("io_config_dialog", "Dialog.Gamepad.Binding.RT", nullptr));
+        txt_rt->setInputMask(QCoreApplication::translate("io_config_dialog", "009", nullptr));
+        tabs->setTabText(tabs->indexOf(tab_gamepad), QCoreApplication::translate("io_config_dialog", "Dialog.Gamepad", nullptr));
+        cb_enable_remote->setText(QCoreApplication::translate("io_config_dialog", "Dialog.Remote.Enable", nullptr));
+        cb_log->setText(QCoreApplication::translate("io_config_dialog", "Dialog.Remote.Logging", nullptr));
+        lbl_status->setText(QCoreApplication::translate("io_config_dialog", "Dialog.Remote.Status", nullptr));
+        lbl_port->setText(QCoreApplication::translate("io_config_dialog", "Dialog.Remote.Port", nullptr));
+#if QT_CONFIG(tooltip)
+        lbl_refresh_rate->setToolTip(QCoreApplication::translate("io_config_dialog", "<html><head/><body><p>Dialog.InputOverlay.RemoteRefreshRate.Tooltip</p></body></html>", nullptr));
+#endif // QT_CONFIG(tooltip)
+        lbl_refresh_rate->setText(QCoreApplication::translate("io_config_dialog", "Dialog.Remote.RefreshRate", nullptr));
+#if QT_CONFIG(tooltip)
+        box_refresh_rate->setToolTip(QCoreApplication::translate("io_config_dialog", "<html><head/><body><p>Dialog.InputOverlay.RemoteRefreshRate.Tooltip</p></body></html>", nullptr));
+#endif // QT_CONFIG(tooltip)
+        lbl_connections->setText(QCoreApplication::translate("io_config_dialog", "Dialog.Remote.Connections", nullptr));
+        btn_refresh->setText(QCoreApplication::translate("io_config_dialog", "Source.InputSource.Reload", nullptr));
+        tabs->setTabText(tabs->indexOf(tab_remote), QCoreApplication::translate("io_config_dialog", "Dialog.RemoteConnection", nullptr));
+        txt_about->setHtml(QCoreApplication::translate("io_config_dialog", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:'Noto Sans'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
@@ -1039,14 +1039,20 @@ public:
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">libuiohook licensed under the GPL v3.0 by</p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Alex Barker &lt;alex@1stleg.com&gt;</p>\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">SDL_net 2.0 (ported as netlib) licensed under the zlib license by</p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Sam Lantin"
+                        "ga &lt;slouken@libsdl.org&gt;</p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Roy Wood &lt;roy@centricsystems.ca&gt;</p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Masahiro Minami &lt;elsur@aaa.letter.co.jp&gt;</p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-weight:600;\">Translators:</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">- JellyBrick (Korean)<"
-                        "/p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">- JellyBrick (Korean)</p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">- hyrious (Chinese)</p>\n"
-"<p style=\" margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">- rashid (Russian)</p></body></html>", nullptr));
-        btn_github->setText(QApplication::translate("io_config_dialog", "Dialog.About.Button.Github", nullptr));
-        btn_forums->setText(QApplication::translate("io_config_dialog", "Dialog.About.Button.Forums", nullptr));
-        tabs->setTabText(tabs->indexOf(tab_about), QApplication::translate("io_config_dialog", "Dialog.About", nullptr));
+""
+                        "<p style=\" margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">- rashid (Russian)</p></body></html>", nullptr));
+        btn_github->setText(QCoreApplication::translate("io_config_dialog", "Dialog.About.Button.Github", nullptr));
+        btn_forums->setText(QCoreApplication::translate("io_config_dialog", "Dialog.About.Button.Forums", nullptr));
+        tabs->setTabText(tabs->indexOf(tab_about), QCoreApplication::translate("io_config_dialog", "Dialog.About", nullptr));
     } // retranslateUi
 
 };
