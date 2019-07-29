@@ -29,7 +29,7 @@ void element_analog_stick::draw(gs_effect_t* effect, gs_image_file_t* image, ele
             auto pos = m_pos;
             gs_rect* temp = nullptr;
 
-            if (m_side == SIDE_LEFT)
+            if (m_side == element_side::LEFT)
                 temp = stick->left_pressed() ? &m_pressed : &m_mapping;
             else
                 temp = stick->right_pressed() ? &m_pressed : &m_mapping;
@@ -46,7 +46,7 @@ element_analog_stick::calc_position(vec2* v, element_data_analog_stick* d, sourc
 {
     UNUSED_PARAMETER(settings);
     switch (m_side) {
-        case SIDE_LEFT:
+        case element_side::LEFT:
 #if _WIN32
             if (!DEAD_ZONE(d->get_left_stick()->x, settings->left_dz))
 #endif
@@ -56,7 +56,7 @@ element_analog_stick::calc_position(vec2* v, element_data_analog_stick* d, sourc
 #endif
             v->y += d->get_left_stick()->y * m_radius;
             break;
-        case SIDE_RIGHT:
+        case element_side::RIGHT:
 #if _WIN32
             if (!DEAD_ZONE(d->get_right_stick()->x, settings->right_dz))
 #endif

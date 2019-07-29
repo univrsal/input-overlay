@@ -13,37 +13,37 @@ const char* key_to_text(const int key_code)
 {
     switch (key_code) {
         case VC_KP_0:
-            return "NUMPAD 0";
+            return "Numpad 0";
         case VC_KP_1:
-            return "NUMPAD 1";
+            return "Numpad 1";
         case VC_KP_2:
-            return "NUMPAD 2";
+            return "Numpad 2";
         case VC_KP_3:
-            return "NUMPAD 3";
+            return "Numpad 3";
         case VC_KP_4:
-            return "NUMPAD 4";
+            return "Numpad 4";
         case VC_KP_5:
-            return "NUMPAD 5";
+            return "Numpad 5";
         case VC_KP_6:
-            return "NUMPAD 6";
+            return "Numpad 6";
         case VC_KP_7:
-            return "NUMPAD 7";
+            return "Numpad 7";
         case VC_KP_8:
-            return "NUMPAD 8";
+            return "Numpad 8";
         case VC_KP_9:
-            return "NUMPAD 9";
+            return "Numpad 9";
         case VC_NUM_LOCK:
-            return "NUM LOCK";
+            return "Num Lock";
         case VC_KP_MULTIPLY:
-            return "MULTIPLY";
+            return "Multiply";
         case VC_KP_ADD:
-            return "ADD";
+            return "Add";
         case VC_KP_SUBTRACT:
-            return "SUBTRACT";
+            return "Subtract";
         case VC_KP_COMMA:
-            return "DECIMAL";
+            return "Decimal";
         case VC_KP_DIVIDE:
-            return "DIVIDE";
+            return "Divide";
         case VC_F1:
             return "F1";
         case VC_F2:
@@ -165,95 +165,95 @@ const char* key_to_text(const int key_code)
         case VC_9:
             return "9";
         case VC_SHIFT_L:
-            return "L-SHIFT";
+            return "L-Shift";
         case VC_SHIFT_R:
-            return "R-SHIFT";
+            return "R-Shift";
         case VC_CONTROL_L:
-            return "L-CONTROL";
+            return "L-Control";
         case VC_CONTROL_R:
-            return "R-CONTROL";
+            return "R-Control";
         case VC_ALT_L:
-            return "L-ALT";
+            return "L-Alt";
         case VC_ALT_R:
-            return "R-ALT";
+            return "R-Alt";
         case VC_META_L:
-            return "L-WIN";
+            return "L-Win";
         case VC_META_R:
-            return "R-WIN";
+            return "R-Win";
         case VC_ENTER:
         case VC_KP_ENTER:
-            return "ENTER";
+            return "Enter";
         case VC_SPACE:
-            return "SPACE";
+            return "Space";
         case VC_TAB:
-            return "TAB";
+            return "Tab";
         case VC_BACKSPACE:
-            return "BACKSPACE";
+            return "Backspace";
         case VC_ESCAPE:
-            return "ESC";
+            return "Esc";
         case VC_INSERT:
-            return "INSERT";
+            return "Insert";
         case VC_HOME:
-            return "HOME";
+            return "Home";
         case VC_PAGE_UP:
-            return "PAGE UP";
+            return "Page up";
         case VC_PAGE_DOWN:
-            return "PAGE DOWN";
+            return "Page down";
         case VC_END:
-            return "END";
+            return "End";
         case VC_DELETE:
-            return "DELETE";
+            return "Delete";
         case VC_UP:
         case VC_KP_UP:
-            return "UP";
+            return "Up";
         case VC_DOWN:
         case VC_KP_DOWN:
-            return "DOWN";
+            return "Down";
         case VC_LEFT:
         case VC_KP_LEFT:
-            return "LEFT";
+            return "Left";
         case VC_RIGHT:
         case VC_KP_RIGHT:
-            return "RIGHT";
+            return "Right";
         case VC_PRINTSCREEN:
-            return "PRINT";
+            return "Print";
         case VC_SCROLL_LOCK:
-            return "SCROLL LOCK";
+            return "Scroll lock";
         case VC_PAUSE:
-            return "PAUSE";
+            return "Pause";
         case VC_CAPS_LOCK:
-            return "CAPSLOCK";
+            return "Capslock";
         case VC_MOUSE_BUTTON1:
-            return "LEFT MOUSE";
+            return "Left mouse";
         case VC_MOUSE_BUTTON2:
-            return "RIGHT MOUSE";
+            return "Right mouse";
         case VC_MOUSE_BUTTON3:
-            return "MIDDLE MOUSE";
+            return "Middle mouse";
         case VC_MOUSE_BUTTON4:
             /* If you have a better name for them lemme know */
-            return "MOUSE4";
+            return "Mouse4";
         case VC_MOUSE_BUTTON5:
-            return "MOUSE5";
+            return "Mouse5";
         case VC_MOUSE_WHEEL_UP:
-            return "SCROLL UP";
+            return "Scroll up";
         case VC_MOUSE_WHEEL_DOWN:
-            return "SCROLL DOWN";
+            return "Scroll down";
         case VC_PAD_A:
-            return "A";
+            return "Pad A";
         case VC_PAD_B:
-            return "B";
+            return "Pad B";
         case VC_PAD_X:
-            return "X";
+            return "Pad X";
         case VC_PAD_Y:
-            return "Y";
+            return "Pad Y";
         case VC_PAD_LB:
-            return "LB";
+            return "Pad LB";
         case VC_PAD_RB:
-            return "RB";
+            return "Pad RB";
         case VC_PAD_BACK:
-            return "BACK";
+            return "Back";
         case VC_PAD_START:
-            return "START";
+            return "Start";
         case VC_PAD_GUIDE:
             return "X-Box Button";
         case VC_PAD_L_ANALOG:

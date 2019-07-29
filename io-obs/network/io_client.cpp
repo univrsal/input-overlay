@@ -72,7 +72,7 @@ namespace network
                         flag = false;
                         break;
                     }
-                    m_holder.add_data(vc, new element_data_button(STATE_PRESSED));
+                    m_holder.add_data(vc, new element_data_button(button_state::PRESSED));
 
                     switch (vc) {
                         case VC_MOUSE_BUTTON1:
@@ -91,20 +91,20 @@ namespace network
         } else if (msg == MSG_MOUSE_DATA) {
             int16_t x = 0, y = 0;
             int8_t dir = 0;
-            wheel_direction direction = WHEEL_DIR_NONE;
+            wheel_direction direction = wheel_direction::NONE;
             int16_t amount = 0;
             uint8_t pressed = 0;
 
             flag = netlib_read_int16(buffer, &x) && netlib_read_int16(buffer, &y) && netlib_read_int8(buffer, &dir) &&
                    netlib_read_int16(buffer, &amount) && netlib_read_uint8(buffer, &pressed);
             if (flag) {
-                if (dir >= WHEEL_DIR_UP && dir <= WHEEL_DIR_DOWN)
+                if (dir >= (int) wheel_direction::UP && dir <= (int) wheel_direction::DOWN)
                     direction = wheel_direction(dir);
 
                 m_holder.add_data(VC_MOUSE_DATA, new element_data_mouse_stats(x, y));
                 m_holder.add_data(VC_MOUSE_DATA, new element_data_mouse_stats(amount, direction, false));
                 m_holder.add_data(VC_MOUSE_WHEEL,
-                                  new element_data_wheel(direction, pressed ? STATE_PRESSED : STATE_RELEASED));
+                                  new element_data_wheel(direction, pressed ? button_state::PRESSED : button_state::RELEASED));
             }
         } else if (msg == MSG_GAMEPAD_DATA) {
             uint8_t pad_id = 0;/*, trigger_l = 0, trigger_r = 0;
@@ -117,14 +117,14 @@ namespace network
                 /* Add all buttons to the holder*/
                 for (auto &btn : xinput_fix::all_codes) {
                     m_holder.add_gamepad_data(pad_id, xinput_fix::to_vc(btn), new element_data_button(
-                            (pad_buttons & btn) > 0 ? STATE_PRESSED : STATE_RELEASED));
+                            (pad_buttons & btn) > 0 ? button_state::PRESSED : button_state::RELEASED));
                 }
 
                 /* Analog sticks are sent before triggers */
                 auto temp = element_data_analog_stick::from_buffer(buffer);
                 if (temp)
-                    temp->set_state((pad_buttons & xinput_fix::CODE_LEFT_THUMB) > 0 ? STATE_PRESSED : STATE_RELEASED,
-                                    (pad_buttons & xinput_fix::CODE_RIGHT_THUMB) > 0 ? STATE_PRESSED : STATE_RELEASED);
+                    temp->set_state((pad_buttons & xinput_fix::CODE_LEFT_THUMB) > 0 ? button_state::PRESSED : button_state::RELEASED,
+                                    (pad_buttons & xinput_fix::CODE_RIGHT_THUMB) > 0 ? button_state::PRESSED : button_state::RELEASED);
                 m_holder.add_gamepad_data(pad_id, VC_STICK_DATA, temp);
 
 

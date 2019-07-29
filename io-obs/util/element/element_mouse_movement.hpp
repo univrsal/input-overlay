@@ -62,7 +62,7 @@ private:
     int16_t m_last_x{}, m_last_y{};
     uint32_t m_lmbcount_total{}, m_lmbcount_current{}, m_rmbcount_total{}, m_rmbcount_current{}, m_mmbcount_total{}, m_mmbcount_current{};
     int32_t m_wheel_up_total{}, m_wheel_down_total{}, m_wheel_current{};
-    wheel_direction m_dir = WHEEL_DIR_NONE;
+    wheel_direction m_dir = wheel_direction::NONE;
     float m_old_angle{};
 };
 
@@ -77,10 +77,10 @@ public:
     draw(gs_effect_t* effect, gs_image_file_t* image, element_data* data, sources::overlay_settings* settings) override;
 
     data_source get_source() override
-    { return MOUSE_POS; }
+    { return data_source::MOUSE_POS; }
 
 private:
-    mouse_movement_type m_movement_type;
+    mouse_movement m_movement_type;
     vec2 m_offset_pos = {};
     uint8_t m_radius = 0;
 };

@@ -10,6 +10,7 @@
 #include "sources/input_history.hpp"
 #include "element_button.hpp"
 #include "element_analog_stick.hpp"
+#include "element_mouse_wheel.hpp"
 
 element_data_holder::element_data_holder()
 {
@@ -116,24 +117,28 @@ void element_data_holder::populate_vector(std::vector<uint16_t> &vec, sources::h
     for (const auto &data : m_button_data) {
         /* Mouse data is persistent and shouldn't be included
          * Any mouse buttons should only be included if enabled
+         * MOUSE_DATA is only used in mouse movement, so it'll
+         * always be excluded
          */
-        if (data.first == VC_MOUSE_DATA ||
-            ((data.first >> 8) == (VC_MOUSE_MASK >> 8) && !(settings->flags & sources::FLAG_INCLUDE_MOUSE)))
+        if (data.first == VC_MOUSE_DATA)
+            continue;
+        if ((data.first >> 8) == (VC_MOUSE_MASK >> 8) && !(settings->flags & (int) sources::history_flags::INCLUDE_MOUSE))
             continue;
 
-        if (data.second->get_type() == BUTTON) {
-            if (dynamic_cast<element_data_button*>(data.second.get())->get_state() == STATE_RELEASED)
+        if (data.second->get_type() == element_type::BUTTON) {
+            if (dynamic_cast<element_data_button*>(data.second.get())->get_state() == button_state::RELEASED)
+                continue;
+        } else if (data.second->get_type() == element_type::MOUSE_SCROLLWHEEL) {
+            if (dynamic_cast<element_data_wheel*>(data.second.get())->get_dir() == wheel_direction::NONE)
                 continue;
         }
 
         if (is_new_key(vec, data.first)) /* if not add it */
-        {
             vec.emplace_back(data.first);
-        }
     }
 
     /* Same procedure for the gamepad */
-    if (settings->flags & sources::FLAG_INCLUDE_PAD) {
+    if (settings->flags & (int) sources::history_flags::INCLUDE_PAD) {
         for (const auto &data : m_gamepad_data[settings->target_gamepad]) {
             auto add = true;
             auto code = data.first;
@@ -143,12 +148,12 @@ void element_data_holder::populate_vector(std::vector<uint16_t> &vec, sources::h
 
             if (data.second) {
                 switch (data.second->get_type()) {
-                    case BUTTON:
+                    case element_type::BUTTON:
                         button = dynamic_cast<element_data_button*>(data.second.get());
-                        if (button && button->get_state() == STATE_RELEASED)
+                        if (button && button->get_state() == button_state::RELEASED)
                             continue;
                         break;
-                    case ANALOG_STICK:
+                    case element_type::ANALOG_STICK:
                         stick = dynamic_cast<element_data_analog_stick*>(data.second.get());
                         if (stick) {
                             if (stick->left_pressed() && is_new_key(vec, VC_PAD_L_ANALOG))
@@ -159,7 +164,7 @@ void element_data_holder::populate_vector(std::vector<uint16_t> &vec, sources::h
                             add = false;
                         }
                         break;
-                    case TRIGGER:
+                    case element_type::TRIGGER:
                         trigger = dynamic_cast<element_data_trigger*>(data.second.get());
 
                         if (trigger) {

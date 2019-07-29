@@ -235,21 +235,21 @@ namespace hook
         if (os_gettime_ns() - hook::last_wheel >= SCROLL_TIMEOUT) {
             if (input_data) d = input_data->get_by_code(VC_MOUSE_WHEEL);
             if (d) wheel = dynamic_cast<element_data_wheel*>(d);
-            if (wheel) wheel->set_dir(WHEEL_DIR_NONE);
+            if (wheel) wheel->set_dir(wheel_direction::NONE);
         }
 
         switch (event->type) {
             case EVENT_KEY_PRESSED:
             case EVENT_KEY_RELEASED:/* Fallthrough */
                 input_data->add_data(event->data.keyboard.keycode, new element_data_button(
-                        event->type == EVENT_KEY_PRESSED ? STATE_PRESSED : STATE_RELEASED));
+                        event->type == EVENT_KEY_PRESSED ? button_state::PRESSED : button_state::RELEASED));
                 break;
             case EVENT_MOUSE_WHEEL:
                 last_wheel = os_gettime_ns();
                 if (event->data.wheel.rotation >= WHEEL_DOWN)
-                    dir = WHEEL_DIR_DOWN;
+                    dir = wheel_direction::DOWN;
                 else
-                    dir = WHEEL_DIR_UP;
+                    dir = wheel_direction::UP;
 
                 input_data->add_data(VC_MOUSE_WHEEL, new element_data_wheel(dir));
                 input_data->add_data(VC_MOUSE_DATA, new element_data_mouse_stats(event->data.wheel.amount, dir, false));
@@ -259,10 +259,10 @@ namespace hook
                 if (util_mouse_to_vc(event->data.mouse.button) == VC_MOUSE_BUTTON3)
                     /* Special case :/ */
                     input_data->add_data(VC_MOUSE_WHEEL, new element_data_wheel(
-                            event->type == EVENT_MOUSE_PRESSED ? STATE_PRESSED : STATE_RELEASED));
+                            event->type == EVENT_MOUSE_PRESSED ? button_state::PRESSED : button_state::RELEASED));
                 else
                     input_data->add_data(util_mouse_to_vc(event->data.mouse.button), new element_data_button(
-                            event->type == EVENT_MOUSE_PRESSED ? STATE_PRESSED : STATE_RELEASED));
+                            event->type == EVENT_MOUSE_PRESSED ? button_state::PRESSED : button_state::RELEASED));
 
                 switch (event->data.mouse.button) {
                     case MOUSE_BUTTON1:
@@ -357,9 +357,9 @@ namespace hook
             }
 #endif
             /* Wait for the thread to indicate that it has passed the
-			   initialization portion by blocking until either a EVENT_HOOK_ENABLED
-			   event is received or the thread terminates.
-			   NOTE This unlocks the hook_control_mutex while we wait.*/
+               initialization portion by blocking until either a EVENT_HOOK_ENABLED
+               event is received or the thread terminates.
+               NOTE This unlocks the hook_control_mutex while we wait.*/
 
 #ifdef _WIN32
             WaitForSingleObject(hook_control_cond, INFINITE);

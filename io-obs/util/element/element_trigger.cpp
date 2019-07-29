@@ -11,7 +11,7 @@
 #include "../util.hpp"
 #include "util/layout_constants.hpp"
 
-element_trigger::element_trigger() : element_texture(TRIGGER)
+element_trigger::element_trigger() : element_texture(element_type::TRIGGER)
 {
 }
 
@@ -38,10 +38,10 @@ void element_trigger::draw(gs_effect_t* effect, gs_image_file_t* image, element_
         auto progress = 0.f;
         if (trigger) {
             switch (m_side) {
-                case SIDE_LEFT:
+                case element_side::LEFT:
                     progress = trigger->get_left();
                     break;
-                case SIDE_RIGHT:
+                case element_side::RIGHT:
                     progress = trigger->get_right();
                     break;
                 default:;
@@ -68,46 +68,45 @@ void element_trigger::draw(gs_effect_t* effect, gs_image_file_t* image, element_
 
 data_source element_trigger::get_source()
 {
-    return GAMEPAD;
+    return data_source::GAMEPAD;
 }
 
 void element_trigger::calculate_mapping(gs_rect* pressed, vec2* pos, const float progress) const
 {
     switch (m_direction) {
-        case TRIGGER_UP:
+        case trigger_direction::UP:
             pressed->cy = m_mapping.cy * progress;
             pressed->y = m_pressed.y + (m_mapping.cy - pressed->cy);
             pos->y += m_mapping.cy - pressed->cy;
             break;
-        case TRIGGER_DOWN:
+        case trigger_direction::DOWN:
             pressed->cy = m_mapping.cy * progress;
             break;
-        case TRIGGER_LEFT:
+        case trigger_direction::LEFT:
             pressed->cx = m_mapping.cx * progress;
             pressed->x = m_mapping.x + (m_mapping.cx - pressed->cx);
             pos->x += (m_mapping.cx - pressed->cx);
             break;
-        case TRIGGER_RIGHT:
+        case trigger_direction::RIGHT:
             pressed->cx = m_mapping.cx * progress;
             break;
-        default:;
     }
 }
 
-element_data_trigger::element_data_trigger(const trigger_data_type side, const float val) : element_data(TRIGGER)
+element_data_trigger::element_data_trigger(const trigger_data side, const float val) : element_data(element_type::TRIGGER)
 {
-    if (side == T_DATA_LEFT)
+    if (side == trigger_data::LEFT)
         m_left_trigger = val;
     else
         m_right_trigger = val;
     m_data_type = side;
 }
 
-element_data_trigger::element_data_trigger(const float left, const float right) : element_data(TRIGGER)
+element_data_trigger::element_data_trigger(const float left, const float right) : element_data(element_type::TRIGGER)
 {
     m_left_trigger = left;
     m_right_trigger = right;
-    m_data_type = T_DATA_BOTH;
+    m_data_type = trigger_data::BOTH;
 }
 
 float element_data_trigger::get_left() const
@@ -132,19 +131,19 @@ void element_data_trigger::merge(element_data* other)
 
         if (trigger) {
             switch (trigger->m_data_type) {
-                case T_DATA_BOTH:
+                case trigger_data::BOTH:
                     m_left_trigger = trigger->m_left_trigger;
                     m_right_trigger = trigger->m_right_trigger;
                     break;
-                case T_DATA_LEFT:
+                case trigger_data::LEFT:
                     m_left_trigger = trigger->m_left_trigger;
-                    if (m_data_type == T_DATA_RIGHT) /* Left merged with right = now contains both sides */
-                        m_data_type = T_DATA_BOTH;
+                    if (m_data_type == trigger_data::RIGHT) /* Left merged with right = now contains both sides */
+                        m_data_type = trigger_data::BOTH;
                     break;
-                case T_DATA_RIGHT:
+                case trigger_data::RIGHT:
                     m_right_trigger = trigger->m_right_trigger;
-                    if (m_data_type == T_DATA_LEFT) /* Left merged with right = now contains both sides */
-                        m_data_type = T_DATA_BOTH;
+                    if (m_data_type == trigger_data::LEFT) /* Left merged with right = now contains both sides */
+                        m_data_type = trigger_data::BOTH;
                     break;
                 default:;
             }

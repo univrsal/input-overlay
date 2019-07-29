@@ -16,7 +16,7 @@ typedef struct gs_image_file gs_image_file_t;
  * Which data holder to read element
  * data from
  */
-enum data_source
+enum class data_source
 {
     NONE = -1, DEFAULT, GAMEPAD, MOUSE_POS /* TODO: use this?*/
 };

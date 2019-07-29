@@ -75,13 +75,20 @@ namespace sources
 
         const auto flags = temp.get_int(CFG_FLAGS, true);
 
-        obs_property_set_visible(GET_PROPS(S_CONTROLLER_L_DEAD_ZONE), flags & FLAG_LEFT_STICK);
-        obs_property_set_visible(GET_PROPS(S_CONTROLLER_R_DEAD_ZONE), flags & FLAG_RIGHT_STICK);
+        obs_property_set_visible(GET_PROPS(S_CONTROLLER_L_DEAD_ZONE), flags & (int)
+                                 overlay_flags::LEFT_STICK);
+        obs_property_set_visible(GET_PROPS(S_CONTROLLER_R_DEAD_ZONE), flags & (int)
+                                 overlay_flags::RIGHT_STICK);
         obs_property_set_visible(GET_PROPS(S_CONTROLLER_ID),
-                                 flags & FLAG_GAMEPAD || (flags & FLAG_LEFT_STICK || flags & FLAG_RIGHT_STICK));
-        obs_property_set_visible(GET_PROPS(S_MOUSE_SENS), flags & FLAG_MOUSE);
-        obs_property_set_visible(GET_PROPS(S_MONITOR_USE_CENTER), flags & FLAG_MOUSE);
-        obs_property_set_visible(GET_PROPS(S_MOUSE_DEAD_ZONE), flags & FLAG_MOUSE);
+                                 flags & (int) overlay_flags::GAMEPAD ||
+                                 (flags & (int) overlay_flags::LEFT_STICK ||
+                                  flags & (int) overlay_flags::RIGHT_STICK));
+        obs_property_set_visible(GET_PROPS(S_MOUSE_SENS), flags & (int)
+                                 overlay_flags::MOUSE);
+        obs_property_set_visible(GET_PROPS(S_MONITOR_USE_CENTER), flags &
+                                 (int) overlay_flags::MOUSE);
+        obs_property_set_visible(GET_PROPS(S_MOUSE_DEAD_ZONE), flags &
+                                 (int) overlay_flags::MOUSE);
         return true;
     }
 

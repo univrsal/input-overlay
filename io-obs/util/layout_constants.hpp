@@ -61,64 +61,64 @@
 #define TEXT_FORMAT_MOUSE_X_FLAG    1 << 4
 #define TEXT_FORMAT_MOUSE_Y_FLAG    1 << 5
 
-enum overlay_flags
+enum class overlay_flags
 {
-    FLAG_LEFT_STICK = 1 << 0, FLAG_RIGHT_STICK = 1 << 1, FLAG_GAMEPAD = 1 << 2, FLAG_MOUSE = 1 << 3
+    LEFT_STICK = 1 << 0, RIGHT_STICK = 1 << 1, GAMEPAD = 1 << 2, MOUSE = 1 << 3
 };
 
-enum dpad_texture
+enum class dpad_texture
 {
-    DPAD_TEXTURE_CENTER,
-    DPAD_TEXTURE_LEFT,
-    DPAD_TEXTURE_RIGHT,
-    DPAD_TEXTURE_UP,
-    DPAD_TEXTURE_DOWN,
-    DPAD_TEXTURE_TOP_LEFT,
-    DPAD_TEXTURE_TOP_RIGHT,
-    DPAD_TEXTURE_BOTTOM_LEFT,
-    DPAD_TEXTURE_BOTTOM_RIGHT
+    CENTER,
+    LEFT,
+    RIGHT,
+    UP,
+    DOWN,
+    TOP_LEFT,
+    TOP_RIGHT,
+    BOTTOM_LEFT,
+    BOTTOM_RIGHT
 };
 
-enum dpad_direction
+enum class dpad_direction
 {
-    DPAD_CENTER = 1 << 0,
-    DPAD_LEFT = 1 << 1,
-    DPAD_RIGHT = 1 << 2,
-    DPAD_UP = 1 << 3,
-    DPAD_DOWN = 1 << 4,
+    CENTER = 1 << 0,
+    LEFT = 1 << 1,
+    RIGHT = 1 << 2,
+    UP = 1 << 3,
+    DOWN = 1 << 4,
 };
 
-enum mouse_movement_type
+enum class mouse_movement
 {
     DOT, ARROW
 };
 
-enum element_side
+enum class element_side
 {
-    SIDE_INVALID = -1, SIDE_LEFT, SIDE_RIGHT
+    INVALID = -1, LEFT, RIGHT
 };
 
-enum trigger_direction
+enum class trigger_direction
 {
-    TRIGGER_UP, TRIGGER_DOWN, TRIGGER_LEFT, TRIGGER_RIGHT
+    UP, DOWN, LEFT, RIGHT
 };
 
-enum history_direction
+enum class history_direction
 {
-    DIR_DOWN, DIR_UP, DIR_LEFT, DIR_RIGHT
+    DOWN, UP, LEFT, RIGHT
 };
 
-enum button_state
+enum class button_state
 {
-    STATE_RELEASED, STATE_PRESSED,
+    RELEASED, PRESSED,
 };
 
-enum wheel_direction
+enum class wheel_direction
 {
-    WHEEL_DIR_UP = -1, WHEEL_DIR_NONE = 0, WHEEL_DIR_DOWN = 1
+    UP = -1, NONE = 0, DOWN = 1
 };
 
-enum element_type
+enum class element_type
 {
     INVALID = -1, TEXTURE, BUTTON, /* MOUSE_WHEEL was taken :( */
     MOUSE_SCROLLWHEEL, MOUSE_STATS, ANALOG_STICK, TRIGGER, /* Shows game pad number 1 through 4 */

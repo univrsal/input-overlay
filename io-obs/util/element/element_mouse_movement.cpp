@@ -16,17 +16,17 @@ void element_mouse_movement::load(ccl_config* cfg, const std::string &id)
     element_texture::load(cfg, id);
     m_keycode = VC_MOUSE_DATA;
     m_radius = cfg->get_int(id + CFG_MOUSE_RADIUS);
-    m_movement_type = cfg->get_int(id + CFG_MOUSE_TYPE) == 0 ? DOT : ARROW;
+    m_movement_type = cfg->get_int(id + CFG_MOUSE_TYPE) == 0 ? mouse_movement::DOT : mouse_movement::ARROW;
 }
 
 void element_mouse_movement::draw(gs_effect_t* effect, gs_image_file_t* image, element_data* data,
                                   sources::overlay_settings* settings)
 {
-    if (data && data->get_type() == MOUSE_STATS) {
+    if (data && data->get_type() == element_type::MOUSE_STATS) {
         const auto element_data = dynamic_cast<element_data_mouse_stats*>(data);
 
         if (element_data) {
-            if (m_movement_type == ARROW) {
+            if (m_movement_type == mouse_movement::ARROW) {
                 element_texture::draw(effect, image, &m_mapping, &m_pos, element_data->get_mouse_angle(settings));
             } else {
                 element_data->get_mouse_offset(settings, m_pos, m_offset_pos, m_radius);
@@ -38,20 +38,20 @@ void element_mouse_movement::draw(gs_effect_t* effect, gs_image_file_t* image, e
     }
 }
 
-element_data_mouse_stats::element_data_mouse_stats(const int16_t x, const int16_t y) : element_data(MOUSE_STATS)
+element_data_mouse_stats::element_data_mouse_stats(const int16_t x, const int16_t y) : element_data(element_type::MOUSE_STATS)
 {
     m_type = stat_pos;
     m_x = x;
     m_y = y;
 }
 
-element_data_mouse_stats::element_data_mouse_stats(const stat_type type) : element_data(MOUSE_STATS)
+element_data_mouse_stats::element_data_mouse_stats(const stat_type type) : element_data(element_type::MOUSE_STATS)
 {
     m_type = type;
 }
 
 element_data_mouse_stats::element_data_mouse_stats(int scroll_amount, const wheel_direction dir, bool unused)
-        : element_data(MOUSE_STATS)
+        : element_data(element_type::MOUSE_STATS)
 {
     UNUSED_PARAMETER(unused);
     m_type = stat_scroll_amount;
@@ -66,7 +66,7 @@ bool element_data_mouse_stats::is_persistent()
 
 void element_data_mouse_stats::merge(element_data* other)
 {
-    if (other && other->get_type() == MOUSE_STATS) {
+    if (other && other->get_type() == element_type::MOUSE_STATS) {
         const auto data = dynamic_cast<element_data_mouse_stats*>(other);
         if (data) {
             switch (data->m_type) {
@@ -206,15 +206,15 @@ int32_t element_data_mouse_stats::get_wheel_current() const
 int32_t element_data_mouse_stats::get_wheel_total() const
 {
     switch (m_dir) {
-        case WHEEL_DIR_DOWN:
+        case wheel_direction::DOWN:
             return m_wheel_down_total;
-        case WHEEL_DIR_UP:
+        case wheel_direction::UP:
             return m_wheel_up_total;
         default:
             return 0;
     }
 }
 
-element_mouse_movement::element_mouse_movement() : element_texture(MOUSE_STATS), m_movement_type()
+element_mouse_movement::element_mouse_movement() : element_texture(element_type::MOUSE_STATS), m_movement_type()
 {
 };

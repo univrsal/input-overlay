@@ -14,7 +14,7 @@
 class element_data_button : public element_data
 {
 public:
-    element_data_button(const button_state state) : element_data(BUTTON)
+    element_data_button(const button_state state) : element_data(element_type::BUTTON)
     {
         m_state = state;
     }
@@ -33,7 +33,7 @@ private:
 class element_button : public element_texture
 {
 public:
-    element_button() : element_texture(BUTTON), m_pressed()
+    element_button() : element_texture(element_type::BUTTON), m_pressed()
     {
     }
 
@@ -43,7 +43,7 @@ public:
     draw(gs_effect_t* effect, gs_image_file_t* image, element_data* data, sources::overlay_settings* settings) override;
 
     data_source get_source() override
-    { return is_gamepad ? GAMEPAD : DEFAULT; }
+    { return is_gamepad ? data_source::GAMEPAD : data_source::DEFAULT; }
 
 private:
     bool is_gamepad = false;

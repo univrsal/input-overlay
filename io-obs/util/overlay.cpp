@@ -112,23 +112,23 @@ bool overlay::load_cfg()
                 element_data* data = nullptr;
 
                 switch (element->get_type()) {
-                    case GAMEPAD_ID: /* Acts just like a button */
-                    case BUTTON:
-                        data = new element_data_button(STATE_RELEASED);
+                    case element_type::GAMEPAD_ID: /* Acts just like a button */
+                    case element_type::BUTTON:
+                        data = new element_data_button(button_state::RELEASED);
                         break;
-                    case MOUSE_SCROLLWHEEL:
-                        data = new element_data_wheel(STATE_RELEASED);
+                    case element_type::MOUSE_SCROLLWHEEL:
+                        data = new element_data_wheel(button_state::RELEASED);
                         break;
-                    case TRIGGER:
+                    case element_type::TRIGGER:
                         data = new element_data_trigger(0.f, 0.f);
                         break;
-                    case ANALOG_STICK:
-                        data = new element_data_analog_stick(STATE_RELEASED, STATE_RELEASED, 0.f, 0.f, 0.f, 0.f);
+                    case element_type::ANALOG_STICK:
+                        data = new element_data_analog_stick(button_state::RELEASED, button_state::RELEASED, 0.f, 0.f, 0.f, 0.f);
                         break;
-                    case DPAD_STICK:
-                        data = new element_data_dpad(DPAD_LEFT, STATE_RELEASED);
+                    case element_type::DPAD_STICK:
+                        data = new element_data_dpad(dpad_direction::LEFT, button_state::RELEASED);
                         break;
-                    case MOUSE_STATS:
+                    case element_type::MOUSE_STATS:
                         data = new element_data_mouse_stats(0, 0);
                         break;
                     default:;
@@ -224,12 +224,12 @@ void overlay::refresh_data()
 
              if (m_data[element->get_keycode()] != nullptr) {
                 switch (element->get_source()) {
-                    case GAMEPAD:
+                    case data_source::GAMEPAD:
                         data = source->get_by_gamepad(m_settings->gamepad, element->get_keycode());
                         break;
                     default:
-                    case MOUSE_POS:
-                    case DEFAULT:
+                case data_source::MOUSE_POS:
+                case data_source::DEFAULT:
                         data = source->get_by_code(element->get_keycode());
                         break;
                 }
@@ -245,28 +245,28 @@ void overlay::load_element(ccl_config* cfg, const std::string &id, const bool de
     element* new_element = nullptr;
 
     switch (type) {
-        case TEXTURE:
+        case (int) element_type::TEXTURE:
             new_element = new element_texture();
             break;
-        case BUTTON:
+        case (int) element_type::BUTTON:
             new_element = new element_button();
             break;
-        case MOUSE_SCROLLWHEEL:
+        case (int) element_type::MOUSE_SCROLLWHEEL:
             new_element = new element_wheel();
             break;
-        case TRIGGER:
+        case (int) element_type::TRIGGER:
             new_element = new element_trigger();
             break;
-        case ANALOG_STICK:
+        case (int) element_type::ANALOG_STICK:
             new_element = new element_analog_stick();
             break;
-        case GAMEPAD_ID:
+        case (int) element_type::GAMEPAD_ID:
             new_element = new element_gamepad_id();
             break;
-        case DPAD_STICK:
+        case (int) element_type::DPAD_STICK:
             new_element = new element_dpad();
             break;
-        case MOUSE_STATS:
+        case (int) element_type::MOUSE_STATS:
             new_element = new element_mouse_movement();
             break;
         default:
@@ -292,24 +292,23 @@ void overlay::load_element(ccl_config* cfg, const std::string &id, const bool de
 const char* overlay::element_type_to_string(const element_type t)
 {
     switch (t) {
-        case TEXTURE:
+        case element_type::TEXTURE:
             return "Texture";
-        case BUTTON:
+        case element_type::BUTTON:
             return "Button";
-        case ANALOG_STICK:
+        case element_type::ANALOG_STICK:
             return "Analog stick";
-        case MOUSE_SCROLLWHEEL:
+        case element_type::MOUSE_SCROLLWHEEL:
             return "Scroll wheel";
-        case MOUSE_STATS:
+        case element_type::MOUSE_STATS:
             return "Mouse movement";
-        case TRIGGER:
+        case element_type::TRIGGER:
             return "Trigger";
-        case GAMEPAD_ID:
+        case element_type::GAMEPAD_ID:
             return "Gamepad ID";
-        case DPAD_STICK:
+        case element_type::DPAD_STICK:
             return "DPad";
-        default:
-        case INVALID:
+        case element_type::INVALID:
             return "Invalid";
     }
 }

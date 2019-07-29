@@ -21,7 +21,7 @@ element_type element_data::get_type() const
 
 element::element() : m_keycode(0)
 {
-    m_type = INVALID;
+    m_type = element_type::INVALID;
 }
 
 element::element(const element_type type)
@@ -41,7 +41,7 @@ uint16_t element::get_keycode() const
 
 data_source element::get_source()
 {
-    return NONE;
+    return data_source::NONE;
 }
 
 void element::read_mapping(ccl_config* cfg, const std::string &id)

@@ -25,30 +25,31 @@ extern "C" {
 
 namespace sources
 {
-    enum history_mode
+    enum class history_mode
     {
-        MODE_TEXT, MODE_ICONS
+        TEXT, ICONS
     };
 
-    enum history_flags
+    enum class history_flags
     {
-        FLAG_FIX_CUTTING = 1 << 0,      /* Append space at the end of text to fix cursive fonts cutting off*/
-        FLAG_INCLUDE_MOUSE = 1 << 1,    /* Include mouse clicks and scrolling */
-        FLAG_AUTO_CLEAR = 1 << 2,       /* Use automatic clearing */
-        FLAG_REPEAT_KEYS = 1 << 3,      /* Allow repeated keys */
-        FLAG_CUSTOM_NAMES = 1 << 4,     /* Use custom key name config */
-        FLAG_USE_FALLBACK = 1 << 5,     /* Use hardcoded names if config doesn't define a key name */
-        FLAG_INCLUDE_PAD = 1 << 6,      /* Include gamepad inputs */
+        FIX_CUTTING = 1 << 0,      /* Append space at the end of text to fix cursive fonts cutting off*/
+        INCLUDE_MOUSE = 1 << 1,    /* Include mouse clicks and scrolling */
+        AUTO_CLEAR = 1 << 2,       /* Use automatic clearing */
+        REPEAT_KEYS = 1 << 3,      /* Allow repeated keys */
+        CUSTOM_NAMES = 1 << 4,     /* Use custom key name config */
+        USE_FALLBACK = 1 << 5,     /* Use hardcoded names if config doesn't define a key name */
+        INCLUDE_PAD = 1 << 6,      /* Include gamepad inputs */
     };
 
     struct history_settings
     {
         /* Configurable properties */
-        history_mode mode = MODE_TEXT;          /* Mode for visualization */
+        history_mode mode = history_mode::TEXT; /* Mode for visualization */
         uint8_t history_size = 0;               /* Maximum amount of entries in history */
         uint8_t target_gamepad = 0;             /* Only one gamepad is used per source */
         uint16_t v_space = 0, h_space = 0;      /* Vertical/Horizontal space. h_space only for icons */
-        history_direction dir = DIR_DOWN;       /* Flow direction of input display */
+        history_direction dir =
+                history_direction::DOWN;		/* Flow direction of input display */
         double update_interval = 0.f;           /* Timespan in which inputs will be accumulated */
         double auto_clear_interval = 0.f;       /* Timespan of no inputs after which history will be cleared */
         const char* key_name_path = nullptr;    /* Path to additional key name config */

@@ -9,9 +9,9 @@
 
 #include "element_texture.hpp"
 
-enum dpad_direction;
+enum class dpad_direction;
 
-enum button_state;
+enum class button_state;
 
 class element_data_dpad : public element_data
 {

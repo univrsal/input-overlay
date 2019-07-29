@@ -19,8 +19,8 @@
 void text_handler::make_body_text(std::string& str)
 {
     switch (m_settings->dir) {
-        case DIR_DOWN:
-        case DIR_LEFT:
+        case history_direction::DOWN:
+        case history_direction::LEFT:
             for (const auto& line : m_values) {
                 str += line->keys;
                 if (line->repeat > 1)
@@ -70,8 +70,8 @@ void text_handler::load_names(const char* cfg)
 void text_handler::update()
 {
     switch (m_settings->dir) {
-        case DIR_LEFT:
-        case DIR_RIGHT:
+        case history_direction::LEFT:
+        case history_direction::RIGHT:
             obs_data_set_bool(m_settings->settings, "vertical", true);
             break;
         default:
@@ -92,10 +92,10 @@ void text_handler::tick(const float seconds)
 
 void text_handler::swap(input_entry& current)
 {
-    auto new_line = current.build_string(&m_names, m_settings->flags & sources::FLAG_USE_FALLBACK);
+    auto new_line = current.build_string(&m_names, m_settings->flags & (int) sources::history_flags::USE_FALLBACK);
 
     if (!m_values.empty() && m_values.begin()->get()->keys == new_line) {
-        if (m_settings->flags & sources::FLAG_REPEAT_KEYS)
+        if (m_settings->flags & (int) sources::history_flags::REPEAT_KEYS)
             m_values.begin()->get()->repeat++;
     } else {
         m_values.insert(m_values.begin(), std::make_unique<key_combination>(new_line));
@@ -107,6 +107,7 @@ void text_handler::swap(input_entry& current)
 
     std::string text;
     make_body_text(text);
+    blog(LOG_DEBUG, "Text: %s", text.c_str());
     m_display->set_text(text.c_str(), m_settings->settings);
 }
 

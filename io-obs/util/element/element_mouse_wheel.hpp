@@ -14,9 +14,9 @@
 #define WHEEL_MAP_UP      1
 #define WHEEL_MAP_DOWN    2
 
-enum wheel_data_type
+enum class wheel_data
 {
-    WHEEL_BOTH, BUTTON_STATE, WHEEL_STATE
+    BOTH, BUTTON, WHEEL
 };
 
 class element_data_wheel : public element_data
@@ -38,10 +38,10 @@ public:
 
     void merge(element_data* other) override;
 
-    wheel_data_type get_data_type() const;
+    wheel_data get_data_type() const;
 
 private:
-    wheel_data_type m_data_type;
+    wheel_data m_data_type;
     button_state m_middle_button;
     wheel_direction m_dir;
 };

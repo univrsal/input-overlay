@@ -11,7 +11,7 @@
 
 void element_data_button::merge(element_data* other)
 {
-    if (other && other->get_type() == BUTTON) {
+    if (other && other->get_type() == element_type::BUTTON) {
         const auto other_btn = dynamic_cast<element_data_button*>(other);
         if (other_btn) {
             m_state = other_btn->m_state;
@@ -36,7 +36,7 @@ void element_button::draw(gs_effect_t* effect, gs_image_file_t* image, element_d
     if (data) {
         const auto button = dynamic_cast<element_data_button*>(data);
         if (button) {
-            if (button->get_state() == STATE_PRESSED) {
+            if (button->get_state() == button_state::PRESSED) {
                 element_texture::draw(effect, image, &m_pressed);
             } else {
                 element_texture::draw(effect, image, nullptr);

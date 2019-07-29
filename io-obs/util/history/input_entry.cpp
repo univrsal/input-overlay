@@ -68,7 +68,7 @@ void input_entry::collect_inputs(sources::history_settings* settings)
     if (settings->data) {
         std::lock_guard<std::mutex> lck1(hook::mutex);
         std::lock_guard<std::mutex> lck2(network::mutex);
-        if (settings->flags & FLAG_GAMEPAD)
+        if (settings->flags & (int) sources::history_flags::INCLUDE_PAD)
             std::lock_guard<std::mutex> lck3(gamepad::mutex);
 
         settings->data->populate_vector(m_inputs, settings);
@@ -82,10 +82,23 @@ std::string input_entry::build_string(key_names* names, const bool use_fallback)
     const char* name = nullptr;
 
     for (const auto &key : m_inputs) {
-        if (!names->empty() && (name = names->get_name(key)))
-            result += name + plus;
-        else if (use_fallback || (names->empty() && (name = key_to_text(key))))
-            result += name + plus;
+        /* Either use custom names or builtin if option is enabled) */
+        if (!names->empty() && (name = names->get_name(key))) {
+            result.append(name).append(plus);
+        } else if (use_fallback || names->empty()) {
+            name = key_to_text(key);
+#ifdef DEBUG
+            if (!name) {
+                /* If no name was found output the keycode */
+                char buf[8];
+                sprintf(buf, "0x%X", key);
+                name = buf;
+            }
+#else
+            if (name)
+#endif
+            result.append(name).append(plus);
+        }
     }
 
     /* Remove the last ' + '*/
@@ -126,7 +139,7 @@ void input_entry::render_icons(sources::history_settings* settings, history_icon
 
     for (const auto& vc : m_inputs)
     {
-        if (settings->dir == DIR_DOWN || settings->dir == DIR_UP)
+        if (settings->dir == history_direction::DOWN || settings->dir == history_direction::UP)
             temp.x = m_position.x + (i++) * (settings->h_space + icons->get_w());
         else
             temp.y = m_position.y + (i++) * (settings->v_space + icons->get_h());

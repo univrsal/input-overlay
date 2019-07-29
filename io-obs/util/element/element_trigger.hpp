@@ -10,17 +10,17 @@
 #include "element_texture.hpp"
 #include <netlib.h>
 
-enum trigger_data_type
+enum class trigger_data
 {
-    T_DATA_NONE = -1,
-    T_DATA_BOTH,
-    T_DATA_LEFT,
-    T_DATA_RIGHT
+    NONE = -1,
+    BOTH,
+    LEFT,
+    RIGHT
 };
 
-enum trigger_direction;
+enum class trigger_direction;
 
-enum element_side;
+enum class element_side;
 
 /* Contains data for both trigger buttons
  */
@@ -31,7 +31,7 @@ public:
         Separate constructors are used on linux
         because the values can't be queried together
     */
-    element_data_trigger(trigger_data_type side, float val);
+    element_data_trigger(trigger_data side, float val);
 
     element_data_trigger(float left, float right);
 
@@ -46,7 +46,7 @@ public:
     static element_data_trigger* from_buffer(netlib_byte_buf* buffer);
 
 private:
-    trigger_data_type m_data_type = T_DATA_BOTH;
+    trigger_data m_data_type = trigger_data::BOTH;
     float m_left_trigger = 0.f, m_right_trigger = 0.f;
 };
 

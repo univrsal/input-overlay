@@ -49,12 +49,12 @@ namespace sources
                 m_settings.data = hook::input_data;
         }
 
-        SET_FLAG(FLAG_INCLUDE_MOUSE, obs_data_get_bool(settings, S_HISTORY_INCLUDE_MOUSE));
-        SET_FLAG(FLAG_REPEAT_KEYS, obs_data_get_bool(settings, S_HISTORY_ENABLE_REPEAT_KEYS));
-        SET_FLAG(FLAG_AUTO_CLEAR, obs_data_get_bool(settings, S_HISTORY_ENABLE_AUTO_CLEAR));
-        SET_FLAG(FLAG_FIX_CUTTING, obs_data_get_bool(settings, S_HISTORY_FIX_CUTTING));
-        SET_FLAG(FLAG_USE_FALLBACK, obs_data_get_bool(settings, S_HISTORY_USE_FALLBACK_NAME));
-        SET_FLAG(FLAG_INCLUDE_PAD, obs_data_get_bool(settings, S_HISTORY_INCLUDE_PAD));
+        SET_FLAG((int) history_flags::INCLUDE_MOUSE, obs_data_get_bool(settings, S_HISTORY_INCLUDE_MOUSE));
+        SET_FLAG((int) history_flags::REPEAT_KEYS, obs_data_get_bool(settings, S_HISTORY_ENABLE_REPEAT_KEYS));
+        SET_FLAG((int) history_flags::AUTO_CLEAR, obs_data_get_bool(settings, S_HISTORY_ENABLE_AUTO_CLEAR));
+        SET_FLAG((int) history_flags::FIX_CUTTING, obs_data_get_bool(settings, S_HISTORY_FIX_CUTTING));
+        SET_FLAG((int) history_flags::USE_FALLBACK, obs_data_get_bool(settings, S_HISTORY_USE_FALLBACK_NAME));
+        SET_FLAG((int) history_flags::INCLUDE_PAD, obs_data_get_bool(settings, S_HISTORY_INCLUDE_PAD));
 
         m_settings.update_interval = obs_data_get_double(settings, S_HISTORY_INTERVAL);
         m_settings.auto_clear_interval = obs_data_get_double(settings, S_HISTORY_AUTO_CLEAR_INTERVAL);
@@ -70,11 +70,11 @@ namespace sources
         m_settings.dir = history_direction(obs_data_get_int(settings, S_HISTORY_DIRECTION));
 
         if (!m_settings.key_name_path || strlen(m_settings.key_name_path) < 1)
-            SET_FLAG(FLAG_CUSTOM_NAMES, false);
+            SET_FLAG((int) history_flags::CUSTOM_NAMES, false);
         else
-            SET_FLAG(FLAG_CUSTOM_NAMES, true);
+            SET_FLAG((int) history_flags::CUSTOM_NAMES, true);
 
-        if (GET_FLAG(FLAG_INCLUDE_PAD))
+        if (GET_FLAG((int) history_flags::INCLUDE_PAD))
             m_settings.target_gamepad = static_cast<uint8_t>(obs_data_get_int(settings, S_CONTROLLER_ID));
 
         /* Order is important here */
@@ -90,13 +90,16 @@ namespace sources
 
         m_settings.queue->tick(seconds);
 
-        if (GET_FLAG(FLAG_AUTO_CLEAR)) {
+        if (GET_FLAG((int) history_flags::AUTO_CLEAR)) {
             m_clear_timer += seconds;
             if (m_settings.auto_clear_interval <= m_clear_timer) {
                 m_clear_timer = 0.f;
                 clear_history();
             }
         }
+
+        if (io_config::io_window_filters.input_blocked())
+            return; /* No input collection if it's blocked */
 
         m_collect_timer += seconds;
         if (m_collect_timer >= m_settings.update_interval) {
@@ -160,8 +163,8 @@ namespace sources
         return true;
     }
 
-#define TEXT_VIS(S)     (obs_property_set_visible(S, mode == MODE_TEXT))
-#define ICON_VIS(S)     (obs_property_set_visible(S, mode == MODE_ICONS))
+#define TEXT_VIS(S)     (obs_property_set_visible(S, mode == (int) history_mode::TEXT))
+#define ICON_VIS(S)     (obs_property_set_visible(S, mode == (int) history_mode::ICONS))
 
     bool mode_changed(obs_properties_t* props, obs_property_t* p, obs_data_t* s)
     {
@@ -193,7 +196,7 @@ namespace sources
         const auto s = reinterpret_cast<input_history_source*>(data);
         obs_properties_t* props = nullptr;
 
-        if (s->m_settings.mode != MODE_ICONS)
+        if (s->m_settings.mode != history_mode::ICONS)
             props = obs_source_properties(s->m_settings.queue->get_fade_in()); /* Reuse text properties */
         else
             props = obs_properties_create();
@@ -220,8 +223,8 @@ namespace sources
         const auto mode_list = obs_properties_add_list(props, S_HISTORY_MODE, T_HISTORY_MODE, OBS_COMBO_TYPE_LIST,
                                                        OBS_COMBO_FORMAT_INT);
 
-        obs_property_list_add_int(mode_list, T_HISTORY_MODE_TEXT, MODE_TEXT);
-        obs_property_list_add_int(mode_list, T_HISTORY_MODE_ICON, MODE_ICONS);
+        obs_property_list_add_int(mode_list, T_HISTORY_MODE_TEXT, (int) history_mode::TEXT);
+        obs_property_list_add_int(mode_list, T_HISTORY_MODE_ICON, (int) history_mode::ICONS);
         obs_property_set_modified_callback(mode_list, mode_changed);
 
         /* Key name, icon and config file */

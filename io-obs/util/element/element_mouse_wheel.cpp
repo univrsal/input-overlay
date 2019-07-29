@@ -12,7 +12,7 @@
 #include "util/layout_constants.hpp"
 #include <util/platform.h>
 
-element_wheel::element_wheel() : element_texture(MOUSE_SCROLLWHEEL), m_mappings{}
+element_wheel::element_wheel() : element_texture(element_type::MOUSE_SCROLLWHEEL), m_mappings{}
 {
     /* NO-OP */
 }
@@ -36,18 +36,17 @@ void element_wheel::draw(gs_effect_t* effect, gs_image_file_t* image, element_da
         const auto wheel = dynamic_cast<element_data_wheel*>(data);
 
         if (wheel) {
-            if (wheel->get_state() == STATE_PRESSED)
+            if (wheel->get_state() == button_state::PRESSED)
                 element_texture::draw(effect, image, &m_mappings[WHEEL_MAP_MIDDLE]);
 
             switch (wheel->get_dir()) {
-                case WHEEL_DIR_UP:
+                case wheel_direction::UP:
                     element_texture::draw(effect, image, &m_mappings[WHEEL_MAP_UP]);
                     break;
-                case WHEEL_DIR_DOWN:
+                case wheel_direction::DOWN:
                     element_texture::draw(effect, image, &m_mappings[WHEEL_MAP_DOWN]);
                     break;
-                default:
-                case WHEEL_DIR_NONE:;
+                case wheel_direction::NONE:;
             }
         }
     }
@@ -57,25 +56,25 @@ void element_wheel::draw(gs_effect_t* effect, gs_image_file_t* image, element_da
 
 data_source element_wheel::get_source()
 {
-    return DEFAULT;
+    return data_source::DEFAULT;
 }
 
 element_data_wheel::element_data_wheel(const wheel_direction dir, const button_state state) : element_data_wheel(dir)
 {
-    m_data_type = WHEEL_BOTH;
+    m_data_type = wheel_data::BOTH;
     m_middle_button = state;
 }
 
-element_data_wheel::element_data_wheel(const wheel_direction dir) : element_data(MOUSE_SCROLLWHEEL),
-                                                                    m_middle_button(STATE_RELEASED)
+element_data_wheel::element_data_wheel(const wheel_direction dir) : element_data(element_type::MOUSE_SCROLLWHEEL),
+                                                                    m_middle_button(button_state::RELEASED)
 {
-    m_data_type = WHEEL_STATE;
+    m_data_type = wheel_data::WHEEL;
     m_dir = dir;
 }
 
-element_data_wheel::element_data_wheel(const button_state state) : element_data(MOUSE_SCROLLWHEEL), m_dir()
+element_data_wheel::element_data_wheel(const button_state state) : element_data(element_type::MOUSE_SCROLLWHEEL), m_dir()
 {
-    m_data_type = BUTTON_STATE;
+    m_data_type = wheel_data::BUTTON;
     m_middle_button = state;
 }
 
@@ -108,25 +107,24 @@ void element_data_wheel::merge(element_data* other)
         if (other_wheel) {
             /* After the merge this data contains both the scroll wheel state and the button state */
             if (m_data_type != other_wheel->m_data_type)
-                m_data_type = WHEEL_BOTH;
+                m_data_type = wheel_data::BOTH;
 
             switch (other_wheel->m_data_type) {
-                case BUTTON_STATE:
+                case wheel_data::BUTTON:
                     m_middle_button = other_wheel->get_state();
                     break;
-                case WHEEL_STATE:
+                case wheel_data::WHEEL:
                     m_dir = other_wheel->get_dir();
                     break;
-                case WHEEL_BOTH:
+                case wheel_data::BOTH:
                     m_dir = other_wheel->get_dir();
                     m_middle_button = other_wheel->get_state();
-                default:;
             }
         }
     }
 }
 
-wheel_data_type element_data_wheel::get_data_type() const
+wheel_data element_data_wheel::get_data_type() const
 {
     return m_data_type;
 }
