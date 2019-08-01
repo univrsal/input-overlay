@@ -76,7 +76,7 @@ void element_data_analog_stick::set_state(const button_state left, const button_
     m_right_state = right;
 }
 
-void element_data_analog_stick::merge(element_data* other)
+bool element_data_analog_stick::merge(element_data* other)
 {
     if (other && other->get_type() == m_type) {
         const auto other_stick = dynamic_cast<element_data_analog_stick*>(other);
@@ -116,6 +116,7 @@ void element_data_analog_stick::merge(element_data* other)
             }
         }
     }
+    return false;
 }
 
 element_data_analog_stick* element_data_analog_stick::from_buffer(netlib_byte_buf* buffer)

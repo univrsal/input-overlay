@@ -87,6 +87,8 @@ namespace sources
     {
         if (!obs_source_showing(m_settings.source))
             return;
+        if (io_config::io_window_filters.input_blocked())
+            return; /* No input collection if it's blocked */
 
         m_settings.queue->tick(seconds);
 
@@ -98,15 +100,16 @@ namespace sources
             }
         }
 
-        if (io_config::io_window_filters.input_blocked())
-            return; /* No input collection if it's blocked */
-
         m_collect_timer += seconds;
         if (m_collect_timer >= m_settings.update_interval) {
             m_collect_timer = 0.f;
             m_clear_timer = 0.f;
-            /* Moves current input entry from collection into list */
-            m_settings.queue->swap();
+            /* Moves current input entry from collection into list
+             * only if there's been any changes in input */
+            if (m_last_input != m_settings.data->get_last_input()) {
+                m_last_input = m_settings.data->get_last_input();
+                m_settings.queue->swap();
+            }
         } else {
             m_settings.queue->collect_input();
         }

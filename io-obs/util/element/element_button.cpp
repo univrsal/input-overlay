@@ -9,14 +9,17 @@
 #include "element_button.hpp"
 #include "../../../ccl/ccl.hpp"
 
-void element_data_button::merge(element_data* other)
+bool element_data_button::merge(element_data* other)
 {
+    bool result = false;
     if (other && other->get_type() == element_type::BUTTON) {
         const auto other_btn = dynamic_cast<element_data_button*>(other);
         if (other_btn) {
+            result = m_state != other_btn->m_state;
             m_state = other_btn->m_state;
         }
     }
+    return result;
 }
 
 void element_button::load(ccl_config* cfg, const std::string &id)

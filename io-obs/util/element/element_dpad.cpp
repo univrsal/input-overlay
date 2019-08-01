@@ -64,16 +64,19 @@ bool element_data_dpad::is_persistent()
     return true;
 }
 
-void element_data_dpad::merge(element_data* other)
+bool element_data_dpad::merge(element_data* other)
 {
+    bool result = false;
     const auto d = dynamic_cast<element_data_dpad*>(other);
 #ifdef _WIN32
     if (d)
     {
+        result = m_direction != d->m_direction;
         m_direction = d->m_direction;
     }
 #else
     if (d) {
+        result = m_direction != d->m_direction;
         if (d->get_state() == button_state::PRESSED) {
             m_direction |= d->m_direction;
         } else {
@@ -81,6 +84,7 @@ void element_data_dpad::merge(element_data* other)
         }
     }
 #endif /* !WINDOWS*/
+    return result;
 }
 
 dpad_texture element_data_dpad::get_direction() const

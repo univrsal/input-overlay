@@ -69,6 +69,7 @@ namespace sources
     {
         double m_clear_timer = 0.f;
         double m_collect_timer = 0.f;
+        uint64_t m_last_input = 0;
     public:
         history_settings m_settings;
 

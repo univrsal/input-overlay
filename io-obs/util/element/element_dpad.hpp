@@ -28,7 +28,7 @@ public:
 
     bool is_persistent() override;
 
-    void merge(element_data* other) override;
+    bool merge(element_data* other) override;
 
     dpad_texture get_direction() const;
 

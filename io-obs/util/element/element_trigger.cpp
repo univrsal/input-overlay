@@ -124,7 +124,7 @@ bool element_data_trigger::is_persistent()
     return true;
 }
 
-void element_data_trigger::merge(element_data* other)
+bool element_data_trigger::merge(element_data* other)
 {
     if (other && other->get_type() == m_type) {
         const auto trigger = dynamic_cast<element_data_trigger*>(other);
@@ -149,6 +149,7 @@ void element_data_trigger::merge(element_data* other)
             }
         }
     }
+    return false;
 }
 
 element_data_trigger* element_data_trigger::from_buffer(netlib_byte_buf* buffer)

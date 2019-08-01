@@ -11,6 +11,7 @@
 #include "element_button.hpp"
 #include "element_analog_stick.hpp"
 #include "element_mouse_wheel.hpp"
+#include <util/platform.h>
 
 element_data_holder::element_data_holder(bool is_local)
 {
@@ -39,17 +40,22 @@ bool element_data_holder::is_empty() const
 
 void element_data_holder::add_data(const uint16_t keycode, element_data* data)
 {
+    bool refresh = false;
     if (data_exists(keycode)) {
         if (m_button_data[keycode]->is_persistent()) {
-            m_button_data[keycode]->merge(data);
+            refresh = m_button_data[keycode]->merge(data);
             delete data; /* Existing data was used -> delete other one */
         } else {
             remove_data(keycode);
             m_button_data[keycode] = std::unique_ptr<element_data>(data);
+            refresh = true;
         }
     } else {
         m_button_data[keycode] = std::unique_ptr<element_data>(data);
+        refresh = true;
     }
+    if (refresh)
+        m_last_input = os_gettime_ns();
 }
 
 void element_data_holder::add_gamepad_data(const uint8_t gamepad, const uint16_t keycode, element_data* data)
@@ -66,6 +72,7 @@ void element_data_holder::add_gamepad_data(const uint8_t gamepad, const uint16_t
     } else {
         m_gamepad_data[gamepad][keycode] = std::unique_ptr<element_data>(data);
     }
+    m_last_input = os_gettime_ns();
 }
 
 bool element_data_holder::gamepad_data_exists(const uint8_t gamepad, const uint16_t keycode)
@@ -214,6 +221,11 @@ bool element_data_holder::data_exists(const uint16_t keycode)
         return false;
 
     return m_button_data[keycode] != nullptr;
+}
+
+uint64_t element_data_holder::get_last_input() const
+{
+    return m_last_input;
 }
 
 void element_data_holder::remove_data(const uint16_t keycode)

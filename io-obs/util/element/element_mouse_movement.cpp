@@ -49,7 +49,7 @@ bool element_data_mouse_pos::is_persistent()
     return true;
 }
 
-void element_data_mouse_pos::merge(element_data *other)
+bool element_data_mouse_pos::merge(element_data *other)
 {
     if (other) {
         element_data_mouse_pos* pos = dynamic_cast<element_data_mouse_pos*>(other);
@@ -60,7 +60,9 @@ void element_data_mouse_pos::merge(element_data *other)
             m_y = pos->m_y;
         }
     }
+    return false;
 }
+
 float element_data_mouse_pos::get_mouse_angle(sources::overlay_settings* settings)
 {
     auto d_x = 0, d_y = 0;

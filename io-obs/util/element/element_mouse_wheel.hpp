@@ -36,7 +36,7 @@ public:
 
     bool is_persistent() override;
 
-    void merge(element_data* other) override;
+    bool merge(element_data* other) override;
 
     wheel_data get_data_type() const;
 

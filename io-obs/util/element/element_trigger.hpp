@@ -41,7 +41,7 @@ public:
 
     bool is_persistent() override;
 
-    void merge(element_data* other) override;
+    bool merge(element_data* other) override;
 
     static element_data_trigger* from_buffer(netlib_byte_buf* buffer);
 

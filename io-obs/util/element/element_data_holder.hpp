@@ -54,7 +54,12 @@ public:
     bool is_empty() const;
 
     bool is_local() const;
+
+    uint64_t get_last_input() const;
 private:
+    /* Used to check if new inputs happened
+     * in input history */
+    uint64_t m_last_input = 0;
     bool m_local; /* True if this holds the data for the local pc */
     std::map<uint16_t, std::unique_ptr<element_data>> m_button_data;
     std::map<uint16_t, std::unique_ptr<element_data>> m_gamepad_data[4];

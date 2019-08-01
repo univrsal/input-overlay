@@ -24,7 +24,7 @@ public:
         return m_state;
     }
 
-    void merge(element_data* other) override;
+    bool merge(element_data* other) override;
 
 private:
     button_state m_state;

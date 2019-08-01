@@ -19,7 +19,7 @@ public:
     element_data_mouse_pos(int16_t x, int16_t y);
 
     bool is_persistent() override;
-    void merge(element_data* other) override;
+    bool merge(element_data* other) override;
     float get_mouse_angle(sources::overlay_settings* settings);
     void get_mouse_offset(sources::overlay_settings* settings, const vec2 &center, vec2 &out, uint8_t radius) const;
     int16_t get_mouse_x() const;

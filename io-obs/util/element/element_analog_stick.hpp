@@ -99,7 +99,7 @@ public:
     bool is_persistent() override
     { return true; }
 
-    void merge(element_data* other) override;
+    bool merge(element_data* other) override;
 
     static element_data_analog_stick* from_buffer(netlib_byte_buf* buffer);
 

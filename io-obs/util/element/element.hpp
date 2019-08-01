@@ -48,11 +48,15 @@ public:
     virtual bool is_persistent()
     { return false; }
 
-    /* used if is persistent */
-    virtual void merge(element_data* other)
+    /* used if is persistent
+     * returns true if new data differed from old one and this input should
+     * invoke an update for input history things like mouse or analog stick
+     * movement return false to prevent spamming input history */
+    virtual bool merge(element_data* other)
     {
         UNUSED_PARAMETER(other);
         /* NO-OP */
+        return false;
     }
 
 protected:

@@ -99,7 +99,7 @@ bool element_data_wheel::is_persistent()
     return true;
 }
 
-void element_data_wheel::merge(element_data* other)
+bool element_data_wheel::merge(element_data* other)
 {
     if (other && other->get_type() == m_type) {
         const auto other_wheel = dynamic_cast<element_data_wheel*>(other);
