@@ -70,7 +70,11 @@ void input_entry::collect_inputs(sources::history_settings* settings)
         std::lock_guard<std::mutex> lck2(network::mutex);
         if (settings->flags & (int) sources::history_flags::INCLUDE_PAD)
             std::lock_guard<std::mutex> lck3(gamepad::mutex);
-
+        /* Check if the scroll wheel timed out if the data
+         * is being fetched from the local data holder, since
+         * scroll wheel doesn't have a released event */
+        if (settings->data->is_local())
+            hook::check_wheel();
         settings->data->populate_vector(m_inputs, settings);
     }
 }

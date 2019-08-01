@@ -129,7 +129,7 @@ bool overlay::load_cfg()
                         data = new element_data_dpad(dpad_direction::LEFT, button_state::RELEASED);
                         break;
                     case element_type::MOUSE_STATS:
-                        data = new element_data_mouse_stats(0, 0);
+                        data = new element_data_mouse_pos(0, 0);
                         break;
                     default:;
                 }

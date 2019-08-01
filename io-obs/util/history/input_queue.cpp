@@ -44,11 +44,10 @@ void input_queue::update(const sources::history_mode new_mode)
 {
     if (new_mode != m_settings->mode || !m_current_handler) {
         switch (new_mode) {
-            default:
-            case sources::MODE_TEXT:
+            case sources::history_mode::TEXT:
                 init_text();
                 break;
-            case sources::MODE_ICONS:
+            case sources::history_mode::ICONS:
                 init_icon();
         }
     }
@@ -93,7 +92,7 @@ void input_queue::render(gs_effect_t* effect)
 
 void input_queue::clear()
 {
-    /* Not zero, since then the source is hard to 
+    /* Not zero, since then the source is hard to
      * move and click on
      */
     if (m_current_handler)

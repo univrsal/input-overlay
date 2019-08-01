@@ -12,8 +12,9 @@
 #include "element_analog_stick.hpp"
 #include "element_mouse_wheel.hpp"
 
-element_data_holder::element_data_holder()
+element_data_holder::element_data_holder(bool is_local)
 {
+    m_local = is_local;
     m_button_data = std::map<uint16_t, std::unique_ptr<element_data>>();
 }
 
@@ -104,6 +105,11 @@ void element_data_holder::clear_gamepad_data()
     m_gamepad_data->clear();
 }
 
+bool element_data_holder::is_local() const
+{
+    return m_local;
+}
+
 bool inline is_new_key(const std::vector<uint16_t> &vec, uint16_t vc)
 {
     for (const auto &k : vec)
@@ -115,6 +121,8 @@ bool inline is_new_key(const std::vector<uint16_t> &vec, uint16_t vc)
 void element_data_holder::populate_vector(std::vector<uint16_t> &vec, sources::history_settings* settings)
 {
     for (const auto &data : m_button_data) {
+        if (!data.second)
+            continue;
         /* Mouse data is persistent and shouldn't be included
          * Any mouse buttons should only be included if enabled
          * MOUSE_DATA is only used in mouse movement, so it'll
@@ -129,8 +137,16 @@ void element_data_holder::populate_vector(std::vector<uint16_t> &vec, sources::h
             if (dynamic_cast<element_data_button*>(data.second.get())->get_state() == button_state::RELEASED)
                 continue;
         } else if (data.second->get_type() == element_type::MOUSE_SCROLLWHEEL) {
-            if (dynamic_cast<element_data_wheel*>(data.second.get())->get_dir() == wheel_direction::NONE)
+            auto* wheel = dynamic_cast<element_data_wheel*>(data.second.get());
+            if (wheel) {
+                if (wheel->get_dir() == wheel_direction::UP && is_new_key(vec, VC_MOUSE_WHEEL_UP))
+                    vec.emplace_back(VC_MOUSE_WHEEL_UP);
+                else if (wheel->get_dir() == wheel_direction::DOWN && is_new_key(vec, VC_MOUSE_WHEEL_DOWN))
+                    vec.emplace_back(VC_MOUSE_WHEEL_DOWN);
+                if (wheel->get_state() == button_state::PRESSED && is_new_key(vec, VC_MOUSE_WHEEL))
+                    vec.emplace_back(VC_MOUSE_WHEEL);
                 continue;
+            }
         }
 
         if (is_new_key(vec, data.first)) /* if not add it */
@@ -175,7 +191,6 @@ void element_data_holder::populate_vector(std::vector<uint16_t> &vec, sources::h
                                 vec.emplace_back(VC_PAD_RT);
                             add = false;
                         }
-                    default:;
                 }
             }
 
@@ -204,7 +219,6 @@ bool element_data_holder::data_exists(const uint16_t keycode)
 void element_data_holder::remove_data(const uint16_t keycode)
 {
     if (data_exists(keycode)) {
-
         m_button_data[keycode].reset();
         m_button_data.erase(keycode);
     }
@@ -212,7 +226,6 @@ void element_data_holder::remove_data(const uint16_t keycode)
 
 element_data* element_data_holder::get_by_code(const uint16_t keycode)
 {
-
     if (!data_exists(keycode))
         return nullptr;
 

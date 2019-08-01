@@ -193,8 +193,8 @@
 #define VC_MOUSE_MASK                   0xED00u /* 'u' for unsigned to fix clang tidy warning */
 #define VC_MOUSE_WHEEL_UP               0xED11u
 #define VC_MOUSE_WHEEL_DOWN             0xED12u
-#define VC_MOUSE_WHEEL                  0xED13u
-/* Contains mouse position, click count and wheel motion */
+#define VC_MOUSE_WHEEL                 	(MOUSE_BUTTON3 | VC_MOUSE_MASK)
+/* Contains mouse position */
 #define VC_MOUSE_DATA                   0xED14u
 
 #define VC_MOUSE_BUTTON1                (MOUSE_BUTTON1 | VC_MOUSE_MASK)

@@ -23,7 +23,7 @@ namespace sources
 class element_data_holder
 {
 public:
-    element_data_holder();
+    element_data_holder(bool is_local = true);
 
     ~element_data_holder();
 
@@ -53,7 +53,9 @@ public:
 
     bool is_empty() const;
 
+    bool is_local() const;
 private:
+    bool m_local; /* True if this holds the data for the local pc */
     std::map<uint16_t, std::unique_ptr<element_data>> m_button_data;
     std::map<uint16_t, std::unique_ptr<element_data>> m_gamepad_data[4];
 };

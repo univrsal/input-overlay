@@ -23,7 +23,7 @@ void element_mouse_movement::draw(gs_effect_t* effect, gs_image_file_t* image, e
                                   sources::overlay_settings* settings)
 {
     if (data && data->get_type() == element_type::MOUSE_STATS) {
-        const auto element_data = dynamic_cast<element_data_mouse_stats*>(data);
+        const auto element_data = dynamic_cast<element_data_mouse_pos*>(data);
 
         if (element_data) {
             if (m_movement_type == mouse_movement::ARROW) {
@@ -38,79 +38,30 @@ void element_mouse_movement::draw(gs_effect_t* effect, gs_image_file_t* image, e
     }
 }
 
-element_data_mouse_stats::element_data_mouse_stats(const int16_t x, const int16_t y) : element_data(element_type::MOUSE_STATS)
+element_data_mouse_pos::element_data_mouse_pos(const int16_t x, const int16_t y) : element_data(element_type::MOUSE_STATS)
 {
-    m_type = stat_pos;
     m_x = x;
     m_y = y;
 }
 
-element_data_mouse_stats::element_data_mouse_stats(const stat_type type) : element_data(element_type::MOUSE_STATS)
-{
-    m_type = type;
-}
-
-element_data_mouse_stats::element_data_mouse_stats(int scroll_amount, const wheel_direction dir, bool unused)
-        : element_data(element_type::MOUSE_STATS)
-{
-    UNUSED_PARAMETER(unused);
-    m_type = stat_scroll_amount;
-    m_wheel_current = scroll_amount;
-    m_dir = dir;
-}
-
-bool element_data_mouse_stats::is_persistent()
+bool element_data_mouse_pos::is_persistent()
 {
     return true;
 }
 
-void element_data_mouse_stats::merge(element_data* other)
+void element_data_mouse_pos::merge(element_data *other)
 {
-    if (other && other->get_type() == element_type::MOUSE_STATS) {
-        const auto data = dynamic_cast<element_data_mouse_stats*>(other);
-        if (data) {
-            switch (data->m_type) {
-                case stat_pos:
-                    m_last_x = m_x;
-                    m_last_y = m_y;
-                    m_x = data->m_x;
-                    m_y = data->m_y;
-                    break;
-                case stat_scroll_amount:
-                    if (data->m_wheel_current <= WHEEL_UP)
-                        m_wheel_up_total += data->m_wheel_current;
-                    else
-                        m_wheel_down_total += data->m_wheel_current;
-                    m_dir = data->m_dir;
-
-                    if ((m_wheel_current < 0) == (data->m_wheel_current < 0))
-                        m_wheel_current += data->m_wheel_current;
-                    else
-                        m_wheel_current = data->m_wheel_current;
-                    break;
-                case stat_lmb:
-                    m_lmbcount_total++;
-                    m_rmbcount_current = 0;
-                    m_mmbcount_current = 0;
-                    break;
-                case stat_rmb:
-                    m_lmbcount_current = 0;
-                    m_rmbcount_total++;
-                    m_mmbcount_current = 0;
-                    break;
-                case stat_mmb:
-                    m_lmbcount_current = 0;
-                    m_rmbcount_current = 0;
-                    m_mmbcount_total++;
-                    break;
-                default:;
-            }
+    if (other) {
+        element_data_mouse_pos* pos = dynamic_cast<element_data_mouse_pos*>(other);
+        if (pos) {
+            m_last_x = m_x;
+            m_last_y = m_x;
+            m_x = pos->m_x;
+            m_y = pos->m_y;
         }
     }
-
 }
-
-float element_data_mouse_stats::get_mouse_angle(sources::overlay_settings* settings)
+float element_data_mouse_pos::get_mouse_angle(sources::overlay_settings* settings)
 {
     auto d_x = 0, d_y = 0;
 
@@ -132,7 +83,7 @@ float element_data_mouse_stats::get_mouse_angle(sources::overlay_settings* setti
     return new_angle;
 }
 
-void element_data_mouse_stats::get_mouse_offset(sources::overlay_settings* settings, const vec2 &center, vec2 &out,
+void element_data_mouse_pos::get_mouse_offset(sources::overlay_settings* settings, const vec2 &center, vec2 &out,
                                                 const uint8_t radius) const
 {
     auto d_x = 0, d_y = 0;
@@ -158,61 +109,14 @@ void element_data_mouse_stats::get_mouse_offset(sources::overlay_settings* setti
 
 }
 
-uint32_t element_data_mouse_stats::get_mmb_total() const
-{
-    return m_mmbcount_total;
-}
-
-uint32_t element_data_mouse_stats::get_mmb_current() const
-{
-    return m_mmbcount_current;
-}
-
-uint32_t element_data_mouse_stats::get_lmb_total() const
-{
-    return m_lmbcount_total;
-}
-
-uint32_t element_data_mouse_stats::get_lmb_current() const
-{
-    return m_lmbcount_current;
-}
-
-uint32_t element_data_mouse_stats::get_rmb_total() const
-{
-    return m_rmbcount_total;
-}
-
-uint32_t element_data_mouse_stats::get_rmb_current() const
-{
-    return m_rmbcount_current;
-}
-
-int16_t element_data_mouse_stats::get_mouse_x() const
+int16_t element_data_mouse_pos::get_mouse_x() const
 {
     return m_x;
 }
 
-int16_t element_data_mouse_stats::get_mouse_y() const
+int16_t element_data_mouse_pos::get_mouse_y() const
 {
     return m_y;
-}
-
-int32_t element_data_mouse_stats::get_wheel_current() const
-{
-    return m_wheel_current;
-}
-
-int32_t element_data_mouse_stats::get_wheel_total() const
-{
-    switch (m_dir) {
-        case wheel_direction::DOWN:
-            return m_wheel_down_total;
-        case wheel_direction::UP:
-            return m_wheel_up_total;
-        default:
-            return 0;
-    }
 }
 
 element_mouse_movement::element_mouse_movement() : element_texture(element_type::MOUSE_STATS), m_movement_type()

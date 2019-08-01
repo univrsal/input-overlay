@@ -107,7 +107,6 @@ void text_handler::swap(input_entry& current)
 
     std::string text;
     make_body_text(text);
-    blog(LOG_DEBUG, "Text: %s", text.c_str());
     m_display->set_text(text.c_str(), m_settings->settings);
 }
 

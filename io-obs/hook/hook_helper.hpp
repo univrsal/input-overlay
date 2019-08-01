@@ -38,6 +38,9 @@ namespace hook
 
 #endif
 
+    /* Checks if mouse scrolling timed out */
+    void check_wheel();
+
     void dispatch_proc(uiohook_event* event);
 
     bool logger_proc(unsigned int level, const char* format, ...);

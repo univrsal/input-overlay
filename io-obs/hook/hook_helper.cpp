@@ -13,6 +13,7 @@
 #include "util/element/element_mouse_movement.hpp"
 #include <cstdarg>
 #include <util/platform.h>
+#include <obs-module.h>
 
 namespace hook
 {
@@ -222,21 +223,22 @@ namespace hook
         }
     }
 
+    void check_wheel()
+    {
+        if (hook::last_wheel && os_gettime_ns() - hook::last_wheel >= SCROLL_TIMEOUT) {
+            hook::last_wheel = 0;
+            input_data->remove_data(VC_MOUSE_WHEEL_UP);
+            input_data->remove_data(VC_MOUSE_WHEEL_DOWN);
+            blog(LOG_DEBUG, "scroll timeout");
+        }
+    }
+
     void process_event(uiohook_event* const event)
     {
         if (!input_data)
             return;
         mutex.lock();
-
-        element_data* d = nullptr;
-        element_data_wheel* wheel = nullptr;
-        wheel_direction dir;
-
-        if (os_gettime_ns() - hook::last_wheel >= SCROLL_TIMEOUT) {
-            if (input_data) d = input_data->get_by_code(VC_MOUSE_WHEEL);
-            if (d) wheel = dynamic_cast<element_data_wheel*>(d);
-            if (wheel) wheel->set_dir(wheel_direction::NONE);
-        }
+        check_wheel();
 
         switch (event->type) {
             case EVENT_KEY_PRESSED:
@@ -246,45 +248,27 @@ namespace hook
                 break;
             case EVENT_MOUSE_WHEEL:
                 last_wheel = os_gettime_ns();
-                if (event->data.wheel.rotation >= WHEEL_DOWN)
-                    dir = wheel_direction::DOWN;
-                else
-                    dir = wheel_direction::UP;
-
-                input_data->add_data(VC_MOUSE_WHEEL, new element_data_wheel(dir));
-                input_data->add_data(VC_MOUSE_DATA, new element_data_mouse_stats(event->data.wheel.amount, dir, false));
+                if (event->data.wheel.rotation >= WHEEL_DOWN) {
+                    input_data->add_data(VC_MOUSE_WHEEL_DOWN, new element_data_button(button_state::PRESSED));
+                    input_data->remove_data(VC_MOUSE_WHEEL_UP);
+                } else {
+                    input_data->add_data(VC_MOUSE_WHEEL_UP, new element_data_button(button_state::PRESSED));
+                    input_data->remove_data(VC_MOUSE_WHEEL_DOWN);
+                }
                 break;
             case EVENT_MOUSE_PRESSED:
             case EVENT_MOUSE_RELEASED:
-                if (util_mouse_to_vc(event->data.mouse.button) == VC_MOUSE_BUTTON3)
-                    /* Special case :/ */
-                    input_data->add_data(VC_MOUSE_WHEEL, new element_data_wheel(
-                            event->type == EVENT_MOUSE_PRESSED ? button_state::PRESSED : button_state::RELEASED));
-                else
-                    input_data->add_data(util_mouse_to_vc(event->data.mouse.button), new element_data_button(
-                            event->type == EVENT_MOUSE_PRESSED ? button_state::PRESSED : button_state::RELEASED));
-
-                switch (event->data.mouse.button) {
-                    case MOUSE_BUTTON1:
-                        input_data->add_data(VC_MOUSE_DATA, new element_data_mouse_stats(stat_lmb));
-                        break;
-                    case MOUSE_BUTTON2:
-                        input_data->add_data(VC_MOUSE_DATA, new element_data_mouse_stats(stat_rmb));
-                        break;
-                    case MOUSE_BUTTON3:
-                        input_data->add_data(VC_MOUSE_DATA, new element_data_mouse_stats(stat_mmb));
-                        break;
-                    default:;
-                }
-
-                break;
+                input_data->add_data(util_mouse_to_vc(event->data.mouse.button),
+                                     new element_data_button(event->type == EVENT_MOUSE_PRESSED
+                                                             ? button_state::PRESSED : button_state::RELEASED));
+                 break;
             case EVENT_KEY_TYPED:
                 last_character = event->data.keyboard.keychar;
                 break;
             case EVENT_MOUSE_DRAGGED:
             case EVENT_MOUSE_MOVED:
                 input_data->add_data(VC_MOUSE_DATA,
-                                     new element_data_mouse_stats(event->data.mouse.x, event->data.mouse.y));
+                                     new element_data_mouse_pos(event->data.mouse.x, event->data.mouse.y));
                 break;
             default:;
         }

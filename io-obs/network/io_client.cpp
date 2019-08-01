@@ -20,6 +20,7 @@
 namespace network
 {
     io_client::io_client(char* name, tcp_socket socket, uint8_t id)
+        : m_holder(true)
     {
         m_name = name;
         m_socket = socket;
@@ -73,19 +74,6 @@ namespace network
                         break;
                     }
                     m_holder.add_data(vc, new element_data_button(button_state::PRESSED));
-
-                    switch (vc) {
-                        case VC_MOUSE_BUTTON1:
-                            m_holder.add_data(VC_MOUSE_DATA, new element_data_mouse_stats(stat_lmb));
-                            break;
-                        case VC_MOUSE_BUTTON2:
-                            m_holder.add_data(VC_MOUSE_DATA, new element_data_mouse_stats(stat_rmb));
-                            break;
-                        case VC_MOUSE_BUTTON3:
-                            m_holder.add_data(VC_MOUSE_DATA, new element_data_mouse_stats(stat_mmb));
-                            break;
-                        default:;
-                    }
                 }
             }
         } else if (msg == MSG_MOUSE_DATA) {
@@ -101,8 +89,7 @@ namespace network
                 if (dir >= (int) wheel_direction::UP && dir <= (int) wheel_direction::DOWN)
                     direction = wheel_direction(dir);
 
-                m_holder.add_data(VC_MOUSE_DATA, new element_data_mouse_stats(x, y));
-                m_holder.add_data(VC_MOUSE_DATA, new element_data_mouse_stats(amount, direction, false));
+                m_holder.add_data(VC_MOUSE_DATA, new element_data_mouse_pos(x, y));
                 m_holder.add_data(VC_MOUSE_WHEEL,
                                   new element_data_wheel(direction, pressed ? button_state::PRESSED : button_state::RELEASED));
             }
