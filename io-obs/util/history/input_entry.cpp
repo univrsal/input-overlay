@@ -55,11 +55,13 @@ void input_entry::set_pos(float x, float y)
     m_position = {x, y};
 }
 
-void input_entry::set_text(const char* text, obs_data_t* settings)
+void input_entry::set_text(const char* text, sources::history_settings* settings)
 {
     if (m_text_source) {
-        obs_data_set_string(settings, "text", text);
-        obs_source_update(m_text_source, settings);
+        m_text = text;
+        obs_data_set_string(settings->settings, "text", text);
+        obs_source_update(m_text_source, settings->settings);
+        obs_source_update(settings->source, settings->settings);
     }
 }
 
@@ -131,6 +133,8 @@ void input_entry::add_effect(effect* e)
 
 void input_entry::render_text()
 {
+    if (m_text.length() < 1)
+        return;
     obs_source_video_render(m_text_source);
     m_width = obs_source_get_width(m_text_source);
     m_height = obs_source_get_height(m_text_source);

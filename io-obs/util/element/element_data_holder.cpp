@@ -12,6 +12,7 @@
 #include "element_analog_stick.hpp"
 #include "element_mouse_wheel.hpp"
 #include <util/platform.h>
+#include <algorithm>
 
 element_data_holder::element_data_holder(bool is_local)
 {
@@ -204,6 +205,10 @@ void element_data_holder::populate_vector(std::vector<uint16_t> &vec, sources::h
             }
         }
     }
+    /* Sort the vector, so keycombinations are always displayed the same way
+     * Sorting is done in reverse so modifier keys like shift are at the
+     * beginning */
+    std::sort(vec.rbegin(), vec.rend());
 }
 
 bool element_data_holder::data_exists(const uint16_t keycode)

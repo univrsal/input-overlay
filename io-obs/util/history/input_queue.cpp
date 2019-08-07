@@ -55,9 +55,11 @@ void input_queue::update(const sources::history_mode new_mode)
     m_current_handler->update();
 }
 
-obs_source_t* input_queue::get_fade_in() const
+obs_source_t* input_queue::get_fade_in()
 {
+    m_handler_mutex.lock();
     const auto h = dynamic_cast<text_handler*>(m_current_handler);
+    m_handler_mutex.unlock();
     return h ? h->get_text_source() : nullptr;
 }
 
@@ -68,10 +70,12 @@ void input_queue::collect_input()
 
 void input_queue::swap()
 {
+    m_handler_mutex.lock();
     if (!m_queued_entry.empty() && m_current_handler) {
         m_current_handler->swap(m_queued_entry);
         m_queued_entry.clear();
     }
+    m_handler_mutex.unlock();
 }
 
 void input_queue::tick(const float seconds)
@@ -95,8 +99,11 @@ void input_queue::clear()
     /* Not zero, since then the source is hard to
      * move and click on
      */
+    m_handler_mutex.lock();
     if (m_current_handler)
         m_current_handler->clear();
+    m_queued_entry.clear();
     m_height = 50;
     m_width = 50;
+    m_handler_mutex.unlock();
 }

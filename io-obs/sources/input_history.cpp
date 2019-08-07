@@ -32,10 +32,14 @@ namespace sources
         delete m_settings.queue;
     }
 
-    void input_history_source::clear_history() const
+    void input_history_source::clear_history()
     {
-        if (m_settings.queue)
+        if (m_settings.queue) {
             m_settings.queue->clear();
+            m_collect_timer = 0.f;
+            m_clear_timer = 0.f;
+            obs_source_update(m_settings.source, m_settings.settings);
+        }
     }
 
     inline void input_history_source::update(obs_data_t* settings)
@@ -95,8 +99,12 @@ namespace sources
         if (GET_FLAG((int) history_flags::AUTO_CLEAR)) {
             m_clear_timer += seconds;
             if (m_settings.auto_clear_interval <= m_clear_timer) {
+                blog(LOG_DEBUG, "auto-clear tmr: %.2f iv: %.2f",
+                     m_clear_timer, m_settings.auto_clear_interval);
                 m_clear_timer = 0.f;
+                m_collect_timer = 0.f;
                 clear_history();
+                return;
             }
         }
 

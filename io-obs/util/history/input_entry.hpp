@@ -37,6 +37,7 @@ class input_entry
 
     bool m_remove = false; /* Set to true once this entry is the last in the list */
     obs_source_t* m_text_source = nullptr; /* Only used in text mode */
+    std::string m_text = "";
 public:
     explicit input_entry(obs_source_t* source);
 
@@ -58,7 +59,7 @@ public:
 
     void set_pos(float x, float y);
 
-    void set_text(const char* text, obs_data_t* settings);
+    void set_text(const char* text, sources::history_settings* settings);
 
     void collect_inputs(sources::history_settings* settings);
 
@@ -83,6 +84,4 @@ public:
     bool empty() const;
 
     void test();
-
-
 };

@@ -50,8 +50,8 @@ namespace sources
         uint16_t v_space = 0, h_space = 0;      /* Vertical/Horizontal space. h_space only for icons */
         history_direction dir =
                 history_direction::DOWN;		/* Flow direction of input display */
-        double update_interval = 0.f;           /* Timespan in which inputs will be accumulated */
-        double auto_clear_interval = 0.f;       /* Timespan of no inputs after which history will be cleared */
+        float update_interval = 0.f;            /* Timespan in which inputs will be accumulated */
+        float auto_clear_interval = 0.f;        /* Timespan of no inputs after which history will be cleared */
         const char* key_name_path = nullptr;    /* Path to additional key name config */
         const char* icon_path = nullptr;        /* Path to icons used for icon mode */
         const char* icon_cfg_path = nullptr;    /* Path to icon config file */
@@ -67,8 +67,8 @@ namespace sources
 
     class input_history_source
     {
-        double m_clear_timer = 0.f;
-        double m_collect_timer = 0.f;
+        float m_clear_timer = 0.f;
+        float m_collect_timer = 0.f;
         uint64_t m_last_input = 0;
     public:
         history_settings m_settings;
@@ -77,7 +77,7 @@ namespace sources
 
         ~input_history_source();
 
-        void clear_history() const;
+        void clear_history();
 
         inline void update(obs_data_t* settings);
 

@@ -54,7 +54,7 @@ text_handler::text_handler(sources::history_settings* settings) : handler(settin
 
 text_handler::~text_handler()
 {
-    m_display->set_text("", m_settings->settings);
+    m_display->set_text("", m_settings);
     obs_source_remove(m_text_source);
     obs_source_release(m_text_source);
     m_text_source = nullptr;
@@ -107,7 +107,7 @@ void text_handler::swap(input_entry& current)
 
     std::string text;
     make_body_text(text);
-    m_display->set_text(text.c_str(), m_settings->settings);
+    m_display->set_text(text.c_str(), m_settings);
 }
 
 void text_handler::render(const gs_effect_t* effect)
@@ -120,7 +120,7 @@ void text_handler::clear()
 {
     m_values.clear();
     m_display->clear();
-    m_display->set_text("", m_settings->settings);
+    m_display->set_text(" ", m_settings);
 }
 
 obs_source_t* text_handler::get_text_source() const

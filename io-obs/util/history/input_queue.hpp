@@ -35,7 +35,7 @@ public:
 
     /* Any of the three sources could be used, since this is only used to get the
      * text source properties */
-    obs_source_t* get_fade_in() const;
+    obs_source_t* get_fade_in();
 
     void collect_input(); /* Accumulates input events in current entry */
     void swap(); /* Adds current entry to the list */
