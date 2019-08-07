@@ -78,21 +78,37 @@ void element_data_analog_stick::set_state(const button_state left, const button_
 
 bool element_data_analog_stick::merge(element_data* other)
 {
+    bool result = false;
     if (other && other->get_type() == m_type) {
         const auto other_stick = dynamic_cast<element_data_analog_stick*>(other);
         if (other_stick) {
             switch (other_stick->m_data_type) {
                 case SD_BOTH:
+                    /* If either of the two sticks
+                     * are switching from unpressed to pressed
+                     * input history should update */
+                    if (other_stick->m_left_state == button_state::PRESSED
+                            && m_left_state == button_state::RELEASED)
+                        result = true;
+                    if (other_stick->m_right_state == button_state::PRESSED
+                            && m_right_state == button_state::RELEASED)
+                        result = true;
                     m_left_stick = other_stick->m_left_stick;
                     m_right_stick = other_stick->m_right_stick;
                     m_left_state = other_stick->m_left_state;
                     m_right_state = other_stick->m_right_state;
                     break;
                 case SD_PRESSED_STATE_LEFT:
+                    if (other_stick->m_left_state == button_state::PRESSED
+                            && m_left_state == button_state::RELEASED)
+                        result = true;
                     m_left_state = other_stick->m_left_state;
                     if (m_data_type != SD_PRESSED_STATE_LEFT) m_data_type = SD_BOTH;
                     break;
                 case SD_PRESSED_STATE_RIGHT:
+                    if (other_stick->m_right_state == button_state::PRESSED
+                            && m_right_state == button_state::RELEASED)
+                        result = true;
                     m_right_state = other_stick->m_right_state;
                     if (m_data_type != SD_PRESSED_STATE_RIGHT) m_data_type = SD_BOTH;
                     break;
@@ -112,11 +128,10 @@ bool element_data_analog_stick::merge(element_data* other)
                     m_right_stick.y = other_stick->m_right_stick.y;
                     if (m_data_type != SD_RIGHT_Y) m_data_type = SD_BOTH;
                     break;
-                default:;
             }
         }
     }
-    return false;
+    return result;
 }
 
 element_data_analog_stick* element_data_analog_stick::from_buffer(netlib_byte_buf* buffer)

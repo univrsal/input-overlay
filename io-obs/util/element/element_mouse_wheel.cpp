@@ -101,6 +101,7 @@ bool element_data_wheel::is_persistent()
 
 bool element_data_wheel::merge(element_data* other)
 {
+    bool result = false;
     if (other && other->get_type() == m_type) {
         const auto other_wheel = dynamic_cast<element_data_wheel*>(other);
 
@@ -111,17 +112,22 @@ bool element_data_wheel::merge(element_data* other)
 
             switch (other_wheel->m_data_type) {
                 case wheel_data::BUTTON:
+                    result = m_middle_button == button_state::RELEASED &&
+                            other_wheel->m_middle_button == button_state::PRESSED;
                     m_middle_button = other_wheel->get_state();
                     break;
                 case wheel_data::WHEEL:
                     m_dir = other_wheel->get_dir();
                     break;
                 case wheel_data::BOTH:
+                    result = m_middle_button == button_state::RELEASED &&
+                            other_wheel->m_middle_button == button_state::PRESSED;
                     m_dir = other_wheel->get_dir();
                     m_middle_button = other_wheel->get_state();
             }
         }
     }
+    return result;
 }
 
 wheel_data element_data_wheel::get_data_type() const

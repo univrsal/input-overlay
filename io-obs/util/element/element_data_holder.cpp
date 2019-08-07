@@ -42,14 +42,8 @@ void element_data_holder::add_data(const uint16_t keycode, element_data* data)
 {
     bool refresh = false;
     if (data_exists(keycode)) {
-        if (m_button_data[keycode]->is_persistent()) {
-            refresh = m_button_data[keycode]->merge(data);
-            delete data; /* Existing data was used -> delete other one */
-        } else {
-            remove_data(keycode);
-            m_button_data[keycode] = std::unique_ptr<element_data>(data);
-            refresh = true;
-        }
+        refresh = m_button_data[keycode]->merge(data);
+        delete data; /* Existing data was used -> delete other one */
     } else {
         m_button_data[keycode] = std::unique_ptr<element_data>(data);
         refresh = true;
@@ -60,19 +54,16 @@ void element_data_holder::add_data(const uint16_t keycode, element_data* data)
 
 void element_data_holder::add_gamepad_data(const uint8_t gamepad, const uint16_t keycode, element_data* data)
 {
+    bool refresh = false;
     if (gamepad_data_exists(gamepad, keycode)) {
-        if (m_gamepad_data[gamepad][keycode]->is_persistent()) {
-            m_gamepad_data[gamepad][keycode]->merge(data);
-
-            delete data; /* Existing data was used -> delete other one */
-        } else {
-            remove_gamepad_data(gamepad, keycode);
-            m_gamepad_data[gamepad][keycode] = std::unique_ptr<element_data>(data);
-        }
+        refresh = m_gamepad_data[gamepad][keycode]->merge(data);
+        delete data; /* Existing data was used -> delete other one */
     } else {
         m_gamepad_data[gamepad][keycode] = std::unique_ptr<element_data>(data);
+        refresh = true;
     }
-    m_last_input = os_gettime_ns();
+    if (refresh)
+        m_last_input = os_gettime_ns();
 }
 
 bool element_data_holder::gamepad_data_exists(const uint8_t gamepad, const uint16_t keycode)

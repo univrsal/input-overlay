@@ -122,6 +122,7 @@ namespace gamepad
                         trigger_l(pad.get_xinput()), trigger_r(pad.get_xinput())
                     ));
 #else
+                blog(LOG_DEBUG, "tick");
                 if (pad.read_event() == -1) {
                     pad.unload();
                     continue;

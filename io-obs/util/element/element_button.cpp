@@ -15,7 +15,8 @@ bool element_data_button::merge(element_data* other)
     if (other && other->get_type() == element_type::BUTTON) {
         const auto other_btn = dynamic_cast<element_data_button*>(other);
         if (other_btn) {
-            result = m_state != other_btn->m_state;
+            if (m_state == button_state::RELEASED && other_btn->m_state == button_state::PRESSED)
+                result = true;
             m_state = other_btn->m_state;
         }
     }

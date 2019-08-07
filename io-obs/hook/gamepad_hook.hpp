@@ -45,9 +45,7 @@ namespace gamepad
         void load()
         {
             m_controller_id = open(m_path.c_str(), O_RDONLY);
-#if _DEBUG
-            blog(LOG_INFO, "Gamepad %i present: %s", m_controller_id, valid() ? "true" : "false");
-#endif
+            blog(LOG_DEBUG, "Gamepad %i present: %s", m_player, valid() ? "true" : "false");
         }
 
         bool valid()
@@ -105,6 +103,7 @@ namespace gamepad
         {
             unload();
             update();
+            blog(LOG_DEBUG, "Gamepad %i present: %s", m_player, valid() ? "true" : "false");
         }
 
         void update()
