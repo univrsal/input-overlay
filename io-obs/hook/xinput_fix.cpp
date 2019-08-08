@@ -110,13 +110,13 @@ namespace xinput_fix
         {
             auto index = 0;
             if (pressed(pad, CODE_DPAD_UP))
-                dirs[index++] = DPAD_UP;
+                dirs[index++] = dpad_direction::UP;
             if (pressed(pad, CODE_DPAD_DOWN))
-                dirs[index++] = DPAD_DOWN;
+                dirs[index++] = dpad_direction::DOWN;
             if (pressed(pad, CODE_DPAD_LEFT) && index < 2)
-                dirs[index++] = DPAD_LEFT;
+                dirs[index++] = dpad_direction::LEFT;
             if (pressed(pad, CODE_DPAD_RIGHT) && index < 2)
-                dirs[index++] = DPAD_RIGHT;
+                dirs[index++] = dpad_direction::RIGHT;
         }
     }
 

@@ -21,7 +21,7 @@ extern "C" {
 
 #define MAX_HISTORY_SIZE 32
 #define SET_FLAG(a, b)      (util_set_mask(m_settings.flags, a, b))
-#define GET_FLAG(a)         (m_settings.flags & a)
+#define GET_FLAG(a)         (m_settings.flags & (a))
 
 namespace sources
 {

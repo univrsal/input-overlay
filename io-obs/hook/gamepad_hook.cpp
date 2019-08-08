@@ -93,7 +93,7 @@ namespace gamepad
                     continue;
 
 #ifdef _WIN32
-                dpad_direction dir[] = { DPAD_CENTER, DPAD_CENTER };
+                dpad_direction dir[] = { dpad_direction::CENTER, dpad_directoin::CENTER };
 
                 for (const auto& button : xinput_fix::all_codes)
                 {

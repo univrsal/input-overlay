@@ -85,6 +85,8 @@ namespace sources
         const auto new_mode = history_mode(obs_data_get_int(settings, S_HISTORY_MODE));
         m_settings.queue->update(new_mode); /* Apply new settings to queue */
         m_settings.mode = new_mode;
+        blog(LOG_DEBUG, "auto-clear tmr: %.2f iv: %.2f",
+             m_clear_timer, m_settings.auto_clear_interval);
     }
 
     inline void input_history_source::tick(float seconds)
@@ -98,7 +100,7 @@ namespace sources
 
         if (GET_FLAG((int) history_flags::AUTO_CLEAR)) {
             m_clear_timer += seconds;
-            if (m_settings.auto_clear_interval <= m_clear_timer) {
+            if (m_clear_timer >= m_settings.auto_clear_interval) {
                 blog(LOG_DEBUG, "auto-clear tmr: %.2f iv: %.2f",
                      m_clear_timer, m_settings.auto_clear_interval);
                 m_clear_timer = 0.f;
