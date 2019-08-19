@@ -589,6 +589,7 @@ KeyIcons::~KeyIcons()
 
 void KeyIcons::load_from_file(std::string img_path, std::string cfg_path)
 {
+    unload_texture();
     m_loaded = false;
     if (img_path.empty() || cfg_path.empty())
         return;
