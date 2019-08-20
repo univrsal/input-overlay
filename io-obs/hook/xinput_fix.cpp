@@ -99,9 +99,9 @@ namespace xinput_fix
             FreeLibrary(xinput_dll);
     }
 
-    button_state pressed(gamepad* pad, const gamepad_codes code)
+    bool pressed(gamepad* pad, const gamepad_codes code)
     {
-        return pad ? button_state((pad->wButtons & code) != 0) : STATE_RELEASED;
+        return pad ? (pad->wButtons & code) != 0 : 0;
     }
 
     void get_dpad(gamepad* pad, dpad_direction dirs[2])

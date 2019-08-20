@@ -17,6 +17,7 @@ public:
     element_data_button(const button_state state) : element_data(element_type::BUTTON)
     {
         m_state = state;
+	    blog(LOG_DEBUG, "state: %i", static_cast<bool>(state));
     }
 
     button_state get_state() const

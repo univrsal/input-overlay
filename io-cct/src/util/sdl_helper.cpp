@@ -8,6 +8,9 @@
 #include "sdl_helper.hpp"
 #include "localization.hpp"
 #include "palette.hpp"
+#include "constants.hpp"
+#include "texture.hpp"
+#include <SDL_image.h>
 
 sdl_helper::sdl_helper()
 {
@@ -401,12 +404,12 @@ void sdl_helper::handle_events(SDL_Event* event)
     } else if (event->type == SDL_WINDOWEVENT) {
         if (event->window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
             SDL_GetWindowSize(m_sdl_window, &m_window_size.x, &m_window_size.y);
-        } else  if (event->window.event == SDL_WINDOWEVENT_FOCUS_GAINED || event->window.event == SDL_WINDOWEVENT_ENTER) {
+        } else  if (event->window.event == SDL_WINDOWEVENT_FOCUS_GAINED) {
             m_focused = true;
-            printf("GAINED\n");
-        } else if (event->window.event == SDL_WINDOWEVENT_FOCUS_LOST || event->window.event == SDL_WINDOWEVENT_LEAVE) {
+        	reset_frame_cap();
+        } else if (event->window.event == SDL_WINDOWEVENT_FOCUS_LOST) {
             m_focused = false;
-            printf("Lost\n");
+        	reset_frame_cap();
         }
     } else if (event->type == SDL_MOUSEMOTION) {
         m_mouse_pos = {event->motion.x, event->motion.y};
@@ -483,17 +486,23 @@ void sdl_helper::end_frame()
 {
     m_fps = m_counted_frames / (m_frame_timer.get_time() / 1000.f);
     m_counted_frames++;
-    if (m_counted_frames + 1 >= UINT16_MAX) {
+    if (m_counted_frames + 1 >= UINT32_MAX) {
         m_counted_frames = 0;
         m_frame_timer.start();
     }
+}
+
+void sdl_helper::reset_frame_cap()
+{
+	m_counted_frames = 0;
+	m_frame_timer.start();
 }
 
 #define TPF         (m_focused ? SDL_WINDOW_TPF : SDL_WINDOW_UNFOCUSED_TPF)
 
 void sdl_helper::cap_frame() const
 {
-    if (m_frame_cap_timer.get_delta() < TPF)
+    if (m_frame_cap_timer.get_time() < TPF)
         SDL_Delay(TPF - m_frame_cap_timer.get_time());
 }
 

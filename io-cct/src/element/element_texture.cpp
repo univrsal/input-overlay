@@ -16,7 +16,7 @@
 #include "../../../ccl/ccl.hpp"
 
 element_texture::element_texture(const std::string &id, const SDL_Point pos, const SDL_Rect mapping, const uint8_t z)
-        : element(TEXTURE, id, pos, z)
+        : element(ET_TEXTURE, id, pos, z)
 {
     m_mapping = mapping;
 }
@@ -27,12 +27,12 @@ element_texture::element_texture(const element_type t, const std::string &id, co
     m_mapping = mapping;
 }
 
-ElementError element_texture::is_valid(notifier* n, sdl_helper* h)
+element_error element_texture::is_valid(notifier* n, sdl_helper* h)
 {
     auto result = element::is_valid(n, h);
-    if (result == VALID && SDL_RectEmpty(&m_mapping)) {
+    if (result == EE_VALID && SDL_RectEmpty(&m_mapping)) {
         n->add_msg(MESSAGE_ERROR, h->loc(LANG_ERROR_SELECTION_EMTPY));
-        result = MAPPING_EMPTY;
+        result = EE_MAPPING_EMPTY;
     }
     return result;
 }

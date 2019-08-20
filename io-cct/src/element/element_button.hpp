@@ -9,35 +9,38 @@
 
 #include "element_texture.hpp"
 
-class ElementButton : public element_texture
-{
+class ElementButton : public element_texture {
 public:
-    ElementButton() : element_texture(), m_pressed_mapping()
-    {
-        /* NO-OP */
-    }
+	ElementButton()
+		: element_texture(),
+		  m_pressed_mapping()
+	{
+		/* NO-OP */
+	}
 
-    ElementButton(const std::string &id, SDL_Point pos, SDL_Rect mapping, uint16_t vc, uint8_t z);
+	ElementButton(const std::string &id, SDL_Point pos, SDL_Rect mapping, uint16_t vc, uint8_t z);
 
-    ElementError is_valid(notifier* n, sdl_helper* h) override;
+	element_error is_valid(notifier *n, sdl_helper *h) override;
 
-    void draw(texture* atlas, coordinate_system* cs, bool selected, bool alpha) override;
+	void draw(texture *atlas, coordinate_system *cs, bool selected, bool alpha) override;
 
-    void write_to_file(ccl_config* cfg, SDL_Point* default_dim, uint8_t &layout_flags) override;
+	void write_to_file(ccl_config *cfg, SDL_Point *default_dim, uint8_t &layout_flags) override;
 
-    void update_settings(dialog_new_element* dialog) override;
+	void update_settings(dialog_new_element *dialog) override;
 
-    void update_settings(dialog_element_settings* dialog) override;
+	void update_settings(dialog_element_settings *dialog) override;
 
-    void handle_event(SDL_Event* event, sdl_helper* helper) override;
+	void handle_event(SDL_Event *event, sdl_helper *helper) override;
 
-    int get_vc() override
-    { return m_keycode; }
+	int get_vc() override
+	{
+		return m_keycode;
+	}
 
-    static ElementButton* read_from_file(ccl_config* file, const std::string &id, SDL_Point* default_dim);
+	static ElementButton *read_from_file(ccl_config *file, const std::string &id, SDL_Point *default_dim);
 
 private:
-    SDL_Rect m_pressed_mapping;
-    uint16_t m_keycode = 0;
-    bool m_pressed = false;
+	SDL_Rect m_pressed_mapping;
+	uint16_t m_keycode = 0;
+	bool m_pressed = false;
 };

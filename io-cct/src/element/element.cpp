@@ -27,21 +27,21 @@
 element* element::read_from_file(ccl_config* file, const std::string &id, const element_type t, SDL_Point* default_dim)
 {
     switch (t) {
-        case TEXTURE:
+        case ET_TEXTURE:
             return element_texture::read_from_file(file, id, default_dim);
-        case BUTTON:
+        case ET_BUTTON:
             return ElementButton::read_from_file(file, id, default_dim);
-        case MOUSE_SCROLLWHEEL:
+        case ET_WHEEL:
             return ElementScrollWheel::read_from_file(file, id, default_dim);
-        case MOUSE_STATS:
+        case ET_MOUSE_STATS:
             return ElementMouseMovement::read_from_file(file, id, default_dim);
-        case ANALOG_STICK:
+        case ET_ANALOG_STICK:
             return ElementAnalogStick::read_from_file(file, id, default_dim);
-        case TRIGGER:
+        case ET_TRIGGER:
             return element_trigger::read_from_file(file, id, default_dim);
-        case DPAD_STICK:
+        case ET_DPAD_STICK:
             return ElementDPad::read_from_file(file, id, default_dim);
-        case GAMEPAD_ID:
+        case ET_GAMEPAD_ID:
             return ElementGamepadID::read_from_file(file, id, default_dim);
         default:;
     }
@@ -52,28 +52,28 @@ element* element::from_dialog(dialog_new_element* dialog)
 {
     element* e = nullptr;
     switch (dialog->get_type()) {
-        case BUTTON:
+        case ET_BUTTON:
             e = new ElementButton();
             break;
-        case TEXTURE:
+        case ET_TEXTURE:
             e = new element_texture();
             break;
-        case TRIGGER:
+        case ET_TRIGGER:
             e = new element_trigger();
             break;
-        case MOUSE_SCROLLWHEEL:
+        case ET_WHEEL:
             e = new ElementScrollWheel();
             break;
-        case DPAD_STICK:
+        case ET_DPAD_STICK:
             e = new ElementDPad();
             break;
-        case MOUSE_STATS:
+        case ET_MOUSE_STATS:
             e = new ElementMouseMovement();
             break;
-        case ANALOG_STICK:
+        case ET_ANALOG_STICK:
             e = new ElementAnalogStick();
             break;
-        case GAMEPAD_ID:
+        case ET_GAMEPAD_ID:
             e = new ElementGamepadID();
             break;
         default:;
@@ -89,14 +89,14 @@ element* element::from_dialog(dialog_new_element* dialog)
 bool element::valid_type(const int t)
 {
     switch (t) {
-        case ANALOG_STICK:
-        case BUTTON:
-        case DPAD_STICK:
-        case MOUSE_STATS:
-        case MOUSE_SCROLLWHEEL:
-        case TEXTURE:
-        case TRIGGER:
-        case GAMEPAD_ID:
+        case ET_ANALOG_STICK:
+        case ET_BUTTON:
+        case ET_DPAD_STICK:
+        case ET_MOUSE_STATS:
+        case ET_WHEEL:
+        case ET_TEXTURE:
+        case ET_TRIGGER:
+        case ET_GAMEPAD_ID:
             return true;
         default:;
     }
@@ -106,7 +106,7 @@ bool element::valid_type(const int t)
 element::element()
 {
     m_id = "";
-    m_type = INVALID;
+    m_type = ET_INVALID;
     m_position = {0, 0};
     m_mapping = {0, 0, 0, 0};
     m_dimensions_scaled = {};
@@ -161,18 +161,18 @@ void element::update_settings(dialog_element_settings* dialog)
     set_pos(dialog->get_x(), dialog->get_y());
 }
 
-ElementError element::is_valid(notifier* n, sdl_helper* h)
+element_error element::is_valid(notifier* n, sdl_helper* h)
 {
-    auto result = VALID;
+    auto result = EE_VALID;
 
     if (m_id.empty()) {
         n->add_msg(MESSAGE_ERROR, h->loc(LANG_ERROR_ID_EMPTY));
-        result = ID_EMPTY;
+        result = EE_ID_EMPTY;
     }
 
-    if (m_type == INVALID) {
+    if (m_type == ET_INVALID) {
         n->add_msg(MESSAGE_ERROR, h->loc(LANG_ERROR_TYPE_INVALID));
-        result = TYPE_INVALID;
+        result = EE_TYPE_INVALID;
     }
     return result;
 }
@@ -209,8 +209,8 @@ uint8_t element::read_layer(ccl_config* file, const std::string &id)
 
 element_side element::read_side(ccl_config* file, const std::string &id)
 {
-    auto s = SIDE_LEFT;
+    auto s = ES_LEFT;
     if (file->get_int(id + CFG_SIDE) != 0)
-        s = SIDE_RIGHT;
+        s = ES_RIGHT;
     return s;
 }

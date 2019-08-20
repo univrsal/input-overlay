@@ -123,7 +123,7 @@ bool overlay::load_cfg()
                         data = new element_data_trigger(0.f, 0.f);
                         break;
                     case element_type::ANALOG_STICK:
-                        data = new element_data_analog_stick(button_state::RELEASED, button_state::RELEASED, 0.f, 0.f, 0.f, 0.f);
+                        data = new element_data_analog_stick(false, false, 0.f, 0.f, 0.f, 0.f);
                         break;
                     case element_type::DPAD_STICK:
                         data = new element_data_dpad(dpad_direction::LEFT, button_state::RELEASED);

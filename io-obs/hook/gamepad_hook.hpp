@@ -103,7 +103,7 @@ namespace gamepad
         {
             unload();
             update();
-            blog(LOG_DEBUG, "Gamepad %i present: %s", m_player, valid() ? "true" : "false");
+            blog(LOG_DEBUG, "Gamepad %i present: %s", m_controller_id, valid() ? "true" : "false");
         }
 
         void update()

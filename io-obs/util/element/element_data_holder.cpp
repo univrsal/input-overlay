@@ -49,6 +49,7 @@ void element_data_holder::add_data(const uint16_t keycode, element_data* data)
         m_button_data[keycode] = std::unique_ptr<element_data>(data);
         refresh = true;
     }
+
     if (refresh)
         m_last_input = os_gettime_ns();
 }

@@ -64,13 +64,13 @@ public:
         m_data_type = data_type;
     }
 
-    element_data_analog_stick(const button_state left, const button_state right, const float l_x, const float l_y,
+    element_data_analog_stick(bool left, bool right, const float l_x, const float l_y,
                               const float r_x, const float r_y) : element_data(element_type::ANALOG_STICK)
     {
         m_left_stick = {l_x, l_y};
         m_right_stick = {r_x, r_y};
-        m_left_state = left;
-        m_right_state = right;
+        m_left_state = static_cast<button_state>(left);
+        m_right_state = static_cast<button_state>(right);
         m_data_type = SD_BOTH;
     }
 

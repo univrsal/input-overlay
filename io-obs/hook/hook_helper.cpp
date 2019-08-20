@@ -243,7 +243,6 @@ namespace hook
         switch (event->type) {
             case EVENT_KEY_PRESSED:
             case EVENT_KEY_RELEASED:/* Fallthrough */
-                if (event->mask)
                 input_data->add_data(event->data.keyboard.keycode, new element_data_button(
                         event->type == EVENT_KEY_PRESSED ? button_state::PRESSED : button_state::RELEASED));
                 break;

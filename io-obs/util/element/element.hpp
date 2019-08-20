@@ -29,7 +29,7 @@ namespace sources
 class ccl_config;
 
 #ifdef _WIN32
-enum element_type;
+enum class element_type;
 #else
 
 #include "../layout_constants.hpp"

@@ -21,31 +21,29 @@
 #include <SDL_ttf.h>
 #include <string>
 #include "sdl_helper.hpp"
-#include "constants.hpp"
 
 class sdl_helper;
 
-class font_helper
-{
+class font_helper {
 public:
-    font_helper(sdl_helper* renderer);
+	font_helper(sdl_helper *renderer);
 
-    ~font_helper();
+	~font_helper();
 
-    void set_mode(int m);
+	void set_mode(int m);
 
-    void draw(const std::string* text, int x, int y, TTF_Font* font, const SDL_Color* fg, const SDL_Color* bg,
-              uint8_t scale = 1) const;
+	void draw(const std::string *text, int x, int y, TTF_Font *font, const SDL_Color *fg, const SDL_Color *bg,
+	          uint8_t scale = 1) const;
 
-    void draw(const std::string* text, int x, int y, TTF_Font* font, const SDL_Color* fg, uint8_t scale = 1);
+	void draw(const std::string *text, int x, int y, TTF_Font *font, const SDL_Color *fg, uint8_t scale = 1);
 
-    void draw(const std::string* text, int x, int y, TTF_Font* font, uint8_t scale = 1) const;
+	void draw(const std::string *text, int x, int y, TTF_Font *font, uint8_t scale = 1) const;
 
-    void draw_rot(const std::string* text, int x, int y, TTF_Font* font, const SDL_Color* fg, double angle) const;
+	void draw_rot(const std::string *text, int x, int y, TTF_Font *font, const SDL_Color *fg, double angle) const;
 
-    SDL_Rect get_text_dimension(TTF_Font* font, const std::string* text) const;
+	SDL_Rect get_text_dimension(TTF_Font *font, const std::string *text) const;
 
 private:
-    sdl_helper* m_helper;
-    uint8_t m_mode;
+	sdl_helper *m_helper;
+	uint8_t m_mode;
 };

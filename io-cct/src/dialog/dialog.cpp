@@ -14,17 +14,20 @@ dialog::dialog(sdl_helper* sdl, const SDL_Rect size, const std::string &title) :
     m_helper = sdl;
     m_dimensions = size;
     m_title = title;
-    m_title_bar = {m_dimensions.x + 5, m_dimensions.y + 5, m_dimensions.w - 10, 20};
+    m_title_bar = {m_dimensions.x + 5, m_dimensions.y + 5,
+    	m_dimensions.w - 10, 20};
 }
 
 dialog::dialog(sdl_helper* sdl, const SDL_Point size, const std::string &title) : m_offset_x(0)
 {
     const auto window_size = sdl->util_window_size();
-    const SDL_Rect temp = {(*window_size).x / 2 - size.x / 2, (*window_size).y / 2 - size.y / 2, size.x, size.y};
+    const SDL_Rect temp = {(*window_size).x / 2 - size.x / 2,
+    	(*window_size).y / 2 - size.y / 2, size.x, size.y};
     m_helper = sdl;
     m_dimensions = temp;
     m_title = title;
-    m_title_bar = {m_dimensions.x + 5, m_dimensions.y + 5, m_dimensions.w - 10, 20};
+    m_title_bar = {m_dimensions.x + 5, m_dimensions.y + 5,
+    	m_dimensions.w - 10, 20};
 }
 
 dialog::~dialog()
@@ -61,7 +64,7 @@ void dialog::draw_background()
         SDL_Rect temp = {0, 0, s->x, s->y};
         m_helper->util_fill_rect(&temp, m_helper->get_palette()->dark_gray(), 200);
     }
-
+	
     // Dialog box
     m_helper->util_fill_rect_shadow(&m_dimensions, m_helper->get_palette()->get_accent());
     m_helper->util_draw_rect(&m_dimensions, m_helper->get_palette()->dark_gray());

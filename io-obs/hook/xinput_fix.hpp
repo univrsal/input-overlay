@@ -62,7 +62,7 @@ namespace xinput_fix
 
     void unload();
 
-    button_state pressed(gamepad* pad, gamepad_codes code);
+    bool pressed(gamepad* pad, gamepad_codes code);
 
     void get_dpad(gamepad* pad, dpad_direction dirs[2]);
 

@@ -7,6 +7,7 @@
 
 #include "coordinate_system.hpp"
 #include "../util/palette.hpp"
+#include "constants.hpp"
 
 bool coordinate_system::handle_events(SDL_Event* e)
 {
