@@ -637,9 +637,10 @@ obs_properties_t* get_properties_for_overlay(void* data)
     obs_property_t* is_controller = obs_properties_add_bool(props, S_IS_CONTROLLER, T_IS_CONTROLLER);
     obs_property_set_modified_callback(is_controller, is_controller_changed);
     obs_properties_add_int(props, S_CONTROLLER_ID, T_CONTROLLER_ID, 0, 3, 1);
-
+#ifdef _WIN32 /* Linux filters inputs automatically */
     obs_properties_add_int_slider(props, S_CONTROLLER_L_DEAD_ZONE, T_CONROLLER_L_DEADZONE, 1, PAD_STICK_MAX_VAL - 1, 1);
     obs_properties_add_int_slider(props, S_CONTROLLER_R_DEAD_ZONE, T_CONROLLER_R_DEADZONE, 1, PAD_STICK_MAX_VAL - 1, 1);
+#endif
 
 #ifdef LINUX
     obs_properties_add_button(props, S_CONTROLLER_RELOAD, T_CONTROLLER_RELOAD, reload_pads);
