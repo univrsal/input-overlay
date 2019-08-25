@@ -64,6 +64,7 @@
 #define S_CONTROLLER_ID             "controller_id"
 #define S_CONTROLLER_L_DEAD_ZONE    "controller_l_deadzone"
 #define S_CONTROLLER_R_DEAD_ZONE    "controller_r_deadzone"
+#define S_CONTROLLER_RELOAD			"controller_reload"
 #define S_IS_MOUSE                  "is_mouse"
 #define S_MOUSE_SENS                "mouse_sens"
 #define S_MOUSE_DEAD_ZONE           "mouse_deadzone"
@@ -79,6 +80,7 @@
 #define T_FILTER_ALL_FILES          T_("Filter.AllFiles")
 #define T_IS_CONTROLLER             T_("Gamepad.IsGamepad")
 #define T_CONTROLLER_ID             T_("GamepadId")
+#define T_CONTROLLER_RELOAD			T_("Gamepad.Reload")
 #define T_CONROLLER_L_DEADZONE      T_("Gamepad.LeftDeadZone")
 #define T_CONROLLER_R_DEADZONE      T_("Gamepad.RightDeadZone")
 #define T_IS_MOUSE                  T_("Mouse.IsMouse")
@@ -91,7 +93,7 @@
 // Lang Input History
 #define S_OVERLAY_HISTORY_SIZE          "history_size"
 #define S_OVERLAY_FIX_CUTTING           "fix_cutting"
-#define S_OVERLAY_INCLUDE_MOUSE            "include_mouse"
+#define S_OVERLAY_INCLUDE_MOUSE         "include_mouse"
 #define S_OVERLAY_INTERVAL              "interval"
 #define S_OVERLAY_CLEAR_HISTORY         "clear_history"
 #define S_OVERLAY_ENABLE_REPEAT_KEYS    "repeat_keys"
@@ -188,7 +190,7 @@
 #define PAD_RB              5
 #define PAD_BACK            6
 #define PAD_START           7
-#define PAD_X_BOX_KEY        8
+#define PAD_X_BOX_KEY       8
 #define PAD_L_ANALOG        9
 #define PAD_R_ANALOG        10
 #define PAD_DPAD_LEFT       11
@@ -197,6 +199,13 @@
 #define PAD_DPAD_DOWN       14
 #define PAD_LT              15
 #define PAD_RT              16
+
+#define PAD_AXIS_LX			0
+#define PAD_AXIS_LY			1
+#define PAD_AXIS_LT			2
+#define PAD_AXIS_RX			3
+#define PAD_AXIS_RY			4
+#define PAD_AXIS_RT			5
 
 // Get default keynames from a libuiohook keycode
 const char* key_to_text(int key_code);

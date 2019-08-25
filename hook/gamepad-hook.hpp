@@ -11,6 +11,10 @@
 #ifdef LINUX
 
 #include "../util/util.hpp"
+#include <linux/joystick.h>
+#include <fcntl.h>
+#include <sys/types.h>
+#include <sys/select.h>
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -28,17 +32,20 @@ struct GamepadState
 
     void unload()
     {
-        if (m_device_file)
-            fclose(m_device_file);
+        if (m_device_id)
+            close(m_device_id);
+        m_device_id = -1;
     }
 
     void load()
     {
-        m_device_file = fopen(m_path.c_str(), "wb+");
-        if (m_device_file) {
-            void* tmp = malloc(8 * 12 * sizeof(char));
-            fread(tmp, sizeof(char) * 8 * 12, 1, m_device_file);
-            free(tmp);
+        unload();
+        m_device_id = open(m_path.c_str(), O_RDONLY);
+        if (m_device_id >= 0) {
+            /* Make this descriptor non blocking */
+            int flags = fcntl(m_device_id, F_GETFL, 0);
+            fcntl(m_device_id, F_SETFL, flags | O_NONBLOCK);
+            blog(LOG_DEBUG, "[input-overlay] Pad %s present", m_path.c_str());
         }
     }
 
@@ -49,7 +56,7 @@ struct GamepadState
     }
 
     bool valid()
-    { return m_device_file != NULL; }
+    { return m_device_id != -1; }
 
     void set_path(std::string path)
     {
@@ -57,10 +64,8 @@ struct GamepadState
         load();
     }
 
-    FILE* dev()
-    { return m_device_file; }
-
-    float l_x, l_y, r_x, r_y;
+    int dev()
+    { return m_device_id; }
 
     bool key_state(uint8_t id)
     {
@@ -69,15 +74,29 @@ struct GamepadState
         return false;
     }
 
+    int read_event()
+    {
+        ssize_t bytes;
+        bytes = read(m_device_id, &m_event, sizeof(m_event));
+        return bytes;
+    }
+
+    js_event* event() { return &m_event; }
+
+    const std::string& path() { return m_path; }
+
+    float l_x, l_y, r_x, r_y;
+
 private:
-    FILE* m_device_file = nullptr;
+    int m_device_id = -1;
+    js_event m_event;
     std::string m_path;
     bool m_keys[PAD_BUTTON_COUNT];
 
 };
 
 extern GamepadState pad_states[PAD_COUNT]; // Only monitor four gamepads, I mean who even has more than four friends
-extern bool gamepad_hook_state;
+extern volatile bool gamepad_hook_state;
 
 void start_pad_hook(void);
 

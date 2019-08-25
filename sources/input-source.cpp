@@ -548,6 +548,10 @@ bool is_controller_changed(obs_properties_t* props, obs_property_t* p, obs_data_
     obs_property_set_visible(l_deadzone, is_gamepad);
     obs_property_set_visible(r_deadzone, is_gamepad);
 
+#ifdef LINUX
+    obs_property_t* reload_pads = obs_properties_get(props, S_CONTROLLER_RELOAD);
+    obs_property_set_visible(reload_pads, is_gamepad);
+#endif
     return true;
 }
 
@@ -576,6 +580,15 @@ bool use_monitor_center_changed(obs_properties_t* props, obs_property_t* p, obs_
     obs_property_set_visible(GET_PROPS(S_MONITOR_H_CENTER), use_center);
     obs_property_set_visible(GET_PROPS(S_MONITOR_V_CENTER), use_center);
 
+    return true;
+}
+
+bool reload_pads(obs_properties_t* props, obs_property_t* property, void* data)
+{
+    UNUSED_PARAMETER(props);
+    UNUSED_PARAMETER(property);
+    UNUSED_PARAMETER(data);
+    init_pad_devices();
     return true;
 }
 
@@ -628,6 +641,9 @@ obs_properties_t* get_properties_for_overlay(void* data)
     obs_properties_add_int_slider(props, S_CONTROLLER_L_DEAD_ZONE, T_CONROLLER_L_DEADZONE, 1, PAD_STICK_MAX_VAL - 1, 1);
     obs_properties_add_int_slider(props, S_CONTROLLER_R_DEAD_ZONE, T_CONROLLER_R_DEADZONE, 1, PAD_STICK_MAX_VAL - 1, 1);
 
+#ifdef LINUX
+    obs_properties_add_button(props, S_CONTROLLER_RELOAD, T_CONTROLLER_RELOAD, reload_pads);
+#endif
     return props;
 }
 
