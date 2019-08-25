@@ -16,13 +16,12 @@ fi
 echo "Creating build directory"
 mkdir -p $build_dir/plugin
 mkdir -p $build_dir/plugin/bin/64bit
-mkdir $build_dir/plugin/data
 
 echo "Fetching build from $build_location"
 cp $build_location/$project.so $build_dir/plugin/bin/64bit/
 
 echo "Fetching locale from $data_dir"
-cp -R $data_dir $build_dir/plugin/data
+cp -R $data_dir $build_dir/plugin
 
 echo "Fetching misc files"
 cp ../LICENSE $build_dir/LICENSE.txt
