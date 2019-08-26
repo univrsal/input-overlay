@@ -16,9 +16,9 @@ function replace($file, $what, $with)
     ((Get-Content $file) -replace $what, $with) | Set-Content -Path $file
 }
 
-if ($version.length -lt 1) {
-    echo("Please provide a version string")
-    exit
+while ($version.length -lt 1) {
+    $version = Read-Host -Prompt 'Enter a version string'
+    $build_dir="./" + $project + ".v" + $version + "." + $arch
 }
 
 echo("Creating build directory")
