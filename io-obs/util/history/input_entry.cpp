@@ -147,7 +147,7 @@ void input_entry::render_icons(sources::history_settings* settings, history_icon
 
     for (const auto& vc : m_inputs)
     {
-        if (settings->dir == history_direction::DOWN || settings->dir == history_direction::UP)
+        if (settings->dir == DIR_DOWN || settings->dir == DIR_UP)
             temp.x = m_position.x + (i++) * (settings->h_space + icons->get_w());
         else
             temp.y = m_position.y + (i++) * (settings->v_space + icons->get_h());

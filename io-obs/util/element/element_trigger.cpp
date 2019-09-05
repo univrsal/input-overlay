@@ -11,7 +11,7 @@
 #include "../util.hpp"
 #include "util/layout_constants.hpp"
 
-element_trigger::element_trigger() : element_texture(element_type::TRIGGER)
+element_trigger::element_trigger() : element_texture(ET_TRIGGER)
 {
 }
 
@@ -24,7 +24,7 @@ void element_trigger::load(ccl_config* cfg, const std::string &id)
     m_pressed = m_mapping;
     m_pressed.y = m_mapping.y + m_mapping.cy + CFG_INNER_BORDER;
     if (!m_button_mode) {
-        m_direction = static_cast<trigger_direction>(cfg->get_int(id + CFG_DIRECTION));
+        m_direction = static_cast<direction>(cfg->get_int(id + CFG_DIRECTION));
     }
 }
 
@@ -38,10 +38,10 @@ void element_trigger::draw(gs_effect_t* effect, gs_image_file_t* image, element_
         auto progress = 0.f;
         if (trigger) {
             switch (m_side) {
-                case element_side::LEFT:
+                case ES_LEFT:
                     progress = trigger->get_left();
                     break;
-                case element_side::RIGHT:
+                case ES_RIGHT:
                     progress = trigger->get_right();
                     break;
                 default:;
@@ -68,45 +68,47 @@ void element_trigger::draw(gs_effect_t* effect, gs_image_file_t* image, element_
 
 data_source element_trigger::get_source()
 {
-    return data_source::GAMEPAD;
+    return DS_GAMEPAD;
 }
 
 void element_trigger::calculate_mapping(gs_rect* pressed, vec2* pos, const float progress) const
 {
     switch (m_direction) {
-        case trigger_direction::UP:
+        case DIR_UP:
             pressed->cy = m_mapping.cy * progress;
             pressed->y = m_pressed.y + (m_mapping.cy - pressed->cy);
             pos->y += m_mapping.cy - pressed->cy;
             break;
-        case trigger_direction::DOWN:
+        case DIR_DOWN:
             pressed->cy = m_mapping.cy * progress;
             break;
-        case trigger_direction::LEFT:
+        case DIR_LEFT:
             pressed->cx = m_mapping.cx * progress;
             pressed->x = m_mapping.x + (m_mapping.cx - pressed->cx);
             pos->x += (m_mapping.cx - pressed->cx);
             break;
-        case trigger_direction::RIGHT:
+        case DIR_RIGHT:
             pressed->cx = m_mapping.cx * progress;
             break;
     }
 }
 
-element_data_trigger::element_data_trigger(const trigger_data side, const float val) : element_data(element_type::TRIGGER)
+element_data_trigger::element_data_trigger(const trigger_data side, const float val) :
+    element_data(ET_TRIGGER)
 {
-    if (side == trigger_data::LEFT)
+    if (side == TD_LEFT)
         m_left_trigger = val;
     else
         m_right_trigger = val;
     m_data_type = side;
 }
 
-element_data_trigger::element_data_trigger(const float left, const float right) : element_data(element_type::TRIGGER)
+element_data_trigger::element_data_trigger(const float left, const float right) :
+    element_data(ET_TRIGGER)
 {
     m_left_trigger = left;
     m_right_trigger = right;
-    m_data_type = trigger_data::BOTH;
+    m_data_type = TD_BOTH;
 }
 
 float element_data_trigger::get_left() const
@@ -131,19 +133,19 @@ bool element_data_trigger::merge(element_data* other)
 
         if (trigger) {
             switch (trigger->m_data_type) {
-                case trigger_data::BOTH:
+                case TD_BOTH:
                     m_left_trigger = trigger->m_left_trigger;
                     m_right_trigger = trigger->m_right_trigger;
                     break;
-                case trigger_data::LEFT:
+                case TD_LEFT:
                     m_left_trigger = trigger->m_left_trigger;
-                    if (m_data_type == trigger_data::RIGHT) /* Left merged with right = now contains both sides */
-                        m_data_type = trigger_data::BOTH;
+                    if (m_data_type == TD_RIGHT) /* Left merged with right = now contains both sides */
+                        m_data_type = TD_BOTH;
                     break;
-                case trigger_data::RIGHT:
+                case TD_RIGHT:
                     m_right_trigger = trigger->m_right_trigger;
-                    if (m_data_type == trigger_data::LEFT) /* Left merged with right = now contains both sides */
-                        m_data_type = trigger_data::BOTH;
+                    if (m_data_type == TD_LEFT) /* Left merged with right = now contains both sides */
+                        m_data_type = TD_BOTH;
                     break;
                 default:;
             }

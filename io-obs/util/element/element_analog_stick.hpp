@@ -21,8 +21,9 @@ enum stick_data_type
 class element_data_analog_stick : public element_data
 {
 public:
-    element_data_analog_stick() : element_data(element_type::ANALOG_STICK), m_left_stick(), m_right_stick(), m_left_state(),
-                                  m_right_state()
+    element_data_analog_stick() :
+        element_data(ET_ANALOG_STICK),
+        m_left_stick(), m_right_stick(), m_left_state(), m_right_state()
     {
         m_data_type = SD_BOTH;
     }
@@ -31,10 +32,12 @@ public:
         Separate constructors are used on linux
         because the values can't be queried together
     */
-    element_data_analog_stick(const button_state state, const element_side side) : element_data(element_type::ANALOG_STICK),
-                                                                                   m_left_stick(), m_right_stick()
+    element_data_analog_stick(const button_state state,
+                              const element_side side) :
+        element_data(ET_ANALOG_STICK),
+        m_left_stick(), m_right_stick()
     {
-        if (side == element_side::LEFT) {
+        if (side == DIR_LEFT) {
             m_left_state = state;
             m_data_type = SD_PRESSED_STATE_LEFT;
         } else {
@@ -43,8 +46,10 @@ public:
         }
     }
 
-    element_data_analog_stick(const float axis_value, const stick_data_type data_type) : element_data(element_type::ANALOG_STICK),
-                                                                                         m_left_state(), m_right_state()
+    element_data_analog_stick(const float axis_value,
+                              const stick_data_type data_type) :
+          element_data(ET_ANALOG_STICK),
+          m_left_state(), m_right_state()
     {
         switch (data_type) {
             case SD_LEFT_X:
@@ -65,7 +70,8 @@ public:
     }
 
     element_data_analog_stick(bool left, bool right, const float l_x, const float l_y,
-                              const float r_x, const float r_y) : element_data(element_type::ANALOG_STICK)
+                              const float r_x, const float r_y) :
+        element_data(ET_ANALOG_STICK)
     {
         m_left_stick = {l_x, l_y};
         m_right_stick = {r_x, r_y};
@@ -76,12 +82,12 @@ public:
 
     bool left_pressed() const
     {
-        return m_left_state == button_state::PRESSED;
+        return m_left_state == BS_PRESSED;
     }
 
     bool right_pressed() const
     {
-        return m_right_state == button_state::PRESSED;
+        return m_right_state == BS_PRESSED;
     }
 
     const vec2* get_left_stick() const
@@ -112,7 +118,7 @@ private:
 class element_analog_stick : public element_texture
 {
 public:
-    element_analog_stick() : element_texture(element_type::ANALOG_STICK), m_side()
+    element_analog_stick() : element_texture(ET_ANALOG_STICK), m_side()
     {
     }
 
@@ -122,7 +128,7 @@ public:
     draw(gs_effect_t* effect, gs_image_file_t* image, element_data* data, sources::overlay_settings* settings) override;
 
     data_source get_source() override
-    { return data_source::GAMEPAD; }
+    { return DS_GAMEPAD; }
 
 private:
     void calc_position(vec2* v, element_data_analog_stick* d, sources::overlay_settings* settings) const;

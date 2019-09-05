@@ -112,23 +112,23 @@ bool overlay::load_cfg()
                 element_data* data = nullptr;
 
                 switch (element->get_type()) {
-                    case element_type::GAMEPAD_ID: /* Acts just like a button */
-                    case element_type::BUTTON:
-                        data = new element_data_button(button_state::RELEASED);
+                    case ET_GAMEPAD_ID: /* Acts just like a button */
+                    case ET_BUTTON:
+                        data = new element_data_button(BS_RELEASED);
                         break;
-                    case element_type::MOUSE_SCROLLWHEEL:
-                        data = new element_data_wheel(button_state::RELEASED);
+                    case ET_WHEEL:
+                        data = new element_data_wheel(BS_RELEASED);
                         break;
-                    case element_type::TRIGGER:
+                    case ET_TRIGGER:
                         data = new element_data_trigger(0.f, 0.f);
                         break;
-                    case element_type::ANALOG_STICK:
+                    case ET_ANALOG_STICK:
                         data = new element_data_analog_stick(false, false, 0.f, 0.f, 0.f, 0.f);
                         break;
-                    case element_type::DPAD_STICK:
-                        data = new element_data_dpad(dpad_direction::LEFT, button_state::RELEASED);
+                    case ET_DPAD_STICK:
+                        data = new element_data_dpad(DD_LEFT, BS_RELEASED);
                         break;
-                    case element_type::MOUSE_STATS:
+                    case ET_MOUSE_STATS:
                         data = new element_data_mouse_pos(0, 0);
                         break;
                     default:;
@@ -224,12 +224,12 @@ void overlay::refresh_data()
 
              if (m_data[element->get_keycode()] != nullptr) {
                 switch (element->get_source()) {
-                    case data_source::GAMEPAD:
+                    case DS_GAMEPAD:
                         data = source->get_by_gamepad(m_settings->gamepad, element->get_keycode());
                         break;
                     default:
-                case data_source::MOUSE_POS:
-                case data_source::DEFAULT:
+                case DS_MOUSE_POS:
+                case DS_DEFAULT:
                         data = source->get_by_code(element->get_keycode());
                         break;
                 }
@@ -245,28 +245,28 @@ void overlay::load_element(ccl_config* cfg, const std::string &id, const bool de
     element* new_element = nullptr;
 
     switch (type) {
-        case (int) element_type::TEXTURE:
+        case ET_TEXTURE:
             new_element = new element_texture();
             break;
-        case (int) element_type::BUTTON:
+        case ET_BUTTON:
             new_element = new element_button();
             break;
-        case (int) element_type::MOUSE_SCROLLWHEEL:
+        case ET_WHEEL:
             new_element = new element_wheel();
             break;
-        case (int) element_type::TRIGGER:
+        case ET_TRIGGER:
             new_element = new element_trigger();
             break;
-        case (int) element_type::ANALOG_STICK:
+        case ET_ANALOG_STICK:
             new_element = new element_analog_stick();
             break;
-        case (int) element_type::GAMEPAD_ID:
+        case ET_GAMEPAD_ID:
             new_element = new element_gamepad_id();
             break;
-        case (int) element_type::DPAD_STICK:
+        case ET_DPAD_STICK:
             new_element = new element_dpad();
             break;
-        case (int) element_type::MOUSE_STATS:
+        case ET_MOUSE_STATS:
             new_element = new element_mouse_movement();
             break;
         default:
@@ -292,23 +292,23 @@ void overlay::load_element(ccl_config* cfg, const std::string &id, const bool de
 const char* overlay::element_type_to_string(const element_type t)
 {
     switch (t) {
-        case element_type::TEXTURE:
+        case ET_TEXTURE:
             return "Texture";
-        case element_type::BUTTON:
+        case ET_BUTTON:
             return "Button";
-        case element_type::ANALOG_STICK:
+        case ET_ANALOG_STICK:
             return "Analog stick";
-        case element_type::MOUSE_SCROLLWHEEL:
+        case ET_WHEEL:
             return "Scroll wheel";
-        case element_type::MOUSE_STATS:
+        case ET_MOUSE_STATS:
             return "Mouse movement";
-        case element_type::TRIGGER:
+        case ET_TRIGGER:
             return "Trigger";
-        case element_type::GAMEPAD_ID:
+        case ET_GAMEPAD_ID:
             return "Gamepad ID";
-        case element_type::DPAD_STICK:
+        case ET_DPAD_STICK:
             return "DPad";
-        case element_type::INVALID:
+        case ET_INVALID:
             return "Invalid";
     }
 }

@@ -43,7 +43,7 @@ public:
     draw(gs_effect_t* effect, gs_image_file_t* image, element_data* data, sources::overlay_settings* settings) override;
 
     data_source get_source() override
-    { return data_source::MOUSE_POS; }
+    { return DS_MOUSE_POS; }
 
 private:
     mouse_movement m_movement_type;

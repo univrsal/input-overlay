@@ -48,8 +48,7 @@ namespace sources
         uint8_t history_size = 0;               /* Maximum amount of entries in history */
         uint8_t target_gamepad = 0;             /* Only one gamepad is used per source */
         uint16_t v_space = 0, h_space = 0;      /* Vertical/Horizontal space. h_space only for icons */
-        history_direction dir =
-                history_direction::DOWN;		/* Flow direction of input display */
+        direction dir = DIR_DOWN;				/* Flow direction of input display */
         float update_interval = 0.f;            /* Timespan in which inputs will be accumulated */
         float auto_clear_interval = 0.f;        /* Timespan of no inputs after which history will be cleared */
         const char* key_name_path = nullptr;    /* Path to additional key name config */

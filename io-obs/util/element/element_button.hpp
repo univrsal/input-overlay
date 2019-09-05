@@ -14,10 +14,10 @@
 class element_data_button : public element_data
 {
 public:
-    element_data_button(const button_state state) : element_data(element_type::BUTTON)
+    element_data_button(const button_state state) : element_data(ET_BUTTON)
     {
         m_state = state;
-	    blog(LOG_DEBUG, "state: %i", static_cast<bool>(state));
+        blog(LOG_DEBUG, "state: %i", static_cast<bool>(state));
     }
 
     button_state get_state() const
@@ -34,7 +34,7 @@ private:
 class element_button : public element_texture
 {
 public:
-    element_button() : element_texture(element_type::BUTTON), m_pressed()
+    element_button() : element_texture(ET_BUTTON), m_pressed()
     {
     }
 
@@ -44,7 +44,7 @@ public:
     draw(gs_effect_t* effect, gs_image_file_t* image, element_data* data, sources::overlay_settings* settings) override;
 
     data_source get_source() override
-    { return is_gamepad ? data_source::GAMEPAD : data_source::DEFAULT; }
+    { return is_gamepad ? DS_GAMEPAD : DS_DEFAULT; }
 
 private:
     bool is_gamepad = false;

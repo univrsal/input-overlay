@@ -71,7 +71,7 @@ namespace sources
         m_settings.v_space = obs_data_get_int(settings, S_HISTORY_ICON_V_SPACE);
 
         m_settings.history_size = obs_data_get_int(settings, S_HISTORY_SIZE);
-        m_settings.dir = history_direction(obs_data_get_int(settings, S_HISTORY_DIRECTION));
+        m_settings.dir = direction(obs_data_get_int(settings, S_HISTORY_DIRECTION));
 
         if (!m_settings.key_name_path || strlen(m_settings.key_name_path) < 1)
             SET_FLAG((int) history_flags::CUSTOM_NAMES, false);

@@ -29,7 +29,7 @@ void element_analog_stick::draw(gs_effect_t* effect, gs_image_file_t* image, ele
             auto pos = m_pos;
             gs_rect* temp = nullptr;
 
-            if (m_side == element_side::LEFT)
+            if (m_side == ES_LEFT)
                 temp = stick->left_pressed() ? &m_pressed : &m_mapping;
             else
                 temp = stick->right_pressed() ? &m_pressed : &m_mapping;
@@ -46,7 +46,7 @@ element_analog_stick::calc_position(vec2* v, element_data_analog_stick* d, sourc
 {
     UNUSED_PARAMETER(settings);
     switch (m_side) {
-        case element_side::LEFT:
+        case ES_LEFT:
 #if _WIN32
             if (!DEAD_ZONE(d->get_left_stick()->x, settings->left_dz))
 #endif
@@ -56,7 +56,7 @@ element_analog_stick::calc_position(vec2* v, element_data_analog_stick* d, sourc
 #endif
             v->y += d->get_left_stick()->y * m_radius;
             break;
-        case element_side::RIGHT:
+        case ES_RIGHT:
 #if _WIN32
             if (!DEAD_ZONE(d->get_right_stick()->x, settings->right_dz))
 #endif
@@ -87,11 +87,11 @@ bool element_data_analog_stick::merge(element_data* other)
                     /* If either of the two sticks
                      * are switching from unpressed to pressed
                      * input history should update */
-                    if (other_stick->m_left_state == button_state::PRESSED
-                            && m_left_state == button_state::RELEASED)
+                    if (other_stick->m_left_state == BS_PRESSED
+                            && m_left_state == BS_RELEASED)
                         result = true;
-                    if (other_stick->m_right_state == button_state::PRESSED
-                            && m_right_state == button_state::RELEASED)
+                    if (other_stick->m_right_state == BS_PRESSED
+                            && m_right_state == BS_RELEASED)
                         result = true;
                     m_left_stick = other_stick->m_left_stick;
                     m_right_stick = other_stick->m_right_stick;
@@ -99,15 +99,15 @@ bool element_data_analog_stick::merge(element_data* other)
                     m_right_state = other_stick->m_right_state;
                     break;
                 case SD_PRESSED_STATE_LEFT:
-                    if (other_stick->m_left_state == button_state::PRESSED
-                            && m_left_state == button_state::RELEASED)
+                    if (other_stick->m_left_state == BS_PRESSED
+                            && m_left_state == BS_RELEASED)
                         result = true;
                     m_left_state = other_stick->m_left_state;
                     if (m_data_type != SD_PRESSED_STATE_LEFT) m_data_type = SD_BOTH;
                     break;
                 case SD_PRESSED_STATE_RIGHT:
-                    if (other_stick->m_right_state == button_state::PRESSED
-                            && m_right_state == button_state::RELEASED)
+                    if (other_stick->m_right_state == BS_PRESSED
+                            && m_right_state == BS_RELEASED)
                         result = true;
                     m_right_state = other_stick->m_right_state;
                     if (m_data_type != SD_PRESSED_STATE_RIGHT) m_data_type = SD_BOTH;

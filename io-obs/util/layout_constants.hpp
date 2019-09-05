@@ -77,7 +77,7 @@ enum mouse_movement { MM_DOT, MM_ARROW };
 
 enum element_side { ES_INVALID = -1, ES_LEFT, ES_RIGHT };
 
-enum direction { DIR_UP = 0, DIR_DOWN, DIR_LEFT, DIR_RIGHT, DIR_MAX };
+enum direction { DIR_NONE = 0, DIR_UP, DIR_DOWN, DIR_LEFT, DIR_RIGHT, DIR_MAX };
 
 enum button_state { BS_RELEASED = 0, BS_PRESSED = 1 };
 

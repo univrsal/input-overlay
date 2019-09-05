@@ -12,7 +12,7 @@
 #include "util/layout_constants.hpp"
 #include <util/platform.h>
 
-element_wheel::element_wheel() : element_texture(element_type::MOUSE_SCROLLWHEEL), m_mappings{}
+element_wheel::element_wheel() : element_texture(ET_WHEEL), m_mappings{}
 {
     /* NO-OP */
 }
@@ -36,17 +36,17 @@ void element_wheel::draw(gs_effect_t* effect, gs_image_file_t* image, element_da
         const auto wheel = dynamic_cast<element_data_wheel*>(data);
 
         if (wheel) {
-            if (wheel->get_state() == button_state::PRESSED)
+            if (wheel->get_state() == BS_PRESSED)
                 element_texture::draw(effect, image, &m_mappings[WHEEL_MAP_MIDDLE]);
 
             switch (wheel->get_dir()) {
-                case wheel_direction::UP:
+                case DIR_UP:
                     element_texture::draw(effect, image, &m_mappings[WHEEL_MAP_UP]);
                     break;
-                case wheel_direction::DOWN:
+                case DIR_DOWN:
                     element_texture::draw(effect, image, &m_mappings[WHEEL_MAP_DOWN]);
                     break;
-                case wheel_direction::NONE:;
+            default:;
             }
         }
     }
@@ -56,35 +56,36 @@ void element_wheel::draw(gs_effect_t* effect, gs_image_file_t* image, element_da
 
 data_source element_wheel::get_source()
 {
-    return data_source::DEFAULT;
+    return DS_DEFAULT;
 }
 
-element_data_wheel::element_data_wheel(const wheel_direction dir, const button_state state) : element_data_wheel(dir)
+element_data_wheel::element_data_wheel(const direction dir, const button_state state) : element_data_wheel(dir)
 {
-    m_data_type = wheel_data::BOTH;
+    m_data_type = WD_BOTH;
     m_middle_button = state;
 }
 
-element_data_wheel::element_data_wheel(const wheel_direction dir) : element_data(element_type::MOUSE_SCROLLWHEEL),
-                                                                    m_middle_button(button_state::RELEASED)
+element_data_wheel::element_data_wheel(const direction dir) :
+    element_data(ET_WHEEL), m_middle_button(BS_RELEASED)
 {
-    m_data_type = wheel_data::WHEEL;
+    m_data_type = WD_WHEEL;
     m_dir = dir;
 }
 
-element_data_wheel::element_data_wheel(const button_state state) : element_data(element_type::MOUSE_SCROLLWHEEL), m_dir()
+element_data_wheel::element_data_wheel(const button_state state) :
+    element_data(ET_WHEEL), m_dir()
 {
-    m_data_type = wheel_data::BUTTON;
+    m_data_type = WD_BUTTON;
     m_middle_button = state;
 }
 
 
-wheel_direction element_data_wheel::get_dir() const
+direction element_data_wheel::get_dir() const
 {
     return m_dir;
 }
 
-void element_data_wheel::set_dir(const wheel_direction dir)
+void element_data_wheel::set_dir(const direction dir)
 {
     m_dir = dir;
 }
@@ -108,20 +109,20 @@ bool element_data_wheel::merge(element_data* other)
         if (other_wheel) {
             /* After the merge this data contains both the scroll wheel state and the button state */
             if (m_data_type != other_wheel->m_data_type)
-                m_data_type = wheel_data::BOTH;
+                m_data_type = WD_BOTH;
 
             switch (other_wheel->m_data_type) {
-                case wheel_data::BUTTON:
-                    result = m_middle_button == button_state::RELEASED &&
-                            other_wheel->m_middle_button == button_state::PRESSED;
+                case WD_BUTTON:
+                    result = m_middle_button == BS_RELEASED &&
+                            other_wheel->m_middle_button == BS_PRESSED;
                     m_middle_button = other_wheel->get_state();
                     break;
-                case wheel_data::WHEEL:
+                case WD_WHEEL:
                     m_dir = other_wheel->get_dir();
                     break;
-                case wheel_data::BOTH:
-                    result = m_middle_button == button_state::RELEASED &&
-                            other_wheel->m_middle_button == button_state::PRESSED;
+                case WD_BOTH:
+                    result = m_middle_button == BS_RELEASED &&
+                            other_wheel->m_middle_button == BS_PRESSED;
                     m_dir = other_wheel->get_dir();
                     m_middle_button = other_wheel->get_state();
             }

@@ -16,17 +16,17 @@ void element_mouse_movement::load(ccl_config* cfg, const std::string &id)
     element_texture::load(cfg, id);
     m_keycode = VC_MOUSE_DATA;
     m_radius = cfg->get_int(id + CFG_MOUSE_RADIUS);
-    m_movement_type = cfg->get_int(id + CFG_MOUSE_TYPE) == 0 ? mouse_movement::DOT : mouse_movement::ARROW;
+    m_movement_type = cfg->get_int(id + CFG_MOUSE_TYPE) == 0 ? MM_DOT : MM_ARROW;
 }
 
 void element_mouse_movement::draw(gs_effect_t* effect, gs_image_file_t* image, element_data* data,
                                   sources::overlay_settings* settings)
 {
-    if (data && data->get_type() == element_type::MOUSE_STATS) {
+    if (data && data->get_type() == ET_MOUSE_STATS) {
         const auto element_data = dynamic_cast<element_data_mouse_pos*>(data);
 
         if (element_data) {
-            if (m_movement_type == mouse_movement::ARROW) {
+            if (m_movement_type == MM_ARROW) {
                 element_texture::draw(effect, image, &m_mapping, &m_pos, element_data->get_mouse_angle(settings));
             } else {
                 element_data->get_mouse_offset(settings, m_pos, m_offset_pos, m_radius);
@@ -38,7 +38,8 @@ void element_mouse_movement::draw(gs_effect_t* effect, gs_image_file_t* image, e
     }
 }
 
-element_data_mouse_pos::element_data_mouse_pos(const int16_t x, const int16_t y) : element_data(element_type::MOUSE_STATS)
+element_data_mouse_pos::element_data_mouse_pos(const int16_t x, const int16_t y) :
+    element_data(ET_MOUSE_STATS)
 {
     m_x = x;
     m_y = y;
@@ -121,6 +122,7 @@ int16_t element_data_mouse_pos::get_mouse_y() const
     return m_y;
 }
 
-element_mouse_movement::element_mouse_movement() : element_texture(element_type::MOUSE_STATS), m_movement_type()
+element_mouse_movement::element_mouse_movement() :
+    element_texture(ET_MOUSE_STATS), m_movement_type()
 {
 };

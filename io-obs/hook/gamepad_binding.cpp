@@ -40,21 +40,21 @@ namespace gamepad
         uint16_t vc = 0;
 
         if (event->type == JS_EVENT_BUTTON) {
-            auto state = event->value ? button_state::PRESSED : button_state::RELEASED;
+            auto state = event->value ? BS_PRESSED : BS_RELEASED;
             vc = get_button_event_by_id(event->number);
 
             if (vc == PAD_L_STICK)
-                data->add_gamepad_data(pad_id, VC_STICK_DATA, new element_data_analog_stick(state, element_side::LEFT));
+                data->add_gamepad_data(pad_id, VC_STICK_DATA,new element_data_analog_stick(state, ES_LEFT));
             else if (vc == PAD_R_STICK)
-                data->add_gamepad_data(pad_id, VC_STICK_DATA, new element_data_analog_stick(state, element_side::RIGHT));
+                data->add_gamepad_data(pad_id, VC_STICK_DATA, new element_data_analog_stick(state, ES_RIGHT));
             else if (vc == PAD_DOWN)
-                data->add_gamepad_data(pad_id, VC_DPAD_DATA, new element_data_dpad(dpad_direction::DOWN, state));
+                data->add_gamepad_data(pad_id, VC_DPAD_DATA, new element_data_dpad(DD_DOWN, state));
             else if (vc == PAD_UP)
-                data->add_gamepad_data(pad_id, VC_DPAD_DATA, new element_data_dpad(dpad_direction::UP, state));
+                data->add_gamepad_data(pad_id, VC_DPAD_DATA, new element_data_dpad(DD_UP, state));
             else if (vc == PAD_LEFT)
-                data->add_gamepad_data(pad_id, VC_DPAD_DATA, new element_data_dpad(dpad_direction::LEFT, state));
+                data->add_gamepad_data(pad_id, VC_DPAD_DATA, new element_data_dpad(DD_LEFT, state));
             else if (vc == PAD_RIGHT)
-                data->add_gamepad_data(pad_id, VC_DPAD_DATA, new element_data_dpad(dpad_direction::RIGHT, state));
+                data->add_gamepad_data(pad_id, VC_DPAD_DATA, new element_data_dpad(DD_RIGHT, state));
 
             if (vc != PAD_L_STICK && vc != PAD_R_STICK)
                 data->add_gamepad_data(pad_id, PAD_TO_VC(vc), new element_data_button(state));
@@ -64,7 +64,7 @@ namespace gamepad
             float axis;
 
             if (vc == PAD_LT || vc == PAD_RT) {
-                auto trigger = vc == PAD_LT ? trigger_data::LEFT : trigger_data::RIGHT;
+                auto trigger = vc == PAD_LT ? TD_LEFT : TD_RIGHT;
                 /* Trigger data goes from ~ -32000 to +32000, so it's offset by 0x7FFF
                  * and then divided by 0xffff to convert it to a float (0.0 - 1.0) */
                 axis = (event->value + (0xffff / 2)) / ((float) 0xffff);

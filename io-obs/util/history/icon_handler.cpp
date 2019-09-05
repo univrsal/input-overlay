@@ -29,19 +29,19 @@ void icon_handler::update()
         load_icons(m_settings->icon_path, m_settings->icon_cfg_path);
 
     switch (m_settings->dir) {
-        case history_direction::DOWN:
+        case DIR_DOWN:
             m_translate_dir = { 0.f, 1.f * (m_icons.get_h() + m_settings->v_space)};
             m_start_pos = { 0.f, 0.f };
             break;
-        case history_direction::UP:
+        case DIR_UP:
             m_translate_dir = { 0.f, -1.f * (m_icons.get_h() + m_settings->v_space)};
             m_start_pos = { 0.f, static_cast<float>(m_settings->cy - m_icons.get_h()) };
             break;
-        case history_direction::LEFT:
+        case DIR_LEFT:
             m_translate_dir = { -1.f * (m_icons.get_w() + m_settings->h_space), 0.f};
             m_start_pos = { static_cast<float>(m_settings->cx - m_icons.get_w()), 0.f };
             break;
-        case history_direction::RIGHT:
+        case DIR_RIGHT:
             m_start_pos = { 0.f, 0.f };
             m_translate_dir = { 1.f * (m_icons.get_w() + m_settings->h_space), 0.f};
             break;
@@ -106,14 +106,14 @@ void icon_handler::render(const gs_effect_t* effect)
         /* Only resize if size would increase, resizing when size would decrease
          * would result in source constantly moving around */
         switch (m_settings->dir) {
-            case history_direction::DOWN:
-            case history_direction::UP:
+            case DIR_DOWN:
+            case DIR_UP:
                 m_settings->cx = max_icon_count * (m_icons.get_w() + m_settings->h_space) - m_settings->h_space;
                 m_settings->cy = m_settings->history_size * (m_icons.get_w() + m_settings->v_space) -
                         m_settings->h_space;
                 break;
-            case history_direction::LEFT:
-            case history_direction::RIGHT:
+            case DIR_LEFT:
+            case DIR_RIGHT:
                 m_settings->cx = m_settings->history_size  * (m_icons.get_w() + m_settings->h_space) - m_settings->h_space;
                 m_settings->cy = max_icon_count * (m_icons.get_w() + m_settings->v_space) -
                                  m_settings->h_space;

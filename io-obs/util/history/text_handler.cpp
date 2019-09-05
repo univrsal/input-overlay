@@ -19,8 +19,8 @@
 void text_handler::make_body_text(std::string& str)
 {
     switch (m_settings->dir) {
-        case history_direction::DOWN:
-        case history_direction::LEFT:
+        case DIR_DOWN:
+        case DIR_LEFT:
             for (const auto& line : m_values) {
                 str += line->keys;
                 if (line->repeat > 1)
@@ -70,8 +70,8 @@ void text_handler::load_names(const char* cfg)
 void text_handler::update()
 {
     switch (m_settings->dir) {
-        case history_direction::LEFT:
-        case history_direction::RIGHT:
+        case DIR_LEFT:
+        case DIR_RIGHT:
             obs_data_set_bool(m_settings->settings, "vertical", true);
             break;
         default:

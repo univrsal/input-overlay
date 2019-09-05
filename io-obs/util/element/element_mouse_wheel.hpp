@@ -14,23 +14,23 @@
 #define WHEEL_MAP_UP      1
 #define WHEEL_MAP_DOWN    2
 
-enum class wheel_data
+enum wheel_data
 {
-    BOTH, BUTTON, WHEEL
+    WD_BOTH, WD_BUTTON, WD_WHEEL
 };
 
 class element_data_wheel : public element_data
 {
 public:
-    element_data_wheel(wheel_direction dir, button_state state);
+    element_data_wheel(direction dir, button_state state);
 
-    explicit element_data_wheel(wheel_direction dir);
+    explicit element_data_wheel(direction dir);
 
     explicit element_data_wheel(button_state state);
 
-    wheel_direction get_dir() const;
+    direction get_dir() const;
 
-    void set_dir(wheel_direction dir);
+    void set_dir(direction dir);
 
     button_state get_state() const;
 
@@ -43,7 +43,7 @@ public:
 private:
     wheel_data m_data_type;
     button_state m_middle_button;
-    wheel_direction m_dir;
+    direction m_dir;
 };
 
 class element_wheel : public element_texture

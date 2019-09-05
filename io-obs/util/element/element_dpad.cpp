@@ -11,7 +11,7 @@
 #include "../util.hpp"
 #include "util/layout_constants.hpp"
 
-element_dpad::element_dpad() : element_texture(element_type::DPAD_STICK)
+element_dpad::element_dpad() : element_texture(ET_DPAD_STICK)
 {
 }
 
@@ -32,7 +32,7 @@ element_dpad::draw(gs_effect_t* effect, gs_image_file_t* image, element_data* da
 {
     const auto d = dynamic_cast<element_data_dpad*>(data);
 
-    if (d && d->get_direction() != dpad_texture::CENTER) {
+    if (d && d->get_direction() != DT_CENTER) {
         /* Enum starts at one (Center doesn't count)*/
         const auto map = &m_mappings[(int) d->get_direction() - 1];
         element_texture::draw(effect, image, map);
@@ -44,16 +44,18 @@ element_dpad::draw(gs_effect_t* effect, gs_image_file_t* image, element_data* da
 
 data_source element_dpad::get_source()
 {
-    return data_source::GAMEPAD;
+    return DS_GAMEPAD;
 }
 
-element_data_dpad::element_data_dpad(const dpad_direction a, const dpad_direction b) : element_data(element_type::DPAD_STICK)
+element_data_dpad::element_data_dpad(const dpad_direction a, const dpad_direction b) :
+    element_data(ET_DPAD_STICK)
 {
     m_direction = (int) a | (int) b;
-    m_state = button_state::RELEASED;
+    m_state = BS_RELEASED;
 }
 
-element_data_dpad::element_data_dpad(const dpad_direction d, const button_state state) : element_data(element_type::DPAD_STICK)
+element_data_dpad::element_data_dpad(const dpad_direction d, const button_state state) :
+    element_data(ET_DPAD_STICK)
 {
     m_direction = (int) d;
     m_state = state;
@@ -77,7 +79,7 @@ bool element_data_dpad::merge(element_data* other)
 #else
     if (d) {
         result = m_direction != d->m_direction;
-        if (d->get_state() == button_state::PRESSED) {
+        if (d->get_state() == BS_PRESSED) {
             m_direction |= d->m_direction;
         } else {
             m_direction &= ~d->m_direction;
@@ -89,22 +91,22 @@ bool element_data_dpad::merge(element_data* other)
 
 dpad_texture element_data_dpad::get_direction() const
 {
-    if (m_direction & (int) dpad_direction::UP && m_direction & (int) dpad_direction::LEFT)
-        return dpad_texture::TOP_LEFT;
-    else if (m_direction & (int) dpad_direction::UP && m_direction & (int) dpad_direction::RIGHT)
-        return dpad_texture::TOP_RIGHT;
-    else if (m_direction & (int) dpad_direction::DOWN && m_direction & (int) dpad_direction::LEFT)
-        return dpad_texture::BOTTOM_LEFT;
-    else if (m_direction & (int) dpad_direction::DOWN && m_direction & (int) dpad_direction::RIGHT)
-        return dpad_texture::BOTTOM_RIGHT;
-    else if (m_direction & (int) dpad_direction::UP)
-        return dpad_texture::UP;
-    else if (m_direction & (int) dpad_direction::DOWN)
-        return dpad_texture::DOWN;
-    else if (m_direction & (int) dpad_direction::LEFT)
-        return dpad_texture::LEFT;
+    if (m_direction & DD_UP && m_direction & DD_LEFT)
+        return DT_TOP_LEFT;
+    else if (m_direction & DD_UP && m_direction & DD_RIGHT)
+        return DT_TOP_RIGHT;
+    else if (m_direction & DD_DOWN && m_direction & DD_LEFT)
+        return DT_BOTTOM_LEFT;
+    else if (m_direction & DD_DOWN && m_direction & DD_RIGHT)
+        return DT_BOTTOM_RIGHT;
+    else if (m_direction & DT_UP)
+        return DT_UP;
+    else if (m_direction & DD_DOWN)
+        return DT_DOWN;
+    else if (m_direction & DD_LEFT)
+        return DT_LEFT;
     else
-        return dpad_texture::RIGHT;
+        return DT_RIGHT;
 }
 
 button_state element_data_dpad::get_state() const

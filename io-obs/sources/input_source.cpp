@@ -76,19 +76,19 @@ namespace sources
         const auto flags = temp.get_int(CFG_FLAGS, true);
 
         obs_property_set_visible(GET_PROPS(S_CONTROLLER_L_DEAD_ZONE), flags & (int)
-                                 overlay_flags::LEFT_STICK);
+                                 OF_LEFT_STICK);
         obs_property_set_visible(GET_PROPS(S_CONTROLLER_R_DEAD_ZONE), flags & (int)
-                                 overlay_flags::RIGHT_STICK);
+                                 OF_RIGHT_STICK);
         obs_property_set_visible(GET_PROPS(S_CONTROLLER_ID),
-                                 flags & (int) overlay_flags::GAMEPAD ||
-                                 (flags & (int) overlay_flags::LEFT_STICK ||
-                                  flags & (int) overlay_flags::RIGHT_STICK));
+                                 flags & OF_GAMEPAD ||
+                                 (flags & OF_LEFT_STICK ||
+                                  flags & OF_RIGHT_STICK));
         obs_property_set_visible(GET_PROPS(S_MOUSE_SENS), flags & (int)
-                                 overlay_flags::MOUSE);
+                                 OF_MOUSE);
         obs_property_set_visible(GET_PROPS(S_MONITOR_USE_CENTER), flags &
-                                 (int) overlay_flags::MOUSE);
+                                 OF_MOUSE);
         obs_property_set_visible(GET_PROPS(S_MOUSE_DEAD_ZONE), flags &
-                                 (int) overlay_flags::MOUSE);
+                                 OF_MOUSE);
         return true;
     }
 

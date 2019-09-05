@@ -14,7 +14,7 @@ extern "C" {
 #include <graphics/image-file.h>
 }
 
-element_texture::element_texture() : element(element_type::TEXTURE)
+element_texture::element_texture() : element(ET_TEXTURE)
 {
     /* NO-OP */
 }
@@ -76,5 +76,5 @@ void element_texture::draw(gs_effect* effect, gs_image_file_t* image, const gs_r
 
 data_source element_texture::get_source()
 {
-    return data_source::NONE;
+    return DS_NONE;
 }

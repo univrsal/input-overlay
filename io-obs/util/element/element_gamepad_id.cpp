@@ -11,7 +11,7 @@
 #include "util/layout_constants.hpp"
 #include "element_button.hpp"
 
-element_gamepad_id::element_gamepad_id() : element_texture(element_type::GAMEPAD_ID), m_mappings{}
+element_gamepad_id::element_gamepad_id() : element_texture(ET_GAMEPAD_ID), m_mappings{}
 {
     m_keycode = VC_PAD_GUIDE;
 }
@@ -45,5 +45,5 @@ void element_gamepad_id::draw(gs_effect_t* effect, gs_image_file_t* image, eleme
 
 data_source element_gamepad_id::get_source()
 {
-    return data_source::GAMEPAD;
+    return DS_GAMEPAD;
 }

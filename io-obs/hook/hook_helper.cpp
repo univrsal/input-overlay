@@ -244,15 +244,15 @@ namespace hook
             case EVENT_KEY_PRESSED:
             case EVENT_KEY_RELEASED:/* Fallthrough */
                 input_data->add_data(event->data.keyboard.keycode, new element_data_button(
-                        event->type == EVENT_KEY_PRESSED ? button_state::PRESSED : button_state::RELEASED));
+                        event->type == EVENT_KEY_PRESSED ? BS_PRESSED : BS_RELEASED));
                 break;
             case EVENT_MOUSE_WHEEL:
                 last_wheel = os_gettime_ns();
                 if (event->data.wheel.rotation >= WHEEL_DOWN) {
-                    input_data->add_data(VC_MOUSE_WHEEL_DOWN, new element_data_button(button_state::PRESSED));
+                    input_data->add_data(VC_MOUSE_WHEEL_DOWN, new element_data_button(BS_PRESSED));
                     input_data->remove_data(VC_MOUSE_WHEEL_UP);
                 } else {
-                    input_data->add_data(VC_MOUSE_WHEEL_UP, new element_data_button(button_state::PRESSED));
+                    input_data->add_data(VC_MOUSE_WHEEL_UP, new element_data_button(BS_PRESSED));
                     input_data->remove_data(VC_MOUSE_WHEEL_DOWN);
                 }
                 break;
@@ -260,12 +260,10 @@ namespace hook
             case EVENT_MOUSE_RELEASED:
                 input_data->add_data(util_mouse_to_vc(event->data.mouse.button),
                                      new element_data_button(event->type == EVENT_MOUSE_PRESSED
-                                                             ? button_state::PRESSED : button_state::RELEASED));
+                                                             ? BS_PRESSED : BS_RELEASED));
                  break;
-            case EVENT_KEY_TYPED:
-                last_character = event->data.keyboard.keychar;
-                break;
-            case EVENT_MOUSE_DRAGGED:
+
+                last_character = event->data.keyboard.keychar; break; case EVENT_MOUSE_DRAGGED:
             case EVENT_MOUSE_MOVED:
                 input_data->add_data(VC_MOUSE_DATA,
                                      new element_data_mouse_pos(event->data.mouse.x, event->data.mouse.y));

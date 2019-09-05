@@ -133,17 +133,17 @@ void element_data_holder::populate_vector(std::vector<uint16_t> &vec, sources::h
         if ((data.first >> 8) == (VC_MOUSE_MASK >> 8) && !(settings->flags & (int) sources::history_flags::INCLUDE_MOUSE))
             continue;
 
-        if (data.second->get_type() == element_type::BUTTON) {
-            if (dynamic_cast<element_data_button*>(data.second.get())->get_state() == button_state::RELEASED)
+        if (data.second->get_type() == ET_BUTTON) {
+            if (dynamic_cast<element_data_button*>(data.second.get())->get_state() == BS_RELEASED)
                 continue;
-        } else if (data.second->get_type() == element_type::MOUSE_SCROLLWHEEL) {
+        } else if (data.second->get_type() == ET_WHEEL) {
             auto* wheel = dynamic_cast<element_data_wheel*>(data.second.get());
             if (wheel) {
-                if (wheel->get_dir() == wheel_direction::UP && is_new_key(vec, VC_MOUSE_WHEEL_UP))
+                if (wheel->get_dir() == DIR_UP && is_new_key(vec, VC_MOUSE_WHEEL_UP))
                     vec.emplace_back(VC_MOUSE_WHEEL_UP);
-                else if (wheel->get_dir() == wheel_direction::DOWN && is_new_key(vec, VC_MOUSE_WHEEL_DOWN))
+                else if (wheel->get_dir() == DIR_DOWN && is_new_key(vec, VC_MOUSE_WHEEL_DOWN))
                     vec.emplace_back(VC_MOUSE_WHEEL_DOWN);
-                if (wheel->get_state() == button_state::PRESSED && is_new_key(vec, VC_MOUSE_WHEEL))
+                if (wheel->get_state() == BS_PRESSED && is_new_key(vec, VC_MOUSE_WHEEL))
                     vec.emplace_back(VC_MOUSE_WHEEL);
                 continue;
             }
@@ -164,12 +164,12 @@ void element_data_holder::populate_vector(std::vector<uint16_t> &vec, sources::h
 
             if (data.second) {
                 switch (data.second->get_type()) {
-                    case element_type::BUTTON:
+                    case ET_BUTTON:
                         button = dynamic_cast<element_data_button*>(data.second.get());
-                        if (button && button->get_state() == button_state::RELEASED)
+                        if (button && button->get_state() == BS_RELEASED)
                             continue;
                         break;
-                    case element_type::ANALOG_STICK:
+                    case ET_ANALOG_STICK:
                         stick = dynamic_cast<element_data_analog_stick*>(data.second.get());
                         if (stick) {
                             if (stick->left_pressed() && is_new_key(vec, VC_PAD_L_ANALOG))
@@ -180,7 +180,7 @@ void element_data_holder::populate_vector(std::vector<uint16_t> &vec, sources::h
                             add = false;
                         }
                         break;
-                    case element_type::TRIGGER:
+                    case ET_TRIGGER:
                         trigger = dynamic_cast<element_data_trigger*>(data.second.get());
 
                         if (trigger) {

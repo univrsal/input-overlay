@@ -10,17 +10,13 @@
 #include "element_texture.hpp"
 #include <netlib.h>
 
-enum class trigger_data
+enum trigger_data
 {
-    NONE = -1,
-    BOTH,
-    LEFT,
-    RIGHT
+    TD_NONE = -1,
+    TD_BOTH,
+    TD_LEFT,
+    TD_RIGHT
 };
-
-enum class trigger_direction;
-
-enum class element_side;
 
 /* Contains data for both trigger buttons
  */
@@ -46,7 +42,7 @@ public:
     static element_data_trigger* from_buffer(netlib_byte_buf* buffer);
 
 private:
-    trigger_data m_data_type = trigger_data::BOTH;
+    trigger_data m_data_type = TD_BOTH;
     float m_left_trigger = 0.f, m_right_trigger = 0.f;
 };
 
@@ -66,6 +62,6 @@ private:
     void calculate_mapping(gs_rect* pressed, vec2* pos, float progress) const;
     gs_rect m_pressed;
     element_side m_side;
-    trigger_direction m_direction;
+    direction m_direction;
     bool m_button_mode = false;
 };
