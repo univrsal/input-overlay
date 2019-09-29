@@ -1,5 +1,6 @@
 #include <sstream>
 #include "input-source.hpp"
+#include "../hook/gamepad-hook.hpp"
 
 /**
  * This file is part of input-overlay
@@ -588,7 +589,9 @@ bool reload_pads(obs_properties_t* props, obs_property_t* property, void* data)
     UNUSED_PARAMETER(props);
     UNUSED_PARAMETER(property);
     UNUSED_PARAMETER(data);
+#ifdef LINUX
     init_pad_devices();
+#endif
     return true;
 }
 

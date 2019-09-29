@@ -4,8 +4,8 @@ param([string]$version)
 $data_dir="../data"
 $project="input-overlay"
 $arch="win32.64"
-$build_location_x32="C:\Users\usr\Documents\git\build\x32\rundir\Release\obs-plugins\32bit"
-$build_location_x64="C:\Users\usr\Documents\git\build\x64\rundir\Release\obs-plugins\64bit"
+$build_location_x32="C:\Users\usr\Documents\git\build\x32\plugins\input-overlay\Release\"
+$build_location_x64="C:\Users\usr\Documents\git\build\x64\plugins\input-overlay\Release\"
 $build_dir="./" + $project + ".v" + $version + "." + $arch
 $uiohook="../libuiohook/bin"
 $zip="C:/Program Files/7-Zip/7z.exe"
