@@ -67,7 +67,7 @@ namespace sources
         }
     }
 
-    bool path_changed(obs_properties_t* props, obs_property_t* p, obs_data_t* s)
+    bool cfg_path_changed(obs_properties_t* props, obs_property_t* p, obs_data_t* s)
     {
         UNUSED_PARAMETER(p);
         const std::string cfg = obs_data_get_string(s, S_LAYOUT_FILE);
@@ -75,20 +75,22 @@ namespace sources
 
         const auto flags = temp.get_int(CFG_FLAGS, true);
 
-        obs_property_set_visible(GET_PROPS(S_CONTROLLER_L_DEAD_ZONE), flags & (int)
+        obs_property_set_visible(GET_PROPS(S_CONTROLLER_L_DEAD_ZONE), flags &
                                  OF_LEFT_STICK);
-        obs_property_set_visible(GET_PROPS(S_CONTROLLER_R_DEAD_ZONE), flags & (int)
+        obs_property_set_visible(GET_PROPS(S_CONTROLLER_R_DEAD_ZONE), flags &
                                  OF_RIGHT_STICK);
         obs_property_set_visible(GET_PROPS(S_CONTROLLER_ID),
                                  flags & OF_GAMEPAD ||
                                  (flags & OF_LEFT_STICK ||
                                   flags & OF_RIGHT_STICK));
-        obs_property_set_visible(GET_PROPS(S_MOUSE_SENS), flags & (int)
+        obs_property_set_visible(GET_PROPS(S_MOUSE_SENS), flags &
                                  OF_MOUSE);
         obs_property_set_visible(GET_PROPS(S_MONITOR_USE_CENTER), flags &
                                  OF_MOUSE);
         obs_property_set_visible(GET_PROPS(S_MOUSE_DEAD_ZONE), flags &
                                  OF_MOUSE);
+        obs_property_set_visible(GET_PROPS(S_RELOAD_PAD_DEVICES), flags &
+                                 OF_GAMEPAD);
         return true;
     }
 
@@ -153,7 +155,7 @@ namespace sources
         const auto cfg = obs_properties_add_path(props, S_LAYOUT_FILE, T_LAYOUT_FILE, OBS_PATH_FILE,
                                                  filter_text.c_str(), layout_path.c_str());
 
-        obs_property_set_modified_callback(cfg, path_changed);
+        obs_property_set_modified_callback(cfg, cfg_path_changed);
 
         /* Mouse stuff */
         obs_property_set_visible(obs_properties_add_int_slider(props, S_MOUSE_SENS, T_MOUSE_SENS, 1, 500, 1), false);
@@ -179,7 +181,8 @@ namespace sources
             T_CONROLLER_R_DEADZONE, 1,
             STICK_MAX_VAL - 1, 1), false);
 #else
-        obs_properties_add_button(props, S_RELOAD_PAD_DEVICES, T_RELOAD_PAD_DEVICES, reload_pads);
+		auto* btn = obs_properties_add_button(props, S_RELOAD_PAD_DEVICES, T_RELOAD_PAD_DEVICES, reload_pads);
+		obs_property_set_visible(btn, false);
 #endif
 
         return props;
