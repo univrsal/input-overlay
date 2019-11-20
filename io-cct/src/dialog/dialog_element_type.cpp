@@ -1,9 +1,20 @@
-/**
- * Created by univrsal on 15.08.2018.
- * This file is part of input-overlay which is licensed
- * under the MOZILLA PUBLIC LICENSE 2.0 - http://www.gnu.org/licenses
- * github.com/univrsal/input-overlay
- */
+/*************************************************************************
+ * This file is part of input-overlay
+ * github.con/univrsal/input-overlay
+ * Copyright 2019 univrsal <universailp@web.de>.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, version 2 of the License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *************************************************************************/
 
 #include "dialog_element_type.hpp"
 #include "elements/combobox.hpp"
@@ -12,10 +23,9 @@
 #include "../util/constants.hpp"
 
 DialogElementType::DialogElementType(sdl_helper *sdl, tool *tool)
-	: dialog(sdl, SDL_Point{350, 120},
-	         LANG_DIALOG_ELEMENT_TYPE)
+    : dialog(sdl, SDL_Point{350, 120}, LANG_DIALOG_ELEMENT_TYPE)
 {
-	m_tool = tool;
+    m_tool = tool;
 }
 
 void DialogElementType::init()
@@ -51,6 +61,6 @@ void DialogElementType::action_performed(const int8_t action_id)
 		m_tool->set_new_element_type(static_cast<element_type>(m_type->get_selected()));
 		m_tool->queue_dialog_open(NEW_ELEMENT);
 		break;
-	default: ;
+	default:;
 	}
 }

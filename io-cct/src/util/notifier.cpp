@@ -1,9 +1,20 @@
-/**
- * Created by univrsal on 30.05.2018.
- * This file is part of input-overlay which is licensed
- * under the MOZILLA PUBLIC LICENSE 2.0 - http://www.gnu.org/licenses
- * github.com/univrsal/input-overlay
- */
+/*************************************************************************
+ * This file is part of input-overlay
+ * github.con/univrsal/input-overlay
+ * Copyright 2019 univrsal <universailp@web.de>.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, version 2 of the License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *************************************************************************/
 
 #include "notifier.hpp"
 #include "palette.hpp"
@@ -48,9 +59,8 @@ void notifier::draw()
 		if (SDL_GetTicks() - msg->m_time_stamp > (MESSAGE_TIMEOUT * msg->m_message_lines.size())) {
 			overdue.emplace_back(index);
 		} else {
-			const auto c = msg->m_type == MESSAGE_ERROR
-				               ? m_helper->get_palette()->red()
-				               : m_helper->get_palette()->white();
+			const auto c = msg->m_type == MESSAGE_ERROR ? m_helper->get_palette()->red()
+			                                            : m_helper->get_palette()->white();
 
 			for (auto const &line : msg->m_message_lines) {
 				if (!line->empty()) {
@@ -65,7 +75,7 @@ void notifier::draw()
 	/* Remove old messages */
 	std::sort(overdue.begin(), overdue.end());
 #ifdef WINDOWS
-    for (auto& i = overdue.rbegin(); i != overdue.rend(); ++i)
+	for (auto &i = overdue.rbegin(); i != overdue.rend(); ++i)
 #else
 	for (auto i = overdue.rbegin(); i != overdue.rend(); ++i)
 #endif

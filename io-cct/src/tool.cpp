@@ -1,9 +1,20 @@
-/**
- * Created by univrsal on 23.05.2018.
- * This file is part of input-overlay which is licensed
- * under the MOZILLA PUBLIC LICENSE 2.0 - http://www.gnu.org/licenses
- * github.com/univrsal/input-overlay
- */
+/*************************************************************************
+ * This file is part of input-overlay
+ * github.con/univrsal/input-overlay
+ * Copyright 2019 univrsal <universailp@web.de>.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, version 2 of the License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *************************************************************************/
 
 #include "tool.hpp"
 #include "config.hpp"
@@ -107,7 +118,7 @@ void tool::action_performed(const uint8_t type)
 		s = dynamic_cast<dialog_setup *>(m_toplevel);
 		m_element_settings = new dialog_element_settings(m_helper, this);
 		m_config = new config(s->get_texture_path(), s->get_config_path(), s->get_default_dim(), s->get_rulers(),
-							  m_helper, m_element_settings);
+		                      m_helper, m_element_settings);
 
 		if (s->should_load_cfg())
 			m_config->read_config(m_notify);
@@ -174,8 +185,8 @@ bool tool::element_id_unique(const char *id) const
 element_error tool::verify_element(dialog_new_element *d, const bool modify_mode) const
 {
 	/*
-	    Only check uniqueness if the element is newly added or
-	    it's id was modified
+		Only check uniqueness if the element is newly added or
+		it's id was modified
 	*/
 	if (!modify_mode) {
 		if (!element_id_unique(d->get_id()->c_str())) {
@@ -273,7 +284,7 @@ void tool::handle_input()
 			if (m_config->selected()) {
 				m_state = IN_NEW_ELEMENT;
 				m_toplevel =
-					new dialog_new_element(m_helper, LANG_DIALOG_NEW_ELEMENT, this, m_config->selected()->get_type());
+				    new dialog_new_element(m_helper, LANG_DIALOG_NEW_ELEMENT, this, m_config->selected()->get_type());
 				m_toplevel->init();
 				d = dynamic_cast<dialog_new_element *>(m_toplevel);
 				d->set_default_dim(m_config->get_default_dim().x, m_config->get_default_dim().y);

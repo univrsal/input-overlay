@@ -1,9 +1,20 @@
-/**
- * Created by univrsal on 26.07.2017.
- * This file is part of reloded which is licensed
- * under the MOZILLA PUBLIC LICENSE 2.0 - http://www.gnu.org/licenses
- * github.com/univrsal/reloded
- */
+/*************************************************************************
+ * This file is part of input-overlay
+ * github.con/univrsal/input-overlay
+ * Copyright 2019 univrsal <universailp@web.de>.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, version 2 of the License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *************************************************************************/
 
 #include "label.hpp"
 #include "../../util/sdl_helper.hpp"
@@ -22,29 +33,25 @@ label::label(const int8_t id, const int x, const int y, const char *text, dialog
 
 label::label(const int8_t id, const int x, const int y, const char *text, const uint8_t font, dialog *parent,
              const uint16_t flags)
-	: label(id, x, y, text, parent, flags)
+    : label(id, x, y, text, parent, flags)
 {
-	m_font = font;
+    m_font = font;
 }
 
 label::label(const int8_t id, const int x, const int y, const char *text, dialog *parent, SDL_Color *color)
-	: label(id,
-	        x,
-	        y,
-	        text,
-	        parent)
+    : label(id, x, y, text, parent)
 {
-	m_color = color;
+    m_color = color;
 }
 
 label::~label()
 {
-	label::close();
+    label::close();
 }
 
 void label::close()
 {
-	m_lines.clear();
+    m_lines.clear();
 }
 
 void label::draw_background()

@@ -93,6 +93,8 @@ set(input-overlay_SOURCES
         hook/gamepad_hook.hpp
         hook/xinput_fix.cpp
         hook/xinput_fix.hpp
+        gui/io_settings_dialog.cpp
+        gui/io_settings_dialog.hpp
         util/util.cpp
         util/util.hpp
         util/overlay.cpp
@@ -137,8 +139,6 @@ set(input-overlay_SOURCES
         util/history/icon_handler.hpp
         util/history/text_handler.cpp
         util/history/text_handler.hpp
-        gui/io_settings_dialog.hpp
-        gui/io_settings_dialog.cpp
         network/remote_connection.cpp
         network/remote_connection.hpp
         network/io_server.cpp

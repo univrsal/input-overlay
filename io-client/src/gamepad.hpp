@@ -1,15 +1,26 @@
-/**
+/*************************************************************************
  * This file is part of input-overlay
- * which is licensed under the GPL v2.0
- * See LICENSE or http://www.gnu.org/licenses
- * github.com/univrsal/input-overlay
- */
+ * github.con/univrsal/input-overlay
+ * Copyright 2019 univrsal <universailp@web.de>.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, version 2 of the License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *************************************************************************/
 
 #pragma once
-#include <stdint.h>
-#include <mutex>
 #include "gamepad_state.hpp"
 #include "xinput_fix.hpp"
+#include <stdint.h>
+#include <mutex>
 
 #define PAD_COUNT 4
 
@@ -25,24 +36,24 @@ namespace gamepad
     extern volatile bool hook_state;
     extern volatile bool hook_run_flag;
 
-    static xinput_fix::gamepad_codes pad_keys[] =
+	static xinput_fix::gamepad_codes pad_keys[] =
 	{ /* These keycodes are only used on windows,
-	     but the linux client converts them to these
-	     to agree on one standard 
+		 but the linux client converts them to these
+		 to agree on one standard
 	  */
-		xinput_fix::CODE_A,
-		xinput_fix::CODE_B,
-		xinput_fix::CODE_X,
-		xinput_fix::CODE_Y,
-        xinput_fix::CODE_GUIDE,
-        xinput_fix::CODE_DPAD_DOWN,
-        xinput_fix::CODE_DPAD_UP,
-		xinput_fix::CODE_DPAD_LEFT,
-		xinput_fix::CODE_DPAD_RIGHT,
-		xinput_fix::CODE_LEFT_SHOULDER,
-		xinput_fix::CODE_RIGHT_SHOULDER,
-		xinput_fix::CODE_START,
-		xinput_fix::CODE_BACK
+	    xinput_fix::CODE_A,
+	    xinput_fix::CODE_B,
+	    xinput_fix::CODE_X,
+	    xinput_fix::CODE_Y,
+	    xinput_fix::CODE_GUIDE,
+	    xinput_fix::CODE_DPAD_DOWN,
+	    xinput_fix::CODE_DPAD_UP,
+	    xinput_fix::CODE_DPAD_LEFT,
+	    xinput_fix::CODE_DPAD_RIGHT,
+	    xinput_fix::CODE_LEFT_SHOULDER,
+	    xinput_fix::CODE_RIGHT_SHOULDER,
+	    xinput_fix::CODE_START,
+	    xinput_fix::CODE_BACK
 	};
 #ifndef _WIN32
 #define ID_TYPE         6
@@ -75,16 +86,16 @@ namespace gamepad
 
 		uint8_t get_id() const;
 
-        gamepad_state* get_state();
+		gamepad_state* get_state();
 
-        void update_state(gamepad_state* new_state);
+		void update_state(gamepad_state* new_state);
 
-        bool m_changed = false;
+		bool m_changed = false;
 #ifdef _WIN32
 		void update();
 		xinput_fix::gamepad* get_xinput();
 	private:
-        std::mutex m_mutex;
+		std::mutex m_mutex;
 		xinput_fix::gamepad m_x_input = {};
 		bool m_valid = false;
 #else
@@ -96,15 +107,15 @@ namespace gamepad
 #endif
 		int8_t m_pad_id = -1;
 		gamepad_state m_current_state;
-        
-    };
 
-    /* Thread stuff*/
+	};
+
+	/* Thread stuff*/
 	bool start_pad_hook(bool threaded);
 	bool init_pads();
 	void close();
 
-    bool check_changes();
+	bool check_changes();
 
 #ifdef _WIN32
 	DWORD WINAPI hook_method(LPVOID arg);

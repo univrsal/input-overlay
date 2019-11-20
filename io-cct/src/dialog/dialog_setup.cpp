@@ -1,9 +1,20 @@
-/**
- * Created by univrsal on 23.05.2018.
- * This file is part of input-overlay which is licensed
- * under the MOZILLA PUBLIC LICENSE 2.0 - http://www.gnu.org/licenses
- * github.com/univrsal/input-overlay
- */
+/*************************************************************************
+ * This file is part of input-overlay
+ * github.con/univrsal/input-overlay
+ * Copyright 2019 univrsal <universailp@web.de>.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, version 2 of the License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *************************************************************************/
 
 #include "dialog_setup.hpp"
 #include "../util/notifier.hpp"
@@ -12,11 +23,11 @@
 #include "../util/localization.hpp"
 
 #if _DEBUG
-#define TEXTURE_PATH    "D:\\Projects\\prog\\cpp\\input-overlay-releases\\build\\v4.6-pre\\presets\\wasd-full\\wasd.png"
-#define CONFIG_PATH     "C:\\Users\\user\\Desktop\\test.ini"
+#define TEXTURE_PATH "D:\\Projects\\prog\\cpp\\input-overlay-releases\\build\\v4.6-pre\\presets\\wasd-full\\wasd.png"
+#define CONFIG_PATH "C:\\Users\\user\\Desktop\\test.ini"
 #else
-#define TEXTURE_PATH    m_tool->get_texture_path()
-#define CONFIG_PATH     m_tool->get_config_path()
+#define TEXTURE_PATH m_tool->get_texture_path()
+#define CONFIG_PATH m_tool->get_config_path()
 #endif
 
 void dialog_setup::init()
@@ -135,7 +146,7 @@ void dialog_setup::action_performed(const int8_t action_id)
 		m_helper->get_localization()->load_lang_by_id(m_lang_box->get_selected());
 		reload_lang();
 		break;
-	default: ;
+	default:;
 	}
 
 	if (cfg) {

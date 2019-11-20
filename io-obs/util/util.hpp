@@ -1,9 +1,20 @@
-/**
+/*************************************************************************
  * This file is part of input-overlay
- * which is licensed under the GPL v2.0
- * See LICENSE or http://www.gnu.org/licenses
- * github.com/univrsal/input-overlay
- */
+ * github.con/univrsal/input-overlay
+ * Copyright 2019 univrsal <universailp@web.de>.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, version 2 of the License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *************************************************************************/
 
 #pragma once
 
@@ -40,13 +51,13 @@
 #endif
 
 /* Logging */
-#define logs(log_level, format, ...)                    \
-	blog(log_level, "[input_overlay: '%s'] " format, \
-	     obs_source_get_name(context->source), ##__VA_ARGS__)
+//#define logs(log_level, format, ...)                    \
+//	blog(log_level, "[input_overlay: '%s'] " format, \
+//	     obs_source_get_name(context->source), ##__VA_ARGS__)
 
-#define debug(format, ...) blog(LOG_DEBUG, "[input_overlay] " format, ##__VA_ARGS__)
-#define info(format, ...) blog(LOG_INFO, "[input_overlay] " format, ##__VA_ARGS__)
-#define warn(format, ...) blog(LOG_WARNING, "[input_overlay] " format, ##__VA_ARGS__)
+//#define debug(format, ...) blog(LOG_DEBUG, "[input_overlay] " format, ##__VA_ARGS__)
+//#define info(format, ...) blog(LOG_INFO, "[input_overlay] " format, ##__VA_ARGS__)
+//#define warn(format, ...) blog(LOG_WARNING, "[input_overlay] " format, ##__VA_ARGS__)
 
 #define UTIL_MAX(a, b)                  (((a) > (b)) ? (a) : (b))
 #define UTIL_MIN(a, b)                  (((a) < (b)) ? (a) : (b))

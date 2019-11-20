@@ -1,9 +1,20 @@
-/**
- * Created by universal on 8.1.17
- * This file is part of reloded which is licensed
- * under the MOZILLA PUBLIC LICENSE 2.0 - http://www.gnu.org/licenses
- * github.com/univrsal/input-overlay
- */
+/*************************************************************************
+ * This file is part of input-overlay
+ * github.con/univrsal/input-overlay
+ * Copyright 2019 univrsal <universailp@web.de>.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, version 2 of the License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *************************************************************************/
 
 #pragma once
 
@@ -59,8 +70,8 @@ private:
 	static inline bool is_hex(const std::string &s);
 
 	/*
-	    Properly deletes last character in
-	    unicode utf8 strings
+		Properly deletes last character in
+		unicode utf8 strings
 	*/
 	static void pop_back(std::string &s);
 

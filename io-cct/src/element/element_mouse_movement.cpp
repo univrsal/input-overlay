@@ -1,9 +1,20 @@
-/**
- * Created by universal on 05.09.2018.
- * This file is part of input-overlay which is licensed
- * under the MOZILLA PUBLIC LICENSE 2.0 - http://www.gnu.org/licenses
- * github.com/univrsal/input-overlay
- */
+/*************************************************************************
+ * This file is part of input-overlay
+ * github.con/univrsal/input-overlay
+ * Copyright 2019 univrsal <universailp@web.de>.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, version 2 of the License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *************************************************************************/
 
 #include "element_mouse_movement.hpp"
 #include <utility>
@@ -15,7 +26,7 @@
 
 ElementMouseMovement::ElementMouseMovement(const std::string &id, const SDL_Point pos, const SDL_Rect mapping,
                                            const mouse_movement type, const uint16_t radius, const uint8_t z)
-	: element_texture(ET_MOUSE_STATS, id, pos, mapping, z)
+    : element_texture(ET_MOUSE_STATS, id, pos, mapping, z)
 {
 	m_radius = radius;
 	m_type = type;
@@ -62,8 +73,8 @@ uint16_t ElementMouseMovement::get_radius() const
 	return m_radius;
 }
 
-ElementMouseMovement *
-ElementMouseMovement::read_from_file(ccl_config *file, const std::string &id, SDL_Point *default_dim)
+ElementMouseMovement *ElementMouseMovement::read_from_file(ccl_config *file, const std::string &id,
+                                                           SDL_Point *default_dim)
 {
 	auto mmt = MM_DOT;
 	if (file->get_int(id + CFG_MOUSE_TYPE) != 0)

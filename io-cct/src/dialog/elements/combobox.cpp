@@ -1,16 +1,26 @@
-/**
- * Created by univrsal on on 11.08.2018.
- * This file is part of input-overlay which is licensed
- * under the MOZILLA PUBLIC LICENSE 2.0 - http://www.gnu.org/licenses
- * github.com/univrsal/input-overlay
- */
+/*************************************************************************
+ * This file is part of input-overlay
+ * github.con/univrsal/input-overlay
+ * Copyright 2019 univrsal <universailp@web.de>.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, version 2 of the License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *************************************************************************/
 
 #include "combobox.hpp"
 #include "../../util/localization.hpp"
 #include "../../util/palette.hpp"
 
-combobox::combobox(const int8_t id, const int x, const int y, const int w,
-                   const int h, dialog *parent,
+combobox::combobox(const int8_t id, const int x, const int y, const int w, const int h, dialog *parent,
                    const uint16_t flags)
 {
 	const SDL_Rect temp = {x, y, w, h};
@@ -28,17 +38,13 @@ static std::string ARROW_DOWN = "▼";
 
 void combobox::draw_background()
 {
-	get_helper()->util_fill_rect(get_dimensions(),
-	                             get_helper()->get_palette()->gray());
-	get_helper()->util_text(&ARROW_DOWN, get_right() - 18, get_top() + 2,
-	                        get_helper()->get_palette()->white());
+	get_helper()->util_fill_rect(get_dimensions(), get_helper()->get_palette()->gray());
+	get_helper()->util_text(&ARROW_DOWN, get_right() - 18, get_top() + 2, get_helper()->get_palette()->white());
 
 	if (m_focused) {
-		get_helper()->util_draw_rect(get_dimensions(),
-		                             get_helper()->get_palette()->light_gray());
+		get_helper()->util_draw_rect(get_dimensions(), get_helper()->get_palette()->light_gray());
 	} else {
-		get_helper()->util_draw_rect(get_dimensions(),
-		                             get_helper()->get_palette()->dark_gray());
+		get_helper()->util_draw_rect(get_dimensions(), get_helper()->get_palette()->dark_gray());
 	}
 }
 
@@ -46,29 +52,23 @@ void combobox::draw_foreground()
 {
 	gui_element::draw_foreground();
 
-	if (!m_items.empty() && m_selected_id >= 0 && m_selected_id < m_items.size()
-	)
-		get_helper()->util_text(&m_items[m_selected_id], get_left() + 2,
-		                        get_top() + 2,
+	if (!m_items.empty() && m_selected_id >= 0 && m_selected_id < m_items.size())
+		get_helper()->util_text(&m_items[m_selected_id], get_left() + 2, get_top() + 2,
 		                        get_helper()->get_palette()->white());
 
 	if (m_list_open) {
 		uint16_t y = get_bottom() + ITEM_V_SPACE;
 
-		get_helper()->util_fill_rect(&m_item_box,
-		                             get_helper()->get_palette()->gray());
-		get_helper()->util_draw_rect(&m_item_box,
-		                             get_helper()->get_palette()->light_gray());
+		get_helper()->util_fill_rect(&m_item_box, get_helper()->get_palette()->gray());
+		get_helper()->util_draw_rect(&m_item_box, get_helper()->get_palette()->light_gray());
 
 		auto temp = m_item_box;
 		temp.y = get_bottom() + ITEM_V_SPACE + m_hovered_id * m_item_v_space;
 		temp.h = get_helper()->util_default_text_height();
-		get_helper()->util_fill_rect(
-			&temp, get_helper()->get_palette()->light_gray());
+		get_helper()->util_fill_rect(&temp, get_helper()->get_palette()->light_gray());
 
 		for (auto const &element : m_items) {
-			get_helper()->util_text(&element, get_left() + 2, y,
-			                        get_helper()->get_palette()->white());
+			get_helper()->util_text(&element, get_left() + 2, y, get_helper()->get_palette()->white());
 			y += m_item_v_space;
 		}
 	}
@@ -122,8 +122,7 @@ bool combobox::handle_events(SDL_Event *event, const bool was_handled)
 
 			if (m_list_open) {
 				/* Move mouse to item position (Little gimmick, but I like the feature) */
-				mouse_pos.y = get_bottom() + m_hovered_id * m_item_v_space +
-				              ITEM_V_SPACE * 1.5;
+				mouse_pos.y = get_bottom() + m_hovered_id * m_item_v_space + ITEM_V_SPACE * 1.5;
 				SDL_WarpMouseInWindow(nullptr, mouse_pos.x, mouse_pos.y);
 			}
 		}
@@ -186,6 +185,5 @@ void combobox::cycle_down(const bool select)
 
 void combobox::resize()
 {
-	m_item_box = {get_left(), get_bottom() - 1, get_width(),
-	              int(m_items.size()) * m_item_v_space + ITEM_V_SPACE};
+	m_item_box = {get_left(), get_bottom() - 1, get_width(), int(m_items.size()) * m_item_v_space + ITEM_V_SPACE};
 }

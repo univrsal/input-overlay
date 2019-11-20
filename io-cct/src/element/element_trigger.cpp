@@ -1,24 +1,33 @@
-/**
- * Created by universal on 06.09.2018.
- * This file is part of input-overlay which is licensed
- * under the MOZILLA PUBLIC LICENSE 2.0 - http://www.gnu.org/licenses
- * github.com/univrsal/input-overlay
- */
+/*************************************************************************
+ * This file is part of input-overlay
+ * github.con/univrsal/input-overlay
+ * Copyright 2019 univrsal <universailp@web.de>.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, version 2 of the License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *************************************************************************/
 
 #include "element_trigger.hpp"
-#include <utility>
 #include "../dialog/dialog_new_element.hpp"
 #include "../dialog/dialog_element_settings.hpp"
 #include "../util/coordinate_system.hpp"
 #include "../util/texture.hpp"
 #include "../util/palette.hpp"
 #include "../../../ccl/ccl.hpp"
+#include <utility>
 
 element_trigger::element_trigger(const std::string &id, const SDL_Point pos, const SDL_Rect mapping,
-                                 const element_side s,
-                                 const direction d, const uint8_t z)
-	: element_texture(ET_TRIGGER, id, pos, mapping,
-	                  z)
+                                 const element_side s, const direction d, const uint8_t z)
+    : element_texture(ET_TRIGGER, id, pos, mapping, z)
 {
 	m_pressed_mapping = m_mapping;
 	m_pressed_mapping.y += m_mapping.h + CFG_INNER_BORDER;
@@ -27,10 +36,8 @@ element_trigger::element_trigger(const std::string &id, const SDL_Point pos, con
 }
 
 element_trigger::element_trigger(const std::string &id, const SDL_Point pos, const SDL_Rect mapping,
-                                 const element_side s,
-                                 const uint8_t z)
-	: element_texture(ET_TRIGGER, id, pos, mapping, z),
-	  m_direction()
+                                 const element_side s, const uint8_t z)
+    : element_texture(ET_TRIGGER, id, pos, mapping, z), m_direction()
 {
 	m_pressed_mapping = m_mapping;
 	m_pressed_mapping.y += m_mapping.h + CFG_INNER_BORDER;

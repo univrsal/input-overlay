@@ -1,9 +1,20 @@
-/**
- * Created by univrsal on 05.08.2018.
- * This file is part of input-overlay which is licensed
- * under the MOZILLA PUBLIC LICENSE 2.0 - http://www.gnu.org/licenses
- * github.com/univrsal/input-overlay
- */
+/*************************************************************************
+ * This file is part of input-overlay
+ * github.con/univrsal/input-overlay
+ * Copyright 2019 univrsal <universailp@web.de>.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, version 2 of the License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *************************************************************************/
 
 #include "localization.hpp"
 #include "notifier.hpp"
@@ -86,30 +97,32 @@ void localization::scan_lang_folder()
 
 	if (h_find != INVALID_HANDLE_VALUE) {
 		do {
-			if (!(GetFileAttributes(data.cFileName) & FILE_ATTRIBUTE_DIRECTORY));
+			if (!(GetFileAttributes(data.cFileName) & FILE_ATTRIBUTE_DIRECTORY))
+				;
 			{
 				file_name = std::string(data.cFileName);
 #else
     /* Iterating over items in folder on linux
      * and filtering only *.ini files
      */
-    DIR* dir;
-    struct dirent* dirent;
+    DIR *dir;
+    struct dirent *dirent;
 
     dir = opendir(m_lang_folder.c_str());
 
-    if (dir) {
-        while ((dirent = readdir(dir))) {
-            file_name = std::string(dirent->d_name);
-            struct stat path_stat{};
-            std::string full_path = m_lang_folder + "/" + file_name;
-            stat(full_path.c_str(), &path_stat);
-            char* file_type = strrchr(dirent->d_name, '.');
+	if (dir) {
+		while ((dirent = readdir(dir))) {
+			file_name = std::string(dirent->d_name);
+			struct stat path_stat {
+			};
+			std::string full_path = m_lang_folder + "/" + file_name;
+			stat(full_path.c_str(), &path_stat);
+			char *file_type = strrchr(dirent->d_name, '.');
 
-            if (file_type && !strcmp(file_type, ".ini") /* Checks file ending */
-                && S_ISREG(path_stat.st_mode)) {
+			if (file_type && !strcmp(file_type, ".ini") /* Checks file ending */
+			    && S_ISREG(path_stat.st_mode)) {
 #endif
-				/* After filtering on windows and linux store file name 
+				/* After filtering on windows and linux store file name
 				 * in file_name
 				 */
 				lang = new ccl_config(m_lang_folder + "/" + file_name, "");
@@ -127,12 +140,11 @@ void localization::scan_lang_folder()
 				delete lang;
 			}
 #ifdef _WIN32
-		}
-		while (FindNextFile(h_find, &data));
+		} while (FindNextFile(h_find, &data));
 		FindClose(h_find);
 #else
-        }
-        closedir(dir);
+		}
+		closedir(dir);
 #endif
 	} else {
 		printf("Localization: Couldn't load files from lang folder!\n");

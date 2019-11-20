@@ -1,9 +1,20 @@
-/**
- * Created by univrsal on 14.07.2017.
- * This file is part of input-overlay which is licensed
- * under the MOZILLA PUBLIC LICENSE 2.0 - http://www.gnu.org/licenses
- * github.com/univrsal/input-overlay
- */
+/*************************************************************************
+ * This file is part of input-overlay
+ * github.con/univrsal/input-overlay
+ * Copyright 2019 univrsal <universailp@web.de>.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, version 2 of the License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *************************************************************************/
 
 #include "texture.hpp"
 #include "constants.hpp"
@@ -133,10 +144,10 @@ void texture::draw(SDL_Renderer *renderer, const SDL_Point *p) const
 	SDL_RenderCopy(renderer, m_sdl_texture, nullptr, &temp_rect);
 }
 
-void
-texture::draw(SDL_Renderer *renderer, const SDL_Point *p, const int scaled_offset_x, const int scaled_offset_y) const
+void texture::draw(SDL_Renderer *renderer, const SDL_Point *p, const int scaled_offset_x,
+                   const int scaled_offset_y) const
 {
-	SDL_Rect temp_rect = {p->x, p->y, m_dimensions.w, m_dimensions.h};
+    SDL_Rect temp_rect = {p->x, p->y, m_dimensions.w, m_dimensions.h};
 
 	if (m_scale != nullptr) {
 		temp_rect.w *= static_cast<int>(*m_scale);
@@ -160,8 +171,8 @@ void texture::draw(SDL_Renderer *renderer, const int x, const int y, const uint8
 	SDL_SetTextureAlphaMod(m_sdl_texture, 255);
 }
 
-void
-texture::draw(SDL_Renderer *renderer, const SDL_Rect *target_dim, const SDL_Rect *cutout, const uint8_t alpha) const
+void texture::draw(SDL_Renderer *renderer, const SDL_Rect *target_dim, const SDL_Rect *cutout,
+                   const uint8_t alpha) const
 {
 	if (alpha < 255) {
 		SDL_SetTextureAlphaMod(m_sdl_texture, alpha);

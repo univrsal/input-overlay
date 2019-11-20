@@ -1,9 +1,20 @@
-/**
- * Created by universal on 27.08.2018.
- * This file is part of input-overlay which is licensed
- * under the MOZILLA PUBLIC LICENSE 2.0 - http://www.gnu.org/licenses
- * github.com/univrsal/input-overlay
- */
+/*************************************************************************
+ * This file is part of input-overlay
+ * github.con/univrsal/input-overlay
+ * Copyright 2019 univrsal <universailp@web.de>.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, version 2 of the License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *************************************************************************/
 
 #include "element_button.hpp"
 #include "../util/notifier.hpp"
@@ -18,7 +29,7 @@
 
 ElementButton::ElementButton(const std::string &id, const SDL_Point pos, const SDL_Rect mapping, const uint16_t vc,
                              const uint8_t z)
-	: element_texture(ET_BUTTON, id, pos, mapping, z)
+    : element_texture(ET_BUTTON, id, pos, mapping, z)
 {
 	m_keycode = vc;
 	m_pressed_mapping = m_mapping;
@@ -81,7 +92,7 @@ void ElementButton::handle_event(SDL_Event *event, sdl_helper *helper)
 	auto pressed = false;
 
 	switch (event->type)
-		/* Fallthrough intended */ {
+	/* Fallthrough intended */ {
 	case SDL_KEYDOWN:
 		pressed = true;
 	case SDL_KEYUP:
@@ -97,7 +108,7 @@ void ElementButton::handle_event(SDL_Event *event, sdl_helper *helper)
 	case SDL_MOUSEBUTTONUP:
 		button = TO_MOUSE_MASK(event->button.button);
 		break;
-	default: ;
+	default:;
 	}
 
 	if (sdl_helper::sdl_key_to_vc(button) == m_keycode)
@@ -106,7 +117,6 @@ void ElementButton::handle_event(SDL_Event *event, sdl_helper *helper)
 
 ElementButton *ElementButton::read_from_file(ccl_config *file, const std::string &id, SDL_Point *default_dim)
 {
-	return new ElementButton(id, read_position(file, id),
-	                         read_mapping(file, id, default_dim), file->get_int(id + CFG_KEY_CODE),
-	                         read_layer(file, id));
+	return new ElementButton(id, read_position(file, id), read_mapping(file, id, default_dim),
+	                         file->get_int(id + CFG_KEY_CODE), read_layer(file, id));
 }

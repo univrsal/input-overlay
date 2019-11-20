@@ -1,9 +1,20 @@
-/**
- * Created by universal on 27.05.2018.
- * This file is part of input-overlay which is licensed
- * under the MOZILLA PUBLIC LICENSE 2.0 - http://www.gnu.org/licenses
- * github.com/univrsal/input-overlay
- */
+/*************************************************************************
+ * This file is part of input-overlay
+ * github.con/univrsal/input-overlay
+ * Copyright 2019 univrsal <universailp@web.de>.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, version 2 of the License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *************************************************************************/
 
 #include "config.hpp"
 #include "dialog/dialog_element_settings.hpp"
@@ -15,9 +26,8 @@
 #include "../../ccl/ccl.hpp"
 #include "element/element_analog_stick.hpp"
 
-config::config(const char *texture_path, const char *config,
-               const SDL_Point def_dim, const SDL_Point space, sdl_helper *h,
-               dialog_element_settings *s)
+config::config(const char *texture_path, const char *config, const SDL_Point def_dim, const SDL_Point space,
+               sdl_helper *h, dialog_element_settings *s)
 {
 	m_texture_path = texture_path;
 	m_config_path = config;
@@ -29,8 +39,7 @@ config::config(const char *texture_path, const char *config,
 	m_offset = space;
 
 	const auto w = h->util_window_size();
-	m_cs = coordinate_system(SDL_Point{X_AXIS, Y_AXIS},
-	                         SDL_Rect{0, 0, w->x, w->y}, h);
+	m_cs = coordinate_system(SDL_Point{X_AXIS, Y_AXIS}, SDL_Rect{0, 0, w->x, w->y}, h);
 
 	if (def_dim.x > 0 && def_dim.y > 0)
 		m_cs.set_grid_space(m_default_dim);
@@ -61,8 +70,7 @@ void config::draw_elements()
 		while (elements_drawn < m_elements.size()) {
 			for (auto const &element : m_elements) {
 				if (element->get_z_level() == layer) {
-					element->draw(m_atlas, &m_cs, element.get() == m_selected,
-					              m_helper->is_ctrl_down());
+					element->draw(m_atlas, &m_cs, element.get() == m_selected, m_helper->is_ctrl_down());
 					elements_drawn++;
 				}
 			}
@@ -89,8 +97,7 @@ void config::draw_elements()
 			m_helper->util_draw_rect(&temp, m_helper->get_palette()->white());
 		}
 
-		if (m_element_to_delete >= 0 && m_element_to_delete < m_elements.size()
-		) {
+		if (m_element_to_delete >= 0 && m_element_to_delete < m_elements.size()) {
 			m_elements.erase(m_elements.begin() + m_element_to_delete);
 			if (m_element_to_delete == m_selected_id) {
 				m_selected = nullptr;
@@ -113,14 +120,13 @@ void config::handle_events(SDL_Event *e)
 			m_cs.translate(m_x, m_y);
 
 			if (SDL_RectEmpty(&m_total_selection))
-				/* No multiple items already selected */ {
+			/* No multiple items already selected */ {
 				auto i = 0;
 				auto highest_layer = 0;
 				m_selected_id = -1;
 
 				for (auto const &elem : m_elements) {
-					if (sdl_helper::util_is_in_rect(
-						elem->get_abs_dim(&m_cs), m_x, m_y)) {
+					if (sdl_helper::util_is_in_rect(elem->get_abs_dim(&m_cs), m_x, m_y)) {
 						if (elem->get_z_level() >= highest_layer) {
 							highest_layer = elem->get_z_level();
 							m_selected = m_elements[i].get();
@@ -132,26 +138,18 @@ void config::handle_events(SDL_Event *e)
 				}
 
 				if (m_in_single_selection)
-					/* Start single element selection */ {
-					m_drag_offset = {
-						(e->button.x - (m_selected->get_x() * m_cs.get_scale())
-						 + m_cs.get_origin()->x),
-						(e->button.y - (m_selected->get_y() * m_cs.get_scale())
-						 + m_cs.get_origin()->y)
-					};
+				/* Start single element selection */ {
+					m_drag_offset = {(e->button.x - (m_selected->get_x() * m_cs.get_scale()) + m_cs.get_origin()->x),
+					                 (e->button.y - (m_selected->get_y() * m_cs.get_scale()) + m_cs.get_origin()->y)};
 					m_settings->select_element(m_selected);
 				} else /* Start multi element selection */ {
 					m_in_multi_selection = true;
 					reset_selection();
 					m_selection_start = {e->button.x, e->button.y};
 				}
-			} else if (sdl_helper::util_is_in_rect(
-				&m_total_selection, e->button.x, e->button.y)) {
+			} else if (sdl_helper::util_is_in_rect(&m_total_selection, e->button.x, e->button.y)) {
 				m_dragging_elements = true;
-				m_drag_offset = {
-					e->button.x - m_total_selection.x,
-					e->button.y - m_total_selection.y
-				};
+				m_drag_offset = {e->button.x - m_total_selection.x, e->button.y - m_total_selection.y};
 			} else {
 				m_total_selection = {};
 			}
@@ -163,10 +161,10 @@ void config::handle_events(SDL_Event *e)
 		m_in_multi_selection = false;
 	} else if (e->type == SDL_MOUSEMOTION) {
 		if (m_in_single_selection && m_selected)
-			/* Dragging single element */ {
+		/* Dragging single element */ {
 			move_element(e->button.x, e->button.y);
 		} else if (m_in_multi_selection)
-			/* Selecting multiple elements */ {
+		/* Selecting multiple elements */ {
 			SDL_Rect elem_dim;
 			SDL_Rect elem_abs_dim;
 
@@ -175,17 +173,15 @@ void config::handle_events(SDL_Event *e)
 
 			m_cs.translate(m_temp_selection.x, m_temp_selection.y);
 
-			m_temp_selection.x = ceil(UTIL_MAX(
-				(m_temp_selection.x - m_cs.get_origin_x()) /
-				((float)m_cs.get_scale()), 0));
-			m_temp_selection.y = ceil(UTIL_MAX(
-				(m_temp_selection.y - m_cs.get_origin_y()) /
-				((float)m_cs.get_scale()), 0));
+			m_temp_selection.x =
+			    ceil(UTIL_MAX((m_temp_selection.x - m_cs.get_origin_x()) / ((float)m_cs.get_scale()), 0));
+			m_temp_selection.y =
+			    ceil(UTIL_MAX((m_temp_selection.y - m_cs.get_origin_y()) / ((float)m_cs.get_scale()), 0));
 
-			m_temp_selection.w = ceil(SDL_abs(m_selection_start.x - e->button.x)
-			                          / static_cast<float>(m_cs.get_scale()));
-			m_temp_selection.h = ceil(SDL_abs(m_selection_start.y - e->button.y)
-			                          / static_cast<float>(m_cs.get_scale()));
+			m_temp_selection.w =
+			    ceil(SDL_abs(m_selection_start.x - e->button.x) / static_cast<float>(m_cs.get_scale()));
+			m_temp_selection.h =
+			    ceil(SDL_abs(m_selection_start.y - e->button.y) / static_cast<float>(m_cs.get_scale()));
 
 			m_selected_elements.clear();
 
@@ -194,19 +190,17 @@ void config::handle_events(SDL_Event *e)
 				if (is_rect_in_rect(elem->get_mapping(), &m_temp_selection)) {
 					m_cs.translate(elem_abs_dim.x, elem_abs_dim.y);
 					m_selected_elements.emplace_back(index);
-					SDL_UnionRect(&m_total_selection, &elem_dim,
-					              &m_total_selection);
+					SDL_UnionRect(&m_total_selection, &elem_dim, &m_total_selection);
 				}
 				index++;
 			}
 		} else if (m_dragging_elements)
-			/* Dragging multiple elements */ {
-			move_elements(e->button.x - m_drag_offset.x,
-			              e->button.y - m_drag_offset.y);
+		/* Dragging multiple elements */ {
+			move_elements(e->button.x - m_drag_offset.x, e->button.y - m_drag_offset.y);
 		}
 	} else if (e->type == SDL_KEYDOWN) {
 		if (m_selected)
-			/* Move selected element with arrow keys */ {
+		/* Move selected element with arrow keys */ {
 			auto x = m_selected->get_x();
 			auto y = m_selected->get_y();
 
@@ -220,8 +214,7 @@ void config::handle_events(SDL_Event *e)
 			if (util_move_element(&x, &y, e->key.keysym.sym))
 				move_elements(x, y);
 		}
-	} else if (e->type == SDL_WINDOWEVENT
-	           && e->window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
+	} else if (e->type == SDL_WINDOWEVENT && e->window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
 		const auto w = m_helper->util_window_size();
 		m_cs.set_dimensions(SDL_Rect{0, 0, w->x, w->y});
 	}
@@ -243,11 +236,9 @@ void config::write_config(notifier *n)
 
 	cfg.free_nodes(); /* Don't need existing values */
 
-	cfg.add_string(CFG_FIRST_ID, "Starting point for loading elements",
-	               *m_elements[0]->get_id(), true);
+	cfg.add_string(CFG_FIRST_ID, "Starting point for loading elements", *m_elements[0]->get_id(), true);
 	cfg.add_int(CFG_DEFAULT_WIDTH, "", m_default_dim.x);
-	cfg.add_int(CFG_DEFAULT_HEIGHT, "Default element dimension",
-	            m_default_dim.y);
+	cfg.add_int(CFG_DEFAULT_HEIGHT, "Default element dimension", m_default_dim.y);
 	cfg.add_int(CFG_H_SPACE, "", m_offset.x);
 	cfg.add_int(CFG_V_SPACE, "element offset for visual help", m_offset.y);
 
@@ -262,8 +253,7 @@ void config::write_config(notifier *n)
 		height = UTIL_MAX(height, e->get_y() + e->get_h());
 
 		if (index + 1 < m_elements.size()) {
-			cfg.add_string((*e->get_id()) + CFG_NEXT_ID, "Next element in list",
-			               *m_elements[index + 1]->get_id());
+			cfg.add_string((*e->get_id()) + CFG_NEXT_ID, "Next element in list", *m_elements[index + 1]->get_id());
 		}
 		index++;
 	}
@@ -281,9 +271,8 @@ void config::write_config(notifier *n)
 		n->add_msg(MESSAGE_ERROR, m_helper->loc(LANG_MSG_SAVE_ERROR));
 		n->add_msg(MESSAGE_ERROR, cfg.get_error_message());
 	} else {
-		const auto result = sdl_helper::format(
-			m_helper->loc(LANG_MSG_SAVE_SUCCESS).c_str(), m_elements.size(),
-			(end - start));
+		const auto result =
+		    sdl_helper::format(m_helper->loc(LANG_MSG_SAVE_SUCCESS).c_str(), m_elements.size(), (end - start));
 		n->add_msg(MESSAGE_INFO, result);
 	}
 	cfg.free_nodes();
@@ -316,22 +305,17 @@ void config::read_config(notifier *n)
 	while (!element_id.empty()) {
 		type = cfg.get_int(element_id + CFG_TYPE);
 		if (!element::valid_type(type)) {
-			n->add_msg(MESSAGE_ERROR, m_helper->format_loc(
-				           LANG_MSG_VALUE_TYPE_INVALID, element_id.c_str(),
-				           type));
+			n->add_msg(MESSAGE_ERROR, m_helper->format_loc(LANG_MSG_VALUE_TYPE_INVALID, element_id.c_str(), type));
 
 			element_id = cfg.get_string(element_id.append(CFG_NEXT_ID));
 			continue;
 		}
 
-		auto e = element::read_from_file(&cfg, element_id,
-		                                 static_cast<element_type>(type),
-		                                 &m_default_dim);
+		auto e = element::read_from_file(&cfg, element_id, static_cast<element_type>(type), &m_default_dim);
 		if (e)
 			m_elements.emplace_back(e);
 		else
-			n->add_msg(MESSAGE_ERROR, m_helper->format_loc(
-				           LANG_MSG_ELEMENT_LOAD_ERROR, element_id.c_str()));
+			n->add_msg(MESSAGE_ERROR, m_helper->format_loc(LANG_MSG_ELEMENT_LOAD_ERROR, element_id.c_str()));
 		element_id = cfg.get_string(element_id.append(CFG_NEXT_ID));
 	}
 
@@ -341,10 +325,8 @@ void config::read_config(notifier *n)
 		n->add_msg(MESSAGE_ERROR, m_helper->loc(LANG_MSG_LOAD_ERROR));
 		n->add_msg(MESSAGE_ERROR, cfg.get_error_message());
 	} else {
-		const auto result = sdl_helper::format(m_helper->
-		                                       loc(LANG_MSG_LOAD_SUCCESS).
-		                                       c_str(), m_elements.size(),
-		                                       (end - start));
+		const auto result =
+		    sdl_helper::format(m_helper->loc(LANG_MSG_LOAD_SUCCESS).c_str(), m_elements.size(), (end - start));
 		n->add_msg(MESSAGE_INFO, result);
 	}
 }
@@ -389,9 +371,7 @@ void config::move_elements(const int new_x, const int new_y)
 				if (index < m_elements.size()) {
 					auto e = m_elements[index].get();
 					if (e) {
-						e->set_pos(
-							e->get_x() + (flag_x ? delta_x : 0),
-							e->get_y() + (flag_y ? delta_y : 0));
+						e->set_pos(e->get_x() + (flag_x ? delta_x : 0), e->get_y() + (flag_y ? delta_y : 0));
 					}
 				}
 			}
@@ -400,10 +380,8 @@ void config::move_elements(const int new_x, const int new_y)
 
 inline void config::move_element(const int mouse_x, const int mouse_y)
 {
-	const auto x = SDL_max((mouse_x - m_drag_offset.x +
-		                       m_cs.get_origin()->x) / m_cs.get_scale(), 0);
-	const auto y = SDL_max((mouse_y - m_drag_offset.y +
-		                       m_cs.get_origin()->y) / m_cs.get_scale(), 0);
+	const auto x = SDL_max((mouse_x - m_drag_offset.x + m_cs.get_origin()->x) / m_cs.get_scale(), 0);
+	const auto y = SDL_max((mouse_y - m_drag_offset.y + m_cs.get_origin()->y) / m_cs.get_scale(), 0);
 
 	m_selected->set_pos(x, y);
 	m_settings->set_xy(x, y);
@@ -411,6 +389,5 @@ inline void config::move_element(const int mouse_x, const int mouse_y)
 
 inline bool config::is_rect_in_rect(const SDL_Rect *a, const SDL_Rect *b)
 {
-	return a->x >= b->x && a->x + a->w <= b->x + b->w
-	       && a->y >= b->y && a->y + a->h <= b->y + b->h;
+	return a->x >= b->x && a->x + a->w <= b->x + b->w && a->y >= b->y && a->y + a->h <= b->y + b->h;
 }

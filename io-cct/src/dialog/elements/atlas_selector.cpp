@@ -1,8 +1,25 @@
+/*************************************************************************
+ * This file is part of input-overlay
+ * github.con/univrsal/input-overlay
+ * Copyright 2019 univrsal <universailp@web.de>.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, version 2 of the License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *************************************************************************/
+
 #include "atlas_selector.hpp"
 #include "../../util/constants.hpp"
 
-atlas_selector::atlas_selector(const int8_t id, const int x, const int y,
-                               const int w, const int h, texture *t,
+atlas_selector::atlas_selector(const int8_t id, const int x, const int y, const int w, const int h, texture *t,
                                dialog *parent)
 {
 	const SDL_Rect temp = {x, y, w, h};
@@ -26,8 +43,7 @@ void atlas_selector::close()
 void atlas_selector::init(dialog *parent, const SDL_Rect dim, const int8_t id)
 {
 	gui_element::init(parent, dim, id);
-	m_cs = new coordinate_system(SDL_Point{X_AXIS, Y_AXIS}, m_dimensions,
-	                             get_helper());
+	m_cs = new coordinate_system(SDL_Point{X_AXIS, Y_AXIS}, m_dimensions, get_helper());
 	m_cs->enable_border();
 	m_cs->enable_crosshair();
 }

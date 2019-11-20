@@ -25,148 +25,148 @@
 
 using namespace std;
 
-static Display* xdisplay = nullptr;
+static Display *xdisplay = nullptr;
 
-Display* disp()
+Display *disp()
 {
-    if (!xdisplay)
-        xdisplay = XOpenDisplay(nullptr);
+	if (!xdisplay)
+		xdisplay = XOpenDisplay(nullptr);
 
-    return xdisplay;
+	return xdisplay;
 }
 
 void cleanupDisplay()
 {
-    if (!xdisplay)
-        return;
+	if (!xdisplay)
+		return;
 
-    XCloseDisplay(xdisplay);
-    xdisplay = nullptr;
+	XCloseDisplay(xdisplay);
+	xdisplay = nullptr;
 }
 
 static bool ewmhIsSupported()
 {
-    Display* display = disp();
-    Atom netSupportingWmCheck = XInternAtom(display, "_NET_SUPPORTING_WM_CHECK", true);
-    Atom actualType;
-    int format = 0;
-    unsigned long num = 0, bytes = 0;
-    unsigned char* data = nullptr;
-    Window ewmh_window = 0;
+	Display *display = disp();
+	Atom netSupportingWmCheck = XInternAtom(display, "_NET_SUPPORTING_WM_CHECK", true);
+	Atom actualType;
+	int format = 0;
+	unsigned long num = 0, bytes = 0;
+	unsigned char *data = nullptr;
+	Window ewmh_window = 0;
 
-    int status = XGetWindowProperty(display, DefaultRootWindow(display), netSupportingWmCheck, 0L, 1L, false, XA_WINDOW,
-                                    &actualType, &format, &num, &bytes, &data);
+	int status = XGetWindowProperty(display, DefaultRootWindow(display), netSupportingWmCheck, 0L, 1L, false, XA_WINDOW,
+									&actualType, &format, &num, &bytes, &data);
 
-    if (status == Success) {
-        if (num > 0) {
-            ewmh_window = ((Window*) data)[0];
-        }
-        if (data) {
-            XFree(data);
-            data = nullptr;
-        }
-    }
+	if (status == Success) {
+		if (num > 0) {
+			ewmh_window = ((Window *)data)[0];
+		}
+		if (data) {
+			XFree(data);
+			data = nullptr;
+		}
+	}
 
-    if (ewmh_window) {
-        status = XGetWindowProperty(display, ewmh_window, netSupportingWmCheck, 0L, 1L, false, XA_WINDOW, &actualType,
-                                    &format, &num, &bytes, &data);
-        if (status != Success || num == 0 || ewmh_window != ((Window*) data)[0]) {
-            ewmh_window = 0;
-        }
-        if (status == Success && data) {
-            XFree(data);
-        }
-    }
+	if (ewmh_window) {
+		status = XGetWindowProperty(display, ewmh_window, netSupportingWmCheck, 0L, 1L, false, XA_WINDOW, &actualType,
+									&format, &num, &bytes, &data);
+		if (status != Success || num == 0 || ewmh_window != ((Window *)data)[0]) {
+			ewmh_window = 0;
+		}
+		if (status == Success && data) {
+			XFree(data);
+		}
+	}
 
-    return ewmh_window != 0;
+	return ewmh_window != 0;
 }
 
 static std::vector<Window> getTopLevelWindows()
 {
-    std::vector<Window> res;
+	std::vector<Window> res;
 
-    res.resize(0);
+	res.resize(0);
 
-    if (!ewmhIsSupported()) {
-        return res;
-    }
+	if (!ewmhIsSupported()) {
+		return res;
+	}
 
-    Atom netClList = XInternAtom(disp(), "_NET_CLIENT_LIST", true);
-    Atom actualType;
-    int format;
-    unsigned long num, bytes;
-    Window* data = 0;
+	Atom netClList = XInternAtom(disp(), "_NET_CLIENT_LIST", true);
+	Atom actualType;
+	int format;
+	unsigned long num, bytes;
+	Window *data = 0;
 
-    for (int i = 0; i < ScreenCount(disp()); ++i) {
-        Window rootWin = RootWindow(disp(), i);
+	for (int i = 0; i < ScreenCount(disp()); ++i) {
+		Window rootWin = RootWindow(disp(), i);
 
-        int status = XGetWindowProperty(disp(), rootWin, netClList, 0L, ~0L, false, AnyPropertyType, &actualType,
-                                        &format, &num, &bytes, (uint8_t**) &data);
+		int status = XGetWindowProperty(disp(), rootWin, netClList, 0L, ~0L, false, AnyPropertyType, &actualType,
+										&format, &num, &bytes, (uint8_t **)&data);
 
-        if (status != Success) {
-            continue;
-        }
+		if (status != Success) {
+			continue;
+		}
 
-        for (unsigned long i = 0; i < num; ++i)
-            res.emplace_back(data[i]);
+		for (unsigned long i = 0; i < num; ++i)
+			res.emplace_back(data[i]);
 
-        XFree(data);
-    }
+		XFree(data);
+	}
 
-    return res;
+	return res;
 }
 
 static std::string GetWindowTitle(size_t i)
 {
-    Window w = getTopLevelWindows().at(i);
-    std::string windowTitle;
-    char* name;
+	Window w = getTopLevelWindows().at(i);
+	std::string windowTitle;
+	char *name;
 
-    int status = XFetchName(disp(), w, &name);
-    if (status >= Success && name != nullptr) {
-        std::string str(name);
-        windowTitle = str;
-    }
+	int status = XFetchName(disp(), w, &name);
+	if (status >= Success && name != nullptr) {
+		std::string str(name);
+		windowTitle = str;
+	}
 
-    XFree(name);
+	XFree(name);
 
-    return windowTitle;
+	return windowTitle;
 }
 
 void GetWindowList(vector<string> &windows)
 {
-    windows.resize(0);
+	windows.resize(0);
 
-    for (size_t i = 0; i < getTopLevelWindows().size(); ++i) {
-        if (!GetWindowTitle(i).empty())
-            windows.emplace_back(GetWindowTitle(i));
-    }
+	for (size_t i = 0; i < getTopLevelWindows().size(); ++i) {
+		if (!GetWindowTitle(i).empty())
+			windows.emplace_back(GetWindowTitle(i));
+	}
 }
 
 void GetCurrentWindowTitle(string &title)
 {
-    if (!ewmhIsSupported()) {
-        return;
-    }
+	if (!ewmhIsSupported()) {
+		return;
+	}
 
-    Atom active = XInternAtom(disp(), "_NET_ACTIVE_WINDOW", true);
-    Atom actualType;
-    int format;
-    unsigned long num, bytes;
-    Window* data = 0;
-    char* name;
+	Atom active = XInternAtom(disp(), "_NET_ACTIVE_WINDOW", true);
+	Atom actualType;
+	int format;
+	unsigned long num, bytes;
+	Window *data = 0;
+	char *name;
 
-    Window rootWin = RootWindow(disp(), 0);
+	Window rootWin = RootWindow(disp(), 0);
 
-    XGetWindowProperty(disp(), rootWin, active, 0L, ~0L, false, AnyPropertyType, &actualType, &format, &num, &bytes,
-                       (uint8_t**) &data);
+	XGetWindowProperty(disp(), rootWin, active, 0L, ~0L, false, AnyPropertyType, &actualType, &format, &num, &bytes,
+					   (uint8_t **)&data);
 
-    int status = XFetchName(disp(), data[0], &name);
+	int status = XFetchName(disp(), data[0], &name);
 
-    if (status >= Success && name != nullptr) {
-        std::string str(name);
-        title = str;
-    }
+	if (status >= Success && name != nullptr) {
+		std::string str(name);
+		title = str;
+	}
 
-    XFree(name);
+	XFree(name);
 }

@@ -70,7 +70,8 @@ namespace gamepad
     bool init_pad_devices();
 
 #ifdef LINUX
-    extern gamepad_binding bindings[PAD_COUNT];
+	extern gamepad_binding bindings;
+	extern uint8_t last_input;
 #endif
 
     /* Mutex for thread safety */

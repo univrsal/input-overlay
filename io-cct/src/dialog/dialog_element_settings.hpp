@@ -1,9 +1,20 @@
-/**
- * Created by univrsal on 27.05.2018.
- * This file is part of input-overlay which is licensed
- * under the MOZILLA PUBLIC LICENSE 2.0 - http://www.gnu.org/licenses
- * github.com/univrsal/input-overlay
- */
+/*************************************************************************
+ * This file is part of input-overlay
+ * github.con/univrsal/input-overlay
+ * Copyright 2019 univrsal <universailp@web.de>.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, version 2 of the License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *************************************************************************/
 
 #pragma once
 
@@ -23,8 +34,8 @@ class element;
 class dialog_element_settings : public dialog {
 public:
 	dialog_element_settings(sdl_helper *sdl, tool *tool)
-		: dialog(sdl, SDL_Rect{1030, 200, 240, 400},
-		         LANG_DIALOG_ELEMENT_SETTINGS)
+	    : dialog(sdl, SDL_Rect{1030, 200, 240, 400},
+	             LANG_DIALOG_ELEMENT_SETTINGS)
 	{
 		m_tool = tool;
 	};

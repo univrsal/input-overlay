@@ -28,7 +28,7 @@ std::mutex mutex;
 bool gamepad_hook_state = false;
 bool gamepad_hook_run_flag = true;
 gamepad_handle pads[PAD_COUNT];
-gamepad_binding bindings[PAD_COUNT];
+gamepad_binding bindings;
 uint8_t last_input = 0xff;
 
 gamepad_handle::~gamepad_handle()
@@ -96,8 +96,7 @@ void start_pad_hook()
 	if (gamepad_hook_state)
 		return;
 	if (init_pad_devices()) {
-		gamepad_hook_state = pthread_create(&gamepad_hook_thread,
-		                                    NULL, hook_method, NULL) == 0;
+		gamepad_hook_state = pthread_create(&gamepad_hook_thread, NULL, hook_method, NULL) == 0;
 	} else {
 		blog(LOG_WARNING, "[input-overlay] Gamepad device init failed\n");
 	}
@@ -123,17 +122,15 @@ void *hook_method(void *)
 			}
 
 			switch (pad.get_event()->type) {
-				case JS_EVENT_BUTTON:
-					/* Yes, this is possible, yes it's insane
+			case JS_EVENT_BUTTON:
+				/* Yes, this is possible, yes it's insane
 					 * but this is the first time I've every had
 					 * the chance to use it so screw it */
-					if (pad.get_event()->value) {
+				if (pad.get_event()->value) {
 				case JS_EVENT_AXIS:
-						last_input = pad.get_event()->number;
-					}
-					bindings->handle_event(pad.get_id(),
-					                       hook::input_data,
-					                       pad.get_event());
+					last_input = pad.get_event()->number;
+				}
+				bindings.handle_event(pad.get_id(), hook::input_data, pad.get_event());
 			}
 		}
 		mutex.unlock();
