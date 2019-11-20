@@ -1,11 +1,21 @@
-/**
+/*************************************************************************
  * This file is part of input-overlay
- * which is licensed under the GPL v2.0
- * See LICENSE or http://www.gnu.org/licenses
- * github.com/univrsal/input-overlay
- */
+ * github.con/univrsal/input-overlay
+ * Copyright 2019 univrsal <universailp@web.de>.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, version 2 of the License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *************************************************************************/
 
-#include <util/platform.h>
 #include "gamepad_hook.hpp"
 #include "hook_helper.hpp"
 #include "../util/element/element_data_holder.hpp"
@@ -13,75 +23,77 @@
 #include "../util/element/element_analog_stick.hpp"
 #include "../util/element/element_trigger.hpp"
 #include "../util/element/element_dpad.hpp"
+#include <util/platform.h>
 
 namespace gamepad
 {
+    static HANDLE hook_thread;
     bool gamepad_hook_state = false;
     bool gamepad_hook_run_flag = true;
-    GamepadState pad_states[PAD_COUNT];
+    gamepad_handle pads[PAD_COUNT];
     std::mutex mutex;
-#ifdef _WIN32
-    static HANDLE hook_thread;
-#else
 
-    gamepad_binding bindings;
-    uint8_t last_input = 0xff;
-    static pthread_t game_pad_hook_thread;
-#endif
-
-    void start_pad_hook()
+    gamepad_handle::~gamepad_handle()
     {
-        if (gamepad_hook_state)
-            return;
+        unload();
+    }
 
-#ifdef _WIN32
-        xinput_fix::load();
+    void gamepad_handle::load()
+    {
+        unload();
+        update();
+        debug("Gamepad %i present: %s", m_id, valid() ? "true" : "false");
+    }
 
-        if (!xinput_fix::loaded) /* Couldn't load xinput Dll*/
-        {
-            blog(LOG_INFO, "[input-overlay] Gamepad hook init failed");
-            return;
-        }
-#endif
-        gamepad_hook_state = gamepad_hook_run_flag = init_pad_devices();
+    void gamepad_handle::update()
+    {
+        m_valid = xinput_fix::update(m_id, &m_xin);
+    }
 
-#ifdef _WIN32
-        hook_thread = CreateThread(nullptr, 0, static_cast<LPTHREAD_START_ROUTINE>(hook_method),
-            nullptr, 0, nullptr);
-        gamepad_hook_state = hook_thread;
-#else
-        gamepad_hook_state = pthread_create(&game_pad_hook_thread, nullptr, hook_method, nullptr) == 0;
-#endif
+    void gamepad_handle::init(uint8_t id)
+    {
+        m_id = id;
+        load();
     }
 
     bool init_pad_devices()
     {
         uint8_t id = 0;
         auto flag = false;
-        for (auto &state : pad_states) {
-            state.init(id++);
-            if (state.valid())
+        for (auto &pad : pads) {
+            pad.init(id++);
+            if (pad.valid())
                 flag = true;
         }
         return flag;
     }
 
+    void start_pad_hook()
+    {
+        if (gamepad_hook_state)
+            return;
+
+        xinput_fix::load();
+
+        if (!xinput_fix::loaded) /* Couldn't load xinput Dll*/ {
+            blog(LOG_INFO, "[input-overlay] Gamepad hook init failed");
+            return;
+        }
+        gamepad_hook_state = gamepad_hook_run_flag = init_pad_devices();
+
+        hook_thread = CreateThread(nullptr, 0, static_cast<LPTHREAD_START_ROUTINE>(hook_method),
+            nullptr, 0, nullptr);
+        gamepad_hook_state = hook_thread;
+    }
+
+
     void end_pad_hook()
     {
         gamepad_hook_run_flag = false;
-
-#ifdef _WIN32
         CloseHandle(hook_thread);
-#endif
     }
 
-    /* Background process for quering game pads */
-#ifdef _WIN32
     DWORD WINAPI hook_method(const LPVOID arg)
-#else
-
-    void* hook_method(void*)
-#endif
     {
         while (gamepad_hook_run_flag) {
             if (!hook::input_data)
@@ -92,11 +104,9 @@ namespace gamepad
                 if (!pad.valid())
                     continue;
 
-#ifdef _WIN32
                 dpad_direction dir[] = { dpad_direction::CENTER, dpad_direction::CENTER };
 
-                for (const auto& button : xinput_fix::all_codes)
-                {
+                for (const auto& button : xinput_fix::all_codes) {
                     const auto state = static_cast<button_state>(pressed(pad.get_xinput(), button));
                     hook::input_data->add_gamepad_data(pad.get_id(), xinput_fix::to_vc(button),
                         new element_data_button(state));
@@ -121,43 +131,11 @@ namespace gamepad
                     new element_data_trigger(
                         trigger_l(pad.get_xinput()), trigger_r(pad.get_xinput())
                     ));
-#else
-                blog(LOG_DEBUG, "tick");
-                if (pad.read_event() == -1) {
-                    pad.unload();
-                    continue;
-                }
-
-                /* js_event code from
-                   https://gist.github.com/jasonwhite/c5b2048c15993d285130
-                 */
-                switch (pad.get_event()->type) {
-                    case JS_EVENT_BUTTON:
-                        if (pad.get_event()->value)
-                            last_input = pad.get_event()->number;
-                        bindings.handle_event(pad.get_player(), hook::input_data, pad.get_event());
-                        break;
-                    case JS_EVENT_AXIS:
-                        last_input = pad.get_event()->number;
-                        bindings.handle_event(pad.get_player(), hook::input_data, pad.get_event());
-                        break;
-                    default:;
-                }
-
-#endif /* LINUX */
                 mutex.unlock();
             }
-#ifdef  _WIN32 /* Delay on linux results in buffered input */
             os_sleep_ms(25);
-#endif
         }
 
-        //for (auto& state : pad_states)
-        //    state.unload();
-#ifdef _WIN32
         return UIOHOOK_SUCCESS;
-#else
-        pthread_exit(nullptr);
-#endif
     }
 }

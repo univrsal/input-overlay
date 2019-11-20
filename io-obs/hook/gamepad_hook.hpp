@@ -1,172 +1,84 @@
-/**
+/*************************************************************************
  * This file is part of input-overlay
- * which is licensed under the GPL v2.0
- * See LICENSE or http://www.gnu.org/licenses
- * github.com/univrsal/input-overlay
- */
+ * github.con/univrsal/input-overlay
+ * Copyright 2019 univrsal <universailp@web.de>.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, version 2 of the License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *************************************************************************/
 
 #pragma once
 
+#include "util/util.hpp"
 #ifdef _WIN32
+struct js_event;		/* placeholder */
 #include "xinput_fix.hpp"
 #else
 #include "gamepad_binding.hpp"
-#include <stdlib.h>
 #include <string>
-#include <malloc.h>
-#include <unistd.h>
-#include <fcntl.h>
 #include <linux/joystick.h>
-#endif
-#include "util/util.hpp"
+#endif /* LINUX */
 #include <stdio.h>
 #include <mutex>
 
 namespace gamepad
 {
-    /* Linux implementation */
-#ifdef LINUX
-    extern gamepad_binding bindings;
-    extern uint8_t last_input; /* Used in config screen to bind buttons */
-
-
-    struct GamepadState
-    {
-        ~GamepadState()
-        {
-            unload();
-        }
-
-        void unload()
-        {
-            close(m_controller_id);
-        }
-
-        void load()
-        {
-            m_controller_id = open(m_path.c_str(), O_RDONLY);
-            blog(LOG_DEBUG, "Gamepad %i present: %s", m_player, valid() ? "true" : "false");
-        }
-
-        bool valid()
-        { return m_controller_id >= 0; }
-
-        void init(uint8_t pad_id)
-        {
-            unload();
-            m_path.clear();
-            m_player = pad_id;
-            m_path = "/dev/input/js";
-            m_path.append(std::to_string(pad_id));
-            load();
-        }
-
-        uint8_t get_player() const
-        { return m_player; }
-
-        int read_event()
-        {
-            ssize_t bytes;
-            bytes = read(m_controller_id, &m_event, sizeof(m_event));
-            if (bytes == sizeof(m_event))
-                return 0;
-
-            /* Error, could not read full event. */
-            return -1;
-        }
-
-        js_event* get_event() { return &m_event; }
-    private:
-        std::string m_path;
-        int m_controller_id = -1; /* Id assigned by the open command */
-        uint8_t m_player; /* 0 - 4 */
-        js_event m_event;
-    };
-
-#endif /* LINUX */
-
-    /* Windows implementation */
-#ifdef _WIN32
-    struct GamepadState
-    {
-        ~GamepadState()
-        {
-            unload();
-        }
-
-        void unload()
-        {
-            ZeroMemory(&m_xinput, sizeof(xinput_fix::gamepad));
-        }
-
-        void load()
-        {
-            unload();
-            update();
-            blog(LOG_DEBUG, "Gamepad %i present: %s", m_controller_id, valid() ? "true" : "false");
-        }
-
-        void update()
-        {
-            if (xinput_fix::update(m_controller_id, &m_xinput) == ERROR_SUCCESS)
-            {
-                m_valid = true;
-            }
-            else
-            {
-                m_valid = false;
-            }
-        }
-
-        bool valid()
-        {
-            update();
-            return m_valid;
-        }
-
-        void init(const uint8_t pad_id)
-        {
-            m_controller_id = pad_id;
-            load();
-        }
-
-        uint8_t get_id() const
-        {
-            return m_controller_id;
-        }
-
-        xinput_fix::gamepad* get_xinput()
-        {
-            return &m_xinput;
-        }
-
-    private:
-        xinput_fix::gamepad m_xinput;
+    class gamepad_handle {
+        int8_t m_id = -1;
         bool m_valid = false;
-        int8_t m_controller_id = -1;
+#ifdef LINUX
+		std::string m_path;
+		js_event m_event;
+		int m_device_id = -1;
+#else
+		xinput_fix::gamepad m_xinput;
+#endif
+    public:
+        gamepad_handle() {}
+        ~gamepad_handle();
+
+        int8_t get_id() const { return m_id; }
+
+        void load();
+        void update();
+        void unload();
+        void init(uint8_t id);
+        bool valid() const { return m_valid; }
+
+        /* Linux only */
+        int read_event();
+        js_event *get_event();
     };
-
-#endif /* HAVE_XINPUT */
-
-    void start_pad_hook();
 
 #ifdef _WIN32
     DWORD WINAPI hook_method(LPVOID arg);
 #else
-
     void* hook_method(void*);
-
 #endif
 
+    void start_pad_hook();
     void end_pad_hook();
-
     bool init_pad_devices();
+
+#ifdef LINUX
+    extern gamepad_binding bindings[PAD_COUNT];
+#endif
 
     /* Mutex for thread safety */
     extern std::mutex mutex;
     /* Four structs containing info to query gamepads */
-    extern GamepadState pad_states[PAD_COUNT];
+    extern gamepad_handle pads[PAD_COUNT];
     /* Init state of hook */
     extern bool gamepad_hook_state;
     /* False will end thread */
-    extern bool gamepad_hook_run_flag; }
+    extern bool gamepad_hook_run_flag;
+}

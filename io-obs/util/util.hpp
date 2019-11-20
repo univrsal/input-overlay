@@ -39,6 +39,15 @@
 #define M_PI 3.14159265358979323846
 #endif
 
+/* Logging */
+#define logs(log_level, format, ...)                    \
+	blog(log_level, "[input_overlay: '%s'] " format, \
+	     obs_source_get_name(context->source), ##__VA_ARGS__)
+
+#define debug(format, ...) blog(LOG_DEBUG, "[input_overlay] " format, ##__VA_ARGS__)
+#define info(format, ...) blog(LOG_INFO, "[input_overlay] " format, ##__VA_ARGS__)
+#define warn(format, ...) blog(LOG_WARNING, "[input_overlay] " format, ##__VA_ARGS__)
+
 #define UTIL_MAX(a, b)                  (((a) > (b)) ? (a) : (b))
 #define UTIL_MIN(a, b)                  (((a) < (b)) ? (a) : (b))
 #define UTIL_CLAMP(lower, x, upper)     (UTIL_MIN(upper, UTIL_MAX(x, lower)))

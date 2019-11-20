@@ -16,7 +16,8 @@ if (MSVC)
     set(input-overlay_PLATFORM_DEPS
             w32-pthreads)
     set(input-overlay_PLATFORM_SOURCES
-            util/window_helper_win.cpp)
+            util/window_helper_win.cpp
+            hook/gamepad_hook_win.cpp)
     find_path(NETLIB_INCLUDE_DIR netlib.h)
     find_library(NETLIB_LIBRARY netlib)
 
@@ -29,7 +30,10 @@ if ("${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
     add_definitions(-DUNIX=1)
 
     set(input-overlay_PLATFORM_SOURCES
-            util/window_helper.hpp util/window_helper_nix.cpp hook/gamepad_binding.cpp hook/gamepad_binding.hpp)
+            util/window_helper_nix.cpp
+            hook/gamepad_binding.cpp
+            hook/gamepad_binding.hpp
+            hook/gamepad_hook_linux.cpp)
 
     if (ENABLE_STATIC_NETLIB)
         message("-- [input-overlay] Using precompiled netlib")
@@ -86,7 +90,6 @@ set(input-overlay_SOURCES
         sources/input_history.hpp
         hook/hook_helper.cpp
         hook/hook_helper.hpp
-        hook/gamepad_hook.cpp
         hook/gamepad_hook.hpp
         hook/xinput_fix.cpp
         hook/xinput_fix.hpp

@@ -14,6 +14,7 @@
  * gamepads might report different events for the same
  * keypresses, so this class loads configurations which
  * map a /dev/js* event to a button identifiable by the plugin
+ * TODO port this to windows
  */
 
 class element_data_holder;

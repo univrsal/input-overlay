@@ -215,13 +215,10 @@ namespace sources
         {
             return reinterpret_cast<input_source*>(data)->m_settings.cy;
         };
-
         si.get_defaults = [](obs_data_t* settings)
         {
             UNUSED_PARAMETER(settings);
-            /* NO-OP */
         };
-
         si.update = [](void* data, obs_data_t* settings)
         {
             reinterpret_cast<input_source*>(data)->update(settings);
