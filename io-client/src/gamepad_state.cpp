@@ -21,6 +21,7 @@
 #include "../../io-obs/util/layout_constants.hpp"
 #define IO_CLIENT 1 /* Prevents external util.hpp from including obs headers */
 #include "../../io-obs/util/util.hpp"
+
 namespace gamepad {
 gamepad_state::gamepad_state()
 {

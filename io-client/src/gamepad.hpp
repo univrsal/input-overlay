@@ -17,6 +17,12 @@
  *************************************************************************/
 
 #pragma once
+#ifdef LINUX
+#include <string>
+#include <linux/joystick.h>
+#else
+
+#endif
 #include "gamepad_state.hpp"
 #include "xinput_fix.hpp"
 #include <stdint.h>
@@ -26,34 +32,44 @@
 
 namespace gamepad
 {
-#ifdef _WIN32
-    extern HANDLE hook_thread;
-#else
-    extern pthread_t game_pad_hook_thread;
-#endif
-    class gamepad_handle;
-    extern gamepad_handle pad_handles[PAD_COUNT];
-    extern volatile bool hook_state;
-    extern volatile bool hook_run_flag;
+    enum pad_code
+    {
+        CODE_DPAD_UP = 0x0001,
+        CODE_DPAD_DOWN = 0x0002,
+        CODE_DPAD_LEFT = 0x0004,
+        CODE_DPAD_RIGHT = 0x0008,
+        CODE_START = 0x0010,
+        CODE_BACK = 0x0020,
+        CODE_LEFT_THUMB = 0x0040,
+        CODE_RIGHT_THUMB = 0x0080,
+        CODE_LEFT_SHOULDER = 0x0100,
+        CODE_RIGHT_SHOULDER = 0x0200,
+        CODE_GUIDE = 0x0400,
+        CODE_A = 0x1000,
+        CODE_B = 0x2000,
+        CODE_X = 0x4000,
+        CODE_Y = 0x8000
+    };
 
-	static xinput_fix::gamepad_codes pad_keys[] =
-	{ /* These keycodes are only used on windows,
+    static pad_code pad_keys[] =
+    {
+       /* These keycodes are only used on windows,
 		 but the linux client converts them to these
 		 to agree on one standard
-	  */
-	    xinput_fix::CODE_A,
-	    xinput_fix::CODE_B,
-	    xinput_fix::CODE_X,
-	    xinput_fix::CODE_Y,
-	    xinput_fix::CODE_GUIDE,
-	    xinput_fix::CODE_DPAD_DOWN,
-	    xinput_fix::CODE_DPAD_UP,
-	    xinput_fix::CODE_DPAD_LEFT,
-	    xinput_fix::CODE_DPAD_RIGHT,
-	    xinput_fix::CODE_LEFT_SHOULDER,
-	    xinput_fix::CODE_RIGHT_SHOULDER,
-	    xinput_fix::CODE_START,
-	    xinput_fix::CODE_BACK
+       */
+        CODE_A,
+        CODE_B,
+        CODE_X,
+        CODE_Y,
+        CODE_GUIDE,
+        CODE_DPAD_DOWN,
+        CODE_DPAD_UP,
+        CODE_DPAD_LEFT,
+        CODE_DPAD_RIGHT,
+        CODE_LEFT_SHOULDER,
+        CODE_RIGHT_SHOULDER,
+        CODE_START,
+        CODE_BACK
 	};
 #ifndef _WIN32
 #define ID_TYPE         6
@@ -71,49 +87,40 @@ namespace gamepad
 #define ID_R_TRIGGER    5
 #endif /* !WINDOWS */
 
-	class gamepad_handle
-	{
-	public:
-		~gamepad_handle();
-
-		void unload();
-
-		void load();
-
-		bool valid();
-
-		void init(const uint8_t pad_id);
-
-		uint8_t get_id() const;
-
-		gamepad_state* get_state();
-
-		void update_state(gamepad_state* new_state);
-
-		bool m_changed = false;
-#ifdef _WIN32
-		void update();
-		xinput_fix::gamepad* get_xinput();
-	private:
-		std::mutex m_mutex;
-		xinput_fix::gamepad m_x_input = {};
-		bool m_valid = false;
+    class gamepad_handle {
+        int8_t m_id = -1;
+        bool m_valid = false;
+        bool m_changed = false;
+#ifdef LINUX
+        std::string m_path;
+        js_event m_event;
+        int m_device_id = -1;
 #else
-		FILE* dev();
-
-	private:
-		FILE* m_device_file = nullptr;
-		std::string m_path;
+        xinput_fix::gamepad m_xinput;
 #endif
-		int8_t m_pad_id = -1;
-		gamepad_state m_current_state;
+    public:
+        gamepad_handle() {}
+        ~gamepad_handle();
 
-	};
+        int8_t get_id() const { return m_id; }
+
+        void load();
+        void update();
+        void unload();
+        void init(uint8_t id);
+        void mark_dirty() { m_changed = true; }
+        void reset() { m_changed = false; }
+        bool valid() const { return m_valid; }
+        bool changed() const { return m_changed; }
+        /* Linux only */
+        int read_event();
+        js_event *get_event();
+    };
 
 	/* Thread stuff*/
 	bool start_pad_hook(bool threaded);
-	bool init_pads();
-	void close();
+    bool init_pad_devices();
+    void end_pad_hook();
 
 	bool check_changes();
 
@@ -123,5 +130,13 @@ namespace gamepad
 	void* hook_method(void*);
 #endif
 
+#ifdef _WIN32
+    extern HANDLE hook_thread;
+#else
+    extern pthread_t thread;
+#endif
+    extern gamepad_handle pads[PAD_COUNT];
+    extern volatile bool state;
+    extern volatile bool run_flag;
 
 } /* namespace gamepad */

@@ -64,7 +64,6 @@ namespace gamepad
 #else
     void* hook_method(void*);
 #endif
-
     void start_pad_hook();
     void end_pad_hook();
     bool init_pad_devices();

@@ -135,8 +135,8 @@ int write_gamepad_data()
 {
 	auto result = 1;
 	netlib_write_uint8(network::buffer, MSG_GAMEPAD_DATA);
-	for (auto &pad : gamepad::pad_handles) {
-		if (pad.m_changed) {
+    for (auto &pad : gamepad::pads) {
+        if (pad.changed()) {
 			if (!netlib_write_uint8(network::buffer, pad.get_id()) ||
 			    !netlib_write_uint16(network::buffer, pad.get_state()->button_states) ||
 			    !netlib_write_float(network::buffer, pad.get_state()->stick_l_x) ||
@@ -147,7 +147,7 @@ int write_gamepad_data()
 			    !netlib_write_uint8(network::buffer, pad.get_state()->trigger_r))
 				result = 0;
 
-			pad.m_changed = false;
+            pad.reset();
 		}
 	}
 
@@ -210,7 +210,7 @@ message recv_msg()
 void close_all()
 {
 	uiohook::close();
-	gamepad::close();
+	gamepad::end_pad_hook();
 	network::close();
 }
 

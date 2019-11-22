@@ -124,8 +124,8 @@ void *hook_method(void *)
 			switch (pad.get_event()->type) {
 			case JS_EVENT_BUTTON:
 				/* Yes, this is possible, yes it's insane
-					 * but this is the first time I've every had
-					 * the chance to use it so screw it */
+                 * but this is the first time I've every had
+                 * the chance to use it so screw it */
 				if (pad.get_event()->value) {
 				case JS_EVENT_AXIS:
 					last_input = pad.get_event()->number;
