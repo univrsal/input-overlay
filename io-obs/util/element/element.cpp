@@ -21,52 +21,51 @@
 
 element_data::element_data(const element_type type)
 {
-    m_type = type;
+	m_type = type;
 }
 
 element_type element_data::get_type() const
 {
-    return m_type;
+	return m_type;
 }
 
-element::element()
-    : m_keycode(0)
+element::element() : m_keycode(0)
 {
-    m_type = ET_INVALID;
+	m_type = ET_INVALID;
 }
 
 element::element(const element_type type)
 {
-    m_type = type;
+	m_type = type;
 }
 
 element_type element::get_type() const
 {
-    return m_type;
+	return m_type;
 }
 
 uint16_t element::get_keycode() const
 {
-    return m_keycode;
+	return m_keycode;
 }
 
 data_source element::get_source()
 {
-    return DS_NONE;
+	return DS_NONE;
 }
 
-void element::read_mapping(const QJsonObject& obj)
+void element::read_mapping(const QJsonObject &obj)
 {
-    auto map = obj[CFG_MAPPING].toArray();
-    m_mapping.x = map[0].toInt();
-    m_mapping.y = map[1].toInt();
-    m_mapping.cx = map[2].toInt();
-    m_mapping.cy = map[3].toInt();
+	auto map = obj[CFG_MAPPING].toArray();
+	m_mapping.x = map[0].toInt();
+	m_mapping.y = map[1].toInt();
+	m_mapping.cx = map[2].toInt();
+	m_mapping.cy = map[3].toInt();
 }
 
-void element::read_pos(const QJsonObject& obj)
+void element::read_pos(const QJsonObject &obj)
 {
-    const auto p = obj[CFG_POS].toArray();
-    m_pos.x = p[0].toInt();
-    m_pos.y = p[1].toInt();
+	const auto p = obj[CFG_POS].toArray();
+	m_pos.x = p[0].toInt();
+	m_pos.y = p[1].toInt();
 }

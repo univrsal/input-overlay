@@ -22,16 +22,16 @@
 #include <string>
 
 class key_names {
-    std::map<uint16_t, std::string> m_names;
+	std::map<uint16_t, std::string> m_names;
 
 public:
-    key_names() = default;
+	key_names() = default;
 
-    ~key_names() = default;
+	~key_names() = default;
 
-    void load_from_file(const char* path);
+	void load_from_file(const char *path);
 
-    bool empty() const;
+	bool empty() const;
 
-    const char* get_name(uint16_t vc);
+	const char *get_name(uint16_t vc);
 };

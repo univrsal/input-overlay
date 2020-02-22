@@ -23,33 +23,25 @@
 #include <util/config-file.h>
 
 #define DEBUG_LOG(lvl, msg, ...) \
-    if (io_config::log_flag)     \
-    blog(lvl, "[input-overlay] " msg, ##__VA_ARGS__)
-#define CDEF_STR(id, value) \
-    config_set_default_string(io_config::instance, S_REGION, id, value)
-#define CDEF_INT(id, value) \
-    config_set_default_int(io_config::instance, S_REGION, id, value)
-#define CDEF_UINT(id, value) \
-    config_set_default_uint(io_config::instance, S_REGION, id, value)
-#define CDEF_BOOL(id, value) \
-    config_set_default_bool(io_config::instance, S_REGION, id, value)
+	if (io_config::log_flag)     \
+	blog(lvl, "[input-overlay] " msg, ##__VA_ARGS__)
+#define CDEF_STR(id, value) config_set_default_string(io_config::instance, S_REGION, id, value)
+#define CDEF_INT(id, value) config_set_default_int(io_config::instance, S_REGION, id, value)
+#define CDEF_UINT(id, value) config_set_default_uint(io_config::instance, S_REGION, id, value)
+#define CDEF_BOOL(id, value) config_set_default_bool(io_config::instance, S_REGION, id, value)
 
 #define CGET_STR(id) config_get_string(io_config::instance, S_REGION, id)
 #define CGET_INT(id) config_get_int(io_config::instance, S_REGION, id)
 #define CGET_UINT(id) config_get_uint(io_config::instance, S_REGION, id)
 #define CGET_BOOL(id) config_get_bool(io_config::instance, S_REGION, id)
 
-#define CSET_STR(id, value) \
-    config_set_string(io_config::instance, S_REGION, id, value)
-#define CSET_INT(id, value) \
-    config_set_int(io_config::instance, S_REGION, id, value)
-#define CSET_UINT(id, value) \
-    config_set_uint(io_config::instance, S_REGION, id, value)
-#define CSET_BOOL(id, value) \
-    config_set_bool(io_config::instance, S_REGION, id, value)
+#define CSET_STR(id, value) config_set_string(io_config::instance, S_REGION, id, value)
+#define CSET_INT(id, value) config_set_int(io_config::instance, S_REGION, id, value)
+#define CSET_UINT(id, value) config_set_uint(io_config::instance, S_REGION, id, value)
+#define CSET_BOOL(id, value) config_set_bool(io_config::instance, S_REGION, id, value)
 
 namespace io_config {
-extern config_t* instance;
+extern config_t *instance;
 
 extern input_filter io_window_filters;
 extern std::mutex filter_mutex;

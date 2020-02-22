@@ -10,6 +10,6 @@
 #include <string>
 #include <vector>
 
-void GetWindowList(std::vector<std::string>& windows);
+void GetWindowList(std::vector<std::string> &windows);
 
-void GetCurrentWindowTitle(std::string& title);
+void GetCurrentWindowTitle(std::string &title);

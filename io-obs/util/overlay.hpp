@@ -36,52 +36,46 @@ typedef struct gs_image_file gs_image_file_t;
 
 class overlay {
 public:
-    overlay() = default;
+	overlay() = default;
 
-    ~overlay();
+	~overlay();
 
-    explicit overlay(sources::overlay_settings* settings);
+	explicit overlay(sources::overlay_settings *settings);
 
-    bool load();
+	bool load();
 
-    void unload();
+	void unload();
 
-    void draw(gs_effect_t* effect);
+	void draw(gs_effect_t *effect);
 
-    void refresh_data();
+	void refresh_data();
 
-    bool is_loaded() const
-    {
-        return m_is_loaded;
-    }
+	bool is_loaded() const { return m_is_loaded; }
 
-    gs_image_file_t* get_texture() const
-    {
-        return m_image;
-    }
+	gs_image_file_t *get_texture() const { return m_image; }
 
 private:
-    bool load_cfg();
+	bool load_cfg();
 
-    bool load_texture();
+	bool load_texture();
 
-    void unload_texture() const;
+	void unload_texture() const;
 
-    void unload_elements();
+	void unload_elements();
 
-    void load_element(const QJsonObject& obj, bool debug);
+	void load_element(const QJsonObject &obj, bool debug);
 
-    static const char* element_type_to_string(element_type t);
+	static const char *element_type_to_string(element_type t);
 
-    gs_image_file_t* m_image = nullptr;
+	gs_image_file_t *m_image = nullptr;
 
-    sources::overlay_settings* m_settings = nullptr;
+	sources::overlay_settings *m_settings = nullptr;
 
-    bool m_is_loaded = false;
-    std::vector<std::unique_ptr<element>> m_elements;
-    std::map<uint16_t, std::unique_ptr<element_data>> m_data;
+	bool m_is_loaded = false;
+	std::vector<std::unique_ptr<element>> m_elements;
+	std::map<uint16_t, std::unique_ptr<element_data>> m_data;
 
-    uint16_t m_track_radius {};
-    uint16_t m_max_mouse_movement {};
-    float m_arrow_rot = 0.f;
+	uint16_t m_track_radius{};
+	uint16_t m_max_mouse_movement{};
+	float m_arrow_rot = 0.f;
 };

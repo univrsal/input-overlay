@@ -21,9 +21,9 @@
 #include "settings.h"
 
 namespace io_config {
-config_t* instance = nullptr;
+config_t *instance = nullptr;
 input_filter io_window_filters; /* Global filters */
-std::mutex filter_mutex; /* Thread safety for writing/reading filters */
+std::mutex filter_mutex;        /* Thread safety for writing/reading filters */
 
 bool control = false;
 bool remote = false;
@@ -39,50 +39,50 @@ uint16_t port = 1608;
 
 void set_defaults()
 {
-    CDEF_BOOL(S_UIOHOOK, io_config::uiohook);
-    CDEF_BOOL(S_GAMEPAD, io_config::gamepad);
-    CDEF_BOOL(S_OVERLAY, io_config::overlay);
-    CDEF_BOOL(S_HISTORY, io_config::history);
+	CDEF_BOOL(S_UIOHOOK, io_config::uiohook);
+	CDEF_BOOL(S_GAMEPAD, io_config::gamepad);
+	CDEF_BOOL(S_OVERLAY, io_config::overlay);
+	CDEF_BOOL(S_HISTORY, io_config::history);
 
-    CDEF_BOOL(S_REMOTE, io_config::remote);
-    CDEF_BOOL(S_LOGGING, io_config::log_flag);
-    CDEF_INT(S_PORT, io_config::port);
-    CDEF_INT(S_REFRESH, io_config::refresh_rate);
-    CDEF_INT(S_REFRESH, io_config::filter_mode);
+	CDEF_BOOL(S_REMOTE, io_config::remote);
+	CDEF_BOOL(S_LOGGING, io_config::log_flag);
+	CDEF_INT(S_PORT, io_config::port);
+	CDEF_INT(S_REFRESH, io_config::refresh_rate);
+	CDEF_INT(S_REFRESH, io_config::filter_mode);
 
-    /* Gamepad binding defaults */
+	/* Gamepad binding defaults */
 #ifdef LINUX
-    for (const auto& binding : gamepad::default_bindings)
-        CDEF_INT(binding.setting, binding.default_value);
+	for (const auto &binding : gamepad::default_bindings)
+		CDEF_INT(binding.setting, binding.default_value);
 #endif
 }
 
 void load()
 {
-    io_config::uiohook = CGET_BOOL(S_UIOHOOK);
-    io_config::gamepad = CGET_BOOL(S_GAMEPAD);
-    io_config::remote = CGET_BOOL(S_REMOTE);
-    io_config::control = CGET_BOOL(S_CONTROL);
-    io_config::filter_mode = CGET_INT(S_FILTER_MODE);
+	io_config::uiohook = CGET_BOOL(S_UIOHOOK);
+	io_config::gamepad = CGET_BOOL(S_GAMEPAD);
+	io_config::remote = CGET_BOOL(S_REMOTE);
+	io_config::control = CGET_BOOL(S_CONTROL);
+	io_config::filter_mode = CGET_INT(S_FILTER_MODE);
 
-    io_config::port = CGET_INT(S_PORT);
-    io_config::log_flag = CGET_BOOL(S_LOGGING);
-    io_config::refresh_rate = CGET_INT(S_REFRESH);
+	io_config::port = CGET_INT(S_PORT);
+	io_config::log_flag = CGET_BOOL(S_LOGGING);
+	io_config::refresh_rate = CGET_INT(S_REFRESH);
 }
 
 void save()
 {
-    /* Window filters are directly saved in formAccept */
-    CSET_BOOL(S_UIOHOOK, io_config::uiohook);
-    CSET_BOOL(S_GAMEPAD, io_config::gamepad);
-    CSET_BOOL(S_REMOTE, io_config::remote);
-    CSET_BOOL(S_CONTROL, io_config::control);
-    CSET_BOOL(S_HISTORY, io_config::history);
-    CSET_BOOL(S_OVERLAY, io_config::overlay);
-    CSET_INT(S_PORT, io_config::port);
-    CSET_INT(S_REFRESH, io_config::refresh_rate);
-    CSET_BOOL(S_LOGGING, io_config::log_flag);
-    CSET_BOOL(S_REGEX, io_config::regex);
+	/* Window filters are directly saved in formAccept */
+	CSET_BOOL(S_UIOHOOK, io_config::uiohook);
+	CSET_BOOL(S_GAMEPAD, io_config::gamepad);
+	CSET_BOOL(S_REMOTE, io_config::remote);
+	CSET_BOOL(S_CONTROL, io_config::control);
+	CSET_BOOL(S_HISTORY, io_config::history);
+	CSET_BOOL(S_OVERLAY, io_config::overlay);
+	CSET_INT(S_PORT, io_config::port);
+	CSET_INT(S_REFRESH, io_config::refresh_rate);
+	CSET_BOOL(S_LOGGING, io_config::log_flag);
+	CSET_BOOL(S_REGEX, io_config::regex);
 }
 
 }

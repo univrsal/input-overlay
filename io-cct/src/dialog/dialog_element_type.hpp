@@ -29,13 +29,13 @@ class combobox;
 
 class DialogElementType : public dialog {
 public:
-    DialogElementType(sdl_helper* sdl, tool* tool);
+	DialogElementType(sdl_helper *sdl, tool *tool);
 
-    void init() override;
+	void init() override;
 
-    void action_performed(int8_t action_id) override;
+	void action_performed(int8_t action_id) override;
 
 private:
-    tool* m_tool;
-    combobox* m_type = nullptr;
+	tool *m_tool;
+	combobox *m_type = nullptr;
 };

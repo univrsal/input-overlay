@@ -30,7 +30,7 @@
 class element_data_holder;
 
 namespace hook {
-extern element_data_holder* input_data;
+extern element_data_holder *input_data;
 
 extern uint64_t last_wheel;
 extern wint_t last_character;
@@ -43,16 +43,16 @@ extern std::mutex mutex;
 DWORD WINAPI hook_thread_proc(LPVOID arg);
 #else
 
-void* hook_thread_proc(void* arg);
+void *hook_thread_proc(void *arg);
 
 #endif
 
 /* Checks if mouse scrolling timed out */
 void check_wheel();
 
-void dispatch_proc(uiohook_event* event);
+void dispatch_proc(uiohook_event *event);
 
-bool logger_proc(unsigned int level, const char* format, ...);
+bool logger_proc(unsigned int level, const char *format, ...);
 
 void init_data_holder();
 
@@ -62,5 +62,5 @@ void end_hook();
 
 int hook_enable();
 
-void process_event(uiohook_event* event);
+void process_event(uiohook_event *event);
 };

@@ -26,10 +26,10 @@
 #include <vector>
 
 #define DIALOG_DRAGGABLE 1 << 0 /* Allow moving by dragging the title bar*/
-#define DIALOG_CENTERED 1 << 1 /* Always center on window resize */
+#define DIALOG_CENTERED 1 << 1  /* Always center on window resize */
 #define DIALOG_TEXTINPUT 1 << 2 /* Hint SDL to read text input */
-#define DIALOG_TOP_MOST 1 << 3 /* Draws background tint */
-#define DIALOG_FLUID 1 << 4 /* Dialog adapts to window size. Includes DIALOG_CENTERED */
+#define DIALOG_TOP_MOST 1 << 3  /* Draws background tint */
+#define DIALOG_FLUID 1 << 4     /* Dialog adapts to window size. Includes DIALOG_CENTERED */
 
 #define FLUID_BORDER 32
 
@@ -39,60 +39,60 @@ class gui_element;
 
 class dialog {
 public:
-    dialog(sdl_helper* sdl, SDL_Rect size, const std::string& title);
+	dialog(sdl_helper *sdl, SDL_Rect size, const std::string &title);
 
-    dialog(sdl_helper* sdl, SDL_Point size, const std::string& title);
+	dialog(sdl_helper *sdl, SDL_Point size, const std::string &title);
 
-    virtual ~dialog();
+	virtual ~dialog();
 
-    virtual void init();
+	virtual void init();
 
-    virtual void draw_background();
+	virtual void draw_background();
 
-    virtual void draw_foreground();
+	virtual void draw_foreground();
 
-    virtual void close();
+	virtual void close();
 
-    virtual bool handle_events(SDL_Event* event);
+	virtual bool handle_events(SDL_Event *event);
 
-    virtual void action_performed(int8_t action_id);
+	virtual void action_performed(int8_t action_id);
 
-    void add(gui_element* e);
+	void add(gui_element *e);
 
-    void set_dimension(uint16_t w, uint16_t h);
+	void set_dimension(uint16_t w, uint16_t h);
 
-    void set_flags(uint16_t flags);
+	void set_flags(uint16_t flags);
 
-    void reload_lang();
+	void reload_lang();
 
-    void change_focus(int8_t id);
+	void change_focus(int8_t id);
 
-    SDL_Point position() const;
+	SDL_Point position() const;
 
-    sdl_helper* helper() const;
+	sdl_helper *helper() const;
 
-    int get_left() const;
+	int get_left() const;
 
-    int get_top() const;
+	int get_top() const;
 
-    int get_right() const;
+	int get_right() const;
 
-    int get_bottom() const;
+	int get_bottom() const;
 
 protected:
-    /* Tab handling */
-    gui_element* m_focused_element = nullptr;
-    int8_t m_focused_element_id = 0;
+	/* Tab handling */
+	gui_element *m_focused_element = nullptr;
+	int8_t m_focused_element_id = 0;
 
-    std::vector<std::unique_ptr<gui_element>> m_screen_elements;
-    std::vector<gui_element*> m_tab_items;
-    std::string m_title;
+	std::vector<std::unique_ptr<gui_element>> m_screen_elements;
+	std::vector<gui_element *> m_tab_items;
+	std::string m_title;
 
-    int m_offset_x, m_offset_y {};
-    bool m_is_dragging = false;
-    uint16_t m_flags = 0x0000;
+	int m_offset_x, m_offset_y{};
+	bool m_is_dragging = false;
+	uint16_t m_flags = 0x0000;
 
-    sdl_helper* m_helper;
-    SDL_Rect m_dimensions {};
-    SDL_Rect m_title_bar {};
+	sdl_helper *m_helper;
+	SDL_Rect m_dimensions{};
+	SDL_Rect m_title_bar{};
 };

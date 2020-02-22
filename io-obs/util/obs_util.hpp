@@ -35,16 +35,16 @@
 #define qt_to_utf8(_str) _str.toUtf8().constData()
 
 /* Creates string for obs to use as accepted files for a file dialog */
-std::string util_file_filter(const char* display, const char* formats);
+std::string util_file_filter(const char *display, const char *formats);
 
 /* Changes slashes in path to fit Unix formatting */
-void util_format_path(std::string& path);
+void util_format_path(std::string &path);
 
 /* Source:
  * github.com/obsproject/obs-studio/blob/master/UI/frontend-plugins/frontend-tools/auto-scene-switcher-win.cpp
  * github.com/obsproject/obs-studio/blob/master/UI/frontend-plugins/frontend-tools/auto-scene-switcher-nix.cpp
  * github.com/obsproject/obs-studio/blob/master/UI/frontend-plugins/frontend-tools/auto-scene-switcher-osx.mm
  */
-extern void GetWindowList(std::vector<std::string>& windows);
+extern void GetWindowList(std::vector<std::string> &windows);
 
-extern void GetCurrentWindowTitle(std::string& title);
+extern void GetCurrentWindowTitle(std::string &title);

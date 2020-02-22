@@ -21,22 +21,22 @@
 #include <algorithm>
 #include <uiohook.h>
 
-std::string util_file_filter(const char* display, const char* formats)
+std::string util_file_filter(const char *display, const char *formats)
 {
-    std::string filter = display;
-    filter += " (";
-    filter += formats;
-    filter += ");;";
-    filter += T_FILTER_ALL_FILES;
-    filter += " (*.*)";
+	std::string filter = display;
+	filter += " (";
+	filter += formats;
+	filter += ");;";
+	filter += T_FILTER_ALL_FILES;
+	filter += " (*.*)";
 
-    return filter;
+	return filter;
 }
 
-void util_format_path(std::string& path)
+void util_format_path(std::string &path)
 {
-    std::replace(path.begin(), path.end(), '\\', '/');
-    const auto slash = strrchr(path.c_str(), '/');
-    if (slash)
-        path.resize(slash - path.c_str() + 1);
+	std::replace(path.begin(), path.end(), '\\', '/');
+	const auto slash = strrchr(path.c_str(), '/');
+	if (slash)
+		path.resize(slash - path.c_str() + 1);
 }

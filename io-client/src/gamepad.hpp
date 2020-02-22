@@ -32,42 +32,41 @@
 
 namespace gamepad {
 enum pad_code {
-    CODE_DPAD_UP = 0x0001,
-    CODE_DPAD_DOWN = 0x0002,
-    CODE_DPAD_LEFT = 0x0004,
-    CODE_DPAD_RIGHT = 0x0008,
-    CODE_START = 0x0010,
-    CODE_BACK = 0x0020,
-    CODE_LEFT_THUMB = 0x0040,
-    CODE_RIGHT_THUMB = 0x0080,
-    CODE_LEFT_SHOULDER = 0x0100,
-    CODE_RIGHT_SHOULDER = 0x0200,
-    CODE_GUIDE = 0x0400,
-    CODE_A = 0x1000,
-    CODE_B = 0x2000,
-    CODE_X = 0x4000,
-    CODE_Y = 0x8000
+	CODE_DPAD_UP = 0x0001,
+	CODE_DPAD_DOWN = 0x0002,
+	CODE_DPAD_LEFT = 0x0004,
+	CODE_DPAD_RIGHT = 0x0008,
+	CODE_START = 0x0010,
+	CODE_BACK = 0x0020,
+	CODE_LEFT_THUMB = 0x0040,
+	CODE_RIGHT_THUMB = 0x0080,
+	CODE_LEFT_SHOULDER = 0x0100,
+	CODE_RIGHT_SHOULDER = 0x0200,
+	CODE_GUIDE = 0x0400,
+	CODE_A = 0x1000,
+	CODE_B = 0x2000,
+	CODE_X = 0x4000,
+	CODE_Y = 0x8000
 };
 
 static pad_code pad_keys[] = {
-    /* These keycodes are only used on windows,
+	/* These keycodes are only used on windows,
 		 but the linux client converts them to these
 		 to agree on one standard
        */
-    CODE_A,
-    CODE_B,
-    CODE_X,
-    CODE_Y,
-    CODE_GUIDE,
-    CODE_DPAD_DOWN,
-    CODE_DPAD_UP,
-    CODE_DPAD_LEFT,
-    CODE_DPAD_RIGHT,
-    CODE_LEFT_SHOULDER,
-    CODE_RIGHT_SHOULDER,
-    CODE_START,
-    CODE_BACK
-};
+	CODE_A,
+	CODE_B,
+	CODE_X,
+	CODE_Y,
+	CODE_GUIDE,
+	CODE_DPAD_DOWN,
+	CODE_DPAD_UP,
+	CODE_DPAD_LEFT,
+	CODE_DPAD_RIGHT,
+	CODE_LEFT_SHOULDER,
+	CODE_RIGHT_SHOULDER,
+	CODE_START,
+	CODE_BACK};
 #ifndef _WIN32
 #define ID_TYPE 6
 #define ID_BUTTON 1
@@ -85,33 +84,33 @@ static pad_code pad_keys[] = {
 #endif /* !WINDOWS */
 
 class gamepad_handle {
-    int8_t m_id = -1;
-    bool m_valid = false;
-    bool m_changed = false;
+	int8_t m_id = -1;
+	bool m_valid = false;
+	bool m_changed = false;
 #ifdef LINUX
-    std::string m_path;
-    js_event m_event;
-    int m_device_id = -1;
+	std::string m_path;
+	js_event m_event;
+	int m_device_id = -1;
 #else
-    xinput_fix::gamepad m_xinput;
+	xinput_fix::gamepad m_xinput;
 #endif
 public:
-    gamepad_handle() {}
-    ~gamepad_handle();
+	gamepad_handle() {}
+	~gamepad_handle();
 
-    int8_t get_id() const { return m_id; }
+	int8_t get_id() const { return m_id; }
 
-    void load();
-    void update();
-    void unload();
-    void init(uint8_t id);
-    void mark_dirty() { m_changed = true; }
-    void reset() { m_changed = false; }
-    bool valid() const { return m_valid; }
-    bool changed() const { return m_changed; }
-    /* Linux only */
-    int read_event();
-    js_event* get_event();
+	void load();
+	void update();
+	void unload();
+	void init(uint8_t id);
+	void mark_dirty() { m_changed = true; }
+	void reset() { m_changed = false; }
+	bool valid() const { return m_valid; }
+	bool changed() const { return m_changed; }
+	/* Linux only */
+	int read_event();
+	js_event *get_event();
 };
 
 /* Thread stuff*/
@@ -124,7 +123,7 @@ bool check_changes();
 #ifdef _WIN32
 DWORD WINAPI hook_method(LPVOID arg);
 #else
-void* hook_method(void*);
+void *hook_method(void *);
 #endif
 
 #ifdef _WIN32

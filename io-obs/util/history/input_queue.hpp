@@ -13,36 +13,36 @@
 class handler;
 
 class input_queue {
-    std::mutex m_handler_mutex; /* Prevents deletion of handlers while rendering */
-    sources::history_settings* m_settings {};
-    uint16_t m_width = 0, m_height = 0;
+	std::mutex m_handler_mutex; /* Prevents deletion of handlers while rendering */
+	sources::history_settings *m_settings{};
+	uint16_t m_width = 0, m_height = 0;
 
-    input_entry m_queued_entry;
-    handler* m_current_handler = nullptr;
+	input_entry m_queued_entry;
+	handler *m_current_handler = nullptr;
 
-    /* Prepare/free the respective display modes */
-    void init_icon();
+	/* Prepare/free the respective display modes */
+	void init_icon();
 
-    void init_text();
+	void init_text();
 
-    void free_handler();
+	void free_handler();
 
 public:
-    explicit input_queue(sources::history_settings* settings);
+	explicit input_queue(sources::history_settings *settings);
 
-    ~input_queue();
+	~input_queue();
 
-    /* Any of the three sources could be used, since this is only used to get the
+	/* Any of the three sources could be used, since this is only used to get the
      * text source properties */
-    obs_source_t* get_fade_in();
+	obs_source_t *get_fade_in();
 
-    void collect_input(); /* Accumulates input events in current entry */
-    void swap(); /* Adds current entry to the list */
-    void tick(float seconds);
+	void collect_input(); /* Accumulates input events in current entry */
+	void swap();          /* Adds current entry to the list */
+	void tick(float seconds);
 
-    void update(sources::history_mode new_mode);
+	void update(sources::history_mode new_mode);
 
-    void render(gs_effect_t* effect);
+	void render(gs_effect_t *effect);
 
-    void clear();
+	void clear();
 };

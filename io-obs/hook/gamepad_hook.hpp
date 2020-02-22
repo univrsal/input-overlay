@@ -33,36 +33,36 @@ struct js_event; /* placeholder */
 
 namespace gamepad {
 class gamepad_handle {
-    int8_t m_id = -1;
-    bool m_valid = false;
+	int8_t m_id = -1;
+	bool m_valid = false;
 #ifdef LINUX
-    std::string m_path;
-    js_event m_event;
-    int m_device_id = -1;
+	std::string m_path;
+	js_event m_event;
+	int m_device_id = -1;
 #else
-    xinput_fix::gamepad m_xinput;
+	xinput_fix::gamepad m_xinput;
 #endif
 public:
-    gamepad_handle() {}
-    ~gamepad_handle();
+	gamepad_handle() {}
+	~gamepad_handle();
 
-    int8_t get_id() const { return m_id; }
+	int8_t get_id() const { return m_id; }
 
-    void load();
-    void update();
-    void unload();
-    void init(uint8_t id);
-    bool valid() const { return m_valid; }
+	void load();
+	void update();
+	void unload();
+	void init(uint8_t id);
+	bool valid() const { return m_valid; }
 
-    /* Linux only */
-    int read_event();
-    js_event* get_event();
+	/* Linux only */
+	int read_event();
+	js_event *get_event();
 };
 
 #ifdef _WIN32
 DWORD WINAPI hook_method(LPVOID arg);
 #else
-void* hook_method(void*);
+void *hook_method(void *);
 #endif
 void start_pad_hook();
 void end_pad_hook();
