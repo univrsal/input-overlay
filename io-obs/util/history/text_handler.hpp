@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2019 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <universailp@web.de>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,21 +18,19 @@
 
 #pragma once
 
-#include "key_names.hpp"
 #include "handler.hpp"
+#include "key_names.hpp"
+#include <memory>
 #include <string>
 #include <vector>
-#include <memory>
 
 class input_entry;
 
-namespace sources
-{
-    struct history_settings;
+namespace sources {
+struct history_settings;
 }
 
-struct key_combination
-{
+struct key_combination {
     /* Contructor is used by make_unique */
     explicit key_combination(std::string& str)
     {
@@ -44,14 +42,13 @@ struct key_combination
     uint8_t repeat;
 };
 
-class text_handler : public handler
-{
-    std::vector<std::unique_ptr<key_combination>> m_values;  /* Text body (All key combinations in order) */
+class text_handler : public handler {
+    std::vector<std::unique_ptr<key_combination>> m_values; /* Text body (All key combinations in order) */
     key_names m_names; /* Contains custom key names */
     input_entry* m_display = nullptr;
     obs_source_t* m_text_source = nullptr;
 
-    void make_body_text(std::string &str);
+    void make_body_text(std::string& str);
 
 public:
     explicit text_handler(sources::history_settings* settings);

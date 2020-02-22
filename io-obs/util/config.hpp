@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2019 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <universailp@web.de>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,30 +20,57 @@
 
 #include "input_filter.hpp"
 #include <mutex>
-#define DEBUG_LOG(lvl, msg, ...) if (io_config::log_flag) blog(lvl, "[input-overlay] " msg, ##__VA_ARGS__)
+#include <util/config-file.h>
 
-namespace io_config
-{
-    extern input_filter io_window_filters;
-    extern std::mutex filter_mutex;
+#define DEBUG_LOG(lvl, msg, ...) \
+    if (io_config::log_flag)     \
+    blog(lvl, "[input-overlay] " msg, ##__VA_ARGS__)
+#define CDEF_STR(id, value) \
+    config_set_default_string(io_config::instance, S_REGION, id, value)
+#define CDEF_INT(id, value) \
+    config_set_default_int(io_config::instance, S_REGION, id, value)
+#define CDEF_UINT(id, value) \
+    config_set_default_uint(io_config::instance, S_REGION, id, value)
+#define CDEF_BOOL(id, value) \
+    config_set_default_bool(io_config::instance, S_REGION, id, value)
 
-    /* Global boolean config values */
-    extern bool control;
-    extern bool remote;
-    extern bool gamepad;
-    extern bool uiohook;
-    extern bool overlay;
-    extern bool history;
-    extern bool regex;
-    extern int filter_mode;
-    /* Netowork config */
-    extern bool log_flag;
-    extern uint16_t refresh_rate;
-    extern uint16_t port;
+#define CGET_STR(id) config_get_string(io_config::instance, S_REGION, id)
+#define CGET_INT(id) config_get_int(io_config::instance, S_REGION, id)
+#define CGET_UINT(id) config_get_uint(io_config::instance, S_REGION, id)
+#define CGET_BOOL(id) config_get_bool(io_config::instance, S_REGION, id)
 
-    extern void set_defaults(config_t* cfg);
+#define CSET_STR(id, value) \
+    config_set_string(io_config::instance, S_REGION, id, value)
+#define CSET_INT(id, value) \
+    config_set_int(io_config::instance, S_REGION, id, value)
+#define CSET_UINT(id, value) \
+    config_set_uint(io_config::instance, S_REGION, id, value)
+#define CSET_BOOL(id, value) \
+    config_set_bool(io_config::instance, S_REGION, id, value)
 
-    extern void load(config_t* cfg);
+namespace io_config {
+extern config_t* instance;
 
-    extern void save(config_t* cfg);
+extern input_filter io_window_filters;
+extern std::mutex filter_mutex;
+
+/* Global boolean config values */
+extern bool control;
+extern bool remote;
+extern bool gamepad;
+extern bool uiohook;
+extern bool overlay;
+extern bool history;
+extern bool regex;
+extern int filter_mode;
+/* Netowork config */
+extern bool log_flag;
+extern uint16_t refresh_rate;
+extern uint16_t port;
+
+extern void set_defaults();
+
+extern void load();
+
+extern void save();
 }

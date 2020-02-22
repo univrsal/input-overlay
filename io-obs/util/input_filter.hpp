@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2019 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <universailp@web.de>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,21 +18,19 @@
 
 #pragma once
 
-#include <QtCore/QStringList>
+#include <QStringList>
 
-typedef struct config_data config_t;
-
-class input_filter
-{
+class input_filter {
     QStringList m_filters;
     bool m_regex = false;
     bool m_whitelist = false;
+
 public:
     ~input_filter();
 
-    void read_from_config(config_t* cfg);
+    void read_from_config();
 
-    void write_to_config(config_t* cfg);
+    void write_to_config();
 
     void add_filter(const char* filter);
 
@@ -44,5 +42,5 @@ public:
 
     bool input_blocked();
 
-    QStringList &filters();
+    QStringList& filters();
 };

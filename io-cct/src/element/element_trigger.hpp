@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2019 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <universailp@web.de>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,53 +22,52 @@
 
 class element_trigger : public element_texture {
 public:
-	element_trigger()
-	    : element_texture(),
-	      m_side(),
-	      m_direction()
-	{
-		/* NO-OP */
-	};
+    element_trigger()
+        : element_texture()
+        , m_side()
+        , m_direction() {
+            /* NO-OP */
+        };
 
-	element_trigger(const std::string &id, SDL_Point pos, SDL_Rect mapping, element_side s, direction d,
-	                uint8_t z);
+    element_trigger(const std::string& id, SDL_Point pos, SDL_Rect mapping, element_side s, direction d,
+        uint8_t z);
 
-	element_trigger(const std::string &id, SDL_Point pos, SDL_Rect mapping, element_side s, uint8_t z);
+    element_trigger(const std::string& id, SDL_Point pos, SDL_Rect mapping, element_side s, uint8_t z);
 
-	void draw(texture *atlas, coordinate_system *cs, bool selected, bool alpha) override;
+    void draw(texture* atlas, coordinate_system* cs, bool selected, bool alpha) override;
 
-	void write_to_file(ccl_config *cfg, SDL_Point *default_dim, uint8_t &layout_flags) override;
+    void write_to_file(ccl_config* cfg, SDL_Point* default_dim, uint8_t& layout_flags) override;
 
-	void update_settings(dialog_new_element *dialog) override;
+    void update_settings(dialog_new_element* dialog) override;
 
-	void update_settings(dialog_element_settings *dialog) override;
+    void update_settings(dialog_element_settings* dialog) override;
 
-	void handle_event(SDL_Event *event, sdl_helper *helper) override;
+    void handle_event(SDL_Event* event, sdl_helper* helper) override;
 
-	static element_trigger *read_from_file(ccl_config *file, const std::string &id, SDL_Point *default_dim);
+    static element_trigger* read_from_file(ccl_config* file, const std::string& id, SDL_Point* default_dim);
 
-	element_side get_side() const
-	{
-		return m_side;
-	}
+    element_side get_side() const
+    {
+        return m_side;
+    }
 
-	direction get_direction() const
-	{
-		return m_direction;
-	}
+    direction get_direction() const
+    {
+        return m_direction;
+    }
 
-	bool get_mode() const
-	{
-		return m_button_mode;
-	}
+    bool get_mode() const
+    {
+        return m_button_mode;
+    }
 
 private:
-	void calculate_mappings(SDL_Rect *pressed, SDL_Rect *absolute) const;
+    void calculate_mappings(SDL_Rect* pressed, SDL_Rect* absolute) const;
 
-	SDL_Rect m_pressed_mapping = {};
+    SDL_Rect m_pressed_mapping = {};
 
-	float m_progress = 0;
-	element_side m_side;
-	direction m_direction;
-	bool m_button_mode = false;
+    float m_progress = 0;
+    element_side m_side;
+    direction m_direction;
+    bool m_button_mode = false;
 };

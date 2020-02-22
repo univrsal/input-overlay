@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2019 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <universailp@web.de>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,31 +16,31 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *************************************************************************/
 
-#include "util/util.hpp"
 #include "effect.hpp"
+#include <util.hpp>
 
 effect::effect(const float duration)
 {
-	m_duration = duration;
-	m_time = 0.f;
+    m_duration = duration;
+    m_time = 0.f;
 }
 
 void effect::tick(const float seconds)
 {
-	m_time += seconds;
+    m_time += seconds;
 }
 
 bool effect::done()
 {
-	return m_time >= m_duration;
+    return m_time >= m_duration;
 }
 
 float effect::get_progress() const
 {
-	return UTIL_MIN(m_time / m_duration, 1.f);
+    return UTIL_MIN(m_time / m_duration, 1.f);
 }
 
 unsigned char effect::get_priority()
 {
-	return 0;
+    return 0;
 }

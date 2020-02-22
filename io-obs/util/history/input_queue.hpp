@@ -12,10 +12,9 @@
 #include <mutex>
 class handler;
 
-class input_queue
-{
+class input_queue {
     std::mutex m_handler_mutex; /* Prevents deletion of handlers while rendering */
-    sources::history_settings* m_settings{};
+    sources::history_settings* m_settings {};
     uint16_t m_width = 0, m_height = 0;
 
     input_entry m_queued_entry;

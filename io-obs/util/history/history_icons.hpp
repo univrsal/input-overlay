@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2019 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <universailp@web.de>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,15 +24,13 @@ extern "C" {
 #include <graphics/image-file.h>
 }
 
-struct icon
-{
+struct icon {
     uint16_t u, v;
 };
 
 class input_entry;
 
-class history_icons
-{
+class history_icons {
     bool m_loaded = false;
     uint16_t m_icon_count = 0;
     uint16_t m_icon_w = 0;
@@ -52,11 +50,17 @@ public:
     gs_image_file_t* image_file();
 
     uint16_t get_w() const
-    { return m_icon_w; }
+    {
+        return m_icon_w;
+    }
 
     uint16_t get_h() const
-    { return m_icon_h; }
+    {
+        return m_icon_h;
+    }
 
     bool is_loaded() const
-    { return m_loaded; }
+    {
+        return m_loaded;
+    }
 };

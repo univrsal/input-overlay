@@ -5,8 +5,7 @@
  * github.com/univrsal/input-overlay
  */
 
-enum message
-{
+enum message {
     MSG_READ_ERROR = -2,
     MSG_INVALID,
     MSG_NAME_NOT_UNIQUE,

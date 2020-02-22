@@ -1,10 +1,7 @@
-#!/bin/bash
-# https://github.com/Xaymar/obs-stream-effects/
-if ! hash clang-format 2>/dev/null; then
-	echo "'clang-format' must be installed in a global environment."
-	exit 1
-fi
-
-find ./io-obs -type f -name "*.h" -or -name "*.hpp" -or -name "*.c" -or -name "*.cpp" -exec clang-format -i '{}' \;
-find ./io-client -type f -name "*.h" -or -name "*.hpp" -or -name "*.c" -or -name "*.cpp" -exec clang-format -i '{}' \;
-find ./io-cct -type f -name "*.h" -or -name "*.hpp" -or -name "*.c" -or -name "*.cpp" -exec clang-format -i '{}' \;
+#!/bin/sh
+grep -rl 'Copyright 2019' ./io-obs | xargs sed -i 's/Copyright 2019/Copyright 2020/g'
+grep -rl 'Copyright 2019' ./io-cct/src | xargs sed -i 's/Copyright 2019/Copyright 2020/g'
+grep -rl 'Copyright 2019' ./io-client/src | xargs sed -i 's/Copyright 2019/Copyright 2020/g'
+find ./io-obs -iname *.h* -o -iname *.c* | xargs clang-format -style=WebKit -i -verbose
+find ./io-cct/src -iname *.h* -o -iname *.c* | xargs clang-format -style=WebKit -i -verbose
+find ./io-client/src -iname *.h* -o -iname *.c* | xargs clang-format -style=WebKit -i -verbose

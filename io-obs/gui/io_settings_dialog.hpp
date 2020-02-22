@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2019 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <universailp@web.de>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,11 +23,10 @@
 #include <netlib.h>
 
 namespace Ui {
-    class io_config_dialog;
+class io_config_dialog;
 }
-class io_settings_dialog : public QDialog
-{
-Q_OBJECT
+class io_settings_dialog : public QDialog {
+    Q_OBJECT
 
 public:
     explicit io_settings_dialog(QWidget* parent = nullptr);
@@ -59,10 +58,10 @@ private Q_SLOTS:
     void OpenGitHub();
 
     void OpenForums();
+
 private:
     Ui::io_config_dialog* ui;
     QTimer* m_refresh = nullptr;
-
 };
 
 extern io_settings_dialog* settings_dialog;

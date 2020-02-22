@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2019 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <universailp@web.de>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,8 +20,7 @@
 
 #include "element_texture.hpp"
 
-class element_data_dpad : public element_data
-{
+class element_data_dpad : public element_data {
 public:
     /*
         Separate constructors are used on linux
@@ -31,7 +30,7 @@ public:
     /* Xinput directly generates direction */
     element_data_dpad(dpad_direction a, dpad_direction b);
 
-    element_data_dpad(dpad_direction d, button_state state);
+    element_data_dpad(dpad_direction d = DD_LEFT, button_state state = BS_RELEASED);
 
     bool is_persistent() override;
 
@@ -46,12 +45,11 @@ private:
     button_state m_state;
 };
 
-class element_dpad : public element_texture
-{
+class element_dpad : public element_texture {
 public:
     element_dpad();
 
-    void load(ccl_config* cfg, const std::string &id) override;
+    void load(const QJsonObject& obj) override;
 
     void
     draw(gs_effect_t* effect, gs_image_file_t* image, element_data* data, sources::overlay_settings* settings) override;

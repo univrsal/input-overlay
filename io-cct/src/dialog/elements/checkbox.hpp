@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2019 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <universailp@web.de>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,42 +18,41 @@
 
 #pragma once
 
-#include "gui_element.hpp"
 #include "../dialog.hpp"
+#include "gui_element.hpp"
 
 #define CHECKBOX_SIZE 17
 
 class checkbox : public gui_element {
 public:
+    checkbox(int8_t id, int x, int y, const char* text, dialog* parent);
 
-	checkbox(int8_t id, int x, int y, const char *text, dialog *parent);
+    checkbox(int8_t id, int x, int y, const char* text, dialog* parent, bool state);
 
-	checkbox(int8_t id, int x, int y, const char *text, dialog *parent, bool state);
+    ~checkbox();
 
-	~checkbox();
+    void close() override;
 
-	void close() override;
+    bool can_select() override;
 
-	bool can_select() override;
+    void select_state(bool state) override;
 
-	void select_state(bool state) override;
+    void draw_background() override;
 
-	void draw_background() override;
+    void draw_foreground() override;
 
-	void draw_foreground() override;
+    bool handle_events(SDL_Event* event, bool was_handled) override;
 
-	bool handle_events(SDL_Event *event, bool was_handled) override;
+    bool get_state() const
+    {
+        return m_state;
+    }
 
-	bool get_state() const
-	{
-		return m_state;
-	}
-
-	void set_checked(bool state);
+    void set_checked(bool state);
 
 private:
-	bool m_focused = false;
-	bool m_state = false;
-	label *m_label = nullptr;
-	SDL_Rect m_checkbox;
+    bool m_focused = false;
+    bool m_state = false;
+    label* m_label = nullptr;
+    SDL_Rect m_checkbox;
 };

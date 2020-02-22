@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2019 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <universailp@web.de>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,10 +18,10 @@
 
 #include "gamepad.hpp"
 #include "network.hpp"
+#include <fcntl.h>
 #include <stdio.h>
 #include <thread>
 #include <unistd.h>
-#include <fcntl.h>
 
 namespace gamepad {
 volatile bool state = false;
@@ -61,7 +61,7 @@ void gamepad_handle::init(const uint8_t id)
     load();
 }
 
-js_event *gamepad_handle::get_event()
+js_event* gamepad_handle::get_event()
 {
     return &m_event;
 }
@@ -83,7 +83,7 @@ bool init_pad_devices()
 {
     uint8_t id = 0;
     auto flag = false;
-    for (auto &pad : pads) {
+    for (auto& pad : pads) {
         pad.init(id++);
         if (pad.valid())
             flag = true;
@@ -112,7 +112,7 @@ bool init_pads()
 {
     uint8_t id = 0;
     auto flag = false;
-    for (auto &state : pads) {
+    for (auto& state : pads) {
         state.init(id++);
         if (state.valid())
             flag = true;
@@ -132,20 +132,20 @@ bool check_changes()
 {
     if (!util::cfg.monitor_gamepad)
         return false;
-//    for (auto &pad : pad_handles)
-//        if (pad.m_changed)
-//            return true;
+    //    for (auto &pad : pad_handles)
+    //        if (pad.m_changed)
+    //            return true;
     return false;
 }
 
 /* Background process for querying game pads */
-void *hook_method(void *)
+void* hook_method(void*)
 {
     /* The hook only keeps track of the gamepad states here
      * and the changes will then be sent in a different thread
      */
     while (run_flag) {
-        for (auto &pad : pads) {
+        for (auto& pad : pads) {
             if (!pad.valid())
                 continue;
             if (pad.read_event() == -1) {
@@ -165,7 +165,7 @@ void *hook_method(void *)
         }
     }
 
-    for (auto &pad : pads)
+    for (auto& pad : pads)
         pad.unload();
 
     pthread_exit(nullptr);

@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2019 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <universailp@web.de>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,16 +19,14 @@
 #pragma once
 
 #ifdef LINUX
-
 #include <stdint.h>
-
 #endif
 
+#include "../hook/hook_helper.hpp"
+#include "element/element.hpp"
+#include <map>
 #include <memory>
 #include <vector>
-#include <map>
-#include "element/element.hpp"
-#include "../hook/hook_helper.hpp"
 
 class ccl_config;
 
@@ -36,8 +34,7 @@ class element_data;
 
 typedef struct gs_image_file gs_image_file_t;
 
-class overlay
-{
+class overlay {
 public:
     overlay() = default;
 
@@ -72,7 +69,7 @@ private:
 
     void unload_elements();
 
-    void load_element(ccl_config* cfg, const std::string &id, bool debug);
+    void load_element(const QJsonObject& obj, bool debug);
 
     static const char* element_type_to_string(element_type t);
 
@@ -84,7 +81,7 @@ private:
     std::vector<std::unique_ptr<element>> m_elements;
     std::map<uint16_t, std::unique_ptr<element_data>> m_data;
 
-    uint16_t m_track_radius{};
-    uint16_t m_max_mouse_movement{};
+    uint16_t m_track_radius {};
+    uint16_t m_max_mouse_movement {};
     float m_arrow_rot = 0.f;
 };

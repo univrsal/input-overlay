@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2019 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <universailp@web.de>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,8 +17,9 @@
  *************************************************************************/
 
 #include "util.hpp"
+#include "keycodes.h"
 #include <uiohook.h>
-#include <algorithm>
+namespace common {
 
 const char *key_to_text(const int key_code)
 {
@@ -406,26 +407,6 @@ const char *key_to_text(const int key_code)
 	}
 }
 
-std::string util_file_filter(const char *display, const char *formats)
-{
-	std::string filter = display;
-	filter += " (";
-	filter += formats;
-	filter += ");;";
-	filter += T_FILTER_ALL_FILES;
-	filter += " (*.*)";
-
-	return filter;
-}
-
-void util_format_path(std::string &path)
-{
-	std::replace(path.begin(), path.end(), '\\', '/');
-	const auto slash = strrchr(path.c_str(), '/');
-	if (slash)
-		path.resize(slash - path.c_str() + 1);
-}
-
 void util_enable_mask(uint16_t &masks, const uint16_t mask)
 {
 	masks |= mask;
@@ -454,4 +435,6 @@ uint16_t util_mouse_to_vc(int m)
 		m = 3;
 #endif
 	return static_cast<uint16_t>(VC_MOUSE_MASK | m);
+}
+
 }

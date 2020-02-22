@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2019 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <universailp@web.de>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,11 +18,11 @@
 
 #pragma once
 
-#include "dialog.hpp"
-#include "../util/sdl_helper.hpp"
-#include "../util/constants.hpp"
-#include "elements/button.hpp"
 #include "../tool.hpp"
+#include "../util/constants.hpp"
+#include "../util/sdl_helper.hpp"
+#include "dialog.hpp"
+#include "elements/button.hpp"
 
 class sdl_helper;
 
@@ -30,16 +30,16 @@ class tool;
 
 class DialogHelp : public dialog {
 public:
-	DialogHelp(sdl_helper *sdl, tool *tool)
-	    : dialog(sdl, SDL_Point{380, 485}, LANG_DIALOG_HELP)
-	{
-		m_tool = tool;
-	};
+    DialogHelp(sdl_helper* sdl, tool* tool)
+        : dialog(sdl, SDL_Point { 380, 485 }, LANG_DIALOG_HELP)
+    {
+        m_tool = tool;
+    };
 
-	void init() override;
+    void init() override;
 
-	void action_performed(int8_t action_id) override;
+    void action_performed(int8_t action_id) override;
 
 private:
-	tool *m_tool = nullptr;
+    tool* m_tool = nullptr;
 };

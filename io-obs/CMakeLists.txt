@@ -95,11 +95,10 @@ set(input-overlay_SOURCES
         hook/xinput_fix.hpp
         gui/io_settings_dialog.cpp
         gui/io_settings_dialog.hpp
-        util/util.cpp
-        util/util.hpp
+        util/obs_util.cpp
+        util/obs_util.hpp
         util/overlay.cpp
         util/overlay.hpp
-        util/layout_constants.hpp
         util/element/element.cpp
         util/element/element.hpp
         util/element/element_texture.cpp
@@ -145,12 +144,13 @@ set(input-overlay_SOURCES
         network/io_server.hpp
         network/io_client.cpp
         network/io_client.hpp
-        ../ccl/ccl.cpp
-        ../ccl/ccl.hpp
         util/config.cpp
         util/config.hpp
         util/input_filter.cpp
-        util/input_filter.hpp)
+        util/input_filter.hpp
+        util/log.h
+        util/settings.h
+        util/lang.h)
 
 add_library(input-overlay MODULE
         ${input-overlay_SOURCES}
@@ -162,6 +162,7 @@ include_directories(
         ${NETLIB_INCLUDE_DIR}
         SYSTEM "${CMAKE_SOURCE_DIR}/libobs"
         "../../../UI/obs-frontend-api"
+        "../common"
         ${Qt5Core_INCLUDES}
         ${Qt5Widgets_INCLUDES})
 

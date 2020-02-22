@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2019 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <universailp@web.de>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,17 +18,18 @@
 
 #pragma once
 
-#include "../layout_constants.hpp"
+#include "../log.h"
 #include "element_texture.hpp"
+#include <layout_constants.h>
 #include <netlib.h>
 
-class element_data_button : public element_data
-{
+class element_data_button : public element_data {
 public:
-    element_data_button(const button_state state) : element_data(ET_BUTTON)
+    element_data_button(const button_state state = BS_RELEASED)
+        : element_data(ET_BUTTON)
     {
         m_state = state;
-        blog(LOG_DEBUG, "state: %i", static_cast<bool>(state));
+        bdebug("state: %i", static_cast<bool>(state));
     }
 
     button_state get_state() const
@@ -42,20 +43,23 @@ private:
     button_state m_state;
 };
 
-class element_button : public element_texture
-{
+class element_button : public element_texture {
 public:
-    element_button() : element_texture(ET_BUTTON), m_pressed()
+    element_button()
+        : element_texture(ET_BUTTON)
+        , m_pressed()
     {
     }
 
-    void load(ccl_config* cfg, const std::string &id) override;
+    void load(const QJsonObject& objc) override;
 
     void
     draw(gs_effect_t* effect, gs_image_file_t* image, element_data* data, sources::overlay_settings* settings) override;
 
     data_source get_source() override
-    { return is_gamepad ? DS_GAMEPAD : DS_DEFAULT; }
+    {
+        return is_gamepad ? DS_GAMEPAD : DS_DEFAULT;
+    }
 
 private:
     bool is_gamepad = false;

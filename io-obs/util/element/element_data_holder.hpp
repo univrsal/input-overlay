@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2019 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <universailp@web.de>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,16 +23,14 @@
 #include <memory>
 #include <vector>
 
-namespace sources
-{
-    struct history_settings;
+namespace sources {
+struct history_settings;
 }
 
 /* Holds all input data for connected clients
  * and/or the local computer
  */
-class element_data_holder
-{
+class element_data_holder {
 public:
     element_data_holder(bool is_local = true);
 
@@ -60,13 +58,14 @@ public:
 
     void clear_gamepad_data();
 
-    void populate_vector(std::vector<uint16_t> &vec, sources::history_settings* settings);
+    void populate_vector(std::vector<uint16_t>& vec, sources::history_settings* settings);
 
     bool is_empty() const;
 
     bool is_local() const;
 
     uint64_t get_last_input() const;
+
 private:
     /* Used to check if new inputs happened
      * in input history */

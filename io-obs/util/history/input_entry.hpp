@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2019 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <universailp@web.de>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,37 +18,36 @@
 
 #pragma once
 
+#include "history_icons.hpp"
 #include <cstdint>
-#include <vector>
 #include <memory>
 #include <obs.hpp>
-#include "history_icons.hpp"
+#include <vector>
 
 class key_names;
 
-namespace sources
-{
-    struct history_settings;
+namespace sources {
+struct history_settings;
 }
 
 class effect;
 
 class element_data_holder;
 
-class input_entry
-{
+class input_entry {
     /* Contains all collected inputs in order */
     std::vector<uint16_t> m_inputs;
     /* Contains all currently active effects */
     std::vector<std::unique_ptr<effect>> m_effects;
 
-    vec2 m_position{};
+    vec2 m_position {};
     /* Only used in text mode */
     uint16_t m_height = 0, m_width = 0;
 
     bool m_remove = false; /* Set to true once this entry is the last in the list */
     obs_source_t* m_text_source = nullptr; /* Only used in text mode */
     std::string m_text = "";
+
 public:
     explicit input_entry(obs_source_t* source);
 

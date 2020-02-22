@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2019 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <universailp@web.de>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,8 +21,7 @@
 #include "element_texture.hpp"
 #include <netlib.h>
 
-enum trigger_data
-{
+enum trigger_data {
     TD_NONE = -1,
     TD_BOTH,
     TD_LEFT,
@@ -31,8 +30,7 @@ enum trigger_data
 
 /* Contains data for both trigger buttons
  */
-class element_data_trigger : public element_data
-{
+class element_data_trigger : public element_data {
 public:
     /*
         Separate constructors are used on linux
@@ -40,7 +38,7 @@ public:
     */
     element_data_trigger(trigger_data side, float val);
 
-    element_data_trigger(float left, float right);
+    element_data_trigger(float left = 0.f, float right = 0.f);
 
     float get_left() const;
 
@@ -57,12 +55,11 @@ private:
     float m_left_trigger = 0.f, m_right_trigger = 0.f;
 };
 
-class element_trigger : public element_texture
-{
+class element_trigger : public element_texture {
 public:
     element_trigger();
 
-    void load(ccl_config* cfg, const std::string& id) override;
+    void load(const QJsonObject& obj) override;
 
     void draw(gs_effect_t* effect, gs_image_file_t* image,
         element_data* data, sources::overlay_settings* settings) override;
