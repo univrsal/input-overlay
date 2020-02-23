@@ -17,7 +17,6 @@
  *************************************************************************/
 
 #include "config.hpp"
-#include "../../ccl/ccl.hpp"
 #include "dialog/dialog_element_settings.hpp"
 #include "element/element_analog_stick.hpp"
 #include "util/constants.hpp"
@@ -25,9 +24,14 @@
 #include "util/palette.hpp"
 #include "util/sdl_helper.hpp"
 #include "util/texture.hpp"
+#include <iomanip>
+#include <fstream>
+#include <json.hpp>
+
+using json = nlohmann::json;
 
 config::config(const char *texture_path, const char *config, const SDL_Point def_dim, const SDL_Point space,
-			   sdl_helper *h, dialog_element_settings *s)
+               sdl_helper *h, dialog_element_settings *s)
 {
 	m_texture_path = texture_path;
 	m_config_path = config;
@@ -140,7 +144,7 @@ void config::handle_events(SDL_Event *e)
 				if (m_in_single_selection)
 				/* Start single element selection */ {
 					m_drag_offset = {(e->button.x - (m_selected->get_x() * m_cs.get_scale()) + m_cs.get_origin()->x),
-									 (e->button.y - (m_selected->get_y() * m_cs.get_scale()) + m_cs.get_origin()->y)};
+					                 (e->button.y - (m_selected->get_y() * m_cs.get_scale()) + m_cs.get_origin()->y)};
 					m_settings->select_element(m_selected);
 				} else /* Start multi element selection */ {
 					m_in_multi_selection = true;
@@ -174,14 +178,14 @@ void config::handle_events(SDL_Event *e)
 			m_cs.translate(m_temp_selection.x, m_temp_selection.y);
 
 			m_temp_selection.x =
-				ceil(UTIL_MAX((m_temp_selection.x - m_cs.get_origin_x()) / ((float)m_cs.get_scale()), 0));
+			    ceil(UTIL_MAX((m_temp_selection.x - m_cs.get_origin_x()) / ((float)m_cs.get_scale()), 0));
 			m_temp_selection.y =
-				ceil(UTIL_MAX((m_temp_selection.y - m_cs.get_origin_y()) / ((float)m_cs.get_scale()), 0));
+			    ceil(UTIL_MAX((m_temp_selection.y - m_cs.get_origin_y()) / ((float)m_cs.get_scale()), 0));
 
 			m_temp_selection.w =
-				ceil(SDL_abs(m_selection_start.x - e->button.x) / static_cast<float>(m_cs.get_scale()));
+			    ceil(SDL_abs(m_selection_start.x - e->button.x) / static_cast<float>(m_cs.get_scale()));
 			m_temp_selection.h =
-				ceil(SDL_abs(m_selection_start.y - e->button.y) / static_cast<float>(m_cs.get_scale()));
+			    ceil(SDL_abs(m_selection_start.y - e->button.y) / static_cast<float>(m_cs.get_scale()));
 
 			m_selected_elements.clear();
 
@@ -232,101 +236,101 @@ void config::write_config(notifier *n)
 	}
 
 	const auto start = SDL_GetTicks();
-	auto cfg = ccl_config(m_config_path, "CCT generated config");
+	std::ofstream out(m_config_path);
+	json cfg;
+	json elements;
 
-	cfg.free_nodes(); /* Don't need existing values */
+	cfg[CFG_DEFAULT_WIDTH] = m_default_dim.x;
+	cfg[CFG_DEFAULT_HEIGHT] = m_default_dim.y;
+	cfg[CFG_H_SPACE] = m_offset.x;
+	cfg[CFG_V_SPACE] = m_offset.y;
 
-	cfg.add_string(CFG_FIRST_ID, "Starting point for loading elements", *m_elements[0]->get_id(), true);
-	cfg.add_int(CFG_DEFAULT_WIDTH, "", m_default_dim.x);
-	cfg.add_int(CFG_DEFAULT_HEIGHT, "Default element dimension", m_default_dim.y);
-	cfg.add_int(CFG_H_SPACE, "", m_offset.x);
-	cfg.add_int(CFG_V_SPACE, "element offset for visual help", m_offset.y);
-
-	auto height = 0, width = 0, index = 0;
+	auto height = 0, width = 0;
 	/* The most bottom right element determines the width/height */
 
 	uint8_t flags = 0; /* Determines which properties to show in OBS */
-	for (auto const &e : m_elements) {
-		e->write_to_file(&cfg, &m_default_dim, flags);
-
+	for (auto &e : m_elements) {
+		json j;
+		e->write_to_json(j, &m_default_dim, flags);
+		if (j.empty()) {
+			n->add_msg(MESSAGE_ERROR, m_helper->format_loc(LANG_MSG_ELEMENT_EMPTY,
+			                                               e->get_id()->c_str()));
+			continue;
+		}
+		elements.emplace_back(j);
 		width = UTIL_MAX(width, e->get_x() + e->get_w());
 		height = UTIL_MAX(height, e->get_y() + e->get_h());
-
-		if (index + 1 < m_elements.size()) {
-			cfg.add_string((*e->get_id()) + CFG_NEXT_ID, "Next element in list", *m_elements[index + 1]->get_id());
-		}
-		index++;
 	}
 
-	cfg.add_int(CFG_TOTAL_WIDTH, "", width);
-	cfg.add_int(CFG_TOTAL_HEIGHT, "Full overlay dimensions", height);
+	cfg[CFG_TOTAL_WIDTH] = width;
+	cfg[CFG_TOTAL_HEIGHT] = height;
+	cfg[CFG_FLAGS] = flags;
 
-	cfg.add_int(CFG_FLAGS, "", flags);
-
-	cfg.write(false);
+	out << std::setw(4) << cfg;
 
 	const auto end = SDL_GetTicks();
 
-	if (cfg.has_fatal_errors()) {
-		n->add_msg(MESSAGE_ERROR, m_helper->loc(LANG_MSG_SAVE_ERROR));
-		n->add_msg(MESSAGE_ERROR, cfg.get_error_message());
-	} else {
+	if (out.good()) {
 		const auto result =
-			sdl_helper::format(m_helper->loc(LANG_MSG_SAVE_SUCCESS).c_str(), m_elements.size(), (end - start));
+		    sdl_helper::format(m_helper->loc(LANG_MSG_SAVE_SUCCESS).c_str(), m_elements.size(), (end - start));
 		n->add_msg(MESSAGE_INFO, result);
+	} else {
+		n->add_msg(MESSAGE_ERROR, m_helper->loc(LANG_MSG_SAVE_ERROR));
+		n->add_msg(MESSAGE_ERROR, m_helper->loc(LANG_MSG_ACCESS_ERROR));
 	}
-	cfg.free_nodes();
 }
 
 void config::read_config(notifier *n)
 {
 	const auto start = SDL_GetTicks();
-	auto cfg = ccl_config(m_config_path, "");
+	std::ifstream input(m_config_path);
+	json cfg;
+	input >> cfg;
 
-	if (cfg.is_empty()) {
+	if (cfg.empty()) {
 		n->add_msg(MESSAGE_INFO, m_helper->loc(LANG_MSG_CONFIG_EMPTY));
 		return;
 	}
 
-	if (!cfg.node_exists(CFG_FIRST_ID)) {
-		n->add_msg(MESSAGE_INFO, m_helper->loc(LANG_MSG_CONFIG_CORRUPT));
+	auto elements = cfg[CFG_ELEMENTS];
+	if (!elements.is_array()) {
+		n->add_msg(MESSAGE_INFO, m_helper->loc(LANG_MSG_CONFIG_NO_ELEMENTS));
 		return;
 	}
 
-	auto element_id = cfg.get_string(CFG_FIRST_ID);
+	auto def_w = cfg[CFG_DEFAULT_WIDTH];
+	auto def_h = cfg[CFG_DEFAULT_HEIGHT];
 
-	if (cfg.get_int(CFG_DEFAULT_WIDTH) != 0)
-		m_default_dim.x = cfg.get_int(CFG_DEFAULT_WIDTH);
-	if (cfg.get_int(CFG_DEFAULT_HEIGHT) != 0)
-		m_default_dim.y = cfg.get_int(CFG_DEFAULT_HEIGHT);
+	if (def_w.is_number())
+		m_default_dim.x = def_w;
+	if (def_h.is_number())
+		m_default_dim.y = def_h;
 
 	auto type = 0;
 
-	while (!element_id.empty()) {
-		type = cfg.get_int(element_id + CFG_TYPE);
-		if (!element::valid_type(type)) {
-			n->add_msg(MESSAGE_ERROR, m_helper->format_loc(LANG_MSG_VALUE_TYPE_INVALID, element_id.c_str(), type));
-
-			element_id = cfg.get_string(element_id.append(CFG_NEXT_ID));
-			continue;
+	for (const auto& element : elements) {
+		auto type = element[CFG_TYPE];
+		if (type.is_number() && element::valid_type(type)) {
+			auto loaded_element = element::read_from_json(element, &m_default_dim);
+			if (loaded_element) {
+				m_elements.emplace_back(loaded_element);
+			} else {
+				n->add_msg(MESSAGE_ERROR, m_helper->format_loc(LANG_MSG_ELEMENT_LOAD_ERROR, element[CFG_ID]));
+			}
+		} else {
+			n->add_msg(MESSAGE_ERROR, m_helper->format_loc(LANG_MSG_VALUE_TYPE_INVALID,
+			                                               element[CFG_ID], type));
 		}
-
-		auto e = element::read_from_file(&cfg, element_id, static_cast<element_type>(type), &m_default_dim);
-		if (e)
-			m_elements.emplace_back(e);
-		else
-			n->add_msg(MESSAGE_ERROR, m_helper->format_loc(LANG_MSG_ELEMENT_LOAD_ERROR, element_id.c_str()));
-		element_id = cfg.get_string(element_id.append(CFG_NEXT_ID));
 	}
 
 	const auto end = SDL_GetTicks();
 
-	if (cfg.has_fatal_errors()) {
+	if (m_elements.empty()) {
 		n->add_msg(MESSAGE_ERROR, m_helper->loc(LANG_MSG_LOAD_ERROR));
-		n->add_msg(MESSAGE_ERROR, cfg.get_error_message());
+		n->add_msg(MESSAGE_ERROR, "TODO");
 	} else {
 		const auto result =
-			sdl_helper::format(m_helper->loc(LANG_MSG_LOAD_SUCCESS).c_str(), m_elements.size(), (end - start));
+		    sdl_helper::format(m_helper->loc(LANG_MSG_LOAD_SUCCESS).c_str(), m_elements.size(), (end - start));
 		n->add_msg(MESSAGE_INFO, result);
 	}
 }

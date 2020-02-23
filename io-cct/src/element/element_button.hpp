@@ -30,7 +30,7 @@ public:
 
 	void draw(texture *atlas, coordinate_system *cs, bool selected, bool alpha) override;
 
-	void write_to_file(ccl_config *cfg, SDL_Point *default_dim, uint8_t &layout_flags) override;
+	void write_to_json(json &j, SDL_Point *default_dim, uint8_t &layout_flags) override;
 
 	void update_settings(dialog_new_element *dialog) override;
 
@@ -40,7 +40,7 @@ public:
 
 	int get_vc() override { return m_keycode; }
 
-	static ElementButton *read_from_file(ccl_config *file, const std::string &id, SDL_Point *default_dim);
+	static ElementButton *read_from_json(const json &j, SDL_Point *default_dim);
 
 private:
 	SDL_Rect m_pressed_mapping;

@@ -31,9 +31,9 @@
 class ElementScrollWheel : public element_texture {
 public:
 	ElementScrollWheel()
-		: element_texture(){
-			  /* NO-OP */
-		  };
+	    : element_texture(){
+		      /* NO-OP */
+	      };
 
 	ElementScrollWheel(const std::string &id, SDL_Point pos, SDL_Rect mapping, uint8_t z);
 
@@ -47,7 +47,7 @@ public:
 
 	void update_settings(dialog_element_settings *dialog) override;
 
-	static ElementScrollWheel *read_from_file(ccl_config *file, const std::string &id, SDL_Point *default_dim);
+	static ElementScrollWheel *read_from_json(const json &j, SDL_Point *default_dim);
 
 private:
 	SDL_Rect m_mapping_pressed = {}, m_mapping_down = {}, m_mapping_up = {};

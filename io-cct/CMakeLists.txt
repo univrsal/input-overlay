@@ -117,5 +117,6 @@ add_executable(io-cct ${io-cct_SOURCES})
 INCLUDE_DIRECTORIES(${SDL2_INCLUDE_DIRS}
     ${SDL2IMAGE_INCLUDE_DIRS}
     ${SDLTTF2_INCLUDE_DIRS}
-    "../common")
+    "../common"
+    "../libuiohook/include")
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${SDL2_LIBRARIES} ${SDL2IMAGE_LIBRARIES} ${SDLTTF2_LIBRARIES})

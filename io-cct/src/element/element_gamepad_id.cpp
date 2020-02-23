@@ -17,7 +17,6 @@
  *************************************************************************/
 
 #include "element_gamepad_id.hpp"
-#include "../../../ccl/ccl.hpp"
 #include "../dialog/dialog_element_settings.hpp"
 #include "../dialog/dialog_new_element.hpp"
 #include "../util/coordinate_system.hpp"
@@ -25,9 +24,9 @@
 #include "../util/texture.hpp"
 
 ElementGamepadID::ElementGamepadID(const std::string &id, const SDL_Point pos, const SDL_Rect mapping, const uint8_t z)
-	: element_texture(ET_GAMEPAD_ID, id, pos, mapping, z)
+    : element_texture(ET_GAMEPAD_ID, id, pos, mapping, z)
 {
-	/* NO-OP */
+    /* NO-OP */
 }
 
 void ElementGamepadID::draw(texture *atlas, coordinate_system *cs, const bool selected, const bool alpha)
@@ -36,13 +35,13 @@ void ElementGamepadID::draw(texture *atlas, coordinate_system *cs, const bool se
 	auto temp = m_mapping;
 	temp.x += (temp.w + CFG_INNER_BORDER) * m_last_gamepad_id;
 	atlas->draw(cs->get_helper()->renderer(), &m_dimensions_scaled, &temp,
-				(alpha && !selected) ? ELEMENT_HIDE_ALPHA : 255);
+	            (alpha && !selected) ? ELEMENT_HIDE_ALPHA : 255);
 
 	if (m_state) /* Guide button */ {
 		temp = m_mapping;
 		temp.x += (temp.w + CFG_INNER_BORDER) * 4;
 		atlas->draw(cs->get_helper()->renderer(), &m_dimensions_scaled, &temp,
-					(alpha && !selected) ? ELEMENT_HIDE_ALPHA : 255);
+		            (alpha && !selected) ? ELEMENT_HIDE_ALPHA : 255);
 	}
 
 	if (selected)
@@ -66,13 +65,14 @@ void ElementGamepadID::handle_event(SDL_Event *event, sdl_helper *helper)
 	m_last_gamepad_id = UTIL_CLAMP(0, m_last_gamepad_id, 4);
 }
 
-ElementGamepadID *ElementGamepadID::read_from_file(ccl_config *file, const std::string &id, SDL_Point *default_dim)
+ElementGamepadID *ElementGamepadID::read_from_json(const json &j, SDL_Point *default_dim)
 {
-	return new ElementGamepadID(id, read_position(file, id), read_mapping(file, id, default_dim), read_layer(file, id));
+	return new ElementGamepadID(j[CFG_ID], read_position(j),
+	                            read_mapping(j, default_dim), j[CFG_Z_LEVEL]);
 }
 
-void ElementGamepadID::write_to_file(ccl_config *cfg, SDL_Point *default_dim, uint8_t &layout_flags)
+void ElementGamepadID::write_to_json(json &j, SDL_Point *default_dim, uint8_t &layout_flags)
 {
-	element_texture::write_to_file(cfg, default_dim, layout_flags);
+	element_texture::write_to_json(j, default_dim, layout_flags);
 	layout_flags |= OF_GAMEPAD;
 }

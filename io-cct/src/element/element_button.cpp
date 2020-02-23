@@ -17,8 +17,6 @@
  *************************************************************************/
 
 #include "element_button.hpp"
-#include "../../../ccl/ccl.hpp"
-#include "../../../io-obs/util/util.hpp"
 #include "../dialog/dialog_element_settings.hpp"
 #include "../dialog/dialog_new_element.hpp"
 #include "../util/coordinate_system.hpp"
@@ -26,10 +24,12 @@
 #include "../util/palette.hpp"
 #include "../util/sdl_helper.hpp"
 #include "../util/texture.hpp"
+#include <util.hpp>
+#include <keycodes.h>
 
 ElementButton::ElementButton(const std::string &id, const SDL_Point pos, const SDL_Rect mapping, const uint16_t vc,
-							 const uint8_t z)
-	: element_texture(ET_BUTTON, id, pos, mapping, z)
+                             const uint8_t z)
+    : element_texture(ET_BUTTON, id, pos, mapping, z)
 {
 	m_keycode = vc;
 	m_pressed_mapping = m_mapping;
@@ -51,20 +51,19 @@ void ElementButton::draw(texture *atlas, coordinate_system *cs, const bool selec
 	get_abs_dim(cs);
 	if (m_pressed)
 		atlas->draw(cs->get_helper()->renderer(), &m_dimensions_scaled, &m_pressed_mapping,
-					(alpha && !selected) ? ELEMENT_HIDE_ALPHA : 255);
+		            (alpha && !selected) ? ELEMENT_HIDE_ALPHA : 255);
 	else
 		atlas->draw(cs->get_helper()->renderer(), &m_dimensions_scaled, &m_mapping,
-					(alpha && !selected) ? ELEMENT_HIDE_ALPHA : 255);
+		            (alpha && !selected) ? ELEMENT_HIDE_ALPHA : 255);
 
 	if (selected)
 		cs->get_helper()->util_draw_rect(&m_dimensions_scaled, cs->get_helper()->get_palette()->red());
 }
 
-void ElementButton::write_to_file(ccl_config *cfg, SDL_Point *default_dim, uint8_t &layout_flags)
+void ElementButton::write_to_json(json &j, SDL_Point *default_dim, uint8_t &layout_flags)
 {
-	element_texture::write_to_file(cfg, default_dim, layout_flags);
-	const auto comment = "Key code of " + m_id;
-	cfg->add_int(m_id + CFG_KEY_CODE, comment, m_keycode, true);
+	element_texture::write_to_file(j, default_dim, layout_flags);
+	j[CFG_KEY_CODE] = m_keycode;
 
 	if ((m_keycode >> 8) == (VC_PAD_MASK >> 8))
 		layout_flags |= OF_GAMEPAD;
@@ -115,8 +114,8 @@ void ElementButton::handle_event(SDL_Event *event, sdl_helper *helper)
 		m_pressed = pressed;
 }
 
-ElementButton *ElementButton::read_from_file(ccl_config *file, const std::string &id, SDL_Point *default_dim)
+ElementButton *ElementButton::read_from_json(const json &j, SDL_Point *default_dim)
 {
-	return new ElementButton(id, read_position(file, id), read_mapping(file, id, default_dim),
-							 file->get_int(id + CFG_KEY_CODE), read_layer(file, id));
+	return new ElementButton(j[CFG_ID], read_position(j), read_mapping(j, default_dim),
+	                         j[CFG_KEY_CODE], j[CFG_Z_LEVEL]);
 }

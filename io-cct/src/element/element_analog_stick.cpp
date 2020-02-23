@@ -17,7 +17,6 @@
  *************************************************************************/
 
 #include "element_analog_stick.hpp"
-#include "../../../ccl/ccl.hpp"
 #include "../dialog/dialog_element_settings.hpp"
 #include "../dialog/dialog_new_element.hpp"
 #include "../util/coordinate_system.hpp"
@@ -27,8 +26,8 @@
 #include "../util/texture.hpp"
 
 ElementAnalogStick::ElementAnalogStick(const std::string &id, const SDL_Point pos, const SDL_Rect mapping,
-									   const element_side side, const uint8_t radius, const uint8_t z)
-	: element_texture(ET_ANALOG_STICK, id, pos, mapping, z), m_static_scaled()
+                                       const element_side side, const uint8_t radius, const uint8_t z)
+    : element_texture(ET_ANALOG_STICK, id, pos, mapping, z), m_static_scaled()
 {
 	m_stick = side;
 	m_radius = radius;
@@ -61,10 +60,10 @@ void ElementAnalogStick::draw(texture *atlas, coordinate_system *cs, const bool 
 		auto temp = m_mapping;
 		temp.y += temp.h + CFG_INNER_BORDER;
 		atlas->draw(cs->get_helper()->renderer(), &m_dimensions_scaled, &temp,
-					(alpha && !selected) ? ELEMENT_HIDE_ALPHA : 255);
+		            (alpha && !selected) ? ELEMENT_HIDE_ALPHA : 255);
 	} else {
 		atlas->draw(cs->get_helper()->renderer(), &m_dimensions_scaled, &m_mapping,
-					(alpha && !selected) ? ELEMENT_HIDE_ALPHA : 255);
+		            (alpha && !selected) ? ELEMENT_HIDE_ALPHA : 255);
 	}
 
 	if (selected) {
@@ -77,14 +76,11 @@ void ElementAnalogStick::draw(texture *atlas, coordinate_system *cs, const bool 
 	}
 }
 
-void ElementAnalogStick::write_to_file(ccl_config *cfg, SDL_Point *default_dim, uint8_t &flags)
+void ElementAnalogStick::write_to_json(json &j, SDL_Point *default_dim, uint8_t &flags)
 {
-	element_texture::write_to_file(cfg, default_dim, flags);
-	auto comment = "Analog stick side of " + m_id;
-	cfg->add_int(m_id + CFG_SIDE, comment, static_cast<int>(m_stick), true);
-	comment = "Analog stick radius of " + m_id;
-	cfg->add_int(m_id + CFG_STICK_RADIUS, comment, static_cast<int>(m_radius), true);
-
+	element_texture::write_to_file(j, default_dim, flags);
+	j[CFG_SIDE] = static_cast<int>(m_stick);
+	j[CFG_STICK_RADIUS] = static_cast<int>(m_radius);
 	flags |= OF_GAMEPAD | (m_stick == ES_LEFT ? OF_LEFT_STICK : OF_RIGHT_STICK);
 }
 
@@ -131,10 +127,10 @@ void ElementAnalogStick::handle_event(SDL_Event *event, sdl_helper *helper)
 	}
 }
 
-ElementAnalogStick *ElementAnalogStick::read_from_file(ccl_config *file, const std::string &id, SDL_Point *default_dim)
+ElementAnalogStick *ElementAnalogStick::read_from_json(ccl_config *file, const std::string &id, SDL_Point *default_dim)
 {
 	const auto s = read_side(file, id);
 
 	return new ElementAnalogStick(id, read_position(file, id), read_mapping(file, id, default_dim), s,
-								  file->get_int(id + CFG_STICK_RADIUS), read_layer(file, id));
+	                              file->get_int(id + CFG_STICK_RADIUS), read_layer(file, id));
 }

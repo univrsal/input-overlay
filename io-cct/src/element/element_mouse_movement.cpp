@@ -17,7 +17,6 @@
  *************************************************************************/
 
 #include "element_mouse_movement.hpp"
-#include "../../../ccl/ccl.hpp"
 #include "../dialog/dialog_element_settings.hpp"
 #include "../dialog/dialog_new_element.hpp"
 #include "../util/notifier.hpp"
@@ -25,8 +24,8 @@
 #include <utility>
 
 ElementMouseMovement::ElementMouseMovement(const std::string &id, const SDL_Point pos, const SDL_Rect mapping,
-										   const mouse_movement type, const uint16_t radius, const uint8_t z)
-	: element_texture(ET_MOUSE_STATS, id, pos, mapping, z)
+                                           const mouse_movement type, const uint16_t radius, const uint8_t z)
+    : element_texture(ET_MOUSE_STATS, id, pos, mapping, z)
 {
 	m_radius = radius;
 	m_type = type;
@@ -42,17 +41,14 @@ element_error ElementMouseMovement::is_valid(notifier *n, sdl_helper *h)
 	return error;
 }
 
-void ElementMouseMovement::write_to_file(ccl_config *cfg, SDL_Point *default_dim, uint8_t &layout_flags)
+void ElementMouseMovement::write_to_json(json &j, SDL_Point *default_dim, uint8_t &layout_flags)
 {
-	element_texture::write_to_file(cfg, default_dim, layout_flags);
-	auto comment = "Movement type of " + m_id;
+	element_texture::write_to_json(j, default_dim, layout_flags);
 
-	cfg->add_int(m_id + CFG_MOUSE_TYPE, comment, m_type, true);
+	j[CFG_MOUSE_TYPE] = m_type;
 	if (m_type == MM_DOT) {
-		comment = "Movement radius of " + m_id;
-		cfg->add_int(m_id + CFG_MOUSE_RADIUS, comment, m_radius, true);
+		j[CFG_MOUSE_RADIUS] = m_radius;
 	}
-
 	layout_flags |= OF_MOUSE;
 }
 
@@ -70,16 +66,16 @@ mouse_movement ElementMouseMovement::get_mouse_type() const
 
 uint16_t ElementMouseMovement::get_radius() const
 {
-	return m_radius;
+    return m_radius;
 }
 
-ElementMouseMovement *ElementMouseMovement::read_from_file(ccl_config *file, const std::string &id,
-														   SDL_Point *default_dim)
+ElementMouseMovement *ElementMouseMovement::read_from_json(const json &j,
+                                                           SDL_Point *default_dim)
 {
 	auto mmt = MM_DOT;
-	if (file->get_int(id + CFG_MOUSE_TYPE) != 0)
+	if (j[CFG_MOUSE_TYPE] != 0)
 		mmt = MM_ARROW;
 
-	return new ElementMouseMovement(id, read_position(file, id), read_mapping(file, id, default_dim), mmt,
-									file->get_int(id + CFG_MOUSE_RADIUS), read_layer(file, id));
+	return new ElementMouseMovement(j[CFG_ID], read_position(j), read_mapping(j, default_dim), mmt,
+	                                j[CFG_MOUSE_RADIUS], j[CFG_Z_LEVEL]);
 }

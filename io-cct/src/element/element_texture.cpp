@@ -17,7 +17,6 @@
  *************************************************************************/
 
 #include "element_texture.hpp"
-#include "../../../ccl/ccl.hpp"
 #include "../dialog/dialog_element_settings.hpp"
 #include "../dialog/dialog_new_element.hpp"
 #include "../util/coordinate_system.hpp"
@@ -27,16 +26,16 @@
 #include <utility>
 
 element_texture::element_texture(const std::string &id, const SDL_Point pos, const SDL_Rect mapping, const uint8_t z)
-	: element(ET_TEXTURE, id, pos, z)
+    : element(ET_TEXTURE, id, pos, z)
 {
-	m_mapping = mapping;
+    m_mapping = mapping;
 }
 
 element_texture::element_texture(const element_type t, const std::string &id, const SDL_Point pos,
-								 const SDL_Rect mapping, const uint8_t z)
-	: element(t, id, pos, z)
+                                 const SDL_Rect mapping, const uint8_t z)
+    : element(t, id, pos, z)
 {
-	m_mapping = mapping;
+    m_mapping = mapping;
 }
 
 element_error element_texture::is_valid(notifier *n, sdl_helper *h)
@@ -53,17 +52,19 @@ void element_texture::draw(texture *atlas, coordinate_system *cs, const bool sel
 {
 	get_abs_dim(cs);
 	atlas->draw(cs->get_helper()->renderer(), &m_dimensions_scaled, &m_mapping,
-				(alpha && !selected) ? ELEMENT_HIDE_ALPHA : 255);
+	            (alpha && !selected) ? ELEMENT_HIDE_ALPHA : 255);
 
 	if (selected)
 		cs->get_helper()->util_draw_rect(&m_dimensions_scaled, cs->get_helper()->get_palette()->red());
 }
 
-void element_texture::write_to_file(ccl_config *cfg, SDL_Point *default_dim, uint8_t &layout_flags)
+void element_texture::write_to_json(json &j, SDL_Point *default_dim, uint8_t &layout_flags)
 {
-	element::write_to_file(cfg, default_dim, layout_flags);
-	const auto comment = "Mapping of " + m_id;
-	cfg->add_rect(m_id + CFG_MAPPING, comment, m_mapping.x, m_mapping.y, m_mapping.w, m_mapping.h);
+	element::write_to_json(j, default_dim, layout_flags);
+	j[CFG_MAPPING][0] = m_mapping.x;
+	j[CFG_MAPPING][1] = m_mapping.y;
+	j[CFG_MAPPING][2] = m_mapping.w;
+	j[CFG_MAPPING][3] = m_mapping.h;
 }
 
 void element_texture::update_settings(dialog_new_element *dialog)
@@ -78,7 +79,7 @@ void element_texture::update_settings(dialog_element_settings *dialog)
 	set_mapping(dialog->get_mapping());
 }
 
-element_texture *element_texture::read_from_file(ccl_config *file, const std::string &id, SDL_Point *default_dim)
+element_texture *element_texture::read_from_json(const json &j, SDL_Point *default_dim)
 {
-	return new element_texture(id, read_position(file, id), read_mapping(file, id, default_dim), read_layer(file, id));
+	return new element_texture(j[CFG_ID], read_position(j), read_mapping(j, default_dim), j[CFG_Z_LEVEL]);
 }

@@ -27,7 +27,7 @@ public:
 	};
 
 	ElementDPad(const std::string &id, const SDL_Point pos, const SDL_Rect mapping, const uint8_t z)
-		: element_texture(id, pos, mapping, z)
+	    : element_texture(id, pos, mapping, z)
 	{
 		/* NO-OP */
 	}
@@ -36,9 +36,9 @@ public:
 
 	void handle_event(SDL_Event *event, sdl_helper *helper) override;
 
-	static ElementDPad *read_from_file(ccl_config *file, const std::string &id, SDL_Point *default_dim);
+	static ElementDPad *read_from_json(const json &file, SDL_Point *default_dim);
 
-	void write_to_file(ccl_config *cfg, SDL_Point *default_dim, uint8_t &layout_flags) override;
+	void write_to_json(json &cfg, SDL_Point *default_dim, uint8_t &layout_flags) override;
 
 private:
 	uint8_t m_dir = DD_CENTER;

@@ -17,7 +17,6 @@
  *************************************************************************/
 
 #include "element.hpp"
-#include "../../../ccl/ccl.hpp"
 #include "../dialog/dialog_element_settings.hpp"
 #include "../dialog/dialog_new_element.hpp"
 #include "../util/coordinate_system.hpp"
@@ -34,25 +33,29 @@
 #include "element_trigger.hpp"
 #include <utility>
 
-element *element::read_from_file(ccl_config *file, const std::string &id, const element_type t, SDL_Point *default_dim)
+element *element::read_from_json(const json &j, SDL_Point *default_dim)
 {
-	switch (t) {
+	auto t = j[CFG_TYPE];
+	if (!t.is_number() || !valid_type(t))
+		return nullptr;
+
+	switch (static_cast<int>(t)) {
 	case ET_TEXTURE:
-		return element_texture::read_from_file(file, id, default_dim);
+		return element_texture::read_from_json(j, default_dim);
 	case ET_BUTTON:
-		return ElementButton::read_from_file(file, id, default_dim);
+		return ElementButton::read_from_json(j, default_dim);
 	case ET_WHEEL:
-		return ElementScrollWheel::read_from_file(file, id, default_dim);
+		return ElementScrollWheel::read_from_json(j, default_dim);
 	case ET_MOUSE_STATS:
-		return ElementMouseMovement::read_from_file(file, id, default_dim);
+		return ElementMouseMovement::read_from_json(j, default_dim);
 	case ET_ANALOG_STICK:
-		return ElementAnalogStick::read_from_file(file, id, default_dim);
+		return ElementAnalogStick::read_from_json(j, default_dim);
 	case ET_TRIGGER:
-		return element_trigger::read_from_file(file, id, default_dim);
+		return element_trigger::read_from_json(j, default_dim);
 	case ET_DPAD_STICK:
-		return ElementDPad::read_from_file(file, id, default_dim);
+		return ElementDPad::read_from_json(j, default_dim);
 	case ET_GAMEPAD_ID:
-		return ElementGamepadID::read_from_file(file, id, default_dim);
+		return ElementGamepadID::read_from_json(j, default_dim);
 	default:;
 	}
 	return nullptr;
@@ -132,25 +135,21 @@ element::element(const element_type t, std::string id, const SDL_Point pos, cons
 	m_z_level = z;
 }
 
-void element::write_to_file(ccl_config *cfg, SDL_Point *default_dim, uint8_t &layout_flags)
+void element::write_to_json(json &j, SDL_Point *default_dim, uint8_t &layout_flags)
 {
 	/* Write commonly shared values */
-	auto comment = "Z position (Layer) of " + m_id;
-	cfg->add_int(m_id + CFG_Z_LEVEL, comment, m_z_level, true);
-
-	comment = "Type id of " + m_id;
-	cfg->add_int(m_id + CFG_TYPE, comment, m_type, true);
-
-	comment = "Position of " + m_id;
-	cfg->add_point(m_id + CFG_POS, comment, m_position.x, m_position.y, true);
+	j[CFG_Z_LEVEL] = m_z_level;
+	j[CFG_TYPE] = m_type;
+	j[CFG_POS][0] = m_position.x;
+	j[CFG_POS][1] = m_position.y;
 }
 
 SDL_Rect *element::get_abs_dim(coordinate_system *cs)
 {
 	m_scale = cs->get_scale();
 	m_dimensions_scaled = {m_position.x * cs->get_scale() + cs->get_origin_x(),
-						   m_position.y * cs->get_scale() + cs->get_origin_y(), m_mapping.w * cs->get_scale(),
-						   m_mapping.h * cs->get_scale()};
+	                       m_position.y * cs->get_scale() + cs->get_origin_y(), m_mapping.w * cs->get_scale(),
+	                       m_mapping.h * cs->get_scale()};
 	return &m_dimensions_scaled;
 }
 
@@ -200,27 +199,31 @@ void element::set_pos(const int x, const int y)
 	m_scale = 0; /* Forces a rescale at next draw */
 }
 
-SDL_Rect element::read_mapping(ccl_config *file, const std::string &id, SDL_Point *default_dim)
+SDL_Rect element::read_mapping(const json &j, const SDL_Point *default_dim)
 {
-	const auto temp = file->get_rect(id + CFG_MAPPING);
-	return SDL_Rect{temp.x, temp.y, temp.w, temp.h};
+	SDL_Rect tmp{};
+	auto map = j[CFG_MAPPING];
+	if (map.is_array()) {
+		tmp.x = map[0];
+		tmp.y = map[1];
+		tmp.w = map[2];
+		tmp.h = map[3];
+	} else if (default_dim) {
+		tmp.w = default_dim->x;
+		tmp.h = default_dim->y;
+	}
+	return tmp;
 }
 
-SDL_Point element::read_position(ccl_config *file, const std::string &id)
+SDL_Point element::read_position(const json& j)
 {
-	const auto pos = file->get_point(id + CFG_POS);
-	return {pos.x, pos.y};
+	return SDL_Point { j[CFG_POS][0], j[CFG_POS][1] };
 }
 
-uint8_t element::read_layer(ccl_config *file, const std::string &id)
-{
-	return file->get_int(id + CFG_Z_LEVEL);
-}
-
-element_side element::read_side(ccl_config *file, const std::string &id)
+element_side element::read_side(const json &j)
 {
 	auto s = ES_LEFT;
-	if (file->get_int(id + CFG_SIDE) != 0)
+	if (j[CFG_SIDE] != 0)
 		s = ES_RIGHT;
 	return s;
 }
