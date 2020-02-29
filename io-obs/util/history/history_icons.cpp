@@ -17,8 +17,11 @@
  *************************************************************************/
 
 #include "history_icons.hpp"
-#include "../../../ccl/ccl.hpp"
 #include "input_entry.hpp"
+#include "../obs_util.hpp"
+#include "../log.h"
+#include <QJsonObject>
+#include <QJsonArray>
 #include <obs-module.h>
 
 void history_icons::unload_texture()
@@ -37,78 +40,77 @@ history_icons::~history_icons()
 	unload_texture();
 }
 
-uint16_t util_read_hex(std::string &l)
+uint16_t util_read_hex(QString &l)
 {
-	std::string temp = l.substr(0, l.find(','));
-	l = l.substr(l.find(',') + 1, l.size());
+	uint16_t tmp;
+	bool ok = true;
+	tmp = static_cast<uint16_t>(l.toInt(&ok, 16));
+	if (ok)
+		return tmp;
+	else
+		berr("Converting hex %s", qt_to_utf8(l));
 
-	if (temp.find("0x") != std::string::npos) {
-		return std::stoul(temp, nullptr, 16);
-	} else {
-		return (uint16_t)0x0;
-	}
+	return 0;
 }
 
-void history_icons::load_from_file(const char *cfg, const char *img)
+void history_icons::load_from_file(const QString &cfg, const QString &img)
 {
 	unload_texture();
-	if (!cfg || !img)
+	if (cfg.isEmpty() || img.isEmpty())
 		return;
 	m_icon_texture = new gs_image_file_t();
 
-	gs_image_file_init(m_icon_texture, img);
+	gs_image_file_init(m_icon_texture, qt_to_utf8(img));
 
 	obs_enter_graphics();
 	gs_image_file_init_texture(m_icon_texture);
 	obs_leave_graphics();
 
 	if (!m_icon_texture->loaded) {
-		blog(LOG_ERROR, "Error: Failed to load key icon image from %s", img);
+		berr("Error: Failed to load key icon image from %s", qt_to_utf8(img));
 		unload_texture();
 		return;
 	}
 
 	auto cfg_loaded = false;
-	auto ccl = ccl_config(cfg, "");
+	QJsonDocument doc;
 
-	if (!ccl.is_empty()) {
+	if (util_open_json(cfg, doc)) {
+		auto obj = doc.object();
 		cfg_loaded = true;
-		m_icon_count = ccl.get_int("icon_count");
-		m_icon_w = ccl.get_int("icon_w");
-		m_icon_h = ccl.get_int("icon_h");
-		const auto node = ccl.get_node("icon_order");
+		m_icon_count = static_cast<uint16_t>(obj["icon_count"].toInt());
+		auto icon_def_w = obj["icon_default_w"].toInt();
+		auto icon_def_h = obj["icon_default_h"].toInt();
+		bool debug = false;
+		if (obj["debug"].isBool())
+			debug = obj["debug"].toBool();
+		const auto arr = obj["icons"].toArray();
 
-		if (node) {
-			auto icon_order = node->get_value();
-			for (auto i = 0; i < m_icon_count; i++) {
+		if (arr.isEmpty()) {
+			berr("No icon data in array");
+		} else {
+			for (const auto obj : arr) {
 				icon ico{};
-				/* TODO: Alternative? */
-				const auto vc = util_read_hex(icon_order);
-#ifdef DEBUG
-				blog(LOG_DEBUG, "Loaded icon with code 0x%X", vc);
-#endif
-				ico.u = (m_icon_w + 3) * i + 1;
-				ico.v = 1;
+				const auto vc = static_cast<uint16_t>(obj["code"].toInt());
+				if (debug)
+					bdebug("Loaded icon with code 0x%X", vc);
+
+				ico.u = static_cast<uint16_t>(obj["u"].toInt());
+				ico.v = static_cast<uint16_t>(obj["v"].toInt());
+				ico.cx = static_cast<uint16_t>(obj["cx"].toInt(icon_def_w));
+				ico.cy = static_cast<uint16_t>(obj["cy"].toInt(icon_def_h));
+
+				if (ico.cx > m_icon_max_w)
+					m_icon_max_w = ico.cx;
+				if (ico.cy > m_icon_max_h)
+					m_icon_max_h = ico.cy;
 
 				m_icons[vc] = ico;
-
-				if (icon_order.empty()) {
-					m_icon_count = i;
-					break;
-				}
 			}
-		} else {
-			blog(LOG_ERROR, "Loading key icons from %s failed. No ccl data!", cfg);
+			m_icon_count = static_cast<uint16_t>(arr.size());
 		}
 	}
-
 	m_loaded = cfg_loaded && m_icon_texture->loaded;
-
-	if (!cfg_loaded)
-		blog(LOG_ERROR, "Error: Failed to load key icon config from %s", cfg);
-
-	if (ccl.has_errors())
-		blog(LOG_WARNING, "[input-overlay] %s", ccl.get_error_message().c_str());
 }
 
 void history_icons::draw(uint16_t vc, vec2 *pos, input_entry *parent)
@@ -118,7 +120,8 @@ void history_icons::draw(uint16_t vc, vec2 *pos, input_entry *parent)
 		gs_matrix_push();
 		gs_matrix_translate3f(pos->x, pos->y, 0.f);
 		parent->render_effects();
-		gs_draw_sprite_subregion(m_icon_texture->texture, 0, icon.u, icon.v, m_icon_w + 1, m_icon_h + 1);
+		gs_draw_sprite_subregion(m_icon_texture->texture, 0, icon.u, icon.v,
+		                         icon.cx + 1, icon.cy + 1);
 		gs_matrix_pop();
 	}
 }

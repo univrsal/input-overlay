@@ -23,6 +23,7 @@
 #include <memory>
 #include <obs.hpp>
 #include <vector>
+#include <QString>
 
 class key_names;
 
@@ -46,7 +47,7 @@ class input_entry {
 
 	bool m_remove = false;                 /* Set to true once this entry is the last in the list */
 	obs_source_t *m_text_source = nullptr; /* Only used in text mode */
-	std::string m_text = "";
+	QString m_text = "";
 
 public:
 	explicit input_entry(obs_source_t *source);
@@ -65,11 +66,11 @@ public:
 
 	vec2 *get_pos();
 
-	std::string build_string(key_names *names, bool use_fallback);
+	QString build_string(key_names *names, bool use_fallback);
 
 	void set_pos(float x, float y);
 
-	void set_text(const char *text, sources::history_settings *settings);
+	void set_text(const QString &text, sources::history_settings *settings);
 
 	void collect_inputs(sources::history_settings *settings);
 

@@ -23,6 +23,7 @@
 #include "history_icons.hpp"
 #include "key_names.hpp"
 #include "network/io_server.hpp"
+#include "../obs_util.hpp"
 #include <algorithm>
 #include <sstream>
 #include <util.hpp>
@@ -67,11 +68,11 @@ void input_entry::set_pos(float x, float y)
 	m_position = {x, y};
 }
 
-void input_entry::set_text(const char *text, sources::history_settings *settings)
+void input_entry::set_text(const QString &text, sources::history_settings *settings)
 {
 	if (m_text_source) {
 		m_text = text;
-		obs_data_set_string(settings->settings, "text", text);
+		obs_data_set_string(settings->settings, "text", qt_to_utf8(text));
 		obs_source_update(m_text_source, settings->settings);
 		obs_source_update(settings->source, settings->settings);
 	}
@@ -93,35 +94,34 @@ void input_entry::collect_inputs(sources::history_settings *settings)
 	}
 }
 
-std::string input_entry::build_string(key_names *names, const bool use_fallback)
+QString input_entry::build_string(key_names *names, const bool use_fallback)
 {
-	static std::string plus = " + ";
-	std::string result;
-	const char *name = nullptr;
+	static QString plus = " + ";
+	QString result;
+	QString name;
 
 	for (const auto &key : m_inputs) {
 		/* Either use custom names or builtin if option is enabled) */
-		if (!names->empty() && (name = names->get_name(key))) {
+		if (!names->empty() && !(name = names->get_name(key)).isEmpty()) {
 			result.append(name).append(plus);
 		} else if (use_fallback || names->empty()) {
 			name = common::key_to_text(key);
-#ifdef DEBUG
-			if (!name) {
+
+			if (name.isEmpty() && names->debug()) {
 				/* If no name was found output the keycode */
 				char buf[8];
 				sprintf(buf, "0x%X", key);
 				name = buf;
 			}
-#else
-			if (name)
-#endif
-			result.append(name).append(plus);
+
+			if (!name.isEmpty())
+				result.append(name).append(plus);
 		}
 	}
 
 	/* Remove the last ' + '*/
-	if (common::ends_with(result, plus))
-		result.erase(result.length() - 3);
+	if (result.endsWith(plus))
+		result.chop(plus.length());
 
 	return result;
 }
@@ -133,8 +133,8 @@ void input_entry::tick(const float seconds)
 
 	/* Remove all finished effects safely */
 	m_effects.erase(std::remove_if(m_effects.begin(), m_effects.end(),
-								   [](const std::unique_ptr<effect> &o) { return o->done(); }),
-					m_effects.end());
+	                               [](const std::unique_ptr<effect> &o) { return o->done(); }),
+	                m_effects.end());
 }
 
 void input_entry::add_effect(effect *e)

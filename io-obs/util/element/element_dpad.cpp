@@ -17,7 +17,6 @@
  *************************************************************************/
 
 #include "element_dpad.hpp"
-#include "../../../ccl/ccl.hpp"
 #include "../../sources/input_source.hpp"
 #include <keycodes.h>
 
@@ -36,9 +35,9 @@ void element_dpad::load(const QJsonObject &obj)
 }
 
 void element_dpad::draw(gs_effect_t *effect, gs_image_file_t *image, element_data *data,
-						sources::overlay_settings *settings)
+                        sources::overlay_settings *settings)
 {
-	const auto d = dynamic_cast<element_data_dpad *>(data);
+    const auto d = dynamic_cast<element_data_dpad *>(data);
 
 	if (d && d->get_direction() != DT_CENTER) {
 		/* Enum starts at one (Center doesn't count)*/

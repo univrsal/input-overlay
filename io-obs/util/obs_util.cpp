@@ -17,13 +17,13 @@
  *************************************************************************/
 
 #include "obs_util.hpp"
+#include "log.h"
 #include "lang.h"
-#include <algorithm>
-#include <uiohook.h>
+#include <QFile>
 
-std::string util_file_filter(const char *display, const char *formats)
+QString util_file_filter(const char *display, const char *formats)
 {
-	std::string filter = display;
+	QString filter = display;
 	filter += " (";
 	filter += formats;
 	filter += ");;";
@@ -33,10 +33,30 @@ std::string util_file_filter(const char *display, const char *formats)
 	return filter;
 }
 
-void util_format_path(std::string &path)
+void util_format_path(QString &path)
 {
-	std::replace(path.begin(), path.end(), '\\', '/');
-	const auto slash = strrchr(path.c_str(), '/');
-	if (slash)
-		path.resize(slash - path.c_str() + 1);
+	path.replace('\\', '/');
+	if (path.endsWith('/'))
+		path.chop(1);
+}
+
+bool util_open_json(const QString &path, QJsonDocument &doc)
+{
+	QFile file(path);
+
+	if (!file.open(QIODevice::ReadOnly)) {
+		berr("couldn't open %s", qt_to_utf8(path));
+		return false;
+	}
+
+	QJsonParseError err;
+	bool result = true;
+	doc = QJsonDocument::fromJson(file.readAll(), &err);
+
+	if (err.error != QJsonParseError::NoError) {
+		result = false;
+		berr("Json parse error for %s: %s", qt_to_utf8(path),
+		     qt_to_utf8(err.errorString()));
+	}
+	return result;
 }

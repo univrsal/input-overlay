@@ -21,6 +21,7 @@
 #include "../util/constants.hpp"
 #include "../util/localization.hpp"
 #include "../util/notifier.hpp"
+#include <fstream>
 
 #if _DEBUG
 #define TEXTURE_PATH "D:\\Projects\\prog\\cpp\\input-overlay-releases\\build\\v4.6-pre\\presets\\wasd-full\\wasd.png"
@@ -40,7 +41,7 @@ void dialog_setup::init()
 	info.append(std::to_string(BUILD_NUMBER));
 
 	add(new label(id++, 8, 22, info.c_str(), FONT_WSTRING_LARGE, this,
-				  ELEMENT_UNLOCALIZED | ELEMENT_ABSOLUTE_POSITION));
+	              ELEMENT_UNLOCALIZED | ELEMENT_ABSOLUTE_POSITION));
 	add(new label(id++, 8, 50, LANG_LABEL_INFO, this, ELEMENT_ABSOLUTE_POSITION));
 
 	add(new label(id++, 8, 35, LANG_LABEL_TEXTURE_PATH, this));
@@ -78,7 +79,7 @@ void dialog_setup::init()
 	const auto files = m_helper->get_localization()->get_languages();
 
 	for (auto const &f : *files) {
-		m_lang_box->add_item(f->language);
+		m_lang_box->add_item(f.m_language);
 	}
 
 	m_lang_box->select_item(m_helper->get_localization()->get_english_id());
@@ -97,17 +98,17 @@ void dialog_setup::action_performed(const int8_t action_id)
 
 	auto valid_texture = false;
 	auto empty_config = false;
-	ccl_config *cfg = nullptr;
+	std::ifstream input;
+	json cfg_json;
 
 	switch (action_id) {
 	case ACTION_OK:
 		valid_texture = m_helper->util_check_texture_path(m_texture_path->get_text()->c_str());
-		cfg = new ccl_config(*m_config_path->get_text(), "");
-		m_load_cfg = cfg->can_write();
-		empty_config = cfg->is_empty();
+		input = std::ifstream(*m_config_path->get_text());
+		input >> cfg_json;
+		empty_config = cfg_json.empty();
 
-		if (!m_texture_path->get_text()->empty() && !m_config_path->get_text()->empty() && valid_texture &&
-			m_load_cfg) {
+		if (valid_texture && m_load_cfg) {
 			m_tool->action_performed(TOOL_ACTION_SETUP_EXIT);
 		} else {
 			if (m_texture_path->get_text()->empty() || !valid_texture) {

@@ -42,7 +42,7 @@ public:
 
 	~icon_handler() override;
 
-	void load_icons(const char *img, const char *cfg);
+	void load_icons(const QString &cfg, const QString &img);
 
 	void update() override;
 

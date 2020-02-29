@@ -30,7 +30,7 @@ icon_handler::~icon_handler()
 	clear();
 }
 
-void icon_handler::load_icons(const char *img, const char *cfg)
+void icon_handler::load_icons(const QString &cfg, const QString &img)
 {
 	m_icons.load_from_file(cfg, img);
 }
@@ -38,25 +38,31 @@ void icon_handler::load_icons(const char *img, const char *cfg)
 void icon_handler::update()
 {
 	if (m_settings->icon_cfg_path && strlen(m_settings->icon_cfg_path) > 0 && m_settings->icon_path &&
-		strlen(m_settings->icon_path) > 0)
+	    strlen(m_settings->icon_path) > 0)
 		load_icons(m_settings->icon_path, m_settings->icon_cfg_path);
 
 	switch (m_settings->dir) {
 	case DIR_DOWN:
-		m_translate_dir = {0.f, 1.f * (m_icons.get_h() + m_settings->v_space)};
-		m_start_pos = {0.f, 0.f};
+		m_translate_dir.x = 0.f;
+		m_translate_dir.y = 1.f * (m_icons.get_h() + m_settings->v_space);
+		m_start_pos = {};
 		break;
 	case DIR_UP:
-		m_translate_dir = {0.f, -1.f * (m_icons.get_h() + m_settings->v_space)};
-		m_start_pos = {0.f, static_cast<float>(m_settings->cy - m_icons.get_h())};
+		m_translate_dir.x = 0.f;
+		m_translate_dir.y = -1.f * (m_icons.get_h() + m_settings->v_space);
+		m_start_pos.x = 0.f;
+		m_start_pos.y = static_cast<float>(m_settings->cy - m_icons.get_h());
 		break;
 	case DIR_LEFT:
-		m_translate_dir = {-1.f * (m_icons.get_w() + m_settings->h_space), 0.f};
-		m_start_pos = {static_cast<float>(m_settings->cx - m_icons.get_w()), 0.f};
+		m_translate_dir.x = -1.f * (m_icons.get_w() + m_settings->h_space);
+		m_translate_dir.y = 0.f;
+		m_start_pos.x = static_cast<float>(m_settings->cx - m_icons.get_w());
+		m_start_pos.y = 0.f;
 		break;
 	case DIR_RIGHT:
-		m_start_pos = {0.f, 0.f};
-		m_translate_dir = {1.f * (m_icons.get_w() + m_settings->h_space), 0.f};
+		m_start_pos = {};
+		m_translate_dir.x = 1.f * (m_icons.get_w() + m_settings->h_space);
+		m_translate_dir.y = 0.f;
 		break;
 	}
 }

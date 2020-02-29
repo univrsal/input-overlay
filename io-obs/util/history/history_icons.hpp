@@ -18,14 +18,15 @@
 
 #pragma once
 
-#include <map>
+#include <QMap>
+#include <QString>
 
 extern "C" {
 #include <graphics/image-file.h>
 }
 
 struct icon {
-	uint16_t u, v;
+	uint16_t u, v, cx, cy;
 };
 
 class input_entry;
@@ -33,9 +34,9 @@ class input_entry;
 class history_icons {
 	bool m_loaded = false;
 	uint16_t m_icon_count = 0;
-	uint16_t m_icon_w = 0;
-	uint16_t m_icon_h = 0;
-	std::map<uint16_t, icon> m_icons;
+	uint16_t m_icon_max_w = 0;
+	uint16_t m_icon_max_h = 0;
+	QMap<uint16_t, icon> m_icons;
 	gs_image_file_t *m_icon_texture = nullptr;
 
 	void unload_texture();
@@ -43,15 +44,15 @@ class history_icons {
 public:
 	~history_icons();
 
-	void load_from_file(const char *cfg, const char *img);
+	void load_from_file(const QString &cfg, const QString &img);
 
 	void draw(uint16_t vc, vec2 *pos, input_entry *parent);
 
 	gs_image_file_t *image_file();
 
-	uint16_t get_w() const { return m_icon_w; }
+	uint16_t get_w() const { return m_icon_max_w; }
 
-	uint16_t get_h() const { return m_icon_h; }
+	uint16_t get_h() const { return m_icon_max_h; }
 
 	bool is_loaded() const { return m_loaded; }
 };

@@ -98,7 +98,7 @@ inline void input_history_source::update(obs_data_t *settings)
 	const auto new_mode = history_mode(obs_data_get_int(settings, S_HISTORY_MODE));
 	m_settings.queue->update(new_mode); /* Apply new settings to queue */
 	m_settings.mode = new_mode;
-	blog(LOG_DEBUG, "auto-clear tmr: %.2f iv: %.2f", m_clear_timer, m_settings.auto_clear_interval);
+	bdebug("auto-clear tmr: %.2f iv: %.2f", m_clear_timer, m_settings.auto_clear_interval);
 }
 
 inline void input_history_source::tick(float seconds)
@@ -113,7 +113,7 @@ inline void input_history_source::tick(float seconds)
 	if (GET_FLAG((int)history_flags::AUTO_CLEAR)) {
 		m_clear_timer += seconds;
 		if (m_clear_timer >= m_settings.auto_clear_interval) {
-			blog(LOG_DEBUG, "auto-clear tmr: %.2f iv: %.2f", m_clear_timer, m_settings.auto_clear_interval);
+			bdebug("auto-clear tmr: %.2f iv: %.2f", m_clear_timer, m_settings.auto_clear_interval);
 			m_clear_timer = 0.f;
 			m_collect_timer = 0.f;
 			clear_history();
@@ -171,10 +171,10 @@ bool toggle_font_settings(obs_properties_t *props, obs_property_t *p, obs_data_t
 		auto name = obs_property_name(prop);
 
 		if (!strcmp(name, "read_from_file") || !strcmp(name, "text") || !strcmp(name, "file") ||
-			!strcmp(name, "vertical") || strstr(name, "align") || strstr(name, "extents") || strstr(name, "chatlog") ||
-			(!use_gradient && strstr(name, "gradient") && strlen(name) > strlen("gradient")) ||
-			(!use_outline && strstr(name, "outline") &&
-			 strlen(name) > strlen("outline"))) { /* do not show unnecessary properties */
+		    !strcmp(name, "vertical") || strstr(name, "align") || strstr(name, "extents") || strstr(name, "chatlog") ||
+		    (!use_gradient && strstr(name, "gradient") && strlen(name) > strlen("gradient")) ||
+		    (!use_outline && strstr(name, "outline") &&
+		     strlen(name) > strlen("outline"))) { /* do not show unnecessary properties */
 			obs_property_set_visible(prop, false);
 		} else if (!strstr(name, "io")) /* All input-history values start with 'io.' ->
 													if the value does not contain 'io' it's part
@@ -236,7 +236,7 @@ obs_properties_t *get_properties_for_history(void *data)
 	/* If enabled add dropdown to select input source */
 	if (io_config::remote) {
 		auto list =
-			obs_properties_add_list(props, S_INPUT_SOURCE, T_INPUT_SOURCE, OBS_COMBO_TYPE_LIST, OBS_COMBO_FORMAT_INT);
+		    obs_properties_add_list(props, S_INPUT_SOURCE, T_INPUT_SOURCE, OBS_COMBO_TYPE_LIST, OBS_COMBO_FORMAT_INT);
 		obs_properties_add_button(props, S_RELOAD_CONNECTIONS, T_RELOAD_CONNECTIONS, reload_connections);
 		if (network::network_flag) {
 			network::server_instance->get_clients(list, network::local_input);
@@ -244,7 +244,7 @@ obs_properties_t *get_properties_for_history(void *data)
 	}
 
 	const auto mode_list =
-		obs_properties_add_list(props, S_HISTORY_MODE, T_HISTORY_MODE, OBS_COMBO_TYPE_LIST, OBS_COMBO_FORMAT_INT);
+	    obs_properties_add_list(props, S_HISTORY_MODE, T_HISTORY_MODE, OBS_COMBO_TYPE_LIST, OBS_COMBO_FORMAT_INT);
 
 	obs_property_list_add_int(mode_list, T_HISTORY_MODE_TEXT, (int)history_mode::TEXT);
 	obs_property_list_add_int(mode_list, T_HISTORY_MODE_ICON, (int)history_mode::ICONS);
@@ -253,7 +253,7 @@ obs_properties_t *get_properties_for_history(void *data)
 	/* Key name, icon and config file */
 	auto filter_img = util_file_filter(T_FILTER_IMAGE_FILES, "*.jpg *.png *.bmp");
 	auto filter_text = util_file_filter(T_FILTER_TEXT_FILES, "*.ini");
-	std::string key_names_path, key_icon_path, key_icon_config_path;
+	QString key_names_path, key_icon_path, key_icon_config_path;
 
 	if (s->m_settings.key_name_path) {
 		key_names_path = s->m_settings.key_name_path;
@@ -271,23 +271,29 @@ obs_properties_t *get_properties_for_history(void *data)
 	}
 
 	/* Icon mode properties */
-	obs_properties_add_path(props, S_HISTORY_KEY_ICON_PATH, T_HISTORY_KEY_ICON_PATH, OBS_PATH_FILE, filter_img.c_str(),
-							key_icon_path.c_str());
+	obs_properties_add_path(props, S_HISTORY_KEY_ICON_PATH,
+	                        T_HISTORY_KEY_ICON_PATH,
+	                        OBS_PATH_FILE, qt_to_utf8(filter_img),
+	                        qt_to_utf8(key_icon_path));
 
-	obs_properties_add_path(props, S_HISTORY_KEY_ICON_CONFIG_PATH, T_HISTORY_KEY_ICON_CONFIG_PATH, OBS_PATH_FILE,
-							filter_text.c_str(), key_icon_config_path.c_str());
+	obs_properties_add_path(props, S_HISTORY_KEY_ICON_CONFIG_PATH,
+	                        T_HISTORY_KEY_ICON_CONFIG_PATH, OBS_PATH_FILE,
+	                        qt_to_utf8(filter_text),
+	                        qt_to_utf8(key_icon_config_path));
 
 	obs_properties_add_int(props, S_HISTORY_ICON_H_SPACE, T_HISTORY_ICON_H_SPACE, -1000, 1000, 1);
 	obs_properties_add_int(props, S_HISTORY_ICON_V_SPACE, T_HISTORY_ICON_V_SPACE, -1000, 1000, 1);
 
 	/* Text mode properties*/
-	obs_properties_add_path(props, S_HISTORY_KEY_NAME_PATH, T_HISTORY_KEY_NAME_PATH, OBS_PATH_FILE, filter_text.c_str(),
-							key_names_path.c_str());
+	obs_properties_add_path(props, S_HISTORY_KEY_NAME_PATH,
+	                        T_HISTORY_KEY_NAME_PATH, OBS_PATH_FILE,
+	                        qt_to_utf8(filter_text),
+	                        qt_to_utf8(key_names_path));
 	obs_properties_add_bool(props, S_HISTORY_USE_FALLBACK_NAME, T_HISTORY_USE_FALLBACK_NAMES);
 
 	/* Entry flow direction */
 	const auto icon_dir_list = obs_properties_add_list(props, S_HISTORY_DIRECTION, T_HISTORY_DIRECTION,
-													   OBS_COMBO_TYPE_LIST, OBS_COMBO_FORMAT_INT);
+	                                                   OBS_COMBO_TYPE_LIST, OBS_COMBO_FORMAT_INT);
 
 	obs_property_list_add_int(icon_dir_list, T_HISTORY_DIRECTION_DOWN, 0);
 	obs_property_list_add_int(icon_dir_list, T_HISTORY_DIRECTION_UP, 1);
