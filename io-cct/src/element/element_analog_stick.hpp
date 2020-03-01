@@ -25,10 +25,12 @@
 
 class ElementAnalogStick : public element_texture {
 public:
-	ElementAnalogStick() : element_texture(), m_static_scaled(), m_stick() { /* NO-OP */ }
+	ElementAnalogStick() : element_texture(), m_static_scaled(), m_stick()
+	{ /* NO-OP */
+	}
 
 	ElementAnalogStick(const std::string &id, SDL_Point pos, SDL_Rect mapping, element_side side, uint8_t radius,
-	                   uint8_t z);
+					   uint8_t z);
 
 	SDL_Rect *get_abs_dim(coordinate_system *cs) override;
 
@@ -58,5 +60,5 @@ private:
 	float m_y_axis = 0;
 	uint16_t m_radius = 0;
 
-	Timer m_movement_reset;
+	timer m_movement_reset;
 };

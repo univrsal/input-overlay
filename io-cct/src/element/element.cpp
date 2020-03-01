@@ -142,6 +142,7 @@ void element::write_to_json(json &j, SDL_Point *default_dim, uint8_t &layout_fla
 	j[CFG_TYPE] = m_type;
 	j[CFG_POS][0] = m_position.x;
 	j[CFG_POS][1] = m_position.y;
+	j[CFG_ID] = m_id;
 }
 
 SDL_Rect *element::get_abs_dim(coordinate_system *cs)
@@ -215,9 +216,9 @@ SDL_Rect element::read_mapping(const json &j, const SDL_Point *default_dim)
 	return tmp;
 }
 
-SDL_Point element::read_position(const json& j)
+SDL_Point element::read_position(const json &j)
 {
-	return SDL_Point { j[CFG_POS][0], j[CFG_POS][1] };
+	return SDL_Point{j[CFG_POS][0], j[CFG_POS][1]};
 }
 
 element_side element::read_side(const json &j)

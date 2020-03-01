@@ -24,12 +24,11 @@
 
 #define FONT_SMALL 10
 #define FONT_DEFAULT 16
-#define FONT_LARGE 28
+#define FONT_LARGE 31
 
 #define FONT_WSTRING 0
 #define FONT_WSTRING_LARGE 1
 
-#include "sdl_helper.hpp"
 #include <SDL_ttf.h>
 #include <string>
 
@@ -44,7 +43,7 @@ public:
 	void set_mode(int m);
 
 	void draw(const std::string *text, int x, int y, TTF_Font *font, const SDL_Color *fg, const SDL_Color *bg,
-			  uint8_t scale = 1) const;
+	          uint8_t scale = 1) const;
 
 	void draw(const std::string *text, int x, int y, TTF_Font *font, const SDL_Color *fg, uint8_t scale = 1);
 

@@ -38,11 +38,11 @@ void dialog_setup::init()
 
 	// info labels
 	auto info = std::string(LABEL_BUILD);
-	info.append(std::to_string(BUILD_NUMBER));
+	info.append(TIMESTAMP);
 
 	add(new label(id++, 8, 22, info.c_str(), FONT_WSTRING_LARGE, this,
 	              ELEMENT_UNLOCALIZED | ELEMENT_ABSOLUTE_POSITION));
-	add(new label(id++, 8, 50, LANG_LABEL_INFO, this, ELEMENT_ABSOLUTE_POSITION));
+	add(new label(id++, 8, 58, LANG_LABEL_INFO, this, ELEMENT_ABSOLUTE_POSITION));
 
 	add(new label(id++, 8, 35, LANG_LABEL_TEXTURE_PATH, this));
 	add(m_texture_path = new textbox(id++, 8, 55, m_dimensions.w - 16, 20, TEXTURE_PATH, this));
@@ -97,18 +97,17 @@ void dialog_setup::action_performed(const int8_t action_id)
 	dialog::action_performed(action_id);
 
 	auto valid_texture = false;
-	auto empty_config = false;
-	std::ifstream input;
+	auto writable_config = false;
 	json cfg_json;
 
 	switch (action_id) {
 	case ACTION_OK:
 		valid_texture = m_helper->util_check_texture_path(m_texture_path->get_text()->c_str());
-		input = std::ifstream(*m_config_path->get_text());
-		input >> cfg_json;
-		empty_config = cfg_json.empty();
+		m_have_existing_cfg = !util::is_empty(*m_config_path->get_text());
+		if (!m_have_existing_cfg)
+			writable_config = util::can_access(*m_config_path->get_text());
 
-		if (valid_texture && m_load_cfg) {
+		if (valid_texture && writable_config) {
 			m_tool->action_performed(TOOL_ACTION_SETUP_EXIT);
 		} else {
 			if (m_texture_path->get_text()->empty() || !valid_texture) {
@@ -116,7 +115,7 @@ void dialog_setup::action_performed(const int8_t action_id)
 				m_notifier->add_msg(MESSAGE_ERROR, m_helper->loc(LANG_ERROR_INVALID_TEXTURE_PATH));
 			}
 
-			if (m_config_path->get_text()->empty() || !m_load_cfg) {
+			if (m_config_path->get_text()->empty() || !writable_config) {
 				m_config_path->set_alert(true);
 				m_notifier->add_msg(MESSAGE_ERROR, m_helper->loc(LANG_ERROR_INVALID_CONFIG_PATH));
 			}
@@ -126,21 +125,20 @@ void dialog_setup::action_performed(const int8_t action_id)
 		m_helper->exit_loop();
 		break;
 	case ACTION_FILE_DROPPED:
-		cfg = new ccl_config(*m_config_path->get_text(), "");
-		if (!cfg->is_empty()) {
-			const auto def_w = cfg->get_node(CFG_DEFAULT_WIDTH, true);
-			const auto def_h = cfg->get_node(CFG_DEFAULT_HEIGHT, true);
-			const auto space_h = cfg->get_node(CFG_H_SPACE, true);
-			const auto space_v = cfg->get_node(CFG_V_SPACE, true);
+		if (util::load_json(*m_config_path->get_text(), cfg_json)) {
+			const auto def_w = cfg_json[CFG_DEFAULT_WIDTH];
+			const auto def_h = cfg_json[CFG_DEFAULT_HEIGHT];
+			const auto space_h = cfg_json[CFG_H_SPACE];
+			const auto space_v = cfg_json[CFG_V_SPACE];
 
-			if (def_w)
-				m_def_w->set_text(def_w->get_value());
-			if (def_h)
-				m_def_h->set_text(def_h->get_value());
-			if (space_h)
-				m_h_space->set_text(space_h->get_value());
-			if (space_v)
-				m_v_space->set_text(space_v->get_value());
+			if (def_w.is_number_integer())
+				m_def_w->set_text(def_w.get<int>());
+			if (def_h.is_number_integer())
+				m_def_h->set_text(def_h.get<int>());
+			if (space_h.is_number_integer())
+				m_h_space->set_text(space_h.get<int>());
+			if (space_v.is_number_integer())
+				m_v_space->set_text(space_v.get<int>());
 		}
 		break;
 	case ACTION_COMBO_ITEM_SELECTED:
@@ -148,11 +146,6 @@ void dialog_setup::action_performed(const int8_t action_id)
 		reload_lang();
 		break;
 	default:;
-	}
-
-	if (cfg) {
-		delete cfg;
-		cfg = nullptr;
 	}
 }
 
@@ -178,5 +171,5 @@ SDL_Point dialog_setup::get_default_dim() const
 
 bool dialog_setup::should_load_cfg() const
 {
-	return m_load_cfg;
+	return m_have_existing_cfg;
 }

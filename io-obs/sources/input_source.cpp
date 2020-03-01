@@ -86,7 +86,7 @@ bool cfg_path_changed(obs_properties_t *props, obs_property_t *p, obs_data_t *s)
 	obs_property_set_visible(GET_PROPS(S_CONTROLLER_L_DEAD_ZONE), flags & OF_LEFT_STICK);
 	obs_property_set_visible(GET_PROPS(S_CONTROLLER_R_DEAD_ZONE), flags & OF_RIGHT_STICK);
 	obs_property_set_visible(GET_PROPS(S_CONTROLLER_ID),
-	                         flags & OF_GAMEPAD || (flags & OF_LEFT_STICK || flags & OF_RIGHT_STICK));
+							 flags & OF_GAMEPAD || (flags & OF_LEFT_STICK || flags & OF_RIGHT_STICK));
 	obs_property_set_visible(GET_PROPS(S_MOUSE_SENS), flags & OF_MOUSE);
 	obs_property_set_visible(GET_PROPS(S_MONITOR_USE_CENTER), flags & OF_MOUSE);
 	obs_property_set_visible(GET_PROPS(S_MOUSE_DEAD_ZONE), flags & OF_MOUSE);
@@ -137,7 +137,7 @@ obs_properties_t *get_properties_for_overlay(void *data)
 	/* If enabled add dropdown to select input source */
 	if (config_get_bool(config, S_REGION, S_REMOTE)) {
 		auto list =
-		    obs_properties_add_list(props, S_INPUT_SOURCE, T_INPUT_SOURCE, OBS_COMBO_TYPE_LIST, OBS_COMBO_FORMAT_INT);
+			obs_properties_add_list(props, S_INPUT_SOURCE, T_INPUT_SOURCE, OBS_COMBO_TYPE_LIST, OBS_COMBO_FORMAT_INT);
 		obs_properties_add_button(props, S_RELOAD_CONNECTIONS, T_RELOAD_CONNECTIONS, reload_connections);
 		if (network::network_flag) {
 			network::server_instance->get_clients(list, network::local_input);
@@ -148,12 +148,11 @@ obs_properties_t *get_properties_for_overlay(void *data)
 	auto filter_text = util_file_filter(T_FILTER_TEXT_FILES, "*.ini");
 
 	/* Config and texture file path */
-	obs_properties_add_path(props, S_OVERLAY_FILE, T_TEXTURE_FILE, OBS_PATH_FILE,
-	                        qt_to_utf8(filter_img), qt_to_utf8(img_path));
+	obs_properties_add_path(props, S_OVERLAY_FILE, T_TEXTURE_FILE, OBS_PATH_FILE, qt_to_utf8(filter_img),
+							qt_to_utf8(img_path));
 
-	const auto cfg = obs_properties_add_path(props, S_LAYOUT_FILE, T_LAYOUT_FILE,
-	                                         OBS_PATH_FILE, qt_to_utf8(filter_text),
-	                                         qt_to_utf8(layout_path));
+	const auto cfg = obs_properties_add_path(props, S_LAYOUT_FILE, T_LAYOUT_FILE, OBS_PATH_FILE,
+											 qt_to_utf8(filter_text), qt_to_utf8(layout_path));
 
 	obs_property_set_modified_callback(cfg, cfg_path_changed);
 
@@ -164,22 +163,22 @@ obs_properties_t *get_properties_for_overlay(void *data)
 	obs_property_set_modified_callback(use_center, use_monitor_center_changed);
 
 	obs_property_set_visible(obs_properties_add_int(props, S_MONITOR_H_CENTER, T_MONITOR_H_CENTER, -9999, 9999, 1),
-	                         false);
+							 false);
 	obs_property_set_visible(obs_properties_add_int(props, S_MONITOR_V_CENTER, T_MONITOR_V_CENTER, -9999, 9999, 1),
-	                         false);
+							 false);
 	obs_property_set_visible(obs_properties_add_int_slider(props, S_MOUSE_DEAD_ZONE, T_MOUSE_DEAD_ZONE, 0, 500, 1),
-	                         false);
+							 false);
 
 	/* Gamepad stuff */
 	obs_property_set_visible(obs_properties_add_int(props, S_CONTROLLER_ID, T_CONTROLLER_ID, 0, 3, 1), false);
 
 #if _WIN32 /* Linux only allows analog stick values 0 - 127 -> No reason for a deadzone */
 	obs_property_set_visible(obs_properties_add_int_slider(props, S_CONTROLLER_L_DEAD_ZONE, T_CONROLLER_L_DEADZONE, 1,
-	                                                       STICK_MAX_VAL - 1, 1),
-	                         false);
+														   STICK_MAX_VAL - 1, 1),
+							 false);
 	obs_property_set_visible(obs_properties_add_int_slider(props, S_CONTROLLER_R_DEAD_ZONE, T_CONROLLER_R_DEADZONE, 1,
-	                                                       STICK_MAX_VAL - 1, 1),
-	                         false);
+														   STICK_MAX_VAL - 1, 1),
+							 false);
 #else
 	auto *btn = obs_properties_add_button(props, S_RELOAD_PAD_DEVICES, T_RELOAD_PAD_DEVICES, reload_pads);
 	obs_property_set_visible(btn, false);

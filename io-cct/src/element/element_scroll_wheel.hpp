@@ -31,9 +31,9 @@
 class ElementScrollWheel : public element_texture {
 public:
 	ElementScrollWheel()
-	    : element_texture(){
-		      /* NO-OP */
-	      };
+		: element_texture(){
+			  /* NO-OP */
+		  };
 
 	ElementScrollWheel(const std::string &id, SDL_Point pos, SDL_Rect mapping, uint8_t z);
 
@@ -51,7 +51,7 @@ public:
 
 private:
 	SDL_Rect m_mapping_pressed = {}, m_mapping_down = {}, m_mapping_up = {};
-	Timer m_wheel_reset;
+	timer m_wheel_reset;
 	bool m_pressed = false;
 	bool m_up = false;
 	bool m_down = false;

@@ -133,8 +133,8 @@ void input_entry::tick(const float seconds)
 
 	/* Remove all finished effects safely */
 	m_effects.erase(std::remove_if(m_effects.begin(), m_effects.end(),
-	                               [](const std::unique_ptr<effect> &o) { return o->done(); }),
-	                m_effects.end());
+								   [](const std::unique_ptr<effect> &o) { return o->done(); }),
+					m_effects.end());
 }
 
 void input_entry::add_effect(effect *e)

@@ -38,7 +38,7 @@ void icon_handler::load_icons(const QString &cfg, const QString &img)
 void icon_handler::update()
 {
 	if (m_settings->icon_cfg_path && strlen(m_settings->icon_cfg_path) > 0 && m_settings->icon_path &&
-	    strlen(m_settings->icon_path) > 0)
+		strlen(m_settings->icon_path) > 0)
 		load_icons(m_settings->icon_path, m_settings->icon_cfg_path);
 
 	switch (m_settings->dir) {

@@ -23,7 +23,7 @@
 #define SDL_WINDOW_H 720
 #define SDL_WINDOW_FPS 30
 #define SDL_WINDOW_TPF (1000. / SDL_WINDOW_FPS)
-#define SDL_WINDOW_UNFOCUSED_TPF 1000. /* 1 FPS while unfocused */
+#define SDL_WINDOW_UNFOCUSED_TPF 1000. / 10 /* 10 FPS while unfocused */
 #define SDL_WINDOW_TITLE "io-cct"
 
 /* 0/0 for coordinate systems */

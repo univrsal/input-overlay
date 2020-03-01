@@ -19,27 +19,23 @@
 #pragma once
 
 #include "font_helper.hpp"
+#include "util.hpp"
 #include <memory.h>
 #include <string>
 #include <utility>
 #include <vector>
-#include <json.hpp>
-
-using json = nlohmann::json;
-
-class ccl_config;
 
 class sdl_helper;
 
 class lang_file {
 public:
-	lang_file(const std::string& name, const std::string& lang)
+	lang_file(const std::string &name, const std::string &lang)
 	{
-		m_file_name = name;
+		m_file_path = name;
 		m_language = lang;
 	}
 
-	std::string m_file_name;
+	std::string m_file_path;
 	std::string m_language;
 };
 
@@ -60,7 +56,7 @@ private:
 
 	void load_default_language();
 
-	bool m_valid = false;
+	bool m_have_default = false;
 
 	uint8_t m_english_id = 0;
 

@@ -1,2 +1,4 @@
 # Visual studio temp files
 *.TMP
+*.autosave
+*.user

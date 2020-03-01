@@ -253,8 +253,7 @@ void config::write_config(notifier *n)
 		json j;
 		e->write_to_json(j, &m_default_dim, flags);
 		if (j.empty()) {
-			n->add_msg(MESSAGE_ERROR, m_helper->format_loc(LANG_MSG_ELEMENT_EMPTY,
-			                                               e->get_id()->c_str()));
+			n->add_msg(MESSAGE_ERROR, m_helper->format_loc(LANG_MSG_ELEMENT_EMPTY, e->get_id()->c_str()));
 			continue;
 		}
 		elements.emplace_back(j);
@@ -265,6 +264,7 @@ void config::write_config(notifier *n)
 	cfg[CFG_TOTAL_WIDTH] = width;
 	cfg[CFG_TOTAL_HEIGHT] = height;
 	cfg[CFG_FLAGS] = flags;
+	cfg[CFG_ELEMENTS] = elements;
 
 	out << std::setw(4) << cfg;
 
@@ -308,7 +308,7 @@ void config::read_config(notifier *n)
 
 	auto type = 0;
 
-	for (const auto& element : elements) {
+	for (const auto &element : elements) {
 		auto type = element[CFG_TYPE];
 		if (type.is_number() && element::valid_type(type)) {
 			auto loaded_element = element::read_from_json(element, &m_default_dim);
@@ -318,8 +318,7 @@ void config::read_config(notifier *n)
 				n->add_msg(MESSAGE_ERROR, m_helper->format_loc(LANG_MSG_ELEMENT_LOAD_ERROR, element[CFG_ID]));
 			}
 		} else {
-			n->add_msg(MESSAGE_ERROR, m_helper->format_loc(LANG_MSG_VALUE_TYPE_INVALID,
-			                                               element[CFG_ID], type));
+			n->add_msg(MESSAGE_ERROR, m_helper->format_loc(LANG_MSG_VALUE_TYPE_INVALID, element[CFG_ID], type));
 		}
 	}
 

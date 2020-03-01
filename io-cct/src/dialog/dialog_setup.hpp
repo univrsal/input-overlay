@@ -56,7 +56,7 @@ public:
 private:
 	notifier *m_notifier = nullptr;
 
-	bool m_load_cfg = false;
+	bool m_have_existing_cfg = false;
 
 	combobox *m_lang_box = nullptr;
 	textbox *m_texture_path = nullptr;

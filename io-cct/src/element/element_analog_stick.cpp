@@ -78,7 +78,7 @@ void ElementAnalogStick::draw(texture *atlas, coordinate_system *cs, const bool 
 
 void ElementAnalogStick::write_to_json(json &j, SDL_Point *default_dim, uint8_t &flags)
 {
-	element_texture::write_to_file(j, default_dim, flags);
+	element_texture::write_to_json(j, default_dim, flags);
 	j[CFG_SIDE] = static_cast<int>(m_stick);
 	j[CFG_STICK_RADIUS] = static_cast<int>(m_radius);
 	flags |= OF_GAMEPAD | (m_stick == ES_LEFT ? OF_LEFT_STICK : OF_RIGHT_STICK);
@@ -127,10 +127,10 @@ void ElementAnalogStick::handle_event(SDL_Event *event, sdl_helper *helper)
 	}
 }
 
-ElementAnalogStick *ElementAnalogStick::read_from_json(ccl_config *file, const std::string &id, SDL_Point *default_dim)
+ElementAnalogStick *ElementAnalogStick::read_from_json(const json &j, SDL_Point *default_dim)
 {
-	const auto s = read_side(file, id);
+	const auto s = read_side(j);
 
-	return new ElementAnalogStick(id, read_position(file, id), read_mapping(file, id, default_dim), s,
-	                              file->get_int(id + CFG_STICK_RADIUS), read_layer(file, id));
+	return new ElementAnalogStick(j[CFG_ID], read_position(j), read_mapping(j, default_dim), s,
+	                              j[CFG_STICK_RADIUS], j[CFG_Z_LEVEL]);
 }

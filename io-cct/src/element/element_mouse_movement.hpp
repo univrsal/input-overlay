@@ -23,13 +23,13 @@
 class ElementMouseMovement : public element_texture {
 public:
 	ElementMouseMovement()
-	    : element_texture(),
-	      m_type(){
-		      /* NO-OP */
-	      };
+		: element_texture(),
+		  m_type(){
+			  /* NO-OP */
+		  };
 
 	ElementMouseMovement(const std::string &id, SDL_Point pos, SDL_Rect mapping, mouse_movement type, uint16_t radius,
-	                     uint8_t z);
+						 uint8_t z);
 
 	element_error is_valid(notifier *n, sdl_helper *h) override;
 

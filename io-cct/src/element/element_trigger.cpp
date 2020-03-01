@@ -25,8 +25,8 @@
 #include <utility>
 
 element_trigger::element_trigger(const std::string &id, const SDL_Point pos, const SDL_Rect mapping,
-                                 const element_side s, const direction d, const uint8_t z)
-    : element_texture(ET_TRIGGER, id, pos, mapping, z)
+								 const element_side s, const direction d, const uint8_t z)
+	: element_texture(ET_TRIGGER, id, pos, mapping, z)
 {
 	m_pressed_mapping = m_mapping;
 	m_pressed_mapping.y += m_mapping.h + CFG_INNER_BORDER;
@@ -35,8 +35,8 @@ element_trigger::element_trigger(const std::string &id, const SDL_Point pos, con
 }
 
 element_trigger::element_trigger(const std::string &id, const SDL_Point pos, const SDL_Rect mapping,
-                                 const element_side s, const uint8_t z)
-    : element_texture(ET_TRIGGER, id, pos, mapping, z), m_direction()
+								 const element_side s, const uint8_t z)
+	: element_texture(ET_TRIGGER, id, pos, mapping, z), m_direction()
 {
 	m_pressed_mapping = m_mapping;
 	m_pressed_mapping.y += m_mapping.h + CFG_INNER_BORDER;
@@ -50,17 +50,17 @@ void element_trigger::draw(texture *atlas, coordinate_system *cs, const bool sel
 
 	if (m_button_mode && m_progress >= .2f) {
 		atlas->draw(cs->get_helper()->renderer(), &m_dimensions_scaled, &m_pressed_mapping,
-		            alpha ? ELEMENT_HIDE_ALPHA : 255);
+					alpha ? ELEMENT_HIDE_ALPHA : 255);
 	} else if (!m_button_mode && m_progress > 0.f) {
 		atlas->draw(cs->get_helper()->renderer(), &m_dimensions_scaled, &m_mapping,
-		            (alpha && !selected) ? ELEMENT_HIDE_ALPHA : 255);
+					(alpha && !selected) ? ELEMENT_HIDE_ALPHA : 255);
 		auto temp = m_pressed_mapping;
 		auto temp2 = m_dimensions_scaled;
 		calculate_mappings(&temp, &temp2);
 		atlas->draw(cs->get_helper()->renderer(), &temp2, &temp, (alpha && !selected) ? ELEMENT_HIDE_ALPHA : 255);
 	} else {
 		atlas->draw(cs->get_helper()->renderer(), &m_dimensions_scaled, &m_mapping,
-		            (alpha && !selected) ? ELEMENT_HIDE_ALPHA : 255);
+					(alpha && !selected) ? ELEMENT_HIDE_ALPHA : 255);
 	}
 
 	if (selected)
@@ -98,7 +98,7 @@ void element_trigger::handle_event(SDL_Event *event, sdl_helper *helper)
 {
 	if (event->type == SDL_CONTROLLERAXISMOTION) {
 		if (m_side == ES_LEFT && event->caxis.axis == SDL_CONTROLLER_AXIS_TRIGGERLEFT ||
-		    m_side == ES_RIGHT && event->caxis.axis == SDL_CONTROLLER_AXIS_TRIGGERRIGHT) {
+			m_side == ES_RIGHT && event->caxis.axis == SDL_CONTROLLER_AXIS_TRIGGERRIGHT) {
 			m_progress = static_cast<float>(event->caxis.value) / AXIS_MAX_AMPLITUDE;
 		}
 	}
@@ -110,12 +110,10 @@ element_trigger *element_trigger::read_from_json(const json &j, SDL_Point *defau
 	const auto s = read_side(j);
 
 	if (button_mode) {
-		return new element_trigger(j[CFG_ID], read_position(j), read_mapping(j, default_dim), s,
-		                           j[CFG_Z_LEVEL]);
+		return new element_trigger(j[CFG_ID], read_position(j), read_mapping(j, default_dim), s, j[CFG_Z_LEVEL]);
 	}
 	auto d = static_cast<direction>(UTIL_CLAMP(0, (int)j[CFG_DIRECTION], DIR_MAX - 1));
-	return new element_trigger(j[CFG_ID], read_position(j), read_mapping(j, default_dim), s, d,
-	                           j[CFG_Z_LEVEL]);
+	return new element_trigger(j[CFG_ID], read_position(j), read_mapping(j, default_dim), s, d, j[CFG_Z_LEVEL]);
 }
 
 void element_trigger::calculate_mappings(SDL_Rect *pressed, SDL_Rect *absolute) const

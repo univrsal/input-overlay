@@ -23,9 +23,9 @@
 class ElementGamepadID : public element_texture {
 public:
 	ElementGamepadID()
-	    : element_texture(){
-		      /* NO-OP */
-	      };
+		: element_texture(){
+			  /* NO-OP */
+		  };
 
 	ElementGamepadID(const std::string &id, SDL_Point pos, SDL_Rect mapping, uint8_t z);
 

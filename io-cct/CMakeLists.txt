@@ -1,9 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 project(io-cct)
 
-file(STRINGS "build.txt" BUILD_NUMBER_)
-add_definitions(-DBUILD_NUMBER=${BUILD_NUMBER_})
-
 if (DEBUG)
     add_compile_definitions(_DEBUG)
 endif ()
@@ -17,6 +14,9 @@ macro(use_cxx14)
         set(CMAKE_CXX_STANDARD 14)
     endif ()
 endmacro(use_cxx14)
+
+string(TIMESTAMP TODAY "%Y.%m.%d %H:%M")
+add_definitions(-DTIMESTAMP="${TODAY}")
 
 use_cxx14()
 

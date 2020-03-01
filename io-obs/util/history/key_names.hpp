@@ -24,6 +24,7 @@
 class key_names {
 	QMap<uint16_t, QString> m_names;
 	bool m_debug = false;
+
 public:
 	key_names() = default;
 

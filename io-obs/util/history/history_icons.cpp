@@ -120,8 +120,7 @@ void history_icons::draw(uint16_t vc, vec2 *pos, input_entry *parent)
 		gs_matrix_push();
 		gs_matrix_translate3f(pos->x, pos->y, 0.f);
 		parent->render_effects();
-		gs_draw_sprite_subregion(m_icon_texture->texture, 0, icon.u, icon.v,
-		                         icon.cx + 1, icon.cy + 1);
+		gs_draw_sprite_subregion(m_icon_texture->texture, 0, icon.u, icon.v, icon.cx + 1, icon.cy + 1);
 		gs_matrix_pop();
 	}
 }

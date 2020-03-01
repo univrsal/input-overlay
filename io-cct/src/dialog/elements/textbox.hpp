@@ -48,6 +48,8 @@ public:
 
 	void set_text(std::string s);
 
+	void set_text(int i);
+
 	void set_hex_int(uint16_t i);
 
 	void append_text(const std::string &s);

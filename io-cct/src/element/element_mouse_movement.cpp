@@ -24,8 +24,8 @@
 #include <utility>
 
 ElementMouseMovement::ElementMouseMovement(const std::string &id, const SDL_Point pos, const SDL_Rect mapping,
-                                           const mouse_movement type, const uint16_t radius, const uint8_t z)
-    : element_texture(ET_MOUSE_STATS, id, pos, mapping, z)
+										   const mouse_movement type, const uint16_t radius, const uint8_t z)
+	: element_texture(ET_MOUSE_STATS, id, pos, mapping, z)
 {
 	m_radius = radius;
 	m_type = type;
@@ -66,16 +66,15 @@ mouse_movement ElementMouseMovement::get_mouse_type() const
 
 uint16_t ElementMouseMovement::get_radius() const
 {
-    return m_radius;
+	return m_radius;
 }
 
-ElementMouseMovement *ElementMouseMovement::read_from_json(const json &j,
-                                                           SDL_Point *default_dim)
+ElementMouseMovement *ElementMouseMovement::read_from_json(const json &j, SDL_Point *default_dim)
 {
 	auto mmt = MM_DOT;
 	if (j[CFG_MOUSE_TYPE] != 0)
 		mmt = MM_ARROW;
 
-	return new ElementMouseMovement(j[CFG_ID], read_position(j), read_mapping(j, default_dim), mmt,
-	                                j[CFG_MOUSE_RADIUS], j[CFG_Z_LEVEL]);
+	return new ElementMouseMovement(j[CFG_ID], read_position(j), read_mapping(j, default_dim), mmt, j[CFG_MOUSE_RADIUS],
+									j[CFG_Z_LEVEL]);
 }

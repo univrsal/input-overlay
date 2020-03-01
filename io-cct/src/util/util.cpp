@@ -17,6 +17,8 @@
  *************************************************************************/
 
 #include "util.hpp"
+#include <fstream>
+using json_ex = nlohmann::json::exception;
 
 SDL_bool util_move_element(int *x, int *y, const SDL_Keycode key)
 {
@@ -46,4 +48,31 @@ void util::replace(std::string &str, const char *find, const char *replace)
 	while ((start = str.find(find)) != std::string::npos) {
 		str.replace(start, len, replace);
 	}
+}
+
+bool util::load_json(const std::string& path, json &out)
+{
+	bool result = false;
+	std::ifstream input(path.c_str());
+	if (input.good()) {
+		try {
+			input >> out;
+		}  catch (json_ex& e) {
+			printf("Error loading json from %s: %s\n", path.c_str(), e.what());
+		}
+		result = true;
+	}
+	return result;
+}
+
+bool util::is_empty(const std::string &path)
+{
+	std::ifstream input(path.c_str());
+	return input.peek() == std::ifstream::traits_type::eof();
+}
+
+bool util::can_access(const std::string &path)
+{
+	std::ofstream output(path.c_str());
+	return output.good();
 }

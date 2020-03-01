@@ -62,7 +62,7 @@ void ElementButton::draw(texture *atlas, coordinate_system *cs, const bool selec
 
 void ElementButton::write_to_json(json &j, SDL_Point *default_dim, uint8_t &layout_flags)
 {
-	element_texture::write_to_file(j, default_dim, layout_flags);
+	element_texture::write_to_json(j, default_dim, layout_flags);
 	j[CFG_KEY_CODE] = m_keycode;
 
 	if ((m_keycode >> 8) == (VC_PAD_MASK >> 8))
@@ -116,6 +116,6 @@ void ElementButton::handle_event(SDL_Event *event, sdl_helper *helper)
 
 ElementButton *ElementButton::read_from_json(const json &j, SDL_Point *default_dim)
 {
-	return new ElementButton(j[CFG_ID], read_position(j), read_mapping(j, default_dim),
-	                         j[CFG_KEY_CODE], j[CFG_Z_LEVEL]);
+	return new ElementButton(j[CFG_ID], read_position(j), read_mapping(j, default_dim), j[CFG_KEY_CODE],
+	                         j[CFG_Z_LEVEL]);
 }

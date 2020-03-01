@@ -38,7 +38,7 @@ class texture;
 class config {
 public:
 	config(const char *texture_path, const char *config, SDL_Point def_dim, SDL_Point space, sdl_helper *h,
-	       dialog_element_settings *s);
+		   dialog_element_settings *s);
 
 	~config();
 

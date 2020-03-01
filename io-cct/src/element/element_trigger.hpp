@@ -23,11 +23,11 @@
 class element_trigger : public element_texture {
 public:
 	element_trigger()
-	    : element_texture(),
-	      m_side(),
-	      m_direction(){
-		      /* NO-OP */
-	      };
+		: element_texture(),
+		  m_side(),
+		  m_direction(){
+			  /* NO-OP */
+		  };
 
 	element_trigger(const std::string &id, SDL_Point pos, SDL_Rect mapping, element_side s, direction d, uint8_t z);
 

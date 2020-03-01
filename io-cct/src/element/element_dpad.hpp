@@ -27,7 +27,7 @@ public:
 	};
 
 	ElementDPad(const std::string &id, const SDL_Point pos, const SDL_Rect mapping, const uint8_t z)
-	    : element_texture(id, pos, mapping, z)
+		: element_texture(id, pos, mapping, z)
 	{
 		/* NO-OP */
 	}

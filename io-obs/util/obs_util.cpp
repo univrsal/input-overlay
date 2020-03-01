@@ -55,8 +55,7 @@ bool util_open_json(const QString &path, QJsonDocument &doc)
 
 	if (err.error != QJsonParseError::NoError) {
 		result = false;
-		berr("Json parse error for %s: %s", qt_to_utf8(path),
-		     qt_to_utf8(err.errorString()));
+		berr("Json parse error for %s: %s", qt_to_utf8(path), qt_to_utf8(err.errorString()));
 	}
 	return result;
 }
