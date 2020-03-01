@@ -149,8 +149,8 @@ SDL_Rect *element::get_abs_dim(coordinate_system *cs)
 {
 	m_scale = cs->get_scale();
 	m_dimensions_scaled = {m_position.x * cs->get_scale() + cs->get_origin_x(),
-	                       m_position.y * cs->get_scale() + cs->get_origin_y(), m_mapping.w * cs->get_scale(),
-	                       m_mapping.h * cs->get_scale()};
+						   m_position.y * cs->get_scale() + cs->get_origin_y(), m_mapping.w * cs->get_scale(),
+						   m_mapping.h * cs->get_scale()};
 	return &m_dimensions_scaled;
 }
 

@@ -29,11 +29,11 @@ font_helper::font_helper(sdl_helper *renderer)
 
 font_helper::~font_helper()
 {
-    m_helper = nullptr;
+	m_helper = nullptr;
 }
 
 void font_helper::draw(const std::string *text, const int x, const int y, TTF_Font *font, const SDL_Color *fg,
-                       const SDL_Color *bg, const uint8_t scale) const
+					   const SDL_Color *bg, const uint8_t scale) const
 {
 	if (!text || text->empty())
 		return;
@@ -75,11 +75,11 @@ void font_helper::set_mode(const int m)
 
 void font_helper::draw(const std::string *text, const int x, const int y, TTF_Font *font, const uint8_t scale) const
 {
-    draw(text, x, y, font, m_helper->get_palette()->black(), m_helper->get_palette()->white(), scale);
+	draw(text, x, y, font, m_helper->get_palette()->black(), m_helper->get_palette()->white(), scale);
 }
 
 void font_helper::draw_rot(const std::string *text, const int x, const int y, TTF_Font *font, const SDL_Color *fg,
-                           const double angle) const
+						   const double angle) const
 {
 	if (!text || text->empty())
 		return;
@@ -114,7 +114,7 @@ SDL_Rect font_helper::get_text_dimension(TTF_Font *font, const std::string *text
 
 	SDL_Surface *surface = nullptr;
 	surface = TTF_RenderUTF8_Shaded(font, text->c_str(), *m_helper->get_palette()->black(),
-	                                *m_helper->get_palette()->white());
+									*m_helper->get_palette()->white());
 	SDL_Rect dest = {};
 
 	if (surface) {
@@ -128,7 +128,7 @@ SDL_Rect font_helper::get_text_dimension(TTF_Font *font, const std::string *text
 }
 
 void font_helper::draw(const std::string *text, const int x, const int y, TTF_Font *font, const SDL_Color *fg,
-                       const uint8_t scale)
+					   const uint8_t scale)
 {
 	set_mode(FONT_BLENDED);
 	draw(text, x, y, font, fg, nullptr, scale);

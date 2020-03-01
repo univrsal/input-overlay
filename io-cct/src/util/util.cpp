@@ -50,14 +50,14 @@ void util::replace(std::string &str, const char *find, const char *replace)
 	}
 }
 
-bool util::load_json(const std::string& path, json &out)
+bool util::load_json(const std::string &path, json &out)
 {
 	bool result = false;
 	std::ifstream input(path.c_str());
 	if (input.good()) {
 		try {
 			input >> out;
-		}  catch (json_ex& e) {
+		} catch (json_ex &e) {
 			printf("Error loading json from %s: %s\n", path.c_str(), e.what());
 		}
 		result = true;

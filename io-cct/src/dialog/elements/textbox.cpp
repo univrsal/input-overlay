@@ -65,13 +65,13 @@ void textbox::draw_background()
 
 	if (!m_cut_text.empty()) {
 		get_helper()->util_text(&m_cut_text, cursor_pos, get_top() + 2, get_helper()->get_palette()->white(),
-		                        FONT_WSTRING);
+								FONT_WSTRING);
 		cursor_pos += get_helper()->util_text_dim(&m_cut_text, FONT_WSTRING).w;
 	}
 
 	if (!m_composition.empty()) {
 		get_helper()->util_text(&m_composition, 2 + cursor_pos, get_top() + 2, get_helper()->get_palette()->blue(),
-		                        FONT_WSTRING);
+								FONT_WSTRING);
 		cursor_pos += get_helper()->util_text_dim(&m_composition, FONT_WSTRING).w;
 	}
 

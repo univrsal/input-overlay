@@ -43,7 +43,7 @@ public:
 	void set_mode(int m);
 
 	void draw(const std::string *text, int x, int y, TTF_Font *font, const SDL_Color *fg, const SDL_Color *bg,
-	          uint8_t scale = 1) const;
+			  uint8_t scale = 1) const;
 
 	void draw(const std::string *text, int x, int y, TTF_Font *font, const SDL_Color *fg, uint8_t scale = 1);
 

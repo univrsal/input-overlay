@@ -26,8 +26,8 @@
 #include "../util/texture.hpp"
 
 ElementAnalogStick::ElementAnalogStick(const std::string &id, const SDL_Point pos, const SDL_Rect mapping,
-                                       const element_side side, const uint8_t radius, const uint8_t z)
-    : element_texture(ET_ANALOG_STICK, id, pos, mapping, z), m_static_scaled()
+									   const element_side side, const uint8_t radius, const uint8_t z)
+	: element_texture(ET_ANALOG_STICK, id, pos, mapping, z), m_static_scaled()
 {
 	m_stick = side;
 	m_radius = radius;
@@ -60,10 +60,10 @@ void ElementAnalogStick::draw(texture *atlas, coordinate_system *cs, const bool 
 		auto temp = m_mapping;
 		temp.y += temp.h + CFG_INNER_BORDER;
 		atlas->draw(cs->get_helper()->renderer(), &m_dimensions_scaled, &temp,
-		            (alpha && !selected) ? ELEMENT_HIDE_ALPHA : 255);
+					(alpha && !selected) ? ELEMENT_HIDE_ALPHA : 255);
 	} else {
 		atlas->draw(cs->get_helper()->renderer(), &m_dimensions_scaled, &m_mapping,
-		            (alpha && !selected) ? ELEMENT_HIDE_ALPHA : 255);
+					(alpha && !selected) ? ELEMENT_HIDE_ALPHA : 255);
 	}
 
 	if (selected) {
@@ -131,6 +131,6 @@ ElementAnalogStick *ElementAnalogStick::read_from_json(const json &j, SDL_Point 
 {
 	const auto s = read_side(j);
 
-	return new ElementAnalogStick(j[CFG_ID], read_position(j), read_mapping(j, default_dim), s,
-	                              j[CFG_STICK_RADIUS], j[CFG_Z_LEVEL]);
+	return new ElementAnalogStick(j[CFG_ID], read_position(j), read_mapping(j, default_dim), s, j[CFG_STICK_RADIUS],
+								  j[CFG_Z_LEVEL]);
 }

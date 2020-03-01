@@ -41,7 +41,7 @@ void dialog_setup::init()
 	info.append(TIMESTAMP);
 
 	add(new label(id++, 8, 22, info.c_str(), FONT_WSTRING_LARGE, this,
-	              ELEMENT_UNLOCALIZED | ELEMENT_ABSOLUTE_POSITION));
+				  ELEMENT_UNLOCALIZED | ELEMENT_ABSOLUTE_POSITION));
 	add(new label(id++, 8, 58, LANG_LABEL_INFO, this, ELEMENT_ABSOLUTE_POSITION));
 
 	add(new label(id++, 8, 35, LANG_LABEL_TEXTURE_PATH, this));

@@ -31,7 +31,7 @@
 using json = nlohmann::json;
 
 config::config(const char *texture_path, const char *config, const SDL_Point def_dim, const SDL_Point space,
-               sdl_helper *h, dialog_element_settings *s)
+			   sdl_helper *h, dialog_element_settings *s)
 {
 	m_texture_path = texture_path;
 	m_config_path = config;
@@ -144,7 +144,7 @@ void config::handle_events(SDL_Event *e)
 				if (m_in_single_selection)
 				/* Start single element selection */ {
 					m_drag_offset = {(e->button.x - (m_selected->get_x() * m_cs.get_scale()) + m_cs.get_origin()->x),
-					                 (e->button.y - (m_selected->get_y() * m_cs.get_scale()) + m_cs.get_origin()->y)};
+									 (e->button.y - (m_selected->get_y() * m_cs.get_scale()) + m_cs.get_origin()->y)};
 					m_settings->select_element(m_selected);
 				} else /* Start multi element selection */ {
 					m_in_multi_selection = true;
@@ -178,14 +178,14 @@ void config::handle_events(SDL_Event *e)
 			m_cs.translate(m_temp_selection.x, m_temp_selection.y);
 
 			m_temp_selection.x =
-			    ceil(UTIL_MAX((m_temp_selection.x - m_cs.get_origin_x()) / ((float)m_cs.get_scale()), 0));
+				ceil(UTIL_MAX((m_temp_selection.x - m_cs.get_origin_x()) / ((float)m_cs.get_scale()), 0));
 			m_temp_selection.y =
-			    ceil(UTIL_MAX((m_temp_selection.y - m_cs.get_origin_y()) / ((float)m_cs.get_scale()), 0));
+				ceil(UTIL_MAX((m_temp_selection.y - m_cs.get_origin_y()) / ((float)m_cs.get_scale()), 0));
 
 			m_temp_selection.w =
-			    ceil(SDL_abs(m_selection_start.x - e->button.x) / static_cast<float>(m_cs.get_scale()));
+				ceil(SDL_abs(m_selection_start.x - e->button.x) / static_cast<float>(m_cs.get_scale()));
 			m_temp_selection.h =
-			    ceil(SDL_abs(m_selection_start.y - e->button.y) / static_cast<float>(m_cs.get_scale()));
+				ceil(SDL_abs(m_selection_start.y - e->button.y) / static_cast<float>(m_cs.get_scale()));
 
 			m_selected_elements.clear();
 
@@ -272,7 +272,7 @@ void config::write_config(notifier *n)
 
 	if (out.good()) {
 		const auto result =
-		    sdl_helper::format(m_helper->loc(LANG_MSG_SAVE_SUCCESS).c_str(), m_elements.size(), (end - start));
+			sdl_helper::format(m_helper->loc(LANG_MSG_SAVE_SUCCESS).c_str(), m_elements.size(), (end - start));
 		n->add_msg(MESSAGE_INFO, result);
 	} else {
 		n->add_msg(MESSAGE_ERROR, m_helper->loc(LANG_MSG_SAVE_ERROR));
@@ -329,7 +329,7 @@ void config::read_config(notifier *n)
 		n->add_msg(MESSAGE_ERROR, "TODO");
 	} else {
 		const auto result =
-		    sdl_helper::format(m_helper->loc(LANG_MSG_LOAD_SUCCESS).c_str(), m_elements.size(), (end - start));
+			sdl_helper::format(m_helper->loc(LANG_MSG_LOAD_SUCCESS).c_str(), m_elements.size(), (end - start));
 		n->add_msg(MESSAGE_INFO, result);
 	}
 }
