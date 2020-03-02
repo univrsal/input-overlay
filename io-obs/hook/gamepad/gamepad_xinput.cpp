@@ -16,29 +16,31 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *************************************************************************/
 
-#pragma once
-
-#include "util/util.hpp"
-#include "gamepad/binding/gamepad_binding.hpp"
-#include "gamepad/gamepad.hpp"
-#include <string>
-#include <layout_constants.h>
-#include <mutex>
-#include <stdio.h>
-#include <memory>
+#include "gamepad_xinput.hpp"
+#include "../../util/log.h"
 
 namespace gamepad {
+    handle_xinput::handle_xinput(int8_t id)
+        : handle(id)
+    {
+        m_pad = xinput_fix::create();
+    }
 
-void start_pad_hook();
-void end_pad_hook();
-bool init_pad_devices();
+    handle_xinput::~handle_xinput()
+    {
+        xinput_fix::free(m_pad);
+    }
 
-/* Mutex for thread safety */
-extern std::mutex mutex;
-/* Four structs containing info to query gamepads */
-extern std::unique_ptr<handle> pads[PAD_COUNT];
-/* Init state of hook */
-extern bool gamepad_hook_state;
-/* False will end thread */
-extern bool gamepad_hook_run_flag;
+    void handle_xinput::load()
+    {
+        unload();
+        update();
+        bdebug("Gamepad %i %s present", m_id, valid() ? "" : "not");
+    }
+
+    void handle_xinput::update()
+    {
+        m_valid = xinput_fix::update(m_pad, m_id);
+    }
+
 }

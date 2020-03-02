@@ -18,27 +18,22 @@
 
 #pragma once
 
-#include "util/util.hpp"
-#include "gamepad/binding/gamepad_binding.hpp"
-#include "gamepad/gamepad.hpp"
+#include "gamepad.hpp"
+#include <linux/joystick.h>
 #include <string>
-#include <layout_constants.h>
-#include <mutex>
-#include <stdio.h>
-#include <memory>
 
 namespace gamepad {
+        class handle_linux : public handle {
+                std::string m_path;
+                js_event m_event;
+                int m_device_id = -1;
+        public:
+                handle_linux(int8_t id);
+                ~handle_linux();
+                void load() override;
+                void unload() override;
 
-void start_pad_hook();
-void end_pad_hook();
-bool init_pad_devices();
-
-/* Mutex for thread safety */
-extern std::mutex mutex;
-/* Four structs containing info to query gamepads */
-extern std::unique_ptr<handle> pads[PAD_COUNT];
-/* Init state of hook */
-extern bool gamepad_hook_state;
-/* False will end thread */
-extern bool gamepad_hook_run_flag;
+                int read_event();
+                js_event *event();
+        };
 }

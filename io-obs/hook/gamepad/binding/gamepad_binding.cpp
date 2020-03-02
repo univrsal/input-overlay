@@ -16,29 +16,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *************************************************************************/
 
-#pragma once
-
-#include "util/util.hpp"
-#include "gamepad/binding/gamepad_binding.hpp"
-#include "gamepad/gamepad.hpp"
-#include <string>
-#include <layout_constants.h>
-#include <mutex>
-#include <stdio.h>
-#include <memory>
+#include "gamepad_binding.hpp"
 
 namespace gamepad {
 
-void start_pad_hook();
-void end_pad_hook();
-bool init_pad_devices();
+gamepad_binding::gamepad_binding()
+{
+	init_default();
+}
 
-/* Mutex for thread safety */
-extern std::mutex mutex;
-/* Four structs containing info to query gamepads */
-extern std::unique_ptr<handle> pads[PAD_COUNT];
-/* Init state of hook */
-extern bool gamepad_hook_state;
-/* False will end thread */
-extern bool gamepad_hook_run_flag;
 }
