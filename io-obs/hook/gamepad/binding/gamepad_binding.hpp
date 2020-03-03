@@ -19,24 +19,33 @@
 #pragma once
 
 #include <stdint.h>
+#include <QString>
+#include <vector>
+#include <map>
 
 class element_data_holder;
 
 namespace gamepad {
-struct binding {
+struct bind {
 	const char *setting;
 	const char *text_box_id;
 	uint8_t default_value;
 	bool axis_event; /* true if axis event */
 };
 
-
-class gamepad_binding {
+class bindings {
+protected:
+	static std::vector<bind> m_defaults;
+	std::map<uint16_t, bind> m_bindings;
+	QString m_name;
 
 public:
-	gamepad_binding();
-
-    virtual void init_default();
-    virtual void set_binding(uint8_t id, uint8_t binding, bool axis_event) = 0;
+	bindings();
+	virtual ~bindings() = 0;
+	virtual void set_binding(uint16_t id, uint16_t binding, bool axis_event);
 };
+
+extern std::vector<bindings> loaded_bindings;
+extern void save_bindings();
+extern void load_bindings();
 }

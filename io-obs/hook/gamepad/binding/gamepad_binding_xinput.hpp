@@ -18,11 +18,15 @@
 
 #pragma once
 
+#include "gamepad_binding.hpp"
 #include <vector>
 
 namespace gamepad {
-    class binding_xinput  {
-    public:
+class bindings_xinput : public bindings {
+		
+public:
+	bindings_xinput();
 
-    };
+	void set_binding(uint8_t id, uint8_t binding, bool axis_event) override;
+};
 }

@@ -41,7 +41,7 @@ class overlay_settings;
 }
 
 #ifdef _WIN32
-enum class element_type;
+enum element_type;
 #else
 #include <layout_constants.h>
 #endif

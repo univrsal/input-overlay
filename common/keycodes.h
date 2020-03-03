@@ -71,6 +71,14 @@
 #define VC_PAD_LT           (15u | VC_PAD_MASK)
 #define VC_PAD_RT           (16u | VC_PAD_MASK)
 
+/* Axis events left/right analog and left/right trigger */
+#define VC_PAD_LX           (17u | VC_PAD_MASK)
+#define VC_PAD_LY           (18u | VC_PAD_MASK)
+#define VC_PAD_RX           (19u | VC_PAD_MASK)
+#define VC_PAD_RY           (20u | VC_PAD_MASK)
+#define VC_PAD_LT           (21u | VC_PAD_MASK)
+#define VC_PAD_RT           (22u | VC_PAD_MASK)
+
 #define STICK_MAX_VAL       32767.f
 #if LINUX
 #define TRIGGER_MAX_VAL     STICK_MAX_VAL
