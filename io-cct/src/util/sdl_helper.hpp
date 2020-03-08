@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2019 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <universailp@web.de>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,14 +35,14 @@
 #include "font_helper.hpp"
 #include "util.hpp"
 
-#define CURSOR_ARROW    0
-#define CURSOR_SIZE_H   1
-#define CURSOR_SIZE_V   2
+#define CURSOR_ARROW 0
+#define CURSOR_SIZE_H 1
+#define CURSOR_SIZE_V 2
 #define CURSOR_SIZE_ALL 3
-#define CURSOR_I_BEAM   4
-#define CURSOR_SPECIAL  5 /* The element will handle the cursor */
+#define CURSOR_I_BEAM 4
+#define CURSOR_SPECIAL 5 /* The element will handle the cursor */
 
-#define LINE_SPACE      4
+#define LINE_SPACE 4
 
 class palette;
 
@@ -97,33 +97,21 @@ public:
 	void util_text(const std::string *text, int x, int y, const SDL_Color *color, uint8_t font, uint8_t scale) const;
 
 	void util_text_rot(const std::string *text, int x, int y, const SDL_Color *color, double angle,
-	                   uint8_t font = FONT_WSTRING) const;
+					   uint8_t font = FONT_WSTRING) const;
 
 	SDL_Rect util_text_dim(const std::string *text, uint8_t font = FONT_WSTRING) const;
 
 	SDL_Point *util_window_size();
 
-	const SDL_Point *util_mouse_pos() const
-	{
-		return &m_mouse_pos;
-	}
+	const SDL_Point *util_mouse_pos() const { return &m_mouse_pos; }
 
-	int util_mouse_x() const
-	{
-		return m_mouse_pos.x;
-	}
+	int util_mouse_x() const { return m_mouse_pos.x; }
 
-	int util_mouse_y() const
-	{
-		return m_mouse_pos.y;
-	}
+	int util_mouse_y() const { return m_mouse_pos.y; }
 
 	void util_cut_string(std::string &s, int max_width, bool front) const;
 
-	uint8_t util_large_text_height() const
-	{
-		return m_large_font_height;
-	}
+	uint8_t util_large_text_height() const { return m_large_font_height; }
 
 	uint8_t util_default_text_height() const;
 
@@ -131,49 +119,34 @@ public:
 
 	static void util_open_url(std::string url);
 
-	template<typename ... Args> static std::string format(const char *format, Args ... args);
+	template<typename... Args> static std::string format(const char *format, Args... args);
 
 	bool util_check_texture_path(const char *path) const;
 
-	bool util_is_windows() const
-	{
-		return m_windows;
-	}
+	bool util_is_windows() const { return m_windows; }
 
 	static std::wstring util_utf8_to_wstring(const std::string &str);
 
 	static std::string util_wstring_to_utf8(const std::wstring &str);
 
 	void format_text(const std::string *s, std::vector<std::unique_ptr<std::string>> &out, SDL_Rect &dim,
-	                 uint8_t font = FONT_WSTRING) const;
+					 uint8_t font = FONT_WSTRING) const;
 
 	std::string loc(const char *id) const;
 
-	template<typename ... Args> std::string format_loc(const char *unlocalized, Args ... args);
+	template<typename... Args> std::string format_loc(const char *unlocalized, Args... args);
 
-	localization *get_localization() const
-	{
-		return m_localization;
-	}
+	localization *get_localization() const { return m_localization; }
 
 	static uint32_t vc_to_sdl_key(uint16_t key);
 
 	static uint16_t sdl_key_to_vc(uint32_t key);
 
-	SDL_Renderer *renderer() const
-	{
-		return m_sdl_renderer;
-	}
+	SDL_Renderer *renderer() const { return m_sdl_renderer; }
 
-	SDL_Window *window() const
-	{
-		return m_sdl_window;
-	}
+	SDL_Window *window() const { return m_sdl_window; }
 
-	palette *get_palette() const
-	{
-		return m_palette;
-	}
+	palette *get_palette() const { return m_palette; }
 
 	void init_controllers();
 
@@ -223,7 +196,6 @@ private:
 		}
 	}
 
-
 	SDL_Point m_window_size;
 	SDL_Point m_mouse_pos;
 	SDL_Renderer *m_sdl_renderer;
@@ -254,7 +226,7 @@ private:
 	SDL_Cursor *m_i_beam = nullptr;
 	SDL_Cursor *m_arrow = nullptr;
 
-	std::vector<SDL_GameController*> m_controllers;
+	std::vector<SDL_GameController *> m_controllers;
 
 	/* Frame timing */
 	Timer m_frame_timer;
@@ -263,19 +235,19 @@ private:
 	uint32_t m_counted_frames = 0;
 };
 
-template<typename ...Args> std::string sdl_helper::format(const char *format, Args ... args)
+template<typename... Args> std::string sdl_helper::format(const char *format, Args... args)
 {
-	const size_t size = snprintf(nullptr, 0, format, args ...) + 1;
+	const size_t size = snprintf(nullptr, 0, format, args...) + 1;
 	std::unique_ptr<char[]> buf(new char[size]);
-	snprintf(buf.get(), size, format, args ...);
+	snprintf(buf.get(), size, format, args...);
 	return std::string(buf.get(), buf.get() + size - 1);
 }
 
-template<typename ...Args> std::string sdl_helper::format_loc(const char *unlocalized, Args ... args)
+template<typename... Args> std::string sdl_helper::format_loc(const char *unlocalized, Args... args)
 {
 	auto localized = loc(unlocalized);
-	const size_t size = snprintf(nullptr, 0, localized.c_str(), args ...) + 1;
+	const size_t size = snprintf(nullptr, 0, localized.c_str(), args...) + 1;
 	std::unique_ptr<char[]> buf(new char[size]);
-	snprintf(buf.get(), size, localized.c_str(), args ...);
+	snprintf(buf.get(), size, localized.c_str(), args...);
 	return std::string(buf.get(), buf.get() + size - 1);
 }

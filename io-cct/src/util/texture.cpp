@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2019 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <universailp@web.de>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -145,9 +145,9 @@ void texture::draw(SDL_Renderer *renderer, const SDL_Point *p) const
 }
 
 void texture::draw(SDL_Renderer *renderer, const SDL_Point *p, const int scaled_offset_x,
-                   const int scaled_offset_y) const
+				   const int scaled_offset_y) const
 {
-    SDL_Rect temp_rect = {p->x, p->y, m_dimensions.w, m_dimensions.h};
+	SDL_Rect temp_rect = {p->x, p->y, m_dimensions.w, m_dimensions.h};
 
 	if (m_scale != nullptr) {
 		temp_rect.w *= static_cast<int>(*m_scale);
@@ -172,7 +172,7 @@ void texture::draw(SDL_Renderer *renderer, const int x, const int y, const uint8
 }
 
 void texture::draw(SDL_Renderer *renderer, const SDL_Rect *target_dim, const SDL_Rect *cutout,
-                   const uint8_t alpha) const
+				   const uint8_t alpha) const
 {
 	if (alpha < 255) {
 		SDL_SetTextureAlphaMod(m_sdl_texture, alpha);

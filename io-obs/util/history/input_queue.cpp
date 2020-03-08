@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2019 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <universailp@web.de>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -107,14 +107,14 @@ void input_queue::render(gs_effect_t *effect)
 
 void input_queue::clear()
 {
-    /* Not zero, since then the source is hard to
+	/* Not zero, since then the source is hard to
      * move and click on
      */
-    m_handler_mutex.lock();
-    if (m_current_handler)
-        m_current_handler->clear();
-    m_queued_entry.clear();
-    m_height = 50;
-    m_width = 50;
-    m_handler_mutex.unlock();
+	m_handler_mutex.lock();
+	if (m_current_handler)
+		m_current_handler->clear();
+	m_queued_entry.clear();
+	m_height = 50;
+	m_width = 50;
+	m_handler_mutex.unlock();
 }

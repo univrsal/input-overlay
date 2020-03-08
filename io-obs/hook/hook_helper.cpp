@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2019 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <universailp@web.de>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -141,7 +141,7 @@ void init_data_holder()
 	data_initialized = input_data;
 #ifdef _DEBUG
 	blog(LOG_INFO, "[input-overlay] libuiohook init start... Dataholder@0x%lX\n",
-	     reinterpret_cast<uint64_t>(input_data));
+		 reinterpret_cast<uint64_t>(input_data));
 #endif
 }
 
@@ -249,7 +249,7 @@ void process_event(uiohook_event *const event)
 	case EVENT_KEY_PRESSED:
 	case EVENT_KEY_RELEASED: /* Fallthrough */
 		input_data->add_data(event->data.keyboard.keycode,
-		                     new element_data_button(event->type == EVENT_KEY_PRESSED ? BS_PRESSED : BS_RELEASED));
+							 new element_data_button(event->type == EVENT_KEY_PRESSED ? BS_PRESSED : BS_RELEASED));
 		break;
 	case EVENT_MOUSE_WHEEL:
 		last_wheel = os_gettime_ns();
@@ -264,7 +264,7 @@ void process_event(uiohook_event *const event)
 	case EVENT_MOUSE_PRESSED:
 	case EVENT_MOUSE_RELEASED:
 		input_data->add_data(util_mouse_to_vc(event->data.mouse.button),
-		                     new element_data_button(event->type == EVENT_MOUSE_PRESSED ? BS_PRESSED : BS_RELEASED));
+							 new element_data_button(event->type == EVENT_MOUSE_PRESSED ? BS_PRESSED : BS_RELEASED));
 		break;
 
 		last_character = event->data.keyboard.keychar;
@@ -281,12 +281,12 @@ void process_event(uiohook_event *const event)
 
 int hook_enable()
 {
-    /* Lock the thread control mutex.  This will be unlocked when the
+	/* Lock the thread control mutex.  This will be unlocked when the
            thread has finished starting, or when it has fully stopped. */
 #ifdef _WIN32
-    WaitForSingleObject(hook_control_mutex, INFINITE);
+	WaitForSingleObject(hook_control_mutex, INFINITE);
 #else
-    pthread_mutex_lock(&hook_control_mutex);
+	pthread_mutex_lock(&hook_control_mutex);
 #endif
 
 	/* Set the initial status. */
@@ -307,7 +307,7 @@ int hook_enable()
 	DWORD hook_thread_id;
 	DWORD *hook_thread_status = (DWORD *)malloc(sizeof(DWORD));
 	hook_thread =
-	    CreateThread(nullptr, 0, (LPTHREAD_START_ROUTINE)hook_thread_proc, hook_thread_status, 0, &hook_thread_id);
+		CreateThread(nullptr, 0, (LPTHREAD_START_ROUTINE)hook_thread_proc, hook_thread_status, 0, &hook_thread_id);
 	if (hook_thread != INVALID_HANDLE_VALUE) {
 #else
 	int *hook_thread_status = (int *)malloc(sizeof(int));
@@ -317,34 +317,34 @@ int hook_enable()
 		/* Attempt to set the thread priority to time critical. */
 		if (SetThreadPriority(hook_thread, THREAD_PRIORITY_TIME_CRITICAL) == 0) {
 			blog(LOG_WARNING,
-			     "[input-overlay] %s [%u]: Could not set thread priority %li for hook thread %#p! (%#lX)\n",
-			     __FUNCTION__, __LINE__, (long)THREAD_PRIORITY_TIME_CRITICAL, hook_thread,
-			     (unsigned long)GetLastError());
+				 "[input-overlay] %s [%u]: Could not set thread priority %li for hook thread %#p! (%#lX)\n",
+				 __FUNCTION__, __LINE__, (long)THREAD_PRIORITY_TIME_CRITICAL, hook_thread,
+				 (unsigned long)GetLastError());
 		}
 #elif (defined(__APPLE__) && defined(__MACH__)) || _POSIX_C_SOURCE >= 200112L
-        /* Some POSIX revisions do not support pthread_setschedprio so we will
+		/* Some POSIX revisions do not support pthread_setschedprio so we will
                use pthread_setschedparam instead. */
-        struct sched_param param = {.sched_priority = priority};
-        if (pthread_setschedparam(hook_thread, SCHED_OTHER, &param) != 0) {
-            blog(LOG_WARNING, "[input-overlay] %s [%u]: Could not set thread priority %i for thread 0x%lX!\n",
-                 __FUNCTION__, __LINE__, priority, (unsigned long)hook_thread);
-        }
+		struct sched_param param = {.sched_priority = priority};
+		if (pthread_setschedparam(hook_thread, SCHED_OTHER, &param) != 0) {
+			blog(LOG_WARNING, "[input-overlay] %s [%u]: Could not set thread priority %i for thread 0x%lX!\n",
+				 __FUNCTION__, __LINE__, priority, (unsigned long)hook_thread);
+		}
 #else
 	/* Raise the thread priority using glibc pthread_setschedprio. */
 	if (pthread_setschedprio(hook_thread, priority) != 0) {
 		blog(LOG_WARNING, "[input-overlay] %s [%u]: Could not set thread priority %i for thread 0x%lX!\n", __FUNCTION__,
-		     __LINE__, priority, (unsigned long)hook_thread);
+			 __LINE__, priority, (unsigned long)hook_thread);
 	}
 #endif
-        /* Wait for the thread to indicate that it has passed the
+		/* Wait for the thread to indicate that it has passed the
                initialization portion by blocking until either a EVENT_HOOK_ENABLED
                event is received or the thread terminates.
                NOTE This unlocks the hook_control_mutex while we wait.*/
 
 #ifdef _WIN32
-	    WaitForSingleObject(hook_control_cond, INFINITE);
+		WaitForSingleObject(hook_control_cond, INFINITE);
 #else
-	    pthread_cond_wait(&hook_control_cond, &hook_control_mutex);
+		pthread_cond_wait(&hook_control_cond, &hook_control_mutex);
 #endif
 
 #ifdef _WIN32
@@ -352,7 +352,7 @@ int hook_enable()
 #else
 		if (pthread_mutex_trylock(&hook_running_mutex) == 0) {
 #endif
-            /* Lock Successful; The hook is not running but the hook_control_cond
+			/* Lock Successful; The hook is not running but the hook_control_cond
                    was signaled!  This indicates that there was a startup problem!
                    Get the status back from the thread. */
 #ifdef _WIN32

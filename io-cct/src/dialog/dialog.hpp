@@ -14,13 +14,13 @@
 #include <vector>
 #include <memory>
 
-#define DIALOG_DRAGGABLE        1 << 0 /* Allow moving by dragging the title bar*/
-#define DIALOG_CENTERED         1 << 1 /* Always center on window resize */
-#define DIALOG_TEXTINPUT        1 << 2 /* Hint SDL to read text input */
-#define DIALOG_TOP_MOST         1 << 3 /* Draws background tint */
-#define DIALOG_FLUID            1 << 4 /* Dialog adapts to window size. Includes DIALOG_CENTERED */
+#define DIALOG_DRAGGABLE 1 << 0 /* Allow moving by dragging the title bar*/
+#define DIALOG_CENTERED 1 << 1  /* Always center on window resize */
+#define DIALOG_TEXTINPUT 1 << 2 /* Hint SDL to read text input */
+#define DIALOG_TOP_MOST 1 << 3  /* Draws background tint */
+#define DIALOG_FLUID 1 << 4     /* Dialog adapts to window size. Includes DIALOG_CENTERED */
 
-#define FLUID_BORDER            32
+#define FLUID_BORDER 32
 
 class sdl_helper;
 
@@ -74,9 +74,8 @@ protected:
 	int8_t m_focused_element_id = 0;
 
 	std::vector<std::unique_ptr<gui_element>> m_screen_elements;
-	std::vector<gui_element*> m_tab_items;
+	std::vector<gui_element *> m_tab_items;
 	std::string m_title;
-
 
 	int m_offset_x, m_offset_y{};
 	bool m_is_dragging = false;

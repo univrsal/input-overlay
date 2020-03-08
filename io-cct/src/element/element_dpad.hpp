@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2019 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <universailp@web.de>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,14 +22,12 @@
 
 class ElementDPad : public element_texture {
 public:
-	ElementDPad()
-	{
+	ElementDPad(){
 		/* NO-OP */
 	};
 
 	ElementDPad(const std::string &id, const SDL_Point pos, const SDL_Rect mapping, const uint8_t z)
-	    : element_texture(
-	        id, pos, mapping, z)
+		: element_texture(id, pos, mapping, z)
 	{
 		/* NO-OP */
 	}

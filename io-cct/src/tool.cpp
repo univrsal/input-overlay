@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2019 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <universailp@web.de>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -118,7 +118,7 @@ void tool::action_performed(const uint8_t type)
 		s = dynamic_cast<dialog_setup *>(m_toplevel);
 		m_element_settings = new dialog_element_settings(m_helper, this);
 		m_config = new config(s->get_texture_path(), s->get_config_path(), s->get_default_dim(), s->get_rulers(),
-		                      m_helper, m_element_settings);
+							  m_helper, m_element_settings);
 
 		if (s->should_load_cfg())
 			m_config->read_config(m_notify);
@@ -284,7 +284,7 @@ void tool::handle_input()
 			if (m_config->selected()) {
 				m_state = IN_NEW_ELEMENT;
 				m_toplevel =
-				    new dialog_new_element(m_helper, LANG_DIALOG_NEW_ELEMENT, this, m_config->selected()->get_type());
+					new dialog_new_element(m_helper, LANG_DIALOG_NEW_ELEMENT, this, m_config->selected()->get_type());
 				m_toplevel->init();
 				d = dynamic_cast<dialog_new_element *>(m_toplevel);
 				d->set_default_dim(m_config->get_default_dim().x, m_config->get_default_dim().y);

@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2019 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <universailp@web.de>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -100,8 +100,8 @@ bool data_holder::write_to_buffer(netlib_byte_buf *buffer)
 
 	if (m_new_mouse_data) {
 		success = netlib_write_uint8(buffer, MSG_MOUSE_DATA) && netlib_write_int16(buffer, m_mouse_x) &&
-		          netlib_write_int16(buffer, m_mouse_y) && netlib_write_int8(buffer, m_wheel_direction) &&
-		          netlib_write_int16(buffer, m_wheel_amount) && netlib_write_int8(buffer, m_wheel_pressed);
+				  netlib_write_int16(buffer, m_mouse_y) && netlib_write_int8(buffer, m_wheel_direction) &&
+				  netlib_write_int16(buffer, m_wheel_amount) && netlib_write_int8(buffer, m_wheel_pressed);
 
 		/* TODO: write other mouse data */
 		m_new_mouse_data = false;
@@ -161,7 +161,7 @@ void dispatch_proc(uiohook_event *const event)
 				data.set_wheel(event->type == EVENT_MOUSE_PRESSED);
 			else
 				data.set_button(util_mouse_fix(event->data.mouse.button) | VC_MOUSE_MASK,
-				                event->type == EVENT_MOUSE_PRESSED);
+								event->type == EVENT_MOUSE_PRESSED);
 		}
 		break;
 	case EVENT_MOUSE_WHEEL:

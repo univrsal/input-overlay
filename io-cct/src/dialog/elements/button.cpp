@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2019 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <universailp@web.de>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,9 +21,9 @@
 #include "../../util/palette.hpp"
 
 button::button(const int8_t id, const int x, const int y, const char *text, dialog *parent)
-    : button(id, x, y, 100, text, parent)
+	: button(id, x, y, 100, text, parent)
 {
-    /* NO-OP*/
+	/* NO-OP*/
 }
 
 button::button(const int8_t id, const int x, const int y, const int w, const char *text, dialog *parent)
@@ -72,7 +72,7 @@ void button::select_state(const bool state)
 void button::draw_background()
 {
 	const auto color = (m_hovered || m_tab_focused) ? get_helper()->get_palette()->light_gray()
-	                                                : get_helper()->get_palette()->dark_gray();
+													: get_helper()->get_palette()->dark_gray();
 
 	if (m_pressed) {
 		auto dim = *get_dimensions();
@@ -80,12 +80,12 @@ void button::draw_background()
 		dim.y += 2;
 		get_helper()->util_fill_rect_shadow(&dim, color, 1);
 		get_helper()->util_text(&m_localized_text, dim.x + m_text_pos.x, dim.y + m_text_pos.y,
-		                        get_helper()->get_palette()->white(), m_font);
+								get_helper()->get_palette()->white(), m_font);
 	} else {
 		get_helper()->util_fill_rect_shadow(get_dimensions(), color);
 
 		get_helper()->util_text(&m_localized_text, get_dimensions()->x + m_text_pos.x,
-		                        get_dimensions()->y + m_text_pos.y, get_helper()->get_palette()->white(), m_font);
+								get_dimensions()->y + m_text_pos.y, get_helper()->get_palette()->white(), m_font);
 	}
 }
 

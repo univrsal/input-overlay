@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2019 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <universailp@web.de>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,12 +28,12 @@ void ElementDPad::draw(texture *atlas, coordinate_system *cs, const bool selecte
 	get_abs_dim(cs);
 	if (m_dir == DD_CENTER) {
 		atlas->draw(cs->get_helper()->renderer(), &m_dimensions_scaled, &m_mapping,
-		            (alpha && !selected) ? ELEMENT_HIDE_ALPHA : 255);
+					(alpha && !selected) ? ELEMENT_HIDE_ALPHA : 255);
 	} else {
 		auto temp = m_mapping;
 		temp.x += (CFG_INNER_BORDER + temp.w) * m_dir;
 		atlas->draw(cs->get_helper()->renderer(), &m_dimensions_scaled, &temp,
-		            (alpha && !selected) ? ELEMENT_HIDE_ALPHA : 255);
+					(alpha && !selected) ? ELEMENT_HIDE_ALPHA : 255);
 	}
 
 	if (selected)

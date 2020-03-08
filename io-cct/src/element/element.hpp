@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2019 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <universailp@web.de>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
 #include <utility>
 #include <SDL.h>
 
-#define ELEMENT_HIDE_ALPHA  60
+#define ELEMENT_HIDE_ALPHA 60
 
 enum element_error {
 	EE_VALID,
@@ -70,70 +70,31 @@ public:
 
 	void set_pos(int x, int y);
 
-	void set_id(std::string id)
-	{
-		m_id = std::move(id);
-	}
+	void set_id(std::string id) { m_id = std::move(id); }
 
-	void set_z_level(const uint8_t z)
-	{
-		m_z_level = z;
-	}
+	void set_z_level(const uint8_t z) { m_z_level = z; }
 
-	uint8_t get_z_level() const
-	{
-		return m_z_level;
-	}
+	uint8_t get_z_level() const { return m_z_level; }
 
-	std::string *get_id()
-	{
-		return &m_id;
-	}
+	std::string *get_id() { return &m_id; }
 
-	int get_x() const
-	{
-		return m_position.x;
-	}
+	int get_x() const { return m_position.x; }
 
-	int get_y() const
-	{
-		return m_position.y;
-	}
+	int get_y() const { return m_position.y; }
 
-	int get_w() const
-	{
-		return m_mapping.w;
-	}
+	int get_w() const { return m_mapping.w; }
 
-	int get_h() const
-	{
-		return m_mapping.h;
-	}
+	int get_h() const { return m_mapping.h; }
 
-	int get_u() const
-	{
-		return m_mapping.x;
-	}
+	int get_u() const { return m_mapping.x; }
 
-	int get_v() const
-	{
-		return m_mapping.y;
-	}
+	int get_v() const { return m_mapping.y; }
 
-	virtual int get_vc()
-	{
-		return 0;
-	}
+	virtual int get_vc() { return 0; }
 
-	element_type get_type() const
-	{
-		return m_type;
-	}
+	element_type get_type() const { return m_type; }
 
-	SDL_Rect *get_mapping()
-	{
-		return &m_mapping;
-	}
+	SDL_Rect *get_mapping() { return &m_mapping; }
 
 	virtual void handle_event(SDL_Event *event, sdl_helper *helper) = 0;
 

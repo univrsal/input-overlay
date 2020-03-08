@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2019 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <universailp@web.de>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,8 +34,7 @@ class element;
 class dialog_element_settings : public dialog {
 public:
 	dialog_element_settings(sdl_helper *sdl, tool *tool)
-	    : dialog(sdl, SDL_Rect{1030, 200, 240, 400},
-	             LANG_DIALOG_ELEMENT_SETTINGS)
+		: dialog(sdl, SDL_Rect{1030, 200, 240, 400}, LANG_DIALOG_ELEMENT_SETTINGS)
 	{
 		m_tool = tool;
 	};
@@ -58,60 +57,27 @@ public:
 
 	void select_element(element *e) const;
 
-	int get_x() const
-	{
-		return SDL_atoi(m_element_x->c_str());
-	}
+	int get_x() const { return SDL_atoi(m_element_x->c_str()); }
 
-	int get_y() const
-	{
-		return SDL_atoi(m_element_y->c_str());
-	}
+	int get_y() const { return SDL_atoi(m_element_y->c_str()); }
 
-	int get_z() const
-	{
-		return SDL_atoi(m_element_z_level->c_str());
-	}
+	int get_z() const { return SDL_atoi(m_element_z_level->c_str()); }
 
-	int get_u() const
-	{
-		return SDL_atoi(m_element_u->c_str());
-	}
+	int get_u() const { return SDL_atoi(m_element_u->c_str()); }
 
-	int get_v() const
-	{
-		return SDL_atoi(m_element_v->c_str());
-	}
+	int get_v() const { return SDL_atoi(m_element_v->c_str()); }
 
-	int get_w() const
-	{
-		return SDL_atoi(m_element_width->c_str());
-	}
+	int get_w() const { return SDL_atoi(m_element_width->c_str()); }
 
-	int get_h() const
-	{
-		return SDL_atoi(m_element_height->c_str());
-	}
+	int get_h() const { return SDL_atoi(m_element_height->c_str()); }
 
-	uint16_t get_vc() const
-	{
-		return SDL_strtol(m_element_vc->c_str(), nullptr, 16);
-	}
+	uint16_t get_vc() const { return SDL_strtol(m_element_vc->c_str(), nullptr, 16); }
 
-	SDL_Rect get_mapping() const
-	{
-		return {get_u(), get_v(), get_w(), get_h()};
-	}
+	SDL_Rect get_mapping() const { return {get_u(), get_v(), get_w(), get_h()}; }
 
-	const std::string *get_id() const
-	{
-		return m_element_id->get_text();
-	}
+	const std::string *get_id() const { return m_element_id->get_text(); }
 
-	void alert_element_id() const
-	{
-		m_element_id->set_alert(true);
-	}
+	void alert_element_id() const { m_element_id->set_alert(true); }
 
 private:
 	bool m_finished = false;

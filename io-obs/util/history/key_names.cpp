@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2019 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <universailp@web.de>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,12 +51,12 @@ bool key_names::empty() const
 
 const char *key_names::get_name(const uint16_t vc)
 {
-    /* Users can use an empty name in the config to
+	/* Users can use an empty name in the config to
      * prevent certain keys from showing up in input-history
      * empty name = key is disabled
      */
-    if (m_names.find(vc) != m_names.end() && !m_names[vc].empty())
-        return m_names[vc].c_str();
+	if (m_names.find(vc) != m_names.end() && !m_names[vc].empty())
+		return m_names[vc].c_str();
 
-    return nullptr;
+	return nullptr;
 }

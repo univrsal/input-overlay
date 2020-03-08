@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2019 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <universailp@web.de>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,7 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *************************************************************************/
-
 
 #pragma once
 
@@ -58,12 +57,7 @@
 
 #define TRIGGER_THRESHOLD 0.2f
 
-enum overlay_flag {
-	OF_LEFT_STICK = 1 << 0,
-	OF_RIGHT_STICK = 1 << 1,
-	OF_GAMEPAD = 1 << 2,
-	OF_MOUSE = 1 << 3
-};
+enum overlay_flag { OF_LEFT_STICK = 1 << 0, OF_RIGHT_STICK = 1 << 1, OF_GAMEPAD = 1 << 2, OF_MOUSE = 1 << 3 };
 
 enum dpad_texture {
 	DT_CENTER,

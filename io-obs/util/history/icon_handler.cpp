@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2019 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <universailp@web.de>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@ void icon_handler::load_icons(const char *img, const char *cfg)
 void icon_handler::update()
 {
 	if (m_settings->icon_cfg_path && strlen(m_settings->icon_cfg_path) > 0 && m_settings->icon_path &&
-	    strlen(m_settings->icon_path) > 0)
+		strlen(m_settings->icon_path) > 0)
 		load_icons(m_settings->icon_path, m_settings->icon_cfg_path);
 
 	switch (m_settings->dir) {

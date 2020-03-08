@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2019 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <universailp@web.de>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,18 +23,17 @@
 
 #define WHEEL_RESET 150
 
-#define POS_WHEEL_NONE      0
-#define POS_WHEEL_PRESSED   1
-#define POS_WHEEL_UP        2
-#define POS_WHEEL_DOWN      3
+#define POS_WHEEL_NONE 0
+#define POS_WHEEL_PRESSED 1
+#define POS_WHEEL_UP 2
+#define POS_WHEEL_DOWN 3
 
 class ElementScrollWheel : public element_texture {
 public:
 	ElementScrollWheel()
-	    : element_texture()
-	{
-		/* NO-OP */
-	};
+		: element_texture(){
+			  /* NO-OP */
+		  };
 
 	ElementScrollWheel(const std::string &id, SDL_Point pos, SDL_Rect mapping, uint8_t z);
 

@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2019 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <universailp@web.de>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,13 +41,10 @@ public:
 			m_items.emplace_back(get_helper()->loc(item.c_str()));
 
 		m_item_box = {get_left(), get_bottom() - 1, get_width(),
-		              static_cast<int>(m_items.size() * m_item_v_space + ITEM_V_SPACE)};
+					  static_cast<int>(m_items.size() * m_item_v_space + ITEM_V_SPACE)};
 	};
 
-	uint8_t get_selected() const
-	{
-		return m_selected_id;
-	}
+	uint8_t get_selected() const { return m_selected_id; }
 
 	void select_item(const uint8_t id)
 	{

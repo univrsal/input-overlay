@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2019 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <universailp@web.de>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,18 +21,17 @@
 #include <string>
 #include <map>
 
-class key_names
-{
-    std::map<uint16_t, std::string> m_names;
+class key_names {
+	std::map<uint16_t, std::string> m_names;
 
 public:
-    key_names() = default;
+	key_names() = default;
 
-    ~key_names() = default;
+	~key_names() = default;
 
-    void load_from_file(const char* path);
+	void load_from_file(const char *path);
 
-    bool empty() const;
+	bool empty() const;
 
-    const char* get_name(uint16_t vc);
+	const char *get_name(uint16_t vc);
 };

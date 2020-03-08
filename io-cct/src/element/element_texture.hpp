@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2019 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <universailp@web.de>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,8 +22,7 @@
 
 class element_texture : public element {
 public:
-	element_texture()
-	{
+	element_texture(){
 		/* NO-OP */
 	};
 
@@ -39,8 +38,7 @@ public:
 
 	void update_settings(dialog_element_settings *dialog) override;
 
-	void handle_event(SDL_Event *event, sdl_helper *helper) override
-	{
+	void handle_event(SDL_Event *event, sdl_helper *helper) override{
 		/* NO-OP */
 	};
 

@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2019 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <universailp@web.de>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,38 +25,35 @@
 #include <Windows.h>
 #endif
 
-#define TIMEOUT_NS  (1000 * 1000 * 1000)
-namespace network
-{
-    class io_server;
+#define TIMEOUT_NS (1000 * 1000 * 1000)
+namespace network {
+class io_server;
 
-    extern bool network_state; /* Initialization state*/
-    extern bool network_flag; /* Running state */
-    /* Set in obs_module_load */
-    extern bool local_input;
-    extern char local_ip[16];
+extern bool network_state; /* Initialization state*/
+extern bool network_flag;  /* Running state */
+/* Set in obs_module_load */
+extern bool local_input;
+extern char local_ip[16];
 
-    const char* get_status();
+const char *get_status();
 
-    void start_network(uint16_t port);
+void start_network(uint16_t port);
 
-    void close_network();
+void close_network();
 
 #ifdef _WIN32
-    DWORD WINAPI network_handler(LPVOID arg);
+DWORD WINAPI network_handler(LPVOID arg);
 #else
 
-    void* network_handler(void*);
+void *network_handler(void *);
 
 #endif
 
-    char* read_text(tcp_socket sock, char** buf);
+char *read_text(tcp_socket sock, char **buf);
 
-    message read_msg_from_buffer(netlib_byte_buf* buf);
+message read_msg_from_buffer(netlib_byte_buf *buf);
 
-    int send_message(tcp_socket sock, message msg);
+int send_message(tcp_socket sock, message msg);
 
-    extern io_server* server_instance;
+extern io_server *server_instance;
 }
-
-

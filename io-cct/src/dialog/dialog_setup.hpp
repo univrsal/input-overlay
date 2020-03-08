@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2019 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <universailp@web.de>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,8 +33,7 @@ class notifier;
 
 class dialog_setup : public dialog {
 public:
-	dialog_setup(sdl_helper *sdl, notifier *notifier, tool *t)
-	    : dialog(sdl, SDL_Point{500, 280}, LANG_DIALOG_SETUP)
+	dialog_setup(sdl_helper *sdl, notifier *notifier, tool *t) : dialog(sdl, SDL_Point{500, 280}, LANG_DIALOG_SETUP)
 	{
 		m_notifier = notifier;
 		m_tool = t;
@@ -68,6 +67,7 @@ private:
 	textbox *m_v_space = nullptr;
 
 	tool *m_tool = nullptr;
+
 public:
 	SDL_Point get_rulers() const;
 };

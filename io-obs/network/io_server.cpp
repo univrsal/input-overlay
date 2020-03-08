@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2019 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <universailp@web.de>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,10 +39,10 @@ io_server::io_server(const uint16_t port) : m_server(nullptr)
 
 io_server::~io_server()
 {
-    /* Smart pointer will delete
+	/* Smart pointer will delete
          * and destructor will close socket
          */
-    m_clients.clear();
+	m_clients.clear();
 }
 
 bool io_server::init()
@@ -55,7 +55,7 @@ bool io_server::init()
 	} else {
 		const auto ipaddr = netlib_swap_BE32(m_ip.host);
 		DEBUG_LOG(LOG_INFO, "Remote connection open on %d.%d.%d.%d:%hu", ipaddr >> 24, ipaddr >> 16 & 0xff,
-		          ipaddr >> 8 & 0xff, ipaddr & 0xff, m_ip.port);
+				  ipaddr >> 8 & 0xff, ipaddr & 0xff, m_ip.port);
 
 		m_server = netlib_tcp_open(&m_ip);
 		m_buffer = netlib_alloc_byte_buf(BUFFER_SIZE);
@@ -163,15 +163,15 @@ void io_server::roundtrip()
 	if (!m_clients.empty()) {
 		const auto old = server_instance->m_num_clients;
 		m_clients.erase(std::remove_if(m_clients.begin(), m_clients.end(),
-		                               [](const std::unique_ptr<io_client> &o) {
-			                               if (!o->valid()) {
+									   [](const std::unique_ptr<io_client> &o) {
+										   if (!o->valid()) {
 											   server_instance->m_num_clients--;
 											   DEBUG_LOG(LOG_INFO, "%s disconnected.", o->name());
 											   return true;
 										   }
 										   return false;
-		                               }),
-		                m_clients.end());
+									   }),
+						m_clients.end());
 
 		if ((os_gettime_ns() - m_last_refresh) / (1000 * 1000) > io_config::refresh_rate) {
 			for (auto &client : m_clients) {

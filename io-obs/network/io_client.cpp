@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2019 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <universailp@web.de>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -93,7 +93,7 @@ bool io_client::read_event(netlib_byte_buf *buffer, const message msg)
 		uint8_t pressed = 0;
 
 		flag = netlib_read_int16(buffer, &x) && netlib_read_int16(buffer, &y) && netlib_read_int8(buffer, &dir_read) &&
-		       netlib_read_int16(buffer, &amount) && netlib_read_uint8(buffer, &pressed);
+			   netlib_read_int16(buffer, &amount) && netlib_read_uint8(buffer, &pressed);
 
 		if (flag) {
 			if (dir_read >= (int)DIR_NONE && dir_read <= (int)DIR_UP)
@@ -113,7 +113,7 @@ bool io_client::read_event(netlib_byte_buf *buffer, const message msg)
 			/* Add all buttons to the holder*/
 			for (auto &btn : xinput_fix::all_codes) {
 				m_holder.add_gamepad_data(pad_id, xinput_fix::to_vc(btn),
-				                          new element_data_button((pad_buttons & btn) > 0 ? BS_PRESSED : BS_RELEASED));
+										  new element_data_button((pad_buttons & btn) > 0 ? BS_PRESSED : BS_RELEASED));
 			}
 
 			/* Analog sticks are sent before triggers */
@@ -121,7 +121,7 @@ bool io_client::read_event(netlib_byte_buf *buffer, const message msg)
 
 			if (temp) {
 				temp->set_state((pad_buttons & xinput_fix::CODE_LEFT_THUMB) ? BS_PRESSED : BS_RELEASED,
-				                (pad_buttons & xinput_fix::CODE_RIGHT_THUMB) ? BS_PRESSED : BS_RELEASED);
+								(pad_buttons & xinput_fix::CODE_RIGHT_THUMB) ? BS_PRESSED : BS_RELEASED);
 			}
 
 			m_holder.add_gamepad_data(pad_id, VC_STICK_DATA, temp);

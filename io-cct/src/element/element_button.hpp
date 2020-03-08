@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2019 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <universailp@web.de>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,12 +22,7 @@
 
 class ElementButton : public element_texture {
 public:
-	ElementButton()
-	    : element_texture(),
-	      m_pressed_mapping()
-	{
-		/* NO-OP */
-	}
+	ElementButton() : element_texture(), m_pressed_mapping() { /* NO-OP */ }
 
 	ElementButton(const std::string &id, SDL_Point pos, SDL_Rect mapping, uint16_t vc, uint8_t z);
 
@@ -43,10 +38,7 @@ public:
 
 	void handle_event(SDL_Event *event, sdl_helper *helper) override;
 
-	int get_vc() override
-	{
-		return m_keycode;
-	}
+	int get_vc() override { return m_keycode; }
 
 	static ElementButton *read_from_file(ccl_config *file, const std::string &id, SDL_Point *default_dim);
 

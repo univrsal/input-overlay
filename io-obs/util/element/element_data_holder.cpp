@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2019 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <universailp@web.de>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -142,7 +142,7 @@ void element_data_holder::populate_vector(std::vector<uint16_t> &vec, sources::h
 		if (data.first == VC_MOUSE_DATA)
 			continue;
 		if ((data.first >> 8) == (VC_MOUSE_MASK >> 8) &&
-		    !(settings->flags & (int)sources::history_flags::INCLUDE_MOUSE))
+			!(settings->flags & (int)sources::history_flags::INCLUDE_MOUSE))
 			continue;
 
 		if (data.second->get_type() == ET_BUTTON) {

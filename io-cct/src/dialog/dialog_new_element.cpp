@@ -1,10 +1,5 @@
 
 
-
-
-
-
-
 #include "dialog_new_element.hpp"
 #include "../config.hpp"
 #include "../element/element_analog_stick.hpp"
@@ -99,7 +94,7 @@ void dialog_new_element::init()
 	case ET_GAMEPAD_ID:
 	case ET_DPAD_STICK:
 		add(m_selector = new atlas_selector(m_id++, get_left() + 270, get_top() + 30, m_dimensions.w - 278,
-		                                    m_dimensions.h - 38, m_tool->get_atlas(), this));
+											m_dimensions.h - 38, m_tool->get_atlas(), this));
 		m_selector->set_selection(&m_selection);
 		add_selection_elements();
 		break;

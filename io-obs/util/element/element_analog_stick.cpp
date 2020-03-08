@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2019 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <universailp@web.de>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ void element_analog_stick::load(ccl_config *cfg, const std::string &id)
 }
 
 void element_analog_stick::draw(gs_effect_t *effect, gs_image_file_t *image, element_data *data,
-                                sources::overlay_settings *settings)
+								sources::overlay_settings *settings)
 {
 	if (data) {
 		const auto stick = dynamic_cast<element_data_analog_stick *>(data);
@@ -53,7 +53,7 @@ void element_analog_stick::draw(gs_effect_t *effect, gs_image_file_t *image, ele
 }
 
 void element_analog_stick::calc_position(vec2 *v, element_data_analog_stick *d,
-                                         sources::overlay_settings *settings) const
+										 sources::overlay_settings *settings) const
 {
 	UNUSED_PARAMETER(settings);
 	switch (m_side) {
@@ -152,7 +152,7 @@ element_data_analog_stick *element_data_analog_stick::from_buffer(netlib_byte_bu
 	auto result = new element_data_analog_stick();
 
 	if (!netlib_read_float(buffer, &result->m_left_stick.x) || !netlib_read_float(buffer, &result->m_left_stick.y) ||
-	    !netlib_read_float(buffer, &result->m_right_stick.x) || !netlib_read_float(buffer, &result->m_right_stick.y)) {
+		!netlib_read_float(buffer, &result->m_right_stick.x) || !netlib_read_float(buffer, &result->m_right_stick.y)) {
 #ifdef _DEBUG
 		blog(LOG_INFO, "Reading of analog stick data failed: %s", netlib_get_error());
 #endif

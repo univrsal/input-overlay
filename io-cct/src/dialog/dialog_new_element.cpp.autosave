@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2019 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <universailp@web.de>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -110,7 +110,7 @@ void dialog_new_element::init()
 	case ET_GAMEPAD_ID:
 	case ET_DPAD_STICK:
 		add(m_selector = new atlas_selector(m_id++, get_left() + 270, get_top() + 30, m_dimensions.w - 278,
-		                                    m_dimensions.h - 38, m_tool->get_atlas(), this));
+											m_dimensions.h - 38, m_tool->get_atlas(), this));
 		m_selector->set_selection(&m_selection);
 		add_selection_elements();
 		break;

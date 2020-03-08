@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2019 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <universailp@web.de>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 #include "../../util/palette.hpp"
 
 combobox::combobox(const int8_t id, const int x, const int y, const int w, const int h, dialog *parent,
-                   const uint16_t flags)
+				   const uint16_t flags)
 {
 	const SDL_Rect temp = {x, y, w, h};
 	m_flags = flags;
@@ -54,7 +54,7 @@ void combobox::draw_foreground()
 
 	if (!m_items.empty() && m_selected_id >= 0 && m_selected_id < m_items.size())
 		get_helper()->util_text(&m_items[m_selected_id], get_left() + 2, get_top() + 2,
-		                        get_helper()->get_palette()->white());
+								get_helper()->get_palette()->white());
 
 	if (m_list_open) {
 		uint16_t y = get_bottom() + ITEM_V_SPACE;

@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2019 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <universailp@web.de>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -135,19 +135,19 @@ int write_gamepad_data()
 {
 	auto result = 1;
 	netlib_write_uint8(network::buffer, MSG_GAMEPAD_DATA);
-    for (auto &pad : gamepad::pads) {
-        if (pad.changed()) {
+	for (auto &pad : gamepad::pads) {
+		if (pad.changed()) {
 			if (!netlib_write_uint8(network::buffer, pad.get_id()) ||
-			    !netlib_write_uint16(network::buffer, pad.get_state()->button_states) ||
-			    !netlib_write_float(network::buffer, pad.get_state()->stick_l_x) ||
-			    !netlib_write_float(network::buffer, pad.get_state()->stick_l_y) ||
-			    !netlib_write_float(network::buffer, pad.get_state()->stick_r_x) ||
-			    !netlib_write_float(network::buffer, pad.get_state()->stick_r_y) ||
-			    !netlib_write_uint8(network::buffer, pad.get_state()->trigger_l) ||
-			    !netlib_write_uint8(network::buffer, pad.get_state()->trigger_r))
+				!netlib_write_uint16(network::buffer, pad.get_state()->button_states) ||
+				!netlib_write_float(network::buffer, pad.get_state()->stick_l_x) ||
+				!netlib_write_float(network::buffer, pad.get_state()->stick_l_y) ||
+				!netlib_write_float(network::buffer, pad.get_state()->stick_r_x) ||
+				!netlib_write_float(network::buffer, pad.get_state()->stick_r_y) ||
+				!netlib_write_uint8(network::buffer, pad.get_state()->trigger_l) ||
+				!netlib_write_uint8(network::buffer, pad.get_state()->trigger_r))
 				result = 0;
 
-            pad.reset();
+			pad.reset();
 		}
 	}
 

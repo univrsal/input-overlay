@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2019 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <universailp@web.de>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,9 +28,9 @@ scale_effect::scale_effect(const float duration, const float scale) : effect(dur
 }
 
 scale_effect::scale_effect(const float duration, const float scale, const float start)
-    : effect(duration), m_scale(start)
+	: effect(duration), m_scale(start)
 {
-    m_delta = scale / duration;
+	m_delta = scale / duration;
 }
 
 void scale_effect::tick(const float seconds)

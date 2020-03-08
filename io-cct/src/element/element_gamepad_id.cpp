@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2019 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <universailp@web.de>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,9 +25,9 @@
 #include "../../../ccl/ccl.hpp"
 
 ElementGamepadID::ElementGamepadID(const std::string &id, const SDL_Point pos, const SDL_Rect mapping, const uint8_t z)
-    : element_texture(ET_GAMEPAD_ID, id, pos, mapping, z)
+	: element_texture(ET_GAMEPAD_ID, id, pos, mapping, z)
 {
-    /* NO-OP */
+	/* NO-OP */
 }
 
 void ElementGamepadID::draw(texture *atlas, coordinate_system *cs, const bool selected, const bool alpha)
@@ -36,13 +36,13 @@ void ElementGamepadID::draw(texture *atlas, coordinate_system *cs, const bool se
 	auto temp = m_mapping;
 	temp.x += (temp.w + CFG_INNER_BORDER) * m_last_gamepad_id;
 	atlas->draw(cs->get_helper()->renderer(), &m_dimensions_scaled, &temp,
-	            (alpha && !selected) ? ELEMENT_HIDE_ALPHA : 255);
+				(alpha && !selected) ? ELEMENT_HIDE_ALPHA : 255);
 
 	if (m_state) /* Guide button */ {
 		temp = m_mapping;
 		temp.x += (temp.w + CFG_INNER_BORDER) * 4;
 		atlas->draw(cs->get_helper()->renderer(), &m_dimensions_scaled, &temp,
-		            (alpha && !selected) ? ELEMENT_HIDE_ALPHA : 255);
+					(alpha && !selected) ? ELEMENT_HIDE_ALPHA : 255);
 	}
 
 	if (selected)

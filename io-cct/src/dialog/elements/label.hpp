@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2019 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <universailp@web.de>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,10 +50,7 @@ public:
 
 	void refresh() override;
 
-	void set_font(const uint8_t font)
-	{
-		m_font = UTIL_CLAMP(FONT_WSTRING, font, FONT_WSTRING_LARGE);
-	}
+	void set_font(const uint8_t font) { m_font = UTIL_CLAMP(FONT_WSTRING, font, FONT_WSTRING_LARGE); }
 
 private:
 	std::string m_unlocalized_text;

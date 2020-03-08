@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2019 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <universailp@web.de>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,8 +25,8 @@
 #include "../../../ccl/ccl.hpp"
 
 ElementMouseMovement::ElementMouseMovement(const std::string &id, const SDL_Point pos, const SDL_Rect mapping,
-                                           const mouse_movement type, const uint16_t radius, const uint8_t z)
-    : element_texture(ET_MOUSE_STATS, id, pos, mapping, z)
+										   const mouse_movement type, const uint16_t radius, const uint8_t z)
+	: element_texture(ET_MOUSE_STATS, id, pos, mapping, z)
 {
 	m_radius = radius;
 	m_type = type;
@@ -74,12 +74,12 @@ uint16_t ElementMouseMovement::get_radius() const
 }
 
 ElementMouseMovement *ElementMouseMovement::read_from_file(ccl_config *file, const std::string &id,
-                                                           SDL_Point *default_dim)
+														   SDL_Point *default_dim)
 {
 	auto mmt = MM_DOT;
 	if (file->get_int(id + CFG_MOUSE_TYPE) != 0)
 		mmt = MM_ARROW;
 
 	return new ElementMouseMovement(id, read_position(file, id), read_mapping(file, id, default_dim), mmt,
-	                                file->get_int(id + CFG_MOUSE_RADIUS), read_layer(file, id));
+									file->get_int(id + CFG_MOUSE_RADIUS), read_layer(file, id));
 }

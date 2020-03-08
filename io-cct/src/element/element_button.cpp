@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2019 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <universailp@web.de>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,8 +28,8 @@
 #include "../../../io-obs/util/util.hpp"
 
 ElementButton::ElementButton(const std::string &id, const SDL_Point pos, const SDL_Rect mapping, const uint16_t vc,
-                             const uint8_t z)
-    : element_texture(ET_BUTTON, id, pos, mapping, z)
+							 const uint8_t z)
+	: element_texture(ET_BUTTON, id, pos, mapping, z)
 {
 	m_keycode = vc;
 	m_pressed_mapping = m_mapping;
@@ -51,10 +51,10 @@ void ElementButton::draw(texture *atlas, coordinate_system *cs, const bool selec
 	get_abs_dim(cs);
 	if (m_pressed)
 		atlas->draw(cs->get_helper()->renderer(), &m_dimensions_scaled, &m_pressed_mapping,
-		            (alpha && !selected) ? ELEMENT_HIDE_ALPHA : 255);
+					(alpha && !selected) ? ELEMENT_HIDE_ALPHA : 255);
 	else
 		atlas->draw(cs->get_helper()->renderer(), &m_dimensions_scaled, &m_mapping,
-		            (alpha && !selected) ? ELEMENT_HIDE_ALPHA : 255);
+					(alpha && !selected) ? ELEMENT_HIDE_ALPHA : 255);
 
 	if (selected)
 		cs->get_helper()->util_draw_rect(&m_dimensions_scaled, cs->get_helper()->get_palette()->red());
@@ -118,5 +118,5 @@ void ElementButton::handle_event(SDL_Event *event, sdl_helper *helper)
 ElementButton *ElementButton::read_from_file(ccl_config *file, const std::string &id, SDL_Point *default_dim)
 {
 	return new ElementButton(id, read_position(file, id), read_mapping(file, id, default_dim),
-	                         file->get_int(id + CFG_KEY_CODE), read_layer(file, id));
+							 file->get_int(id + CFG_KEY_CODE), read_layer(file, id));
 }

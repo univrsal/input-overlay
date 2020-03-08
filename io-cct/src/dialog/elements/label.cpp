@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2019 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <universailp@web.de>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,26 +32,26 @@ label::label(const int8_t id, const int x, const int y, const char *text, dialog
 }
 
 label::label(const int8_t id, const int x, const int y, const char *text, const uint8_t font, dialog *parent,
-             const uint16_t flags)
-    : label(id, x, y, text, parent, flags)
+			 const uint16_t flags)
+	: label(id, x, y, text, parent, flags)
 {
-    m_font = font;
+	m_font = font;
 }
 
 label::label(const int8_t id, const int x, const int y, const char *text, dialog *parent, SDL_Color *color)
-    : label(id, x, y, text, parent)
+	: label(id, x, y, text, parent)
 {
-    m_color = color;
+	m_color = color;
 }
 
 label::~label()
 {
-    label::close();
+	label::close();
 }
 
 void label::close()
 {
-    m_lines.clear();
+	m_lines.clear();
 }
 
 void label::draw_background()

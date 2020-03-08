@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2019 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <universailp@web.de>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,7 +52,7 @@ void start_network(uint16_t port)
 	ip_address addresses[2];
 	if (netlib_get_local_addresses(addresses, 2) > 0) {
 		snprintf(local_ip, sizeof(local_ip), "%d.%d.%d.%d", (addresses[0].host >> 0) & 0xFF,
-		         (addresses[0].host >> 8) & 0xFF, (addresses[0].host >> 16) & 0xFF, (addresses[0].host >> 24) & 0xFF);
+				 (addresses[0].host >> 8) & 0xFF, (addresses[0].host >> 16) & 0xFF, (addresses[0].host >> 24) & 0xFF);
 	}
 
 	network_state = true;
@@ -66,7 +66,7 @@ void start_network(uint16_t port)
 			network_flag = true;
 #ifdef _WIN32
 			network_thread =
-			    CreateThread(nullptr, 0, static_cast<LPTHREAD_START_ROUTINE>(network_handler), nullptr, 0, nullptr);
+				CreateThread(nullptr, 0, static_cast<LPTHREAD_START_ROUTINE>(network_handler), nullptr, 0, nullptr);
 			network_state = network_thread;
 			error = GetLastError();
 #else

@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2019 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <universailp@web.de>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,33 +40,18 @@ class dialog_new_element;
 
 class texture;
 
-enum tool_state {
-	IN_SETUP,
-	IN_BUILD,
-	IN_HELP,
-	IN_ELEMENT_TYPE,
-	IN_NEW_ELEMENT
-};
+enum tool_state { IN_SETUP, IN_BUILD, IN_HELP, IN_ELEMENT_TYPE, IN_NEW_ELEMENT };
 
 #define TOOL_ACTION_NEW_ELEMENT_ADD 4
 #define TOOL_ACTION_MOD_ELEMENT_APPLY 6
 #define TOOL_ACTION_SAVE_CONFIG 7
 #define TOOL_ACTION_SETUP_EXIT 8
 
-enum dialog_id {
-	NONE,
-	HELP,
-	NEW_ELEMENT,
-	MOD_ELEMENT,
-	SELECECT_TYPE
-};
+enum dialog_id { NONE, HELP, NEW_ELEMENT, MOD_ELEMENT, SELECECT_TYPE };
 
 class tool {
 public:
-	tool()
-	{
-		m_helper = nullptr;
-	}
+	tool() { m_helper = nullptr; }
 
 	tool(sdl_helper *helper, const char *texture, const char *config);
 
@@ -84,10 +69,7 @@ public:
 
 	void delete_element(uint16_t id) const;
 
-	void set_new_element_type(const element_type type)
-	{
-		m_new_element_type = type;
-	}
+	void set_new_element_type(const element_type type) { m_new_element_type = type; }
 
 	void queue_dialog_open(dialog_id id);
 
@@ -97,15 +79,9 @@ public:
 
 	element_error verify_element(dialog_new_element *d, bool modify_mode) const;
 
-	const char *get_texture_path() const
-	{
-		return m_texture_path;
-	}
+	const char *get_texture_path() const { return m_texture_path; }
 
-	const char *get_config_path() const
-	{
-		return m_config_path;
-	}
+	const char *get_config_path() const { return m_config_path; }
 
 private:
 	void add_element(element *e) const;

@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2019 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <universailp@web.de>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -132,8 +132,8 @@ void input_entry::tick(const float seconds)
 
 	/* Remove all finished effects safely */
 	m_effects.erase(std::remove_if(m_effects.begin(), m_effects.end(),
-	                               [](const std::unique_ptr<effect> &o) { return o->done(); }),
-	                m_effects.end());
+								   [](const std::unique_ptr<effect> &o) { return o->done(); }),
+					m_effects.end());
 }
 
 void input_entry::add_effect(effect *e)

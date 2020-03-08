@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2019 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <universailp@web.de>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -90,7 +90,7 @@ bool start_thread()
 {
 #ifdef _WIN32
 	network_thread =
-	    CreateThread(nullptr, 0, static_cast<LPTHREAD_START_ROUTINE>(network_thread_method), nullptr, 0, nullptr);
+		CreateThread(nullptr, 0, static_cast<LPTHREAD_START_ROUTINE>(network_thread_method), nullptr, 0, nullptr);
 	return network_thread;
 #else
 	return pthread_create(&network_thread, nullptr, network_thread_method, nullptr) == 0;

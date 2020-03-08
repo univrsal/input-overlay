@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2019 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <universailp@web.de>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,21 +22,20 @@
 
 #define ID_PRESSED 3
 
-class element_gamepad_id : public element_texture
-{
+class element_gamepad_id : public element_texture {
 public:
-    element_gamepad_id();
+	element_gamepad_id();
 
-    void load(ccl_config* cfg, const std::string &id) override;
+	void load(ccl_config *cfg, const std::string &id) override;
 
-    void
-    draw(gs_effect_t* effect, gs_image_file_t* image, element_data* data, sources::overlay_settings* settings) override;
+	void draw(gs_effect_t *effect, gs_image_file_t *image, element_data *data,
+			  sources::overlay_settings *settings) override;
 
-    data_source get_source() override;
+	data_source get_source() override;
 
 private:
-    /* 0 - 2 Player 2 - 4 (Player 1 is default)
+	/* 0 - 2 Player 2 - 4 (Player 1 is default)
      * 3     Middle pressed down
      */
-    gs_rect m_mappings[4];
+	gs_rect m_mappings[4];
 };

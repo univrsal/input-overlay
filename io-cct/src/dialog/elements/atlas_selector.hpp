@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2019 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <universailp@web.de>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,17 +45,11 @@ public:
 
 	bool handle_events(SDL_Event *event, bool was_handled) override;
 
-	bool selection_changing() const
-	{
-		return m_cs->changing_selection();
-	}
+	bool selection_changing() const { return m_cs->changing_selection(); }
 
 	uint8_t get_cursor() override;
 
-	void set_selection(SDL_Rect *r) const
-	{
-		m_cs->set_selection(r);
-	}
+	void set_selection(SDL_Rect *r) const { m_cs->set_selection(r); }
 
 private:
 	void resize() override;

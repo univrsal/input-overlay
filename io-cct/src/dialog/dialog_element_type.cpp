@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2019 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <universailp@web.de>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,9 +23,9 @@
 #include "../util/constants.hpp"
 
 DialogElementType::DialogElementType(sdl_helper *sdl, tool *tool)
-    : dialog(sdl, SDL_Point{350, 120}, LANG_DIALOG_ELEMENT_TYPE)
+	: dialog(sdl, SDL_Point{350, 120}, LANG_DIALOG_ELEMENT_TYPE)
 {
-    m_tool = tool;
+	m_tool = tool;
 }
 
 void DialogElementType::init()

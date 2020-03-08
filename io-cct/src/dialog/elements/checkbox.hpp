@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2019 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <universailp@web.de>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,6 @@
 
 class checkbox : public gui_element {
 public:
-
 	checkbox(int8_t id, int x, int y, const char *text, dialog *parent);
 
 	checkbox(int8_t id, int x, int y, const char *text, dialog *parent, bool state);
@@ -44,10 +43,7 @@ public:
 
 	bool handle_events(SDL_Event *event, bool was_handled) override;
 
-	bool get_state() const
-	{
-		return m_state;
-	}
+	bool get_state() const { return m_state; }
 
 	void set_checked(bool state);
 

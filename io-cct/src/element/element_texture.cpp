@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2019 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <universailp@web.de>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,16 +27,16 @@
 #include <utility>
 
 element_texture::element_texture(const std::string &id, const SDL_Point pos, const SDL_Rect mapping, const uint8_t z)
-    : element(ET_TEXTURE, id, pos, z)
+	: element(ET_TEXTURE, id, pos, z)
 {
-    m_mapping = mapping;
+	m_mapping = mapping;
 }
 
 element_texture::element_texture(const element_type t, const std::string &id, const SDL_Point pos,
-                                 const SDL_Rect mapping, const uint8_t z)
-    : element(t, id, pos, z)
+								 const SDL_Rect mapping, const uint8_t z)
+	: element(t, id, pos, z)
 {
-    m_mapping = mapping;
+	m_mapping = mapping;
 }
 
 element_error element_texture::is_valid(notifier *n, sdl_helper *h)
@@ -53,7 +53,7 @@ void element_texture::draw(texture *atlas, coordinate_system *cs, const bool sel
 {
 	get_abs_dim(cs);
 	atlas->draw(cs->get_helper()->renderer(), &m_dimensions_scaled, &m_mapping,
-	            (alpha && !selected) ? ELEMENT_HIDE_ALPHA : 255);
+				(alpha && !selected) ? ELEMENT_HIDE_ALPHA : 255);
 
 	if (selected)
 		cs->get_helper()->util_draw_rect(&m_dimensions_scaled, cs->get_helper()->get_palette()->red());

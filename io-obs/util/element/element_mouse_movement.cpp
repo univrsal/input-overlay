@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2019 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <universailp@web.de>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ void element_mouse_movement::load(ccl_config *cfg, const std::string &id)
 }
 
 void element_mouse_movement::draw(gs_effect_t *effect, gs_image_file_t *image, element_data *data,
-                                  sources::overlay_settings *settings)
+								  sources::overlay_settings *settings)
 {
 	if (data && data->get_type() == ET_MOUSE_STATS) {
 		const auto element_data = dynamic_cast<element_data_mouse_pos *>(data);
@@ -97,9 +97,9 @@ float element_data_mouse_pos::get_mouse_angle(sources::overlay_settings *setting
 }
 
 void element_data_mouse_pos::get_mouse_offset(sources::overlay_settings *settings, const vec2 &center, vec2 &out,
-                                              const uint8_t radius) const
+											  const uint8_t radius) const
 {
-    auto d_x = 0, d_y = 0;
+	auto d_x = 0, d_y = 0;
 
 	if (settings->use_center) {
 		d_x = m_x - settings->monitor_h;

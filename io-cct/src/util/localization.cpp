@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2019 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <universailp@web.de>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -102,13 +102,13 @@ void localization::scan_lang_folder()
 			{
 				file_name = std::string(data.cFileName);
 #else
-    /* Iterating over items in folder on linux
+	/* Iterating over items in folder on linux
      * and filtering only *.ini files
      */
-    DIR *dir;
-    struct dirent *dirent;
+	DIR *dir;
+	struct dirent *dirent;
 
-    dir = opendir(m_lang_folder.c_str());
+	dir = opendir(m_lang_folder.c_str());
 
 	if (dir) {
 		while ((dirent = readdir(dir))) {
@@ -120,7 +120,7 @@ void localization::scan_lang_folder()
 			char *file_type = strrchr(dirent->d_name, '.');
 
 			if (file_type && !strcmp(file_type, ".ini") /* Checks file ending */
-			    && S_ISREG(path_stat.st_mode)) {
+				&& S_ISREG(path_stat.st_mode)) {
 #endif
 				/* After filtering on windows and linux store file name
 				 * in file_name

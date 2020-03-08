@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2019 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <universailp@web.de>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ void dialog_setup::init()
 	info.append(std::to_string(BUILD_NUMBER));
 
 	add(new label(id++, 8, 22, info.c_str(), FONT_WSTRING_LARGE, this,
-	              ELEMENT_UNLOCALIZED | ELEMENT_ABSOLUTE_POSITION));
+				  ELEMENT_UNLOCALIZED | ELEMENT_ABSOLUTE_POSITION));
 	add(new label(id++, 8, 50, LANG_LABEL_INFO, this, ELEMENT_ABSOLUTE_POSITION));
 
 	add(new label(id++, 8, 35, LANG_LABEL_TEXTURE_PATH, this));
@@ -107,7 +107,7 @@ void dialog_setup::action_performed(const int8_t action_id)
 		empty_config = cfg->is_empty();
 
 		if (!m_texture_path->get_text()->empty() && !m_config_path->get_text()->empty() && valid_texture &&
-		    m_load_cfg) {
+			m_load_cfg) {
 			m_tool->action_performed(TOOL_ACTION_SETUP_EXIT);
 		} else {
 			if (m_texture_path->get_text()->empty() || !valid_texture) {

@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2019 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <universailp@web.de>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@ extern "C" {
 }
 
 translate_effect::translate_effect(const float duration, vec2 &direction, vec2 *target, const bool translate)
-    : effect(duration), m_direction(direction), m_translate(translate)
+	: effect(duration), m_direction(direction), m_translate(translate)
 {
 	m_pos = target;
 	m_original = *target;

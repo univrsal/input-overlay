@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2019 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <universailp@web.de>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,18 +22,18 @@
 
 namespace xinput_fix {
 gamepad_codes all_codes[13] = {CODE_A,
-                               CODE_B,
-                               CODE_X,
-                               CODE_Y,
-                               CODE_GUIDE,
-                               CODE_DPAD_DOWN,
-                               CODE_DPAD_UP,
-                               CODE_DPAD_LEFT,
-                               CODE_DPAD_RIGHT,
-                               CODE_LEFT_SHOULDER,
-                               CODE_RIGHT_SHOULDER,
-                               CODE_START,
-                               CODE_BACK};
+							   CODE_B,
+							   CODE_X,
+							   CODE_Y,
+							   CODE_GUIDE,
+							   CODE_DPAD_DOWN,
+							   CODE_DPAD_UP,
+							   CODE_DPAD_LEFT,
+							   CODE_DPAD_RIGHT,
+							   CODE_LEFT_SHOULDER,
+							   CODE_RIGHT_SHOULDER,
+							   CODE_START,
+							   CODE_BACK};
 
 uint16_t to_vc(const gamepad_codes code)
 {

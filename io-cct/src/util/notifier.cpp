@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2019 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <universailp@web.de>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,7 +60,7 @@ void notifier::draw()
 			overdue.emplace_back(index);
 		} else {
 			const auto c = msg->m_type == MESSAGE_ERROR ? m_helper->get_palette()->red()
-			                                            : m_helper->get_palette()->white();
+														: m_helper->get_palette()->white();
 
 			for (auto const &line : msg->m_message_lines) {
 				if (!line->empty()) {

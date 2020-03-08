@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2019 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <universailp@web.de>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +47,7 @@ bool sdl_helper::init()
 	}
 
 	m_sdl_window = SDL_CreateWindow(SDL_WINDOW_TITLE, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SDL_WINDOW_W,
-	                                SDL_WINDOW_H, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
+									SDL_WINDOW_H, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
 
 	if (m_sdl_window == nullptr) {
 		printf(SDL_CREATE_WINDOW_FAILED, SDL_GetError());
@@ -248,7 +248,7 @@ bool sdl_helper::util_mouse_in_rect(const SDL_Rect *rect)
 }
 
 void sdl_helper::util_text(const std::string *text, const int x, const int y, const SDL_Color *color,
-                           const uint8_t font) const
+						   const uint8_t font) const
 {
 	const auto ttf_font = get_font(font);
 	if (color == nullptr)
@@ -258,7 +258,7 @@ void sdl_helper::util_text(const std::string *text, const int x, const int y, co
 }
 
 void sdl_helper::util_text(const std::string *text, const int x, const int y, const SDL_Color *color,
-                           const uint8_t font, const uint8_t scale) const
+						   const uint8_t font, const uint8_t scale) const
 {
 	const auto ttf_font = get_font(font);
 	if (color == nullptr)
@@ -268,7 +268,7 @@ void sdl_helper::util_text(const std::string *text, const int x, const int y, co
 }
 
 void sdl_helper::util_text_rot(const std::string *text, const int x, const int y, const SDL_Color *color,
-                               const double angle, const uint8_t font) const
+							   const double angle, const uint8_t font) const
 {
 	const auto ttf_font = get_font(font);
 	if (color == nullptr)
@@ -524,13 +524,13 @@ std::wstring sdl_helper::util_utf8_to_wstring(const std::string &str)
 	std::wstring_convert<std::codecvt_utf8<wchar_t>> conv;
 	return conv.from_bytes(str);
 #else
-    /* Conversion taken from
+	/* Conversion taken from
      * https://www.linuxquestions.org/questions/programming-9/wstring-utf8-conversion-in-pure-c-701084/
      **/
-    std::wstring dest = L"";
-    wchar_t w = 0;
-    int bytes = 0;
-    wchar_t err = L'�';
+	std::wstring dest = L"";
+	wchar_t w = 0;
+	int bytes = 0;
+	wchar_t err = L'�';
 
 	for (size_t i = 0; i < str.size(); i++) {
 		unsigned char c = (unsigned char)str[i];
@@ -584,36 +584,36 @@ std::string sdl_helper::util_wstring_to_utf8(const std::wstring &str)
 	std::wstring_convert<std::codecvt_utf8<wchar_t>> conv;
 	return conv.to_bytes(str);
 #else
-    /* Conversion taken from
+	/* Conversion taken from
      * https://www.linuxquestions.org/questions/programming-9/wstring-utf8-conversion-in-pure-c-701084/
      **/
-    std::string dest = "";
-    for (size_t i = 0; i < str.size(); i++) {
-        wchar_t w = str[i];
-        if (w <= 0x7f) {
-            dest.push_back((char)w);
-        } else if (w <= 0x7ff) {
-            dest.push_back(0xc0 | ((w >> 6) & 0x1f));
-            dest.push_back(0x80 | (w & 0x3f));
-        } else if (w <= 0xffff) {
-            dest.push_back(0xe0 | ((w >> 12) & 0x0f));
-            dest.push_back(0x80 | ((w >> 6) & 0x3f));
-            dest.push_back(0x80 | (w & 0x3f));
-        } else if (w <= 0x10ffff) {
-            dest.push_back(0xf0 | ((w >> 18) & 0x07));
-            dest.push_back(0x80 | ((w >> 12) & 0x3f));
-            dest.push_back(0x80 | ((w >> 6) & 0x3f));
-            dest.push_back(0x80 | (w & 0x3f));
-        } else {
-            dest.push_back('?');
-        }
-    }
-    return dest;
+	std::string dest = "";
+	for (size_t i = 0; i < str.size(); i++) {
+		wchar_t w = str[i];
+		if (w <= 0x7f) {
+			dest.push_back((char)w);
+		} else if (w <= 0x7ff) {
+			dest.push_back(0xc0 | ((w >> 6) & 0x1f));
+			dest.push_back(0x80 | (w & 0x3f));
+		} else if (w <= 0xffff) {
+			dest.push_back(0xe0 | ((w >> 12) & 0x0f));
+			dest.push_back(0x80 | ((w >> 6) & 0x3f));
+			dest.push_back(0x80 | (w & 0x3f));
+		} else if (w <= 0x10ffff) {
+			dest.push_back(0xf0 | ((w >> 18) & 0x07));
+			dest.push_back(0x80 | ((w >> 12) & 0x3f));
+			dest.push_back(0x80 | ((w >> 6) & 0x3f));
+			dest.push_back(0x80 | (w & 0x3f));
+		} else {
+			dest.push_back('?');
+		}
+	}
+	return dest;
 #endif
 }
 
 void sdl_helper::format_text(const std::string *s, std::vector<std::unique_ptr<std::string>> &out, SDL_Rect &dim,
-                             const uint8_t font) const
+							 const uint8_t font) const
 {
 	if (!s || s->empty())
 		return;
@@ -669,159 +669,159 @@ std::string sdl_helper::loc(const char *id) const
 #include "../../../io-obs/util/util.hpp"
 
 static uint32_t KEY_MAP[][2]{/* Alphabet */
-	                         {VC_A, SDLK_a},
-	                         {VC_B, SDLK_b},
-	                         {VC_C, SDLK_c},
-	                         {VC_D, SDLK_d},
-	                         {VC_E, SDLK_e},
-	                         {VC_F, SDLK_f},
-	                         {VC_G, SDLK_g},
-	                         {VC_H, SDLK_h},
-	                         {VC_I, SDLK_i},
-	                         {VC_J, SDLK_j},
-	                         {VC_K, SDLK_k},
-	                         {VC_L, SDLK_l},
-	                         {VC_M, SDLK_m},
-	                         {VC_N, SDLK_n},
-	                         {VC_O, SDLK_o},
-	                         {VC_P, SDLK_p},
-	                         {VC_Q, SDLK_q},
-	                         {VC_R, SDLK_r},
-	                         {VC_S, SDLK_s},
-	                         {VC_T, SDLK_t},
-	                         {VC_U, SDLK_u},
-	                         {VC_V, SDLK_v},
-	                         {VC_W, SDLK_w},
-	                         {VC_X, SDLK_x},
-	                         {VC_Y, SDLK_y},
-	                         {VC_Z, SDLK_z},
+							 {VC_A, SDLK_a},
+							 {VC_B, SDLK_b},
+							 {VC_C, SDLK_c},
+							 {VC_D, SDLK_d},
+							 {VC_E, SDLK_e},
+							 {VC_F, SDLK_f},
+							 {VC_G, SDLK_g},
+							 {VC_H, SDLK_h},
+							 {VC_I, SDLK_i},
+							 {VC_J, SDLK_j},
+							 {VC_K, SDLK_k},
+							 {VC_L, SDLK_l},
+							 {VC_M, SDLK_m},
+							 {VC_N, SDLK_n},
+							 {VC_O, SDLK_o},
+							 {VC_P, SDLK_p},
+							 {VC_Q, SDLK_q},
+							 {VC_R, SDLK_r},
+							 {VC_S, SDLK_s},
+							 {VC_T, SDLK_t},
+							 {VC_U, SDLK_u},
+							 {VC_V, SDLK_v},
+							 {VC_W, SDLK_w},
+							 {VC_X, SDLK_x},
+							 {VC_Y, SDLK_y},
+							 {VC_Z, SDLK_z},
 
-	                         /* Numbers */
-	                         {VC_0, SDLK_0},
-	                         {VC_1, SDLK_1},
-	                         {VC_2, SDLK_2},
-	                         {VC_3, SDLK_3},
-	                         {VC_4, SDLK_4},
-	                         {VC_5, SDLK_5},
-	                         {VC_6, SDLK_6},
-	                         {VC_7, SDLK_7},
-	                         {VC_8, SDLK_8},
-	                         {VC_9, SDLK_9},
-	                         {VC_KP_0, SDLK_KP_0},
-	                         {VC_KP_1, SDLK_KP_1},
-	                         {VC_KP_2, SDLK_KP_2},
-	                         {VC_KP_3, SDLK_KP_3},
-	                         {VC_KP_4, SDLK_KP_4},
-	                         {VC_KP_5, SDLK_KP_5},
-	                         {VC_KP_6, SDLK_KP_6},
-	                         {VC_KP_7, SDLK_KP_7},
-	                         {VC_KP_8, SDLK_KP_8},
-	                         {VC_KP_9, SDLK_KP_9},
-	                         {VC_KP_ADD, SDLK_KP_PLUS},
-	                         {VC_KP_SEPARATOR, SDLK_KP_COMMA},
+							 /* Numbers */
+							 {VC_0, SDLK_0},
+							 {VC_1, SDLK_1},
+							 {VC_2, SDLK_2},
+							 {VC_3, SDLK_3},
+							 {VC_4, SDLK_4},
+							 {VC_5, SDLK_5},
+							 {VC_6, SDLK_6},
+							 {VC_7, SDLK_7},
+							 {VC_8, SDLK_8},
+							 {VC_9, SDLK_9},
+							 {VC_KP_0, SDLK_KP_0},
+							 {VC_KP_1, SDLK_KP_1},
+							 {VC_KP_2, SDLK_KP_2},
+							 {VC_KP_3, SDLK_KP_3},
+							 {VC_KP_4, SDLK_KP_4},
+							 {VC_KP_5, SDLK_KP_5},
+							 {VC_KP_6, SDLK_KP_6},
+							 {VC_KP_7, SDLK_KP_7},
+							 {VC_KP_8, SDLK_KP_8},
+							 {VC_KP_9, SDLK_KP_9},
+							 {VC_KP_ADD, SDLK_KP_PLUS},
+							 {VC_KP_SEPARATOR, SDLK_KP_COMMA},
 
-	                         /* Numpad misc */
-	                         {VC_KP_ADD, SDLK_KP_PLUS},
-	                         {VC_KP_SUBTRACT, SDLK_KP_MINUS},
-	                         {VC_KP_ENTER, SDLK_KP_ENTER},
-	                         {VC_KP_MULTIPLY, SDLK_KP_MULTIPLY},
-	                         {VC_KP_DIVIDE, SDLK_KP_DIVIDE},
-	                         {VC_NUM_LOCK, SDLK_NUMLOCKCLEAR},
-	                         {VC_KP_SEPARATOR, SDLK_KP_COMMA},
+							 /* Numpad misc */
+							 {VC_KP_ADD, SDLK_KP_PLUS},
+							 {VC_KP_SUBTRACT, SDLK_KP_MINUS},
+							 {VC_KP_ENTER, SDLK_KP_ENTER},
+							 {VC_KP_MULTIPLY, SDLK_KP_MULTIPLY},
+							 {VC_KP_DIVIDE, SDLK_KP_DIVIDE},
+							 {VC_NUM_LOCK, SDLK_NUMLOCKCLEAR},
+							 {VC_KP_SEPARATOR, SDLK_KP_COMMA},
 
-	                         /* Function keys */
-	                         {VC_F1, SDLK_F1},
-	                         {VC_F2, SDLK_F2},
-	                         {VC_F3, SDLK_F3},
-	                         {VC_F4, SDLK_F4},
-	                         {VC_F5, SDLK_F5},
-	                         {VC_F6, SDLK_F6},
-	                         {VC_F7, SDLK_F7},
-	                         {VC_F8, SDLK_F8},
-	                         {VC_F9, SDLK_F9},
-	                         {VC_F10, SDLK_F10},
-	                         {VC_F11, SDLK_F11},
-	                         {VC_F12, SDLK_F12},
-	                         {VC_F13, SDLK_F13},
-	                         {VC_F14, SDLK_F14},
-	                         {VC_F15, SDLK_F15},
-	                         {VC_F16, SDLK_F16},
-	                         {VC_F17, SDLK_F17},
-	                         {VC_F18, SDLK_F18},
-	                         {VC_F19, SDLK_F19},
-	                         {VC_F20, SDLK_F20},
-	                         {VC_F21, SDLK_F21},
-	                         {VC_F22, SDLK_F22},
-	                         {VC_F23, SDLK_F23},
-	                         {VC_F24, SDLK_F24},
+							 /* Function keys */
+							 {VC_F1, SDLK_F1},
+							 {VC_F2, SDLK_F2},
+							 {VC_F3, SDLK_F3},
+							 {VC_F4, SDLK_F4},
+							 {VC_F5, SDLK_F5},
+							 {VC_F6, SDLK_F6},
+							 {VC_F7, SDLK_F7},
+							 {VC_F8, SDLK_F8},
+							 {VC_F9, SDLK_F9},
+							 {VC_F10, SDLK_F10},
+							 {VC_F11, SDLK_F11},
+							 {VC_F12, SDLK_F12},
+							 {VC_F13, SDLK_F13},
+							 {VC_F14, SDLK_F14},
+							 {VC_F15, SDLK_F15},
+							 {VC_F16, SDLK_F16},
+							 {VC_F17, SDLK_F17},
+							 {VC_F18, SDLK_F18},
+							 {VC_F19, SDLK_F19},
+							 {VC_F20, SDLK_F20},
+							 {VC_F21, SDLK_F21},
+							 {VC_F22, SDLK_F22},
+							 {VC_F23, SDLK_F23},
+							 {VC_F24, SDLK_F24},
 
-	                         /* Mask keys*/
-	                         {VC_ALT_L, SDLK_LALT},
-	                         {VC_ALT_R, SDLK_RALT},
-	                         {VC_CONTROL_L, SDLK_LCTRL},
-	                         {VC_CONTROL_R, SDLK_RCTRL},
-	                         {VC_SHIFT_L, SDLK_LSHIFT},
-	                         {VC_SHIFT_R, SDLK_RSHIFT},
-	                         {VC_META_L, SDLK_LGUI},
-	                         {VC_META_R, SDLK_RGUI},
+							 /* Mask keys*/
+							 {VC_ALT_L, SDLK_LALT},
+							 {VC_ALT_R, SDLK_RALT},
+							 {VC_CONTROL_L, SDLK_LCTRL},
+							 {VC_CONTROL_R, SDLK_RCTRL},
+							 {VC_SHIFT_L, SDLK_LSHIFT},
+							 {VC_SHIFT_R, SDLK_RSHIFT},
+							 {VC_META_L, SDLK_LGUI},
+							 {VC_META_R, SDLK_RGUI},
 
-	                         /* Misc */
-	                         {VC_BACKSPACE, SDLK_BACKSPACE},
-	                         {VC_ENTER, SDLK_RETURN},
-	                         {VC_SPACE, SDLK_SPACE},
-	                         {VC_TAB, SDLK_TAB},
-	                         {VC_ESCAPE, SDLK_ESCAPE},
-	                         /* libuiohook mixes up keypad arrow keys with normal arrow keys */
-	                         {VC_KP_UP, SDLK_UP},
-	                         {VC_KP_DOWN, SDLK_DOWN},
-	                         {VC_KP_LEFT, SDLK_LEFT},
-	                         {VC_KP_RIGHT, SDLK_RIGHT},
-	                         {VC_DELETE, SDLK_DELETE},
-	                         {VC_INSERT, SDLK_INSERT},
-	                         {VC_HOME, SDLK_HOME},
-	                         {VC_PAGE_UP, SDLK_PAGEUP},
-	                         {VC_PAGE_DOWN, SDLK_PAGEDOWN},
-	                         {VC_END, SDLK_END},
-	                         {VC_PRINTSCREEN, SDLK_PRINTSCREEN},
-	                         {VC_SCROLL_LOCK, SDLK_SCROLLLOCK},
-	                         {VC_PAUSE, SDLK_PAUSE},
-	                         {VC_MINUS, SDLK_MINUS},
-	                         {VC_EQUALS, SDLK_EQUALS},
-	                         {VC_CAPS_LOCK, SDLK_CAPSLOCK},
-	                         {VC_OPEN_BRACKET, SDLK_LEFTBRACKET},
-	                         {VC_CLOSE_BRACKET, SDLK_RIGHTBRACKET},
-	                         {VC_BACK_SLASH, SDLK_BACKSLASH},
-	                         {VC_SLASH, SDLK_SLASH},
-	                         {VC_COMMA, SDLK_COMMA},
-	                         {VC_PERIOD, SDLK_PERIOD},
-	                         {VC_SEMICOLON, SDLK_SEMICOLON},
-	                         {VC_QUOTE, SDLK_QUOTE},
-	                         {VC_BACKQUOTE, SDLK_BACKQUOTE},
+							 /* Misc */
+							 {VC_BACKSPACE, SDLK_BACKSPACE},
+							 {VC_ENTER, SDLK_RETURN},
+							 {VC_SPACE, SDLK_SPACE},
+							 {VC_TAB, SDLK_TAB},
+							 {VC_ESCAPE, SDLK_ESCAPE},
+							 /* libuiohook mixes up keypad arrow keys with normal arrow keys */
+							 {VC_KP_UP, SDLK_UP},
+							 {VC_KP_DOWN, SDLK_DOWN},
+							 {VC_KP_LEFT, SDLK_LEFT},
+							 {VC_KP_RIGHT, SDLK_RIGHT},
+							 {VC_DELETE, SDLK_DELETE},
+							 {VC_INSERT, SDLK_INSERT},
+							 {VC_HOME, SDLK_HOME},
+							 {VC_PAGE_UP, SDLK_PAGEUP},
+							 {VC_PAGE_DOWN, SDLK_PAGEDOWN},
+							 {VC_END, SDLK_END},
+							 {VC_PRINTSCREEN, SDLK_PRINTSCREEN},
+							 {VC_SCROLL_LOCK, SDLK_SCROLLLOCK},
+							 {VC_PAUSE, SDLK_PAUSE},
+							 {VC_MINUS, SDLK_MINUS},
+							 {VC_EQUALS, SDLK_EQUALS},
+							 {VC_CAPS_LOCK, SDLK_CAPSLOCK},
+							 {VC_OPEN_BRACKET, SDLK_LEFTBRACKET},
+							 {VC_CLOSE_BRACKET, SDLK_RIGHTBRACKET},
+							 {VC_BACK_SLASH, SDLK_BACKSLASH},
+							 {VC_SLASH, SDLK_SLASH},
+							 {VC_COMMA, SDLK_COMMA},
+							 {VC_PERIOD, SDLK_PERIOD},
+							 {VC_SEMICOLON, SDLK_SEMICOLON},
+							 {VC_QUOTE, SDLK_QUOTE},
+							 {VC_BACKQUOTE, SDLK_BACKQUOTE},
 
-	                         /* Game pad */
-	                         {VC_PAD_A, TO_PAD_MASK(SDL_CONTROLLER_BUTTON_A)},
-	                         {VC_PAD_B, TO_PAD_MASK(SDL_CONTROLLER_BUTTON_B)},
-	                         {VC_PAD_X, TO_PAD_MASK(SDL_CONTROLLER_BUTTON_X)},
-	                         {VC_PAD_Y, TO_PAD_MASK(SDL_CONTROLLER_BUTTON_Y)},
-	                         {VC_PAD_LB, TO_PAD_MASK(SDL_CONTROLLER_BUTTON_LEFTSHOULDER)},
-	                         {VC_PAD_RB, TO_PAD_MASK(SDL_CONTROLLER_BUTTON_RIGHTSHOULDER)},
-	                         {VC_PAD_BACK, TO_PAD_MASK(SDL_CONTROLLER_BUTTON_BACK)},
-	                         {VC_PAD_START, TO_PAD_MASK(SDL_CONTROLLER_BUTTON_START)},
-	                         {VC_PAD_DPAD_DOWN, TO_PAD_MASK(SDL_CONTROLLER_BUTTON_DPAD_DOWN)},
-	                         {VC_PAD_DPAD_UP, TO_PAD_MASK(SDL_CONTROLLER_BUTTON_DPAD_UP)},
-	                         {VC_PAD_DPAD_LEFT, TO_PAD_MASK(SDL_CONTROLLER_BUTTON_DPAD_LEFT)},
-	                         {VC_PAD_DPAD_RIGHT, TO_PAD_MASK(SDL_CONTROLLER_BUTTON_DPAD_RIGHT)},
-	                         {VC_PAD_L_ANALOG, TO_PAD_MASK(SDL_CONTROLLER_BUTTON_LEFTSTICK)},
-	                         {VC_PAD_R_ANALOG, TO_PAD_MASK(SDL_CONTROLLER_BUTTON_RIGHTSTICK)},
-	                         {VC_PAD_GUIDE, TO_PAD_MASK(SDL_CONTROLLER_BUTTON_GUIDE)},
-	                         {VC_PAD_START, TO_PAD_MASK(SDL_CONTROLLER_BUTTON_START)},
+							 /* Game pad */
+							 {VC_PAD_A, TO_PAD_MASK(SDL_CONTROLLER_BUTTON_A)},
+							 {VC_PAD_B, TO_PAD_MASK(SDL_CONTROLLER_BUTTON_B)},
+							 {VC_PAD_X, TO_PAD_MASK(SDL_CONTROLLER_BUTTON_X)},
+							 {VC_PAD_Y, TO_PAD_MASK(SDL_CONTROLLER_BUTTON_Y)},
+							 {VC_PAD_LB, TO_PAD_MASK(SDL_CONTROLLER_BUTTON_LEFTSHOULDER)},
+							 {VC_PAD_RB, TO_PAD_MASK(SDL_CONTROLLER_BUTTON_RIGHTSHOULDER)},
+							 {VC_PAD_BACK, TO_PAD_MASK(SDL_CONTROLLER_BUTTON_BACK)},
+							 {VC_PAD_START, TO_PAD_MASK(SDL_CONTROLLER_BUTTON_START)},
+							 {VC_PAD_DPAD_DOWN, TO_PAD_MASK(SDL_CONTROLLER_BUTTON_DPAD_DOWN)},
+							 {VC_PAD_DPAD_UP, TO_PAD_MASK(SDL_CONTROLLER_BUTTON_DPAD_UP)},
+							 {VC_PAD_DPAD_LEFT, TO_PAD_MASK(SDL_CONTROLLER_BUTTON_DPAD_LEFT)},
+							 {VC_PAD_DPAD_RIGHT, TO_PAD_MASK(SDL_CONTROLLER_BUTTON_DPAD_RIGHT)},
+							 {VC_PAD_L_ANALOG, TO_PAD_MASK(SDL_CONTROLLER_BUTTON_LEFTSTICK)},
+							 {VC_PAD_R_ANALOG, TO_PAD_MASK(SDL_CONTROLLER_BUTTON_RIGHTSTICK)},
+							 {VC_PAD_GUIDE, TO_PAD_MASK(SDL_CONTROLLER_BUTTON_GUIDE)},
+							 {VC_PAD_START, TO_PAD_MASK(SDL_CONTROLLER_BUTTON_START)},
 
-	                         /* Mouse */
-	                         {VC_MOUSE_BUTTON1, TO_MOUSE_MASK(SDL_BUTTON_LEFT)},
-	                         {VC_MOUSE_BUTTON2, TO_MOUSE_MASK(SDL_BUTTON_RIGHT)},
-	                         {VC_MOUSE_BUTTON3, TO_MOUSE_MASK(SDL_BUTTON_MIDDLE)},
-	                         {VC_MOUSE_BUTTON4, TO_MOUSE_MASK(SDL_BUTTON_X1)},
-	                         {VC_MOUSE_BUTTON5, TO_MOUSE_MASK(SDL_BUTTON_X2)}};
+							 /* Mouse */
+							 {VC_MOUSE_BUTTON1, TO_MOUSE_MASK(SDL_BUTTON_LEFT)},
+							 {VC_MOUSE_BUTTON2, TO_MOUSE_MASK(SDL_BUTTON_RIGHT)},
+							 {VC_MOUSE_BUTTON3, TO_MOUSE_MASK(SDL_BUTTON_MIDDLE)},
+							 {VC_MOUSE_BUTTON4, TO_MOUSE_MASK(SDL_BUTTON_X1)},
+							 {VC_MOUSE_BUTTON5, TO_MOUSE_MASK(SDL_BUTTON_X2)}};
 
 uint32_t sdl_helper::vc_to_sdl_key(const uint16_t key)
 {

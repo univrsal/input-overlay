@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2019 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <universailp@web.de>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -102,7 +102,7 @@ io_settings_dialog::io_settings_dialog(QWidget *parent) : QDialog(parent, Qt::Di
 
 	/* Set red color on label so people don't miss it */
 	ui->lbl_local_features->setStyleSheet("QLabel { color: red; "
-	                                      "font-weight: bold;}");
+										  "font-weight: bold;}");
 }
 
 void io_settings_dialog::showEvent(QShowEvent *event)

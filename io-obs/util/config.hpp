@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2019 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <universailp@web.de>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,30 +20,31 @@
 
 #include "input_filter.hpp"
 #include <mutex>
-#define DEBUG_LOG(lvl, msg, ...) if (io_config::log_flag) blog(lvl, "[input-overlay] " msg, ##__VA_ARGS__)
+#define DEBUG_LOG(lvl, msg, ...) \
+	if (io_config::log_flag)     \
+	blog(lvl, "[input-overlay] " msg, ##__VA_ARGS__)
 
-namespace io_config
-{
-    extern input_filter io_window_filters;
-    extern std::mutex filter_mutex;
+namespace io_config {
+extern input_filter io_window_filters;
+extern std::mutex filter_mutex;
 
-    /* Global boolean config values */
-    extern bool control;
-    extern bool remote;
-    extern bool gamepad;
-    extern bool uiohook;
-    extern bool overlay;
-    extern bool history;
-    extern bool regex;
-    extern int filter_mode;
-    /* Netowork config */
-    extern bool log_flag;
-    extern uint16_t refresh_rate;
-    extern uint16_t port;
+/* Global boolean config values */
+extern bool control;
+extern bool remote;
+extern bool gamepad;
+extern bool uiohook;
+extern bool overlay;
+extern bool history;
+extern bool regex;
+extern int filter_mode;
+/* Netowork config */
+extern bool log_flag;
+extern uint16_t refresh_rate;
+extern uint16_t port;
 
-    extern void set_defaults(config_t* cfg);
+extern void set_defaults(config_t *cfg);
 
-    extern void load(config_t* cfg);
+extern void load(config_t *cfg);
 
-    extern void save(config_t* cfg);
+extern void save(config_t *cfg);
 }

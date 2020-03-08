@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2019 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <universailp@web.de>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,7 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *************************************************************************/
-
 
 #include "coordinate_system.hpp"
 #include "../util/palette.hpp"
@@ -46,7 +45,7 @@ bool coordinate_system::handle_events(SDL_Event *e)
 						m_selection_a = {m_selection->x + m_selection->w, m_selection->y + m_selection->h};
 					} else {
 						m_selection_a = {e->button.x - m_selection->x * m_scale_f,
-						                 e->button.y - m_selection->y * m_scale_f};
+										 e->button.y - m_selection->y * m_scale_f};
 					}
 				}
 			}
@@ -190,14 +189,14 @@ void coordinate_system::draw_foreground() const
 			auto tag = std::to_string(((x - m_origin.x) / m_scale_f));
 			const auto dim = m_helper->util_text_dim(&tag);
 			m_helper->util_text_rot(&tag, UTIL_CLAMP(get_origin_left() + dim.h + 2, x + dim.h / 2, get_right() - 2),
-			                        get_origin_top() - dim.w - 6, m_helper->get_palette()->white(), 90);
+									get_origin_top() - dim.w - 6, m_helper->get_palette()->white(), 90);
 			m_helper->util_draw_line(x, get_origin_top() - 4, x, get_origin_top() + 4,
-			                         m_helper->get_palette()->white());
+									 m_helper->get_palette()->white());
 			if (!m_has_custom_grid)
 				m_helper->util_draw_line(x, get_origin_top() + 4, x, get_bottom(), m_helper->get_palette()->gray());
 		} else {
 			m_helper->util_draw_line(x, get_origin_top() - 2, x, get_origin_top() + 2,
-			                         m_helper->get_palette()->white());
+									 m_helper->get_palette()->white());
 		}
 	}
 
@@ -210,23 +209,23 @@ void coordinate_system::draw_foreground() const
 			const auto dim = m_helper->util_text_dim(&tag);
 
 			m_helper->util_text(&tag, get_origin_left() - dim.w - 5,
-			                    UTIL_CLAMP(get_origin_top() + 2, y - dim.h / 2, get_bottom() - dim.h - 2),
-			                    m_helper->get_palette()->white());
+								UTIL_CLAMP(get_origin_top() + 2, y - dim.h / 2, get_bottom() - dim.h - 2),
+								m_helper->get_palette()->white());
 			m_helper->util_draw_line(get_origin_left() - 4, y, get_origin_left() + 4, y,
-			                         m_helper->get_palette()->white());
+									 m_helper->get_palette()->white());
 			if (!m_has_custom_grid)
 				m_helper->util_draw_line(get_origin_left() + 4, y, get_right(), y, m_helper->get_palette()->gray());
 		} else {
 			m_helper->util_draw_line(get_origin_left() - 2, y, get_origin_left() + 2, y,
-			                         m_helper->get_palette()->white());
+									 m_helper->get_palette()->white());
 		}
 	}
 
 	/* Draw origin cross (0/0) */
 	m_helper->util_draw_line(m_dimensions.x, get_origin_top(), get_right() - 1, get_origin_top(),
-	                         m_helper->get_palette()->white());
+							 m_helper->get_palette()->white());
 	m_helper->util_draw_line(get_origin_left(), m_dimensions.y, get_origin_left(), get_bottom() - 1,
-	                         m_helper->get_palette()->white());
+							 m_helper->get_palette()->white());
 
 	/* Axe titles */
 	auto t = m_helper->loc(LANG_LABEL_X_AXIS);
@@ -272,7 +271,7 @@ void coordinate_system::set_dimensions(const SDL_Rect r)
 {
 	m_dimensions = r;
 	m_system_area = {get_origin_left(), get_origin_top(), m_dimensions.w - m_origin_anchor.x,
-	                 m_dimensions.h - m_origin_anchor.y};
+					 m_dimensions.h - m_origin_anchor.y};
 }
 
 void coordinate_system::set_pos(const int x, const int y)
@@ -282,7 +281,7 @@ void coordinate_system::set_pos(const int x, const int y)
 	m_dimensions.x = x;
 	m_dimensions.y = y;
 	m_system_area = {get_origin_left(), get_origin_top(), m_dimensions.w - m_origin_anchor.x,
-	                 m_dimensions.h - m_origin_anchor.y};
+					 m_dimensions.h - m_origin_anchor.y};
 }
 
 int coordinate_system::adjust(const int i) const
@@ -327,11 +326,11 @@ void coordinate_system::draw_rulers() const
 
 			m_helper->util_draw_line(0, temp.y, m_system_area.w, temp.y, m_helper->get_palette()->white());
 			m_helper->util_draw_line(0, temp.y + temp.h, m_system_area.w - 1, temp.y + temp.h,
-			                         m_helper->get_palette()->white());
+									 m_helper->get_palette()->white());
 
 			m_helper->util_draw_line(temp.x, 0, temp.x, m_system_area.h, m_helper->get_palette()->white());
 			m_helper->util_draw_line(temp.x + temp.w, 0, temp.x + temp.w, m_system_area.h,
-			                         m_helper->get_palette()->white());
+									 m_helper->get_palette()->white());
 		}
 		end_draw();
 	}
@@ -353,25 +352,25 @@ void coordinate_system::mouse_state(SDL_Event *event)
 
 	const SDL_Point mouse = {event->button.x, event->button.y};
 	SDL_Rect selection = {m_selection->x * m_scale_f + m_origin.x, m_selection->y * m_scale_f + m_origin.y,
-	                      m_selection->w * m_scale_f, m_selection->h * m_scale_f};
+						  m_selection->w * m_scale_f, m_selection->h * m_scale_f};
 
 	if (SDL_RectEmpty(&selection))
 		return;
 
 	if (in_range(mouse.x, selection.x, EXTENDED_BORDER) &&
-	    in_between(mouse.y, m_selection->y, m_selection->y + m_selection->h, m_origin.y)) {
+		in_between(mouse.y, m_selection->y, m_selection->y + m_selection->h, m_origin.y)) {
 		m_size_mode = SIZE_LEFT;
 		m_helper->set_cursor(CURSOR_SIZE_H);
 	} else if (in_range(mouse.x, selection.w + selection.x, EXTENDED_BORDER) &&
-	           in_between(mouse.y, m_selection->y, m_selection->y + m_selection->h, m_origin.y)) {
+			   in_between(mouse.y, m_selection->y, m_selection->y + m_selection->h, m_origin.y)) {
 		m_size_mode = SIZE_RIGHT;
 		m_helper->set_cursor(CURSOR_SIZE_H);
 	} else if (in_range(mouse.y, selection.y, EXTENDED_BORDER) &&
-	           in_between(mouse.x, m_selection->x, m_selection->x + m_selection->w, m_origin.x)) {
+			   in_between(mouse.x, m_selection->x, m_selection->x + m_selection->w, m_origin.x)) {
 		m_size_mode = SIZE_TOP;
 		m_helper->set_cursor(CURSOR_SIZE_V);
 	} else if (in_range(mouse.y, selection.h + selection.y, EXTENDED_BORDER) &&
-	           in_between(mouse.x, m_selection->x, m_selection->x + m_selection->w, m_origin.x)) {
+			   in_between(mouse.x, m_selection->x, m_selection->x + m_selection->w, m_origin.x)) {
 		m_size_mode = SIZE_BOTTOM;
 		m_helper->set_cursor(CURSOR_SIZE_V);
 	} else if (sdl_helper::util_is_in_rect(&selection, event->button.x, event->button.y)) {

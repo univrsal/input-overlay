@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2019 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <universailp@web.de>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ class texture;
 class config {
 public:
 	config(const char *texture_path, const char *config, SDL_Point def_dim, SDL_Point space, sdl_helper *h,
-	       dialog_element_settings *s);
+		   dialog_element_settings *s);
 
 	~config();
 
@@ -67,15 +67,9 @@ public:
 
 	std::vector<std::unique_ptr<element>> m_elements;
 
-	element *selected() const
-	{
-		return m_selected;
-	}
+	element *selected() const { return m_selected; }
 
-	uint16_t selected_id() const
-	{
-		return m_selected_id;
-	}
+	uint16_t selected_id() const { return m_selected_id; }
 
 	void reset_selection();
 

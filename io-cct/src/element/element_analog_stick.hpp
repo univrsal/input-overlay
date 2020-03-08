@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2019 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <universailp@web.de>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,16 +25,10 @@
 
 class ElementAnalogStick : public element_texture {
 public:
-	ElementAnalogStick()
-	    : element_texture(),
-	      m_static_scaled(),
-	      m_stick()
-	{
-		/* NO-OP */
-	}
+	ElementAnalogStick() : element_texture(), m_static_scaled(), m_stick() { /* NO-OP */ }
 
 	ElementAnalogStick(const std::string &id, SDL_Point pos, SDL_Rect mapping, element_side side, uint8_t radius,
-	                   uint8_t z);
+					   uint8_t z);
 
 	SDL_Rect *get_abs_dim(coordinate_system *cs) override;
 
@@ -50,15 +44,9 @@ public:
 
 	void handle_event(SDL_Event *event, sdl_helper *helper) override;
 
-	element_side get_stick() const
-	{
-		return m_stick;
-	}
+	element_side get_stick() const { return m_stick; }
 
-	uint16_t get_radius() const
-	{
-		return m_radius;
-	}
+	uint16_t get_radius() const { return m_radius; }
 
 	static ElementAnalogStick *read_from_file(ccl_config *file, const std::string &id, SDL_Point *default_dim);
 

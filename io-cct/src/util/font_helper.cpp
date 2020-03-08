@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2019 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <universailp@web.de>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ font_helper::~font_helper()
 }
 
 void font_helper::draw(const std::string *text, const int x, const int y, TTF_Font *font, const SDL_Color *fg,
-                       const SDL_Color *bg, const uint8_t scale) const
+					   const SDL_Color *bg, const uint8_t scale) const
 {
 	SDL_Surface *surface = nullptr;
 	SDL_Texture *texture = nullptr;
@@ -76,7 +76,7 @@ void font_helper::draw(const std::string *text, const int x, const int y, TTF_Fo
 }
 
 void font_helper::draw_rot(const std::string *text, const int x, const int y, TTF_Font *font, const SDL_Color *fg,
-                           const double angle) const
+						   const double angle) const
 {
 	SDL_Surface *surface = nullptr;
 	SDL_Texture *texture = nullptr;
@@ -108,7 +108,7 @@ SDL_Rect font_helper::get_text_dimension(TTF_Font *font, const std::string *text
 
 	SDL_Surface *surface = nullptr;
 	surface = TTF_RenderUTF8_Shaded(font, text->c_str(), *m_helper->get_palette()->black(),
-	                                *m_helper->get_palette()->white());
+									*m_helper->get_palette()->white());
 	SDL_Rect dest = {};
 
 	if (surface) {
@@ -122,7 +122,7 @@ SDL_Rect font_helper::get_text_dimension(TTF_Font *font, const std::string *text
 }
 
 void font_helper::draw(const std::string *text, const int x, const int y, TTF_Font *font, const SDL_Color *fg,
-                       const uint8_t scale)
+					   const uint8_t scale)
 {
 	set_mode(FONT_BLENDED);
 	draw(text, x, y, font, fg, nullptr, scale);

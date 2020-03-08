@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2019 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <universailp@web.de>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,37 +22,33 @@
 #include "remote_connection.hpp"
 #include <netlib.h>
 
-namespace network
-{
-    class io_client
-    {
-    public:
-        io_client(char* name, tcp_socket socket, uint8_t id);
+namespace network {
+class io_client {
+public:
+	io_client(char *name, tcp_socket socket, uint8_t id);
 
-        ~io_client();
+	~io_client();
 
-        tcp_socket socket() const;
+	tcp_socket socket() const;
 
-        const char* name() const;
+	const char *name() const;
 
-        uint8_t id() const;
+	uint8_t id() const;
 
-        element_data_holder* get_data();
+	element_data_holder *get_data();
 
-        bool read_event(netlib_byte_buf* buffer, message msg);
+	bool read_event(netlib_byte_buf *buffer, message msg);
 
-        void mark_invalid();
+	void mark_invalid();
 
-        bool valid() const;
+	bool valid() const;
 
-    private:
-        element_data_holder m_holder;
-        tcp_socket m_socket;
-        uint8_t m_id;
-        /* Set to false if this client should be disconnected on next roundtrip */
-        bool m_valid;
-        char* m_name;
-    };
+private:
+	element_data_holder m_holder;
+	tcp_socket m_socket;
+	uint8_t m_id;
+	/* Set to false if this client should be disconnected on next roundtrip */
+	bool m_valid;
+	char *m_name;
+};
 }
-
-

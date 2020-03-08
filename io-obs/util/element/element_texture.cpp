@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2019 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <universailp@web.de>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ void element_texture::load(ccl_config *cfg, const std::string &id)
 }
 
 void element_texture::draw(gs_effect_t *effect, gs_image_file_t *image, element_data *data,
-                           sources::overlay_settings *settings)
+						   sources::overlay_settings *settings)
 {
 	UNUSED_PARAMETER(data);
 	UNUSED_PARAMETER(settings);
@@ -64,9 +64,9 @@ void element_texture::draw(gs_effect_t *effect, gs_image_file_t *image, const gs
 }
 
 void element_texture::draw(gs_effect *effect, gs_image_file_t *image, const gs_rect *rect, const vec2 *pos,
-                           const float angle)
+						   const float angle)
 {
-    gs_effect_set_texture(gs_effect_get_param_by_name(effect, "image"), image->texture);
+	gs_effect_set_texture(gs_effect_get_param_by_name(effect, "image"), image->texture);
 
 	gs_matrix_push();
 	{

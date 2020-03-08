@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2019 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <universailp@web.de>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,14 +39,14 @@ checkbox::checkbox(const int8_t id, const int x, const int y, const char *text, 
 }
 
 checkbox::checkbox(const int8_t id, const int x, const int y, const char *text, dialog *parent, const bool state)
-    : checkbox(id, x, y, text, parent)
+	: checkbox(id, x, y, text, parent)
 {
-    m_state = state;
+	m_state = state;
 }
 
 checkbox::~checkbox()
 {
-    checkbox::close();
+	checkbox::close();
 }
 
 void checkbox::close()
@@ -70,12 +70,12 @@ void checkbox::draw_background()
 	m_label->draw_background();
 
 	get_helper()->util_fill_rect(get_left(), m_parent_dialog->get_top() + m_checkbox.y, CHECKBOX_SIZE, CHECKBOX_SIZE,
-	                             get_helper()->get_palette()->dark_gray());
+								 get_helper()->get_palette()->dark_gray());
 	get_helper()->util_draw_rect(get_left(), m_parent_dialog->get_top() + m_checkbox.y, CHECKBOX_SIZE, CHECKBOX_SIZE,
-	                             get_helper()->get_palette()->light_gray());
+								 get_helper()->get_palette()->light_gray());
 	if (m_focused) {
 		get_helper()->util_draw_rect(get_left() - 2, get_top() - 2, get_width() + 4, get_height() + 4,
-		                             get_helper()->get_palette()->light_gray());
+									 get_helper()->get_palette()->light_gray());
 	}
 }
 
@@ -85,7 +85,7 @@ void checkbox::draw_foreground()
 	m_label->draw_foreground();
 	if (m_state) {
 		get_helper()->util_fill_rect(get_left() + 4, m_parent_dialog->get_top() + m_checkbox.y + 4, CHECKBOX_SIZE - 8,
-		                             CHECKBOX_SIZE - 8, get_helper()->get_palette()->green());
+									 CHECKBOX_SIZE - 8, get_helper()->get_palette()->green());
 	}
 }
 

@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2019 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <universailp@web.de>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,16 +18,16 @@
 
 #pragma once
 
-#define FONT_SOLID          0
-#define FONT_SHADED         1
-#define FONT_BLENDED        2
+#define FONT_SOLID 0
+#define FONT_SHADED 1
+#define FONT_BLENDED 2
 
-#define FONT_SMALL          10
-#define FONT_DEFAULT        16
-#define FONT_LARGE          28
+#define FONT_SMALL 10
+#define FONT_DEFAULT 16
+#define FONT_LARGE 28
 
-#define FONT_WSTRING   0
-#define FONT_WSTRING_LARGE  1
+#define FONT_WSTRING 0
+#define FONT_WSTRING_LARGE 1
 
 #include <SDL_ttf.h>
 #include <string>
@@ -44,7 +44,7 @@ public:
 	void set_mode(int m);
 
 	void draw(const std::string *text, int x, int y, TTF_Font *font, const SDL_Color *fg, const SDL_Color *bg,
-	          uint8_t scale = 1) const;
+			  uint8_t scale = 1) const;
 
 	void draw(const std::string *text, int x, int y, TTF_Font *font, const SDL_Color *fg, uint8_t scale = 1);
 

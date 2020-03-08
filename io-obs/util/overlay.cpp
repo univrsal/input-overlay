@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2019 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <universailp@web.de>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -205,18 +205,18 @@ void overlay::draw(gs_effect_t *effect)
 
 void overlay::refresh_data()
 {
-    /* This copies over necessary element data information
+	/* This copies over necessary element data information
      * to make sure the overlay always has data available to
      * draw the overlay. If the data was directly accessed in the render
      * method, the overlay can start to flicker if the frame is rendered
      * while the data is currently inaccessible, because it is being written
      * to by the input thread, resulting in all buttons being unpressed
      */
-    if (io_config::io_window_filters.input_blocked())
-        return;
-    element_data_holder *source = nullptr;
-    std::lock_guard<std::mutex> lck1(hook::mutex);
-    std::lock_guard<std::mutex> lck2(network::mutex);
+	if (io_config::io_window_filters.input_blocked())
+		return;
+	element_data_holder *source = nullptr;
+	std::lock_guard<std::mutex> lck1(hook::mutex);
+	std::lock_guard<std::mutex> lck2(network::mutex);
 
 	if (hook::data_initialized || network::network_flag) {
 		if (network::server_instance && m_settings->selected_source > 0) {
@@ -292,7 +292,7 @@ void overlay::load_element(ccl_config *cfg, const std::string &id, const bool de
 		{
 #endif
 			blog(LOG_INFO, "[input-overlay]  Type: %14s, KEYCODE: 0x%04X ID: %s",
-			     element_type_to_string(static_cast<element_type>(type)), new_element->get_keycode(), id.c_str());
+				 element_type_to_string(static_cast<element_type>(type)), new_element->get_keycode(), id.c_str());
 		}
 	}
 }

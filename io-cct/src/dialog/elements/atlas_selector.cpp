@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2019 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <universailp@web.de>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 #include "../../util/constants.hpp"
 
 atlas_selector::atlas_selector(const int8_t id, const int x, const int y, const int w, const int h, texture *t,
-                               dialog *parent)
+							   dialog *parent)
 {
 	const SDL_Rect temp = {x, y, w, h};
 	atlas_selector::init(parent, temp, id);

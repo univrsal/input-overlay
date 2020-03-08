@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2019 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <universailp@web.de>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -210,18 +210,18 @@ DWORD WINAPI hook_method(const LPVOID arg)
 void *hook_method(void *)
 #endif
 {
-    /* The hook only keeps track of the gamepad states here
+	/* The hook only keeps track of the gamepad states here
          * and the changes will then be sent in a different thread
          */
-    while (hook_run_flag) {
-        for (auto &pad : pad_handles) {
-            if (!pad.valid())
-                continue;
+	while (hook_run_flag) {
+		for (auto &pad : pad_handles) {
+			if (!pad.valid())
+				continue;
 #ifdef _WIN32
 			gamepad_state new_state(pad.get_xinput());
 			pad.update_state(&new_state);
 #else
-			    /* TODO: Linux implementation */
+				/* TODO: Linux implementation */
 #endif
 		}
 #ifdef _WIN32

@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2019 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <universailp@web.de>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,46 +23,45 @@
 #include <netlib.h>
 
 namespace Ui {
-    class io_config_dialog;
+class io_config_dialog;
 }
-class io_settings_dialog : public QDialog
-{
-Q_OBJECT
+class io_settings_dialog : public QDialog {
+	Q_OBJECT
 
 public:
-    explicit io_settings_dialog(QWidget* parent = nullptr);
+	explicit io_settings_dialog(QWidget *parent = nullptr);
 
-    ~io_settings_dialog();
+	~io_settings_dialog();
 
-    void showEvent(QShowEvent* event) override;
+	void showEvent(QShowEvent *event) override;
 
-    void toggleShowHide();
+	void toggleShowHide();
 
 private Q_SLOTS:
 
-    void RefreshUi();
+	void RefreshUi();
 
-    void FormAccepted();
+	void FormAccepted();
 
-    void CbRemoteStateChanged(int state);
+	void CbRemoteStateChanged(int state);
 
-    void CbInputControlStateChanged(int state);
+	void CbInputControlStateChanged(int state);
 
-    void PingClients();
+	void PingClients();
 
-    void RefreshWindowList();
+	void RefreshWindowList();
 
-    void AddFilter();
+	void AddFilter();
 
-    void RemoveFilter();
+	void RemoveFilter();
 
-    void OpenGitHub();
+	void OpenGitHub();
 
-    void OpenForums();
+	void OpenForums();
+
 private:
-    Ui::io_config_dialog* ui;
-    QTimer* m_refresh = nullptr;
-
+	Ui::io_config_dialog *ui;
+	QTimer *m_refresh = nullptr;
 };
 
-extern io_settings_dialog* settings_dialog;
+extern io_settings_dialog *settings_dialog;
