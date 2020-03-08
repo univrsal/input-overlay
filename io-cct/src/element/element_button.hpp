@@ -22,7 +22,9 @@
 
 class ElementButton : public element_texture {
 public:
-	ElementButton() : element_texture(), m_pressed_mapping() { /* NO-OP */ }
+	ElementButton() : element_texture(), m_pressed_mapping()
+	{ /* NO-OP */
+	}
 
 	ElementButton(const std::string &id, SDL_Point pos, SDL_Rect mapping, uint16_t vc, uint8_t z);
 
