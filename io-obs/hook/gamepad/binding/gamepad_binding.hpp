@@ -18,27 +18,34 @@
 
 #pragma once
 
-#include "util/util.hpp"
-#include "gamepad/binding/gamepad_binding.hpp"
-#include "gamepad/gamepad.hpp"
-#include <string>
-#include <layout_constants.h>
-#include <mutex>
-#include <stdio.h>
-#include <memory>
+#include <stdint.h>
+#include <QString>
+#include <vector>
+#include <map>
+
+class element_data_holder;
 
 namespace gamepad {
+struct bind {
+	const char *setting;
+	const char *text_box_id;
+	uint8_t default_value;
+	bool axis_event; /* true if axis event */
+};
 
-void start_pad_hook();
-void end_pad_hook();
-bool init_pad_devices();
+class bindings {
+protected:
+	static std::vector<bind> m_defaults;
+	std::map<uint16_t, bind> m_bindings;
+	QString m_name;
 
-/* Mutex for thread safety */
-extern std::mutex mutex;
-/* Four structs containing info to query gamepads */
-extern std::unique_ptr<handle> pads[PAD_COUNT];
-/* Init state of hook */
-extern bool gamepad_hook_state;
-/* False will end thread */
-extern bool gamepad_hook_run_flag;
+public:
+	bindings();
+	virtual ~bindings() = 0;
+	virtual void set_binding(uint16_t id, uint16_t binding, bool axis_event);
+};
+
+extern std::vector<bindings> loaded_bindings;
+extern void save_bindings();
+extern void load_bindings();
 }

@@ -32,29 +32,6 @@ bool gamepad_hook_run_flag = true;
 gamepad_handle pads[PAD_COUNT];
 std::mutex mutex;
 
-gamepad_handle::~gamepad_handle()
-{
-	unload();
-}
-
-void gamepad_handle::load()
-{
-	unload();
-	update();
-	debug("Gamepad %i present: %s", m_id, valid() ? "true" : "false");
-}
-
-void gamepad_handle::update()
-{
-	m_valid = xinput_fix::update(m_id, &m_xin);
-}
-
-void gamepad_handle::init(uint8_t id)
-{
-	m_id = id;
-	load();
-}
-
 bool init_pad_devices()
 {
 	uint8_t id = 0;

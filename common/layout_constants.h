@@ -51,6 +51,7 @@
 #define CFG_TRIGGER_MODE "trigger_mode"
 
 /* Misc */
+#define PAD_COUNT 4
 #define AXIS_MAX_AMPLITUDE 32767
 #define STICK_DEAD_ZONE 100
 /* ns after last scroll message until reset */
