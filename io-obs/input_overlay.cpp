@@ -70,14 +70,14 @@ bool obs_module_load()
 	if (io_config::control)
 		io_config::io_window_filters.read_from_config();
 
-    /* UI registration from
+	/* UI registration from
     * https://github.com/Palakis/obs-websocket/
     */
-    const auto menu_action = static_cast<QAction *>(obs_frontend_add_tools_menu_qaction(T_MENU_OPEN_SETTINGS));
-    obs_frontend_push_ui_translation(obs_module_get_string);
-    const auto main_window = static_cast<QMainWindow *>(obs_frontend_get_main_window());
-    settings_dialog = new io_settings_dialog(main_window);
-    obs_frontend_pop_ui_translation();
+	const auto menu_action = static_cast<QAction *>(obs_frontend_add_tools_menu_qaction(T_MENU_OPEN_SETTINGS));
+	obs_frontend_push_ui_translation(obs_module_get_string);
+	const auto main_window = static_cast<QMainWindow *>(obs_frontend_get_main_window());
+	settings_dialog = new io_settings_dialog(main_window);
+	obs_frontend_pop_ui_translation();
 
 	const auto menu_cb = [] { settings_dialog->toggleShowHide(); };
 	QAction::connect(menu_action, &QAction::triggered, menu_cb);
