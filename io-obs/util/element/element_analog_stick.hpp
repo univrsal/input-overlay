@@ -18,7 +18,6 @@
 
 #pragma once
 
-#include "../layout_constants.hpp"
 #include "element_texture.hpp"
 #include <netlib.h>
 
@@ -49,7 +48,7 @@ public:
 	element_data_analog_stick(const button_state state, const element_side side)
 		: element_data(ET_ANALOG_STICK), m_left_stick(), m_right_stick()
 	{
-		if (side == DIR_LEFT) {
+		if (side == ES_LEFT) {
 			m_left_state = state;
 			m_data_type = SD_PRESSED_STATE_LEFT;
 		} else {
@@ -58,52 +57,69 @@ public:
 		}
 	}
 
-	element_data_analog_stick(const float axis_value, const stick_data_type data_type)
-		: element_data(ET_ANALOG_STICK), m_left_state(), m_right_state()
-	{
-		switch (data_type) {
-		case SD_LEFT_X:
-			m_left_stick = {axis_value, -1};
-			break;
-		case SD_LEFT_Y:
-			m_left_stick = {-1, axis_value};
-			break;
-		case SD_RIGHT_X:
-			m_right_stick = {axis_value, -1};
-			break;
-		case SD_RIGHT_Y:
-			m_right_stick = {-1, axis_value};
-			break;
-		default:;
-		}
-		m_data_type = data_type;
-	}
+    element_data_analog_stick(const float axis_value,
+                              const stick_data_type data_type) :
+          element_data(ET_ANALOG_STICK),
+          m_left_state(), m_right_state()
+    {
+        switch (data_type) {
+            case SD_LEFT_X:
+                m_left_stick = {axis_value, -1};
+                break;
+            case SD_LEFT_Y:
+                m_left_stick = {-1, axis_value};
+                break;
+            case SD_RIGHT_X:
+                m_right_stick = {axis_value, -1};
+                break;
+            case SD_RIGHT_Y:
+                m_right_stick = {-1, axis_value};
+                break;
+            default:;
+        }
+        m_data_type = data_type;
+    }
 
-	element_data_analog_stick(bool left, bool right, const float l_x, const float l_y, const float r_x, const float r_y)
-		: element_data(ET_ANALOG_STICK)
-	{
-		m_left_stick = {l_x, l_y};
-		m_right_stick = {r_x, r_y};
-		m_left_state = static_cast<button_state>(left);
-		m_right_state = static_cast<button_state>(right);
-		m_data_type = SD_BOTH;
-	}
+    element_data_analog_stick(bool left, bool right, const float l_x, const float l_y,
+                              const float r_x, const float r_y) :
+        element_data(ET_ANALOG_STICK)
+    {
+        m_left_stick = {l_x, l_y};
+        m_right_stick = {r_x, r_y};
+        m_left_state = static_cast<button_state>(left);
+        m_right_state = static_cast<button_state>(right);
+        m_data_type = SD_BOTH;
+    }
 
-	bool left_pressed() const { return m_left_state == BS_PRESSED; }
+    bool left_pressed() const
+    {
+        return m_left_state == BS_PRESSED;
+    }
 
-	bool right_pressed() const { return m_right_state == BS_PRESSED; }
+    bool right_pressed() const
+    {
+        return m_right_state == BS_PRESSED;
+    }
 
-	const vec2 *get_left_stick() const { return &m_left_stick; }
+    const vec2* get_left_stick() const
+    {
+        return &m_left_stick;
+    }
 
-	const vec2 *get_right_stick() const { return &m_right_stick; }
+    const vec2* get_right_stick() const
+    {
+        return &m_right_stick;
+    }
 
-	void set_state(button_state left, button_state right);
+    void set_state(button_state left, button_state right);
 
-	bool is_persistent() override { return true; }
+    bool is_persistent() override
+    { return true; }
 
-	bool merge(element_data *other) override;
+    bool merge(element_data* other) override;
 
-	static element_data_analog_stick *from_buffer(netlib_byte_buf *buffer);
+    static element_data_analog_stick* from_buffer(netlib_byte_buf* buffer);
+==== BASE ====
 
 private:
 	vec2 m_left_stick{}, m_right_stick{};
@@ -115,7 +131,7 @@ class element_analog_stick : public element_texture {
 public:
 	element_analog_stick() : element_texture(ET_ANALOG_STICK), m_side() {}
 
-	void load(ccl_config *cfg, const std::string &id) override;
+	void load(const QJsonObject &obj) override;
 
 	void draw(gs_effect_t *effect, gs_image_file_t *image, element_data *data,
 			  sources::overlay_settings *settings) override;

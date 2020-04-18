@@ -16,11 +16,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *************************************************************************/
 
-#include "uiohook.hpp"
 #include "network.hpp"
+#include "gamepad.hpp"
+#include "uiohook.hpp"
 #include "util.hpp"
 #include <cstdio>
-#include "gamepad.hpp"
 #ifdef UNIX
 #include <pthread.h>
 #endif

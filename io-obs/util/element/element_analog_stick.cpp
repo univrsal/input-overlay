@@ -16,16 +16,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *************************************************************************/
 
-#include "../../sources/input_source.hpp"
 #include "element_analog_stick.hpp"
-#include "../../../ccl/ccl.hpp"
-#include "../util.hpp"
+#include <keycodes.h>
 
-void element_analog_stick::load(ccl_config *cfg, const std::string &id)
+void element_analog_stick::load(const QJsonObject &obj)
 {
-	element_texture::load(cfg, id);
-	m_side = static_cast<element_side>(cfg->get_int(id + CFG_SIDE));
-	m_radius = cfg->get_int(id + CFG_STICK_RADIUS);
+	element_texture::load(obj);
+	m_side = static_cast<element_side>(obj[CFG_SIDE].toInt());
+	m_radius = static_cast<uint8_t>(obj[CFG_STICK_RADIUS].toInt());
 	m_keycode = VC_STICK_DATA;
 	m_pressed = m_mapping;
 	m_pressed.y = m_mapping.y + m_mapping.cy + CFG_INNER_BORDER;

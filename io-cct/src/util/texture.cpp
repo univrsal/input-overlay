@@ -18,8 +18,8 @@
 
 #include "texture.hpp"
 #include "constants.hpp"
-#include <cstdio>
 #include <SDL_image.h>
+#include <cstdio>
 
 texture::texture()
 {

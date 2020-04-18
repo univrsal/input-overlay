@@ -19,7 +19,7 @@
 #pragma once
 
 #include "element_texture.hpp"
-#include "util/layout_constants.hpp"
+#include <layout_constants.h>
 
 #define WHEEL_MAP_MIDDLE 0
 #define WHEEL_MAP_UP 1
@@ -33,7 +33,7 @@ public:
 
 	explicit element_data_wheel(direction dir);
 
-	explicit element_data_wheel(button_state state);
+	explicit element_data_wheel(button_state state = BS_PRESSED);
 
 	direction get_dir() const;
 
@@ -57,7 +57,9 @@ class element_wheel : public element_texture {
 public:
 	element_wheel();
 
-	void load(ccl_config *cfg, const std::string &id) override;
+==== BASE ====
+    void load(ccl_config* cfg, const std::string &id) override;
+==== BASE ====
 
 	void draw(gs_effect_t *effect, gs_image_file_t *image, element_data *data,
 			  sources::overlay_settings *settings) override;

@@ -18,8 +18,8 @@
 
 #pragma once
 
-#include "gui_element.hpp"
 #include "../dialog.hpp"
+#include "gui_element.hpp"
 #include <string>
 
 class dialog;
@@ -47,6 +47,8 @@ public:
 	uint8_t get_cursor() override;
 
 	void set_text(std::string s);
+
+	void set_text(int i);
 
 	void set_hex_int(uint16_t i);
 

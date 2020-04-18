@@ -18,8 +18,8 @@
 
 #pragma once
 
-#include "element_texture.hpp"
 #include "../util/util.hpp"
+#include "element_texture.hpp"
 
 #define WHEEL_RESET 150
 
@@ -47,11 +47,11 @@ public:
 
 	void update_settings(dialog_element_settings *dialog) override;
 
-	static ElementScrollWheel *read_from_file(ccl_config *file, const std::string &id, SDL_Point *default_dim);
+	static ElementScrollWheel *read_from_json(const json &j, SDL_Point *default_dim);
 
 private:
 	SDL_Rect m_mapping_pressed = {}, m_mapping_down = {}, m_mapping_up = {};
-	Timer m_wheel_reset;
+	timer m_wheel_reset;
 	bool m_pressed = false;
 	bool m_up = false;
 	bool m_down = false;

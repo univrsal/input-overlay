@@ -25,8 +25,8 @@
 
 #include <codecvt>
 #include <locale>
-#include <vector>
 #include <memory>
+#include <vector>
 
 #ifdef LINUX
 #include <clocale>
@@ -229,8 +229,8 @@ private:
 	std::vector<SDL_GameController *> m_controllers;
 
 	/* Frame timing */
-	Timer m_frame_timer;
-	Timer m_frame_cap_timer;
+	timer m_frame_timer;
+	timer m_frame_cap_timer;
 	float m_fps = 0.f;
 	uint32_t m_counted_frames = 0;
 };

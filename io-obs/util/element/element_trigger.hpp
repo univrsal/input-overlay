@@ -33,7 +33,7 @@ public:
     */
 	element_data_trigger(trigger_data side, float val);
 
-	element_data_trigger(float left, float right);
+	element_data_trigger(float left = 0.f, float right = 0.f);
 
 	float get_left() const;
 
@@ -54,7 +54,7 @@ class element_trigger : public element_texture {
 public:
 	element_trigger();
 
-	void load(ccl_config *cfg, const std::string &id) override;
+	void load(const QJsonObject &obj) override;
 
 	void draw(gs_effect_t *effect, gs_image_file_t *image, element_data *data,
 			  sources::overlay_settings *settings) override;

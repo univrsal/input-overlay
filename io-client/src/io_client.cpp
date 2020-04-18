@@ -16,12 +16,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *************************************************************************/
 
-#include <stdio.h>
-#include <signal.h>
-#include "util.hpp"
+#include "gamepad.hpp"
 #include "network.hpp"
 #include "uiohook.hpp"
-#include "gamepad.hpp"
+#include "util.hpp"
+#include <signal.h>
+#include <stdio.h>
 
 /* Catch Application closing */
 void sig_int__handler(int signal)

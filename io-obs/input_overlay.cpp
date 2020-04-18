@@ -16,20 +16,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *************************************************************************/
 
-#include <obs-module.h>
-#include <obs-frontend-api.h>
-#include <QMainWindow>
 #include <QAction>
+#include <QMainWindow>
+#include <obs-frontend-api.h>
+#include <obs-module.h>
 #include <util/config-file.h>
 
-#include "util/util.hpp"
-#include "util/config.hpp"
-#include "sources/input_source.hpp"
-#include "sources/input_history.hpp"
-#include "hook/hook_helper.hpp"
-#include "hook/gamepad_hook.hpp"
 #include "gui/io_settings_dialog.hpp"
+#include "hook/gamepad_hook.hpp"
+#include "hook/hook_helper.hpp"
 #include "network/remote_connection.hpp"
+#include "sources/input_history.hpp"
+#include "sources/input_source.hpp"
+#include "util/config.hpp"
+#include "util/lang.h"
+#include "util/util.hpp"
 
 #ifdef LINUX
 
@@ -42,9 +43,9 @@ OBS_MODULE_USE_DEFAULT_LOCALE("input-overlay", "en-US")
 
 bool obs_module_load()
 {
-	auto cfg = obs_frontend_get_global_config();
-	io_config::set_defaults(cfg);
-	io_config::load(cfg);
+	return false;
+	io_config::set_defaults();
+	io_config::load();
 
 	if (io_config::history)
 		sources::register_history();
@@ -67,7 +68,7 @@ bool obs_module_load()
 
 	/* Input filtering via focused window title */
 	if (io_config::control)
-		io_config::io_window_filters.read_from_config(cfg);
+		io_config::io_window_filters.read_from_config();
 
 	/* UI registration from
     * https://github.com/Palakis/obs-websocket/
@@ -87,8 +88,7 @@ bool obs_module_load()
 void obs_module_unload()
 {
 	/* Save config values again */
-	auto cfg = obs_frontend_get_global_config();
-	io_config::save(cfg);
+	io_config::save();
 
 	if (gamepad::gamepad_hook_state)
 		gamepad::end_pad_hook();

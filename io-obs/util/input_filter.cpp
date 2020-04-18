@@ -17,36 +17,36 @@
  *************************************************************************/
 
 #include "input_filter.hpp"
-#include "util.hpp"
 #include "config.hpp"
+#include "obs_util.hpp"
+#include "settings.h"
 #include <util/config-file.h>
 
 static std::string base_id = S_FILTER_BASE;
 
-void input_filter::read_from_config(config_t *cfg)
+void input_filter::read_from_config()
 {
 	io_config::filter_mutex.lock();
-	m_regex = config_get_bool(cfg, S_REGION, S_REGEX);
-	m_whitelist = config_get_int(cfg, S_REGION, S_FILTER_MODE) == 0;
-	const int filter_count = config_get_int(cfg, S_REGION, S_FILTER_COUNT);
+	m_regex = CGET_BOOL(S_REGEX);
+	m_whitelist = CGET_INT(S_FILTER_MODE) == 0;
+	const int filter_count = CGET_INT(S_FILTER_COUNT);
 
 	for (auto i = 0; i < filter_count; ++i) {
-		const auto str = config_get_string(cfg, S_REGION, (base_id + std::to_string(i)).c_str());
+		const auto str = CGET_STR((base_id + std::to_string(i)).c_str());
 		if (str && strlen(str) > 0)
 			m_filters.append(str);
 	}
 	io_config::filter_mutex.unlock();
 }
 
-void input_filter::write_to_config(config_t *cfg)
+void input_filter::write_to_config()
 {
 	io_config::filter_mutex.lock();
 
-	config_set_int(cfg, S_REGION, S_FILTER_COUNT, m_filters.size());
+	CSET_INT(S_FILTER_COUNT, m_filters.size());
 
-	for (auto i = 0; i < m_filters.size(); i++) {
-		config_set_string(cfg, S_REGION, (base_id + std::to_string(i)).c_str(), m_filters[i].toStdString().c_str());
-	}
+	for (auto i = 0; i < m_filters.size(); i++)
+		CSET_STR((base_id + std::to_string(i)).c_str(), m_filters[i].toStdString().c_str());
 
 	io_config::filter_mutex.unlock();
 }

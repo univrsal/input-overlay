@@ -16,20 +16,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *************************************************************************/
 
-#include "../../sources/input_source.hpp"
-#include "../../../ccl/ccl.hpp"
 #include "element_gamepad_id.hpp"
-#include "util/layout_constants.hpp"
 #include "element_button.hpp"
+#include "sources/input_source.hpp"
+#include <keycodes.h>
 
 element_gamepad_id::element_gamepad_id() : element_texture(ET_GAMEPAD_ID), m_mappings{}
 {
 	m_keycode = VC_PAD_GUIDE;
 }
 
-void element_gamepad_id::load(ccl_config *cfg, const std::string &id)
+void element_gamepad_id::load(const QJsonObject &obj)
 {
-	element_texture::load(cfg, id);
+	element_texture::load(obj);
 	auto i = 1;
 	for (auto &map : m_mappings) {
 		map = m_mapping;

@@ -18,12 +18,12 @@
 
 #pragma once
 
-#include "dialog.hpp"
+#include "../util/constants.hpp"
 #include "../util/sdl_helper.hpp"
-#include "elements/textbox.hpp"
+#include "dialog.hpp"
 #include "elements/button.hpp"
 #include "elements/combobox.hpp"
-#include "../util/constants.hpp"
+#include "elements/textbox.hpp"
 
 class tool;
 
@@ -56,7 +56,7 @@ public:
 private:
 	notifier *m_notifier = nullptr;
 
-	bool m_load_cfg = false;
+	bool m_have_existing_cfg = false;
 
 	combobox *m_lang_box = nullptr;
 	textbox *m_texture_path = nullptr;

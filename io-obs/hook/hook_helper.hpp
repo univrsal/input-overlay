@@ -18,15 +18,9 @@
 
 #pragma once
 
-#include <uiohook.h>
 #include <mutex>
-#include "../util/util.hpp"
-
-#ifdef LINUX
+#include <uiohook.h>
 #include <stdint.h>
-#else
-#include <Windows.h>
-#endif
 
 class element_data_holder;
 
@@ -40,13 +34,7 @@ extern bool hook_initialized;
 extern bool data_initialized;
 extern std::mutex mutex;
 
-#ifdef _WIN32
-DWORD WINAPI hook_thread_proc(LPVOID arg);
-#else
-
 void *hook_thread_proc(void *arg);
-
-#endif
 
 /* Checks if mouse scrolling timed out */
 void check_wheel();

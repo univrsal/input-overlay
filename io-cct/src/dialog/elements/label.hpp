@@ -18,11 +18,11 @@
 
 #pragma once
 
-#include "gui_element.hpp"
 #include "../dialog.hpp"
+#include "gui_element.hpp"
+#include <memory>
 #include <string>
 #include <vector>
-#include <memory>
 
 class dialog;
 

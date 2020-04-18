@@ -18,11 +18,11 @@
 
 #ifdef _WIN32
 #include "xinput_fix.hpp"
-#include <string>
 #include <stdio.h>
+#include <string>
 #define IO_CLIENT 1 /* Prevents util.hpp from including obs headers */
-#include "../../io-obs/util/util.hpp"
 #include "../../io-obs/util/layout_constants.hpp"
+#include "../../io-obs/util/util.hpp"
 
 namespace xinput_fix {
 bool loaded = false;

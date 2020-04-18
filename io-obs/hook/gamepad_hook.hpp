@@ -19,63 +19,24 @@
 #pragma once
 
 #include "util/util.hpp"
-#ifdef _WIN32
-struct js_event; /* placeholder */
-#include "xinput_fix.hpp"
-#else
-#include "gamepad_binding.hpp"
+#include "gamepad/binding/gamepad_binding.hpp"
+#include "gamepad/gamepad.hpp"
 #include <string>
-#include <linux/joystick.h>
-#endif /* LINUX */
-#include <stdio.h>
+#include <layout_constants.h>
 #include <mutex>
+#include <stdio.h>
+#include <memory>
 
 namespace gamepad {
-class gamepad_handle {
-	int8_t m_id = -1;
-	bool m_valid = false;
-#ifdef LINUX
-	std::string m_path;
-	js_event m_event;
-	int m_device_id = -1;
-#else
-	xinput_fix::gamepad m_xinput;
-#endif
-public:
-	gamepad_handle() {}
-	~gamepad_handle();
 
-	int8_t get_id() const { return m_id; }
-
-	void load();
-	void update();
-	void unload();
-	void init(uint8_t id);
-	bool valid() const { return m_valid; }
-
-	/* Linux only */
-	int read_event();
-	js_event *get_event();
-};
-
-#ifdef _WIN32
-DWORD WINAPI hook_method(LPVOID arg);
-#else
-void *hook_method(void *);
-#endif
 void start_pad_hook();
 void end_pad_hook();
 bool init_pad_devices();
 
-#ifdef LINUX
-extern gamepad_binding bindings;
-extern uint8_t last_input;
-#endif
-
 /* Mutex for thread safety */
 extern std::mutex mutex;
 /* Four structs containing info to query gamepads */
-extern gamepad_handle pads[PAD_COUNT];
+extern std::unique_ptr<handle> pads[PAD_COUNT];
 /* Init state of hook */
 extern bool gamepad_hook_state;
 /* False will end thread */

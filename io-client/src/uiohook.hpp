@@ -17,10 +17,10 @@
  *************************************************************************/
 
 #pragma once
-#include <uiohook.h>
-#include <mutex>
 #include <map>
+#include <mutex>
 #include <netlib.h>
+#include <uiohook.h>
 
 #define SCROLL_TIMEOUT 120
 namespace uiohook {

@@ -16,12 +16,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *************************************************************************/
 
+#include "element_dpad.hpp"
 #include "../dialog/dialog_new_element.hpp"
 #include "../util/coordinate_system.hpp"
-#include "../util/texture.hpp"
 #include "../util/palette.hpp"
-#include "../../../ccl/ccl.hpp"
-#include "element_dpad.hpp"
+#include "../util/texture.hpp"
 
 void ElementDPad::draw(texture *atlas, coordinate_system *cs, const bool selected, const bool alpha)
 {
@@ -77,13 +76,13 @@ void ElementDPad::handle_event(SDL_Event *event, sdl_helper *helper)
 	}
 }
 
-ElementDPad *ElementDPad::read_from_file(ccl_config *file, const std::string &id, SDL_Point *default_dim)
+ElementDPad *ElementDPad::read_from_json(const json &j, SDL_Point *default_dim)
 {
-	return new ElementDPad(id, read_position(file, id), read_mapping(file, id, default_dim), read_layer(file, id));
+	return new ElementDPad(j[CFG_ID], read_position(j), read_mapping(j, default_dim), j[CFG_Z_LEVEL]);
 }
 
-void ElementDPad::write_to_file(ccl_config *cfg, SDL_Point *default_dim, uint8_t &layout_flags)
+void ElementDPad::write_to_json(json &j, SDL_Point *default_dim, uint8_t &layout_flags)
 {
-	element_texture::write_to_file(cfg, default_dim, layout_flags);
+	element_texture::write_to_json(j, default_dim, layout_flags);
 	layout_flags |= OF_GAMEPAD;
 }

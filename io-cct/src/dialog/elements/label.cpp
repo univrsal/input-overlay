@@ -17,9 +17,9 @@
  *************************************************************************/
 
 #include "label.hpp"
-#include "../../util/sdl_helper.hpp"
 #include "../../util/localization.hpp"
 #include "../../util/palette.hpp"
+#include "../../util/sdl_helper.hpp"
 
 label::label(const int8_t id, const int x, const int y, const char *text, dialog *parent, uint16_t flags)
 {

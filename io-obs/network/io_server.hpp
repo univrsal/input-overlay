@@ -19,11 +19,11 @@
 #pragma once
 
 #include "io_client.hpp"
-#include <netlib.h>
-#include <vector>
 #include <memory>
-#include <obs-module.h>
 #include <mutex>
+#include <netlib.h>
+#include <obs-module.h>
+#include <vector>
 
 #ifdef _WIN32
 #include <Windows.h>

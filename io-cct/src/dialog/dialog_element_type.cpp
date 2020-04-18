@@ -17,10 +17,10 @@
  *************************************************************************/
 
 #include "dialog_element_type.hpp"
-#include "elements/combobox.hpp"
-#include "elements/button.hpp"
 #include "../tool.hpp"
 #include "../util/constants.hpp"
+#include "elements/button.hpp"
+#include "elements/combobox.hpp"
 
 DialogElementType::DialogElementType(sdl_helper *sdl, tool *tool)
 	: dialog(sdl, SDL_Point{350, 120}, LANG_DIALOG_ELEMENT_TYPE)

@@ -18,10 +18,10 @@
 
 #include "gamepad.hpp"
 #include "network.hpp"
+#include <fcntl.h>
 #include <stdio.h>
 #include <thread>
 #include <unistd.h>
-#include <fcntl.h>
 
 namespace gamepad {
 volatile bool state = false;

@@ -18,10 +18,10 @@
 
 #pragma once
 
-#include "sdl_helper.hpp"
 #include "localization.hpp"
-#include <vector>
+#include "sdl_helper.hpp"
 #include <memory>
+#include <vector>
 
 #define MESSAGE_INFO 0
 #define MESSAGE_ERROR 1

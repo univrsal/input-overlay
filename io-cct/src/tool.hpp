@@ -18,9 +18,9 @@
 
 #pragma once
 
-#include <SDL.h>
-#include "../../io-obs/util/layout_constants.hpp"
 #include "element/element.hpp"
+#include <layout_constants.h>
+#include <SDL.h>
 
 class dialog;
 

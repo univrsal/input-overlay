@@ -18,15 +18,15 @@
 
 #pragma once
 #ifdef LINUX
-#include <string>
 #include <linux/joystick.h>
+#include <string>
 #else
 
 #endif
 #include "gamepad_state.hpp"
 #include "xinput_fix.hpp"
-#include <stdint.h>
 #include <mutex>
+#include <stdint.h>
 
 #define PAD_COUNT 4
 

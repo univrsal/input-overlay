@@ -17,10 +17,10 @@
  *************************************************************************/
 
 #include "uiohook.hpp"
+#include "gamepad.hpp"
+#include "network.hpp"
 #include <cstdarg>
 #include <cstdio>
-#include "network.hpp"
-#include "gamepad.hpp"
 #define IO_CLIENT
 #include "../../io-obs/util/util.hpp"
 

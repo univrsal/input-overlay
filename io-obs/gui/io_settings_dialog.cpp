@@ -16,20 +16,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *************************************************************************/
 
-#include "ui_io_settings_dialog.h"
 #include "io_settings_dialog.hpp"
-#include "network/remote_connection.hpp"
-#include "network/io_server.hpp"
-#include "util/util.hpp"
-#include "util/config.hpp"
 #include "hook/gamepad_hook.hpp"
-#include <obs-frontend-api.h>
-#include <util/platform.h>
-#include <util/config-file.h>
-#include <string>
-#include <obs-module.h>
-#include <QTimer>
+#include "network/io_server.hpp"
+#include "network/remote_connection.hpp"
+#include "ui_io_settings_dialog.h"
+#include "util/config.hpp"
+#include "util/lang.h"
+#include "util/obs_util.hpp"
+#include "util/settings.h"
 #include <QDesktopServices>
+#include <QTimer>
+#include <obs-frontend-api.h>
+#include <obs-module.h>
+#include <string>
+#include <util/config-file.h>
+#include <util/platform.h>
 
 io_settings_dialog *settings_dialog = nullptr;
 
@@ -212,8 +214,6 @@ void io_settings_dialog::RemoveFilter()
 
 void io_settings_dialog::FormAccepted()
 {
-	auto cfg = obs_frontend_get_global_config();
-
 	io_config::uiohook = ui->cb_iohook->isChecked();
 	io_config::gamepad = ui->cb_gamepad_hook->isChecked();
 	io_config::overlay = ui->cb_enable_overlay->isChecked();
@@ -228,7 +228,7 @@ void io_settings_dialog::FormAccepted()
 
 	io_config::io_window_filters.set_regex(ui->cb_regex->isChecked());
 	io_config::io_window_filters.set_whitelist(ui->cb_list_mode->currentIndex() == 0);
-	io_config::io_window_filters.write_to_config(cfg);
+	io_config::io_window_filters.write_to_config();
 
 #ifdef LINUX
 	for (const auto &binding : gamepad::default_bindings) {
@@ -237,7 +237,7 @@ void io_settings_dialog::FormAccepted()
 			bool ok = false;
 			int value = text_box->text().toInt(&ok, 10);
 			if (ok) {
-				config_set_int(cfg, S_REGION, binding.setting, value);
+				CSET_INT(binding.setting, value);
 				gamepad::bindings.set_binding(binding.default_value, value, binding.axis_event);
 			}
 		}

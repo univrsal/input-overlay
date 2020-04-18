@@ -26,7 +26,7 @@ public:
 
 	explicit element_texture(element_type type);
 
-	void load(ccl_config *cfg, const std::string &id) override;
+	void load(const QJsonObject &obj) override;
 
 	void draw(gs_effect_t *effect, gs_image_file_t *image, element_data *data,
 			  sources::overlay_settings *settings) override;

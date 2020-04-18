@@ -16,19 +16,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *************************************************************************/
 
-#include <graphics/matrix4.h>
 #include "icon_handler.hpp"
-#include "sources/input_history.hpp"
 #include "input_entry.hpp"
-#include "translate_effect.hpp"
 #include "scale_effect.hpp"
+#include "sources/input_history.hpp"
+#include "translate_effect.hpp"
+#include <graphics/matrix4.h>
+#include <layout_constants.h>
+#include <util.hpp>
 
 icon_handler::~icon_handler()
 {
 	clear();
 }
 
-void icon_handler::load_icons(const char *img, const char *cfg)
+void icon_handler::load_icons(const QString &cfg, const QString &img)
 {
 	m_icons.load_from_file(cfg, img);
 }
@@ -41,20 +43,26 @@ void icon_handler::update()
 
 	switch (m_settings->dir) {
 	case DIR_DOWN:
-		m_translate_dir = {0.f, 1.f * (m_icons.get_h() + m_settings->v_space)};
-		m_start_pos = {0.f, 0.f};
+		m_translate_dir.x = 0.f;
+		m_translate_dir.y = 1.f * (m_icons.get_h() + m_settings->v_space);
+		m_start_pos = {};
 		break;
 	case DIR_UP:
-		m_translate_dir = {0.f, -1.f * (m_icons.get_h() + m_settings->v_space)};
-		m_start_pos = {0.f, static_cast<float>(m_settings->cy - m_icons.get_h())};
+		m_translate_dir.x = 0.f;
+		m_translate_dir.y = -1.f * (m_icons.get_h() + m_settings->v_space);
+		m_start_pos.x = 0.f;
+		m_start_pos.y = static_cast<float>(m_settings->cy - m_icons.get_h());
 		break;
 	case DIR_LEFT:
-		m_translate_dir = {-1.f * (m_icons.get_w() + m_settings->h_space), 0.f};
-		m_start_pos = {static_cast<float>(m_settings->cx - m_icons.get_w()), 0.f};
+		m_translate_dir.x = -1.f * (m_icons.get_w() + m_settings->h_space);
+		m_translate_dir.y = 0.f;
+		m_start_pos.x = static_cast<float>(m_settings->cx - m_icons.get_w());
+		m_start_pos.y = 0.f;
 		break;
 	case DIR_RIGHT:
-		m_start_pos = {0.f, 0.f};
-		m_translate_dir = {1.f * (m_icons.get_w() + m_settings->h_space), 0.f};
+		m_start_pos = {};
+		m_translate_dir.x = 1.f * (m_icons.get_w() + m_settings->h_space);
+		m_translate_dir.y = 0.f;
 		break;
 	}
 }

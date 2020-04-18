@@ -18,8 +18,8 @@
 
 #pragma once
 
-#include "dialog.hpp"
 #include "../util/sdl_helper.hpp"
+#include "dialog.hpp"
 
 class sdl_helper;
 

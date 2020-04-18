@@ -16,9 +16,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *************************************************************************/
 
-#include "../../sources/input_source.hpp"
 #include "element_button.hpp"
-#include "../../../ccl/ccl.hpp"
+#include <keycodes.h>
 
 bool element_data_button::merge(element_data *other)
 {
@@ -34,10 +33,10 @@ bool element_data_button::merge(element_data *other)
 	return result;
 }
 
-void element_button::load(ccl_config *cfg, const std::string &id)
+void element_button::load(const QJsonObject &obj)
 {
-	element_texture::load(cfg, id);
-	m_keycode = cfg->get_int(id + CFG_KEY_CODE);
+	element_texture::load(obj);
+	m_keycode = static_cast<uint16_t>(obj[CFG_KEY_CODE].toInt());
 	m_pressed = m_mapping;
 	m_pressed.y = m_mapping.y + m_mapping.cy + CFG_INNER_BORDER;
 	/* Checks whether first 8 bits are equal */

@@ -16,24 +16,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *************************************************************************/
 
-#include "gui/io_settings_dialog.hpp"
-#include "../../ccl/ccl.hpp"
 #include "overlay.hpp"
-#include "layout_constants.hpp"
+#include "../sources/input_source.hpp"
+#include "config.hpp"
+#include "element/element.hpp"
+#include "element/element_analog_stick.hpp"
 #include "element/element_button.hpp"
 #include "element/element_data_holder.hpp"
-#include "element/element.hpp"
+#include "element/element_dpad.hpp"
+#include "element/element_gamepad_id.hpp"
+#include "element/element_mouse_movement.hpp"
 #include "element/element_mouse_wheel.hpp"
 #include "element/element_trigger.hpp"
-#include "element/element_analog_stick.hpp"
-#include "../sources/input_source.hpp"
-#include "element/element_gamepad_id.hpp"
-#include "element/element_dpad.hpp"
-#include "network/remote_connection.hpp"
+#include "gui/io_settings_dialog.hpp"
+#include "log.h"
 #include "network/io_server.hpp"
-#include "element/element_mouse_movement.hpp"
-#include "config.hpp"
-
+#include "network/remote_connection.hpp"
+#include "obs_util.hpp"
+#include <QFile>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <layout_constants.h>
 extern "C" {
 #include <graphics/image-file.h>
 }
@@ -85,16 +88,24 @@ bool overlay::load_cfg()
 	if (!m_settings || m_settings->layout_file.empty())
 		return false;
 
-	auto cfg = new ccl_config(m_settings->layout_file, "");
+	QFile file(m_settings->layout_file.c_str());
+
+	if (!file.open(QIODevice::ReadOnly)) {
+		blog(LOG_ERROR, "[input-overlay] couldn't open config file");
+		return false;
+	}
+
+	QJsonParseError err;
+	auto cfg_doc = QJsonDocument::fromJson(file.readAll(), &err);
+	auto cfg_obj = cfg_doc.object();
 	auto flag = true;
 
-	if (!cfg->has_fatal_errors()) {
-		m_settings->cx = static_cast<uint32_t>(cfg->get_int(CFG_TOTAL_WIDTH, true));
-		m_settings->cy = static_cast<uint32_t>(cfg->get_int(CFG_TOTAL_HEIGHT, true));
-		m_settings->layout_flags = cfg->get_int(CFG_FLAGS, true);
+	if (err.error == QJsonParseError::NoError) {
+		m_settings->cx = static_cast<uint32_t>(cfg_obj[CFG_TOTAL_WIDTH].toInt());
+		m_settings->cy = static_cast<uint32_t>(cfg_obj[CFG_TOTAL_HEIGHT].toInt());
+		m_settings->layout_flags = static_cast<uint8_t>(cfg_obj[CFG_FLAGS].toInt());
 
-		auto element_id = cfg->get_string(CFG_FIRST_ID);
-		const auto debug_mode = cfg->get_bool(CFG_DEBUG_FLAG, true);
+		const auto debug_mode = cfg_obj[CFG_DEBUG_FLAG].toBool();
 
 #ifndef _DEBUG
 		if (debug_mode) {
@@ -104,52 +115,14 @@ bool overlay::load_cfg()
 			blog(LOG_INFO, "[input-overlay] Started loading of %s", m_settings->layout_file.c_str());
 		}
 
-		while (!element_id.empty()) {
-			load_element(cfg, element_id, debug_mode);
-			element_id = cfg->get_string(element_id + CFG_NEXT_ID, true);
-		}
+		auto arr = cfg_obj[CFG_ELEMENTS].toArray();
+
+		for (const auto element : arr)
+			load_element(element.toObject(), debug_mode);
+	} else {
+		berr("Couldn't load layout from %s. Error: %s", m_settings->layout_file.c_str(), qt_to_utf8(err.errorString()));
 	}
 
-	if (cfg->has_errors()) {
-		blog(LOG_WARNING, "[input-overlay] %s", cfg->get_error_message().c_str());
-		if (cfg->has_fatal_errors()) {
-			blog(LOG_WARNING, "[input-overlay] Fatal errors occured while loading config file");
-			flag = false;
-		} else {
-			/* Populate data map */
-			for (auto const &element : m_elements) {
-				element_data *data = nullptr;
-
-				switch (element->get_type()) {
-				case ET_GAMEPAD_ID: /* Acts just like a button */
-				case ET_BUTTON:
-					data = new element_data_button(BS_RELEASED);
-					break;
-				case ET_WHEEL:
-					data = new element_data_wheel(BS_RELEASED);
-					break;
-				case ET_TRIGGER:
-					data = new element_data_trigger(0.f, 0.f);
-					break;
-				case ET_ANALOG_STICK:
-					data = new element_data_analog_stick(false, false, 0.f, 0.f, 0.f, 0.f);
-					break;
-				case ET_DPAD_STICK:
-					data = new element_data_dpad(DD_LEFT, BS_RELEASED);
-					break;
-				case ET_MOUSE_STATS:
-					data = new element_data_mouse_pos(0, 0);
-					break;
-				default:;
-				}
-
-				if (data)
-					m_data[element->get_keycode()] = std::unique_ptr<element_data>(data);
-			}
-		}
-	}
-
-	delete cfg;
 	return flag;
 }
 
@@ -171,7 +144,7 @@ bool overlay::load_texture()
 	obs_leave_graphics();
 
 	if (!m_image->loaded) {
-		blog(LOG_WARNING, "[input-overlay] Error: failed to load texture %s", m_settings->image_file.c_str());
+		bwarn("Error: failed to load texture %s", m_settings->image_file.c_str());
 		flag = false;
 	} else {
 		m_settings->cx = m_image->cx;
@@ -247,52 +220,63 @@ void overlay::refresh_data()
 	}
 }
 
-void overlay::load_element(ccl_config *cfg, const std::string &id, const bool debug)
+void overlay::load_element(const QJsonObject &obj, const bool debug)
 {
-	const auto type = cfg->get_int(id + CFG_TYPE);
+	const auto type = obj[CFG_TYPE].toInt();
 	element *new_element = nullptr;
+	element_data *data = nullptr;
 
 	switch (type) {
 	case ET_TEXTURE:
-		new_element = new element_texture();
-		break;
-	case ET_BUTTON:
-		new_element = new element_button();
-		break;
-	case ET_WHEEL:
-		new_element = new element_wheel();
-		break;
-	case ET_TRIGGER:
-		new_element = new element_trigger();
-		break;
-	case ET_ANALOG_STICK:
-		new_element = new element_analog_stick();
+		new_element = new element_texture;
 		break;
 	case ET_GAMEPAD_ID:
-		new_element = new element_gamepad_id();
+		new_element = new element_gamepad_id;
+		/* Fallthrough */
+	case ET_BUTTON:
+		data = new element_data_button;
+		new_element = new element_button;
+		break;
+	case ET_WHEEL:
+		new_element = new element_wheel;
+		data = new element_data_wheel;
+		break;
+	case ET_TRIGGER:
+		new_element = new element_trigger;
+		data = new element_data_trigger;
+		break;
+	case ET_ANALOG_STICK:
+		new_element = new element_analog_stick;
+		data = new element_data_analog_stick;
 		break;
 	case ET_DPAD_STICK:
-		new_element = new element_dpad();
+		new_element = new element_dpad;
+		data = new element_data_dpad;
 		break;
 	case ET_MOUSE_STATS:
-		new_element = new element_mouse_movement();
+		new_element = new element_mouse_movement;
+		data = new element_data_mouse_pos;
 		break;
 	default:
-		if (debug)
-			blog(LOG_INFO, "[input-overlay] Invalid element type %i for %s", type, id.c_str());
+		if (debug) {
+			binfo("Invalid element type %i for %s", type, qt_to_utf8(obj[CFG_ID].toString()));
+		}
 	}
 
 	if (new_element) {
-		new_element->load(cfg, id);
+		new_element->load(obj);
 		m_elements.emplace_back(new_element);
+
+		if (data)
+			m_data[new_element->get_keycode()] = std::unique_ptr<element_data>(data);
 
 #ifndef _DEBUG
 		if (debug) {
 #else
 		{
 #endif
-			blog(LOG_INFO, "[input-overlay]  Type: %14s, KEYCODE: 0x%04X ID: %s",
-				 element_type_to_string(static_cast<element_type>(type)), new_element->get_keycode(), id.c_str());
+			binfo("Type: %14s, KEYCODE: 0x%04X ID: %s", element_type_to_string(static_cast<element_type>(type)),
+				  new_element->get_keycode(), qt_to_utf8(obj[CFG_ID].toString()));
 		}
 	}
 }

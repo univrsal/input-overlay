@@ -18,9 +18,10 @@
 
 #pragma once
 
-#include <string>
-#include "graphics/vec2.h"
 #include "graphics/graphics.h"
+#include "graphics/vec2.h"
+#include <QJsonObject>
+#include <string>
 
 typedef struct gs_image_file gs_image_file_t;
 
@@ -39,14 +40,10 @@ namespace sources {
 class overlay_settings;
 }
 
-class ccl_config;
-
 #ifdef _WIN32
-enum class element_type;
+enum element_type;
 #else
-
-#include "../layout_constants.hpp"
-
+#include <layout_constants.h>
 #endif
 
 class element_data {
@@ -82,7 +79,7 @@ public:
 
 	element(element_type type);
 
-	virtual void load(ccl_config *cfg, const std::string &id) = 0;
+	virtual void load(const QJsonObject &obj) = 0;
 
 	virtual void draw(gs_effect_t *effect, gs_image_file_t *m_image, element_data *data,
 					  sources::overlay_settings *settings) = 0;
@@ -94,9 +91,9 @@ public:
 	virtual data_source get_source();
 
 protected:
-	void read_mapping(ccl_config *cfg, const std::string &id);
+	void read_mapping(const QJsonObject &obj);
 
-	void read_pos(ccl_config *cfg, const std::string &id);
+	void read_pos(const QJsonObject &obj);
 
 	vec2 m_pos = {};
 	gs_rect m_mapping = {};

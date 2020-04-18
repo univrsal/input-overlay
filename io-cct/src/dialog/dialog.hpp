@@ -1,18 +1,29 @@
-/**
- * Created by univrsal on 23.05.2018.
- * This file is part of input-overlay which is licensed
- * under the MOZILLA PUBLIC LICENSE 2.0 - http://www.gnu.org/licenses
- * github.com/univrsal/input-overlay
- */
+/*************************************************************************
+ * This file is part of input-overlay
+ * github.con/univrsal/input-overlay
+ * Copyright 2020 univrsal <universailp@web.de>.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, version 2 of the License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *************************************************************************/
 
 #pragma once
 
 #include "../util/sdl_helper.hpp"
 #include "elements/gui_element.hpp"
 #include "elements/label.hpp"
+#include <memory>
 #include <string>
 #include <vector>
-#include <memory>
 
 #define DIALOG_DRAGGABLE 1 << 0 /* Allow moving by dragging the title bar*/
 #define DIALOG_CENTERED 1 << 1  /* Always center on window resize */

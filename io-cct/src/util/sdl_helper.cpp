@@ -17,9 +17,9 @@
  *************************************************************************/
 
 #include "sdl_helper.hpp"
+#include "constants.hpp"
 #include "localization.hpp"
 #include "palette.hpp"
-#include "constants.hpp"
 #include "texture.hpp"
 #include <SDL_image.h>
 
@@ -665,8 +665,8 @@ std::string sdl_helper::loc(const char *id) const
 	return std::string(id);
 }
 
-#include "../../../libuiohook/include/uiohook.h"
-#include "../../../io-obs/util/util.hpp"
+#include <util.hpp>
+#include <keycodes.h>
 
 static uint32_t KEY_MAP[][2]{/* Alphabet */
 							 {VC_A, SDLK_a},

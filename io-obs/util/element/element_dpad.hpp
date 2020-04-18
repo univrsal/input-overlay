@@ -30,7 +30,7 @@ public:
 	/* Xinput directly generates direction */
 	element_data_dpad(dpad_direction a, dpad_direction b);
 
-	element_data_dpad(dpad_direction d, button_state state);
+	element_data_dpad(dpad_direction d = DD_LEFT, button_state state = BS_RELEASED);
 
 	bool is_persistent() override;
 
@@ -49,7 +49,7 @@ class element_dpad : public element_texture {
 public:
 	element_dpad();
 
-	void load(ccl_config *cfg, const std::string &id) override;
+	void load(const QJsonObject &obj) override;
 
 	void draw(gs_effect_t *effect, gs_image_file_t *image, element_data *data,
 			  sources::overlay_settings *settings) override;

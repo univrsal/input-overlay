@@ -18,8 +18,8 @@
 
 #pragma once
 
-#include <SDL.h>
 #include "sdl_helper.hpp"
+#include <SDL.h>
 
 #define SIZE_LEFT 0
 #define SIZE_RIGHT 1

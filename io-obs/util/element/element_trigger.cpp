@@ -16,25 +16,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *************************************************************************/
 
-#include "../../sources/input_source.hpp"
-#include "../../../ccl/ccl.hpp"
 #include "element_trigger.hpp"
-#include "../util.hpp"
-#include "util/layout_constants.hpp"
+#include <keycodes.h>
 
 element_trigger::element_trigger() : element_texture(ET_TRIGGER) {}
 
-void element_trigger::load(ccl_config *cfg, const std::string &id)
+void element_trigger::load(const QJsonObject &obj)
 {
-	element_texture::load(cfg, id);
-	m_button_mode = cfg->get_bool(id + CFG_TRIGGER_MODE);
-	m_side = static_cast<element_side>(cfg->get_int(id + CFG_SIDE));
+	element_texture::load(obj);
+	m_button_mode = obj[CFG_TRIGGER_MODE].toBool();
+	m_side = static_cast<element_side>(obj[CFG_SIDE].toInt());
 	m_keycode = VC_TRIGGER_DATA;
 	m_pressed = m_mapping;
 	m_pressed.y = m_mapping.y + m_mapping.cy + CFG_INNER_BORDER;
-	if (!m_button_mode) {
-		m_direction = static_cast<direction>(cfg->get_int(id + CFG_DIRECTION));
-	}
+	if (!m_button_mode)
+		m_direction = static_cast<direction>(obj[CFG_DIRECTION].toInt());
 }
 
 void element_trigger::draw(gs_effect_t *effect, gs_image_file_t *image, element_data *data,
@@ -57,11 +53,10 @@ void element_trigger::draw(gs_effect_t *effect, gs_image_file_t *image, element_
 			}
 
 			if (m_button_mode) {
-				if (progress >= 0.1) {
+				if (progress >= 0.1)
 					element_texture::draw(effect, image, &m_pressed);
-				} else {
+				else
 					element_texture::draw(effect, image, &m_mapping);
-				}
 			} else {
 				auto crop = m_pressed;
 				auto new_pos = m_pos;
@@ -84,21 +79,23 @@ void element_trigger::calculate_mapping(gs_rect *pressed, vec2 *pos, const float
 {
 	switch (m_direction) {
 	case DIR_UP:
-		pressed->cy = m_mapping.cy * progress;
+		pressed->cy = static_cast<int>(m_mapping.cy * progress);
 		pressed->y = m_pressed.y + (m_mapping.cy - pressed->cy);
 		pos->y += m_mapping.cy - pressed->cy;
 		break;
 	case DIR_DOWN:
-		pressed->cy = m_mapping.cy * progress;
+		pressed->cy = static_cast<int>(m_mapping.cy * progress);
 		break;
 	case DIR_LEFT:
-		pressed->cx = m_mapping.cx * progress;
+		pressed->cx = static_cast<int>(m_mapping.cx * progress);
 		pressed->x = m_mapping.x + (m_mapping.cx - pressed->cx);
 		pos->x += (m_mapping.cx - pressed->cx);
 		break;
 	case DIR_RIGHT:
-		pressed->cx = m_mapping.cx * progress;
+		pressed->cx = static_cast<int>(m_mapping.cx * progress);
 		break;
+	case DIR_MAX:
+	case DIR_NONE:;
 	}
 }
 

@@ -16,14 +16,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *************************************************************************/
 
+#include "remote_connection.hpp"
 #include "io_server.hpp"
 #include "util/config.hpp"
 #include "util/util.hpp"
-#include "remote_connection.hpp"
-#include "util/config.hpp"
 #include <obs-module.h>
-#include <util/platform.h>
 #include <string>
+#include <util/platform.h>
 
 namespace network {
 bool network_state = false;

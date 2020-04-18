@@ -17,8 +17,8 @@
  *************************************************************************/
 
 #include "dialog_element_settings.hpp"
-#include <utility>
 #include "../config.hpp"
+#include <utility>
 
 void dialog_element_settings::init()
 {

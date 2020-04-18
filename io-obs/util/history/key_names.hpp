@@ -18,20 +18,23 @@
 
 #pragma once
 
-#include <string>
-#include <map>
+#include <QMap>
+#include <QString>
 
 class key_names {
-	std::map<uint16_t, std::string> m_names;
+	QMap<uint16_t, QString> m_names;
+	bool m_debug = false;
 
 public:
 	key_names() = default;
 
 	~key_names() = default;
 
-	void load_from_file(const char *path);
+	void load_from_file(const QString &path);
 
 	bool empty() const;
 
-	const char *get_name(uint16_t vc);
+	bool debug() const;
+
+	const QString &get_name(uint16_t vc);
 };

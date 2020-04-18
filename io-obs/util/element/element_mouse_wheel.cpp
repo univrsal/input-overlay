@@ -16,11 +16,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *************************************************************************/
 
-#include "../../sources/input_source.hpp"
 #include "element_mouse_wheel.hpp"
-#include "../util.hpp"
-#include "../../hook/hook_helper.hpp"
-#include "util/layout_constants.hpp"
+#include <keycodes.h>
 #include <util/platform.h>
 
 element_wheel::element_wheel() : element_texture(ET_WHEEL), m_mappings{}
@@ -28,9 +25,9 @@ element_wheel::element_wheel() : element_texture(ET_WHEEL), m_mappings{}
 	/* NO-OP */
 }
 
-void element_wheel::load(ccl_config *cfg, const std::string &id)
+void element_wheel::load(const QJsonObject &obj)
 {
-	element_texture::load(cfg, id);
+	element_texture::load(obj);
 	m_keycode = VC_MOUSE_WHEEL;
 	auto i = 1;
 	for (auto &map : m_mappings) {

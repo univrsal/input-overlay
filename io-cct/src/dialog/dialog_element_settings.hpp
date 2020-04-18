@@ -18,12 +18,12 @@
 
 #pragma once
 
-#include "dialog.hpp"
-#include "../util/sdl_helper.hpp"
-#include "../util/constants.hpp"
-#include "elements/textbox.hpp"
-#include "elements/button.hpp"
 #include "../tool.hpp"
+#include "../util/constants.hpp"
+#include "../util/sdl_helper.hpp"
+#include "dialog.hpp"
+#include "elements/button.hpp"
+#include "elements/textbox.hpp"
 
 class sdl_helper;
 

@@ -20,8 +20,8 @@
 
 #include "../../util/coordinate_system.hpp"
 #include "../../util/texture.hpp"
-#include <SDL.h>
 #include "gui_element.hpp"
+#include <SDL.h>
 
 class sdl_helper;
 

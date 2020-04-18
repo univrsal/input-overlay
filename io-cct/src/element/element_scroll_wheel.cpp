@@ -17,9 +17,9 @@
  *************************************************************************/
 
 #include "element_scroll_wheel.hpp"
-#include "../util/texture.hpp"
 #include "../util/coordinate_system.hpp"
 #include "../util/palette.hpp"
+#include "../util/texture.hpp"
 #include <utility>
 
 ElementScrollWheel::ElementScrollWheel(const std::string &id, const SDL_Point pos, const SDL_Rect mapping,
@@ -98,8 +98,7 @@ void ElementScrollWheel::update_settings(dialog_element_settings *dialog)
 	refresh_mappings();
 }
 
-ElementScrollWheel *ElementScrollWheel::read_from_file(ccl_config *file, const std::string &id, SDL_Point *default_dim)
+ElementScrollWheel *ElementScrollWheel::read_from_json(const json &j, SDL_Point *default_dim)
 {
-	return new ElementScrollWheel(id, read_position(file, id), read_mapping(file, id, default_dim),
-								  read_layer(file, id));
+	return new ElementScrollWheel(j[CFG_ID], read_position(j), read_mapping(j, default_dim), j[CFG_Z_LEVEL]);
 }

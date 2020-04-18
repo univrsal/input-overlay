@@ -19,8 +19,8 @@
 #pragma once
 
 #include "effect.hpp"
-#include "graphics/vec3.h"
 #include "graphics/vec2.h"
+#include "graphics/vec3.h"
 
 class translate_effect : public effect {
 	vec2 m_direction, m_original; /* Original contains a copy of m_pos, which is used for the modification */

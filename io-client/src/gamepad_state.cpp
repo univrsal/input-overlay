@@ -17,8 +17,8 @@
  *************************************************************************/
 
 #include "gamepad_state.hpp"
-#include "xinput_fix.hpp"
 #include "../../io-obs/util/layout_constants.hpp"
+#include "xinput_fix.hpp"
 #define IO_CLIENT 1 /* Prevents external util.hpp from including obs headers */
 #include "../../io-obs/util/util.hpp"
 

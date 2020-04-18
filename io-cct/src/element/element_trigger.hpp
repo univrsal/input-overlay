@@ -35,7 +35,7 @@ public:
 
 	void draw(texture *atlas, coordinate_system *cs, bool selected, bool alpha) override;
 
-	void write_to_file(ccl_config *cfg, SDL_Point *default_dim, uint8_t &layout_flags) override;
+	void write_to_json(json &j, SDL_Point *default_dim, uint8_t &layout_flags) override;
 
 	void update_settings(dialog_new_element *dialog) override;
 
@@ -43,7 +43,7 @@ public:
 
 	void handle_event(SDL_Event *event, sdl_helper *helper) override;
 
-	static element_trigger *read_from_file(ccl_config *file, const std::string &id, SDL_Point *default_dim);
+	static element_trigger *read_from_json(const json &j, SDL_Point *default_dim);
 
 	element_side get_side() const { return m_side; }
 

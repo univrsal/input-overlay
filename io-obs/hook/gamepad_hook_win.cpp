@@ -16,13 +16,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *************************************************************************/
 
+#include "../util/element/element_analog_stick.hpp"
+#include "../util/element/element_button.hpp"
+#include "../util/element/element_data_holder.hpp"
+#include "../util/element/element_dpad.hpp"
+#include "../util/element/element_trigger.hpp"
 #include "gamepad_hook.hpp"
 #include "hook_helper.hpp"
-#include "../util/element/element_data_holder.hpp"
-#include "../util/element/element_button.hpp"
-#include "../util/element/element_analog_stick.hpp"
-#include "../util/element/element_trigger.hpp"
-#include "../util/element/element_dpad.hpp"
 #include <util/platform.h>
 
 namespace gamepad {
@@ -31,29 +31,6 @@ bool gamepad_hook_state = false;
 bool gamepad_hook_run_flag = true;
 gamepad_handle pads[PAD_COUNT];
 std::mutex mutex;
-
-gamepad_handle::~gamepad_handle()
-{
-	unload();
-}
-
-void gamepad_handle::load()
-{
-	unload();
-	update();
-	debug("Gamepad %i present: %s", m_id, valid() ? "true" : "false");
-}
-
-void gamepad_handle::update()
-{
-	m_valid = xinput_fix::update(m_id, &m_xin);
-}
-
-void gamepad_handle::init(uint8_t id)
-{
-	m_id = id;
-	load();
-}
 
 bool init_pad_devices()
 {

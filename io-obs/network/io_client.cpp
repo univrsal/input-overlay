@@ -17,16 +17,16 @@
  *************************************************************************/
 
 #include "io_client.hpp"
-#include "util/element/element_button.hpp"
 #include "hook/gamepad_hook.hpp"
+#include "hook/xinput_fix.hpp"
+#include "util/config.hpp"
 #include "util/element/element_analog_stick.hpp"
-#include "util/element/element_trigger.hpp"
+#include "util/element/element_button.hpp"
 #include "util/element/element_mouse_movement.hpp"
 #include "util/element/element_mouse_wheel.hpp"
-#include "hook/xinput_fix.hpp"
+#include "util/element/element_trigger.hpp"
 #include "util/util.hpp"
-#include "util/config.hpp"
-#include <uiohook.h>
+#include <keycodes.h>
 
 namespace network {
 io_client::io_client(char *name, tcp_socket socket, uint8_t id) : m_holder(true)

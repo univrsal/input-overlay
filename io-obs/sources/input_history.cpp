@@ -19,13 +19,16 @@
 #include "input_history.hpp"
 #include "../util/element/element_button.hpp"
 #include "graphics/matrix4.h"
-#include "util/history/history_icons.hpp"
-#include "util/history/key_names.hpp"
-#include "util/history/input_queue.hpp"
-#include "util/config-file.h"
 #include "network/io_server.hpp"
+#include "util/history/history_icons.hpp"
+#include "util/history/input_queue.hpp"
+#include "util/history/key_names.hpp"
+#include "util/lang.h"
+#include "util/obs_util.hpp"
+#include "util/settings.h"
 #include <iomanip>
 #include <obs-frontend-api.h>
+#include <util.hpp>
 #include <util/config.hpp>
 
 namespace sources {
@@ -95,7 +98,7 @@ inline void input_history_source::update(obs_data_t *settings)
 	const auto new_mode = history_mode(obs_data_get_int(settings, S_HISTORY_MODE));
 	m_settings.queue->update(new_mode); /* Apply new settings to queue */
 	m_settings.mode = new_mode;
-	blog(LOG_DEBUG, "auto-clear tmr: %.2f iv: %.2f", m_clear_timer, m_settings.auto_clear_interval);
+	bdebug("auto-clear tmr: %.2f iv: %.2f", m_clear_timer, m_settings.auto_clear_interval);
 }
 
 inline void input_history_source::tick(float seconds)
@@ -110,7 +113,7 @@ inline void input_history_source::tick(float seconds)
 	if (GET_FLAG((int)history_flags::AUTO_CLEAR)) {
 		m_clear_timer += seconds;
 		if (m_clear_timer >= m_settings.auto_clear_interval) {
-			blog(LOG_DEBUG, "auto-clear tmr: %.2f iv: %.2f", m_clear_timer, m_settings.auto_clear_interval);
+			bdebug("auto-clear tmr: %.2f iv: %.2f", m_clear_timer, m_settings.auto_clear_interval);
 			m_clear_timer = 0.f;
 			m_collect_timer = 0.f;
 			clear_history();
@@ -250,7 +253,7 @@ obs_properties_t *get_properties_for_history(void *data)
 	/* Key name, icon and config file */
 	auto filter_img = util_file_filter(T_FILTER_IMAGE_FILES, "*.jpg *.png *.bmp");
 	auto filter_text = util_file_filter(T_FILTER_TEXT_FILES, "*.ini");
-	std::string key_names_path, key_icon_path, key_icon_config_path;
+	QString key_names_path, key_icon_path, key_icon_config_path;
 
 	if (s->m_settings.key_name_path) {
 		key_names_path = s->m_settings.key_name_path;
@@ -268,18 +271,18 @@ obs_properties_t *get_properties_for_history(void *data)
 	}
 
 	/* Icon mode properties */
-	obs_properties_add_path(props, S_HISTORY_KEY_ICON_PATH, T_HISTORY_KEY_ICON_PATH, OBS_PATH_FILE, filter_img.c_str(),
-							key_icon_path.c_str());
+	obs_properties_add_path(props, S_HISTORY_KEY_ICON_PATH, T_HISTORY_KEY_ICON_PATH, OBS_PATH_FILE,
+							qt_to_utf8(filter_img), qt_to_utf8(key_icon_path));
 
 	obs_properties_add_path(props, S_HISTORY_KEY_ICON_CONFIG_PATH, T_HISTORY_KEY_ICON_CONFIG_PATH, OBS_PATH_FILE,
-							filter_text.c_str(), key_icon_config_path.c_str());
+							qt_to_utf8(filter_text), qt_to_utf8(key_icon_config_path));
 
 	obs_properties_add_int(props, S_HISTORY_ICON_H_SPACE, T_HISTORY_ICON_H_SPACE, -1000, 1000, 1);
 	obs_properties_add_int(props, S_HISTORY_ICON_V_SPACE, T_HISTORY_ICON_V_SPACE, -1000, 1000, 1);
 
 	/* Text mode properties*/
-	obs_properties_add_path(props, S_HISTORY_KEY_NAME_PATH, T_HISTORY_KEY_NAME_PATH, OBS_PATH_FILE, filter_text.c_str(),
-							key_names_path.c_str());
+	obs_properties_add_path(props, S_HISTORY_KEY_NAME_PATH, T_HISTORY_KEY_NAME_PATH, OBS_PATH_FILE,
+							qt_to_utf8(filter_text), qt_to_utf8(key_names_path));
 	obs_properties_add_bool(props, S_HISTORY_USE_FALLBACK_NAME, T_HISTORY_USE_FALLBACK_NAMES);
 
 	/* Entry flow direction */

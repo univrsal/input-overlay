@@ -17,17 +17,19 @@
  *************************************************************************/
 
 #include "text_handler.hpp"
-#include "sources/input_history.hpp"
 #include "input_entry.hpp"
 #include "key_names.hpp"
-
+#include "sources/input_history.hpp"
+#include <util.hpp>
 #ifdef _WIN32
 #define TEXT_SOURCE "text_gdiplus\0"
 #else
 #define TEXT_SOURCE "text_ft2_source\0"
 #endif
 
-void text_handler::make_body_text(std::string &str)
+#include <layout_constants.h>
+
+void text_handler::make_body_text(QString &str)
 {
 	switch (m_settings->dir) {
 	case DIR_DOWN:
@@ -35,7 +37,7 @@ void text_handler::make_body_text(std::string &str)
 		for (const auto &line : m_values) {
 			str += line->keys;
 			if (line->repeat > 1)
-				str += " (x" + std::to_string(line->repeat) + ")\n";
+				str += " (x" + QString::number(line->repeat) + ")\n";
 			else
 				str += "\n";
 		}
@@ -44,14 +46,14 @@ void text_handler::make_body_text(std::string &str)
 		for (auto line = m_values.rbegin(); line != m_values.rend(); ++line) {
 			str += line->get()->keys;
 			if (line->get()->repeat > 1)
-				str += " (x" + std::to_string(line->get()->repeat) + ")\n";
+				str += " (x" + QString::number(line->get()->repeat) + ")\n";
 			else
 				str += "\n";
 		}
 	}
 
-	if (ends_with(str, "\n")) {
-		str.pop_back(); /* Get rid of last '\n' */
+	if (str.endsWith("\n")) {
+		str.chop(1); /* Get rid of last '\n' */
 	}
 }
 
@@ -116,9 +118,9 @@ void text_handler::swap(input_entry &current)
 	if (m_values.size() > m_settings->history_size)
 		m_values.pop_back();
 
-	std::string text;
+	QString text;
 	make_body_text(text);
-	m_display->set_text(text.c_str(), m_settings);
+	m_display->set_text(text, m_settings);
 }
 
 void text_handler::render(const gs_effect_t *effect)

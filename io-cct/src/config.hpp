@@ -18,14 +18,12 @@
 
 #pragma once
 
-#include "util/coordinate_system.hpp"
 #include "element/element.hpp"
-#include <string>
+#include "util/coordinate_system.hpp"
 #include <SDL.h>
 #include <memory>
+#include <string>
 #include <vector>
-
-class ccl_config;
 
 class notifier;
 

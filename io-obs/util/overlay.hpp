@@ -19,16 +19,14 @@
 #pragma once
 
 #ifdef LINUX
-
 #include <stdint.h>
-
 #endif
 
+#include "../hook/hook_helper.hpp"
+#include "element/element.hpp"
+#include <map>
 #include <memory>
 #include <vector>
-#include <map>
-#include "element/element.hpp"
-#include "../hook/hook_helper.hpp"
 
 class ccl_config;
 
@@ -65,7 +63,7 @@ private:
 
 	void unload_elements();
 
-	void load_element(ccl_config *cfg, const std::string &id, bool debug);
+	void load_element(const QJsonObject &obj, bool debug);
 
 	static const char *element_type_to_string(element_type t);
 

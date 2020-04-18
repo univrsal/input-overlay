@@ -1,9 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 project(io-cct)
 
-file(STRINGS "build.txt" BUILD_NUMBER_)
-add_definitions(-DBUILD_NUMBER=${BUILD_NUMBER_})
-
 if (DEBUG)
     add_compile_definitions(_DEBUG)
 endif ()
@@ -17,6 +14,9 @@ macro(use_cxx14)
         set(CMAKE_CXX_STANDARD 14)
     endif ()
 endmacro(use_cxx14)
+
+string(TIMESTAMP TODAY "%Y.%m.%d %H:%M")
+add_definitions(-DTIMESTAMP="${TODAY}")
 
 use_cxx14()
 
@@ -43,9 +43,7 @@ set(APP_ICON_RC "${CMAKE_CURRENT_SOURCE_DIR}/res/icon.ico")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GCC_FLAGS}")
 
 set(io-cct_SOURCES
-        ../ccl/ccl.cpp ../ccl/ccl.hpp
         ../libuiohook/include/uiohook.h
-        ../io-obs/util/layout_constants.hpp
         main.cpp
         src/tool.cpp
         src/tool.hpp
@@ -116,5 +114,9 @@ set(io-cct_SOURCES
 
 add_executable(io-cct ${io-cct_SOURCES})
 
-INCLUDE_DIRECTORIES(${SDL2_INCLUDE_DIRS} ${SDL2IMAGE_INCLUDE_DIRS} ${SDLTTF2_INCLUDE_DIRS})
+INCLUDE_DIRECTORIES(${SDL2_INCLUDE_DIRS}
+    ${SDL2IMAGE_INCLUDE_DIRS}
+    ${SDLTTF2_INCLUDE_DIRS}
+    "../common"
+    "../libuiohook/include")
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${SDL2_LIBRARIES} ${SDL2IMAGE_LIBRARIES} ${SDLTTF2_LIBRARIES})

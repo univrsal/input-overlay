@@ -17,13 +17,14 @@
  *************************************************************************/
 
 #include "element_data_holder.hpp"
+#include "element_analog_stick.hpp"
+#include "element_button.hpp"
+#include "element_mouse_wheel.hpp"
 #include "element_trigger.hpp"
 #include "sources/input_history.hpp"
-#include "element_button.hpp"
-#include "element_analog_stick.hpp"
-#include "element_mouse_wheel.hpp"
-#include <util/platform.h>
 #include <algorithm>
+#include <keycodes.h>
+#include <util/platform.h>
 
 element_data_holder::element_data_holder(bool is_local)
 {
@@ -142,7 +143,7 @@ void element_data_holder::populate_vector(std::vector<uint16_t> &vec, sources::h
 		if (data.first == VC_MOUSE_DATA)
 			continue;
 		if ((data.first >> 8) == (VC_MOUSE_MASK >> 8) &&
-			!(settings->flags & (int)sources::history_flags::INCLUDE_MOUSE))
+			!(settings->flags & static_cast<int>(sources::history_flags::INCLUDE_MOUSE)))
 			continue;
 
 		if (data.second->get_type() == ET_BUTTON) {
@@ -166,7 +167,7 @@ void element_data_holder::populate_vector(std::vector<uint16_t> &vec, sources::h
 	}
 
 	/* Same procedure for the gamepad */
-	if (settings->flags & (int)sources::history_flags::INCLUDE_PAD) {
+	if (settings->flags & static_cast<int>(sources::history_flags::INCLUDE_PAD)) {
 		for (const auto &data : m_gamepad_data[settings->target_gamepad]) {
 			auto add = true;
 			auto code = data.first;
@@ -203,6 +204,8 @@ void element_data_holder::populate_vector(std::vector<uint16_t> &vec, sources::h
 							vec.emplace_back(VC_PAD_RT);
 						add = false;
 					}
+					break;
+				default:;
 				}
 			}
 

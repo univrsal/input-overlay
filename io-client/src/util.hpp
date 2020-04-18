@@ -21,9 +21,9 @@
 #include <cstdint>
 #endif
 
+#include "../../io-obs/network/messages.hpp"
 #include <netlib.h>
 #include <uiohook.h>
-#include "../../io-obs/network/messages.hpp"
 
 #ifdef _WIN32
 #define STICK_MAX_VAL 32767.f

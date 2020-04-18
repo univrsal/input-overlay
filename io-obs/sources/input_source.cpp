@@ -17,15 +17,16 @@
  *************************************************************************/
 
 #include "input_source.hpp"
-#include "../hook/hook_helper.hpp"
 #include "../hook/gamepad_hook.hpp"
+#include "../hook/hook_helper.hpp"
 #include "../util/element/element_data_holder.hpp"
-#include "../util/util.hpp"
-#include "../../ccl/ccl.hpp"
-#include "util/layout_constants.hpp"
-#include "util/config-file.h"
-#include "network/remote_connection.hpp"
+#include "../util/lang.h"
+#include "../util/obs_util.hpp"
+#include "../util/settings.h"
 #include "network/io_server.hpp"
+#include "network/remote_connection.hpp"
+#include <QFile>
+#include <QJsonDocument>
 #include <obs-frontend-api.h>
 
 namespace sources {
@@ -80,11 +81,8 @@ inline void input_source::render(gs_effect_t *effect) const
 bool cfg_path_changed(obs_properties_t *props, obs_property_t *p, obs_data_t *s)
 {
 	UNUSED_PARAMETER(p);
-	const std::string cfg = obs_data_get_string(s, S_LAYOUT_FILE);
-	auto temp = ccl_config(cfg, "");
-
-	const auto flags = temp.get_int(CFG_FLAGS, true);
-
+	int flags = 0xfffffff;
+	/* TODO: get the actual flags */
 	obs_property_set_visible(GET_PROPS(S_CONTROLLER_L_DEAD_ZONE), flags & OF_LEFT_STICK);
 	obs_property_set_visible(GET_PROPS(S_CONTROLLER_R_DEAD_ZONE), flags & OF_RIGHT_STICK);
 	obs_property_set_visible(GET_PROPS(S_CONTROLLER_ID),
@@ -132,8 +130,7 @@ bool reload_pads(obs_properties_t *props, obs_property_t *property, void *data)
 obs_properties_t *get_properties_for_overlay(void *data)
 {
 	UNUSED_PARAMETER(data);
-	std::string img_path;
-	std::string layout_path;
+	QString img_path, layout_path;
 	const auto config = obs_frontend_get_global_config();
 	const auto props = obs_properties_create();
 
@@ -151,10 +148,11 @@ obs_properties_t *get_properties_for_overlay(void *data)
 	auto filter_text = util_file_filter(T_FILTER_TEXT_FILES, "*.ini");
 
 	/* Config and texture file path */
-	obs_properties_add_path(props, S_OVERLAY_FILE, T_TEXTURE_FILE, OBS_PATH_FILE, filter_img.c_str(), img_path.c_str());
+	obs_properties_add_path(props, S_OVERLAY_FILE, T_TEXTURE_FILE, OBS_PATH_FILE, qt_to_utf8(filter_img),
+							qt_to_utf8(img_path));
 
-	const auto cfg = obs_properties_add_path(props, S_LAYOUT_FILE, T_LAYOUT_FILE, OBS_PATH_FILE, filter_text.c_str(),
-											 layout_path.c_str());
+	const auto cfg = obs_properties_add_path(props, S_LAYOUT_FILE, T_LAYOUT_FILE, OBS_PATH_FILE,
+											 qt_to_utf8(filter_text), qt_to_utf8(layout_path));
 
 	obs_property_set_modified_callback(cfg, cfg_path_changed);
 

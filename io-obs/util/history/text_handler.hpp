@@ -18,11 +18,11 @@
 
 #pragma once
 
-#include "key_names.hpp"
 #include "handler.hpp"
-#include <string>
-#include <vector>
+#include "key_names.hpp"
 #include <memory>
+#include <QString>
+#include <vector>
 
 class input_entry;
 
@@ -32,13 +32,13 @@ struct history_settings;
 
 struct key_combination {
 	/* Contructor is used by make_unique */
-	explicit key_combination(std::string &str)
+	explicit key_combination(QString &str)
 	{
 		keys = str;
 		repeat = 0;
 	}
 
-	std::string keys;
+	QString keys;
 	uint8_t repeat;
 };
 
@@ -48,7 +48,7 @@ class text_handler : public handler {
 	input_entry *m_display = nullptr;
 	obs_source_t *m_text_source = nullptr;
 
-	void make_body_text(std::string &str);
+	void make_body_text(QString &str);
 
 public:
 	explicit text_handler(sources::history_settings *settings);

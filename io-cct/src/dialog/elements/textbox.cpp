@@ -1,16 +1,27 @@
-/**
- * Created by universal on 8/1/17.
- * This file is part of reloded which is licensed
- * under the MOZILLA PUBLIC LICENSE 2.0 - http://www.gnu.org/licenses
- * github.com/univrsal/reloded
- */
+/*************************************************************************
+ * This file is part of input-overlay
+ * github.con/univrsal/input-overlay
+ * Copyright 2020 univrsal <universailp@web.de>.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, version 2 of the License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *************************************************************************/
 
 #include "textbox.hpp"
-#include "../../util/sdl_helper.hpp"
 #include "../../util/palette.hpp"
-#include <utility>
+#include "../../util/sdl_helper.hpp"
 #include <iomanip>
 #include <sstream>
+#include <utility>
 
 class sdl_helper;
 
@@ -167,6 +178,11 @@ void textbox::select_state(const bool state)
 		get_text(); /* Reset if empty */
 }
 
+void textbox::set_text(int i)
+{
+	set_text(std::to_string(i));
+}
+
 void textbox::set_text(std::string s)
 {
 	m_text = std::move(s);
@@ -176,9 +192,9 @@ void textbox::set_text(std::string s)
 	m_cut_text = m_text;
 
 	/*
-	    We have to leave space for the composition
-	    which is the currently written text through
-	    the IME (Only for Japanese, Chinese etc.)
+		We have to leave space for the composition
+		which is the currently written text through
+		the IME (Only for Japanese, Chinese etc.)
 	*/
 
 	get_helper()->util_cut_string(m_cut_text.append(m_composition), get_dimensions()->w - m_cut_off, false);

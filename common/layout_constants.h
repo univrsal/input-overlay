@@ -33,23 +33,24 @@
 #define CFG_TOTAL_WIDTH "overlay_width"
 #define CFG_TOTAL_HEIGHT "overlay_height"
 
-#define CFG_POS "_pos"
-#define CFG_MAPPING "_mapping"
-#define CFG_TYPE "_type"
-#define CFG_KEY_CODE "_code"
-#define CFG_WIDTH "_width"
-#define CFG_HEIGHT "_height"
-#define CFG_Z_LEVEL "_z_level"
-#define CFG_FIRST_ID "first_element"
-#define CFG_NEXT_ID "_next"
-#define CFG_SIDE "_side"
-#define CFG_STICK_RADIUS "_stick_radius"
-#define CFG_MOUSE_RADIUS "_mouse_radius"
-#define CFG_MOUSE_TYPE "_mouse_type"
-#define CFG_DIRECTION "_direction"
-#define CFG_TRIGGER_MODE "_trigger_mode"
+#define CFG_ID "id"
+#define CFG_POS "pos"
+#define CFG_MAPPING "mapping"
+#define CFG_TYPE "type"
+#define CFG_KEY_CODE "code"
+#define CFG_WIDTH "width"
+#define CFG_HEIGHT "height"
+#define CFG_Z_LEVEL "z_level"
+#define CFG_ELEMENTS "elements"
+#define CFG_SIDE "side"
+#define CFG_STICK_RADIUS "stick_radius"
+#define CFG_MOUSE_RADIUS "mouse_radius"
+#define CFG_MOUSE_TYPE "mouse_type"
+#define CFG_DIRECTION "direction"
+#define CFG_TRIGGER_MODE "trigger_mode"
 
 /* Misc */
+#define PAD_COUNT 4
 #define AXIS_MAX_AMPLITUDE 32767
 #define STICK_DEAD_ZONE 100
 /* ns after last scroll message until reset */
@@ -60,23 +61,23 @@
 enum overlay_flag { OF_LEFT_STICK = 1 << 0, OF_RIGHT_STICK = 1 << 1, OF_GAMEPAD = 1 << 2, OF_MOUSE = 1 << 3 };
 
 enum dpad_texture {
-	DT_CENTER,
-	DT_LEFT,
-	DT_RIGHT,
-	DT_UP,
-	DT_DOWN,
-	DT_TOP_LEFT,
-	DT_TOP_RIGHT,
-	DT_BOTTOM_LEFT,
-	DT_BOTTOM_RIGHT
+    DT_CENTER,
+    DT_LEFT,
+    DT_RIGHT,
+    DT_UP,
+    DT_DOWN,
+    DT_TOP_LEFT,
+    DT_TOP_RIGHT,
+    DT_BOTTOM_LEFT,
+    DT_BOTTOM_RIGHT
 };
 
 enum dpad_direction {
-	DD_CENTER = 1 << 0,
-	DD_LEFT = 1 << 1,
-	DD_RIGHT = 1 << 2,
-	DD_UP = 1 << 3,
-	DD_DOWN = 1 << 4,
+    DD_CENTER = 1 << 0,
+    DD_LEFT = 1 << 1,
+    DD_RIGHT = 1 << 2,
+    DD_UP = 1 << 3,
+    DD_DOWN = 1 << 4,
 };
 
 enum mouse_movement { MM_DOT, MM_ARROW };
@@ -88,14 +89,16 @@ enum direction { DIR_NONE = 0, DIR_UP, DIR_DOWN, DIR_LEFT, DIR_RIGHT, DIR_MAX };
 enum button_state { BS_RELEASED = 0, BS_PRESSED = 1 };
 
 enum element_type {
-	ET_INVALID = -1,
-	ET_TEXTURE,
-	ET_BUTTON,
-	ET_WHEEL,
-	ET_MOUSE_STATS,
-	ET_ANALOG_STICK,
-	ET_TRIGGER,
-	ET_GAMEPAD_ID,
-	/* Shows game pad number 1 through 4 */
-	ET_DPAD_STICK,
+    ET_INVALID = -1,
+    ET_TEXTURE,
+    ET_BUTTON,
+    ET_WHEEL,
+    ET_MOUSE_STATS,
+    ET_ANALOG_STICK,
+    ET_TRIGGER,
+    /* Shows game pad number 1 through 4 */
+    ET_GAMEPAD_ID,
+    ET_DPAD_STICK,
 };
+
+#endif

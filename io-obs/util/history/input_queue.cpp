@@ -17,8 +17,8 @@
  *************************************************************************/
 
 #include "input_queue.hpp"
-#include "sources/input_history.hpp"
 #include "icon_handler.hpp"
+#include "sources/input_history.hpp"
 #include "text_handler.hpp"
 
 void input_queue::init_icon()

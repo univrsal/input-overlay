@@ -17,8 +17,7 @@
  *************************************************************************/
 
 #include "element.hpp"
-#include "../../../ccl/ccl.hpp"
-#include "util/layout_constants.hpp"
+#include <QJsonArray>
 
 element_data::element_data(const element_type type)
 {
@@ -55,18 +54,18 @@ data_source element::get_source()
 	return DS_NONE;
 }
 
-void element::read_mapping(ccl_config *cfg, const std::string &id)
+void element::read_mapping(const QJsonObject &obj)
 {
-	const auto r = cfg->get_rect(id + CFG_MAPPING);
-	m_mapping.x = r.x;
-	m_mapping.y = r.y;
-	m_mapping.cx = r.w;
-	m_mapping.cy = r.h;
+	auto map = obj[CFG_MAPPING].toArray();
+	m_mapping.x = map[0].toInt();
+	m_mapping.y = map[1].toInt();
+	m_mapping.cx = map[2].toInt();
+	m_mapping.cy = map[3].toInt();
 }
 
-void element::read_pos(ccl_config *cfg, const std::string &id)
+void element::read_pos(const QJsonObject &obj)
 {
-	const auto p = cfg->get_point(id + CFG_POS);
-	m_pos.x = p.x;
-	m_pos.y = p.y;
+	const auto p = obj[CFG_POS].toArray();
+	m_pos.x = p[0].toInt();
+	m_pos.y = p[1].toInt();
 }

@@ -18,10 +18,11 @@
 
 #pragma once
 
-#include "../../../io-obs/util/layout_constants.hpp"
+#include <layout_constants.h>
+#include <SDL.h>
 #include <string>
 #include <utility>
-#include <SDL.h>
+#include <json.hpp>
 
 #define ELEMENT_HIDE_ALPHA 60
 
@@ -46,17 +47,18 @@ class dialog_new_element;
 
 class coordinate_system;
 
-class ccl_config;
-
 class texture;
 
 /* Base class for display elements
  */
+
+using json = nlohmann::json;
+
 class element {
 public:
 	virtual void draw(texture *atlas, coordinate_system *cs, bool selected, bool alpha) = 0;
 
-	virtual void write_to_file(ccl_config *cfg, SDL_Point *default_dim, uint8_t &layout_flags);
+	virtual void write_to_json(json &j, SDL_Point *default_dim, uint8_t &layout_flags);
 
 	virtual SDL_Rect *get_abs_dim(coordinate_system *cs);
 
@@ -99,7 +101,7 @@ public:
 	virtual void handle_event(SDL_Event *event, sdl_helper *helper) = 0;
 
 	/* Creates empty element and load settings from config */
-	static element *read_from_file(ccl_config *file, const std::string &id, element_type t, SDL_Point *default_dim);
+	static element *read_from_json(const json &j, SDL_Point *default_dim);
 
 	/* Creates empty element and loads settings from dialog */
 	static element *from_dialog(dialog_new_element *dialog);
@@ -110,13 +112,11 @@ protected:
 	element(); /* Used for creation over dialogs */
 	element(element_type t, std::string id, SDL_Point pos, uint8_t z);
 
-	static SDL_Rect read_mapping(ccl_config *file, const std::string &id, SDL_Point *default_dim);
+	static SDL_Rect read_mapping(const json &j, const SDL_Point *default_dim);
 
-	static SDL_Point read_position(ccl_config *file, const std::string &id);
+	static SDL_Point read_position(const json &j);
 
-	static uint8_t read_layer(ccl_config *file, const std::string &id);
-
-	static element_side read_side(ccl_config *file, const std::string &id);
+	static element_side read_side(const json &j);
 
 	element_type m_type;
 	SDL_Point m_position{}; /* Final position in overlay */

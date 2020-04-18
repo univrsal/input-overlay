@@ -23,7 +23,7 @@
 #define SDL_WINDOW_H 720
 #define SDL_WINDOW_FPS 30
 #define SDL_WINDOW_TPF (1000. / SDL_WINDOW_FPS)
-#define SDL_WINDOW_UNFOCUSED_TPF 1000. /* 1 FPS while unfocused */
+#define SDL_WINDOW_UNFOCUSED_TPF 1000. / 10 /* 10 FPS while unfocused */
 #define SDL_WINDOW_TITLE "io-cct"
 
 /* 0/0 for coordinate systems */
@@ -66,16 +66,18 @@
 
 /* Notifications */
 #define LANG_MSG_SAVE_ERROR "msg_save_error"
+#define LANG_MSG_ACCESS_ERROR "msg_access_error"
 #define LANG_MSG_LOAD_ERROR "msg_load_error"
 #define LANG_MSG_SAVE_SUCCESS "msg_save_success"
 #define LANG_MSG_LOAD_SUCCESS "msg_load_success"
 #define LANG_MSG_CONFIG_EMPTY "msg_config_empty"
-#define LANG_MSG_CONFIG_CORRUPT "msg_config_corrupt"
+#define LANG_MSG_CONFIG_NO_ELEMENTS "msg_config_corrupt"
 #define LANG_MSG_VALUE_TYPE_INVALID "msg_value_invalid_type"
 #define LANG_MSG_NOTHING_TO_SAVE "msg_nothing_to_save"
 #define LANG_MSG_GAMEPAD_CONNECTED "msg_gamepad_connected"
 #define LANG_MSG_GAMEPAD_DISCONNECTED "msg_gamepad_disconnected"
 #define LANG_MSG_ELEMENT_LOAD_ERROR "msg_element_load_error"
+#define LANG_MSG_ELEMENT_EMPTY "msg_element_empty_error"
 
 /* Dialog titles*/
 #define LANG_DIALOG_NEW_ELEMENT "dialog_new_element"

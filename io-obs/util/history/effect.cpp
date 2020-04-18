@@ -16,8 +16,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *************************************************************************/
 
-#include "util/util.hpp"
 #include "effect.hpp"
+#include <util.hpp>
 
 effect::effect(const float duration)
 {

@@ -18,27 +18,25 @@
 
 #pragma once
 
+#include "font_helper.hpp"
+#include "util.hpp"
+#include <memory.h>
+#include <string>
 #include <utility>
 #include <vector>
-#include <string>
-#include <memory.h>
-#include "font_helper.hpp"
-#include "../../../ccl/ccl.hpp"
-
-class ccl_config;
 
 class sdl_helper;
 
-struct LangFile {
+class lang_file {
 public:
-	LangFile(std::string name, std::string lang)
+	lang_file(const std::string &name, const std::string &lang)
 	{
-		file_name = std::move(name);
-		language = std::move(lang);
+		m_file_path = name;
+		m_language = lang;
 	}
 
-	std::string file_name;
-	std::string language;
+	std::string m_file_path;
+	std::string m_language;
 };
 
 class localization {
@@ -47,7 +45,7 @@ public:
 
 	void load_lang_by_id(uint8_t id);
 
-	const std::vector<std::unique_ptr<LangFile>> *get_languages() const { return &m_langfiles; }
+	const std::vector<lang_file> *get_languages() const { return &m_langfiles; }
 
 	std::string localize(const char *id) const;
 
@@ -58,15 +56,15 @@ private:
 
 	void load_default_language();
 
-	bool m_valid = false;
+	bool m_have_default = false;
 
 	uint8_t m_english_id = 0;
 
 	std::string m_lang_folder;
-	std::vector<std::unique_ptr<LangFile>> m_langfiles;
+	std::vector<lang_file> m_langfiles;
 
 	sdl_helper *m_helper = nullptr;
 
-	std::unique_ptr<ccl_config> m_english;
-	std::unique_ptr<ccl_config> m_current;
+	json m_english;
+	json m_current;
 };

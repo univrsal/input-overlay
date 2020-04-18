@@ -18,14 +18,14 @@
 
 #pragma once
 
-#include "dialog.hpp"
-#include "elements/button.hpp"
-#include "elements/textbox.hpp"
-#include "elements/atlas_selector.hpp"
-#include "elements/checkbox.hpp"
-#include "elements/combobox.hpp"
 #include "../tool.hpp"
 #include "../util/sdl_helper.hpp"
+#include "dialog.hpp"
+#include "elements/atlas_selector.hpp"
+#include "elements/button.hpp"
+#include "elements/checkbox.hpp"
+#include "elements/combobox.hpp"
+#include "elements/textbox.hpp"
 
 class sdl_helper;
 

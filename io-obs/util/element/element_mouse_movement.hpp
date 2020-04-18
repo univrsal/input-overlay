@@ -19,14 +19,14 @@
 #pragma once
 
 #include "element_texture.hpp"
-#include "util/layout_constants.hpp"
+#include <layout_constants.h>
 
 /* Contains all information about mouse movement,
  * button clicks and scroll motion
  */
 class element_data_mouse_pos : public element_data {
 public:
-	element_data_mouse_pos(int16_t x, int16_t y);
+	element_data_mouse_pos(int16_t x = 0, int16_t y = 0);
 
 	bool is_persistent() override;
 	bool merge(element_data *other) override;
@@ -45,7 +45,7 @@ class element_mouse_movement : public element_texture {
 public:
 	element_mouse_movement();
 
-	void load(ccl_config *cfg, const std::string &id) override;
+	void load(const QJsonObject &obj) override;
 
 	void draw(gs_effect_t *effect, gs_image_file_t *image, element_data *data,
 			  sources::overlay_settings *settings) override;

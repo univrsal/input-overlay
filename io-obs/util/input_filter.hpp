@@ -18,21 +18,26 @@
 
 #pragma once
 
-#include <QtCore/QStringList>
-
-typedef struct config_data config_t;
+#include <QStringList>
 
 class input_filter {
 	QStringList m_filters;
 	bool m_regex = false;
 	bool m_whitelist = false;
 
+==== BASE ====
+class input_filter
+{
+    QStringList m_filters;
+    bool m_regex = false;
+    bool m_whitelist = false;
+==== BASE ====
 public:
 	~input_filter();
 
-	void read_from_config(config_t *cfg);
+	void read_from_config();
 
-	void write_to_config(config_t *cfg);
+	void write_to_config();
 
 	void add_filter(const char *filter);
 

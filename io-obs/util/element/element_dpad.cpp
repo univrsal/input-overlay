@@ -16,17 +16,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *************************************************************************/
 
-#include "../../sources/input_source.hpp"
-#include "../../../ccl/ccl.hpp"
 #include "element_dpad.hpp"
-#include "../util.hpp"
-#include "util/layout_constants.hpp"
+#include "../../sources/input_source.hpp"
+#include <keycodes.h>
 
 element_dpad::element_dpad() : element_texture(ET_DPAD_STICK) {}
 
-void element_dpad::load(ccl_config *cfg, const std::string &id)
+void element_dpad::load(const QJsonObject &obj)
 {
-	element_texture::load(cfg, id);
+	element_texture::load(obj);
 	auto i = 1;
 	for (auto &map : m_mappings) {
 		map = m_mapping;

@@ -17,12 +17,11 @@
  *************************************************************************/
 
 #include "element_trigger.hpp"
-#include "../dialog/dialog_new_element.hpp"
 #include "../dialog/dialog_element_settings.hpp"
+#include "../dialog/dialog_new_element.hpp"
 #include "../util/coordinate_system.hpp"
-#include "../util/texture.hpp"
 #include "../util/palette.hpp"
-#include "../../../ccl/ccl.hpp"
+#include "../util/texture.hpp"
 #include <utility>
 
 element_trigger::element_trigger(const std::string &id, const SDL_Point pos, const SDL_Rect mapping,
@@ -68,18 +67,14 @@ void element_trigger::draw(texture *atlas, coordinate_system *cs, const bool sel
 		cs->get_helper()->util_draw_rect(&m_dimensions_scaled, cs->get_helper()->get_palette()->red());
 }
 
-void element_trigger::write_to_file(ccl_config *cfg, SDL_Point *default_dim, uint8_t &layout_flags)
+void element_trigger::write_to_json(json &j, SDL_Point *default_dim, uint8_t &layout_flags)
 {
-	element_texture::write_to_file(cfg, default_dim, layout_flags);
-	auto comment = "Trigger mode of " + m_id;
-	cfg->add_bool(m_id + CFG_TRIGGER_MODE, comment, m_button_mode, true);
-	comment = "Trigger side of " + m_id;
-	cfg->add_int(m_id + CFG_SIDE, comment, static_cast<int>(m_side), true);
+	element_texture::write_to_json(j, default_dim, layout_flags);
+	j[CFG_TRIGGER_MODE] = m_button_mode;
+	j[CFG_SIDE] = static_cast<int>(m_side);
 
-	if (!m_button_mode) {
-		comment = "Trigger side of " + m_id;
-		cfg->add_int(m_id + CFG_DIRECTION, comment, static_cast<int>(m_direction), true);
-	}
+	if (!m_button_mode)
+		j[CFG_DIRECTION] = static_cast<int>(m_direction);
 }
 
 void element_trigger::update_settings(dialog_new_element *dialog)
@@ -109,18 +104,16 @@ void element_trigger::handle_event(SDL_Event *event, sdl_helper *helper)
 	}
 }
 
-element_trigger *element_trigger::read_from_file(ccl_config *file, const std::string &id, SDL_Point *default_dim)
+element_trigger *element_trigger::read_from_json(const json &j, SDL_Point *default_dim)
 {
-	const auto button_mode = file->get_bool(id + CFG_TRIGGER_MODE);
-	const auto s = read_side(file, id);
+	const auto button_mode = j[CFG_TRIGGER_MODE];
+	const auto s = read_side(j);
 
 	if (button_mode) {
-		return new element_trigger(id, read_position(file, id), read_mapping(file, id, default_dim), s,
-								   read_layer(file, id));
+		return new element_trigger(j[CFG_ID], read_position(j), read_mapping(j, default_dim), s, j[CFG_Z_LEVEL]);
 	}
-	auto d = static_cast<direction>(UTIL_CLAMP(0, file->get_int(id + CFG_DIRECTION), DIR_MAX - 1));
-	return new element_trigger(id, read_position(file, id), read_mapping(file, id, default_dim), s, d,
-							   read_layer(file, id));
+	auto d = static_cast<direction>(UTIL_CLAMP(0, (int)j[CFG_DIRECTION], DIR_MAX - 1));
+	return new element_trigger(j[CFG_ID], read_position(j), read_mapping(j, default_dim), s, d, j[CFG_Z_LEVEL]);
 }
 
 void element_trigger::calculate_mappings(SDL_Rect *pressed, SDL_Rect *absolute) const

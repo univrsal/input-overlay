@@ -6,8 +6,8 @@
  */
 
 #include "window_helper.hpp"
-#include <windows.h>
 #include <util/platform.h>
+#include <windows.h>
 
 using namespace std;
 

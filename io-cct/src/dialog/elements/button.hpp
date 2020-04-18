@@ -18,10 +18,10 @@
 
 #pragma once
 
-#include <SDL.h>
-#include "gui_element.hpp"
-#include "../dialog.hpp"
 #include "../../util/sdl_helper.hpp"
+#include "../dialog.hpp"
+#include "gui_element.hpp"
+#include <SDL.h>
 
 class dialog;
 

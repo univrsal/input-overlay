@@ -18,8 +18,8 @@
 
 #pragma once
 
-#include "gui_element.hpp"
 #include "../dialog.hpp"
+#include "gui_element.hpp"
 
 #define CHECKBOX_SIZE 17
 

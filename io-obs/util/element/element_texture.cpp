@@ -16,10 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *************************************************************************/
 
-#include "../../sources/input_source.hpp"
 #include "element_texture.hpp"
-#include "../../../ccl/ccl.hpp"
-#include "util/layout_constants.hpp"
 
 extern "C" {
 #include <graphics/image-file.h>
@@ -35,10 +32,10 @@ element_texture::element_texture(const element_type type) : element(type)
 	/* NO-OP */
 }
 
-void element_texture::load(ccl_config *cfg, const std::string &id)
+void element_texture::load(const QJsonObject &obj)
 {
-	read_pos(cfg, id);
-	read_mapping(cfg, id);
+	read_pos(obj);
+	read_mapping(obj);
 }
 
 void element_texture::draw(gs_effect_t *effect, gs_image_file_t *image, element_data *data,

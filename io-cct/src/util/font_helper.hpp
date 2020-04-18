@@ -24,14 +24,13 @@
 
 #define FONT_SMALL 10
 #define FONT_DEFAULT 16
-#define FONT_LARGE 28
+#define FONT_LARGE 31
 
 #define FONT_WSTRING 0
 #define FONT_WSTRING_LARGE 1
 
 #include <SDL_ttf.h>
 #include <string>
-#include "sdl_helper.hpp"
 
 class sdl_helper;
 

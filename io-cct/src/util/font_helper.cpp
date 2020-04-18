@@ -17,8 +17,9 @@
  *************************************************************************/
 
 #include "font_helper.hpp"
-#include "palette.hpp"
+#include "sdl_helper.hpp"
 #include "constants.hpp"
+#include "palette.hpp"
 
 font_helper::font_helper(sdl_helper *renderer)
 {
@@ -34,6 +35,8 @@ font_helper::~font_helper()
 void font_helper::draw(const std::string *text, const int x, const int y, TTF_Font *font, const SDL_Color *fg,
 					   const SDL_Color *bg, const uint8_t scale) const
 {
+	if (!text || text->empty())
+		return;
 	SDL_Surface *surface = nullptr;
 	SDL_Texture *texture = nullptr;
 
@@ -78,6 +81,9 @@ void font_helper::draw(const std::string *text, const int x, const int y, TTF_Fo
 void font_helper::draw_rot(const std::string *text, const int x, const int y, TTF_Font *font, const SDL_Color *fg,
 						   const double angle) const
 {
+	if (!text || text->empty())
+		return;
+
 	SDL_Surface *surface = nullptr;
 	SDL_Texture *texture = nullptr;
 
@@ -102,7 +108,7 @@ void font_helper::draw_rot(const std::string *text, const int x, const int y, TT
 
 SDL_Rect font_helper::get_text_dimension(TTF_Font *font, const std::string *text) const
 {
-	if (text->empty()) {
+	if (!text || text->empty()) {
 		return SDL_Rect{0, 0, 0, 0};
 	}
 
@@ -115,7 +121,7 @@ SDL_Rect font_helper::get_text_dimension(TTF_Font *font, const std::string *text
 		dest.w = surface->w;
 		dest.h = surface->h;
 	} else {
-		printf(SDL_TEXT_TO_TEXTURE, TTF_GetError());
+		printf(SDL_TEXT_TO_SURFACE, TTF_GetError());
 	}
 	SDL_FreeSurface(surface);
 	return dest;

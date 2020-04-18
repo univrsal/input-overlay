@@ -18,12 +18,12 @@
 
 #include "tool.hpp"
 #include "config.hpp"
-#include "util/notifier.hpp"
-#include "dialog/dialog_setup.hpp"
 #include "dialog/dialog_element_settings.hpp"
+#include "dialog/dialog_element_type.hpp"
 #include "dialog/dialog_help.hpp"
 #include "dialog/dialog_new_element.hpp"
-#include "dialog/dialog_element_type.hpp"
+#include "dialog/dialog_setup.hpp"
+#include "util/notifier.hpp"
 
 tool::tool(sdl_helper *helper, const char *texture, const char *config) : m_event()
 {
@@ -62,7 +62,6 @@ void tool::program_loop()
 			// Drawing
 			switch (m_state) {
 			case IN_SETUP:
-				printf("ayyy");
 				m_toplevel->draw_background();
 				m_toplevel->draw_foreground();
 				break;

@@ -16,18 +16,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *************************************************************************/
 
-#include "../../sources/input_source.hpp"
-#include "../../../ccl/ccl.hpp"
 #include "element_mouse_movement.hpp"
-#include "util/layout_constants.hpp"
-#include "util/util.hpp"
+#include "sources/input_source.hpp"
+#include <keycodes.h>
+#include <util.hpp>
 
-void element_mouse_movement::load(ccl_config *cfg, const std::string &id)
+void element_mouse_movement::load(const QJsonObject &obj)
 {
-	element_texture::load(cfg, id);
+	element_texture::load(obj);
 	m_keycode = VC_MOUSE_DATA;
-	m_radius = cfg->get_int(id + CFG_MOUSE_RADIUS);
-	m_movement_type = cfg->get_int(id + CFG_MOUSE_TYPE) == 0 ? MM_DOT : MM_ARROW;
+	m_radius = static_cast<uint8_t>(obj[CFG_MOUSE_RADIUS].toInt());
+	m_movement_type = obj[CFG_MOUSE_TYPE].toBool() ? MM_DOT : MM_ARROW;
 }
 
 void element_mouse_movement::draw(gs_effect_t *effect, gs_image_file_t *image, element_data *data,

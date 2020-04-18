@@ -20,8 +20,8 @@
 
 #define STICK_RESET 500
 
-#include "element_texture.hpp"
 #include "../util/util.hpp"
+#include "element_texture.hpp"
 
 class ElementAnalogStick : public element_texture {
 public:
@@ -38,7 +38,7 @@ public:
 
 	void draw(texture *atlas, coordinate_system *cs, bool selected, bool alpha) override;
 
-	void write_to_file(ccl_config *cfg, SDL_Point *default_dim, uint8_t &flags) override;
+	void write_to_json(json &j, SDL_Point *default_dim, uint8_t &flags) override;
 
 	void update_settings(dialog_new_element *dialog) override;
 
@@ -50,7 +50,7 @@ public:
 
 	uint16_t get_radius() const { return m_radius; }
 
-	static ElementAnalogStick *read_from_file(ccl_config *file, const std::string &id, SDL_Point *default_dim);
+	static ElementAnalogStick *read_from_json(const json &j, SDL_Point *default_dim);
 
 private:
 	SDL_Rect m_static_scaled; /* Position without input movement for display */
@@ -60,5 +60,5 @@ private:
 	float m_y_axis = 0;
 	uint16_t m_radius = 0;
 
-	Timer m_movement_reset;
+	timer m_movement_reset;
 };
