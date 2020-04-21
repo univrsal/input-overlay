@@ -28,7 +28,7 @@
 #include <obs-module.h>
 
 namespace gamepad {
-std::vector<bindings> loaded_bindings;
+std::vector<std::shared_ptr<bindings>> loaded_bindings;
 
 std::vector<bind> bindings::m_defaults =
     {{S_BINDING_A, "txt_a", VC_PAD_A, false},
@@ -68,7 +68,8 @@ bindings::bindings(const QJsonObject &obj)
     }
 
     const auto &binds = obj["binds"].toArray();
-    m_target_device = obj["device"].toString();
+    const auto &devs = obj["devices"].toArray();
+
     m_name = obj["name"].toString();
 
     for (const auto &b : binds) {
@@ -77,11 +78,15 @@ bindings::bindings(const QJsonObject &obj)
         m_bindings[in].code = o["out"].toInt();
         m_bindings[in].axis_event = o["is_axis"].toBool();
     }
+
+    for (const auto &d : devs) {
+        m_bound_devices.append(d.toString());
+    }
 }
 
 void bindings::write_to_json(QJsonObject &obj) const
 {
-    QJsonArray binds;
+    QJsonArray binds, devs;
     for (const auto &b : m_bindings) {
         QJsonObject obj;
         obj["in"] = b.first;
@@ -89,9 +94,26 @@ void bindings::write_to_json(QJsonObject &obj) const
         obj["is_axis"] = b.second.axis_event;
         binds.append(obj);
     }
+
+    for (const auto &dev : m_bound_devices)
+        devs.append(dev);
     obj["binds"] = binds;
-    obj["device"] = m_target_device;
+    obj["devices"] = devs;
     obj["name"] = m_name;
+}
+
+const QStringList &bindings::get_devices() const
+{
+    return m_bound_devices;
+}
+
+std::shared_ptr<bindings> get_binding_for_device(const QString &id)
+{
+    for (auto &b : loaded_bindings) {
+        if (b->get_devices().contains(id))
+            return b;
+    }
+    return nullptr;
 }
 
 void load_bindings()
@@ -116,7 +138,6 @@ void load_bindings()
     } else {
         bwarn("Json parse error: %s", qt_to_utf8(err.errorString()));
     }
-
 }
 
 void save_bindings()
@@ -134,7 +155,7 @@ void save_bindings()
 
     for (const auto &b : loaded_bindings) {
         QJsonObject obj;
-        b.write_to_json(obj);
+        b->write_to_json(obj);
         bindings.append(obj);
     }
 

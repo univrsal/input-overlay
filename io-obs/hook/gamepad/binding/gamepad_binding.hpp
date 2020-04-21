@@ -20,9 +20,11 @@
 
 #include <stdint.h>
 #include <QString>
+#include <QStringList>
 #include <QJsonObject>
 #include <vector>
 #include <map>
+#include <memory>
 
 class element_data_holder;
 
@@ -38,16 +40,19 @@ class bindings {
 protected:
     static std::vector<bind> m_defaults;
     std::map<uint16_t, bind> m_bindings;
+    /* Device id of all gamepads that use this binding */
+    QStringList m_bound_devices;
     QString m_name;
-    QString m_target_device;
 public:
     bindings();
     bindings(const QJsonObject &obj);
+    const QStringList &get_devices() const;
     void set_binding(uint16_t id, uint16_t binding);
     void write_to_json(QJsonObject &obj) const;
 };
 
-extern std::vector<bindings> loaded_bindings;
+extern std::vector<std::shared_ptr<bindings>> loaded_bindings;
+extern std::shared_ptr<bindings> get_binding_for_device(const QString &id);
 extern void save_bindings();
 extern void load_bindings();
 }

@@ -18,6 +18,7 @@
 
 #include "gamepad_linux.hpp"
 #include "../../util/log.h"
+#include "../../util/obs_util.hpp"
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -39,9 +40,18 @@ namespace gamepad {
             unload();
             m_path = "/dev/input/js";
             m_path.append(std::to_string(m_id));
-            m_device_id = open(m_path.c_str(), O_RDONLY);
+            m_device_id = open(m_path.c_str(), O_RDONLY | O_NONBLOCK);
             m_valid = m_device_id >= 0;
-            bdebug("Gamepad %i %s present", m_id, valid() ? "" : "not");
+
+            if (m_valid) {
+                char buf[64];
+
+                if (ioctl(m_device_id, JSIOCGNAME(64), &buf) != -1)
+                    m_device_name = utf8_to_qt(buf);
+            }
+
+            bdebug("Gamepad (%s) %i %s present", qt_to_utf8(m_device_name),
+                   m_id, valid() ? "" : "not");
         }
 
         void handle_linux::unload()

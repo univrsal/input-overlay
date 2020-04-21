@@ -17,8 +17,10 @@
  *************************************************************************/
 
 #pragma once
+#include <QString>
 #include <stdint.h>
 #include <keycodes.h>
+#include <string>
 
 namespace gamepad {
 
@@ -29,6 +31,7 @@ class handle {
 protected:
     int8_t m_id = -1;
     bool m_valid = false;
+    QString m_device_name;
 public:
     handle(int8_t id);
     ~handle();
@@ -39,7 +42,7 @@ public:
 
     bool valid() const;
     int8_t id() const;
+    const QString &get_name() const { return m_device_name; }
 };
-
 
 }
