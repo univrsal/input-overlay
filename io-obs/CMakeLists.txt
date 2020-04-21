@@ -24,10 +24,6 @@ if (MSVC)
             hook/gamepad/gamepad_dinput.cpp
             hook/gamepad/gamepad_xinput.hpp
             hook/gamepad/gamepad_xinput.cpp
-            hook/gamepad/binding/gamepad_binding_dinput.cpp
-            hook/gamepad/binding/gamepad_binding_dinput.hpp
-            hook/gamepad/binding/gamepad_binding_xinput.cpp
-            hook/gamepad/binding/gamepad_binding_xinput.hpp
             )
     find_path(NETLIB_INCLUDE_DIR netlib.h)
     find_library(NETLIB_LIBRARY netlib)
@@ -44,9 +40,7 @@ if ("${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
             util/window_helper_nix.cpp
             hook/gamepad_hook_linux.cpp
             hook/gamepad/gamepad_linux.hpp
-            hook/gamepad/gamepad_linux.cpp
-            hook/gamepad/binding/gamepad_binding_linux.cpp
-            hook/gamepad/binding/gamepad_binding_linux.hpp)
+            hook/gamepad/gamepad_linux.cpp)
 
     if (ENABLE_STATIC_NETLIB)
         message("-- [input-overlay] Using precompiled netlib")
