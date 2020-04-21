@@ -20,6 +20,7 @@
 
 #include <stdint.h>
 #include <QString>
+#include <QJsonObject>
 #include <vector>
 #include <map>
 
@@ -27,22 +28,23 @@ class element_data_holder;
 
 namespace gamepad {
 struct bind {
-	const char *setting;
-	const char *text_box_id;
-	uint8_t default_value;
-	bool axis_event; /* true if axis event */
+    const char *setting;
+    const char *text_box_id;
+    uint16_t code;
+    bool axis_event; /* true if axis event */
 };
 
 class bindings {
 protected:
-	static std::vector<bind> m_defaults;
-	std::map<uint16_t, bind> m_bindings;
-	QString m_name;
-
+    static std::vector<bind> m_defaults;
+    std::map<uint16_t, bind> m_bindings;
+    QString m_name;
+    QString m_target_device;
 public:
-	bindings();
-	virtual ~bindings() = 0;
-	virtual void set_binding(uint16_t id, uint16_t binding, bool axis_event);
+    bindings();
+    bindings(const QJsonObject &obj);
+    void set_binding(uint16_t id, uint16_t binding);
+    void write_to_json(QJsonObject &obj) const;
 };
 
 extern std::vector<bindings> loaded_bindings;

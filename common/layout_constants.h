@@ -100,5 +100,3 @@ enum element_type {
     ET_GAMEPAD_ID,
     ET_DPAD_STICK,
 };
-
-#endif

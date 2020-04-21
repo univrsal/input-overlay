@@ -19,6 +19,7 @@
 #pragma once
 
 #include "gamepad_binding.hpp"
+#include <linux/joystick.h>
 
 namespace gamepad {
 enum pad_axis_events { PAD_AXIS_INVALID = -1, PAD_LX, PAD_LY, PAD_LT, PAD_RX, PAD_RY, PAD_RT, PAD_AXIS_EVENT_COUNT };
@@ -42,13 +43,13 @@ enum pad_button_events {
         PAD_DOWN,
         PAD_BUTTON_EVENT_COUNT
 };
-        class binding_linux : public binding {
-        pad_button_events get_button_event_by_id(uint8_t id);
+//        class binding_linux : public binding {
+//        pad_button_events get_button_event_by_id(uint8_t id);
 
-        pad_axis_events get_axis_event_by_id(uint8_t id);
-                public:
-            void init_default() override;
-            void set_binding(uint8_t what, uint8_t to, bool is_axis) override;
-            void handle_event(uint8_t pad_id, element_data_holder *data, js_event *event);
-        };
+//        pad_axis_events get_axis_event_by_id(uint8_t id);
+//                public:
+//            void init_default() override;
+//            void set_binding(uint8_t what, uint8_t to, bool is_axis) override;
+//            void handle_event(uint8_t pad_id, element_data_holder *data, js_event *event);
+//        };
 }

@@ -18,6 +18,9 @@
 
 #include "gamepad_linux.hpp"
 #include "../../util/log.h"
+#include <fcntl.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
 namespace gamepad {
         handle_linux::handle_linux(int8_t id)

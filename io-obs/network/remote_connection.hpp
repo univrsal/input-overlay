@@ -21,10 +21,6 @@
 #include "messages.hpp"
 #include <netlib.h>
 
-#ifdef _WIN32
-#include <Windows.h>
-#endif
-
 #define TIMEOUT_NS (1000 * 1000 * 1000)
 namespace network {
 class io_server;
@@ -41,13 +37,7 @@ void start_network(uint16_t port);
 
 void close_network();
 
-#ifdef _WIN32
-DWORD WINAPI network_handler(LPVOID arg);
-#else
-
 void *network_handler(void *);
-
-#endif
 
 char *read_text(tcp_socket sock, char **buf);
 

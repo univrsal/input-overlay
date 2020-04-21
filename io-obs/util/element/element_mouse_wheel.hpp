@@ -29,44 +29,42 @@ enum wheel_data { WD_BOTH, WD_BUTTON, WD_WHEEL };
 
 class element_data_wheel : public element_data {
 public:
-	element_data_wheel(direction dir, button_state state);
+    element_data_wheel(direction dir, button_state state);
 
-	explicit element_data_wheel(direction dir);
+    explicit element_data_wheel(direction dir);
 
-	explicit element_data_wheel(button_state state = BS_PRESSED);
+    explicit element_data_wheel(button_state state = BS_PRESSED);
 
-	direction get_dir() const;
+    direction get_dir() const;
 
-	void set_dir(direction dir);
+    void set_dir(direction dir);
 
-	button_state get_state() const;
+    button_state get_state() const;
 
-	bool is_persistent() override;
+    bool is_persistent() override;
 
-	bool merge(element_data *other) override;
+    bool merge(element_data *other) override;
 
-	wheel_data get_data_type() const;
+    wheel_data get_data_type() const;
 
 private:
-	wheel_data m_data_type;
-	button_state m_middle_button;
-	direction m_dir;
+    wheel_data m_data_type;
+    button_state m_middle_button;
+    direction m_dir;
 };
 
 class element_wheel : public element_texture {
 public:
-	element_wheel();
+    element_wheel();
 
-==== BASE ====
-    void load(ccl_config* cfg, const std::string &id) override;
-==== BASE ====
+    void load(const QJsonObject &obj) override;
 
-	void draw(gs_effect_t *effect, gs_image_file_t *image, element_data *data,
-			  sources::overlay_settings *settings) override;
+    void draw(gs_effect_t *effect, gs_image_file_t *image, element_data *data,
+              sources::overlay_settings *settings) override;
 
-	data_source get_source() override;
+    data_source get_source() override;
 
 private:
-	/* Middle, Up, Down */
-	gs_rect m_mappings[3];
+    /* Middle, Up, Down */
+    gs_rect m_mappings[3];
 };

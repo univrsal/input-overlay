@@ -111,5 +111,4 @@ namespace sources
     static obs_properties_t* get_properties_for_history(void* data);
 
     void register_history();
-==== BASE ====
 };
