@@ -30,25 +30,27 @@ class element_data_holder;
 
 namespace gamepad {
 struct bind {
-    const char *setting;
-    const char *text_box_id;
-    uint16_t code;
-    bool axis_event; /* true if axis event */
+	const char *setting;
+	const char *text_box_id;
+	uint16_t code;
+	bool axis_event; /* true if axis event */
 };
 
 class bindings {
 protected:
-    static std::vector<bind> m_defaults;
-    std::map<uint16_t, bind> m_bindings;
-    /* Device id of all gamepads that use this binding */
-    QStringList m_bound_devices;
-    QString m_name;
+	static std::vector<bind> m_defaults;
+	std::map<uint16_t, bind> m_bindings;
+	/* Device id of all gamepads that use this binding */
+	QStringList m_bound_devices;
+	QString m_name;
+
 public:
-    bindings();
-    bindings(const QJsonObject &obj);
-    const QStringList &get_devices() const;
-    void set_binding(uint16_t id, uint16_t binding);
-    void write_to_json(QJsonObject &obj) const;
+	bindings();
+	bindings(const QJsonObject &obj);
+	const QStringList &get_devices() const;
+	void set_binding(uint16_t id, uint16_t binding);
+	void write_to_json(QJsonObject &obj) const;
+	uint16_t translate(uint16_t in);
 };
 
 extern std::vector<std::shared_ptr<bindings>> loaded_bindings;

@@ -23,17 +23,18 @@
 #include <string>
 
 namespace gamepad {
-        class handle_linux : public handle {
-                std::string m_path;
-                js_event m_event;
-                int m_device_id = -1;
-        public:
-                handle_linux(int8_t id);
-                ~handle_linux();
-                void load() override;
-                void unload() override;
+class handle_linux : public handle {
+	std::string m_path;
+	js_event m_event;
+	int m_device_id = -1;
 
-                int read_event();
-                js_event *event();
-        };
+public:
+	handle_linux(int8_t id);
+	~handle_linux();
+	void load() override;
+	void unload() override;
+
+	int read_event();
+	js_event *event();
+};
 }

@@ -23,8 +23,8 @@
 #include <util/config-file.h>
 
 #define DEBUG_LOG(lvl, msg, ...) \
-    if (io_config::log_flag)     \
-    blog(lvl, "[input-overlay] " msg, ##__VA_ARGS__)
+	if (io_config::log_flag)     \
+	blog(lvl, "[input-overlay] " msg, ##__VA_ARGS__)
 #define CDEF_STR(id, value) config_set_default_string(io_config::instance, S_REGION, id, value)
 #define CDEF_INT(id, value) config_set_default_int(io_config::instance, S_REGION, id, value)
 #define CDEF_UINT(id, value) config_set_default_uint(io_config::instance, S_REGION, id, value)

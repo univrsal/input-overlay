@@ -39,89 +39,84 @@ uint16_t last_input = VC_NONE;
 
 bool init_pad_devices()
 {
-    uint8_t id = 0;
-    auto flag = false;
-    QString path = "/dev/input/js";
+	uint8_t id = 0;
+	auto flag = false;
+	QString path = "/dev/input/js";
 
-    /* Remove invalid gamepads */
-    pads.erase(std::remove_if(pads.begin(), pads.end(),
-                              [&flag](handle &h)->bool
-    {
-        if (h.valid()) {
-           flag = true;
-           return false;
-        }
-        return true;
-    }));
+	/* Remove invalid gamepads */
+	pads.erase(std::remove_if(pads.begin(), pads.end(), [&flag](handle &h) -> bool {
+		if (h.valid()) {
+			flag = true;
+			return false;
+		}
+		return true;
+	}));
 
+	for (auto i = 0; i < 127; i++) { /* idk 127 gamepads seems like enough */
+		if (QFile::exists(path + QString::number(i)) &&
+			std::find_if(pads.begin(), pads.end(), [i](handle &h) -> bool { return h.id() == i; }) == pads.end()) {
+			pads.emplace_back(std::make_shared<handle_linux>(i));
+		}
+	}
 
-    for (auto i = 0; i < 127; i++) { /* idk 127 gamepads seems like enough */
-        if (QFile::exists(path + QString::number(i)) &&
-            std::find_if(pads.begin(), pads.end(), [i](handle &h)->bool
-            {
-                return h.id() == i;
-            }) == pads.end())
-        {
-            pads.emplace_back(std::make_shared<handle_linux>(i));
-        }
-    }
-
-    return flag;
+	return flag;
 }
 
 void start_pad_hook()
 {
-    if (gamepad_hook_state)
-        return;
-    if (init_pad_devices()) {
-        gamepad_hook_state = pthread_create(&gamepad_hook_thread, nullptr, hook_method, nullptr) == 0;
-    } else {
-        bwarn("Gamepad device init failed\n");
-    }
+	if (gamepad_hook_state)
+		return;
+
+	if (init_pad_devices()) {
+		gamepad_hook_state = pthread_create(&gamepad_hook_thread, nullptr, hook_method, nullptr) == 0;
+	} else {
+		bwarn("Gamepad device init failed\n");
+	}
 }
 
 void end_pad_hook()
 {
-    gamepad_hook_run_flag = false;
-    for (size_t i = 0; i < pads.size(); i++) {
-        if (pads[i].use_count() > 1) {
-            berr("Shared pointer for handle %s is still in use! (refs: %li)!",
-                 qt_to_utf8(pads[i]->get_name()), pads[i].use_count());
-        }
-    }
+	gamepad_hook_run_flag = false;
+	for (size_t i = 0; i < pads.size(); i++) {
+		if (pads[i].use_count() > 1) {
+			berr("Shared pointer for handle %s is still in use! (refs: %li)!", qt_to_utf8(pads[i]->get_name()),
+				 pads[i].use_count());
+		}
+	}
 }
 
 void *hook_method(void *)
 {
-    while (gamepad_hook_run_flag) {
-        if (!hook::input_data)
-            break;
-        mutex.lock();
-        for (auto &pad : pads) {
-            if (!pad->valid())
-                continue;
-            auto ptr = std::dynamic_pointer_cast<handle_linux>(pad);
-            if (ptr->read_event() == -1) {
-                ptr->unload();
-                continue;
-            }
+	while (gamepad_hook_run_flag) {
+		if (!hook::input_data)
+			break;
+		mutex.lock();
+		for (auto &pad : pads) {
+			if (!pad->valid())
+				continue;
 
-            switch (ptr->event()->type) {
-                case JS_EVENT_BUTTON:
-                /* Yes, this is possible, yes it's insane
+			auto ptr = std::dynamic_pointer_cast<handle_linux>(pad);
+			if (ptr->read_event() == -1) {
+				ptr->unload();
+				continue;
+			}
+
+			switch (ptr->event()->type) {
+			case JS_EVENT_BUTTON:
+				/* Yes, this is possible, yes it's insane
                  * but this is the first time I've ever had
                  * the chance to use it so screw it */
-                if (ptr->event()->value) {
-                case JS_EVENT_AXIS:
-                    last_input = ptr->event()->number;
-                }
-//                bindings.handle_event(pad.get_id(), hook::input_data, pad.get_event());
-            }
-        }
-        mutex.unlock();
-    }
-    pthread_exit(nullptr);
-    return nullptr;
+				if (ptr->event()->value) {
+				case JS_EVENT_AXIS:
+					last_input = ptr->event()->number;
+				}
+				//                bindings.handle_event(pad.get_id(), hook::input_data, pad.get_event());
+			}
+		}
+		mutex.unlock();
+	}
+	pthread_exit(nullptr);
+	return nullptr;
 }
 
 }

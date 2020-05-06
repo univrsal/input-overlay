@@ -21,11 +21,11 @@
 #include "gamepad.hpp"
 
 namespace gamepad {
-    class handle_dinput : public handle {
+class handle_dinput : public handle {
 
-    public:
-        void load() override;
-        void unload() override;
-        void update() override;
-    };
+public:
+	void load() override;
+	void unload() override;
+	void update() override;
+};
 }

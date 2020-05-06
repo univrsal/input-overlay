@@ -27,17 +27,18 @@
 #define TO_MOUSE_MASK(a) (a | SDL_MOUSE_MASK)
 
 ==== BASE ====
-#define SDL_PAD_MASK        0x00FF0000 /* SDL uses 32bit integer for */
-#define SDL_MOUSE_MASK      0x00FE0000 /* codes so there's plenty of space */
-#define TO_PAD_MASK(a)      (a | SDL_PAD_MASK)
-#define TO_MOUSE_MASK(a)    (a | SDL_MOUSE_MASK)
+#define SDL_PAD_MASK 0x00FF0000   /* SDL uses 32bit integer for */
+#define SDL_MOUSE_MASK 0x00FE0000 /* codes so there's plenty of space */
+#define TO_PAD_MASK(a) (a | SDL_PAD_MASK)
+#define TO_MOUSE_MASK(a) (a | SDL_MOUSE_MASK)
 
-#define UTIL_MAX(a, b)               (((a) > (b)) ? (a) : (b))
-#define UTIL_MIN(a, b)               (((a) < (b)) ? (a) : (b))
+#define UTIL_MAX(a, b) (((a) > (b)) ? (a) : (b))
+#define UTIL_MIN(a, b) (((a) < (b)) ? (a) : (b))
 ==== BASE ====
-#define UTIL_CLAMP(lower, x, upper) (UTIL_MIN(upper, UTIL_MAX(x, lower)))
+	#define UTIL_CLAMP(lower, x, upper)(UTIL_MIN(upper, UTIL_MAX(x, lower)))
 
-SDL_bool util_move_element(int *x, int *y, SDL_Keycode key);
+		SDL_bool
+		util_move_element(int *x, int *y, SDL_Keycode key);
 
 using json = nlohmann::json;
 

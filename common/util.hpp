@@ -32,7 +32,7 @@
 namespace common {
 
 /* Get default key names from a libuiohook keycode */
-const char* key_to_text(int key_code);
+const char *key_to_text(int key_code);
 
 void util_enable_mask(uint16_t &masks, uint16_t mask);
 
@@ -44,8 +44,9 @@ uint16_t util_mouse_to_vc(int m);
 
 inline bool ends_with(std::string const &value, std::string const &ending)
 {
-    if (ending.size() > value.size()) return false;
-    return std::equal(ending.rbegin(), ending.rend(), value.rbegin());
+	if (ending.size() > value.size())
+		return false;
+	return std::equal(ending.rbegin(), ending.rend(), value.rbegin());
 }
 
 }

@@ -202,7 +202,6 @@ void overlay::refresh_data()
 	if (source) {
 		for (auto const &element : m_elements) {
 			element_data *data = nullptr;
-
 			if (m_data[element->get_keycode()] != nullptr) {
 				switch (element->get_source()) {
 				case DS_GAMEPAD:
@@ -232,7 +231,7 @@ void overlay::load_element(const QJsonObject &obj, const bool debug)
 		break;
 	case ET_GAMEPAD_ID:
 		new_element = new element_gamepad_id;
-		/* Fallthrough */
+		break;
 	case ET_BUTTON:
 		data = new element_data_button;
 		new_element = new element_button;

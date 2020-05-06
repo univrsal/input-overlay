@@ -29,7 +29,7 @@
 element_data_holder::element_data_holder(bool is_local)
 {
 	m_local = is_local;
-	m_button_data = std::map<uint16_t, std::unique_ptr<element_data>>();
+	m_input_data = std::map<uint16_t, std::unique_ptr<element_data>>();
 }
 
 element_data_holder::~element_data_holder()
@@ -48,17 +48,17 @@ bool element_data_holder::is_empty() const
 		}
 	}
 
-	return flag && m_button_data.empty();
+	return flag && m_input_data.empty();
 }
 
 void element_data_holder::add_data(const uint16_t keycode, element_data *data)
 {
 	bool refresh = false;
 	if (data_exists(keycode)) {
-		refresh = m_button_data[keycode]->merge(data);
+		refresh = m_input_data[keycode]->merge(data);
 		delete data; /* Existing data was used -> delete other one */
 	} else {
-		m_button_data[keycode] = std::unique_ptr<element_data>(data);
+		m_input_data[keycode] = std::unique_ptr<element_data>(data);
 		refresh = true;
 	}
 
@@ -109,7 +109,7 @@ void element_data_holder::clear_data()
 
 void element_data_holder::clear_button_data()
 {
-	m_button_data.clear();
+	m_input_data.clear();
 }
 
 void element_data_holder::clear_gamepad_data()
@@ -132,14 +132,14 @@ bool inline is_new_key(const std::vector<uint16_t> &vec, uint16_t vc)
 
 void element_data_holder::populate_vector(std::vector<uint16_t> &vec, sources::history_settings *settings)
 {
-	for (const auto &data : m_button_data) {
+	for (const auto &data : m_input_data) {
 		if (!data.second)
 			continue;
 		/* Mouse data is persistent and shouldn't be included
-		 * Any mouse buttons should only be included if enabled
-		 * MOUSE_DATA is only used in mouse movement, so it'll
-		 * always be excluded
-		 */
+         * Any mouse buttons should only be included if enabled
+         * MOUSE_DATA is only used in mouse movement, so it'll
+         * always be excluded
+         */
 		if (data.first == VC_MOUSE_DATA)
 			continue;
 		if ((data.first >> 8) == (VC_MOUSE_MASK >> 8) &&
@@ -222,8 +222,8 @@ void element_data_holder::populate_vector(std::vector<uint16_t> &vec, sources::h
 		}
 	}
 	/* Sort the vector, so keycombinations are always displayed the same way
-	 * Sorting is done in reverse so modifier keys like shift are at the
-	 * beginning */
+     * Sorting is done in reverse so modifier keys like shift are at the
+     * beginning */
 	std::sort(vec.rbegin(), vec.rend());
 }
 
@@ -232,7 +232,7 @@ bool element_data_holder::data_exists(const uint16_t keycode)
 	if (is_empty())
 		return false;
 
-	return m_button_data[keycode] != nullptr;
+	return m_input_data[keycode] != nullptr;
 }
 
 uint64_t element_data_holder::get_last_input() const
@@ -243,8 +243,8 @@ uint64_t element_data_holder::get_last_input() const
 void element_data_holder::remove_data(const uint16_t keycode)
 {
 	if (data_exists(keycode)) {
-		m_button_data[keycode].reset();
-		m_button_data.erase(keycode);
+		m_input_data[keycode].reset();
+		m_input_data.erase(keycode);
 	}
 }
 
@@ -253,5 +253,5 @@ element_data *element_data_holder::get_by_code(const uint16_t keycode)
 	if (!data_exists(keycode))
 		return nullptr;
 
-	return m_button_data[keycode].get();
+	return m_input_data[keycode].get();
 }

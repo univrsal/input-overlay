@@ -44,19 +44,7 @@ public:
 
 	element_data *get_by_code(uint16_t keycode);
 
-	void add_gamepad_data(uint8_t gamepad, uint16_t keycode, element_data *data);
-
-	bool gamepad_data_exists(uint8_t gamepad, uint16_t keycode);
-
-	void remove_gamepad_data(uint8_t gamepad, uint16_t keycode);
-
-	element_data *get_by_gamepad(uint8_t gamepad, uint16_t keycode);
-
 	void clear_data();
-
-	void clear_button_data();
-
-	void clear_gamepad_data();
 
 	void populate_vector(std::vector<uint16_t> &vec, sources::history_settings *settings);
 
@@ -71,6 +59,5 @@ private:
      * in input history */
 	uint64_t m_last_input = 0;
 	bool m_local; /* True if this holds the data for the local pc */
-	std::map<uint16_t, std::unique_ptr<element_data>> m_button_data;
-	std::map<uint16_t, std::unique_ptr<element_data>> m_gamepad_data[4];
+	std::map<uint16_t, std::unique_ptr<element_data>> m_input_data;
 };

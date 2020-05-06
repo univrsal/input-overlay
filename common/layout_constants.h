@@ -61,23 +61,23 @@
 enum overlay_flag { OF_LEFT_STICK = 1 << 0, OF_RIGHT_STICK = 1 << 1, OF_GAMEPAD = 1 << 2, OF_MOUSE = 1 << 3 };
 
 enum dpad_texture {
-    DT_CENTER,
-    DT_LEFT,
-    DT_RIGHT,
-    DT_UP,
-    DT_DOWN,
-    DT_TOP_LEFT,
-    DT_TOP_RIGHT,
-    DT_BOTTOM_LEFT,
-    DT_BOTTOM_RIGHT
+	DT_CENTER,
+	DT_LEFT,
+	DT_RIGHT,
+	DT_UP,
+	DT_DOWN,
+	DT_TOP_LEFT,
+	DT_TOP_RIGHT,
+	DT_BOTTOM_LEFT,
+	DT_BOTTOM_RIGHT
 };
 
 enum dpad_direction {
-    DD_CENTER = 1 << 0,
-    DD_LEFT = 1 << 1,
-    DD_RIGHT = 1 << 2,
-    DD_UP = 1 << 3,
-    DD_DOWN = 1 << 4,
+	DD_CENTER = 1 << 0,
+	DD_LEFT = 1 << 1,
+	DD_RIGHT = 1 << 2,
+	DD_UP = 1 << 3,
+	DD_DOWN = 1 << 4,
 };
 
 enum mouse_movement { MM_DOT, MM_ARROW };
@@ -89,14 +89,14 @@ enum direction { DIR_NONE = 0, DIR_UP, DIR_DOWN, DIR_LEFT, DIR_RIGHT, DIR_MAX };
 enum button_state { BS_RELEASED = 0, BS_PRESSED = 1 };
 
 enum element_type {
-    ET_INVALID = -1,
-    ET_TEXTURE,
-    ET_BUTTON,
-    ET_WHEEL,
-    ET_MOUSE_STATS,
-    ET_ANALOG_STICK,
-    ET_TRIGGER,
-    /* Shows game pad number 1 through 4 */
-    ET_GAMEPAD_ID,
-    ET_DPAD_STICK,
+	ET_INVALID = -1,
+	ET_TEXTURE,
+	ET_BUTTON,
+	ET_WHEEL,
+	ET_MOUSE_STATS,
+	ET_ANALOG_STICK,
+	ET_TRIGGER,
+	/* Shows game pad number 1 through 4 */
+	ET_GAMEPAD_ID,
+	ET_DPAD_STICK,
 };

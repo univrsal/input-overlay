@@ -21,25 +21,26 @@
 #include <QStringList>
 
 class input_filter {
-    QStringList m_filters;
-    bool m_regex = false;
-    bool m_whitelist = false;
+	QStringList m_filters;
+	bool m_regex = false;
+	bool m_whitelist = false;
+
 public:
-    ~input_filter();
+	~input_filter();
 
-    void read_from_config();
+	void read_from_config();
 
-    void write_to_config();
+	void write_to_config();
 
-    void add_filter(const char *filter);
+	void add_filter(const char *filter);
 
-    void remove_filter(int index);
+	void remove_filter(int index);
 
-    void set_regex(bool enabled);
+	void set_regex(bool enabled);
 
-    void set_whitelist(bool wl);
+	void set_whitelist(bool wl);
 
-    bool input_blocked();
+	bool input_blocked();
 
-    QStringList &filters();
+	QStringList &filters();
 };

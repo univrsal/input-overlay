@@ -21,13 +21,14 @@
 #include "xinput_fix.hpp"
 
 namespace gamepad {
-    class handle_xinput : public handle {
-        xinput_fix::pad_handle *m_pad = nullptr;
-    public:
-        handle_xinput(int8_t id);
-        ~handle_xinput();
+class handle_xinput : public handle {
+	xinput_fix::pad_handle *m_pad = nullptr;
 
-        void load() override;
-        void update() override;
-    };
+public:
+	handle_xinput(int8_t id);
+	~handle_xinput();
+
+	void load() override;
+	void update() override;
+};
 }

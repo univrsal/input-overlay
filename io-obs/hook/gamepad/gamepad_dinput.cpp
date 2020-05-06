@@ -20,18 +20,9 @@
 
 namespace gamepad {
 
-    void handle_dinput::load()
-    {
+void handle_dinput::load() {}
 
-    }
+void handle_dinput::unload() {}
 
-    void handle_dinput::unload()
-    {
-
-    }
-
-    void handle_dinput::update()
-    {
-
-    }
+void handle_dinput::update() {}
 }

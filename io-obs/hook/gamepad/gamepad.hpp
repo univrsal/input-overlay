@@ -29,20 +29,21 @@ extern uint16_t to_vc(code c);
 
 class handle {
 protected:
-    int8_t m_id = -1;
-    bool m_valid = false;
-    QString m_device_name;
+	int8_t m_id = -1;
+	bool m_valid = false;
+	QString m_device_name;
+
 public:
-    handle(int8_t id);
-    ~handle();
+	handle(int8_t id);
+	~handle();
 
-    virtual void update();
-    virtual void load() = 0;
-    virtual void unload();
+	virtual void update();
+	virtual void load() = 0;
+	virtual void unload();
 
-    bool valid() const;
-    int8_t id() const;
-    const QString &get_name() const { return m_device_name; }
+	bool valid() const;
+	int8_t id() const;
+	const QString &get_name() const { return m_device_name; }
 };
 
 }

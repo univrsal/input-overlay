@@ -20,27 +20,26 @@
 #include "../../util/log.h"
 
 namespace gamepad {
-    handle_xinput::handle_xinput(int8_t id)
-        : handle(id)
-    {
-        m_pad = xinput_fix::create();
-    }
+handle_xinput::handle_xinput(int8_t id) : handle(id)
+{
+	m_pad = xinput_fix::create();
+}
 
-    handle_xinput::~handle_xinput()
-    {
-        xinput_fix::free(m_pad);
-    }
+handle_xinput::~handle_xinput()
+{
+	xinput_fix::free(m_pad);
+}
 
-    void handle_xinput::load()
-    {
-        unload();
-        update();
-        bdebug("Gamepad %i %s present", m_id, valid() ? "" : "not");
-    }
+void handle_xinput::load()
+{
+	unload();
+	update();
+	bdebug("Gamepad %i %s present", m_id, valid() ? "" : "not");
+}
 
-    void handle_xinput::update()
-    {
-        m_valid = xinput_fix::update(m_pad, m_id);
-    }
+void handle_xinput::update()
+{
+	m_valid = xinput_fix::update(m_pad, m_id);
+}
 
 }

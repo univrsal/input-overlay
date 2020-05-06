@@ -21,74 +21,71 @@
 
 namespace gamepad {
 
-    // clang-format off
+// clang-format off
     code all_codes[13] = { CODE_A, CODE_B, CODE_X, CODE_Y, CODE_GUIDE,
                            CODE_DPAD_DOWN, CODE_DPAD_UP, CODE_DPAD_LEFT,
                            CODE_DPAD_RIGHT, CODE_LEFT_SHOULDER,
                            CODE_RIGHT_SHOULDER, CODE_START, CODE_BACK };
-    // clang-format on
+// clang-format on
 
-    uint16_t to_vc(const code code)
-    {
-        switch (code) {
-        case CODE_A:
-            return VC_PAD_A;
-        case CODE_B:
-            return VC_PAD_B;
-        case CODE_X:
-            return VC_PAD_X;
-        case CODE_Y:
-            return VC_PAD_Y;
-        case CODE_DPAD_DOWN:
-            return VC_PAD_DPAD_DOWN;
-        case CODE_DPAD_UP:
-            return VC_PAD_DPAD_UP;
-        case CODE_DPAD_LEFT:
-            return VC_PAD_DPAD_LEFT;
-        case CODE_DPAD_RIGHT:
-            return VC_PAD_DPAD_RIGHT;
-        case CODE_GUIDE:
-            return VC_PAD_GUIDE;
-        case CODE_LEFT_SHOULDER:
-            return VC_PAD_LB;
-        case CODE_RIGHT_SHOULDER:
-            return VC_PAD_RB;
-        case CODE_START:
-            return VC_PAD_START;
-        case CODE_BACK:
-            return VC_PAD_BACK;
-        default:
-            return VC_NONE;
-        }
-    }
+uint16_t to_vc(const code code)
+{
+	switch (code) {
+	case CODE_A:
+		return VC_PAD_A;
+	case CODE_B:
+		return VC_PAD_B;
+	case CODE_X:
+		return VC_PAD_X;
+	case CODE_Y:
+		return VC_PAD_Y;
+	case CODE_DPAD_DOWN:
+		return VC_PAD_DPAD_DOWN;
+	case CODE_DPAD_UP:
+		return VC_PAD_DPAD_UP;
+	case CODE_DPAD_LEFT:
+		return VC_PAD_DPAD_LEFT;
+	case CODE_DPAD_RIGHT:
+		return VC_PAD_DPAD_RIGHT;
+	case CODE_GUIDE:
+		return VC_PAD_GUIDE;
+	case CODE_LEFT_SHOULDER:
+		return VC_PAD_LB;
+	case CODE_RIGHT_SHOULDER:
+		return VC_PAD_RB;
+	case CODE_START:
+		return VC_PAD_START;
+	case CODE_BACK:
+		return VC_PAD_BACK;
+	default:
+		return VC_NONE;
+	}
+}
 
-    handle::handle(int8_t id)
-        : m_id(id)
-    {
-    }
+handle::handle(int8_t id) : m_id(id) {}
 
-    handle::~handle()
-    {
-        unload();
-    }
+handle::~handle()
+{
+	unload();
+}
 
-    void handle::unload()
-    {
-        /* NO-OP */
-    }
+void handle::unload()
+{
+	/* NO-OP */
+}
 
-    void handle::update()
-    {
-        /* NO-OP */
-    }
+void handle::update()
+{
+	/* NO-OP */
+}
 
-    bool handle::valid() const
-    {
-        return m_valid;
-    }
+bool handle::valid() const
+{
+	return m_valid;
+}
 
-    int8_t handle::id() const
-    {
-        return m_id;
-    }
+int8_t handle::id() const
+{
+	return m_id;
+}
 }
