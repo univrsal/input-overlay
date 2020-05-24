@@ -69,9 +69,9 @@ std::string localization::localize(const char *id) const
 	std::string value = "";
 	if (m_have_default) {
 		if (!m_current.empty() && (m_current[id]).is_string())
-			value = m_current[id];
+			value = m_current[id].get<std::string>();
 		else
-			value = m_english[id];
+			value = m_english[id].get<std::string>();
 	}
 
 	if (!m_have_default || value.empty()) {
@@ -118,6 +118,7 @@ void localization::scan_lang_folder()
 				&& S_ISREG(path_stat.st_mode)) {
 #endif
 				lang.clear();
+				std::string full_path = m_lang_folder + "/" + file_name;
 				if (!util::load_json(full_path, lang))
 					continue;
 				/* After filtering on windows and linux store file name
@@ -130,7 +131,7 @@ void localization::scan_lang_folder()
 						m_have_default = true;
 						m_english_id = m_langfiles.size();
 					}
-					m_langfiles.emplace_back(lang_file(full_path, val));
+					m_langfiles.emplace_back(full_path, val);
 				} else {
 					printf("Invalid lang file %s. Missing language identifier\n", file_name.c_str());
 				}

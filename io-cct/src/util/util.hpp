@@ -42,7 +42,7 @@ using json = nlohmann::json;
 
 class timer {
 public:
-    Timer() { start(); };
+    timer() { start(); };
 
     void start()
     {
