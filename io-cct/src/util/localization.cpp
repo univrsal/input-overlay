@@ -94,8 +94,8 @@ void localization::scan_lang_folder()
 
 	if (h_find != INVALID_HANDLE_VALUE) {
 		do {
-			if (!(GetFileAttributes(data.cFileName) & FILE_ATTRIBUTE_DIRECTORY)) {
-				file_name = std::string(data.cFileName);
+			std::string full_path = m_lang_folder + "/" + data.cFileName;
+			if (!(GetFileAttributes(full_path.c_str()) & FILE_ATTRIBUTE_DIRECTORY)) {
 #else
 	/* Iterating over items in folder on linux
      * and filtering only *.ini files
@@ -116,9 +116,9 @@ void localization::scan_lang_folder()
 
 			if (file_type && !strcmp(file_type, ".json") /* Checks file ending */
 				&& S_ISREG(path_stat.st_mode)) {
+				std::string full_path = m_lang_folder + "/" + file_name;
 #endif
 				lang.clear();
-				std::string full_path = m_lang_folder + "/" + file_name;
 				if (!util::load_json(full_path, lang))
 					continue;
 				/* After filtering on windows and linux store file name
