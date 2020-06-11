@@ -24,8 +24,8 @@ if (MSVC)
     find_path(SDL2_INCLUDE_DIRS SDL.h)
     find_library(SDL2_LIBRARIES SDL2)
 
-    find_path(SDLTTF2_INCLUDE_DIRS SDL_ttf.h)
-    find_library(SDLTTF2_LIBRARIES SDL2_ttf)
+    find_path(SDL2TTF_INCLUDE_DIRS SDL_ttf.h)
+    find_library(SDL2TTF_LIBRARIES SDL2_ttf)
 
     find_path(SDL2IMAGE_INCLUDE_DIRS SDL_image.h)
     find_library(SDL2IMAGE_LIBRARIES SDL2_image)
@@ -36,7 +36,7 @@ else ()
 
     PKG_SEARCH_MODULE(SDL2 REQUIRED sdl2)
     PKG_SEARCH_MODULE(SDL2IMAGE REQUIRED SDL2_image>=2.0.0)
-    PKG_SEARCH_MODULE(SDLTTF2 REQUIRED SDL2_ttf)
+    PKG_SEARCH_MODULE(SDL2TTF REQUIRED SDL2_ttf)
 endif ()
 
 set(APP_ICON_RC "${CMAKE_CURRENT_SOURCE_DIR}/res/icon.ico")
@@ -116,7 +116,32 @@ add_executable(io-cct ${io-cct_SOURCES})
 
 INCLUDE_DIRECTORIES(${SDL2_INCLUDE_DIRS}
     ${SDL2IMAGE_INCLUDE_DIRS}
-    ${SDLTTF2_INCLUDE_DIRS}
+    ${SDL2TTF_INCLUDE_DIRS}
     "../common"
     "../libuiohook/include")
-TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${SDL2_LIBRARIES} ${SDL2IMAGE_LIBRARIES} ${SDLTTF2_LIBRARIES})
+TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${SDL2_LIBRARIES} ${SDL2IMAGE_LIBRARIES} ${SDL2TTF_LIBRARIES})
+
+if (MSVC)
+    get_filename_component(SDL2_BINARYDIR ${SDL2_LIBRARIES} DIRECTORY INTERNAL)
+    get_filename_component(SDL2_IMAGE_BINARYDIR ${SDL2IMAGE_LIBRARIES} DIRECTORY INTERNAL)
+    get_filename_component(SDL2_TTF_BINARYDIR ${SDL2TTF_LIBRARIES} DIRECTORY INTERNAL)
+    
+    # Copy dependencies
+    add_custom_command(TARGET io-cct POST_BUILD 
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${SDL2_BINARYDIR}/SDL2.dll"
+        "${SDL2_IMAGE_BINARYDIR}/zlib1.dll"
+        "${SDL2_IMAGE_BINARYDIR}/SDL2_image.dll"
+        "${SDL2_IMAGE_BINARYDIR}/libwebp-7.dll"
+        "${SDL2_IMAGE_BINARYDIR}/libtiff-5.dll"
+        "${SDL2_IMAGE_BINARYDIR}/libpng16-16.dll"
+        "${SDL2_IMAGE_BINARYDIR}/libjpeg-9.dll"
+        "${SDL2_TTF_BINARYDIR}/SDL2_ttf.dll"
+        "${SDL2_TTF_BINARYDIR}/libfreetype-6.dll"
+        $<TARGET_FILE_DIR:io-cct>)
+endif()
+
+# Copy assets
+add_custom_command(TARGET io-cct POST_BUILD
+                   COMMAND ${CMAKE_COMMAND} -E copy_directory
+                       ${CMAKE_SOURCE_DIR}/res $<TARGET_FILE_DIR:${PROJECT_NAME}>/../res)
