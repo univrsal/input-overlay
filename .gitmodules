@@ -1,0 +1,9 @@
+[submodule "deps/libgamepad"]
+	path = deps/libgamepad
+	url = https://github.com/univrsal/libgamepad
+[submodule "deps/netlib"]
+	path = deps/netlib
+	url = https://github.com/univrsal/netlib
+[submodule "deps/libuiohook"]
+	path = deps/libuiohook
+	url = https://github.com/kwhat/libuiohook
