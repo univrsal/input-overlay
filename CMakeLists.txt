@@ -1,1 +1,1 @@
-add_subdirectory(io-obs)
+add_subdirectory(projects/plugin)
