@@ -1,4 +1,3 @@
-cmake_minimum_required(VERSION 2.8)
 project(io_client)
 
 find_path(UIOHOOK_INCLUDE_DIR uiohook.h)

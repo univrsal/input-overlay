@@ -99,6 +99,7 @@ void dialog_setup::action_performed(const int8_t action_id)
 	auto valid_texture = false;
 	auto writable_config = false;
 	json cfg_json;
+	std::string err;
 
 	switch (action_id) {
 	case ACTION_OK:
@@ -125,20 +126,23 @@ void dialog_setup::action_performed(const int8_t action_id)
 		m_helper->exit_loop();
 		break;
 	case ACTION_FILE_DROPPED:
-		if (util::load_json(*m_config_path->get_text(), cfg_json)) {
+		if (util::load_json(*m_config_path->get_text(), err, cfg_json)) {
 			const auto def_w = cfg_json[CFG_DEFAULT_WIDTH];
 			const auto def_h = cfg_json[CFG_DEFAULT_HEIGHT];
 			const auto space_h = cfg_json[CFG_H_SPACE];
 			const auto space_v = cfg_json[CFG_V_SPACE];
 
-			if (def_w.is_number_integer())
-				m_def_w->set_text(def_w.get<int>());
-			if (def_h.is_number_integer())
-				m_def_h->set_text(def_h.get<int>());
-			if (space_h.is_number_integer())
-				m_h_space->set_text(space_h.get<int>());
-			if (space_v.is_number_integer())
-				m_v_space->set_text(space_v.get<int>());
+			if (def_w.is_number())
+				m_def_w->set_text(def_w.number_value());
+			if (def_h.is_number())
+				m_def_h->set_text(def_h.number_value());
+			if (space_h.is_number())
+				m_h_space->set_text(space_h.number_value());
+			if (space_v.is_number())
+				m_v_space->set_text(space_v.number_value());
+		} else {
+			m_notifier->add_msg(MESSAGE_ERROR, m_helper->loc(LANG_MSG_LOAD_ERROR));
+			m_notifier->add_msg(MESSAGE_ERROR, err.c_str());
 		}
 		break;
 	case ACTION_COMBO_ITEM_SELECTED:

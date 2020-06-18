@@ -1,4 +1,10 @@
-include_directories(common)
+set(COMMON_HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/common" CACHE STRING "" FORCE)
+set(JSON_11_HEADER "${CMAKE_CURRENT_SOURCE_DIR}/libgamepad/include" CACHE STRING "" FORCE)
+set(JSON_11_SOURCE "${CMAKE_CURRENT_SOURCE_DIR}/libgamepad/src/json11.cpp" CACHE STRING "" FORCE)
+
+mark_as_advanced(COMMON_HEADERS)
+mark_as_advanced(JSON_11_HEADER)
+mark_as_advanced(JSON_11_SOURCE)
 
 add_subdirectory(libuiohook)
 add_subdirectory(netlib)

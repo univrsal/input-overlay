@@ -98,7 +98,7 @@ bool coordinate_system::handle_events(SDL_Event *e)
 		mouse.x -= get_origin_left();
 		mouse.y -= get_origin_top();
 
-		SDL_Point old_scale = {mouse.x * m_scale_f + m_origin.x, mouse.y * m_scale_f + m_origin.y};
+		//        SDL_Point old_scale = {mouse.x * m_scale_f + m_origin.x, mouse.y * m_scale_f + m_origin.y};
 
 		if (e->wheel.y > 0) /* TRIGGER_UP */
 		{
@@ -108,10 +108,9 @@ bool coordinate_system::handle_events(SDL_Event *e)
 		}
 		//mouse = { e->button.x, e->button.y };
 		// translate(mouse.x, mouse.y);
-		SDL_Point new_scale = {mouse.x * m_scale_f + m_origin.x, mouse.y * m_scale_f + m_origin.y};
+		//        SDL_Point new_scale = {mouse.x * m_scale_f + m_origin.x, mouse.y * m_scale_f + m_origin.y};
 
 		/* Move origin so the original center stays centered */
-		printf("X: %i, Y: %i\n", old_scale.x, old_scale.y);
 
 		//m_origin.x += (new_scale.x - old_scale.x);
 		//m_origin.y += (new_scale.y - old_scale.y);
@@ -378,9 +377,9 @@ void coordinate_system::mouse_state(SDL_Event *event)
 		m_helper->set_cursor(CURSOR_SIZE_ALL);
 	} else if (sdl_helper::util_is_in_rect(&m_system_area, event->button.x, event->button.y))
 	/*
-			Only reset the cursor within the coordinate system,
-			because outside it might be set to I_BEAM by a text box
-		*/
+            Only reset the cursor within the coordinate system,
+            because outside it might be set to I_BEAM by a text box
+        */
 	{
 		m_size_mode = SIZE_NONE;
 		m_helper->set_cursor(CURSOR_ARROW);

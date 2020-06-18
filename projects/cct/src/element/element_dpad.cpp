@@ -22,7 +22,7 @@
 #include "../util/palette.hpp"
 #include "../util/texture.hpp"
 
-void ElementDPad::draw(texture *atlas, coordinate_system *cs, const bool selected, const bool alpha)
+void element_dpad::draw(texture *atlas, coordinate_system *cs, const bool selected, const bool alpha)
 {
 	get_abs_dim(cs);
 	if (m_dir == DD_CENTER) {
@@ -39,7 +39,7 @@ void ElementDPad::draw(texture *atlas, coordinate_system *cs, const bool selecte
 		cs->get_helper()->util_draw_rect(&m_dimensions_scaled, cs->get_helper()->get_palette()->red());
 }
 
-void ElementDPad::handle_event(SDL_Event *event, sdl_helper *helper)
+void element_dpad::handle_event(SDL_Event *event, sdl_helper *helper)
 {
 	if (event->type == SDL_CONTROLLERBUTTONDOWN) {
 		switch (event->cbutton.button) {
@@ -76,12 +76,13 @@ void ElementDPad::handle_event(SDL_Event *event, sdl_helper *helper)
 	}
 }
 
-ElementDPad *ElementDPad::read_from_json(const json &j, SDL_Point *default_dim)
+element_dpad *element_dpad::read_from_json(const json &j, SDL_Point *default_dim)
 {
-	return new ElementDPad(j[CFG_ID], read_position(j), read_mapping(j, default_dim), j[CFG_Z_LEVEL]);
+	return new element_dpad(j[CFG_ID].string_value(), read_position(j), read_mapping(j, default_dim),
+							j[CFG_Z_LEVEL].number_value());
 }
 
-void ElementDPad::write_to_json(json &j, SDL_Point *default_dim, uint8_t &layout_flags)
+void element_dpad::write_to_json(json_obj &j, SDL_Point *default_dim, uint8_t &layout_flags)
 {
 	element_texture::write_to_json(j, default_dim, layout_flags);
 	layout_flags |= OF_GAMEPAD;

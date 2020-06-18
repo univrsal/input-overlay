@@ -20,19 +20,19 @@
 
 #include "element_texture.hpp"
 
-class ElementButton : public element_texture {
+class element_button : public element_texture {
 public:
-	ElementButton() : element_texture(), m_pressed_mapping()
+	element_button() : element_texture(), m_pressed_mapping()
 	{ /* NO-OP */
 	}
 
-	ElementButton(const std::string &id, SDL_Point pos, SDL_Rect mapping, uint16_t vc, uint8_t z);
+	element_button(const std::string &id, SDL_Point pos, SDL_Rect mapping, uint16_t vc, uint8_t z);
 
 	element_error is_valid(notifier *n, sdl_helper *h) override;
 
 	void draw(texture *atlas, coordinate_system *cs, bool selected, bool alpha) override;
 
-	void write_to_json(json &j, SDL_Point *default_dim, uint8_t &layout_flags) override;
+	void write_to_json(json_obj &j, SDL_Point *default_dim, uint8_t &layout_flags) override;
 
 	void update_settings(dialog_new_element *dialog) override;
 
@@ -42,7 +42,7 @@ public:
 
 	int get_vc() override { return m_keycode; }
 
-	static ElementButton *read_from_json(const json &j, SDL_Point *default_dim);
+	static element_button *read_from_json(const json &j, SDL_Point *default_dim);
 
 private:
 	SDL_Rect m_pressed_mapping;

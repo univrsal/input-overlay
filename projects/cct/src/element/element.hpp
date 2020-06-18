@@ -22,9 +22,12 @@
 #include <SDL.h>
 #include <string>
 #include <utility>
-#include <json.hpp>
+#include <json/json11.hpp>
 
 #define ELEMENT_HIDE_ALPHA 60
+
+using json = json11::Json;
+using json_obj = json11::Json::object;
 
 enum element_error {
 	EE_VALID,
@@ -52,13 +55,11 @@ class texture;
 /* Base class for display elements
  */
 
-using json = nlohmann::json;
-
 class element {
 public:
 	virtual void draw(texture *atlas, coordinate_system *cs, bool selected, bool alpha) = 0;
 
-	virtual void write_to_json(json &j, SDL_Point *default_dim, uint8_t &layout_flags);
+	virtual void write_to_json(json_obj &j, SDL_Point *default_dim, uint8_t &layout_flags);
 
 	virtual SDL_Rect *get_abs_dim(coordinate_system *cs);
 

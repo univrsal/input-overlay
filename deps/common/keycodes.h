@@ -16,9 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *************************************************************************/
 
-#ifndef IO_KEY_CODES
-#define IO_KEY_CODES
-
+#pragma once
 #include <uiohook.h>
 /* clang-format off */
 #define WHEEL_UP           -1
@@ -51,59 +49,4 @@
 #define VC_TRIGGER_DATA     0xEC31u
 #define VC_DPAD_DATA        0xEC32u
 
-#define PAD_TO_VC(a)        (a | VC_PAD_MASK)
-
-#define VC_PAD_A            ( 0u | VC_PAD_MASK)
-#define VC_PAD_B            ( 1u | VC_PAD_MASK)
-#define VC_PAD_X            ( 2u | VC_PAD_MASK)
-#define VC_PAD_Y            ( 3u | VC_PAD_MASK)
-#define VC_PAD_LB           ( 4u | VC_PAD_MASK)
-#define VC_PAD_RB           ( 5u | VC_PAD_MASK)
-#define VC_PAD_BACK         ( 6u | VC_PAD_MASK)
-#define VC_PAD_START        ( 7u | VC_PAD_MASK)
-#define VC_PAD_GUIDE        ( 8u | VC_PAD_MASK)
-#define VC_PAD_L_ANALOG     ( 9u | VC_PAD_MASK)
-#define VC_PAD_R_ANALOG     (10u | VC_PAD_MASK)
-#define VC_PAD_DPAD_LEFT    (11u | VC_PAD_MASK)
-#define VC_PAD_DPAD_RIGHT   (12u | VC_PAD_MASK)
-#define VC_PAD_DPAD_UP      (13u | VC_PAD_MASK)
-#define VC_PAD_DPAD_DOWN    (14u | VC_PAD_MASK)
-#define VC_PAD_LT           (15u | VC_PAD_MASK)
-#define VC_PAD_RT           (16u | VC_PAD_MASK)
-
-/* Axis events left/right analog and left/right trigger */
-#define VC_PAD_LX           (17u | VC_PAD_MASK)
-#define VC_PAD_LY           (18u | VC_PAD_MASK)
-#define VC_PAD_RX           (19u | VC_PAD_MASK)
-#define VC_PAD_RY           (20u | VC_PAD_MASK)
-#define VC_PAD_LT           (21u | VC_PAD_MASK)
-#define VC_PAD_RT           (22u | VC_PAD_MASK)
-
-#define STICK_MAX_VAL       32767.f
-#if LINUX
-#define TRIGGER_MAX_VAL     STICK_MAX_VAL
-#else
-#define TRIGGER_MAX_VAL     256.f
-#endif
-
-namespace gamepad {
-enum code {
-    CODE_DPAD_UP = 0x0001,
-    CODE_DPAD_DOWN = 0x0002,
-    CODE_DPAD_LEFT = 0x0004,
-    CODE_DPAD_RIGHT = 0x0008,
-    CODE_START = 0x0010,
-    CODE_BACK = 0x0020,
-    CODE_LEFT_THUMB = 0x0040,
-    CODE_RIGHT_THUMB = 0x0080,
-    CODE_LEFT_SHOULDER = 0x0100,
-    CODE_RIGHT_SHOULDER = 0x0200,
-    CODE_GUIDE = 0x0400,
-    CODE_A = 0x1000,
-    CODE_B = 0x2000,
-    CODE_X = 0x4000,
-    CODE_Y = 0x8000
-};
-}
 /* clang-format on */
-#endif

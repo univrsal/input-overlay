@@ -20,6 +20,7 @@
 
 #include "element/element.hpp"
 #include "util/coordinate_system.hpp"
+#include "util.hpp"
 #include <SDL.h>
 #include <memory>
 #include <string>

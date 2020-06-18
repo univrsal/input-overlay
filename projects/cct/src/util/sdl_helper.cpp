@@ -22,6 +22,7 @@
 #include "palette.hpp"
 #include "texture.hpp"
 #include <SDL_image.h>
+#include <gamepad/device.hpp>
 
 sdl_helper::sdl_helper() {}
 
@@ -462,7 +463,7 @@ bool sdl_helper::handle_controller_connect(const int32_t id)
 	if (id < 0)
 		return false; /* Negative IDs shouldn't happen, I think */
 
-	if (id < m_controllers.size()) {
+	if (id < int32_t(m_controllers.size())) {
 		if (!m_controllers[id]) {
 			c = SDL_GameControllerOpen(id);
 			if (c) {
@@ -771,11 +772,10 @@ static uint32_t KEY_MAP[][2]{/* Alphabet */
 							 {VC_SPACE, SDLK_SPACE},
 							 {VC_TAB, SDLK_TAB},
 							 {VC_ESCAPE, SDLK_ESCAPE},
-							 /* libuiohook mixes up keypad arrow keys with normal arrow keys */
-							 {VC_KP_UP, SDLK_UP},
-							 {VC_KP_DOWN, SDLK_DOWN},
-							 {VC_KP_LEFT, SDLK_LEFT},
-							 {VC_KP_RIGHT, SDLK_RIGHT},
+							 {VC_UP, SDLK_UP},
+							 {VC_DOWN, SDLK_DOWN},
+							 {VC_LEFT, SDLK_LEFT},
+							 {VC_RIGHT, SDLK_RIGHT},
 							 {VC_DELETE, SDLK_DELETE},
 							 {VC_INSERT, SDLK_INSERT},
 							 {VC_HOME, SDLK_HOME},
@@ -799,22 +799,22 @@ static uint32_t KEY_MAP[][2]{/* Alphabet */
 							 {VC_BACKQUOTE, SDLK_BACKQUOTE},
 
 							 /* Game pad */
-							 {VC_PAD_A, TO_PAD_MASK(SDL_CONTROLLER_BUTTON_A)},
-							 {VC_PAD_B, TO_PAD_MASK(SDL_CONTROLLER_BUTTON_B)},
-							 {VC_PAD_X, TO_PAD_MASK(SDL_CONTROLLER_BUTTON_X)},
-							 {VC_PAD_Y, TO_PAD_MASK(SDL_CONTROLLER_BUTTON_Y)},
-							 {VC_PAD_LB, TO_PAD_MASK(SDL_CONTROLLER_BUTTON_LEFTSHOULDER)},
-							 {VC_PAD_RB, TO_PAD_MASK(SDL_CONTROLLER_BUTTON_RIGHTSHOULDER)},
-							 {VC_PAD_BACK, TO_PAD_MASK(SDL_CONTROLLER_BUTTON_BACK)},
-							 {VC_PAD_START, TO_PAD_MASK(SDL_CONTROLLER_BUTTON_START)},
-							 {VC_PAD_DPAD_DOWN, TO_PAD_MASK(SDL_CONTROLLER_BUTTON_DPAD_DOWN)},
-							 {VC_PAD_DPAD_UP, TO_PAD_MASK(SDL_CONTROLLER_BUTTON_DPAD_UP)},
-							 {VC_PAD_DPAD_LEFT, TO_PAD_MASK(SDL_CONTROLLER_BUTTON_DPAD_LEFT)},
-							 {VC_PAD_DPAD_RIGHT, TO_PAD_MASK(SDL_CONTROLLER_BUTTON_DPAD_RIGHT)},
-							 {VC_PAD_L_ANALOG, TO_PAD_MASK(SDL_CONTROLLER_BUTTON_LEFTSTICK)},
-							 {VC_PAD_R_ANALOG, TO_PAD_MASK(SDL_CONTROLLER_BUTTON_RIGHTSTICK)},
-							 {VC_PAD_GUIDE, TO_PAD_MASK(SDL_CONTROLLER_BUTTON_GUIDE)},
-							 {VC_PAD_START, TO_PAD_MASK(SDL_CONTROLLER_BUTTON_START)},
+							 {gamepad::button::A, TO_PAD_MASK(SDL_CONTROLLER_BUTTON_A)},
+							 {gamepad::button::B, TO_PAD_MASK(SDL_CONTROLLER_BUTTON_B)},
+							 {gamepad::button::X, TO_PAD_MASK(SDL_CONTROLLER_BUTTON_X)},
+							 {gamepad::button::Y, TO_PAD_MASK(SDL_CONTROLLER_BUTTON_Y)},
+							 {gamepad::button::LB, TO_PAD_MASK(SDL_CONTROLLER_BUTTON_LEFTSHOULDER)},
+							 {gamepad::button::RB, TO_PAD_MASK(SDL_CONTROLLER_BUTTON_RIGHTSHOULDER)},
+							 {gamepad::button::BACK, TO_PAD_MASK(SDL_CONTROLLER_BUTTON_BACK)},
+							 {gamepad::button::START, TO_PAD_MASK(SDL_CONTROLLER_BUTTON_START)},
+							 {gamepad::button::DPAD_DOWN, TO_PAD_MASK(SDL_CONTROLLER_BUTTON_DPAD_DOWN)},
+							 {gamepad::button::DPAD_UP, TO_PAD_MASK(SDL_CONTROLLER_BUTTON_DPAD_UP)},
+							 {gamepad::button::DPAD_LEFT, TO_PAD_MASK(SDL_CONTROLLER_BUTTON_DPAD_LEFT)},
+							 {gamepad::button::DPAD_RIGHT, TO_PAD_MASK(SDL_CONTROLLER_BUTTON_DPAD_RIGHT)},
+							 {gamepad::button::L_THUMB, TO_PAD_MASK(SDL_CONTROLLER_BUTTON_LEFTSTICK)},
+							 {gamepad::button::R_THUMB, TO_PAD_MASK(SDL_CONTROLLER_BUTTON_RIGHTSTICK)},
+							 {gamepad::button::GUIDE, TO_PAD_MASK(SDL_CONTROLLER_BUTTON_GUIDE)},
+							 {gamepad::button::START, TO_PAD_MASK(SDL_CONTROLLER_BUTTON_START)},
 
 							 /* Mouse */
 							 {VC_MOUSE_BUTTON1, TO_MOUSE_MASK(SDL_BUTTON_LEFT)},

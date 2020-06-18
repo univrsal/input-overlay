@@ -1,4 +1,4 @@
-﻿{
+{
     "language": "Deutsch",
     "msg_save_error": "Es traten schwerwiegende Fehler beim speichern auf",
     "msg_load_error": "Es traten schwerwiegende Fehler beim laden auf",
@@ -19,7 +19,7 @@
     "error_keycode_invalid": "0x0 ist kein gültiger Tastencode",
     "error_selection_empty": "Auswahl war leer",
     "error_invalid_texture_path": "Ungültiger Texturenpfad",
-    "error_invalid_config_path": "Ungültiger Konfiugrationspfad",
+    "error_invalid_config_path": "Ungültiger Konfigurationspfad",
     "error_id_empty": "Element ID ist leer",
     "error_type_invalid": "Ungültiger Elementtyp",
     "error_radius_invalid": "Radius ist ungültig",

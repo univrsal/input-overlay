@@ -27,8 +27,8 @@
 #include <util.hpp>
 #include <keycodes.h>
 
-ElementButton::ElementButton(const std::string &id, const SDL_Point pos, const SDL_Rect mapping, const uint16_t vc,
-							 const uint8_t z)
+element_button::element_button(const std::string &id, const SDL_Point pos, const SDL_Rect mapping, const uint16_t vc,
+							   const uint8_t z)
 	: element_texture(ET_BUTTON, id, pos, mapping, z)
 {
 	m_keycode = vc;
@@ -36,7 +36,7 @@ ElementButton::ElementButton(const std::string &id, const SDL_Point pos, const S
 	m_pressed_mapping.y += m_mapping.h + CFG_INNER_BORDER;
 }
 
-element_error ElementButton::is_valid(notifier *n, sdl_helper *h)
+element_error element_button::is_valid(notifier *n, sdl_helper *h)
 {
 	auto error = element_texture::is_valid(n, h);
 	if (error == EE_VALID && m_keycode == 0x0) {
@@ -46,7 +46,7 @@ element_error ElementButton::is_valid(notifier *n, sdl_helper *h)
 	return error;
 }
 
-void ElementButton::draw(texture *atlas, coordinate_system *cs, const bool selected, const bool alpha)
+void element_button::draw(texture *atlas, coordinate_system *cs, const bool selected, const bool alpha)
 {
 	get_abs_dim(cs);
 	if (m_pressed)
@@ -60,7 +60,7 @@ void ElementButton::draw(texture *atlas, coordinate_system *cs, const bool selec
 		cs->get_helper()->util_draw_rect(&m_dimensions_scaled, cs->get_helper()->get_palette()->red());
 }
 
-void ElementButton::write_to_json(json &j, SDL_Point *default_dim, uint8_t &layout_flags)
+void element_button::write_to_json(json_obj &j, SDL_Point *default_dim, uint8_t &layout_flags)
 {
 	element_texture::write_to_json(j, default_dim, layout_flags);
 	j[CFG_KEY_CODE] = m_keycode;
@@ -69,7 +69,7 @@ void ElementButton::write_to_json(json &j, SDL_Point *default_dim, uint8_t &layo
 		layout_flags |= OF_GAMEPAD;
 }
 
-void ElementButton::update_settings(dialog_new_element *dialog)
+void element_button::update_settings(dialog_new_element *dialog)
 {
 	element_texture::update_settings(dialog);
 	m_pressed_mapping = m_mapping;
@@ -77,7 +77,7 @@ void ElementButton::update_settings(dialog_new_element *dialog)
 	m_keycode = dialog->get_vc();
 }
 
-void ElementButton::update_settings(dialog_element_settings *dialog)
+void element_button::update_settings(dialog_element_settings *dialog)
 {
 	element_texture::update_settings(dialog);
 	m_pressed_mapping = m_mapping;
@@ -85,7 +85,7 @@ void ElementButton::update_settings(dialog_element_settings *dialog)
 	m_keycode = dialog->get_vc();
 }
 
-void ElementButton::handle_event(SDL_Event *event, sdl_helper *helper)
+void element_button::handle_event(SDL_Event *event, sdl_helper *helper)
 {
 	uint32_t button = SDLK_UNKNOWN;
 	auto pressed = false;
@@ -114,8 +114,8 @@ void ElementButton::handle_event(SDL_Event *event, sdl_helper *helper)
 		m_pressed = pressed;
 }
 
-ElementButton *ElementButton::read_from_json(const json &j, SDL_Point *default_dim)
+element_button *element_button::read_from_json(const json &j, SDL_Point *default_dim)
 {
-	return new ElementButton(j[CFG_ID], read_position(j), read_mapping(j, default_dim), j[CFG_KEY_CODE],
-							 j[CFG_Z_LEVEL]);
+	return new element_button(j[CFG_ID].string_value(), read_position(j), read_mapping(j, default_dim),
+							  j[CFG_KEY_CODE].number_value(), j[CFG_Z_LEVEL].number_value());
 }

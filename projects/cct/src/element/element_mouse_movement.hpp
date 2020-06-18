@@ -20,26 +20,26 @@
 
 #include "element_texture.hpp"
 
-class ElementMouseMovement : public element_texture {
+class element_mouse_movement : public element_texture {
 public:
-	ElementMouseMovement()
+	element_mouse_movement()
 		: element_texture(),
 		  m_type(){
 			  /* NO-OP */
 		  };
 
-	ElementMouseMovement(const std::string &id, SDL_Point pos, SDL_Rect mapping, mouse_movement type, uint16_t radius,
-						 uint8_t z);
+	element_mouse_movement(const std::string &id, SDL_Point pos, SDL_Rect mapping, mouse_movement type, uint16_t radius,
+						   uint8_t z);
 
 	element_error is_valid(notifier *n, sdl_helper *h) override;
 
-	void write_to_json(json &j, SDL_Point *default_dim, uint8_t &layout_flags) override;
+	void write_to_json(json_obj &j, SDL_Point *default_dim, uint8_t &layout_flags) override;
 
 	void update_settings(dialog_new_element *dialog) override;
 
 	mouse_movement get_mouse_type() const;
 
-	static ElementMouseMovement *read_from_json(const json &j, SDL_Point *default_dim);
+	static element_mouse_movement *read_from_json(const json &j, SDL_Point *default_dim);
 
 	uint16_t get_radius() const;
 

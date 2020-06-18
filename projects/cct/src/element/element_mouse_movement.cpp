@@ -23,15 +23,15 @@
 #include "../util/sdl_helper.hpp"
 #include <utility>
 
-ElementMouseMovement::ElementMouseMovement(const std::string &id, const SDL_Point pos, const SDL_Rect mapping,
-										   const mouse_movement type, const uint16_t radius, const uint8_t z)
+element_mouse_movement::element_mouse_movement(const std::string &id, const SDL_Point pos, const SDL_Rect mapping,
+											   const mouse_movement type, const uint16_t radius, const uint8_t z)
 	: element_texture(ET_MOUSE_STATS, id, pos, mapping, z)
 {
 	m_radius = radius;
 	m_type = type;
 }
 
-element_error ElementMouseMovement::is_valid(notifier *n, sdl_helper *h)
+element_error element_mouse_movement::is_valid(notifier *n, sdl_helper *h)
 {
 	auto error = element_texture::is_valid(n, h);
 	if (error == EE_VALID && (m_type == MM_DOT && m_radius == 0)) {
@@ -41,7 +41,7 @@ element_error ElementMouseMovement::is_valid(notifier *n, sdl_helper *h)
 	return error;
 }
 
-void ElementMouseMovement::write_to_json(json &j, SDL_Point *default_dim, uint8_t &layout_flags)
+void element_mouse_movement::write_to_json(json_obj &j, SDL_Point *default_dim, uint8_t &layout_flags)
 {
 	element_texture::write_to_json(j, default_dim, layout_flags);
 
@@ -52,29 +52,29 @@ void ElementMouseMovement::write_to_json(json &j, SDL_Point *default_dim, uint8_
 	layout_flags |= OF_MOUSE;
 }
 
-void ElementMouseMovement::update_settings(dialog_new_element *dialog)
+void element_mouse_movement::update_settings(dialog_new_element *dialog)
 {
 	element_texture::update_settings(dialog);
 	m_radius = dialog->get_radius();
 	m_type = dialog->get_mouse_type();
 }
 
-mouse_movement ElementMouseMovement::get_mouse_type() const
+mouse_movement element_mouse_movement::get_mouse_type() const
 {
 	return m_type;
 }
 
-uint16_t ElementMouseMovement::get_radius() const
+uint16_t element_mouse_movement::get_radius() const
 {
 	return m_radius;
 }
 
-ElementMouseMovement *ElementMouseMovement::read_from_json(const json &j, SDL_Point *default_dim)
+element_mouse_movement *element_mouse_movement::read_from_json(const json &j, SDL_Point *default_dim)
 {
 	auto mmt = MM_DOT;
 	if (j[CFG_MOUSE_TYPE] != 0)
 		mmt = MM_ARROW;
 
-	return new ElementMouseMovement(j[CFG_ID], read_position(j), read_mapping(j, default_dim), mmt, j[CFG_MOUSE_RADIUS],
-									j[CFG_Z_LEVEL]);
+	return new element_mouse_movement(j[CFG_ID].string_value(), read_position(j), read_mapping(j, default_dim), mmt,
+									  j[CFG_MOUSE_RADIUS].number_value(), j[CFG_Z_LEVEL].number_value());
 }

@@ -28,14 +28,14 @@
 #define POS_WHEEL_UP 2
 #define POS_WHEEL_DOWN 3
 
-class ElementScrollWheel : public element_texture {
+class element_scroll_wheel : public element_texture {
 public:
-	ElementScrollWheel()
+	element_scroll_wheel()
 		: element_texture(){
 			  /* NO-OP */
 		  };
 
-	ElementScrollWheel(const std::string &id, SDL_Point pos, SDL_Rect mapping, uint8_t z);
+	element_scroll_wheel(const std::string &id, SDL_Point pos, SDL_Rect mapping, uint8_t z);
 
 	void draw(texture *atlas, coordinate_system *cs, bool selected, bool alpha) override;
 
@@ -47,7 +47,7 @@ public:
 
 	void update_settings(dialog_element_settings *dialog) override;
 
-	static ElementScrollWheel *read_from_json(const json &j, SDL_Point *default_dim);
+	static element_scroll_wheel *read_from_json(const json &j, SDL_Point *default_dim);
 
 private:
 	SDL_Rect m_mapping_pressed = {}, m_mapping_down = {}, m_mapping_up = {};

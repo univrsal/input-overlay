@@ -20,7 +20,7 @@
 #include "constants.hpp"
 #include "notifier.hpp"
 #include "sdl_helper.hpp"
-
+#include <json/json11.hpp>
 #include <fstream>
 #ifdef _WIN32
 #include <Windows.h>
@@ -50,14 +50,14 @@ void localization::load_lang_by_id(uint8_t id)
 {
 	if (m_have_default && id < m_langfiles.size()) {
 		if (id == m_english_id) {
-			m_current.clear();
+			m_current = json11::Json::object{};
 			return; /* English is always loaded */
 		}
 
 		const auto &lang = m_langfiles[id];
 		if (!lang.m_file_path.empty()) {
-			m_current.clear();
-			util::load_json(lang.m_file_path, m_current);
+			std::string err;
+			util::load_json(lang.m_file_path, err, m_current);
 		} else {
 			printf("Can't load language with id %i\n", id);
 		}
@@ -68,10 +68,10 @@ std::string localization::localize(const char *id) const
 {
 	std::string value = "";
 	if (m_have_default) {
-		if (!m_current.empty() && (m_current[id]).is_string())
-			value = m_current[id].get<std::string>();
+		if (!m_current.is_null() && (m_current[id]).is_string())
+			value = m_current[id].string_value();
 		else
-			value = m_english[id].get<std::string>();
+			value = m_english[id].string_value();
 	}
 
 	if (!m_have_default || value.empty()) {
@@ -83,7 +83,7 @@ std::string localization::localize(const char *id) const
 
 void localization::scan_lang_folder()
 {
-	json lang;
+	json11::Json lang;
 	std::string file_name;
 #ifdef _WIN32
 	WIN32_FIND_DATA data;
@@ -118,24 +118,26 @@ void localization::scan_lang_folder()
 				&& S_ISREG(path_stat.st_mode)) {
 				std::string full_path = m_lang_folder + "/" + file_name;
 #endif
-				lang.clear();
-				if (!util::load_json(full_path, lang))
+				std::string err;
+				lang = json11::Json();
+				if (!util::load_json(full_path, err, lang)) {
+					printf("Error while loading language from %s: %s\n", full_path.c_str(), err.c_str());
 					continue;
+				}
+
 				/* After filtering on windows and linux store file name
-				 * in file_name
-				 */
+                 * in file_name
+                 */
 				auto val = lang[LANG_ID];
 				if (val.is_string()) {
-					m_have_default = true;
 					if (file_name == "en_US.json") {
 						m_have_default = true;
 						m_english_id = m_langfiles.size();
 					}
-					m_langfiles.emplace_back(full_path, val);
+					m_langfiles.emplace_back(full_path, val.string_value());
 				} else {
 					printf("Invalid lang file %s. Missing language identifier\n", file_name.c_str());
 				}
-				lang.clear();
 			}
 #ifdef _WIN32
 		} while (FindNextFile(h_find, &data));
@@ -151,16 +153,14 @@ void localization::scan_lang_folder()
 
 void localization::load_default_language()
 {
-	auto error = false;
+	std::string error;
 
 	if (m_have_default) {
 		auto path = m_lang_folder + "/en_US.json";
-		error = !util::load_json(path, m_english);
-	}
-
-	if (error) {
-		m_have_default = false;
-		printf("Loading of English translation failed!\n");
-		printf("Couldn't load default language! Localization might not work!\n");
+		if (!util::load_json(path, error, m_english)) {
+			m_have_default = false;
+			printf("Loading of English translation failed: %s!\n", error.c_str());
+			printf("Couldn't load default language! Localization might not work!\n");
+		}
 	}
 }

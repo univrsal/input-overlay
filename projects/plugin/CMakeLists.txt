@@ -1,6 +1,11 @@
-cmake_minimum_required(VERSION 3.5)
 project(input-overlay)
 
+set(PLUGIN_AUTHOR "univrsal")
+set(PLUGIN_GIT dvds3)
+set(LINUX_MAINTAINER_EMAIL "uni@vrsal.cf")
+set(MACOS_BUNDLEID "cf.vrsal.inputoverlay")
+
+set(CMAKE_PREFIX_PATH "${QTDIR}")
 set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
@@ -24,6 +29,10 @@ if ("${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
         src/util/window_helper_nix.cpp)
 endif ()
 
+if (WIN32 OR APPLE)
+    set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
+endif()
+
 if (APPLE)
     # TODO: macOS stuff
 endif ()
@@ -40,7 +49,16 @@ endmacro(use_cxx14)
 
 use_cxx14()
 
-find_package(Qt5Widgets REQUIRED)
+if(ARCH EQUAL 64)
+    set(OBS_ARCH_NAME "64bit")
+    set(OBS_BUILDDIR_ARCH "build64")
+else()
+    set(OBS_ARCH_NAME "32bit")
+    set(OBS_BUILDDIR_ARCH "build32")
+endif()
+
+find_package(LibObs REQUIRED)
+find_package(Qt5 REQUIRED COMPONENTS Core Widgets)
 
 if (NOT Qt5Widgets_FOUND)
     message(FATAL_ERROR "Failed to find Qt5")
@@ -121,18 +139,130 @@ add_library(input-overlay MODULE
         ${input-overlay_PLATFORM_SOURCES})
 
 include_directories(
-        SYSTEM "${CMAKE_SOURCE_DIR}/libobs"
-        "../../../UI/obs-frontend-api"
-        ${Qt5Core_INCLUDES}
-        ${Qt5Widgets_INCLUDES})
+    "${LIBOBS_INCLUDE_DIR}/../UI/obs-frontend-api"
+    ${Qt5Core_INCLUDES}
+    ${Qt5Widgets_INCLUDES}
+)
 
 target_link_libraries(input-overlay
         libobs
+        Qt5::Core
         Qt5::Widgets
-        obs-frontend-api
         ${input-overlay_PLATFORM_DEPS}
-        uiohook}
+        uiohook
         netlib
         gamepad)
 
-install_obs_plugin_with_data(input-overlay data)
+# --- Windows-specific build settings and tasks ---
+if(WIN32)
+    if(NOT DEFINED OBS_FRONTEND_LIB)
+        set(OBS_FRONTEND_LIB "OBS_FRONTEND_LIB-NOTFOUND" CACHE FILEPATH "OBS frontend library")
+        message(FATAL_ERROR "Could not find OBS Frontend API\'s library !")
+    endif()
+
+    # Enable Multicore Builds and disable FH4 (to not depend on VCRUNTIME140_1.DLL when building with VS2019)
+    if (MSVC)
+        add_definitions(/MP /d2FH4-)
+    endif()
+
+    include_directories(
+        "${LIBOBS_INCLUDE_DIR}/../${OBS_BUILDDIR_ARCH}/UI"
+    )
+
+    target_link_libraries(${CMAKE_PROJECT_NAME}
+        "${OBS_FRONTEND_LIB}"
+    )
+
+    # --- Release package helper ---
+    # The "release" folder has a structure similar OBS' one on Windows
+    set(RELEASE_DIR "${PROJECT_SOURCE_DIR}/release")
+
+    add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
+        # If config is Release or RelWithDebInfo, package release files
+        COMMAND if $<CONFIG:Release>==1 OR $<CONFIG:RelWithDebInfo>==1 (
+            "${CMAKE_COMMAND}" -E make_directory
+                "${RELEASE_DIR}/data/obs-plugins/${CMAKE_PROJECT_NAME}"
+                "${RELEASE_DIR}/obs-plugins/${ARCH_NAME}"
+        )
+
+        COMMAND if $<CONFIG:Release>==1 OR $<CONFIG:RelWithDebInfo>==1 (
+            "${CMAKE_COMMAND}" -E copy_directory
+                "${PROJECT_SOURCE_DIR}/data"
+                "${RELEASE_DIR}/data/obs-plugins/${CMAKE_PROJECT_NAME}"
+        )
+
+        COMMAND if $<CONFIG:Release>==1 OR $<CONFIG:RelWithDebInfo>==1 (
+            "${CMAKE_COMMAND}" -E copy
+                "$<TARGET_FILE:${CMAKE_PROJECT_NAME}>"
+                "${RELEASE_DIR}/obs-plugins/${ARCH_NAME}"
+        )
+
+        # If config is RelWithDebInfo, copy the pdb file
+        COMMAND if $<CONFIG:RelWithDebInfo>==1 (
+            "${CMAKE_COMMAND}" -E copy
+                "$<TARGET_PDB_FILE:${CMAKE_PROJECT_NAME}>"
+                "${RELEASE_DIR}/obs-plugins/${ARCH_NAME}"
+        )
+
+        # Copy to obs-studio dev environment for immediate testing
+        COMMAND if $<CONFIG:Debug>==1 (
+            "${CMAKE_COMMAND}" -E copy
+                "$<TARGET_FILE:${CMAKE_PROJECT_NAME}>"
+                "${LIBOBS_INCLUDE_DIR}/../${OBS_BUILDDIR_ARCH}/rundir/$<CONFIG>/obs-plugins/${ARCH_NAME}"
+        )
+
+        COMMAND if $<CONFIG:Debug>==1 (
+            "${CMAKE_COMMAND}" -E copy
+                "$<TARGET_PDB_FILE:${CMAKE_PROJECT_NAME}>"
+                "${LIBOBS_INCLUDE_DIR}/../${OBS_BUILDDIR_ARCH}/rundir/$<CONFIG>/obs-plugins/${ARCH_NAME}"
+        )
+
+        COMMAND if $<CONFIG:Debug>==1 (
+            "${CMAKE_COMMAND}" -E make_directory
+                "${LIBOBS_INCLUDE_DIR}/../${OBS_BUILDDIR_ARCH}/rundir/$<CONFIG>/data/obs-plugins/${CMAKE_PROJECT_NAME}"
+        )
+
+        COMMAND if $<CONFIG:Debug>==1 (
+            "${CMAKE_COMMAND}" -E copy_directory
+                "${PROJECT_SOURCE_DIR}/data"
+                "${LIBOBS_INCLUDE_DIR}/../${OBS_BUILDDIR_ARCH}/rundir/$<CONFIG>/data/obs-plugins/${CMAKE_PROJECT_NAME}"
+        )
+    )
+endif()
+
+if(UNIX AND NOT APPLE)
+
+    include(GNUInstallDirs)
+
+    set_target_properties(input-overlay PROPERTIES PREFIX "")
+#	target_link_libraries(${CMAKE_PROJECT_NAME} obs-frontend-api)
+
+    file(GLOB locale_files data/locale/*.ini)
+
+    if (LOCAL_INSTALLATION)
+        # Installs into home directory
+        install(TARGETS input-overlay
+            LIBRARY DESTINATION "$ENV{HOME}/.config/obs-studio/plugins/input-overlay/bin/${OBS_ARCH_NAME}")
+
+        install(FILES ${locale_files}
+            DESTINATION "$ENV{HOME}/.config/obs-studio/plugins/input-overlay/data/locale/")
+    elseif(GLOBAL_INSTALLATION)
+        # For *.deb installer
+        install(TARGETS ${CMAKE_PROJECT_NAME}
+            LIBRARY DESTINATION "${CMAKE_INSTALL_FULL_LIBDIR}/obs-plugins")
+
+        install(FILES ${locale_files}
+            DESTINATION "${CMAKE_INSTALL_FULL_DATAROOTDIR}/obs/obs-plugins/${CMAKE_PROJECT_NAME}/locale")
+    else()
+        # For *.zip binary
+        install(TARGETS input-overlay
+            LIBRARY DESTINATION "${CMAKE_CURRENT_SOURCE_DIR}/dist/input-overlay/bin/${OBS_ARCH_NAME}")
+
+        install(FILES ${locale_files}
+            DESTINATION "${CMAKE_CURRENT_SOURCE_DIR}/dist/input-overlay/data/locale/")
+        install(FILES ./COPYING
+            DESTINATION "${CMAKE_CURRENT_SOURCE_DIR}/dist/")
+        install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/package/README.txt"
+            DESTINATION "${CMAKE_CURRENT_SOURCE_DIR}/dist/")
+    endif()
+endif()

@@ -35,7 +35,7 @@ public:
 
 	void draw(texture *atlas, coordinate_system *cs, bool selected, bool alpha) override;
 
-	void write_to_json(json &j, SDL_Point *default_dim, uint8_t &layout_flags) override;
+	void write_to_json(json_obj &j, SDL_Point *default_dim, uint8_t &layout_flags) override;
 
 	void update_settings(dialog_new_element *dialog) override;
 

@@ -192,10 +192,10 @@ void textbox::set_text(std::string s)
 	m_cut_text = m_text;
 
 	/*
-		We have to leave space for the composition
-		which is the currently written text through
-		the IME (Only for Japanese, Chinese etc.)
-	*/
+        We have to leave space for the composition
+        which is the currently written text through
+        the IME (Only for Japanese, Chinese etc.)
+    */
 
 	get_helper()->util_cut_string(m_cut_text.append(m_composition), get_dimensions()->w - m_cut_off, false);
 }

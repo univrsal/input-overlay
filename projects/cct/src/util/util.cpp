@@ -18,7 +18,7 @@
 
 #include "util.hpp"
 #include <fstream>
-using json_ex = nlohmann::json::exception;
+#include <locale>
 
 SDL_bool util_move_element(int *x, int *y, const SDL_Keycode key)
 {
@@ -50,15 +50,19 @@ void util::replace(std::string &str, const char *find, const char *replace)
 	}
 }
 
-bool util::load_json(const std::string &path, json &out)
+bool util::load_json(const std::string &path, std::string &err, json11::Json &out)
 {
 	bool result = false;
-	std::ifstream input(path.c_str());
-	if (input.good()) {
-		try {
-			input >> out;
-		} catch (json_ex &e) {
-			printf("Error loading json from %s: %s\n", path.c_str(), e.what());
+	std::ifstream in(path.c_str());
+	in.imbue(std::locale("en_US.UTF8"));
+
+	if (in.good()) {
+		std::string content = std::string(std::istreambuf_iterator<char>(in), std::istreambuf_iterator<char>());
+		out = json11::Json::parse(content, err);
+		if (err.empty() && !out.is_null()) {
+			result = true;
+		} else {
+			printf("Error loading json from %s: %s\n", path.c_str(), err.c_str());
 		}
 		result = true;
 	}

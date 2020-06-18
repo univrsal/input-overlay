@@ -33,29 +33,29 @@
 #include "element_trigger.hpp"
 #include <utility>
 
-element *element::read_from_json(const json &j, SDL_Point *default_dim)
+element *element::read_from_json(const json11::Json &j, SDL_Point *default_dim)
 {
 	auto t = j[CFG_TYPE];
-	if (!t.is_number() || !valid_type(t))
+	if (!t.is_number() || !valid_type(t.number_value()))
 		return nullptr;
 
-	switch (static_cast<int>(t)) {
+	switch (static_cast<int>(t.number_value())) {
 	case ET_TEXTURE:
 		return element_texture::read_from_json(j, default_dim);
 	case ET_BUTTON:
-		return ElementButton::read_from_json(j, default_dim);
+		return element_button::read_from_json(j, default_dim);
 	case ET_WHEEL:
-		return ElementScrollWheel::read_from_json(j, default_dim);
+		return element_scroll_wheel::read_from_json(j, default_dim);
 	case ET_MOUSE_STATS:
-		return ElementMouseMovement::read_from_json(j, default_dim);
+		return element_mouse_movement::read_from_json(j, default_dim);
 	case ET_ANALOG_STICK:
-		return ElementAnalogStick::read_from_json(j, default_dim);
+		return element_analog_stick::read_from_json(j, default_dim);
 	case ET_TRIGGER:
 		return element_trigger::read_from_json(j, default_dim);
 	case ET_DPAD_STICK:
-		return ElementDPad::read_from_json(j, default_dim);
+		return element_dpad::read_from_json(j, default_dim);
 	case ET_GAMEPAD_ID:
-		return ElementGamepadID::read_from_json(j, default_dim);
+		return element_gamepad_id::read_from_json(j, default_dim);
 	default:;
 	}
 	return nullptr;
@@ -66,7 +66,7 @@ element *element::from_dialog(dialog_new_element *dialog)
 	element *e = nullptr;
 	switch (dialog->get_type()) {
 	case ET_BUTTON:
-		e = new ElementButton();
+		e = new element_button();
 		break;
 	case ET_TEXTURE:
 		e = new element_texture();
@@ -75,19 +75,19 @@ element *element::from_dialog(dialog_new_element *dialog)
 		e = new element_trigger();
 		break;
 	case ET_WHEEL:
-		e = new ElementScrollWheel();
+		e = new element_scroll_wheel();
 		break;
 	case ET_DPAD_STICK:
-		e = new ElementDPad();
+		e = new element_dpad();
 		break;
 	case ET_MOUSE_STATS:
-		e = new ElementMouseMovement();
+		e = new element_mouse_movement();
 		break;
 	case ET_ANALOG_STICK:
-		e = new ElementAnalogStick();
+		e = new element_analog_stick();
 		break;
 	case ET_GAMEPAD_ID:
-		e = new ElementGamepadID();
+		e = new element_gamepad_id();
 		break;
 	default:;
 	}
@@ -135,13 +135,12 @@ element::element(const element_type t, std::string id, const SDL_Point pos, cons
 	m_z_level = z;
 }
 
-void element::write_to_json(json &j, SDL_Point *default_dim, uint8_t &layout_flags)
+void element::write_to_json(json_obj &j, SDL_Point *default_dim, uint8_t &layout_flags)
 {
 	/* Write commonly shared values */
 	j[CFG_Z_LEVEL] = m_z_level;
-	j[CFG_TYPE] = m_type;
-	j[CFG_POS][0] = m_position.x;
-	j[CFG_POS][1] = m_position.y;
+	j[CFG_TYPE] = m_type, j[CFG_POS] = m_position.x;
+	j[CFG_POS] = m_position.y;
 	j[CFG_ID] = m_id;
 }
 
@@ -205,10 +204,11 @@ SDL_Rect element::read_mapping(const json &j, const SDL_Point *default_dim)
 	SDL_Rect tmp{};
 	auto map = j[CFG_MAPPING];
 	if (map.is_array()) {
-		tmp.x = map[0];
-		tmp.y = map[1];
-		tmp.w = map[2];
-		tmp.h = map[3];
+		auto arr = map.array_items();
+		tmp.x = arr[0].number_value();
+		tmp.y = arr[1].number_value();
+		tmp.w = arr[2].number_value();
+		tmp.h = arr[3].number_value();
 	} else if (default_dim) {
 		tmp.w = default_dim->x;
 		tmp.h = default_dim->y;
@@ -218,7 +218,7 @@ SDL_Rect element::read_mapping(const json &j, const SDL_Point *default_dim)
 
 SDL_Point element::read_position(const json &j)
 {
-	return SDL_Point{j[CFG_POS][0], j[CFG_POS][1]};
+	return SDL_Point{int(j[CFG_POS].array_items()[0].number_value()), int(j[CFG_POS].array_items()[1].number_value())};
 }
 
 element_side element::read_side(const json &j)

@@ -23,13 +23,14 @@
 #include "../util/palette.hpp"
 #include "../util/texture.hpp"
 
-ElementGamepadID::ElementGamepadID(const std::string &id, const SDL_Point pos, const SDL_Rect mapping, const uint8_t z)
+element_gamepad_id::element_gamepad_id(const std::string &id, const SDL_Point pos, const SDL_Rect mapping,
+									   const uint8_t z)
 	: element_texture(ET_GAMEPAD_ID, id, pos, mapping, z)
 {
 	/* NO-OP */
 }
 
-void ElementGamepadID::draw(texture *atlas, coordinate_system *cs, const bool selected, const bool alpha)
+void element_gamepad_id::draw(texture *atlas, coordinate_system *cs, const bool selected, const bool alpha)
 {
 	get_abs_dim(cs);
 	auto temp = m_mapping;
@@ -48,7 +49,7 @@ void ElementGamepadID::draw(texture *atlas, coordinate_system *cs, const bool se
 		cs->get_helper()->util_draw_rect(&m_dimensions_scaled, cs->get_helper()->get_palette()->red());
 }
 
-void ElementGamepadID::handle_event(SDL_Event *event, sdl_helper *helper)
+void element_gamepad_id::handle_event(SDL_Event *event, sdl_helper *helper)
 {
 	switch (event->type) {
 	case SDL_CONTROLLERBUTTONDOWN:
@@ -65,12 +66,13 @@ void ElementGamepadID::handle_event(SDL_Event *event, sdl_helper *helper)
 	m_last_gamepad_id = UTIL_CLAMP(0, m_last_gamepad_id, 4);
 }
 
-ElementGamepadID *ElementGamepadID::read_from_json(const json &j, SDL_Point *default_dim)
+element_gamepad_id *element_gamepad_id::read_from_json(const json &j, SDL_Point *default_dim)
 {
-	return new ElementGamepadID(j[CFG_ID], read_position(j), read_mapping(j, default_dim), j[CFG_Z_LEVEL]);
+	return new element_gamepad_id(j[CFG_ID].string_value(), read_position(j), read_mapping(j, default_dim),
+								  j[CFG_Z_LEVEL].number_value());
 }
 
-void ElementGamepadID::write_to_json(json &j, SDL_Point *default_dim, uint8_t &layout_flags)
+void element_gamepad_id::write_to_json(json_obj &j, SDL_Point *default_dim, uint8_t &layout_flags)
 {
 	element_texture::write_to_json(j, default_dim, layout_flags);
 	layout_flags |= OF_GAMEPAD;

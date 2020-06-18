@@ -22,14 +22,14 @@
 #include "../util/texture.hpp"
 #include <utility>
 
-ElementScrollWheel::ElementScrollWheel(const std::string &id, const SDL_Point pos, const SDL_Rect mapping,
-									   const uint8_t z)
+element_scroll_wheel::element_scroll_wheel(const std::string &id, const SDL_Point pos, const SDL_Rect mapping,
+										   const uint8_t z)
 	: element_texture(ET_WHEEL, id, pos, mapping, z)
 {
 	refresh_mappings();
 }
 
-void ElementScrollWheel::draw(texture *atlas, coordinate_system *cs, const bool selected, const bool alpha)
+void element_scroll_wheel::draw(texture *atlas, coordinate_system *cs, const bool selected, const bool alpha)
 {
 	get_abs_dim(cs);
 
@@ -58,7 +58,7 @@ void ElementScrollWheel::draw(texture *atlas, coordinate_system *cs, const bool 
 	}
 }
 
-void ElementScrollWheel::handle_event(SDL_Event *event, sdl_helper *helper)
+void element_scroll_wheel::handle_event(SDL_Event *event, sdl_helper *helper)
 {
 	if (event->type == SDL_MOUSEWHEEL) {
 		if (event->wheel.y > 0) /* TRIGGER_UP */ {
@@ -75,7 +75,7 @@ void ElementScrollWheel::handle_event(SDL_Event *event, sdl_helper *helper)
 	}
 }
 
-void ElementScrollWheel::refresh_mappings()
+void element_scroll_wheel::refresh_mappings()
 {
 	m_mapping_up = m_mapping;
 	m_mapping_down = m_mapping;
@@ -86,19 +86,20 @@ void ElementScrollWheel::refresh_mappings()
 	m_mapping_pressed.x += (m_mapping.w + CFG_INNER_BORDER) * POS_WHEEL_PRESSED;
 }
 
-void ElementScrollWheel::update_settings(dialog_new_element *dialog)
+void element_scroll_wheel::update_settings(dialog_new_element *dialog)
 {
 	element_texture::update_settings(dialog);
 	refresh_mappings();
 }
 
-void ElementScrollWheel::update_settings(dialog_element_settings *dialog)
+void element_scroll_wheel::update_settings(dialog_element_settings *dialog)
 {
 	element_texture::update_settings(dialog);
 	refresh_mappings();
 }
 
-ElementScrollWheel *ElementScrollWheel::read_from_json(const json &j, SDL_Point *default_dim)
+element_scroll_wheel *element_scroll_wheel::read_from_json(const json &j, SDL_Point *default_dim)
 {
-	return new ElementScrollWheel(j[CFG_ID], read_position(j), read_mapping(j, default_dim), j[CFG_Z_LEVEL]);
+	return new element_scroll_wheel(j[CFG_ID].string_value(), read_position(j), read_mapping(j, default_dim),
+									j[CFG_Z_LEVEL].number_value());
 }

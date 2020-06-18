@@ -1,4 +1,3 @@
-cmake_minimum_required(VERSION 2.8)
 project(io-cct)
 
 if (DEBUG)
@@ -19,6 +18,7 @@ string(TIMESTAMP TODAY "%Y.%m.%d %H:%M")
 add_definitions(-DTIMESTAMP="${TODAY}")
 
 use_cxx14()
+add_compile_definitions(LGP_ENABLE_JSON)
 
 if (MSVC)
     find_path(SDL2_INCLUDE_DIRS SDL.h)
@@ -43,7 +43,6 @@ set(APP_ICON_RC "${CMAKE_CURRENT_SOURCE_DIR}/res/icon.ico")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GCC_FLAGS}")
 
 set(io-cct_SOURCES
-        ../libuiohook/include/uiohook.h
         main.cpp
         src/tool.cpp
         src/tool.hpp
@@ -110,24 +109,29 @@ set(io-cct_SOURCES
         src/element/element_gamepad_id.hpp
         src/element/element_dpad.cpp
         src/element/element_dpad.hpp
+        ${JSON_11_SOURCE}
         )
 
 add_executable(io-cct ${io-cct_SOURCES})
 
-INCLUDE_DIRECTORIES(${SDL2_INCLUDE_DIRS}
+include_directories(${SDL2_INCLUDE_DIRS}
     ${SDL2IMAGE_INCLUDE_DIRS}
     ${SDL2TTF_INCLUDE_DIRS}
-    "../common"
-    "../libuiohook/include")
-TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${SDL2_LIBRARIES} ${SDL2IMAGE_LIBRARIES} ${SDL2TTF_LIBRARIES})
+    ${COMMON_HEADERS}
+    ${JSON_11_HEADER}
+    )
+
+message(STATUS "SKFSD:F:SJDFD:FJ ${JSON_11_HEADER}")
+
+target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARIES} ${SDL2IMAGE_LIBRARIES} ${SDL2TTF_LIBRARIES})
 
 if (MSVC)
     get_filename_component(SDL2_BINARYDIR ${SDL2_LIBRARIES} DIRECTORY INTERNAL)
     get_filename_component(SDL2_IMAGE_BINARYDIR ${SDL2IMAGE_LIBRARIES} DIRECTORY INTERNAL)
     get_filename_component(SDL2_TTF_BINARYDIR ${SDL2TTF_LIBRARIES} DIRECTORY INTERNAL)
-    
+
     # Copy dependencies
-    add_custom_command(TARGET io-cct POST_BUILD 
+    add_custom_command(TARGET io-cct POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
         "${SDL2_BINARYDIR}/SDL2.dll"
         "${SDL2_IMAGE_BINARYDIR}/zlib1.dll"
@@ -139,9 +143,14 @@ if (MSVC)
         "${SDL2_TTF_BINARYDIR}/SDL2_ttf.dll"
         "${SDL2_TTF_BINARYDIR}/libfreetype-6.dll"
         $<TARGET_FILE_DIR:io-cct>)
-endif()
 
 # Copy assets
 add_custom_command(TARGET io-cct POST_BUILD
                    COMMAND ${CMAKE_COMMAND} -E copy_directory
-                       ${CMAKE_SOURCE_DIR}/res $<TARGET_FILE_DIR:${PROJECT_NAME}>/../res)
+                       ${CMAKE_CURRENT_SOURCE_DIR}/res $<TARGET_FILE_DIR:${PROJECT_NAME}>/../res)
+else()
+# Copy assets
+add_custom_command(TARGET io-cct POST_BUILD
+                   COMMAND ${CMAKE_COMMAND} -E copy_directory
+                       ${CMAKE_CURRENT_SOURCE_DIR}/res $<TARGET_FILE_DIR:${PROJECT_NAME}>/res)
+endif()

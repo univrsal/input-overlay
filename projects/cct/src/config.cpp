@@ -26,9 +26,6 @@
 #include "util/texture.hpp"
 #include <iomanip>
 #include <fstream>
-#include <json.hpp>
-
-using json = nlohmann::json;
 
 config::config(const char *texture_path, const char *config, const SDL_Point def_dim, const SDL_Point space,
 			   sdl_helper *h, dialog_element_settings *s)
@@ -68,7 +65,7 @@ void config::draw_elements()
 	/* Draw elements */
 	m_cs.begin_draw();
 	{
-		auto elements_drawn = 0;
+		auto elements_drawn = 0ull;
 		auto layer = 0;
 
 		while (elements_drawn < m_elements.size()) {
@@ -237,20 +234,14 @@ void config::write_config(notifier *n)
 
 	const auto start = SDL_GetTicks();
 	std::ofstream out(m_config_path);
-	json cfg;
-	json elements;
 
-	cfg[CFG_DEFAULT_WIDTH] = m_default_dim.x;
-	cfg[CFG_DEFAULT_HEIGHT] = m_default_dim.y;
-	cfg[CFG_H_SPACE] = m_offset.x;
-	cfg[CFG_V_SPACE] = m_offset.y;
-
-	auto height = 0, width = 0;
 	/* The most bottom right element determines the width/height */
-
+	auto height = 0, width = 0;
+	std::vector<json> elements;
 	uint8_t flags = 0; /* Determines which properties to show in OBS */
+
 	for (auto &e : m_elements) {
-		json j;
+		json::object j;
 		e->write_to_json(j, &m_default_dim, flags);
 		if (j.empty()) {
 			n->add_msg(MESSAGE_ERROR, m_helper->format_loc(LANG_MSG_ELEMENT_EMPTY, e->get_id()->c_str()));
@@ -261,12 +252,16 @@ void config::write_config(notifier *n)
 		height = UTIL_MAX(height, e->get_y() + e->get_h());
 	}
 
-	cfg[CFG_TOTAL_WIDTH] = width;
-	cfg[CFG_TOTAL_HEIGHT] = height;
-	cfg[CFG_FLAGS] = flags;
-	cfg[CFG_ELEMENTS] = elements;
+	json cfg = json::object{{CFG_DEFAULT_WIDTH, m_default_dim.x},
+							{CFG_DEFAULT_HEIGHT, m_default_dim.y},
+							{CFG_H_SPACE, m_offset.x},
+							{CFG_V_SPACE, m_offset.y},
+							{CFG_TOTAL_WIDTH, width},
+							{CFG_TOTAL_HEIGHT, height},
+							{CFG_FLAGS, flags},
+							{CFG_ELEMENTS, elements}};
 
-	out << std::setw(4) << cfg;
+	out << cfg.dump();
 
 	const auto end = SDL_GetTicks();
 
@@ -283,12 +278,11 @@ void config::write_config(notifier *n)
 void config::read_config(notifier *n)
 {
 	const auto start = SDL_GetTicks();
-	std::ifstream input(m_config_path);
 	json cfg;
-	input >> cfg;
-
-	if (cfg.empty()) {
-		n->add_msg(MESSAGE_INFO, m_helper->loc(LANG_MSG_CONFIG_EMPTY));
+	std::string err;
+	if (!util::load_json(m_config_path, err, cfg)) {
+		n->add_msg(MESSAGE_ERROR, m_helper->loc(LANG_MSG_LOAD_ERROR));
+		n->add_msg(MESSAGE_ERROR, err);
 		return;
 	}
 
@@ -302,15 +296,13 @@ void config::read_config(notifier *n)
 	auto def_h = cfg[CFG_DEFAULT_HEIGHT];
 
 	if (def_w.is_number())
-		m_default_dim.x = def_w;
+		m_default_dim.x = def_w.int_value();
 	if (def_h.is_number())
-		m_default_dim.y = def_h;
+		m_default_dim.y = def_h.int_value();
 
-	auto type = 0;
-
-	for (const auto &element : elements) {
+	for (const auto &element : elements.array_items()) {
 		auto type = element[CFG_TYPE];
-		if (type.is_number() && element::valid_type(type)) {
+		if (type.is_number() && element::valid_type(type.int_value())) {
 			auto loaded_element = element::read_from_json(element, &m_default_dim);
 			if (loaded_element) {
 				m_elements.emplace_back(loaded_element);

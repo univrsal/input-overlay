@@ -67,7 +67,7 @@ void element_trigger::draw(texture *atlas, coordinate_system *cs, const bool sel
 		cs->get_helper()->util_draw_rect(&m_dimensions_scaled, cs->get_helper()->get_palette()->red());
 }
 
-void element_trigger::write_to_json(json &j, SDL_Point *default_dim, uint8_t &layout_flags)
+void element_trigger::write_to_json(json_obj &j, SDL_Point *default_dim, uint8_t &layout_flags)
 {
 	element_texture::write_to_json(j, default_dim, layout_flags);
 	j[CFG_TRIGGER_MODE] = m_button_mode;
@@ -109,11 +109,13 @@ element_trigger *element_trigger::read_from_json(const json &j, SDL_Point *defau
 	const auto button_mode = j[CFG_TRIGGER_MODE];
 	const auto s = read_side(j);
 
-	if (button_mode) {
-		return new element_trigger(j[CFG_ID], read_position(j), read_mapping(j, default_dim), s, j[CFG_Z_LEVEL]);
+	if (button_mode.bool_value()) {
+		return new element_trigger(j[CFG_ID].string_value(), read_position(j), read_mapping(j, default_dim), s,
+								   j[CFG_Z_LEVEL].number_value());
 	}
-	auto d = static_cast<direction>(UTIL_CLAMP(0, (int)j[CFG_DIRECTION], DIR_MAX - 1));
-	return new element_trigger(j[CFG_ID], read_position(j), read_mapping(j, default_dim), s, d, j[CFG_Z_LEVEL]);
+	auto d = static_cast<direction>(UTIL_CLAMP(0, j[CFG_DIRECTION].number_value(), DIR_MAX - 1));
+	return new element_trigger(j[CFG_ID].string_value(), read_position(j), read_mapping(j, default_dim), s, d,
+							   j[CFG_Z_LEVEL].number_value());
 }
 
 void element_trigger::calculate_mappings(SDL_Rect *pressed, SDL_Rect *absolute) const

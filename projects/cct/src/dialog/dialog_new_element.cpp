@@ -49,18 +49,18 @@ void dialog_new_element::load_from_element(element *e)
 		m_modify_mode = true;
 
 		/* Specific handling */
-		ElementAnalogStick *stick = nullptr;
-		ElementMouseMovement *mouse = nullptr;
+		element_analog_stick *stick = nullptr;
+		element_mouse_movement *mouse = nullptr;
 		element_trigger *trigger = nullptr;
 
 		switch (e->get_type()) {
 		case ET_ANALOG_STICK:
-			stick = dynamic_cast<ElementAnalogStick *>(e);
+			stick = dynamic_cast<element_analog_stick *>(e);
 			m_binary_choice->select_item(stick->get_stick());
 			m_radius->set_text(std::to_string(stick->get_radius()));
 			break;
 		case ET_MOUSE_STATS:
-			mouse = dynamic_cast<ElementMouseMovement *>(e);
+			mouse = dynamic_cast<element_mouse_movement *>(e);
 			m_binary_choice->select_item(mouse->get_mouse_type());
 			m_radius->set_text(std::to_string(mouse->get_radius()));
 			break;

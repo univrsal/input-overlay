@@ -65,6 +65,6 @@ private:
 
 	sdl_helper *m_helper = nullptr;
 
-	json m_english;
-	json m_current;
+	json11::Json m_english;
+	json11::Json m_current;
 };

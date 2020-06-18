@@ -58,13 +58,10 @@ void element_texture::draw(texture *atlas, coordinate_system *cs, const bool sel
 		cs->get_helper()->util_draw_rect(&m_dimensions_scaled, cs->get_helper()->get_palette()->red());
 }
 
-void element_texture::write_to_json(json &j, SDL_Point *default_dim, uint8_t &layout_flags)
+void element_texture::write_to_json(json_obj &j, SDL_Point *default_dim, uint8_t &layout_flags)
 {
 	element::write_to_json(j, default_dim, layout_flags);
-	j[CFG_MAPPING][0] = m_mapping.x;
-	j[CFG_MAPPING][1] = m_mapping.y;
-	j[CFG_MAPPING][2] = m_mapping.w;
-	j[CFG_MAPPING][3] = m_mapping.h;
+	j[CFG_MAPPING] = json::array{m_mapping.x, m_mapping.y, m_mapping.w, m_mapping.h};
 }
 
 void element_texture::update_settings(dialog_new_element *dialog)
@@ -81,5 +78,6 @@ void element_texture::update_settings(dialog_element_settings *dialog)
 
 element_texture *element_texture::read_from_json(const json &j, SDL_Point *default_dim)
 {
-	return new element_texture(j[CFG_ID], read_position(j), read_mapping(j, default_dim), j[CFG_Z_LEVEL]);
+	return new element_texture(j[CFG_ID].string_value(), read_position(j), read_mapping(j, default_dim),
+							   j[CFG_Z_LEVEL].number_value());
 }
