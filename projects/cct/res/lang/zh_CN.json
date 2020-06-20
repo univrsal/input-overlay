@@ -42,7 +42,7 @@
     "right": "右",
     "up": "上",
     "down": "下",
-    "label_help_about": "input-overlay 配置文件编辑器\n  基于 Mozilla Public Licence 2.0 发布\n  github.com/univrsal/input-overlay\n\n感谢:\n  OBS Studio 团队和它的贡献者们\n  obsproject.com\n  SDL 的开发者们 (包括 SDL_image 和 SDL_ttf)\n  libsdl.org\n翻译: hyrious\n\n用法:\n  滚轮: 缩放\n  左键: 移动元素\n  右键: 移动画布\n  Ctrl: 隐藏未选中元素\n\n  部分按键可以在预览时使用\n  并且按下时会被高亮",
+    "label_help_about": "input-overlay 配置文件编辑器\n  基于 GNU General Public License 2.0 发布\n  github.com/univrsal/input-overlay\n\n感谢:\n  OBS Studio 团队和它的贡献者们\n  obsproject.com\n  SDL 的开发者们 (包括 SDL_image 和 SDL_ttf)\n  libsdl.org\n翻译: hyrious\n\n用法:\n  滚轮: 缩放\n  左键: 移动元素\n  右键: 移动画布\n  Ctrl: 隐藏未选中元素\n\n  部分按键可以在预览时使用\n  并且按下时会被高亮",
     "button_open_url": "在浏览器中打开",
     "label_info": "你可以将文件拖放到已获取焦点的文本框",
     "label_texture_path": "贴图文件:",

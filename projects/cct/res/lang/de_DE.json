@@ -42,7 +42,7 @@
     "right": "Rechts",
     "up": "Hoch",
     "down": "Runter",
-    "label_help_about": "input-overlay config creation tool\n  lizensiert unter der Mozilla Public Lizenz 2.0\n  github.com/univrsal/input-overlay\n\nDanke an:\n  Das OBS Studio Team und Mitwirkende\n  obsproject.com\n  Die SDL Entwickler (inkl. SDL_image und SDL_ttf)\n  libsdl.org\n\nAnleitung:\n  Scrollrad: Zoom rein/raus\n  Linke Maustaste: Bewege Elemente\n  Rechte Maustaste: bewege Vorschau\n  Strg: Blende nicht ausgewählte Elemente aus\n\n  Manche Tasten funktionieren in der Vorschau\n  und leuchten bei Verwendung",
+    "label_help_about": "input-overlay config creation tool\n  lizensiert unter der GNU General Public License v2.0\n  github.com/univrsal/input-overlay\n\nDanke an:\n  Das OBS Studio Team und Mitwirkende\n  obsproject.com\n  Die SDL Entwickler (inkl. SDL_image und SDL_ttf)\n  libsdl.org\n\nAnleitung:\n  Scrollrad: Zoom rein/raus\n  Linke Maustaste: Bewege Elemente\n  Rechte Maustaste: bewege Vorschau\n  Strg: Blende nicht ausgewählte Elemente aus\n\n  Manche Tasten funktionieren in der Vorschau\n  und leuchten bei Verwendung",
     "button_open_url": "Öffne im webbrowser",
     "label_info": "Es können Datein in ausgewählte Textfelder gezogen werden",
     "label_texture_path": "Texturdateipfad:",
