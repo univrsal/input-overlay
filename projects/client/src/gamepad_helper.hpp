@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2020 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <uni@vrsal.cf>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,29 +17,12 @@
  *************************************************************************/
 
 #pragma once
-#include "xinput_fix.hpp"
-#include <cstdint>
+#include <libgamepad.hpp>
 
 namespace gamepad {
-/* Contains the current state of a gamepad*/
-class gamepad_state {
-public:
-	gamepad_state();
-#ifdef _WIN32
-	explicit gamepad_state(xinput_fix::gamepad *pad);
-#else
-	/* Linux constructor */
-#endif
-	bool merge(gamepad_state *new_state);
+extern std::shared_ptr<hook> hook_instance;
 
-	int16_t button_states;
-	/* Floats take more space, but are
-         * more straightforward than using
-         * 16 bit/8 bit depending on the system
-         */
-	float stick_l_x, stick_l_y;
-	float stick_r_x, stick_r_y;
-	int8_t trigger_l, trigger_r;
-};
-
-} /* namespace gamepad */
+extern bool start(hook_type t);
+extern void stop();
+extern bool write_data();
+}

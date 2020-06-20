@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2020 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <uni@vrsal.cf>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,24 +16,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *************************************************************************/
 
-#include "gamepad.hpp"
 #include "network.hpp"
-#include "uiohook.hpp"
-#include "util.hpp"
+#include "uiohook_helper.hpp"
+#include "gamepad_helper.hpp"
+#include "client_util.hpp"
 #include <signal.h>
 #include <stdio.h>
+
+#ifndef SIGBREAK
+#define SIGBREAK SIGQUIT /* SIGBREAK only exists on Windows, so just use quit otherwise */
+#endif
 
 /* Catch Application closing */
 void sig_int__handler(int signal)
 {
 	network::network_loop = false;
-	gamepad::hook_run_flag = false;
 }
 
 void sig_break__handler(int signal)
 {
 	network::network_loop = false;
-	gamepad::hook_run_flag = false;
 }
 
 int main(int argc, char **argv)
@@ -60,22 +62,22 @@ int main(int argc, char **argv)
 		return util::RET_CONNECTION;
 	}
 
-	/* This will block if uiohook isn't running */
 	if (util::cfg.monitor_gamepad) {
-		auto threaded = util::cfg.monitor_keyboard || util::cfg.monitor_mouse;
-		if (threaded) {
-			if (!gamepad::start_pad_hook(true)) {
-				printf("Gamepad hook initialization failed!\n");
-				return util::RET_GAMEPAD_INIT;
-			}
-		} else {
-			gamepad::start_pad_hook(false);
+		if (!gamepad::start(util::cfg.gamepad_hook_type)) {
+			printf("Gamepad hook initialization failed!\n");
+			return util::RET_GAMEPAD_INIT;
 		}
 	}
 
 	if ((util::cfg.monitor_keyboard || util::cfg.monitor_mouse) && !uiohook::init()) {
 		printf("uiohook init failed\n");
 		return util::RET_UIOHOOK_INIT;
+	}
+
+	if ((!util::cfg.monitor_mouse && !util::cfg.monitor_keyboard)) {
+		/* If uiohook isn't used, we need to block here until we're told to quit */
+		while (network::network_loop)
+			util::sleep_ms(500);
 	}
 
 	util::close_all();

@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2020 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <uni@vrsal.cf>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,13 +17,10 @@
  *************************************************************************/
 
 #include "network.hpp"
-#include "gamepad.hpp"
-#include "uiohook.hpp"
-#include "util.hpp"
+#include "gamepad_helper.hpp"
+#include "uiohook_helper.hpp"
+#include "client_util.hpp"
 #include <cstdio>
-#ifdef UNIX
-#include <pthread.h>
-#endif
 
 namespace network {
 tcp_socket sock = nullptr;
@@ -37,11 +34,7 @@ volatile bool network_loop = true;
 bool connected = false;
 bool state = false;
 
-#ifdef _WIN32
-static HANDLE network_thread;
-#else
-static pthread_t network_thread;
-#endif
+std::thread network_thread;
 
 bool start_connection()
 {
@@ -78,30 +71,28 @@ bool start_connection()
 		return false;
 	}
 
-	if (!start_thread()) {
-		DEBUG_LOG("Failed to create network thread.\n");
-		return false;
+	/* Send gamepad names */
+	if (util::cfg.monitor_gamepad) {
+		//        buffer->write_pos = 0;
+		//        netlib_write_uint8(buffer, message::MSG_GAMEPAD_ID);
+		//        gamepad::hook_instance->get_mutex()->lock();
+		//        for (const auto &dev : gamepad::hook_instance->get_devices()) {
+
+		//        }
+		gamepad::hook_instance->get_mutex()->unlock();
 	}
+
+	start_thread();
 	connected = true;
 	return true;
 }
 
-bool start_thread()
+void start_thread()
 {
-#ifdef _WIN32
-	network_thread =
-		CreateThread(nullptr, 0, static_cast<LPTHREAD_START_ROUTINE>(network_thread_method), nullptr, 0, nullptr);
-	return network_thread;
-#else
-	return pthread_create(&network_thread, nullptr, network_thread_method, nullptr) == 0;
-#endif
+	network_thread = std::thread(network_thread_method);
 }
 
-#ifdef _WIN32
-DWORD WINAPI network_thread_method(const LPVOID arg)
-#else
-void *network_thread_method(void *)
-#endif
+void network_thread_method()
 {
 	while (network_loop) {
 		if (!listen()) /* Has a timeout of 25ms*/
@@ -120,7 +111,7 @@ void *network_thread_method(void *)
 			std::lock_guard<std::mutex> lock(uiohook::m_mutex);
 
 			buffer->write_pos = 0;
-			if (gamepad::check_changes() && !util::write_gamepad_data()) {
+			if (!gamepad::write_data()) {
 				DEBUG_LOG("Failed to write gamepad event data to buffer. Exiting...\n");
 				break;
 			}
@@ -145,12 +136,6 @@ void *network_thread_method(void *)
 	}
 
 	DEBUG_LOG("Network loop exited\n");
-
-#ifdef _WIN32
-	return 0;
-#else
-	pthread_exit(nullptr);
-#endif
 }
 
 int numready = 0;
@@ -222,13 +207,9 @@ void close()
 	}
 
 	/* Give server time to process DC message */
-#ifdef _WIN32
-	Sleep(100);
-#else
-	usleep(100 * 1000);
-#endif
+	util::sleep_ms(100);
 	network_loop = false;
-
+	network_thread.join();
 	netlib_tcp_close(sock);
 	netlib_free_byte_buf(buffer);
 	netlib_quit();

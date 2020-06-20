@@ -4,8 +4,10 @@
  * See LICENSE or http://www.gnu.org/licenses
  * github.com/univrsal/input-overlay
  */
+#pragma once
 
-enum message {
+namespace network {
+enum message : char {
 	MSG_READ_ERROR = -2,
 	MSG_INVALID,
 	MSG_NAME_NOT_UNIQUE,
@@ -17,6 +19,8 @@ enum message {
 	MSG_GAMEPAD_DATA,
 	MSG_CLIENT_DC,
 	MSG_REFRESH,
+	MSG_GAMEPAD_ID,
 	MSG_END_BUFFER,
 	MSG_LAST
 };
+}

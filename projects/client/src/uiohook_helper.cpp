@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2020 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <uni@vrsal.cf>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,13 +16,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *************************************************************************/
 
-#include "uiohook.hpp"
-#include "gamepad.hpp"
+#include "uiohook_helper.hpp"
 #include "network.hpp"
+#include "client_util.hpp"
 #include <cstdarg>
 #include <cstdio>
-#define IO_CLIENT
-#include "../../io-obs/util/util.hpp"
+#include <util.hpp>
 
 namespace uiohook {
 std::mutex m_mutex;
@@ -85,7 +84,7 @@ bool data_holder::write_to_buffer(netlib_byte_buf *buffer)
 
 	auto success = true;
 
-	if (netlib_write_uint8(buffer, MSG_BUTTON_DATA)) {
+	if (netlib_write_uint8(buffer, network::MSG_BUTTON_DATA)) {
 		if (netlib_write_uint8(buffer, int(m_button_states.size()))) {
 			for (const auto &data : m_button_states) {
 				if (!netlib_write_uint16(buffer, data.first))
@@ -99,7 +98,7 @@ bool data_holder::write_to_buffer(netlib_byte_buf *buffer)
 	}
 
 	if (m_new_mouse_data) {
-		success = netlib_write_uint8(buffer, MSG_MOUSE_DATA) && netlib_write_int16(buffer, m_mouse_x) &&
+		success = netlib_write_uint8(buffer, network::MSG_MOUSE_DATA) && netlib_write_int16(buffer, m_mouse_x) &&
 				  netlib_write_int16(buffer, m_mouse_y) && netlib_write_int8(buffer, m_wheel_direction) &&
 				  netlib_write_int16(buffer, m_wheel_amount) && netlib_write_int8(buffer, m_wheel_pressed);
 

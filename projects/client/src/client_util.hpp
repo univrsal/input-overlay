@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2020 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <uni@vrsal.cf>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,17 +21,10 @@
 #include <cstdint>
 #endif
 
-#include "../../io-obs/network/messages.hpp"
 #include <netlib.h>
 #include <uiohook.h>
-
-#ifdef _WIN32
-#define STICK_MAX_VAL 32767.f
-#define TRIGGER_MAX_VAL 256.f
-#else
-#define STICK_MAX_VAL 127.f
-#define TRIGGER_MAX_VAL 256.f
-#endif
+#include <messages.hpp>
+#include <gamepad/hook.hpp>
 
 #define DEBUG_LOG(fmt, ...) printf("[%25.25s:%03d]: " fmt, __FUNCTION__, __LINE__, ##__VA_ARGS__)
 
@@ -41,6 +34,7 @@ typedef struct {
 	bool monitor_mouse;
 	bool monitor_keyboard;
 	char username[64];
+	gamepad::hook_type gamepad_hook_type;
 	uint16_t port;
 	ip_address ip;
 } config;
@@ -56,12 +50,12 @@ enum return_codes {
 	RET_UIOHOOK_INIT
 };
 
+void sleep_ms(uint32_t ms);
+
 /* Get config values and print help */
 bool parse_arguments(int argc, char **args);
 
 int send_text(char *buf);
-
-int write_gamepad_data();
 
 bool write_keystate(netlib_byte_buf *buffer, uint16_t code, bool pressed);
 
@@ -72,11 +66,8 @@ inline uint16_t swap_be16(uint16_t in)
 
 uint32_t get_ticks();
 
-message recv_msg();
+network::message recv_msg();
 
 void close_all();
 
-#ifdef _DEBUG
-void to_bits(size_t const size, void const *const ptr);
-#endif
 }

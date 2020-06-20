@@ -15,7 +15,7 @@ macro(use_cxx14)
 endmacro(use_cxx14)
 
 string(TIMESTAMP TODAY "%Y.%m.%d %H:%M")
-add_definitions(-DTIMESTAMP="${TODAY}")
+add_compile_definitions(TIMESTAMP="${TODAY}")
 
 use_cxx14()
 add_compile_definitions(LGP_ENABLE_JSON)
@@ -119,9 +119,8 @@ include_directories(${SDL2_INCLUDE_DIRS}
     ${SDL2TTF_INCLUDE_DIRS}
     ${COMMON_HEADERS}
     ${JSON_11_HEADER}
+    ${GAMEPAD_INCLUDE_DIR}
     )
-
-message(STATUS "SKFSD:F:SJDFD:FJ ${JSON_11_HEADER}")
 
 target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARIES} ${SDL2IMAGE_LIBRARIES} ${SDL2TTF_LIBRARIES})
 

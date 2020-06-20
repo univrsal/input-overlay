@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2020 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <uni@vrsal.cf>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,13 +18,10 @@
 
 #pragma once
 #include <netlib.h>
-#ifdef _WIN32
-#include <Windows.h>
-#endif
+#include <thread>
 #include "util.hpp"
 
-/* We need 85 bytes if all four gamepads are sent + 32 bytes if all buttons are pressed down */
-#define BUFFER_SIZE 118
+#define BUFFER_SIZE 512
 #define LISTEN_TIMEOUT 25
 
 namespace network {
@@ -36,17 +33,14 @@ extern volatile bool network_loop;
 extern volatile bool need_refresh; /* Set to true by other threads */
 extern volatile bool data_block; /* Set to true to prevent other threads from modifying data, which is about to be sent */
 extern netlib_byte_buf *buffer; /* Shared buffer for writing data, which will be sent to the server */
+extern std::thread network_thread;
 
 bool init();
 bool start_connection();
-bool start_thread();
+void start_thread();
 bool listen();
 
-#ifdef _WIN32
-DWORD WINAPI network_thread_method(LPVOID arg);
-#else
-void *network_thread_method(void *);
-#endif
+void network_thread_method();
 
 void close();
 }

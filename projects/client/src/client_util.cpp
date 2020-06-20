@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2020 univrsal <universailp@web.de>.
+ * Copyright 2020 univrsal <uni@vrsal.cf>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,15 +16,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *************************************************************************/
 
-#include "util.hpp"
-#include "gamepad.hpp"
+#include "client_util.hpp"
+#include "gamepad_helper.hpp"
 #include "network.hpp"
-#include "uiohook.hpp"
+#include "uiohook_helper.hpp"
 #include <cstdio>
 #include <cstdlib>
 #include <string>
-#define IO_CLIENT
-#include "../../io-obs/util/util.hpp"
+#include <chrono>
+#include <thread>
 
 #ifdef _WIN32
 #include <Windows.h>
@@ -34,8 +34,10 @@
 #include <stdio.h>
 #include <time.h>
 #include <uiohook.h>
-
 #endif
+
+using namespace std::chrono;
+
 namespace util {
 config cfg;
 
@@ -46,10 +48,11 @@ bool parse_arguments(int argc, char **args)
 		DEBUG_LOG(" [] => required {} => optional\n");
 		DEBUG_LOG(" [ip]          can be ipv4 or hostname\n");
 		DEBUG_LOG(" [name]        unique name to identify client (max. 64 characters)\n");
-		DEBUG_LOG(" {port}        default is 1608 [1025 - %hu]\n", 0xffff);
+		DEBUG_LOG(" {port}        default is 1608 [1025 - %ui]\n", 0xffff);
 		DEBUG_LOG(" --gamepad=1   enable/disable gamepad monitoring. Off by default\n");
 		DEBUG_LOG(" --mouse=1     enable/disable mouse monitoring.  Off by default\n");
 		DEBUG_LOG(" --keyboard=1  enable/disable keyboard monitoring. On by default\n");
+		DEBUG_LOG(" --dinput      use direct input on windows. XInput is default\n");
 		return false;
 	}
 
@@ -67,7 +70,7 @@ bool parse_arguments(int argc, char **args)
 		if (newport > 1024) /* No system ports pls */
 			cfg.port = newport;
 		else
-			DEBUG_LOG("%hu is outside the valid port range [1024 - %hu]\n", newport, 0xffff);
+			DEBUG_LOG("%hu is outside the valid port range [1024 - %ui]\n", newport, 0xffff);
 	}
 
 	/* Resolve ip */
@@ -131,30 +134,9 @@ int send_text(char *buf)
 	return result;
 }
 
-int write_gamepad_data()
+void sleep_ms(uint32_t ms)
 {
-	auto result = 1;
-	netlib_write_uint8(network::buffer, MSG_GAMEPAD_DATA);
-	for (auto &pad : gamepad::pads) {
-		if (pad.changed()) {
-			if (!netlib_write_uint8(network::buffer, pad.get_id()) ||
-				!netlib_write_uint16(network::buffer, pad.get_state()->button_states) ||
-				!netlib_write_float(network::buffer, pad.get_state()->stick_l_x) ||
-				!netlib_write_float(network::buffer, pad.get_state()->stick_l_y) ||
-				!netlib_write_float(network::buffer, pad.get_state()->stick_r_x) ||
-				!netlib_write_float(network::buffer, pad.get_state()->stick_r_y) ||
-				!netlib_write_uint8(network::buffer, pad.get_state()->trigger_l) ||
-				!netlib_write_uint8(network::buffer, pad.get_state()->trigger_r))
-				result = 0;
-
-			pad.reset();
-		}
-	}
-
-	if (!result)
-		DEBUG_LOG("Writing event data to buffer failed: %s\n", netlib_get_error());
-
-	return result;
+	std::this_thread::sleep_for(milliseconds(ms));
 }
 
 bool write_keystate(netlib_byte_buf *buffer, uint16_t code, bool pressed)
@@ -188,7 +170,7 @@ uint32_t get_ticks()
 #endif
 }
 
-message recv_msg()
+network::message recv_msg()
 {
 	uint8_t msg_id;
 
@@ -197,35 +179,20 @@ message recv_msg()
 	if (read_length < sizeof(msg_id)) {
 		if (netlib_get_error() && strlen(netlib_get_error()))
 			DEBUG_LOG("netlib_tcp_recv: %s\n", netlib_get_error());
-		return MSG_READ_ERROR;
+		return network::MSG_READ_ERROR;
 	}
 
-	if (msg_id < MSG_LAST)
-		return message(msg_id);
+	if (msg_id < network::MSG_LAST)
+		return network::message(msg_id);
 
 	DEBUG_LOG("Received message with invalid id (%i).\n", msg_id);
-	return MSG_INVALID;
+	return network::MSG_INVALID;
 }
 
 void close_all()
 {
 	uiohook::close();
-	gamepad::end_pad_hook();
+	gamepad::stop();
 	network::close();
 }
-
-#ifdef _DEBUG
-void to_bits(size_t const size, void const *const ptr)
-{
-	const auto b = (unsigned char *)ptr;
-
-	for (int i = size - 1; i >= 0; i--) {
-		for (auto j = 7; j >= 0; j--) {
-			const unsigned char byte = (b[i] >> j) & 1;
-			printf("%u", byte);
-		}
-	}
-	puts("");
-}
-#endif
 }
