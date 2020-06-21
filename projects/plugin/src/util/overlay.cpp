@@ -28,10 +28,10 @@
 #include "element/element_mouse_movement.hpp"
 #include "element/element_mouse_wheel.hpp"
 #include "element/element_trigger.hpp"
-#include "gui/io_settings_dialog.hpp"
+#include "../gui/io_settings_dialog.hpp"
 #include "log.h"
-#include "network/io_server.hpp"
-#include "network/remote_connection.hpp"
+#include "../network/io_server.hpp"
+#include "../network/remote_connection.hpp"
 #include "obs_util.hpp"
 #include <QFile>
 #include <QJsonArray>
@@ -200,12 +200,13 @@ void overlay::refresh_data()
 	}
 
 	if (source) {
+		/* TODO element data holder refactor */
 		for (auto const &element : m_elements) {
 			element_data *data = nullptr;
 			if (m_data[element->get_keycode()] != nullptr) {
 				switch (element->get_source()) {
 				case DS_GAMEPAD:
-					data = source->get_by_gamepad(m_settings->gamepad, element->get_keycode());
+					//                    data = source->get_by_gamepad(m_settings->gamepad, element->get_keycode());
 					break;
 				default:
 				case DS_MOUSE_POS:

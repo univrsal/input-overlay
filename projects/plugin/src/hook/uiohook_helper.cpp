@@ -16,12 +16,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *************************************************************************/
 
-#include "hook_helper.hpp"
+#include "uiohook_helper.hpp"
 #include "../util/element/element_button.hpp"
 #include "../util/element/element_data_holder.hpp"
 #include "../util/element/element_mouse_wheel.hpp"
 #include "../util/overlay.hpp"
-#include "util/element/element_mouse_movement.hpp"
+#include "../util/element/element_mouse_movement.hpp"
 #include <cstdarg>
 #include <keycodes.h>
 #include <obs-module.h>
@@ -30,10 +30,10 @@
 
 namespace hook {
 /*
-        Hook process stuff
-        Source:
-        https://github.com/kwhat/libuiohook/blob/master/src/demo_hook_async.c
-    */
+    Hook process stuff
+    Source:
+    https://github.com/kwhat/libuiohook/blob/master/src/demo_hook_async.c
+*/
 
 uint64_t last_wheel = 0;                   /* System time at last scroll event */
 element_data_holder *input_data = nullptr; /* Data for local input events */
@@ -264,9 +264,9 @@ int hook_enable()
 		}
 #endif
 		/* Wait for the thread to indicate that it has passed the
-               initialization portion by blocking until either a EVENT_HOOK_ENABLED
-               event is received or the thread terminates.
-               NOTE This unlocks the hook_control_mutex while we wait.*/
+           initialization portion by blocking until either a EVENT_HOOK_ENABLED
+           event is received or the thread terminates.
+           NOTE This unlocks the hook_control_mutex while we wait.*/
 
 		pthread_cond_wait(&hook_control_cond, &hook_control_mutex);
 

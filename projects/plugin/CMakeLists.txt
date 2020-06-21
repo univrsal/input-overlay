@@ -10,7 +10,8 @@ set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
-
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(input-overlay_UI
         src/gui/io_settings_dialog.ui)
 
@@ -19,6 +20,9 @@ if (MSVC)
             w32-pthreads)
     set(input-overlay_PLATFORM_SOURCES
             src/util/window_helper_win.cpp)
+    set(OBS_FRONTEND_INCLUDE "${LIBOBS_INCLUDE_DIR}/../UI/obs-frontend-api.h")
+else()
+    find_path(OBS_FRONTEND_INCLUDE obs-frontend-api.h)
 endif ()
 
 if ("${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
@@ -36,18 +40,6 @@ endif()
 if (APPLE)
     # TODO: macOS stuff
 endif ()
-
-macro(use_cxx14)
-    if (CMAKE_VERSION VERSION_LESS "3.1")
-        if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++14")
-        endif ()
-    else ()
-        set(CMAKE_CXX_STANDARD 14)
-    endif ()
-endmacro(use_cxx14)
-
-use_cxx14()
 
 if(ARCH EQUAL 64)
     set(OBS_ARCH_NAME "64bit")
@@ -71,9 +63,10 @@ set(input-overlay_SOURCES
         src/sources/input_source.cpp
         src/sources/input_history.cpp
         src/sources/input_history.hpp
-        src/hook/hook_helper.cpp
-        src/hook/hook_helper.hpp
-        src/hook/gamepad_hook.hpp
+        src/hook/uiohook_helper.cpp
+        src/hook/uiohook_helper.hpp
+        src/hook/gamepad_hook_helper.cpp
+        src/hook/gamepad_hook_helper.hpp
         src/gui/io_settings_dialog.cpp
         src/gui/io_settings_dialog.hpp
         src/util/obs_util.cpp
@@ -139,16 +132,21 @@ add_library(input-overlay MODULE
         ${input-overlay_PLATFORM_SOURCES})
 
 include_directories(
-    "${LIBOBS_INCLUDE_DIR}/../UI/obs-frontend-api"
     ${Qt5Core_INCLUDES}
     ${Qt5Widgets_INCLUDES}
+    ${COMMON_HEADERS}
+    ${JSON_11_HEADER}
+    ${GAMEPAD_INCLUDE_DIR}
+    ${OBS_FRONTEND_INCLUDE}
+    ${UIOHOOK_INCLUDE_DIR}
+    ${NETLIB_INCLUDE_DIR}
 )
 
 target_link_libraries(input-overlay
-        libobs
+        ${input-overlay_PLATFORM_DEPS}
         Qt5::Core
         Qt5::Widgets
-        ${input-overlay_PLATFORM_DEPS}
+        libobs
         uiohook
         netlib
         gamepad)
@@ -235,7 +233,7 @@ if(UNIX AND NOT APPLE)
     include(GNUInstallDirs)
 
     set_target_properties(input-overlay PROPERTIES PREFIX "")
-#	target_link_libraries(${CMAKE_PROJECT_NAME} obs-frontend-api)
+    target_link_libraries(input-overlay obs-frontend-api)
 
     file(GLOB locale_files data/locale/*.ini)
 

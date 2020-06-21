@@ -17,7 +17,7 @@
  *************************************************************************/
 
 #include "element_mouse_movement.hpp"
-#include "sources/input_source.hpp"
+#include "../../sources/input_source.hpp"
 #include <keycodes.h>
 #include <util.hpp>
 

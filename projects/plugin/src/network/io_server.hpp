@@ -31,7 +31,6 @@
 
 #define BUFFER_SIZE 90
 #define LISTEN_TIMEOUT 25
-enum message;
 
 namespace network {
 extern std::mutex mutex;

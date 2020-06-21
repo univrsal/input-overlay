@@ -17,7 +17,6 @@
  *************************************************************************/
 
 #include "config.hpp"
-#include "../hook/gamepad/binding/gamepad_binding.hpp"
 #include "settings.h"
 #include "log.h"
 #include <QDir>

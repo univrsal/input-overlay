@@ -19,7 +19,7 @@
 #include "text_handler.hpp"
 #include "input_entry.hpp"
 #include "key_names.hpp"
-#include "sources/input_history.hpp"
+#include "../../sources/input_history.hpp"
 #include <util.hpp>
 #ifdef _WIN32
 #define TEXT_SOURCE "text_gdiplus\0"

@@ -18,8 +18,8 @@
 
 #include "remote_connection.hpp"
 #include "io_server.hpp"
-#include "util/config.hpp"
-#include "util/util.hpp"
+#include "../util/config.hpp"
+#include "../util/obs_util.hpp"
 #include <obs-module.h>
 #include <string>
 #include <util/platform.h>

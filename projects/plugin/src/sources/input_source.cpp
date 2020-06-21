@@ -17,15 +17,15 @@
  *************************************************************************/
 
 #include "input_source.hpp"
-#include "../hook/gamepad_hook.hpp"
-#include "../hook/hook_helper.hpp"
+#include "../hook/gamepad_hook_helper.hpp"
+#include "../hook/uiohook_helper.hpp"
 #include "../util/element/element_data_holder.hpp"
 #include "../util/lang.h"
 #include "../util/obs_util.hpp"
 #include "../util/settings.h"
 #include "../util/config.hpp"
-#include "network/io_server.hpp"
-#include "network/remote_connection.hpp"
+#include "../network/io_server.hpp"
+#include "../network/remote_connection.hpp"
 #include <QFile>
 #include <QJsonDocument>
 #include <obs-frontend-api.h>

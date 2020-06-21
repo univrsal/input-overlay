@@ -20,6 +20,7 @@
 
 #include "../util/element/element_data_holder.hpp"
 #include "remote_connection.hpp"
+#include <messages.hpp>
 #include <netlib.h>
 
 namespace network {

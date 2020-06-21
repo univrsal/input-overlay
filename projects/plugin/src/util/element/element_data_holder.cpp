@@ -21,7 +21,7 @@
 #include "element_button.hpp"
 #include "element_mouse_wheel.hpp"
 #include "element_trigger.hpp"
-#include "sources/input_history.hpp"
+#include "../../sources/input_history.hpp"
 #include <algorithm>
 #include <keycodes.h>
 #include <util/platform.h>
@@ -41,12 +41,12 @@ bool element_data_holder::is_empty() const
 {
 	auto flag = true;
 
-	for (const auto &pad : m_gamepad_data) {
-		if (!pad.empty()) {
-			flag = false;
-			break;
-		}
-	}
+	//    for (const auto &pad : m_gamepad_data) {
+	//        if (!pad.empty()) {
+	//            flag = false;
+	//            break;
+	//        }
+	//    }
 
 	return flag && m_input_data.empty();
 }
@@ -66,56 +66,56 @@ void element_data_holder::add_data(const uint16_t keycode, element_data *data)
 		m_last_input = os_gettime_ns();
 }
 
-void element_data_holder::add_gamepad_data(const uint8_t gamepad, const uint16_t keycode, element_data *data)
-{
-	bool refresh = false;
-	if (gamepad_data_exists(gamepad, keycode)) {
-		refresh = m_gamepad_data[gamepad][keycode]->merge(data);
-		delete data; /* Existing data was used -> delete other one */
-	} else {
-		m_gamepad_data[gamepad][keycode] = std::unique_ptr<element_data>(data);
-		refresh = true;
-	}
-	if (refresh)
-		m_last_input = os_gettime_ns();
-}
+//void element_data_holder::add_gamepad_data(const uint8_t gamepad, const uint16_t keycode, element_data *data)
+//{
+//    bool refresh = false;
+//    if (gamepad_data_exists(gamepad, keycode)) {
+//        refresh = m_gamepad_data[gamepad][keycode]->merge(data);
+//        delete data; /* Existing data was used -> delete other one */
+//    } else {
+//        m_gamepad_data[gamepad][keycode] = std::unique_ptr<element_data>(data);
+//        refresh = true;
+//    }
+//    if (refresh)
+//        m_last_input = os_gettime_ns();
+//}
 
-bool element_data_holder::gamepad_data_exists(const uint8_t gamepad, const uint16_t keycode)
-{
-	if (is_empty())
-		return false;
-	return m_gamepad_data[gamepad][keycode] != nullptr;
-}
+//bool element_data_holder::gamepad_data_exists(const uint8_t gamepad, const uint16_t keycode)
+//{
+//    if (is_empty())
+//        return false;
+//    return m_gamepad_data[gamepad][keycode] != nullptr;
+//}
 
-void element_data_holder::remove_gamepad_data(const uint8_t gamepad, const uint16_t keycode)
-{
-	if (gamepad_data_exists(gamepad, keycode)) {
-		m_gamepad_data[gamepad][keycode].reset();
-		m_gamepad_data[gamepad].erase(keycode);
-	}
-}
+//void element_data_holder::remove_gamepad_data(const uint8_t gamepad, const uint16_t keycode)
+//{
+//    if (gamepad_data_exists(gamepad, keycode)) {
+//        m_gamepad_data[gamepad][keycode].reset();
+//        m_gamepad_data[gamepad].erase(keycode);
+//    }
+//}
 
-element_data *element_data_holder::get_by_gamepad(const uint8_t gamepad, const uint16_t keycode)
-{
-	auto result = m_gamepad_data[gamepad][keycode].get();
-	return result;
-}
+//element_data *element_data_holder::get_by_gamepad(const uint8_t gamepad, const uint16_t keycode)
+//{
+//    auto result = m_gamepad_data[gamepad][keycode].get();
+//    return result;
+//}
 
-void element_data_holder::clear_data()
-{
-	clear_button_data();
-	clear_gamepad_data();
-}
+//void element_data_holder::clear_data()
+//{
+//    clear_button_data();
+//    clear_gamepad_data();
+//}
 
-void element_data_holder::clear_button_data()
-{
-	m_input_data.clear();
-}
+//void element_data_holder::clear_button_data()
+//{
+//    m_input_data.clear();
+//}
 
-void element_data_holder::clear_gamepad_data()
-{
-	m_gamepad_data->clear();
-}
+//void element_data_holder::clear_gamepad_data()
+//{
+//    m_gamepad_data->clear();
+//}
 
 bool element_data_holder::is_local() const
 {
@@ -168,63 +168,63 @@ void element_data_holder::populate_vector(std::vector<uint16_t> &vec, sources::h
 
 	/* Same procedure for the gamepad */
 	if (settings->flags & static_cast<int>(sources::history_flags::INCLUDE_PAD)) {
-		for (const auto &data : m_gamepad_data[settings->target_gamepad]) {
-			auto add = true;
-			auto code = data.first;
-			element_data_analog_stick *stick = nullptr;
-			element_data_button *button = nullptr;
-			element_data_trigger *trigger = nullptr;
+		//        for (const auto &data : m_gamepad_data[settings->target_gamepad]) {
+		//            auto add = true;
+		//            auto code = data.first;
+		//            element_data_analog_stick *stick = nullptr;
+		//            element_data_button *button = nullptr;
+		//            element_data_trigger *trigger = nullptr;
 
-			if (data.second) {
-				switch (data.second->get_type()) {
-				case ET_BUTTON:
-					button = dynamic_cast<element_data_button *>(data.second.get());
-					if (button && button->get_state() == BS_RELEASED)
-						continue;
-					break;
-				case ET_ANALOG_STICK:
-					stick = dynamic_cast<element_data_analog_stick *>(data.second.get());
-					if (stick) {
-						if (stick->left_pressed() && is_new_key(vec, VC_PAD_L_ANALOG))
-							vec.emplace_back(VC_PAD_L_ANALOG);
+		//            if (data.second) {
+		//                switch (data.second->get_type()) {
+		//                case ET_BUTTON:
+		//                    button = dynamic_cast<element_data_button *>(data.second.get());
+		//                    if (button && button->get_state() == BS_RELEASED)
+		//                        continue;
+		//                    break;
+		//                case ET_ANALOG_STICK:
+		//                    stick = dynamic_cast<element_data_analog_stick *>(data.second.get());
+		//                    if (stick) {
+		//                        if (stick->left_pressed() && is_new_key(vec, VC_PAD_L_ANALOG))
+		//                            vec.emplace_back(VC_PAD_L_ANALOG);
 
-						if (stick->right_pressed() && is_new_key(vec, VC_PAD_R_ANALOG))
-							vec.emplace_back(VC_PAD_R_ANALOG);
-						add = false;
-					}
-					break;
-				case ET_TRIGGER:
-					trigger = dynamic_cast<element_data_trigger *>(data.second.get());
+		//                        if (stick->right_pressed() && is_new_key(vec, VC_PAD_R_ANALOG))
+		//                            vec.emplace_back(VC_PAD_R_ANALOG);
+		//                        add = false;
+		//                    }
+		//                    break;
+		//                case ET_TRIGGER:
+		//                    trigger = dynamic_cast<element_data_trigger *>(data.second.get());
 
-					if (trigger) {
-						if (trigger->get_left() > TRIGGER_THRESHOLD && is_new_key(vec, VC_PAD_LT))
-							vec.emplace_back(VC_PAD_LT);
+		//                    if (trigger) {
+		//                        if (trigger->get_left() > TRIGGER_THRESHOLD && is_new_key(vec, VC_PAD_LT))
+		//                            vec.emplace_back(VC_PAD_LT);
 
-						if (trigger->get_right() > TRIGGER_THRESHOLD && is_new_key(vec, VC_PAD_RT))
-							vec.emplace_back(VC_PAD_RT);
-						add = false;
-					}
-					break;
-				default:;
-				}
-			}
+		//                        if (trigger->get_right() > TRIGGER_THRESHOLD && is_new_key(vec, VC_PAD_RT))
+		//                            vec.emplace_back(VC_PAD_RT);
+		//                        add = false;
+		//                    }
+		//                    break;
+		//                default:;
+		//                }
+		//            }
 
-			if (add && is_new_key(vec, code)) {
-				switch (code) {
-				case VC_STICK_DATA:
-				case VC_TRIGGER_DATA:
-				case VC_DPAD_DATA:
-					break;
-				default:
-					vec.emplace_back(code);
-				}
-			}
-		}
+		//            if (add && is_new_key(vec, code)) {
+		//                switch (code) {
+		//                case VC_STICK_DATA:
+		//                case VC_TRIGGER_DATA:
+		//                case VC_DPAD_DATA:
+		//                    break;
+		//                default:
+		//                    vec.emplace_back(code);
+		//                }
+		//            }
+		//        }
 	}
 	/* Sort the vector, so keycombinations are always displayed the same way
      * Sorting is done in reverse so modifier keys like shift are at the
      * beginning */
-	std::sort(vec.rbegin(), vec.rend());
+	//    std::sort(vec.rbegin(), vec.rend());
 }
 
 bool element_data_holder::data_exists(const uint16_t keycode)

@@ -40,11 +40,7 @@ namespace sources {
 class overlay_settings;
 }
 
-#ifdef _WIN32
-enum element_type;
-#else
 #include <layout_constants.h>
-#endif
 
 class element_data {
 public:

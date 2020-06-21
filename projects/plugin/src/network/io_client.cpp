@@ -17,15 +17,13 @@
  *************************************************************************/
 
 #include "io_client.hpp"
-#include "hook/gamepad_hook.hpp"
-#include "hook/xinput_fix.hpp"
-#include "util/config.hpp"
-#include "util/element/element_analog_stick.hpp"
-#include "util/element/element_button.hpp"
-#include "util/element/element_mouse_movement.hpp"
-#include "util/element/element_mouse_wheel.hpp"
-#include "util/element/element_trigger.hpp"
-#include "util/util.hpp"
+#include "../util/config.hpp"
+#include "../util/element/element_analog_stick.hpp"
+#include "../util/element/element_button.hpp"
+#include "../util/element/element_mouse_movement.hpp"
+#include "../util/element/element_mouse_wheel.hpp"
+#include "../util/element/element_trigger.hpp"
+#include "../util/util.hpp"
 #include <keycodes.h>
 
 namespace network {
@@ -76,7 +74,7 @@ bool io_client::read_event(netlib_byte_buf *buffer, const message msg)
 
 		if (flag) /* Only pressed buttons are sent */
 		{
-			m_holder.clear_button_data();
+			//            m_holder.clear_button_data();
 			for (int i = 0; i < key_count; i++) {
 				if (!netlib_read_uint16(buffer, &vc)) {
 					flag = false;
@@ -124,9 +122,9 @@ bool io_client::read_event(netlib_byte_buf *buffer, const message msg)
 			//								(pad_buttons & xinput_fix::CODE_RIGHT_THUMB) ? BS_PRESSED : BS_RELEASED);
 			//			}
 
-			m_holder.add_gamepad_data(pad_id, VC_STICK_DATA, temp);
+			//            m_holder.add_gamepad_data(pad_id, VC_STICK_DATA, temp);
 
-			m_holder.add_gamepad_data(pad_id, VC_TRIGGER_DATA, element_data_trigger::from_buffer(buffer));
+			//            m_holder.add_gamepad_data(pad_id, VC_TRIGGER_DATA, element_data_trigger::from_buffer(buffer));
 		} else {
 			DEBUG_LOG(LOG_ERROR, "Couldn't read gamepad id from buffer");
 		}

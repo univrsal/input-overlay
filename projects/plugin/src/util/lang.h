@@ -16,9 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *************************************************************************/
 
-#ifndef IO_LANG_H
-#define IO_LANG_H
-
+#pragma once
 /* clang-format off */
 
 /* Misc */
@@ -78,4 +76,3 @@
 #define T_HISTORY_AUTO_CLEAR_INTERVAL   T_("History.AutoClear.Interval")
 
 /* clang-format on */
-#endif

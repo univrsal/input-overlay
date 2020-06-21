@@ -22,7 +22,7 @@
 #include "effect.hpp"
 #include "history_icons.hpp"
 #include "key_names.hpp"
-#include "network/io_server.hpp"
+#include "../../network/io_server.hpp"
 #include "../obs_util.hpp"
 #include <algorithm>
 #include <sstream>
@@ -86,8 +86,8 @@ void input_entry::collect_inputs(sources::history_settings *settings)
 		if (settings->flags & (int)sources::history_flags::INCLUDE_PAD)
 			std::lock_guard<std::mutex> lck3(gamepad::mutex);
 		/* Check if the scroll wheel timed out if the data
-		 * is being fetched from the local data holder, since
-		 * scroll wheel doesn't have a released event */
+         * is being fetched from the local data holder, since
+         * scroll wheel doesn't have a released event */
 		if (settings->data->is_local())
 			hook::check_wheel();
 		settings->data->populate_vector(m_inputs, settings);

@@ -19,7 +19,7 @@
 #include "icon_handler.hpp"
 #include "input_entry.hpp"
 #include "scale_effect.hpp"
-#include "sources/input_history.hpp"
+#include "../../sources/input_history.hpp"
 #include "translate_effect.hpp"
 #include <graphics/matrix4.h>
 #include <layout_constants.h>
@@ -122,7 +122,7 @@ void icon_handler::render(const gs_effect_t *effect)
 
 	if (max_icon_count > m_old_icon_count) {
 		/* Only resize if size would increase, resizing when size would decrease
-		 * would result in source constantly moving around */
+         * would result in source constantly moving around */
 		switch (m_settings->dir) {
 		case DIR_DOWN:
 		case DIR_UP:

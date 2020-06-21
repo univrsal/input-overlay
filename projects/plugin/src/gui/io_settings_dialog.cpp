@@ -17,14 +17,13 @@
  *************************************************************************/
 
 #include "io_settings_dialog.hpp"
-#include "hook/gamepad_hook.hpp"
-#include "network/io_server.hpp"
-#include "network/remote_connection.hpp"
+#include "../network/io_server.hpp"
+#include "../network/remote_connection.hpp"
 #include "ui_io_settings_dialog.h"
-#include "util/config.hpp"
-#include "util/lang.h"
-#include "util/obs_util.hpp"
-#include "util/settings.h"
+#include "../util/config.hpp"
+#include "../util/lang.h"
+#include "../util/obs_util.hpp"
+#include "../util/settings.h"
 #include <QDesktopServices>
 #include <QTimer>
 #include <obs-frontend-api.h>

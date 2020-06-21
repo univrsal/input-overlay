@@ -167,5 +167,6 @@ element_data_trigger *element_data_trigger::from_buffer(netlib_byte_buf *buffer)
 #endif
 		return nullptr;
 	}
-	return new element_data_trigger(left / TRIGGER_MAX_VAL, right / TRIGGER_MAX_VAL);
+	/* TODO: network */
+	return new element_data_trigger(left, right);
 }

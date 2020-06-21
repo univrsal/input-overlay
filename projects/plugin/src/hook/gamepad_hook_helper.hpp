@@ -17,33 +17,29 @@
  *************************************************************************/
 
 #pragma once
-#include <QString>
-#include <stdint.h>
-#include <keycodes.h>
+
+#include "../util/obs_util.hpp"
 #include <string>
+#include <vector>
+#include <layout_constants.h>
+#include <mutex>
+#include <stdio.h>
+#include <memory>
 
 namespace gamepad {
 
-extern code all_codes[13];
-extern uint16_t to_vc(code c);
+void start_pad_hook();
+void end_pad_hook();
+bool init_pad_devices();
+void *hook_method(void *);
 
-class handle {
-protected:
-	int8_t m_id = -1;
-	bool m_valid = false;
-	QString m_device_name;
-
-public:
-	handle(int8_t id);
-	~handle();
-
-	virtual void update();
-	virtual void load() = 0;
-	virtual void unload();
-
-	bool valid() const;
-	int8_t id() const;
-	const QString &get_name() const { return m_device_name; }
-};
+/* Mutex for thread safety */
+extern std::mutex mutex;
+/* Four structs containing info to query gamepads */
+//extern std::vector<std::shared_ptr<handle>> pads;
+/* Init state of hook */
+extern bool gamepad_hook_state;
+/* False will end thread */
+extern bool gamepad_hook_run_flag;
 
 }

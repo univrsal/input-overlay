@@ -16,9 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *************************************************************************/
 
-#ifndef IO_LOG_H
-#define IO_LOG_H
-
+#pragma once
 #include <obs-module.h>
 
 #define write_log(log_level, format, ...) blog(log_level, "[input-overlay] " format, ##__VA_ARGS__)
@@ -27,5 +25,3 @@
 #define binfo(format, ...) write_log(LOG_INFO, format, ##__VA_ARGS__)
 #define bwarn(format, ...) write_log(LOG_WARNING, format, ##__VA_ARGS__)
 #define berr(format, ...) write_log(LOG_ERROR, format, ##__VA_ARGS__)
-
-#endif

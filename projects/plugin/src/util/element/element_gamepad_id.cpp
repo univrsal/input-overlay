@@ -18,12 +18,13 @@
 
 #include "element_gamepad_id.hpp"
 #include "element_button.hpp"
-#include "sources/input_source.hpp"
+#include "../../sources/input_source.hpp"
+#include <libgamepad.hpp>
 #include <keycodes.h>
 
 element_gamepad_id::element_gamepad_id() : element_texture(ET_GAMEPAD_ID), m_mappings{}
 {
-	m_keycode = VC_PAD_GUIDE;
+	m_keycode = gamepad::button::GUIDE;
 }
 
 void element_gamepad_id::load(const QJsonObject &obj)

@@ -23,8 +23,8 @@
 #include <util/config-file.h>
 
 #include "gui/io_settings_dialog.hpp"
-#include "hook/gamepad_hook.hpp"
-#include "hook/hook_helper.hpp"
+#include "hook/gamepad_hook_helper.hpp"
+#include "hook/uiohook_helper.hpp"
 #include "network/remote_connection.hpp"
 #include "sources/input_history.hpp"
 #include "sources/input_source.hpp"
@@ -71,8 +71,8 @@ bool obs_module_load()
 		io_config::io_window_filters.read_from_config();
 
 	/* UI registration from
-    * https://github.com/Palakis/obs-websocket/
-    */
+     * https://github.com/Palakis/obs-websocket/
+     */
 	const auto menu_action = static_cast<QAction *>(obs_frontend_add_tools_menu_qaction(T_MENU_OPEN_SETTINGS));
 	obs_frontend_push_ui_translation(obs_module_get_string);
 	const auto main_window = static_cast<QMainWindow *>(obs_frontend_get_main_window());

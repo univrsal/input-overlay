@@ -18,8 +18,8 @@
 
 #pragma once
 
-#include "../hook/gamepad_hook.hpp"
-#include "../hook/hook_helper.hpp"
+#include "../hook/gamepad_hook_helper.hpp"
+#include "../hook/uiohook_helper.hpp"
 #include <layout_constants.h>
 #include <obs-module.h>
 

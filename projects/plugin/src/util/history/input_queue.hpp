@@ -8,7 +8,7 @@
 #pragma once
 
 #include "input_entry.hpp"
-#include "sources/input_history.hpp"
+#include "../../sources/input_history.hpp"
 #include <mutex>
 class handler;
 

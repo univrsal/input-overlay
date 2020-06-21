@@ -18,9 +18,9 @@
 
 #include "io_server.hpp"
 #include "remote_connection.hpp"
-#include "util/config.hpp"
-#include "util/lang.h"
-#include "util/util.hpp"
+#include "../util/config.hpp"
+#include "../util/lang.h"
+#include "../util/util.hpp"
 #include <algorithm>
 #include <obs-module.h>
 #include <util/platform.h>
