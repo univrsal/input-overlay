@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  linux:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+    - uses: actions/checkout@v2
+      with:
+          submodules: true
+
+    # Runs a set of commands using the runners shell
+    - name: Install dependencies
+      run: |
+        sudo apt-get install \
+         libsdl2-dev
+         libsdl2-image-dev
+         libsdl2-ttf-dev
+    - name: Compile
+      shell: bash
+      run: | # TODO: obs-studio plugin build
+          cmake -S ${{github.workspace}} -B ${{github.workspace}}/build \
+            -G "Unix Makefiles" \
+            -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/dist \
+            -DCMAKE_VERBOSE_MAKEFILE=true -DENABLE_PLUGIN=OFF
+          cmake --build ${{github.workspace}}/build \
+            --parallel 2 \
+            --target install
+    - name: Upload
+      uses: actions/upload-artifact@v2
+      with:
+          name: linux-ubuntu
+          path: ${{github.workspace}}/dist/**/*
