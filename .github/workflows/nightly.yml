@@ -29,7 +29,16 @@ jobs:
         sudo apt-get install \
          libsdl2-dev \
          libsdl2-image-dev \
-         libsdl2-ttf-dev
+         libsdl2-ttf-dev \
+         libx11-dev:amd64 \
+         libxtst-dev:amd64 \
+         libxt-dev:amd64 \
+         libxinerama-dev \
+         libx11-xcb-dev \
+         libxkbcommon-dev \
+         libxkbcommon-x11-dev \
+         libxkbfile-dev
+         
     - name: Compile
       shell: bash
       run: | # TODO: obs-studio plugin build
