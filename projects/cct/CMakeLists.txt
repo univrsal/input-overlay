@@ -160,3 +160,4 @@ else()
 endif()
 
 install(TARGETS io-cct DESTINATION io-cct)
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/res DESTINATION io-cct)
