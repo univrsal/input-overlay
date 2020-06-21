@@ -27,8 +27,8 @@ jobs:
           sudo apt-get update -m
           
         sudo apt-get install \
-         libsdl2-dev
-         libsdl2-image-dev
+         libsdl2-dev \
+         libsdl2-image-dev \
          libsdl2-ttf-dev
     - name: Compile
       shell: bash
