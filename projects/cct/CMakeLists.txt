@@ -129,9 +129,7 @@ if (MSVC)
     get_filename_component(SDL2_IMAGE_BINARYDIR ${SDL2IMAGE_LIBRARIES} DIRECTORY INTERNAL)
     get_filename_component(SDL2_TTF_BINARYDIR ${SDL2TTF_LIBRARIES} DIRECTORY INTERNAL)
 
-    # Copy dependencies
-    add_custom_command(TARGET io-cct POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    list(APPEND WIN_DLLS
         "${SDL2_BINARYDIR}/SDL2.dll"
         "${SDL2_IMAGE_BINARYDIR}/zlib1.dll"
         "${SDL2_IMAGE_BINARYDIR}/SDL2_image.dll"
@@ -141,15 +139,23 @@ if (MSVC)
         "${SDL2_IMAGE_BINARYDIR}/libjpeg-9.dll"
         "${SDL2_TTF_BINARYDIR}/SDL2_ttf.dll"
         "${SDL2_TTF_BINARYDIR}/libfreetype-6.dll"
+        )
+    # Copy dependencies
+    add_custom_command(TARGET io-cct POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        ${WIN_DLLS}
         $<TARGET_FILE_DIR:io-cct>)
 
-# Copy assets
-add_custom_command(TARGET io-cct POST_BUILD
-                   COMMAND ${CMAKE_COMMAND} -E copy_directory
-                       ${CMAKE_CURRENT_SOURCE_DIR}/res $<TARGET_FILE_DIR:${PROJECT_NAME}>/../res)
+    install(FILES ${WIN_DLLS} DESTINATION io-cct)
+    # Copy assets
+    add_custom_command(TARGET io-cct POST_BUILD
+                       COMMAND ${CMAKE_COMMAND} -E copy_directory
+                           ${CMAKE_CURRENT_SOURCE_DIR}/res $<TARGET_FILE_DIR:${PROJECT_NAME}>/../res)
 else()
-# Copy assets
-add_custom_command(TARGET io-cct POST_BUILD
-                   COMMAND ${CMAKE_COMMAND} -E copy_directory
-                       ${CMAKE_CURRENT_SOURCE_DIR}/res $<TARGET_FILE_DIR:${PROJECT_NAME}>/res)
+    # Copy assets
+    add_custom_command(TARGET io-cct POST_BUILD
+                       COMMAND ${CMAKE_COMMAND} -E copy_directory
+                           ${CMAKE_CURRENT_SOURCE_DIR}/res $<TARGET_FILE_DIR:${PROJECT_NAME}>/res)
 endif()
+
+install(TARGETS io-cct DESTINATION io-cct)

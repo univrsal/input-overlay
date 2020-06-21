@@ -40,3 +40,5 @@ include_directories(
     ${UIOHOOK_INCLUDE_DIR}
     ${NETLIB_INCLUDE_DIR}
     )
+
+install(TARGETS client DESTINATION client)
