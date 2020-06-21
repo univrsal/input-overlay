@@ -18,6 +18,14 @@ jobs:
     # Runs a set of commands using the runners shell
     - name: Install dependencies
       run: |
+        sudo bash -c 'source /etc/lsb-release && echo "
+          deb [arch=amd64] http://us.archive.ubuntu.com/ubuntu ${DISTRIB_CODENAME} main universe
+          deb [arch=amd64] http://us.archive.ubuntu.com/ubuntu ${DISTRIB_CODENAME}-updates main universe
+          deb [arch=amd64] http://us.archive.ubuntu.com/ubuntu ${DISTRIB_CODENAME}-backports main universe
+          " > /etc/apt/sources.list'
+          sudo rm -Rf /etc/apt/sources.list.d
+          sudo apt-get update -m
+          
         sudo apt-get install \
          libsdl2-dev
          libsdl2-image-dev
