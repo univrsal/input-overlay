@@ -232,12 +232,10 @@ if(WIN32)
 endif()
 
 if(UNIX AND NOT APPLE)
-
     include(GNUInstallDirs)
-
     set_target_properties(input-overlay PROPERTIES PREFIX "")
     target_link_libraries(input-overlay obs-frontend-api)
-
+    
     if (LOCAL_INSTALLATION)
         # Installs into home directory
         install(TARGETS input-overlay
@@ -249,6 +247,8 @@ if(UNIX AND NOT APPLE)
         # For *.deb installer
         install(TARGETS input-overlay
             LIBRARY DESTINATION "${CMAKE_INSTALL_FULL_LIBDIR}/obs-plugins")
+        install(TARGETS input-overlay
+            LIBRARY DESTINATION "/usr/lib/obs-plugins") # Ubuntu apparently doesn't know the correct path
 
         install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/data
             DESTINATION "${CMAKE_INSTALL_FULL_DATAROOTDIR}/obs/obs-plugins/input-overlay")
