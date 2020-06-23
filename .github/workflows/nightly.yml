@@ -73,7 +73,6 @@ jobs:
             --target install
     - name: Compile deb installer
       shell: bash
-      env: 
       run: | # Now only build deb installer
           cmake -S ${{github.workspace}} -B ${{github.workspace}}/build \
             -G "Unix Makefiles" \
