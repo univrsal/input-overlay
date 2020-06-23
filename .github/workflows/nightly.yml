@@ -49,6 +49,13 @@ jobs:
           cmake --build ${{github.workspace}}/build \
             --parallel 2 \
             --target install
+    
+    - name: Cleanup
+      shell: bash
+      run: |
+        rm -rf ${{github.workspace}}/dist/include ${{github.workspace}}/dist/lib
+        chmod a+x ${{github.workspace}}/dist/client/client
+        chmod a+x ${{github.workspace}}/dist/io-cct/io-cct
     - name: Upload
       uses: actions/upload-artifact@v2
       with:
