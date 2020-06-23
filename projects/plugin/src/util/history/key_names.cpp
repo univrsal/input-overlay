@@ -53,6 +53,7 @@ bool key_names::empty() const
 
 const QString &key_names::get_name(const uint16_t vc)
 {
+    static QString empty = "";
 	/* Users can use an empty name in the config to
      * prevent certain keys from showing up in input-history
      * empty name = key is disabled
@@ -60,5 +61,5 @@ const QString &key_names::get_name(const uint16_t vc)
 	if (m_names.find(vc) != m_names.end() && !m_names[vc].isEmpty())
 		return m_names[vc];
 
-	return QString();
+    return empty;
 }

@@ -89,9 +89,10 @@ void history_icons::load_from_file(const QString &cfg, const QString &img)
 		if (arr.isEmpty()) {
 			berr("No icon data in array");
 		} else {
-			for (const auto obj : arr) {
+            for (const auto val : arr) {
+                const auto obj = val.toObject();
 				icon ico{};
-				const auto vc = static_cast<uint16_t>(obj["code"].toInt());
+                const auto vc = static_cast<uint16_t>(obj["code"].toInt());
 				if (debug)
 					bdebug("Loaded icon with code 0x%X", vc);
 
