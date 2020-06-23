@@ -13,6 +13,7 @@ jobs:
       obs-studio-version: 25.0.8
       maintainer: uni@vrsal.cf
       project: input-overlay
+      project-url: github.com/univrsal/input-overlay
     steps:
     - name: Checkout
       uses: actions/checkout@v2
@@ -71,6 +72,11 @@ jobs:
             -G "Unix Makefiles" \
             -DCMAKE_INSTALL_PREFIX=/usr -DENABLE_TOOL=OFF -DENABLE_CLIENT=OFF \
             -DCMAKE_VERBOSE_MAKEFILE=true
+          cmake ${{github.workspace}} -B ${{github.workspace}}/build \
+            -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_VERBOSE_MAKEFILE=true \
+            -DOBS_FRONTEND_INCLUDE=/usr/include/obs -DENABLE_TOOL=OFF \
+            -DENABLE_CLIENT=OFF -DDEB_INSTALLER=ON -DUIOHOOK_ENABLE_INSTALL=off \
+            -DGAMEPAD_ENABLE_INSTALL=off -DNETLIB_ENABLE_INSTALL=off
           sudo cmake --build ${{github.workspace}}/build \
             --parallel 4 \
             --target install
@@ -86,9 +92,9 @@ jobs:
             --pkgname=input-overlay --pkgversion="$PKG_VERSION" \
             --pkglicense="GPLv2.0" --maintainer="${{ env.maintainer }}" \
             --pkggroup="video" \
-            --pkgsource="https://github.com/Palakis/obs-websocket" \
+            --pkgsource="https://${{ env.project-url }}" \
             --requires="obs-studio \(\>= ${{ env.obs-studio-version }}\), libqt5core5a, libqt5widgets5, qt5-image-formats-plugins" \
-            --pakdir="../dist"
+            --pakdir="../package"
           
     - name: Cleanup
       shell: bash
@@ -96,9 +102,13 @@ jobs:
         rm -rf ${{github.workspace}}/dist/include ${{github.workspace}}/dist/lib
         chmod a+x ${{github.workspace}}/dist/client/client
         chmod a+x ${{github.workspace}}/dist/io-cct/io-cct
-        sudo chmod ao+r ../dist/*
-    - name: Upload
+        sudo chmod ao+r ../package/*.deb
+    - name: Upload binary zip
       uses: actions/upload-artifact@v2
       with:
           name: linux-ubuntu
           path: ${{github.workspace}}/dist/**/*
+    - name: Upload installer
+      uses: actions/upload-artifact@v2
+      with:
+        path: ${{github.workspace}}/dist/*.deb
