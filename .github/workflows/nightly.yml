@@ -68,10 +68,6 @@ jobs:
     - name: Compile deb installer
       shell: bash
       run: | # Now only build deb installer
-          cmake -S ${{github.workspace}} -B ${{github.workspace}}/build \
-            -G "Unix Makefiles" \
-            -DCMAKE_INSTALL_PREFIX=/usr -DENABLE_TOOL=OFF -DENABLE_CLIENT=OFF \
-            -DCMAKE_VERBOSE_MAKEFILE=true
           cmake ${{github.workspace}} -B ${{github.workspace}}/build \
             -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_VERBOSE_MAKEFILE=true \
             -DOBS_FRONTEND_INCLUDE=/usr/include/obs -DENABLE_TOOL=OFF \
@@ -102,7 +98,7 @@ jobs:
         rm -rf ${{github.workspace}}/dist/include ${{github.workspace}}/dist/lib
         chmod a+x ${{github.workspace}}/dist/client/client
         chmod a+x ${{github.workspace}}/dist/io-cct/io-cct
-        sudo chmod ao+r ../package/*.deb
+        sudo chmod ao+r ${{github.workspace}}/package/*
     - name: Upload binary zip
       uses: actions/upload-artifact@v2
       with:
