@@ -107,4 +107,4 @@ jobs:
     - name: Upload installer
       uses: actions/upload-artifact@v2
       with:
-        path: ${{github.workspace}}/dist/*.deb
+        path: ${{github.workspace}}/package/*.deb
