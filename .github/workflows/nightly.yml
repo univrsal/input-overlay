@@ -54,7 +54,12 @@ jobs:
           libxkbcommon-x11-dev \
           libxkbfile-dev \
           libc-dev-bin \
-	        libc6-dev git build-essential checkinstall cmake obs-studio qtbase5-dev
+          libc6-dev git \
+          build-essential \
+          checkinstall \
+          cmake \
+          obs-studio \
+          qtbase5-dev
 
     - name: Compile
       shell: bash
