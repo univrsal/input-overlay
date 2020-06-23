@@ -36,9 +36,9 @@ jobs:
           libsdl2-dev \
           libsdl2-image-dev \
           libsdl2-ttf-dev \
-          libx11-dev:amd64 \
-          libxtst-dev:amd64 \
-          libxt-dev:amd64 \
+          libx11-dev \
+          libxtst-dev \
+          libxt-dev \
           libxinerama-dev \
           libx11-xcb-dev \
           libxkbcommon-dev \
@@ -60,7 +60,7 @@ jobs:
           cmake -S ${{github.workspace}} -B ${{github.workspace}}/build \
             -G "Unix Makefiles" \
             -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/dist \
-            -DCMAKE_VERBOSE_MAKEFILE=true
+            -DCMAKE_VERBOSE_MAKEFILE=true -DOBS_FRONTEND_INCLUDE=/usr/include/obs
           cmake --build ${{github.workspace}}/build \
             --parallel 4 \
             --target install
