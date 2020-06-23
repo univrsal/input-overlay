@@ -36,10 +36,7 @@ jobs:
           " > /etc/apt/sources.list'
         sudo add-apt-repository -y ppa:obsproject/obs-studio
         sudo apt-get -qq update -m
-        
-        sudo wget -O /usr/include/obs/obs-frontend-api.h https://raw.githubusercontent.com/obsproject/obs-studio/25.0.0/UI/obs-frontend-api/obs-frontend-api.h
-        sudo ldconfig
-        
+                
         sudo apt-get install -y \
           libsdl2-dev \
           libsdl2-image-dev \
@@ -59,7 +56,9 @@ jobs:
           cmake \
           obs-studio \
           qtbase5-dev
-
+          
+        sudo wget -O /usr/include/obs/obs-frontend-api.h https://raw.githubusercontent.com/obsproject/obs-studio/25.0.0/UI/obs-frontend-api/obs-frontend-api.h
+        sudo ldconfig
     - name: Compile
       shell: bash
       run: | # First build everything
