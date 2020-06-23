@@ -19,4 +19,7 @@ if (ENABLE_PLUGIN)
     add_subdirectory(projects/plugin)
 endif()
 
-install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/LICENSE DESTINATION ./)
+# Don't install the license when building the deb installer
+if (ENABLE_CLIENT OR ENABLE_TOOL)
+    install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/LICENSE DESTINATION ./)
+endif()
