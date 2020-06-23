@@ -1,7 +1,7 @@
 project(input-overlay)
 
 set(PLUGIN_AUTHOR "univrsal")
-set(PLUGIN_GIT dvds3)
+set(PLUGIN_GIT input-overlay)
 set(LINUX_MAINTAINER_EMAIL "uni@vrsal.cf")
 set(MACOS_BUNDLEID "cf.vrsal.inputoverlay")
 
@@ -245,13 +245,13 @@ if(UNIX AND NOT APPLE)
 
         install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/data
             DESTINATION "$ENV{HOME}/.config/obs-studio/plugins/input-overlay/data/locale/")
-    elseif(GLOBAL_INSTALLATION)
+    elseif(DEB_INSTALLER)
         # For *.deb installer
-        install(TARGETS ${CMAKE_PROJECT_NAME}
+        install(TARGETS input-overlay
             LIBRARY DESTINATION "${CMAKE_INSTALL_FULL_LIBDIR}/obs-plugins")
 
         install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/data
-            DESTINATION "${CMAKE_INSTALL_FULL_DATAROOTDIR}/obs/obs-plugins/${CMAKE_PROJECT_NAME}")
+            DESTINATION "${CMAKE_INSTALL_FULL_DATAROOTDIR}/obs/obs-plugins/input-overlay")
     else()
         # For *.zip binary
         install(TARGETS input-overlay
