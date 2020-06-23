@@ -18,3 +18,5 @@ endif()
 if (ENABLE_PLUGIN)
     add_subdirectory(projects/plugin)
 endif()
+
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/LICENSE DESTINATION ./)

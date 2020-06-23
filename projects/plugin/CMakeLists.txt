@@ -15,6 +15,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(input-overlay_UI
         src/gui/io_settings_dialog.ui)
 
+option(LOCAL_INSTALLATION "Wether to install the obs plugin in the user config directory (default: OFF)" OFF)
+option(DEB_INSTALLER "Wether to use the folder structure for a *.deb installer on linux (default: OFF)" OFF)
+
 if (MSVC)
     set(input-overlay_PLATFORM_DEPS
             w32-pthreads)
@@ -235,32 +238,26 @@ if(UNIX AND NOT APPLE)
     set_target_properties(input-overlay PROPERTIES PREFIX "")
     target_link_libraries(input-overlay obs-frontend-api)
 
-    file(GLOB locale_files data/locale/*.ini)
-
     if (LOCAL_INSTALLATION)
         # Installs into home directory
         install(TARGETS input-overlay
             LIBRARY DESTINATION "$ENV{HOME}/.config/obs-studio/plugins/input-overlay/bin/${OBS_ARCH_NAME}")
 
-        install(FILES ${locale_files}
+        install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/data
             DESTINATION "$ENV{HOME}/.config/obs-studio/plugins/input-overlay/data/locale/")
     elseif(GLOBAL_INSTALLATION)
         # For *.deb installer
         install(TARGETS ${CMAKE_PROJECT_NAME}
             LIBRARY DESTINATION "${CMAKE_INSTALL_FULL_LIBDIR}/obs-plugins")
 
-        install(FILES ${locale_files}
-            DESTINATION "${CMAKE_INSTALL_FULL_DATAROOTDIR}/obs/obs-plugins/${CMAKE_PROJECT_NAME}/locale")
+        install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/data
+            DESTINATION "${CMAKE_INSTALL_FULL_DATAROOTDIR}/obs/obs-plugins/${CMAKE_PROJECT_NAME}")
     else()
         # For *.zip binary
         install(TARGETS input-overlay
-            LIBRARY DESTINATION "${CMAKE_CURRENT_SOURCE_DIR}/dist/input-overlay/bin/${OBS_ARCH_NAME}")
+            LIBRARY DESTINATION "input-overlay/bin/${OBS_ARCH_NAME}")
 
-        install(FILES ${locale_files}
-            DESTINATION "${CMAKE_CURRENT_SOURCE_DIR}/dist/input-overlay/data/locale/")
-        install(FILES ./COPYING
-            DESTINATION "${CMAKE_CURRENT_SOURCE_DIR}/dist/")
-        install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/package/README.txt"
-            DESTINATION "${CMAKE_CURRENT_SOURCE_DIR}/dist/")
+        install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/data
+            DESTINATION "input-overlay")
     endif()
 endif()
