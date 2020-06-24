@@ -45,9 +45,10 @@ inline void input_source::update(obs_data_t *settings)
 	}
 
 	m_settings.gamepad = obs_data_get_int(settings, S_CONTROLLER_ID);
+	/* TODO: deadzones */
 #ifdef _WIN32
-	m_settings.left_dz = obs_data_get_int(settings, S_CONTROLLER_L_DEAD_ZONE) / STICK_MAX_VAL;
-	m_settings.right_dz = obs_data_get_int(settings, S_CONTROLLER_R_DEAD_ZONE) / STICK_MAX_VAL;
+	//m_settings.left_dz = obs_data_get_int(settings, S_CONTROLLER_L_DEAD_ZONE) / ;
+	//m_settings.right_dz = obs_data_get_int(settings, S_CONTROLLER_R_DEAD_ZONE) / STICK_MAX_VAL;
 #endif
 	m_settings.mouse_sens = obs_data_get_int(settings, S_MOUSE_SENS);
 
@@ -172,13 +173,13 @@ obs_properties_t *get_properties_for_overlay(void *data)
 	/* Gamepad stuff */
 	obs_property_set_visible(obs_properties_add_int(props, S_CONTROLLER_ID, T_CONTROLLER_ID, 0, 3, 1), false);
 
-#if _WIN32 /* Linux only allows analog stick values 0 - 127 -> No reason for a deadzone */
-	obs_property_set_visible(obs_properties_add_int_slider(props, S_CONTROLLER_L_DEAD_ZONE, T_CONROLLER_L_DEADZONE, 1,
+#if _WIN32 /* TODO: DEADZONES */
+/*	obs_property_set_visible(obs_properties_add_int_slider(props, S_CONTROLLER_L_DEAD_ZONE, T_CONROLLER_L_DEADZONE, 1,
 														   STICK_MAX_VAL - 1, 1),
 							 false);
 	obs_property_set_visible(obs_properties_add_int_slider(props, S_CONTROLLER_R_DEAD_ZONE, T_CONROLLER_R_DEADZONE, 1,
 														   STICK_MAX_VAL - 1, 1),
-							 false);
+							 false);*/
 #else
 	auto *btn = obs_properties_add_button(props, S_RELOAD_PAD_DEVICES, T_RELOAD_PAD_DEVICES, reload_pads);
 	obs_property_set_visible(btn, false);

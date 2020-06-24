@@ -57,23 +57,23 @@ void element_analog_stick::calc_position(vec2 *v, element_data_analog_stick *d,
 	/* TODO: deadzones combined with bindings? */
 	switch (m_side) {
 	case ES_LEFT:
-#if _WIN32
-		if (!DEAD_ZONE(d->get_left_stick()->x, settings->left_dz))
-#endif
-			v->x += d->get_left_stick()->x * m_radius;
-#if _WIN32
-		if (!DEAD_ZONE(d->get_left_stick()->y, settings->left_dz))
-#endif
-			v->y += d->get_left_stick()->y * m_radius;
-		break;
-	case ES_RIGHT:
-#if _WIN32
-		if (!DEAD_ZONE(d->get_right_stick()->x, settings->right_dz))
-#endif
-			v->x += d->get_right_stick()->x * m_radius;
-#if _WIN32
-		if (!DEAD_ZONE(d->get_right_stick()->y, settings->right_dz))
-#endif
+//#if _WIN32
+//		if (!DEAD_ZONE(d->get_left_stick()->x, settings->left_dz))
+//#endif
+//			v->x += d->get_left_stick()->x * m_radius;
+//#if _WIN32
+//		if (!DEAD_ZONE(d->get_left_stick()->y, settings->left_dz))
+//#endif
+//			v->y += d->get_left_stick()->y * m_radius;
+//		break;
+//	case ES_RIGHT:
+//#if _WIN32
+//		if (!DEAD_ZONE(d->get_right_stick()->x, settings->right_dz))
+//#endif
+//			v->x += d->get_right_stick()->x * m_radius;
+//#if _WIN32
+//		if (!DEAD_ZONE(d->get_right_stick()->y, settings->right_dz))
+//#endif
 			v->y += d->get_right_stick()->y * m_radius;
 		break;
 	default:;

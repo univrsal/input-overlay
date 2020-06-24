@@ -21,7 +21,6 @@
 #include <mutex>
 #include <uiohook.h>
 #include <stdint.h>
-
 class element_data_holder;
 
 namespace hook {
