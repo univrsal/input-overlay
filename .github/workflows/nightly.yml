@@ -78,9 +78,9 @@ jobs:
             --target install
           
           export GIT_HASH=$(git rev-parse --short HEAD)
-          export PKG_VERSION="1-$GIT_HASH-$BRANCH_SHORT_NAME-git"
+          export PKG_VERSION="1-$GIT_HASH-$GITHUB_REF-git"
           
-          [[ "$BRANCH_FULL_NAME" =~ "^refs/tags/" ]] && export PKG_VERSION="$BRANCH_SHORT_NAME"
+          [[ "$GITHUB_REF" =~ "^refs/tags/" ]] && export PKG_VERSION="$BRANCH_SHORT_NAME"
           cd ${{github.workspace}}/build
           
           PAGER="cat" sudo checkinstall -y --type=debian --fstrans=no --nodoc \
@@ -88,7 +88,7 @@ jobs:
             --pkgname=input-overlay --pkgversion="$PKG_VERSION" \
             --pkglicense="GPLv2.0" --maintainer="${{ env.maintainer }}" \
             --pkggroup="video" \
-            --pkgsource="https://${{ env.project-url }}" \
+            --pkgsource="https://github.com/$GITHUB_REPOSITORY" \
             --requires="obs-studio \(\>= ${{ env.obs-studio-version }}\), libqt5core5a, libqt5widgets5, qt5-image-formats-plugins" \
             --pakdir="../package"
           
