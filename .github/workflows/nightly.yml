@@ -14,6 +14,9 @@ jobs:
       maintainer: uni@vrsal.cf
       project: input-overlay
       project-url: github.com/univrsal/input-overlay
+      sdl: 2.0.12 
+      sdl_image: 2.0.15
+      sdl_ttf: 2.0.15
     steps:
     - name: Checkout
       uses: actions/checkout@v2
@@ -76,16 +79,16 @@ jobs:
           sudo cmake --build ${{github.workspace}}/build \
             --parallel 4 \
             --target install
-          
+          cd ${{github.workspace}}
           export GIT_HASH=$(git rev-parse --short HEAD)
           export PKG_VERSION="1-$GIT_HASH-$GITHUB_REF-git"
           
           [[ "$GITHUB_REF" =~ "^refs/tags/" ]] && export PKG_VERSION="$BRANCH_SHORT_NAME"
           cd ${{github.workspace}}/build
-          
+          echo "Packaging version ${PK_VERSION}"
           PAGER="cat" sudo checkinstall -y --type=debian --fstrans=no --nodoc \
             --backup=no --deldoc=yes --install=no \
-            --pkgname=input-overlay --pkgversion="$PKG_VERSION" \
+            --pkgname=input-overlay --pkgversion="${PKG_VERSION}" \
             --pkglicense="GPLv2.0" --maintainer="${{ env.maintainer }}" \
             --pkggroup="video" \
             --pkgsource="https://github.com/$GITHUB_REPOSITORY" \
@@ -108,3 +111,189 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         path: ${{github.workspace}}/package/*.deb
+  windows:
+    if: 1 == 0 # Disable for now, since it's unfinished
+    name: 'Windows 32+64bit'
+    runs-on: [windows-latest]
+    env:
+      QT_VERSION: '5.10.1'
+      WINDOWS_DEPS_VERSION: '2017'
+      CMAKE_GENERATOR: "Visual Studio 16 2019"
+      CMAKE_SYSTEM_VERSION: "10.0"
+    steps:
+      - name: 'Add msbuild to PATH'
+        uses: microsoft/setup-msbuild@v1.0.0
+      - name: 'Checkout'
+        uses: actions/checkout@v2
+        with:
+          path: ${{ github.workspace }}/obs-virtual-cam
+          submodules: 'recursive'
+      - name: 'Checkout OBS'
+        uses: actions/checkout@v2
+        with:
+          repository: obsproject/obs-studio
+          path: ${{ github.workspace }}/obs-studio
+          submodules: 'recursive'
+      - name: 'Get OBS-Studio git info'
+        shell: bash
+        working-directory: ${{ github.workspace }}/obs-studio
+        run: |
+          git fetch --prune --unshallow
+          echo ::set-env name=OBS_GIT_BRANCH::$(git rev-parse --abbrev-ref HEAD)
+          echo ::set-env name=OBS_GIT_HASH::$(git rev-parse --short HEAD)
+          echo ::set-env name=OBS_GIT_TAG::$(git describe --tags --abbrev=0)
+      - name: 'Checkout last OBS-Studio release (${{ env.OBS_GIT_TAG }})'
+        shell: bash
+        working-directory: ${{ github.workspace }}/obs-studio
+        run: |
+          git checkout ${{ env.OBS_GIT_TAG }}
+          git submodule update
+      - name: 'Get obs-virtual-cam git info'
+        shell: bash
+        working-directory: ${{ github.workspace }}/obs-virtual-cam
+        run: |
+          git fetch --prune --unshallow
+          echo ::set-env name=GIT_BRANCH::${{ github.event.pull_request.head.ref }}
+          echo ::set-env name=GIT_HASH::$(git rev-parse --short HEAD)
+          echo ::set-env name=GIT_TAG::$(git describe --tags --abbrev=0)
+      - name: 'Install prerequisite: QT'
+        run: |
+          curl -kLO https://cdn-fastly.obsproject.com/downloads/Qt_${{ env.QT_VERSION }}.7z -f --retry 5 -C -
+          7z x Qt_${{ env.QT_VERSION }}.7z -o"${{ github.workspace }}\cmbuild\QT"
+      - name: 'Install prerequisite: Pre-built OBS dependencies'
+        run: |
+          curl -kLO https://cdn-fastly.obsproject.com/downloads/dependencies${{ env.WINDOWS_DEPS_VERSION }}.zip -f --retry 5 -C -
+          7z x dependencies${{ env.WINDOWS_DEPS_VERSION }}.zip -o"${{ github.workspace }}\cmbuild\deps"
+      - name: 'Restore OBS 32-bit build v${{ env.OBS_GIT_TAG }} from cache'
+        id: build-cache-obs-32
+        uses: actions/cache@v1
+        env:
+          CACHE_NAME: 'build-cache-obs-32'
+        with:
+          path: ${{ github.workspace }}/obs-studio/build32
+          key: ${{ runner.os }}-${{ env.CACHE_NAME }}-${{ env.OBS_GIT_TAG }}
+          restore-keys: |
+            ${{ runner.os }}-${{ env.CACHE_NAME }}-
+      - name: 'Configure OBS 32-bit'
+        if: steps.build-cache-obs-32.outputs.cache-hit != 'true'
+        working-directory: ${{ github.workspace }}/obs-studio
+        run: |
+          mkdir .\build32
+          cd .\build32
+          cmake -G "${{ env.CMAKE_GENERATOR }}" -A Win32 -DCMAKE_SYSTEM_VERSION="${{ env.CMAKE_SYSTEM_VERSION }}" -DQTDIR="${{ github.workspace }}\cmbuild\QT\${{ env.QT_VERSION }}\msvc2017" -DDepsPath="${{ github.workspace }}\cmbuild\deps\win32" -DBUILD_CAPTIONS=YES -DCOPIED_DEPENDENCIES=NO -DCOPY_DEPENDENCIES=YES ..
+      - name: 'Build OBS-Studio 32-bit'
+        if: steps.build-cache-obs-32.outputs.cache-hit != 'true'
+        working-directory: ${{ github.workspace }}/obs-studio
+        run: |
+          msbuild /m /p:Configuration=RelWithDebInfo .\build32\libobs\libobs.vcxproj
+          msbuild /m /p:Configuration=RelWithDebInfo .\build32\UI\obs-frontend-api\obs-frontend-api.vcxproj
+      - name: 'Restore OBS 64-bit build v${{ env.OBS_GIT_TAG }} from cache'
+        id: build-cache-obs-64
+        uses: actions/cache@v1
+        env:
+          CACHE_NAME: 'build-cache-obs-64'
+        with:
+          path: ${{ github.workspace }}/obs-studio/build64
+          key: ${{ runner.os }}-${{ env.CACHE_NAME }}-${{ env.OBS_GIT_TAG }}
+          restore-keys: |
+            ${{ runner.os }}-${{ env.CACHE_NAME }}-
+      - name: 'Configure OBS 64-bit'
+        if: steps.build-cache-obs-64.outputs.cache-hit != 'true'
+        working-directory: ${{ github.workspace }}/obs-studio
+        run: |
+          mkdir .\build64
+          cd .\build64
+          cmake -G "${{ env.CMAKE_GENERATOR }}" -A x64 -DCMAKE_SYSTEM_VERSION="${{ env.CMAKE_SYSTEM_VERSION }}" -DQTDIR="${{ github.workspace }}\cmbuild\QT\${{ env.QT_VERSION }}\msvc2017_64" -DDepsPath="${{ github.workspace }}\cmbuild\deps\win64" -DBUILD_CAPTIONS=YES -DCOPIED_DEPENDENCIES=NO -DCOPY_DEPENDENCIES=YES ..
+      - name: 'Build OBS-Studio 64-bit'
+        if: steps.build-cache-obs-64.outputs.cache-hit != 'true'
+        working-directory: ${{ github.workspace }}/obs-studio
+        run: |
+          msbuild /m /p:Configuration=RelWithDebInfo .\build64\libobs\libobs.vcxproj
+          msbuild /m /p:Configuration=RelWithDebInfo .\build64\UI\obs-frontend-api\obs-frontend-api.vcxproj
+      - name: 'Restore SDL libraries from cache'
+        id: build-sdl2
+        uses: actions/cache@v1
+        env:
+          CACHE_NAME: 'build-cache-sdl2'
+        with:
+          path: ${{ github.workspace }}/sdl2
+          key: ${{ runner.os }}-${{ env.CACHE_NAME }}-sdl2
+          restore-keys: |
+            ${{ runner.os }}-${{ env.CACHE_NAME }}-   
+      - name: Install SDL libraries
+        if: steps.build-sdl2.outputs.cache-hit != 'true'
+        run: |
+          curl -kLO https://www.libsdl.org/release/SDL2-devel-${{ evn.sdl }}-VC.zip -f --retry 5 -C -
+          curl -kLO https://www.libsdl.org/projects/SDL_image/release/SDL2_image-devel-${{ env.sdl_image }}-VC.zip -f --retry 5 -C -
+          curl -KLO https://www.libsdl.org/projects/SDL_ttf/release/SDL2_ttf-devel-${{ env.sdl_ttf }}-VC.zip -f --retry 5 -C -
+          7z x SDL2-devel-${{ env.sdl }}-VC.zip -o"${{ github.workspace }}\sdl2\"
+          7z x SDL2_image-devel-${{ env.sdl_image }}-VC.zip -o"${{ github.workspace }}\sdl2\"
+          7z x SDL2_ttf-devel-${{ env.sdl_ttf }}-VC.zip -o"${{ github.workspace }}\sdl2\"
+      - name: 'Configure input-overlay 64-bit'
+        working-directory: ${{ github.workspace }}\${{ env.project }}
+        run: |
+          mkdir .\build64
+          cd .\build64
+          cmake -G "${{ env.CMAKE_GENERATOR }}" -A x64 -DCMAKE_SYSTEM_VERSION="${{ env.CMAKE_SYSTEM_VERSION }}" \
+            -DQTDIR="${{ github.workspace }}\cmbuild\QT\${{ env.QT_VERSION }}\msvc2017_64" \
+            -DDepsPath="${{ github.workspace }}\cmbuild\deps\win64" \
+            -DLibObs_DIR="${{ github.workspace }}\obs-studio\build64\libobs" \
+            -DLIBOBS_INCLUDE_DIR="${{ github.workspace }}\obs-studio\libobs" \
+            -DLIBOBS_LIB="${{ github.workspace }}\obs-studio\build64\libobs\RelWithDebInfo\obs.lib" \
+            -DOBS_FRONTEND_LIB="${{ github.workspace }}\obs-studio\build64\UI\obs-frontend-api\RelWithDebInfo\obs-frontend-api.lib" \
+            -DPTHREAD_LIB="${{ github.workspace }}\obs-studio\build64\deps\w32-pthreads\RelWithDebInfo\w32-pthreads.lib" \
+            -DSDL2_INCLUDE_DIRS="${{ github.workspace }}\sdl2\SDL2-${{ env.sdl }}\include" \
+            -DSDL2TTF_INCLUDE_DIRS="${{ github.workspace }}\sdl2\SDL2_ttf-${{ env.sdl_ttf }}\include" \
+            -DSDL2IMAGE_INCLUDE_DIRS="${{ github.workspace }}\sdl2\SDL2_image-${{ env.sdl_image }}\include" \
+            -DSDL2_LIBRARIES="${{ github.workspace }}\sdl2\SDL2-${{ env.sdl }}\lib\x64\SDL2.lib" \
+            -DSDL2TTF_LIBRARIES="${{ github.workspace }}\sdl2\SDL2_ttf-${{ env.sdl_ttf }}\lib\x64\SDL2_ttf.lib" \
+            -DSDL2IMAGE_LIBRARIES="${{ github.workspace }}\sdl2\SDL2_image-${{ env.sdl_image }}\lib\x64\SDL2_image.lib" ..
+      - name: 'Configure input-overlay 32-bit'
+        working-directory: ${{ github.workspace }}/${{ env.project }}
+        run: |
+          mkdir .\build32
+          cd .\build32
+          cmake -G "${{ env.CMAKE_GENERATOR }}" -A Win32 -DCMAKE_SYSTEM_VERSION="${{ env.CMAKE_SYSTEM_VERSION }}" \
+          -DQTDIR="${{ github.workspace }}\cmbuild\QT\${{ env.QT_VERSION }}\msvc2017" \
+          -DDepsPath="${{ github.workspace }}\cmbuild\deps\win32" \
+          -DLibObs_DIR="${{ github.workspace }}\obs-studio\build32\libobs" \
+          -DLIBOBS_INCLUDE_DIR="${{ github.workspace }}\obs-studio\libobs" \
+          -DLIBOBS_LIB="${{ github.workspace }}\obs-studio\build32\libobs\RelWithDebInfo\obs.lib" \
+          -DOBS_FRONTEND_LIB="${{ github.workspace }}\obs-studio\build32\UI\obs-frontend-api\RelWithDebInfo\obs-frontend-api.lib" \
+          -DPTHREAD_LIB="${{ github.workspace }}\obs-studio\build32\deps\w32-pthreads\RelWithDebInfo\w32-pthreads.lib" \
+          -DSDL2_INCLUDE_DIRS="${{ github.workspace }}\sdl2\SDL2-${{ env.sdl }}\include" \
+          -DSDL2TTF_INCLUDE_DIRS="${{ github.workspace }}\sdl2\SDL2_ttf-${{ env.sdl_ttf }}\include" \
+          -DSDL2IMAGE_INCLUDE_DIRS="${{ github.workspace }}\sdl2\SDL2_image-${{ env.sdl_image }}\include" \
+          -DSDL2_LIBRARIES="${{ github.workspace }}\sdl2\SDL2-${{ env.sdl }}\lib\x86\SDL2.lib" \
+          -DSDL2TTF_LIBRARIES="${{ github.workspace }}\sdl2\SDL2_ttf-${{ env.sdl_ttf }}\lib\x86\SDL2_ttf.lib" \
+          -DSDL2IMAGE_LIBRARIES="${{ github.workspace }}\sdl2\SDL2_image-${{ env.sdl_image }}\lib\x86\SDL2_image.lib" ..  
+      - name: 'Build ${{ env.project }} 64-bit'
+        working-directory: ${{ github.workspace }}/${{ env.project }}
+        run: msbuild /m /p:Configuration=RelWithDebInfo .\build64\io-base.sln
+      - name: 'Build ${{ env.project }} 32-bit'
+        working-directory: ${{ github.workspace }}/${{ env.project }}
+        run: msbuild /m /p:Configuration=RelWithDebInfo .\build32\io-base.sln
+      - name: 'Set release filename'
+        shell: bash
+        run: |
+          FILENAME="${{ env.project }}-${{ env.GIT_TAG }}-Windows"
+          echo "::set-env name=WIN_FILENAME::$FILENAME"
+      - name: 'Package ${{ env.project }}'
+        working-directory: ${{ github.workspace }}/${{ env.project }}
+        run: |
+          mkdir build-package\obs-plugins\64bit
+          mkdir build-package\obs-plugins\32bit
+          mkdir build-package\data\obs-plugins\${{ env.project }}\
+          mkdir build-package\bin\64bit
+          mkdir build-package\bin\32bit
+          robocopy .\build64\src\virtual-output\RelWithDebInfo .\build-package\obs-plugins\64bit\ ${{project}}.dll obs-virtualoutput.stripped.pdb
+          robocopy .\build64\src\virtual-source\RelWithDebInfo .\build-package\bin\64bit\ obs-virtualsource.dll obs-virtualsource.stripped.pdb
+          robocopy .\build32\src\virtual-output\RelWithDebInfo .\build-package\obs-plugins\32bit\ obs-virtualoutput.dll obs-virtualoutput.stripped.pdb
+          robocopy .\build32\src\virtual-source\RelWithDebInfo .\build-package\bin\32bit\ obs-virtualsource.dll obs-virtualsource.stripped.pdb
+          robocopy .\locale\ .\build-package\data\obs-plugins\obs-virtualoutput\locale\ *.ini
+          ren .\build-package\obs-plugins\64bit\obs-virtualoutput.stripped.pdb obs-virtualoutput.pdb
+          ren .\build-package\obs-plugins\32bit\obs-virtualoutput.stripped.pdb obs-virtualoutput.pdb
+          ren .\build-package\bin\64bit\obs-virtualsource.stripped.pdb obs-virtualsource.pdb
+          ren .\build-package\bin\32bit\obs-virtualsource.stripped.pdb obs-virtualsource.pdb
+          mkdir release
+          7z a ".\release\${{ env.WIN_FILENAME }}.zip" ".\build-package\*"
