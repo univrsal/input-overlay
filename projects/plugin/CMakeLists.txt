@@ -132,12 +132,14 @@ add_library(input-overlay MODULE
         ${input-overlay_UI}
         ${input-overlay_PLATFORM_SOURCES})
 
+if (OBS_FRONTEND_INCLUDE)
+    include_directories(${OBS_FRONTEND_INCLUDE})
+endif()
 
 include_directories(
     ${COMMON_HEADERS}
     ${JSON_11_HEADER}
     ${GAMEPAD_INCLUDE_DIR}
-    "${LIBOBS_INCLUDE_DIR}/../UI/obs-frontend-api"
     ${UIOHOOK_INCLUDE_DIR}
     ${NETLIB_INCLUDE_DIR}
     ${Qt5Core_INCLUDES}
@@ -234,7 +236,7 @@ if(UNIX AND NOT APPLE)
     include(GNUInstallDirs)
     set_target_properties(input-overlay PROPERTIES PREFIX "")
     target_link_libraries(input-overlay obs-frontend-api)
-    
+
     if (LOCAL_INSTALLATION)
         # Installs into home directory
         install(TARGETS input-overlay
