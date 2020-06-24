@@ -255,3 +255,8 @@ element_data *element_data_holder::get_by_code(const uint16_t keycode)
 
 	return m_input_data[keycode].get();
 }
+
+void element_data_holder::clear_data()
+{
+	m_input_data.clear();
+}

@@ -21,7 +21,7 @@
 #include <graphics/graphics.h>
 #include <graphics/vec2.h>
 #include <QJsonObject>
-#include <string>
+#include <layout_constants.h>
 
 typedef struct gs_image_file gs_image_file_t;
 
@@ -39,8 +39,6 @@ enum data_source {
 namespace sources {
 class overlay_settings;
 }
-
-#include <layout_constants.h>
 
 class element_data {
 public:

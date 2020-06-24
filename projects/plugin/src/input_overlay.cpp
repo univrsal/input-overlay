@@ -43,7 +43,6 @@ OBS_MODULE_USE_DEFAULT_LOCALE("input-overlay", "en-US")
 
 bool obs_module_load()
 {
-	return false;
 	io_config::set_defaults();
 	io_config::load();
 

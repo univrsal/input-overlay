@@ -18,13 +18,8 @@
 
 #pragma once
 
-#include "../util/obs_util.hpp"
-#include <string>
-#include <vector>
-#include <layout_constants.h>
 #include <mutex>
-#include <stdio.h>
-#include <memory>
+
 
 namespace gamepad {
 

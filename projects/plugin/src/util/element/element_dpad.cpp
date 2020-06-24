@@ -16,8 +16,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *************************************************************************/
 
-#include "element_dpad.hpp"
 #include "../../sources/input_source.hpp"
+#include "element_dpad.hpp"
 #include <keycodes.h>
 
 element_dpad::element_dpad() : element_texture(ET_DPAD_STICK) {}

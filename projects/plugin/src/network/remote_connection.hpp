@@ -37,7 +37,7 @@ void start_network(uint16_t port);
 
 void close_network();
 
-void *network_handler(void *);
+void network_handler();
 
 char *read_text(tcp_socket sock, char **buf);
 

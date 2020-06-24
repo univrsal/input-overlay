@@ -20,7 +20,15 @@
 
 #include <mutex>
 #include <uiohook.h>
+
+#ifdef LINUX
 #include <stdint.h>
+#else
+#define VC_EXTRALEAN
+#define WIN32_LEAN_AND_MEAN
+#include <Windows.h>
+#endif
+
 class element_data_holder;
 
 namespace hook {
@@ -33,7 +41,13 @@ extern bool hook_initialized;
 extern bool data_initialized;
 extern std::mutex mutex;
 
+#ifdef _WIN32
+DWORD WINAPI hook_thread_proc(LPVOID arg);
+#else
+
 void *hook_thread_proc(void *arg);
+
+#endif
 
 /* Checks if mouse scrolling timed out */
 void check_wheel();
@@ -51,4 +65,4 @@ void end_hook();
 int hook_enable();
 
 void process_event(uiohook_event *event);
-};
+}

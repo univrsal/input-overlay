@@ -19,15 +19,13 @@ option(LOCAL_INSTALLATION "Wether to install the obs plugin in the user config d
 option(DEB_INSTALLER "Wether to use the folder structure for a *.deb installer on linux (default: OFF)" OFF)
 
 if (WIN32 OR APPLE)
-    set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
+    include(${CMAKE_SOURCE_DIR}/cmake/FindLibObs.cmake)
 endif()
 
 find_package(LibObs REQUIRED)
 find_package(Qt5 REQUIRED COMPONENTS Core Widgets)
 
 if (MSVC)
-    set(input-overlay_PLATFORM_DEPS
-            w32-pthreads)
     set(input-overlay_PLATFORM_SOURCES
             src/util/window_helper_win.cpp)
     set(OBS_FRONTEND_INCLUDE "${LIBOBS_INCLUDE_DIR}/../UI/")
@@ -151,9 +149,9 @@ target_link_libraries(input-overlay
         Qt5::Core
         Qt5::Widgets
         libobs
-        uiohook
-        netlib
-        gamepad)
+        uiohook_static
+        netlib_static
+        gamepad_static)
 
 # --- Windows-specific build settings and tasks ---
 if(WIN32)
@@ -173,8 +171,6 @@ if(WIN32)
 
     target_link_libraries(input-overlay
         "${OBS_FRONTEND_LIB}"
-        "${LIBOBS_LIB}"
-        "${THREAD_LIB}"
     )
 
     # --- Release package helper ---

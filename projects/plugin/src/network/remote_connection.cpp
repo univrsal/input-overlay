@@ -21,8 +21,8 @@
 #include "../util/config.hpp"
 #include "../util/obs_util.hpp"
 #include <obs-module.h>
-#include <string>
 #include <util/platform.h>
+#include <thread>
 
 namespace network {
 bool network_state = false;
@@ -31,11 +31,8 @@ bool local_input = false; /* True if either of the local hooks is running */
 char local_ip[16] = "127.0.0.1\0";
 
 io_server *server_instance = nullptr;
-#ifdef _WIN32
-static HANDLE network_thread;
-#else
-static pthread_t network_thread;
-#endif
+std::thread network_thread;
+
 
 const char *get_status()
 {
@@ -63,15 +60,8 @@ void start_network(uint16_t port)
 		if (server_instance->init()) {
 			auto error = 0;
 			network_flag = true;
-#ifdef _WIN32
-			network_thread =
-				CreateThread(nullptr, 0, static_cast<LPTHREAD_START_ROUTINE>(network_handler), nullptr, 0, nullptr);
-			network_state = network_thread;
-			error = GetLastError();
-#else
-			error = pthread_create(&network_thread, nullptr, network_handler, nullptr);
-			network_state = error == 0;
-#endif
+			network_thread = std::thread(network_handler);
+			
 			if (!network_state) {
 				DEBUG_LOG(LOG_ERROR, "Server thread creation failed with code: %i", error);
 				failed = true;
@@ -95,18 +85,14 @@ void close_network()
 {
 	if (network_state) {
 		network_flag = false;
+		network_thread.join();
 		delete server_instance;
 
 		netlib_quit();
 	}
 }
 
-#ifdef _WIN32
-DWORD WINAPI network_handler(LPVOID arg)
-#else
-
-void *network_handler(void *)
-#endif
+void network_handler()
 {
 	tcp_socket sock;
 
@@ -147,12 +133,6 @@ void *network_handler(void *)
 		if (numready)
 			server_instance->update_clients();
 	}
-
-#ifdef _WIN32
-	return 0x0;
-#else
-	pthread_exit(nullptr);
-#endif
 }
 
 int send_message(tcp_socket sock, message msg)

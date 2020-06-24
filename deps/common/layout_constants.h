@@ -58,6 +58,12 @@
 
 #define TRIGGER_THRESHOLD 0.2f
 
+#undef DT_CENTER /* God dammit microsoft what the fuck */
+#undef DT_LEFT
+#undef DT_RIGHT
+#undef ES_LEFT
+#undef ES_RIGHT
+
 enum overlay_flag { OF_LEFT_STICK = 1 << 0, OF_RIGHT_STICK = 1 << 1, OF_GAMEPAD = 1 << 2, OF_MOUSE = 1 << 3 };
 
 enum dpad_texture {
