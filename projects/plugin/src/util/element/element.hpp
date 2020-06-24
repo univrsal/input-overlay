@@ -18,8 +18,8 @@
 
 #pragma once
 
-#include "graphics/graphics.h"
-#include "graphics/vec2.h"
+#include <graphics/graphics.h>
+#include <graphics/vec2.h>
 #include <QJsonObject>
 #include <string>
 

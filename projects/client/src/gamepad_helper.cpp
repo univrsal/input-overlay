@@ -16,6 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *************************************************************************/
 
+#define NOMINMAX /* Some windows header defines min/max */
 #include "gamepad_helper.hpp"
 #include "network.hpp"
 #include "client_util.hpp"

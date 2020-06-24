@@ -27,6 +27,7 @@
 #include <obs-module.h>
 #include <util.hpp>
 #include <util/platform.h>
+#include <util/threading.h>
 
 namespace hook {
 /*
@@ -43,27 +44,26 @@ bool hook_initialized = false;
 bool data_initialized = false;
 std::mutex mutex;
 
-static pthread_t hook_thread;
-static pthread_mutex_t hook_running_mutex;
-static pthread_mutex_t hook_control_mutex;
-static pthread_cond_t hook_control_cond;
+static std::thread hook_thread;
+static std::mutex hook_running_mutex;
+static std::mutex hook_control_mutex;
+static std::condition_variable hook_control_cond;
 
 void dispatch_proc(uiohook_event *const event)
 {
 	switch (event->type) {
 	case EVENT_HOOK_ENABLED:
-		pthread_mutex_lock(&hook_running_mutex);
-
-		pthread_cond_signal(&hook_control_cond);
-		pthread_mutex_unlock(&hook_control_mutex);
+		hook_running_mutex.lock();
+		hook_control_cond.notify_all();
+		hook_control_mutex.unlock();
 		break;
 	case EVENT_HOOK_DISABLED:
-		pthread_mutex_lock(&hook_control_mutex);
+		hook_control_mutex.lock();
 
 #if defined(__APPLE__) && defined(__MACH__)
 		CFRunLoopStop(CFRunLoopGetMain());
 #endif
-		pthread_mutex_unlock(&hook_running_mutex);
+		hook_running_mutex.unlock();
 	default:; /* Prevent missing case error */
 	}
 	process_event(event);
@@ -75,8 +75,8 @@ void *hook_thread_proc(void *arg)
 	if (status != UIOHOOK_SUCCESS) {
 		*(int *)arg = status;
 	}
-	pthread_cond_signal(&hook_control_cond);
-	pthread_mutex_unlock(&hook_control_mutex);
+	hook_control_cond.notify_all();
+	hook_control_mutex.unlock();
 
 	return arg;
 }
@@ -111,9 +111,6 @@ void init_data_holder()
 void end_hook()
 {
 	mutex.lock();
-	pthread_mutex_destroy(&hook_running_mutex);
-	pthread_mutex_destroy(&hook_control_mutex);
-	pthread_cond_destroy(&hook_control_cond);
 	delete input_data;
 	input_data = nullptr;
 	mutex.unlock();
@@ -121,10 +118,6 @@ void end_hook()
 
 void start_hook()
 {
-	pthread_mutex_init(&hook_running_mutex, nullptr);
-	pthread_mutex_init(&hook_control_mutex, nullptr);
-	pthread_cond_init(&hook_control_cond, nullptr);
-
 	/* Set the logger callback for library output. */
 	hook_set_logger_proc(&logger_proc);
 
@@ -231,8 +224,8 @@ void process_event(uiohook_event *const event)
 int hook_enable()
 {
 	/* Lock the thread control mutex.  This will be unlocked when the
-           thread has finished starting, or when it has fully stopped. */
-	pthread_mutex_lock(&hook_control_mutex);
+       thread has finished starting, or when it has fully stopped. */
+	hook_control_mutex.lock();
 
 	/* Set the initial status. */
 	int status = UIOHOOK_FAILURE;
@@ -247,7 +240,7 @@ int hook_enable()
 	int priority = sched_get_priority_max(policy);
 
 	int *hook_thread_status = (int *)malloc(sizeof(int));
-	if (pthread_create(&hook_thread, &hook_thread_attr, hook_thread_proc, hook_thread_status) == 0) {
+	if (pthread_create(hook_thread.native_handle(), &hook_thread_attr, hook_thread_proc, hook_thread_status) == 0) {
 #if (defined(__APPLE__) && defined(__MACH__)) || _POSIX_C_SOURCE >= 200112L
 		/* Some POSIX revisions do not support pthread_setschedprio so we will
                use pthread_setschedparam instead. */
@@ -256,6 +249,8 @@ int hook_enable()
 			blog(LOG_WARNING, "[input-overlay] %s [%u]: Could not set thread priority %i for thread 0x%lX!\n",
 				 __FUNCTION__, __LINE__, priority, (unsigned long)hook_thread);
 		}
+#elif WIN32
+		
 #else
 		/* Raise the thread priority using glibc pthread_setschedprio. */
 		if (pthread_setschedprio(hook_thread, priority) != 0) {
@@ -268,6 +263,7 @@ int hook_enable()
            event is received or the thread terminates.
            NOTE This unlocks the hook_control_mutex while we wait.*/
 
+		hook_control_cond.wait_until(hook_control_mutex);
 		pthread_cond_wait(&hook_control_cond, &hook_control_mutex);
 
 		if (pthread_mutex_trylock(&hook_running_mutex) == 0) {
