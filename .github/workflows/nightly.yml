@@ -225,13 +225,11 @@ jobs:
       - name: Install SDL libraries
         if: steps.build-sdl2.outputs.cache-hit != 'true'
         run: |
-          curl -kLO https://www.libsdl.org/release/SDL2-devel-${{ env.sdl }}-VC.zip -f --retry 5
+          curl -kLO https://www.libsdl.org/release/SDL2-devel-${{ env.sdl }}-VC.zip -f --retry 10
           7z x SDL2-devel-${{ env.sdl }}-VC.zip -o"${{ github.workspace }}\sdl2\"
-          
-          curl -kLO https://www.libsdl.org/projects/SDL_image/release/SDL2_image-devel-${{ env.sdl_image }}-VC.zip -f --retry 5
+          curl -kLO https://www.libsdl.org/projects/SDL_image/release/SDL2_image-devel-${{ env.sdl_image }}-VC.zip -f --retry 10
           7z x SDL2_image-devel-${{ env.sdl_image }}-VC.zip -o"${{ github.workspace }}\sdl2\"
-          
-          curl -kLO https://www.libsdl.org/projects/SDL_ttf/release/SDL2_ttf-devel-${{ env.sdl_ttf }}-VC.zip -f --retry 5
+          curl -kLO https://www.libsdl.org/projects/SDL_ttf/release/SDL2_ttf-devel-${{ env.sdl_ttf }}-VC.zip -f --retry 10
           7z x SDL2_ttf-devel-${{ env.sdl_ttf }}-VC.zip -o"${{ github.workspace }}\sdl2\"
       - name: 'Configure input-overlay 64-bit'
         working-directory: ${{ github.workspace }}\${{ env.project }}
