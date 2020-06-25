@@ -141,6 +141,7 @@ include_directories(
     ${JSON_11_HEADER}
     ${GAMEPAD_INCLUDE_DIR}
     ${UIOHOOK_INCLUDE_DIR}
+    "${LIBOBS_INCLUDE_DIR}/../UI/obs-frontend-api"
     ${NETLIB_INCLUDE_DIR}
     ${Qt5Core_INCLUDES}
     ${Qt5Widgets_INCLUDES}
