@@ -298,21 +298,21 @@ jobs:
           mkdir build-package\cct\x64
           mkdir build-package\client
           
-          robocopy .\build64\plugin\RelWithDebInfo .\build-package\plugin\obs-plugins\64bit\ ${{ env.project }}.dll ${{ env.project }}.pdb
-          robocopy .\build64\plugin\RelWithDebInfo .\build-package\plugin\bin\64bit\ ${{ env.project }}.dll ${{ env.project }}.pdb
-          robocopy .\build32\plugin\RelWithDebInfo .\build-package\plugin\obs-plugins\32bit\ ${{ env.project }}.dll ${{ env.project }}.pdb
-          robocopy .\build32\plugin\RelWithDebInfo .\build-package\plugin\bin\32bit\ ${{ env.project }}.dll ${{ env.project }}.pdb
+          robocopy .\build64\projects\plugin\RelWithDebInfo .\build-package\plugin\obs-plugins\64bit\ ${{ env.project }}.dll ${{ env.project }}.pdb
+          robocopy .\build64\projects\plugin\RelWithDebInfo .\build-package\plugin\bin\64bit\ ${{ env.project }}.dll ${{ env.project }}.pdb
+          robocopy .\build32\projects\plugin\RelWithDebInfo .\build-package\plugin\obs-plugins\32bit\ ${{ env.project }}.dll ${{ env.project }}.pdb
+          robocopy .\build32\projects\plugin\RelWithDebInfo .\build-package\plugin\bin\32bit\ ${{ env.project }}.dll ${{ env.project }}.pdb
           robocopy /E .\projects\plugin\data .\build-package\plugin\data\obs-plugins\${{ env.project }}
           
-          robocopy .\build64\client\RelWithDebInfo .\build-package\client\ client.exe
+          robocopy .\build64\projects\client\RelWithDebInfo .\build-package\client\ client.exe
           ren .\build-package\client\client.exe client.x64.exe
-          robocopy .\build32\client\RelWithDebInfo .\build-package\client\ client.exe
+          robocopy .\build32\projects\client\RelWithDebInfo .\build-package\client\ client.exe
           ren .\build-package\client\client.exe client.x86.exe
           
-          robocopy .\build64\cct\RelWithDebInfo .\build-package\cct\x64\ io-cct.exe
-          robocopy .\build64\cct\RelWithDebInfo .\build-package\cct\x64\ *.dll
-          robocopy .\build32\cct\RelWithDebInfo .\build-package\cct\x86\ io-cct.exe
-          robocopy .\build32\cct\RelWithDebInfo .\build-package\cct\x86\ *.dll
+          robocopy .\build64\projects\cct\RelWithDebInfo .\build-package\cct\x64\ io-cct.exe
+          robocopy .\build64\projects\cct\RelWithDebInfo .\build-package\cct\x64\ *.dll
+          robocopy .\build32\projects\cct\RelWithDebInfo .\build-package\cct\x86\ io-cct.exe
+          robocopy .\build32\projects\cct\RelWithDebInfo .\build-package\cct\x86\ *.dll
           robocopy /E .\projects\cct\res .\build-package\cct\res
           
           cd .\build-package\cct\x64\
