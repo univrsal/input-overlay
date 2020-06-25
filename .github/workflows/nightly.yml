@@ -110,9 +110,9 @@ jobs:
     - name: Upload installer
       uses: actions/upload-artifact@v2
       with:
+        name: debian-installer
         path: ${{github.workspace}}/package/*.deb
   windows:
-    if: 1 == 0 # Disable for now, since it's unfinished
     name: 'Windows 32+64bit'
     runs-on: [windows-latest]
     env:
