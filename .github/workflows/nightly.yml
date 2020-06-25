@@ -223,7 +223,7 @@ jobs:
       - name: Install SDL libraries
         if: steps.build-sdl2.outputs.cache-hit != 'true'
         run: |
-          curl -kLO https://www.libsdl.org/release/SDL2-devel-${{ evn.sdl }}-VC.zip -f --retry 5 -C -
+          curl -kLO https://www.libsdl.org/release/SDL2-devel-${{ env.sdl }}-VC.zip -f --retry 5 -C -
           curl -kLO https://www.libsdl.org/projects/SDL_image/release/SDL2_image-devel-${{ env.sdl_image }}-VC.zip -f --retry 5 -C -
           curl -KLO https://www.libsdl.org/projects/SDL_ttf/release/SDL2_ttf-devel-${{ env.sdl_ttf }}-VC.zip -f --retry 5 -C -
           7z x SDL2-devel-${{ env.sdl }}-VC.zip -o"${{ github.workspace }}\sdl2\"
@@ -281,19 +281,44 @@ jobs:
       - name: 'Package ${{ env.project }}'
         working-directory: ${{ github.workspace }}/${{ env.project }}
         run: |
-          mkdir build-package\obs-plugins\64bit
-          mkdir build-package\obs-plugins\32bit
-          mkdir build-package\data\obs-plugins\${{ env.project }}\
-          mkdir build-package\bin\64bit
-          mkdir build-package\bin\32bit
-          robocopy .\build64\src\virtual-output\RelWithDebInfo .\build-package\obs-plugins\64bit\ ${{project}}.dll obs-virtualoutput.stripped.pdb
-          robocopy .\build64\src\virtual-source\RelWithDebInfo .\build-package\bin\64bit\ obs-virtualsource.dll obs-virtualsource.stripped.pdb
-          robocopy .\build32\src\virtual-output\RelWithDebInfo .\build-package\obs-plugins\32bit\ obs-virtualoutput.dll obs-virtualoutput.stripped.pdb
-          robocopy .\build32\src\virtual-source\RelWithDebInfo .\build-package\bin\32bit\ obs-virtualsource.dll obs-virtualsource.stripped.pdb
-          robocopy .\locale\ .\build-package\data\obs-plugins\obs-virtualoutput\locale\ *.ini
-          ren .\build-package\obs-plugins\64bit\obs-virtualoutput.stripped.pdb obs-virtualoutput.pdb
-          ren .\build-package\obs-plugins\32bit\obs-virtualoutput.stripped.pdb obs-virtualoutput.pdb
-          ren .\build-package\bin\64bit\obs-virtualsource.stripped.pdb obs-virtualsource.pdb
-          ren .\build-package\bin\32bit\obs-virtualsource.stripped.pdb obs-virtualsource.pdb
+          mkdir build-package\plugin\obs-plugins\64bit
+          mkdir build-package\plugin\obs-plugins\32bit
+          mkdir build-package\plugin\data\obs-plugins\${{ env.project }}\
+          mkdir build-package\plugin\bin\64bit
+          mkdir build-package\plugin\bin\32bit
+          mkdir build-package\cct\x86
+          mkdir build-package\cct\x64
+          mkdir build-package\client
+          
+          robocopy .\build64\plugin\RelWithDebInfo .\build-package\plugin\obs-plugins\64bit\ ${{ project }}.dll ${{ project }}.pdb
+          robocopy .\build64\plugin\RelWithDebInfo .\build-package\plugin\bin\64bit\ ${{ project }}.dll ${{ project }}.pdb
+          robocopy .\build32\plugin\RelWithDebInfo .\build-package\plugin\obs-plugins\32bit\ ${{ project }}.dll ${{ project }}.pdb
+          robocopy .\build32\plugin\RelWithDebInfo .\build-package\plugin\bin\32bit\ ${{ project }}.dll ${{ project }}.pdb
+          robocopy /E .\projects\plugin\data .\build-package\plugin\data\obs-plugins\${{ env.project }}
+          
+          robocopy .\build64\client\RelWithDebInfo .\build-package\client\ client.exe
+          ren .\build-package\client\client.exe client.x64.exe
+          robocopy .\build32\client\RelWithDebInfo .\build-package\client\ client.exe
+          ren .\build-package\client\client.exe client.x86.exe
+          
+          robocopy .\build64\cct\RelWithDebInfo .\build-package\cct\x64\ io-cct.exe
+          robocopy .\build64\cct\RelWithDebInfo .\build-package\cct\x64\ *.dll
+          robocopy .\build32\cct\RelWithDebInfo .\build-package\cct\x86\ io-cct.exe
+          robocopy .\build32\cct\RelWithDebInfo .\build-package\cct\x86\ *.dll
+          robocopy /E .\projects\cct\res .\build-package\cct\res
+          
+          cd .\build-package\cct\x64\
+          mklink /D res ..\res
+          cd ..\x86
+          mklink /D res ..\res
+          
+          cd ${{ github.workspace }}/${{ env.project }}
           mkdir release
           7z a ".\release\${{ env.WIN_FILENAME }}.zip" ".\build-package\*"
+      - name: 'Publish ${{ env.WIN_FILENAME }}.zip'
+        if: success()
+        uses: actions/upload-artifact@v2-preview
+        with:
+          name: '${{ env.GIT_TAG }}-Windows'
+          path: ${{ github.workspace }}\${{ project }}\release\*.zip
+          
