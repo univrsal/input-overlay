@@ -313,12 +313,8 @@ jobs:
           robocopy .\build64\projects\cct\RelWithDebInfo .\build-package\cct\x64\ *.dll
           robocopy .\build32\projects\cct\RelWithDebInfo .\build-package\cct\x86\ io-cct.exe
           robocopy .\build32\projects\cct\RelWithDebInfo .\build-package\cct\x86\ *.dll
-          robocopy /E .\projects\cct\res .\build-package\cct\res
-          
-          cd .\build-package\cct\x64\
-          mklink /D res ..\res
-          cd ..\x86
-          mklink /D res ..\res
+          robocopy /E .\projects\cct\res .\build-package\cct\x86\res
+          robocopy /E .\projects\cct\res .\build-package\cct\x64\res
           
           cd ${{ github.workspace }}/${{ env.project }}
           mkdir release
