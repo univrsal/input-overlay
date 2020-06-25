@@ -320,5 +320,5 @@ jobs:
         uses: actions/upload-artifact@v2-preview
         with:
           name: '${{ env.GIT_TAG }}-Windows'
-          path: ${{ github.workspace }}\${{ project }}\release\*.zip
+          path: ${{ github.workspace }}\${{ env.project }}\release\*.zip
           
