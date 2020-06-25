@@ -20,6 +20,7 @@ option(DEB_INSTALLER "Wether to use the folder structure for a *.deb installer o
 
 if (WIN32 OR APPLE)
     include(${CMAKE_SOURCE_DIR}/cmake/FindLibObs.cmake)
+    include(${CMAKE_SOURCE_DIR}/cmake/ObsPluginHelpers.cmake)
 endif()
 
 find_package(LibObs REQUIRED)
@@ -44,14 +45,6 @@ endif ()
 if (APPLE)
     # TODO: macOS stuff
 endif ()
-
-if(ARCH EQUAL 64)
-    set(OBS_ARCH_NAME "64bit")
-    set(OBS_BUILDDIR_ARCH "build64")
-else()
-    set(OBS_ARCH_NAME "32bit")
-    set(OBS_BUILDDIR_ARCH "build32")
-endif()
 
 if (NOT Qt5Widgets_FOUND)
     message(FATAL_ERROR "Failed to find Qt5")
@@ -175,62 +168,8 @@ if(WIN32)
     target_link_libraries(input-overlay
         "${OBS_FRONTEND_LIB}"
     )
-
-    # --- Release package helper ---
-    # The "release" folder has a structure similar OBS' one on Windows
-    set(RELEASE_DIR "${PROJECT_SOURCE_DIR}/release")
-
-    add_custom_command(TARGET input-overlay POST_BUILD
-        # If config is Release or RelWithDebInfo, package release files
-        COMMAND if $<CONFIG:Release>==1 OR $<CONFIG:RelWithDebInfo>==1 (
-            "${CMAKE_COMMAND}" -E make_directory
-                "${RELEASE_DIR}/data/obs-plugins/input-overlay"
-                "${RELEASE_DIR}/obs-plugins/${ARCH_NAME}"
-        )
-
-        COMMAND if $<CONFIG:Release>==1 OR $<CONFIG:RelWithDebInfo>==1 (
-            "${CMAKE_COMMAND}" -E copy_directory
-                "${PROJECT_SOURCE_DIR}/data"
-                "${RELEASE_DIR}/data/obs-plugins/input-overlay"
-        )
-
-        COMMAND if $<CONFIG:Release>==1 OR $<CONFIG:RelWithDebInfo>==1 (
-            "${CMAKE_COMMAND}" -E copy
-                "$<TARGET_FILE:input-overlay>"
-                "${RELEASE_DIR}/obs-plugins/${ARCH_NAME}"
-        )
-
-        # If config is RelWithDebInfo, copy the pdb file
-        COMMAND if $<CONFIG:RelWithDebInfo>==1 (
-            "${CMAKE_COMMAND}" -E copy
-                "$<TARGET_PDB_FILE:input-overlay>"
-                "${RELEASE_DIR}/obs-plugins/${ARCH_NAME}"
-        )
-
-        # Copy to obs-studio dev environment for immediate testing
-        COMMAND if $<CONFIG:Debug>==1 (
-            "${CMAKE_COMMAND}" -E copy
-                "$<TARGET_FILE:input-overlay>"
-                "${LIBOBS_INCLUDE_DIR}/../${OBS_BUILDDIR_ARCH}/rundir/$<CONFIG>/obs-plugins/${ARCH_NAME}"
-        )
-
-        COMMAND if $<CONFIG:Debug>==1 (
-            "${CMAKE_COMMAND}" -E copy
-                "$<TARGET_PDB_FILE:input-overlay>"
-                "${LIBOBS_INCLUDE_DIR}/../${OBS_BUILDDIR_ARCH}/rundir/$<CONFIG>/obs-plugins/${ARCH_NAME}"
-        )
-
-        COMMAND if $<CONFIG:Debug>==1 (
-            "${CMAKE_COMMAND}" -E make_directory
-                "${LIBOBS_INCLUDE_DIR}/../${OBS_BUILDDIR_ARCH}/rundir/$<CONFIG>/data/obs-plugins/input-overlay"
-        )
-
-        COMMAND if $<CONFIG:Debug>==1 (
-            "${CMAKE_COMMAND}" -E copy_directory
-                "${PROJECT_SOURCE_DIR}/data"
-                "${LIBOBS_INCLUDE_DIR}/../${OBS_BUILDDIR_ARCH}/rundir/$<CONFIG>/data/obs-plugins/input-overlay"
-        )
-    )
+    message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}/data")
+    install_external_plugin_with_data(input-overlay "data")
 endif()
 
 if(UNIX AND NOT APPLE)
