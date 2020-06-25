@@ -231,7 +231,7 @@ jobs:
           curl -kLO https://www.libsdl.org/projects/SDL_image/release/SDL2_image-devel-${{ env.sdl_image }}-VC.zip -f --retry 5
           7z x SDL2_image-devel-${{ env.sdl_image }}-VC.zip -o"${{ github.workspace }}\sdl2\"
           
-          curl -KLO https://www.libsdl.org/projects/SDL_ttf/release/SDL2_ttf-devel-${{ env.sdl_ttf }}-VC.zip -f --retry 5
+          curl -kLO https://www.libsdl.org/projects/SDL_ttf/release/SDL2_ttf-devel-${{ env.sdl_ttf }}-VC.zip -f --retry 5
           7z x SDL2_ttf-devel-${{ env.sdl_ttf }}-VC.zip -o"${{ github.workspace }}\sdl2\"
       - name: 'Configure input-overlay 64-bit'
         working-directory: ${{ github.workspace }}\${{ env.project }}
