@@ -290,10 +290,10 @@ jobs:
           mkdir build-package\cct\x64
           mkdir build-package\client
           
-          robocopy .\build64\plugin\RelWithDebInfo .\build-package\plugin\obs-plugins\64bit\ ${{ project }}.dll ${{ project }}.pdb
-          robocopy .\build64\plugin\RelWithDebInfo .\build-package\plugin\bin\64bit\ ${{ project }}.dll ${{ project }}.pdb
-          robocopy .\build32\plugin\RelWithDebInfo .\build-package\plugin\obs-plugins\32bit\ ${{ project }}.dll ${{ project }}.pdb
-          robocopy .\build32\plugin\RelWithDebInfo .\build-package\plugin\bin\32bit\ ${{ project }}.dll ${{ project }}.pdb
+          robocopy .\build64\plugin\RelWithDebInfo .\build-package\plugin\obs-plugins\64bit\ ${{ env.project }}.dll ${{ env.project }}.pdb
+          robocopy .\build64\plugin\RelWithDebInfo .\build-package\plugin\bin\64bit\ ${{ env.project }}.dll ${{ env.project }}.pdb
+          robocopy .\build32\plugin\RelWithDebInfo .\build-package\plugin\obs-plugins\32bit\ ${{ env.project }}.dll ${{ env.project }}.pdb
+          robocopy .\build32\plugin\RelWithDebInfo .\build-package\plugin\bin\32bit\ ${{ env.project }}.dll ${{ env.project }}.pdb
           robocopy /E .\projects\plugin\data .\build-package\plugin\data\obs-plugins\${{ env.project }}
           
           robocopy .\build64\client\RelWithDebInfo .\build-package\client\ client.exe
