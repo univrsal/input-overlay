@@ -14,9 +14,6 @@ jobs:
       maintainer: uni@vrsal.cf
       project: input-overlay
       project-url: github.com/univrsal/input-overlay
-      sdl: 2.0.12 
-      sdl_image: 2.0.15
-      sdl_ttf: 2.0.15
     steps:
     - name: Checkout
       uses: actions/checkout@v2
@@ -120,6 +117,11 @@ jobs:
       WINDOWS_DEPS_VERSION: '2017'
       CMAKE_GENERATOR: "Visual Studio 16 2019"
       CMAKE_SYSTEM_VERSION: "10.0"
+      obs-studio-version: 25.0.8
+      project: input-overlay
+      sdl: 2.0.12 
+      sdl_image: 2.0.15
+      sdl_ttf: 2.0.15
     steps:
       - name: 'Add msbuild to PATH'
         uses: microsoft/setup-msbuild@v1.0.0
