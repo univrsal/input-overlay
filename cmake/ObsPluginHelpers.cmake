@@ -2,6 +2,14 @@
 
 set(EXTERNAL_PLUGIN_OUTPUT_DIR "${LibObs_DIR}/../rundir")
 
+if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+    set(OBS_ARCH_NAME "64bit")
+    set(OBS_BUILDDIR_ARCH "build64")
+else()
+    set(OBS_ARCH_NAME "32bit")
+    set(OBS_BUILDDIR_ARCH "build32")
+endif()
+
 # Fix XCode includes to ignore warnings on system includes
 function(target_include_directories_system _target)
   if(XCODE)
