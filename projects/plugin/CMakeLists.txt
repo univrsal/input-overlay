@@ -18,9 +18,9 @@ set(input-overlay_UI
 option(LOCAL_INSTALLATION "Wether to install the obs plugin in the user config directory (default: OFF)" OFF)
 option(DEB_INSTALLER "Wether to use the folder structure for a *.deb installer on linux (default: OFF)" OFF)
 
+include(${CMAKE_SOURCE_DIR}/cmake/ObsPluginHelpers.cmake)
 if (WIN32 OR APPLE)
     include(${CMAKE_SOURCE_DIR}/cmake/FindLibObs.cmake)
-    include(${CMAKE_SOURCE_DIR}/cmake/ObsPluginHelpers.cmake)
 endif()
 
 find_package(LibObs REQUIRED)
