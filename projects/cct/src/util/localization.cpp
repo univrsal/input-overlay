@@ -95,10 +95,11 @@ void localization::scan_lang_folder()
 	if (h_find != INVALID_HANDLE_VALUE) {
 		do {
 			std::string full_path = m_lang_folder + "/" + data.cFileName;
+			file_name = data.cFileName;
 			if (!(GetFileAttributes(full_path.c_str()) & FILE_ATTRIBUTE_DIRECTORY)) {
 #else
 	/* Iterating over items in folder on linux
-     * and filtering only *.ini files
+     * and filtering only *.json files
      */
 	DIR *dir;
 	struct dirent *dirent;

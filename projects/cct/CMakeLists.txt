@@ -1,4 +1,5 @@
 project(io-cct)
+cmake_minimum_required(VERSION 3.10)
 
 if (DEBUG)
     add_compile_definitions(_DEBUG)
