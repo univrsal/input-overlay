@@ -25,9 +25,9 @@
 
 class checkbox : public gui_element {
 public:
-	checkbox(int8_t id, int x, int y, const char *text, dialog *parent);
+	checkbox(int x, int y, const char *text, dialog *parent);
 
-	checkbox(int8_t id, int x, int y, const char *text, dialog *parent, bool state);
+	checkbox(int x, int y, const char *text, dialog *parent, bool state);
 
 	~checkbox();
 

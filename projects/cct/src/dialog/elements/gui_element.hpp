@@ -92,7 +92,9 @@ public:
 
 	int8_t get_id() const;
 
-	virtual void init(dialog *parent, SDL_Rect dim, int8_t id);
+	void set_id(int8_t id) { m_element_id = id; }
+
+	virtual void init(dialog *parent, SDL_Rect dim);
 
 	void set_flags(uint16_t flags);
 

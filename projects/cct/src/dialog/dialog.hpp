@@ -59,6 +59,16 @@ public:
 
 	void add(gui_element *e);
 
+	template<class T, typename... Args> T *add(Args &&... args)
+	{
+		auto id = m_screen_elements.size();
+		auto elem = new T(std::forward<Args>(args)...);
+		m_screen_elements.emplace_back(elem);
+		if (elem->can_select())
+			m_tab_items.emplace_back(elem);
+		return elem;
+	}
+
 	void set_dimension(uint16_t w, uint16_t h);
 
 	void set_flags(uint16_t flags);
@@ -78,6 +88,8 @@ public:
 	int get_right() const;
 
 	int get_bottom() const;
+
+	int8_t get_next_id() const { return int8_t(m_screen_elements.size()); }
 
 protected:
 	/* Tab handling */

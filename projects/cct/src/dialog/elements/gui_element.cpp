@@ -78,7 +78,7 @@ int8_t gui_element::get_id() const
 	return m_element_id;
 }
 
-void gui_element::init(dialog *parent, const SDL_Rect dim, const int8_t id)
+void gui_element::init(dialog *parent, const SDL_Rect dim)
 {
 	m_parent_dialog = parent;
 	m_dimensions = dim;
@@ -86,7 +86,7 @@ void gui_element::init(dialog *parent, const SDL_Rect dim, const int8_t id)
 	m_position.x = dim.x;
 	m_position.y = dim.y;
 
-	m_element_id = id;
+	m_element_id = parent->get_next_id();
 }
 
 bool gui_element::is_mouse_over(const SDL_Point *p)

@@ -21,11 +21,10 @@
 void DialogHelp::init()
 {
 	dialog::init();
-	const auto info = new label(1, 8, 32, LANG_LABEL_HELP_AND_ABOUT, this);
-	add(info);
+	const auto info = add<label>(8, 32, LANG_LABEL_HELP_AND_ABOUT, this);
 
-	add(new button(ACTION_OK, 8, m_dimensions.h - 32, LANG_BUTTON_OK, this));
-	add(new button(2, 116, m_dimensions.h - 32, LANG_BUTTON_OPEN_URL, this));
+	add<button>(8, m_dimensions.h - 32, LANG_BUTTON_OK, this)->set_id(ACTION_OK);
+	add<button>(116, m_dimensions.h - 32, LANG_BUTTON_OPEN_URL, this);
 	set_flags(DIALOG_CENTERED | DIALOG_TOP_MOST);
 
 	const auto temp = m_dimensions;

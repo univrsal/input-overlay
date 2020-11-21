@@ -20,12 +20,11 @@
 #include "../../util/localization.hpp"
 #include "../../util/palette.hpp"
 
-combobox::combobox(const int8_t id, const int x, const int y, const int w, const int h, dialog *parent,
-				   const uint16_t flags)
+combobox::combobox(const int x, const int y, const int w, const int h, dialog *parent, const uint16_t flags)
 {
 	const SDL_Rect temp = {x, y, w, h};
 	m_flags = flags;
-	gui_element::init(parent, temp, id);
+	gui_element::init(parent, temp);
 	m_item_v_space = get_helper()->util_default_text_height() + ITEM_V_SPACE;
 }
 
@@ -122,7 +121,7 @@ bool combobox::handle_events(SDL_Event *event, const bool was_handled)
 
 			if (m_list_open) {
 				/* Move mouse to item position (Little gimmick, but I like the feature) */
-				mouse_pos.y = get_bottom() + m_hovered_id * m_item_v_space + ITEM_V_SPACE * 1.5;
+				mouse_pos.y = int(get_bottom() + m_hovered_id * m_item_v_space + ITEM_V_SPACE * 1.5);
 				SDL_WarpMouseInWindow(nullptr, mouse_pos.x, mouse_pos.y);
 			}
 		}
@@ -131,7 +130,7 @@ bool combobox::handle_events(SDL_Event *event, const bool was_handled)
 		const auto m_y = event->button.y - get_bottom();
 
 		if (m_x >= 0 && m_x <= m_dimensions.w && m_y >= 0) {
-			m_hovered_id = UTIL_MIN(m_y / m_item_v_space, m_items.size() - 1);
+			m_hovered_id = uint8_t(UTIL_MIN(m_y / m_item_v_space, m_items.size() - 1));
 		}
 	} else if (event->type == SDL_KEYDOWN) {
 		if (m_focused && event->key.keysym.sym == SDLK_RETURN) {
@@ -166,7 +165,7 @@ bool combobox::is_mouse_over(const SDL_Point *p)
 void combobox::cycle_up(const bool select)
 {
 	if (m_hovered_id - 1 < 0)
-		m_hovered_id = m_items.size() - 1;
+		m_hovered_id = uint8_t(m_items.size() - 1);
 	else
 		m_hovered_id--;
 	if (select)
@@ -175,7 +174,7 @@ void combobox::cycle_up(const bool select)
 
 void combobox::cycle_down(const bool select)
 {
-	if (m_hovered_id + 1 >= m_items.size())
+	if (uint8_t(m_hovered_id + 1) >= m_items.size())
 		m_hovered_id = 0;
 	else
 		m_hovered_id++;

@@ -26,25 +26,25 @@ void dialog_element_settings::init()
 	int8_t id = 1;
 
 	/* Labels */
-	add(new label(id++, 8, 35, LANG_LABEL_WIDTH, this));
-	add(new label(id++, (m_dimensions.w / 2) + 4, 35, LANG_LABEL_HEIGHT, this));
-	add(new label(id++, 8, 65, LANG_LABEL_X, this));
-	add(new label(id++, (m_dimensions.w / 2) + 4, 65, LANG_LABEL_Y, this));
-	add(new label(id++, 8, 95, LANG_LABEL_U, this));
-	add(new label(id++, (m_dimensions.w / 2) + 4, 95, LANG_LABEL_V, this));
-	add(new label(id++, 8, 125, LANG_LABEL_ELEMENT_ID, this));
-	add(new label(id++, 8, 170, LANG_LABEL_KEY_CODE, this));
-	add(new label(id++, (m_dimensions.w / 2) + 8, 170, LANG_LABEL_Z_LEVEL, this));
+	add<label>(8, 35, LANG_LABEL_WIDTH, this);
+	add<label>((m_dimensions.w / 2) + 4, 35, LANG_LABEL_HEIGHT, this);
+	add<label>(8, 65, LANG_LABEL_X, this);
+	add<label>((m_dimensions.w / 2) + 4, 65, LANG_LABEL_Y, this);
+	add<label>(8, 95, LANG_LABEL_U, this);
+	add<label>((m_dimensions.w / 2) + 4, 95, LANG_LABEL_V, this);
+	add<label>(8, 125, LANG_LABEL_ELEMENT_ID, this);
+	add<label>(8, 170, LANG_LABEL_KEY_CODE, this);
+	add<label>((m_dimensions.w / 2) + 8, 170, LANG_LABEL_Z_LEVEL, this);
 
 	/* Text boxes */
-	m_element_width = new textbox(id++, 55, 32, (m_dimensions.w / 2) - 63, 20, "0", this);
-	m_element_height = new textbox(id++, (m_dimensions.w / 2) + 55, 32, (m_dimensions.w / 2) - 63, 20, "0", this);
+	m_element_width = new textbox(55, 32, (m_dimensions.w / 2) - 63, 20, "0", this);
+	m_element_height = new textbox((m_dimensions.w / 2) + 55, 32, (m_dimensions.w / 2) - 63, 20, "0", this);
 
-	m_element_x = new textbox(id++, 55, 62, (m_dimensions.w / 2) - 63, 20, "0", this);
-	m_element_y = new textbox(id++, (m_dimensions.w / 2) + 55, 62, (m_dimensions.w / 2) - 63, 20, "0", this);
+	m_element_x = new textbox(55, 62, (m_dimensions.w / 2) - 63, 20, "0", this);
+	m_element_y = new textbox((m_dimensions.w / 2) + 55, 62, (m_dimensions.w / 2) - 63, 20, "0", this);
 
-	m_element_u = new textbox(id++, 55, 92, (m_dimensions.w / 2) - 63, 20, "0", this);
-	m_element_v = new textbox(id++, (m_dimensions.w / 2) + 55, 92, (m_dimensions.w / 2) - 63, 20, "0", this);
+	m_element_u = new textbox(55, 92, (m_dimensions.w / 2) - 63, 20, "0", this);
+	m_element_v = new textbox((m_dimensions.w / 2) + 55, 92, (m_dimensions.w / 2) - 63, 20, "0", this);
 
 	m_element_width->set_flags(TEXTBOX_NUMERIC);
 	m_element_height->set_flags(TEXTBOX_NUMERIC);
@@ -67,22 +67,24 @@ void dialog_element_settings::init()
 	add(m_element_u);
 	add(m_element_v);
 
-	add(m_element_id = new textbox(id++, 8, 145, m_dimensions.w - 16, 20, "", this));
-	add(m_element_vc = new textbox(id++, 8, 190, m_dimensions.w / 2 - 16, 20, "", this));
+	add(m_element_id = new textbox(8, 145, m_dimensions.w - 16, 20, "", this));
+	add(m_element_vc = new textbox(8, 190, m_dimensions.w / 2 - 16, 20, "", this));
 
-	add(m_element_z_level = new textbox(id++, m_dimensions.w / 2 + 8, 190, m_dimensions.w / 2 - 16, 20, "0", this));
+	add(m_element_z_level = new textbox(m_dimensions.w / 2 + 8, 190, m_dimensions.w / 2 - 16, 20, "0", this));
 
 	m_element_id->set_flags(TEXTBOX_NO_SPACE | TEXTBOX_ALPHA_NUMERIC);
 	m_element_vc->set_flags(TEXTBOX_HEX | TEXTBOX_NO_SPACE);
 	m_element_z_level->set_flags(TEXTBOX_NUMERIC);
 
 	/* Controls */
-	add(new button(ACTION_NEW_ELEMENT, 8, m_dimensions.h - 182, m_dimensions.w - 16, LANG_BUTTON_ADD_ELEMENT, this));
-	add(new button(ACTION_DEL_ELEMENT, 8, m_dimensions.h - 154, m_dimensions.w - 16, LANG_BUTTON_DELETE_ELEMENT, this));
-	add(new button(ACTION_MOD_ELEMENT, 8, m_dimensions.h - 126, m_dimensions.w - 16, LANG_BUTTON_MODIFY_ELEMENT, this));
-	add(new button(ACTION_SAVE_CONFIG, 8, m_dimensions.h - 98, m_dimensions.w - 16, LANG_BUTTON_SAVE_CONFIG, this));
-	add(new button(ACTION_HELP_BUTTON, 8, m_dimensions.h - 70, m_dimensions.w - 16, LANG_BUTTON_HELP, this));
-	add(new button(ACTION_OK, 8, m_dimensions.h - 32, LANG_BUTTON_OK, this));
+	add<button>(8, m_dimensions.h - 182, m_dimensions.w - 16, LANG_BUTTON_ADD_ELEMENT, this)->set_id(ACTION_NEW_ELEMENT);
+	add<button>(8, m_dimensions.h - 154, m_dimensions.w - 16, LANG_BUTTON_DELETE_ELEMENT, this)
+		->set_id(ACTION_DEL_ELEMENT);
+	add<button>(8, m_dimensions.h - 126, m_dimensions.w - 16, LANG_BUTTON_MODIFY_ELEMENT, this)
+		->set_id(ACTION_MOD_ELEMENT);
+	add<button>(8, m_dimensions.h - 98, m_dimensions.w - 16, LANG_BUTTON_SAVE_CONFIG, this)->set_id(ACTION_SAVE_CONFIG);
+	add<button>(8, m_dimensions.h - 70, m_dimensions.w - 16, LANG_BUTTON_HELP, this)->set_id(ACTION_HELP_BUTTON);
+	add<button>(8, m_dimensions.h - 32, LANG_BUTTON_OK, this)->set_id(ACTION_OK);
 
 	set_flags(DIALOG_DRAGGABLE | DIALOG_TEXTINPUT);
 }

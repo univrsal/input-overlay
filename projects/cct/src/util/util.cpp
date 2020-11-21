@@ -17,8 +17,10 @@
  *************************************************************************/
 
 #include "util.hpp"
+#include "sdl_helper.hpp"
 #include <fstream>
 #include <locale>
+#include <sstream>
 
 SDL_bool util_move_element(int *x, int *y, const SDL_Keycode key)
 {
@@ -53,7 +55,11 @@ void util::replace(std::string &str, const char *find, const char *replace)
 bool util::load_json(const std::string &path, std::string &err, json11::Json &out)
 {
 	bool result = false;
+#if WIN32
+	std::ifstream in(sdl_helper::util_utf8_to_wstring(path));
+#else
 	std::ifstream in(path.c_str());
+#endif
 	in.imbue(std::locale("en_US.UTF8"));
 
 	if (in.good()) {
@@ -71,12 +77,68 @@ bool util::load_json(const std::string &path, std::string &err, json11::Json &ou
 
 bool util::is_empty(const std::string &path)
 {
+#if WIN32
+	std::ifstream input(sdl_helper::util_utf8_to_wstring(path));
+
+#else
 	std::ifstream input(path.c_str());
+#endif
+
 	return input.peek() == std::ifstream::traits_type::eof();
 }
 
 bool util::can_access(const std::string &path)
 {
+#if WIN32
+	std::ofstream output(sdl_helper::util_utf8_to_wstring(path));
+#else
 	std::ofstream output(path.c_str());
-	return output.good();
+#endif
+	bool result = output.good();
+	output.close();
+	return result;
+}
+
+void util::indent_json(std::string &json)
+{
+	std::stringstream tmp;
+	int indent_level = 0;
+	char prev = 0;
+
+	for (auto it = json.begin(); it < json.end(); it++) {
+		switch (*it) {
+		case '{':
+		case '[':
+			indent_level++;
+		case ',':
+			tmp << *it << '\n';
+			for (int i = 0; i < indent_level; i++)
+				tmp << "    ";
+			break;
+		case '}':
+		case ']':
+			tmp << "\n";
+			indent_level--;
+			for (int i = 0; i < indent_level; i++)
+				tmp << "    ";
+			tmp << *it;
+			break;
+		case '"':
+			prev = 0;
+			do {
+				tmp << *it;
+				prev = *it++;
+			} while (*it != '"' || prev == '\\');
+			tmp << *it;
+			break;
+		case ' ':
+			break;
+		case ':':
+			tmp << *it << " ";
+			break;
+		default:
+			tmp << *it;
+		}
+	}
+	json = tmp.str();
 }

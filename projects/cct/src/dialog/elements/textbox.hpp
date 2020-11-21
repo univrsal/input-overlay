@@ -28,7 +28,7 @@ class gui_element;
 
 class textbox : public gui_element {
 public:
-	textbox(int8_t id, int x, int y, int w, int h, std::string text, dialog *parent);
+	textbox(int x, int y, int w, int h, std::string text, dialog *parent);
 
 	~textbox();
 
@@ -49,6 +49,10 @@ public:
 	void set_text(std::string s);
 
 	void set_text(int i);
+
+	void set_text(double d);
+
+	void set_text(float f);
 
 	void set_hex_int(uint16_t i);
 

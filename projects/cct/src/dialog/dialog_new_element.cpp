@@ -109,8 +109,8 @@ void dialog_new_element::init()
 	case ET_TRIGGER:
 	case ET_GAMEPAD_ID:
 	case ET_DPAD_STICK:
-		add(m_selector = new atlas_selector(m_id++, get_left() + 270, get_top() + 30, m_dimensions.w - 278,
-											m_dimensions.h - 38, m_tool->get_atlas(), this));
+		add(m_selector = new atlas_selector(get_left() + 270, get_top() + 30, m_dimensions.w - 278, m_dimensions.h - 38,
+											m_tool->get_atlas(), this));
 		m_selector->set_selection(&m_selection);
 		add_selection_elements();
 		break;
@@ -118,8 +118,10 @@ void dialog_new_element::init()
 	default:;
 	}
 
-	add(m_ok = new button(ACTION_OK, 8, m_dimensions.h - 32, LANG_BUTTON_OK, this));
-	add(m_cancel = new button(ACTION_CANCEL, 124, m_dimensions.h - 32, LANG_BUTTON_CANCEL, this));
+	m_ok = add<button>(8, m_dimensions.h - 32, LANG_BUTTON_OK, this);
+	m_cancel = add<button>(124, m_dimensions.h - 32, LANG_BUTTON_CANCEL, this);
+	m_cancel->set_id(ACTION_CANCEL);
+	m_ok->set_id(ACTION_OK);
 }
 
 void dialog_new_element::action_performed(const int8_t action_id)
@@ -231,7 +233,7 @@ uint16_t dialog_new_element::get_vc() const
 
 uint8_t dialog_new_element::get_z_level() const
 {
-	return SDL_strtol(m_z_level->get_text()->c_str(), nullptr, 10);
+	return uint8_t(SDL_strtol(m_z_level->get_text()->c_str(), nullptr, 10));
 }
 
 element_side dialog_new_element::get_side() const
@@ -271,7 +273,7 @@ mouse_movement dialog_new_element::get_mouse_type() const
 uint8_t dialog_new_element::get_radius() const
 {
 	if (m_radius)
-		return SDL_strtol(m_radius->c_str(), nullptr, 10);
+		return uint8_t(SDL_strtol(m_radius->c_str(), nullptr, 10));
 	return 0;
 }
 
@@ -325,19 +327,19 @@ void dialog_new_element::add_selection_elements()
 	if (m_element_y == 0)
 		m_element_y = 30;
 
-	add(new label(m_id++, 8, m_element_y, LANG_LABEL_TEXTURE_SELECTION, this));
+	add<label>(8, m_element_y, LANG_LABEL_TEXTURE_SELECTION, this);
 
 	m_element_y += 25;
-	add(new label(m_id++, 8, m_element_y, LANG_LABEL_WIDTH, this));
-	add(new label(m_id++, 16 + panel_w / 2, m_element_y, LANG_LABEL_HEIGHT, this));
-	add(m_w = new textbox(m_id++, 8 + panel_w / 4 + 4, m_element_y, panel_w / 4, 20, "0", this));
-	add(m_h = new textbox(m_id++, 8 + panel_w / 4 * 3 + 4, m_element_y, panel_w / 4, 20, "0", this));
+	add<label>(8, m_element_y, LANG_LABEL_WIDTH, this);
+	add<label>(16 + panel_w / 2, m_element_y, LANG_LABEL_HEIGHT, this);
+	m_w = add<textbox>(8 + panel_w / 4 + 4, m_element_y, panel_w / 4, 20, "0", this);
+	m_h = add<textbox>(8 + panel_w / 4 * 3 + 4, m_element_y, panel_w / 4, 20, "0", this);
 
 	m_element_y += 25;
-	add(new label(m_id++, 8, m_element_y, LANG_LABEL_U, this));
-	add(new label(m_id++, 16 + panel_w / 2, m_element_y, LANG_LABEL_V, this));
-	add(m_u = new textbox(m_id++, 8 + panel_w / 4 + 4, m_element_y, panel_w / 4, 20, "0", this));
-	add(m_v = new textbox(m_id++, 8 + panel_w / 4 * 3 + 4, m_element_y, panel_w / 4, 20, "0", this));
+	add<label>(8, m_element_y, LANG_LABEL_U, this);
+	add<label>(16 + panel_w / 2, m_element_y, LANG_LABEL_V, this);
+	m_u = add<textbox>(8 + panel_w / 4 + 4, m_element_y, panel_w / 4, 20, "0", this);
+	m_v = add<textbox>(8 + panel_w / 4 * 3 + 4, m_element_y, panel_w / 4, 20, "0", this);
 
 	m_w->set_flags(TEXTBOX_NUMERIC);
 	m_w->set_cutoff(20);
@@ -355,13 +357,13 @@ void dialog_new_element::add_keycode_elements()
 {
 	if (m_element_y == 0)
 		m_element_y = 30;
-	add(new label(m_id++, 8, m_element_y, LANG_LABEL_KEY_CODE, this));
+	add<label>(8, m_element_y, LANG_LABEL_KEY_CODE, this);
 	m_element_y += 25;
-	add(m_keycode = new textbox(m_id++, 8, m_element_y, panel_w, 20, "0", this));
+	m_keycode = add<textbox>(8, m_element_y, panel_w, 20, "0", this);
 	m_keycode->set_cutoff(10);
 	m_keycode->set_flags(TEXTBOX_HEX | TEXTBOX_KEYBIND);
 	m_element_y += 25;
-	add(m_read_keybind = new checkbox(m_id++, 8, m_element_y, LANG_CHECKBOX_RECORD_KEYBIND, this, true));
+	m_read_keybind = add<checkbox>(8, m_element_y, LANG_CHECKBOX_RECORD_KEYBIND, this, true);
 	m_element_y += 40;
 }
 
@@ -369,9 +371,9 @@ void dialog_new_element::add_element_id()
 {
 	if (m_element_y == 0)
 		m_element_y = 30;
-	add(new label(m_id++, 9, m_element_y, LANG_LABEL_ELEMENT_ID, this));
+	add<label>(9, m_element_y, LANG_LABEL_ELEMENT_ID, this);
 	m_element_y += 25;
-	add(m_element_id = new textbox(m_id++, 8, m_element_y, panel_w, 20, ELEMENT_UNNAMED, this));
+	m_element_id = add<textbox>(8, m_element_y, panel_w, 20, ELEMENT_UNNAMED, this);
 	m_element_id->set_flags(TEXTBOX_ALPHA_NUMERIC);
 	m_element_y += 40;
 }
@@ -380,9 +382,9 @@ void dialog_new_element::add_z_level()
 {
 	if (m_element_y == 0)
 		m_element_y = 30;
-	add(new label(m_id++, 9, m_element_y, LANG_LABEL_Z_LEVEL, this));
+	add<label>(9, m_element_y, LANG_LABEL_Z_LEVEL, this);
 	m_element_y += 25;
-	add(m_z_level = new textbox(m_id++, 8, m_element_y, panel_w, 20, "1", this));
+	m_z_level = add<textbox>(8, m_element_y, panel_w, 20, "1", this);
 	m_z_level->set_flags(TEXTBOX_NUMERIC);
 	m_element_y += 40;
 }
@@ -391,15 +393,15 @@ void dialog_new_element::add_mouse_or_analog_stick(const char *label_text, const
 {
 	if (m_element_y == 0)
 		m_element_y = 30;
-	add(new label(m_id++, 9, m_element_y, label_text, this));
+	add<label>(9, m_element_y, label_text, this);
 	m_element_y += 25;
-	add(m_binary_choice = new combobox(m_id++, 8, m_element_y, panel_w, 20, this));
+	m_binary_choice = add<combobox>(8, m_element_y, panel_w, 20, this);
 	m_binary_choice->add_item(item_a);
 	m_binary_choice->add_item(item_b);
 	m_element_y += 25;
-	add(new label(m_id++, 9, m_element_y, LANG_LABEL_MOVEMENT_RADIUS, this));
+	add<label>(9, m_element_y, LANG_LABEL_MOVEMENT_RADIUS, this);
 	m_element_y += 25;
-	add(m_radius = new textbox(m_id++, 8, m_element_y, panel_w, 20, "0", this));
+	m_radius = add<textbox>(8, m_element_y, panel_w, 20, "0", this);
 	m_z_level->set_flags(TEXTBOX_NUMERIC);
 	m_radius->set_flags(TEXTBOX_NUMERIC);
 	m_element_y += 40;
@@ -409,8 +411,7 @@ void dialog_new_element::add_info(const char *unlocalized_text)
 {
 	if (m_element_y == 0)
 		m_element_y = 30;
-	auto *l = new label(m_id++, 9, m_element_y, unlocalized_text, this);
-	add(l);
+	auto *l = add<label>(9, m_element_y, unlocalized_text, this);
 	m_element_y += 15 + l->get_height();
 }
 
@@ -418,22 +419,22 @@ void dialog_new_element::add_trigger()
 {
 	if (m_element_y == 0)
 		m_element_y = 30;
-	add(new label(m_id++, 9, m_element_y, LANG_LABEL_TRIGGER_SIDE, this));
+	add<label>(9, m_element_y, LANG_LABEL_TRIGGER_SIDE, this);
 	m_element_y += 25;
-	add(m_binary_choice = new combobox(m_id++, 8, m_element_y, panel_w, 20, this));
+	m_binary_choice = add<combobox>(8, m_element_y, panel_w, 20, this);
 	m_binary_choice->add_item(LANG_LEFT);
 	m_binary_choice->add_item(LANG_RIGHT);
 	m_element_y += 25;
 
-	add(new label(m_id++, 9, m_element_y, LANG_LABEL_TRIGGER_DIRECTION, this));
+	add<label>(9, m_element_y, LANG_LABEL_TRIGGER_DIRECTION, this);
 	m_element_y += 25;
-	add(m_direction = new combobox(m_id++, 8, m_element_y, panel_w, 20, this));
+	m_direction = add<combobox>(8, m_element_y, panel_w, 20, this);
 	m_direction->add_item(LANG_UP);
 	m_direction->add_item(LANG_DOWN);
 	m_direction->add_item(LANG_LEFT);
 	m_direction->add_item(LANG_RIGHT);
 	m_element_y += 25;
 
-	add(m_trigger_mode = new checkbox(m_id++, 8, m_element_y, LANG_CHECKBOX_TRIGGER_BUTON, this));
+	m_trigger_mode = add<checkbox>(8, m_element_y, LANG_CHECKBOX_TRIGGER_BUTON, this);
 	m_element_y += 40;
 }

@@ -20,17 +20,16 @@
 #include "../../util/localization.hpp"
 #include "../../util/palette.hpp"
 
-button::button(const int8_t id, const int x, const int y, const char *text, dialog *parent)
-	: button(id, x, y, 100, text, parent)
+button::button(const int x, const int y, const char *text, dialog *parent) : button(x, y, 100, text, parent)
 {
 	/* NO-OP*/
 }
 
-button::button(const int8_t id, const int x, const int y, const int w, const char *text, dialog *parent)
+button::button(const int x, const int y, const int w, const char *text, dialog *parent)
 {
 	const SDL_Rect temp_rect = {x, y, w, 0};
 	m_unlocalized_text = text;
-	gui_element::init(parent, temp_rect, id);
+	gui_element::init(parent, temp_rect);
 	button::refresh();
 }
 

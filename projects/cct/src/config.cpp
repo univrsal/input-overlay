@@ -175,14 +175,14 @@ void config::handle_events(SDL_Event *e)
 			m_cs.translate(m_temp_selection.x, m_temp_selection.y);
 
 			m_temp_selection.x =
-				ceil(UTIL_MAX((m_temp_selection.x - m_cs.get_origin_x()) / ((float)m_cs.get_scale()), 0));
+				int(ceil(UTIL_MAX((m_temp_selection.x - m_cs.get_origin_x()) / ((float)m_cs.get_scale()), 0)));
 			m_temp_selection.y =
-				ceil(UTIL_MAX((m_temp_selection.y - m_cs.get_origin_y()) / ((float)m_cs.get_scale()), 0));
+				int(ceil(UTIL_MAX((m_temp_selection.y - m_cs.get_origin_y()) / ((float)m_cs.get_scale()), 0)));
 
 			m_temp_selection.w =
-				ceil(SDL_abs(m_selection_start.x - e->button.x) / static_cast<float>(m_cs.get_scale()));
+				int(ceil(SDL_abs(m_selection_start.x - e->button.x) / static_cast<float>(m_cs.get_scale())));
 			m_temp_selection.h =
-				ceil(SDL_abs(m_selection_start.y - e->button.y) / static_cast<float>(m_cs.get_scale()));
+				int(ceil(SDL_abs(m_selection_start.y - e->button.y) / static_cast<float>(m_cs.get_scale())));
 
 			m_selected_elements.clear();
 
@@ -233,8 +233,12 @@ void config::write_config(notifier *n)
 	}
 
 	const auto start = SDL_GetTicks();
-	std::ofstream out(m_config_path);
+#if WIN32
+	std::ofstream out(sdl_helper::util_utf8_to_wstring(m_config_path));
+#else
 
+	std::ofstream out(m_config_path);
+#endif
 	/* The most bottom right element determines the width/height */
 	auto height = 0, width = 0;
 	std::vector<json> elements;
@@ -260,8 +264,9 @@ void config::write_config(notifier *n)
 							{CFG_TOTAL_HEIGHT, height},
 							{CFG_FLAGS, flags},
 							{CFG_ELEMENTS, elements}};
-
-	out << cfg.dump();
+	std::string json_str = cfg.dump();
+	util::indent_json(json_str);
+	out << json_str;
 
 	const auto end = SDL_GetTicks();
 

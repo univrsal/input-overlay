@@ -34,33 +34,31 @@
 void dialog_setup::init()
 {
 	dialog::init();
-	int8_t id = 1;
+	int8_t id = 2;
 
 	// info labels
 	auto info = std::string(LABEL_BUILD);
 	info.append(TIMESTAMP);
 
-	add(new label(id++, 8, 22, info.c_str(), FONT_WSTRING_LARGE, this,
-				  ELEMENT_UNLOCALIZED | ELEMENT_ABSOLUTE_POSITION));
-	add(new label(id++, 8, 58, LANG_LABEL_INFO, this, ELEMENT_ABSOLUTE_POSITION));
+	add<label>(8, 22, info.c_str(), FONT_WSTRING_LARGE, this, ELEMENT_UNLOCALIZED | ELEMENT_ABSOLUTE_POSITION);
+	add<label>(8, 58, LANG_LABEL_INFO, this, ELEMENT_ABSOLUTE_POSITION);
+	add<label>(8, 35, LANG_LABEL_TEXTURE_PATH, this);
+	m_texture_path = add<textbox>(8, 55, m_dimensions.w - 16, 20, TEXTURE_PATH, this);
 
-	add(new label(id++, 8, 35, LANG_LABEL_TEXTURE_PATH, this));
-	add(m_texture_path = new textbox(id++, 8, 55, m_dimensions.w - 16, 20, TEXTURE_PATH, this));
+	add<label>(8, 85, LANG_LABEL_CONFIG_PATH, this);
+	m_config_path = add<textbox>(8, 105, m_dimensions.w - 16, 20, CONFIG_PATH, this);
 
-	add(new label(id++, 8, 85, LANG_LABEL_CONFIG_PATH, this));
-	add(m_config_path = new textbox(id++, 8, 105, m_dimensions.w - 16, 20, CONFIG_PATH, this));
+	add<label>(8, 135, LANG_LABEL_DEFAULT_WIDTH, this);
+	add<label>((m_dimensions.w / 2) + 4, 135, LANG_LABEL_DEFAULT_HEIGHT, this);
 
-	add(new label(id++, 8, 135, LANG_LABEL_DEFAULT_WIDTH, this));
-	add(new label(id++, (m_dimensions.w / 2) + 4, 135, LANG_LABEL_DEFAULT_HEIGHT, this));
+	add<label>(8, 185, LANG_LABEL_ELEMENT_H_SPACE, this);
+	add<label>((m_dimensions.w / 2) + 4, 185, LANG_LABEL_ELEMENT_V_SPACE, this);
 
-	add(new label(id++, 8, 185, LANG_LABEL_ELEMENT_H_SPACE, this));
-	add(new label(id++, (m_dimensions.w / 2) + 4, 185, LANG_LABEL_ELEMENT_V_SPACE, this));
+	m_def_w = add<textbox>(8, 155, (m_dimensions.w / 2) - 16, 20, "0", this);
+	m_def_h = add<textbox>((m_dimensions.w / 2) + 4, 155, (m_dimensions.w / 2) - 12, 20, "0", this);
 
-	add(m_def_w = new textbox(id++, 8, 155, (m_dimensions.w / 2) - 16, 20, "0", this));
-	add(m_def_h = new textbox(id++, (m_dimensions.w / 2) + 4, 155, (m_dimensions.w / 2) - 12, 20, "0", this));
-
-	add(m_h_space = new textbox(id++, 8, 205, (m_dimensions.w / 2) - 16, 20, "0", this));
-	add(m_v_space = new textbox(id++, (m_dimensions.w / 2) + 4, 205, (m_dimensions.w / 2) - 12, 20, "0", this));
+	m_h_space = add<textbox>(8, 205, (m_dimensions.w / 2) - 16, 20, "0", this);
+	m_v_space = add<textbox>((m_dimensions.w / 2) + 4, 205, (m_dimensions.w / 2) - 12, 20, "0", this);
 
 	m_def_w->set_flags(TEXTBOX_NUMERIC);
 	m_def_h->set_flags(TEXTBOX_NUMERIC);
@@ -71,10 +69,10 @@ void dialog_setup::init()
 	m_config_path->set_flags(TEXTBOX_DROP_FILE);
 	m_texture_path->set_flags(TEXTBOX_DROP_FILE);
 
-	add(new button(ACTION_OK, 8, m_dimensions.h - 32, LANG_BUTTON_OK, this));
-	add(new button(ACTION_CANCEL, 116, m_dimensions.h - 32, LANG_BUTTON_EXIT, this));
+	add<button>(8, m_dimensions.h - 32, LANG_BUTTON_OK, this)->set_id(ACTION_OK);
+	add<button>(116, m_dimensions.h - 32, LANG_BUTTON_EXIT, this)->set_id(ACTION_CANCEL);
 
-	add(m_lang_box = new combobox(id++, m_dimensions.w - 148, m_dimensions.h - 28, 140, 20, this, ELEMENT_UNLOCALIZED));
+	m_lang_box = add<combobox>(m_dimensions.w - 148, m_dimensions.h - 28, 140, 20, this, ELEMENT_UNLOCALIZED);
 
 	const auto files = m_helper->get_localization()->get_languages();
 
@@ -108,7 +106,22 @@ void dialog_setup::action_performed(const int8_t action_id)
 		if (!m_have_existing_cfg)
 			writable_config = util::can_access(*m_config_path->get_text());
 
-		if (valid_texture && writable_config) {
+		if (m_have_existing_cfg && util::load_json(*m_config_path->get_text(), err, cfg_json)) {
+			const auto def_w = cfg_json[CFG_DEFAULT_WIDTH];
+			const auto def_h = cfg_json[CFG_DEFAULT_HEIGHT];
+			const auto space_h = cfg_json[CFG_H_SPACE];
+			const auto space_v = cfg_json[CFG_V_SPACE];
+
+			if (def_w.is_number())
+				m_def_w->set_text(def_w.number_value());
+			if (def_h.is_number())
+				m_def_h->set_text(def_h.number_value());
+			if (space_h.is_number())
+				m_h_space->set_text(space_h.number_value());
+			if (space_v.is_number())
+				m_v_space->set_text(space_v.number_value());
+		}
+		if (valid_texture && (writable_config || m_have_existing_cfg)) {
 			m_tool->action_performed(TOOL_ACTION_SETUP_EXIT);
 		} else {
 			if (m_texture_path->get_text()->empty() || !valid_texture) {

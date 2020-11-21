@@ -31,9 +31,9 @@ DialogElementType::DialogElementType(sdl_helper *sdl, tool *tool)
 void DialogElementType::init()
 {
 	dialog::init();
-	add(new label(1, 8, 32, LANG_LABEL_SELECT_ELEMENT_TYPE, this));
+	add<label>(8, 32, LANG_LABEL_SELECT_ELEMENT_TYPE, this);
 
-	add(m_type = new combobox(2, 8, 52, m_dimensions.w - 16, 20, this));
+	m_type = add<combobox>(8, 52, m_dimensions.w - 16, 20, this);
 
 	/* Populate combobox with element types */
 	m_type->add_item(LANG_ELEMENT_TEXTURE);
@@ -45,8 +45,8 @@ void DialogElementType::init()
 	m_type->add_item(LANG_ELEMENT_GAMEPAD_ID);
 	m_type->add_item(LANG_ELEMENT_DPAD_STICK);
 
-	add(new button(ACTION_OK, 8, m_dimensions.h - 32, LANG_BUTTON_OK, this));
-	add(new button(ACTION_CANCEL, 124, m_dimensions.h - 32, LANG_BUTTON_CANCEL, this));
+	add<button>(8, m_dimensions.h - 32, LANG_BUTTON_OK, this)->set_id(ACTION_OK);
+	add<button>(124, m_dimensions.h - 32, LANG_BUTTON_CANCEL, this)->set_id(ACTION_CANCEL);
 
 	set_flags(DIALOG_CENTERED | DIALOG_TOP_MOST);
 }

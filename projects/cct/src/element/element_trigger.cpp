@@ -111,11 +111,11 @@ element_trigger *element_trigger::read_from_json(const json &j, SDL_Point *defau
 
 	if (button_mode.bool_value()) {
 		return new element_trigger(j[CFG_ID].string_value(), read_position(j), read_mapping(j, default_dim), s,
-								   j[CFG_Z_LEVEL].number_value());
+								   uint8_t(j[CFG_Z_LEVEL].number_value()));
 	}
-	auto d = static_cast<direction>(UTIL_CLAMP(0, j[CFG_DIRECTION].number_value(), DIR_MAX - 1));
+	auto d = static_cast<direction>(UTIL_CLAMP(0, j[CFG_DIRECTION].int_value(), DIR_MAX - 1));
 	return new element_trigger(j[CFG_ID].string_value(), read_position(j), read_mapping(j, default_dim), s, d,
-							   j[CFG_Z_LEVEL].number_value());
+							   uint8_t(j[CFG_Z_LEVEL].int_value()));
 }
 
 void element_trigger::calculate_mappings(SDL_Rect *pressed, SDL_Rect *absolute) const
@@ -123,24 +123,24 @@ void element_trigger::calculate_mappings(SDL_Rect *pressed, SDL_Rect *absolute) 
 	switch (m_direction) {
 	default:
 	case DIR_UP:
-		pressed->h = m_mapping.h * m_progress;
-		pressed->y = m_pressed_mapping.y + (m_mapping.h - pressed->h);
+		pressed->h = int(m_mapping.h * m_progress);
+		pressed->y = int(m_pressed_mapping.y + (m_mapping.h - pressed->h));
 		absolute->y += (m_mapping.h - pressed->h) * m_scale;
-		absolute->h = pressed->h * m_scale;
+		absolute->h = int(pressed->h * m_scale);
 		break;
 	case DIR_DOWN:
-		pressed->h = m_mapping.h * m_progress;
-		absolute->h = pressed->h * m_scale;
+		pressed->h = int(m_mapping.h * m_progress);
+		absolute->h = int(pressed->h * m_scale);
 		break;
 	case DIR_LEFT:
-		pressed->w = m_mapping.w * m_progress;
-		pressed->x = m_mapping.x + (m_mapping.w - pressed->w);
-		absolute->x += (m_mapping.w - pressed->w) * m_scale;
-		absolute->w = pressed->w * m_scale;
+		pressed->w = int(m_mapping.w * m_progress);
+		pressed->x = int(m_mapping.x + (m_mapping.w - pressed->w));
+		absolute->x += int((m_mapping.w - pressed->w) * m_scale);
+		absolute->w = int(pressed->w * m_scale);
 		break;
 	case DIR_RIGHT:
-		pressed->w = m_mapping.w * m_progress;
-		absolute->w = pressed->w * m_scale;
+		pressed->w = int(m_mapping.w * m_progress);
+		absolute->w = int(pressed->w * m_scale);
 		break;
 	}
 }

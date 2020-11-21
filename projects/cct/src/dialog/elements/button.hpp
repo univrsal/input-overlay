@@ -27,9 +27,9 @@ class dialog;
 
 class button : public gui_element {
 public:
-	button(int8_t id, int x, int y, const char *text, dialog *parent);
+	button(int x, int y, const char *text, dialog *parent);
 
-	button(int8_t id, int x, int y, int w, const char *text, dialog *parent);
+	button(int x, int y, int w, const char *text, dialog *parent);
 
 	~button();
 

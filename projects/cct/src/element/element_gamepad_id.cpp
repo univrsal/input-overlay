@@ -69,7 +69,7 @@ void element_gamepad_id::handle_event(SDL_Event *event, sdl_helper *helper)
 element_gamepad_id *element_gamepad_id::read_from_json(const json &j, SDL_Point *default_dim)
 {
 	return new element_gamepad_id(j[CFG_ID].string_value(), read_position(j), read_mapping(j, default_dim),
-								  j[CFG_Z_LEVEL].number_value());
+								  uint8_t(j[CFG_Z_LEVEL].number_value()));
 }
 
 void element_gamepad_id::write_to_json(json_obj &j, SDL_Point *default_dim, uint8_t &layout_flags)

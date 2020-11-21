@@ -38,8 +38,8 @@ SDL_Rect *element_analog_stick::get_abs_dim(coordinate_system *cs)
 {
 	m_static_scaled = *element::get_abs_dim(cs);
 
-	m_dimensions_scaled.x += m_x_axis * m_radius * cs->get_scale();
-	m_dimensions_scaled.y += m_y_axis * m_radius * cs->get_scale();
+	m_dimensions_scaled.x += int(m_x_axis * m_radius * cs->get_scale());
+	m_dimensions_scaled.y += int(m_y_axis * m_radius * cs->get_scale());
 	return &m_dimensions_scaled;
 }
 
@@ -133,5 +133,5 @@ element_analog_stick *element_analog_stick::read_from_json(const json &j, SDL_Po
 	const auto s = read_side(j);
 
 	return new element_analog_stick(j[CFG_ID].string_value(), read_position(j), read_mapping(j, default_dim), s,
-									j[CFG_STICK_RADIUS].number_value(), j[CFG_Z_LEVEL].number_value());
+									uint8_t(j[CFG_STICK_RADIUS].int_value()), uint8_t(j[CFG_Z_LEVEL].number_value()));
 }

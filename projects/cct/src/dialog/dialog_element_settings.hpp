@@ -71,7 +71,7 @@ public:
 
 	int get_h() const { return SDL_atoi(m_element_height->c_str()); }
 
-	uint16_t get_vc() const { return SDL_strtol(m_element_vc->c_str(), nullptr, 16); }
+	uint16_t get_vc() const { return uint16_t(SDL_strtol(m_element_vc->c_str(), nullptr, 16)); }
 
 	SDL_Rect get_mapping() const { return {get_u(), get_v(), get_w(), get_h()}; }
 

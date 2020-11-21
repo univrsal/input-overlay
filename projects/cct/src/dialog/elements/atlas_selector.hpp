@@ -31,13 +31,13 @@ class texture;
 
 class atlas_selector : public gui_element {
 public:
-	atlas_selector(int8_t id, int x, int y, int w, int h, texture *t, dialog *parent);
+	atlas_selector(int x, int y, int w, int h, texture *t, dialog *parent);
 
 	~atlas_selector();
 
 	void close() override;
 
-	void init(dialog *parent, SDL_Rect dim, int8_t id) override;
+	void init(dialog *parent, SDL_Rect dim) override;
 
 	void draw_foreground() override;
 

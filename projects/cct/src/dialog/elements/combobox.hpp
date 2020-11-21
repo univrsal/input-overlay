@@ -25,7 +25,7 @@
 
 class combobox : public gui_element {
 public:
-	combobox(int8_t id, int x, int y, int w, int h, dialog *parent, uint16_t flags = 0x0);
+	combobox(int x, int y, int w, int h, dialog *parent, uint16_t flags = 0x0);
 
 	void close() override;
 
@@ -48,7 +48,7 @@ public:
 
 	void select_item(const uint8_t id)
 	{
-		m_selected_id = UTIL_CLAMP(0, id, m_items.size() - 1);
+		m_selected_id = uint8_t(UTIL_CLAMP(0, id, m_items.size() - 1));
 		m_parent_dialog->action_performed(ACTION_COMBO_ITEM_SELECTED);
 	}
 

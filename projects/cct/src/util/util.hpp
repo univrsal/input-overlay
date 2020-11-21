@@ -68,8 +68,9 @@ private:
 };
 
 namespace util {
-extern void replace(std::string &str, const char *find, const char *replace);
+extern void replace(std::string &str, const char *find, const char *r);
 extern bool load_json(const std::string &path, std::string &err, json11::Json &out);
 extern bool is_empty(const std::string &path);
 extern bool can_access(const std::string &path);
+extern void indent_json(std::string &json);
 }

@@ -33,7 +33,6 @@ char local_ip[16] = "127.0.0.1\0";
 io_server *server_instance = nullptr;
 std::thread network_thread;
 
-
 const char *get_status()
 {
 	return network_state ? "UP" : "DOWN";
@@ -61,7 +60,7 @@ void start_network(uint16_t port)
 			auto error = 0;
 			network_flag = true;
 			network_thread = std::thread(network_handler);
-			
+
 			if (!network_state) {
 				DEBUG_LOG(LOG_ERROR, "Server thread creation failed with code: %i", error);
 				failed = true;

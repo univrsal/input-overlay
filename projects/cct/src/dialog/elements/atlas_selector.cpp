@@ -19,11 +19,10 @@
 #include "atlas_selector.hpp"
 #include "../../util/constants.hpp"
 
-atlas_selector::atlas_selector(const int8_t id, const int x, const int y, const int w, const int h, texture *t,
-							   dialog *parent)
+atlas_selector::atlas_selector(const int x, const int y, const int w, const int h, texture *t, dialog *parent)
 {
 	const SDL_Rect temp = {x, y, w, h};
-	atlas_selector::init(parent, temp, id);
+	atlas_selector::init(parent, temp);
 	m_atlas = t;
 }
 
@@ -40,9 +39,9 @@ void atlas_selector::close()
 	m_cs = nullptr;
 }
 
-void atlas_selector::init(dialog *parent, const SDL_Rect dim, const int8_t id)
+void atlas_selector::init(dialog *parent, const SDL_Rect dim)
 {
-	gui_element::init(parent, dim, id);
+	gui_element::init(parent, dim);
 	m_cs = new coordinate_system(SDL_Point{X_AXIS, Y_AXIS}, m_dimensions, get_helper());
 	m_cs->enable_border();
 	m_cs->enable_crosshair();

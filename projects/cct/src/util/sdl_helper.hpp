@@ -237,7 +237,7 @@ private:
 
 template<typename... Args> std::string sdl_helper::format(const char *format, Args... args)
 {
-	const size_t size = snprintf(nullptr, 0, format, args...) + 1;
+	const size_t size = snprintf(nullptr, 0, format, args...) + 1ull;
 	std::unique_ptr<char[]> buf(new char[size]);
 	snprintf(buf.get(), size, format, args...);
 	return std::string(buf.get(), buf.get() + size - 1);
@@ -246,7 +246,7 @@ template<typename... Args> std::string sdl_helper::format(const char *format, Ar
 template<typename... Args> std::string sdl_helper::format_loc(const char *unlocalized, Args... args)
 {
 	auto localized = loc(unlocalized);
-	const size_t size = snprintf(nullptr, 0, localized.c_str(), args...) + 1;
+	const size_t size = snprintf(nullptr, 0, localized.c_str(), args...) + 1ull;
 	std::unique_ptr<char[]> buf(new char[size]);
 	snprintf(buf.get(), size, localized.c_str(), args...);
 	return std::string(buf.get(), buf.get() + size - 1);

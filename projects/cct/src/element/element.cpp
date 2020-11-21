@@ -32,11 +32,12 @@
 #include "element_texture.hpp"
 #include "element_trigger.hpp"
 #include <utility>
+#include <array>
 
 element *element::read_from_json(const json11::Json &j, SDL_Point *default_dim)
 {
 	auto t = j[CFG_TYPE];
-	if (!t.is_number() || !valid_type(t.number_value()))
+	if (!t.is_number() || !valid_type(t.int_value()))
 		return nullptr;
 
 	switch (static_cast<int>(t.number_value())) {
@@ -139,8 +140,11 @@ void element::write_to_json(json_obj &j, SDL_Point *default_dim, uint8_t &layout
 {
 	/* Write commonly shared values */
 	j[CFG_Z_LEVEL] = m_z_level;
-	j[CFG_TYPE] = m_type, j[CFG_POS] = m_position.x;
-	j[CFG_POS] = m_position.y;
+	j[CFG_TYPE] = m_type;
+	std::array<int, 2> arr;
+	arr[0] = m_position.x;
+	arr[1] = m_position.y;
+	j[CFG_POS] = arr;
 	j[CFG_ID] = m_id;
 }
 
@@ -205,10 +209,12 @@ SDL_Rect element::read_mapping(const json &j, const SDL_Point *default_dim)
 	auto map = j[CFG_MAPPING];
 	if (map.is_array()) {
 		auto arr = map.array_items();
-		tmp.x = arr[0].number_value();
-		tmp.y = arr[1].number_value();
-		tmp.w = arr[2].number_value();
-		tmp.h = arr[3].number_value();
+		if (arr.size() < 4)
+			return tmp;
+		tmp.x = arr[0].int_value();
+		tmp.y = arr[1].int_value();
+		tmp.w = arr[2].int_value();
+		tmp.h = arr[3].int_value();
 	} else if (default_dim) {
 		tmp.w = default_dim->x;
 		tmp.h = default_dim->y;
@@ -218,7 +224,10 @@ SDL_Rect element::read_mapping(const json &j, const SDL_Point *default_dim)
 
 SDL_Point element::read_position(const json &j)
 {
-	return SDL_Point{int(j[CFG_POS].array_items()[0].number_value()), int(j[CFG_POS].array_items()[1].number_value())};
+	auto pos_array = j[CFG_POS].array_items();
+	if (pos_array.size() > 1)
+		return SDL_Point{pos_array[0].int_value(), pos_array[1].int_value()};
+	return SDL_Point{};
 }
 
 element_side element::read_side(const json &j)

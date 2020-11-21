@@ -74,7 +74,7 @@ void notifier::draw()
 
 	/* Remove old messages */
 	std::sort(overdue.begin(), overdue.end());
-#ifdef WINDOWS
+#ifdef _WIN32
 	for (auto &i = overdue.rbegin(); i != overdue.rend(); ++i)
 #else
 	for (auto i = overdue.rbegin(); i != overdue.rend(); ++i)

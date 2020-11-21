@@ -19,12 +19,12 @@
 #include "checkbox.hpp"
 #include "../../util/palette.hpp"
 
-checkbox::checkbox(const int8_t id, const int x, const int y, const char *text, dialog *parent)
+checkbox::checkbox(const int x, const int y, const char *text, dialog *parent)
 {
 	SDL_Rect temp = {x, y, 0, 0};
 	m_checkbox = {x, y, CHECKBOX_SIZE, CHECKBOX_SIZE};
 
-	m_label = new label(id, x + CHECKBOX_SIZE + 5, y, text, parent);
+	m_label = new label(x + CHECKBOX_SIZE + 5, y, text, parent);
 
 	if (m_label->get_height() > CHECKBOX_SIZE) {
 		m_checkbox.y = m_label->get_height() / 2 - CHECKBOX_SIZE / 2;
@@ -35,11 +35,11 @@ checkbox::checkbox(const int8_t id, const int x, const int y, const char *text, 
 	}
 
 	temp.w = m_label->get_width() + CHECKBOX_SIZE + 5;
-	gui_element::init(parent, temp, id);
+	gui_element::init(parent, temp);
 }
 
-checkbox::checkbox(const int8_t id, const int x, const int y, const char *text, dialog *parent, const bool state)
-	: checkbox(id, x, y, text, parent)
+checkbox::checkbox(const int x, const int y, const char *text, dialog *parent, const bool state)
+	: checkbox(x, y, text, parent)
 {
 	m_state = state;
 }

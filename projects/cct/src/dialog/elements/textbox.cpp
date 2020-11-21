@@ -25,10 +25,10 @@
 
 class sdl_helper;
 
-textbox::textbox(const int8_t id, const int x, const int y, const int w, const int h, std::string text, dialog *parent)
+textbox::textbox(const int x, const int y, const int w, const int h, std::string text, dialog *parent)
 {
 	const SDL_Rect temp = {x, y, w, h};
-	gui_element::init(parent, temp, id);
+	gui_element::init(parent, temp);
 	set_text(std::move(text));
 }
 
@@ -181,6 +181,16 @@ void textbox::select_state(const bool state)
 void textbox::set_text(int i)
 {
 	set_text(std::to_string(i));
+}
+
+void textbox::set_text(double d)
+{
+	set_text(std::to_string(d));
+}
+
+void textbox::set_text(float f)
+{
+	set_text(std::to_string(f));
 }
 
 void textbox::set_text(std::string s)

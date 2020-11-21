@@ -21,25 +21,23 @@
 #include "../../util/palette.hpp"
 #include "../../util/sdl_helper.hpp"
 
-label::label(const int8_t id, const int x, const int y, const char *text, dialog *parent, uint16_t flags)
+label::label(const int x, const int y, const char *text, dialog *parent, uint16_t flags)
 {
 	const SDL_Rect temp{x, y, 0, 0}; /* Width/Height will be calculated by set_text */
-	gui_element::init(parent, temp, id);
+	gui_element::init(parent, temp);
 	m_flags = flags;
 	m_unlocalized_text = text;
 	label::refresh();
 	m_color = get_helper()->get_palette()->white();
 }
 
-label::label(const int8_t id, const int x, const int y, const char *text, const uint8_t font, dialog *parent,
-			 const uint16_t flags)
-	: label(id, x, y, text, parent, flags)
+label::label(const int x, const int y, const char *text, const uint8_t font, dialog *parent, const uint16_t flags)
+	: label(x, y, text, parent, flags)
 {
 	m_font = font;
 }
 
-label::label(const int8_t id, const int x, const int y, const char *text, dialog *parent, SDL_Color *color)
-	: label(id, x, y, text, parent)
+label::label(const int x, const int y, const char *text, dialog *parent, SDL_Color *color) : label(x, y, text, parent)
 {
 	m_color = color;
 }

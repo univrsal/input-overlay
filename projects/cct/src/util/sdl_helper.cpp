@@ -521,7 +521,7 @@ float sdl_helper::util_get_fps() const
 
 std::wstring sdl_helper::util_utf8_to_wstring(const std::string &str)
 {
-#ifdef WINDOWS
+#ifdef _WIN32
 	std::wstring_convert<std::codecvt_utf8<wchar_t>> conv;
 	return conv.from_bytes(str);
 #else
@@ -581,7 +581,7 @@ std::wstring sdl_helper::util_utf8_to_wstring(const std::string &str)
 
 std::string sdl_helper::util_wstring_to_utf8(const std::wstring &str)
 {
-#ifdef WINDOWS
+#ifdef _WIN32
 	std::wstring_convert<std::codecvt_utf8<wchar_t>> conv;
 	return conv.to_bytes(str);
 #else

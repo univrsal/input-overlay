@@ -76,5 +76,6 @@ element_mouse_movement *element_mouse_movement::read_from_json(const json &j, SD
 		mmt = MM_ARROW;
 
 	return new element_mouse_movement(j[CFG_ID].string_value(), read_position(j), read_mapping(j, default_dim), mmt,
-									  j[CFG_MOUSE_RADIUS].number_value(), j[CFG_Z_LEVEL].number_value());
+									  uint16_t(j[CFG_MOUSE_RADIUS].number_value()),
+									  uint8_t(j[CFG_Z_LEVEL].number_value()));
 }

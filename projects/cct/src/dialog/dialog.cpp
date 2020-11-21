@@ -45,7 +45,7 @@ dialog::~dialog()
 
 void dialog::init()
 {
-	add(new label(0, 8, 6, m_title.c_str(), this));
+	add(new label(8, 6, m_title.c_str(), this));
 
 	const auto temp = m_helper->util_window_size();
 

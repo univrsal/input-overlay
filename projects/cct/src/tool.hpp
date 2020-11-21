@@ -98,7 +98,7 @@ private:
 	/* Stores the type, which the user selected for the next element */
 	element_type m_new_element_type = ET_INVALID;
 
-	SDL_Event m_event;
+	SDL_Event m_event{};
 	sdl_helper *m_helper;
 
 	config *m_config = nullptr;
@@ -106,7 +106,7 @@ private:
 	dialog_element_settings *m_element_settings = nullptr;
 	dialog *m_toplevel = nullptr;
 	notifier *m_notify = nullptr;
-	tool_state m_state;
+	tool_state m_state{};
 
 	const char *m_texture_path = "";
 	const char *m_config_path = "";

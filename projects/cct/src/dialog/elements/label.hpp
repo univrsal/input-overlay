@@ -30,12 +30,13 @@ class gui_element;
 
 class label : public gui_element {
 public:
-	label(int8_t id, int x, int y, const char *text, dialog *parent, uint16_t flags = 0x0);
+	label(int x, int y, const char *text, dialog *parent, uint16_t flags = 0x0);
 
-	label(int8_t id, int x, int y, const char *text, uint8_t font, dialog *parent, uint16_t flags = 0x0);
+	label(int x, int y, const char *text, uint8_t font, dialog *parent, uint16_t flags = 0x0);
 
-	label(int8_t id, int x, int y, const char *text, dialog *parent, SDL_Color *color);
+	label(int x, int y, const char *text, dialog *parent, SDL_Color *color);
 
+	label() = default;
 	~label();
 
 	void close() override;

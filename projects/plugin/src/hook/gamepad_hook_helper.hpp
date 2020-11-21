@@ -20,7 +20,6 @@
 
 #include <mutex>
 
-
 namespace gamepad {
 
 void start_pad_hook();
