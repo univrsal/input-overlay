@@ -124,7 +124,7 @@ jobs:
       sdl_ttf: 2.0.15
     steps:
       - name: 'Add msbuild to PATH'
-        uses: microsoft/setup-msbuild@v1.0.0
+        uses: microsoft/setup-msbuild@v1.0.2
       - name: 'Checkout'
         uses: actions/checkout@v2
         with:
