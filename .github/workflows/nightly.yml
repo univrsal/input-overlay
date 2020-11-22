@@ -213,7 +213,7 @@ jobs:
           msbuild /m /p:Configuration=RelWithDebInfo .\build64\libobs\libobs.vcxproj
           msbuild /m /p:Configuration=RelWithDebInfo .\build64\UI\obs-frontend-api\obs-frontend-api.vcxproj
       - name: 'Restore SDL libraries from cache'
-        id: build-sdl2
+        id: build-cache-sdl2
         uses: actions/cache@v1
         env:
           CACHE_NAME: 'build-cache-sdl2'
