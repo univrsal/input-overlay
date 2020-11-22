@@ -285,7 +285,7 @@ jobs:
         shell: bash
         run: |
           FILENAME="${{ env.project }}-${{ env.GIT_TAG }}-Windows"
-          echo "::set-env name=WIN_FILENAME::$FILENAME"
+          echo "WIN_FILENAME=$FILENAME" >> $GITHUB_ENV
       - name: 'Package ${{ env.project }}'
         working-directory: ${{ github.workspace }}/${{ env.project }}
         run: |
