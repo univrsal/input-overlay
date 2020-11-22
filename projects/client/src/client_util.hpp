@@ -57,8 +57,6 @@ bool parse_arguments(int argc, char **args);
 
 int send_text(char *buf);
 
-bool write_keystate(netlib_byte_buf *buffer, uint16_t code, bool pressed);
-
 inline uint16_t swap_be16(uint16_t in)
 {
 	return (in >> 8) | (in << 8);

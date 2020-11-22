@@ -139,24 +139,6 @@ void sleep_ms(uint32_t ms)
 	std::this_thread::sleep_for(milliseconds(ms));
 }
 
-bool write_keystate(netlib_byte_buf *buffer, uint16_t code, bool pressed)
-{
-	auto result = netlib_write_uint16(buffer, code);
-
-	if (!result) {
-		DEBUG_LOG("Couldn't write keycode: %s\n", netlib_get_error());
-		return false;
-	}
-
-	result = netlib_write_uint8(buffer, pressed);
-	if (!result) {
-		DEBUG_LOG("Couldn't write keystate: %s\n", netlib_get_error());
-		return false;
-	}
-
-	return true;
-}
-
 uint32_t get_ticks()
 {
 #ifdef _WIN32

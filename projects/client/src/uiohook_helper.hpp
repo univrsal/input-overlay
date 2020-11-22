@@ -25,27 +25,8 @@
 #define SCROLL_TIMEOUT 120
 namespace uiohook {
 extern std::mutex m_mutex;
+extern uint32_t last_scroll_time;
 enum wheel_dir { wheel_up = -1, wheel_none, wheel_down };
-
-class data_holder {
-	std::map<uint16_t, bool> m_button_states;
-	int16_t m_mouse_x, m_mouse_y;
-	wheel_dir m_wheel_direction;
-	int16_t m_wheel_amount;
-	bool m_wheel_pressed;
-	bool m_new_mouse_data;
-	uint32_t m_last_scroll;
-
-public:
-	data_holder();
-	void set_button(uint16_t keycode, bool pressed);
-	void set_mouse_pos(int16_t x, int16_t y);
-	void set_wheel(int amount, wheel_dir dir);
-	void reset_wheel();
-	void set_wheel(bool pressed);
-	bool write_to_buffer(netlib_byte_buf *buffer);
-	uint32_t get_last_scroll();
-};
 
 inline uint16_t util_mouse_fix(int m)
 {
@@ -63,7 +44,6 @@ inline bool is_middle_mouse(int m)
 	return util_mouse_fix(m) == MOUSE_BUTTON3;
 }
 
-extern data_holder data;
 extern volatile bool hook_state;
 bool logger_proc(unsigned level, const char *format, ...);
 

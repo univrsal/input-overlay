@@ -24,5 +24,4 @@ extern std::shared_ptr<hook> hook_instance;
 
 extern bool start(hook_type t);
 extern void stop();
-extern bool write_data();
 }

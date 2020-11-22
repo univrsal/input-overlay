@@ -25,94 +25,8 @@
 
 namespace uiohook {
 std::mutex m_mutex;
-data_holder data;
+uint32_t last_scroll_time;
 volatile bool hook_state = false;
-
-data_holder::data_holder() : m_mouse_x(0), m_mouse_y(0), m_wheel_direction(wheel_none), m_new_mouse_data(false) {}
-
-void data_holder::set_button(const uint16_t keycode, const bool pressed)
-{
-	m_mutex.lock();
-	if (pressed)
-		m_button_states[keycode] = pressed;
-	else
-		m_button_states.erase(keycode);
-	m_mutex.unlock();
-}
-
-void data_holder::set_mouse_pos(const int16_t x, const int16_t y)
-{
-	m_mutex.lock();
-	m_mouse_x = x;
-	m_mouse_y = y;
-	m_new_mouse_data = true;
-	m_mutex.unlock();
-}
-
-void data_holder::set_wheel(int amount, wheel_dir dir)
-{
-	m_mutex.lock();
-	if (dir != m_wheel_direction)
-		m_wheel_amount = amount;
-	else
-		m_wheel_amount += amount;
-	m_wheel_direction = dir;
-	m_new_mouse_data = true;
-	m_last_scroll = util::get_ticks();
-	m_mutex.unlock();
-}
-
-void data_holder::reset_wheel()
-{
-	m_mutex.lock();
-	m_new_mouse_data = true;
-	m_wheel_direction = wheel_none;
-	m_mutex.unlock();
-}
-
-void data_holder::set_wheel(bool pressed)
-{
-	m_mutex.lock();
-	m_new_mouse_data = true;
-	m_wheel_pressed = pressed;
-	m_mutex.unlock();
-}
-
-bool data_holder::write_to_buffer(netlib_byte_buf *buffer)
-{
-	/* Message always sends both mouse and button data. */
-
-	auto success = true;
-
-	if (netlib_write_uint8(buffer, network::MSG_BUTTON_DATA)) {
-		if (netlib_write_uint8(buffer, int(m_button_states.size()))) {
-			for (const auto &data : m_button_states) {
-				if (!netlib_write_uint16(buffer, data.first))
-					success = false;
-			}
-		} else {
-			success = false;
-		}
-	} else {
-		success = false;
-	}
-
-	if (m_new_mouse_data) {
-		success = netlib_write_uint8(buffer, network::MSG_MOUSE_DATA) && netlib_write_int16(buffer, m_mouse_x) &&
-				  netlib_write_int16(buffer, m_mouse_y) && netlib_write_int8(buffer, m_wheel_direction) &&
-				  netlib_write_int16(buffer, m_wheel_amount) && netlib_write_int8(buffer, m_wheel_pressed);
-
-		/* TODO: write other mouse data */
-		m_new_mouse_data = false;
-	}
-
-	return success;
-}
-
-uint32_t data_holder::get_last_scroll()
-{
-	return m_last_scroll;
-}
 
 bool logger_proc(unsigned level, const char *format, ...)
 {
@@ -144,6 +58,7 @@ bool logger_proc(unsigned level, const char *format, ...)
 
 void dispatch_proc(uiohook_event *const event)
 {
+	std::lock_guard<std::mutex> lock(network::buffer_mutex);
 	switch (event->type) {
 	case EVENT_HOOK_ENABLED:
 		DEBUG_LOG("uiohook started\n");
@@ -152,31 +67,45 @@ void dispatch_proc(uiohook_event *const event)
 	case EVENT_HOOK_DISABLED:
 		DEBUG_LOG("uiohook exited\n");
 		break;
-	case EVENT_MOUSE_CLICKED:
+	//case EVENT_MOUSE_CLICKED:
 	case EVENT_MOUSE_PRESSED:
 	case EVENT_MOUSE_RELEASED:
 		if (util::cfg.monitor_mouse) {
-			if (is_middle_mouse(event->data.mouse.button))
-				data.set_wheel(event->type == EVENT_MOUSE_PRESSED);
-			else
-				data.set_button(util_mouse_fix(event->data.mouse.button) | VC_MOUSE_MASK,
-								event->type == EVENT_MOUSE_PRESSED);
+			network::buf.write<uint8_t>(network::MSG_BUTTON_DATA);
+			network::buf.write<uint16_t>(event->data.mouse.button | VC_MOUSE_MASK);
+			network::buf.write<uint8_t>(event->type == EVENT_MOUSE_PRESSED);
+			network::buf.write<uint16_t>(event->mask);
+			network::buf.write<uint64_t>(event->time);
 		}
 		break;
 	case EVENT_MOUSE_WHEEL:
 		if (util::cfg.monitor_mouse) {
-			data.set_wheel(event->data.wheel.amount, event->data.wheel.rotation >= WHEEL_DOWN ? wheel_down : wheel_up);
-		} /* Fallthrough */
+			last_scroll_time = util::get_ticks();
+			network::buf.write<uint8_t>(network::MSG_MOUSE_WHEEL_DATA);
+			network::buf.write<mouse_wheel_event_data>(event->data.wheel);
+			network::buf.write<uint16_t>(event->mask);
+			network::buf.write<uint64_t>(event->time);
+		}
+		break;
 	case EVENT_MOUSE_MOVED:
 	case EVENT_MOUSE_DRAGGED:
-		if (util::cfg.monitor_mouse)
-			data.set_mouse_pos(event->data.mouse.x, event->data.mouse.y);
+		if (util::cfg.monitor_mouse) {
+			network::buf.write<uint8_t>(network::MSG_MOUSE_POS_DATA);
+			network::buf.write<mouse_event_data>(event->data.mouse);
+			network::buf.write<uint16_t>(event->mask);
+			network::buf.write<uint64_t>(event->time);
+		}
 		break;
-	case EVENT_KEY_TYPED: /* TODO: how to handle this */
+	//case EVENT_KEY_TYPED: /* TODO: how to handle this */
 	case EVENT_KEY_PRESSED:
 	case EVENT_KEY_RELEASED:
-		if (util::cfg.monitor_keyboard)
-			data.set_button(event->data.keyboard.keycode, event->type == EVENT_KEY_PRESSED);
+		if (util::cfg.monitor_keyboard) {
+			network::buf.write<uint8_t>(network::MSG_BUTTON_DATA);
+			network::buf.write<uint16_t>(event->data.keyboard.keycode);
+			network::buf.write<uint8_t>(event->type == EVENT_KEY_PRESSED);
+			network::buf.write<uint16_t>(event->mask);
+			network::buf.write<uint64_t>(event->time);
+		}
 		break;
 	default:;
 	}

@@ -25,8 +25,7 @@
 namespace network {
 tcp_socket sock = nullptr;
 netlib_socket_set set = nullptr;
-netlib_byte_buf *buffer = nullptr;
-
+buffer buf;
 volatile bool need_refresh = false;
 volatile bool data_block = false;
 volatile bool network_loop = true;
@@ -35,6 +34,7 @@ bool connected = false;
 bool state = false;
 
 std::thread network_thread;
+std::mutex buffer_mutex;
 
 bool start_connection()
 {
@@ -71,17 +71,6 @@ bool start_connection()
 		return false;
 	}
 
-	/* Send gamepad names */
-	if (util::cfg.monitor_gamepad) {
-		//        buffer->write_pos = 0;
-		//        netlib_write_uint8(buffer, message::MSG_GAMEPAD_ID);
-		//        gamepad::hook_instance->get_mutex()->lock();
-		//        for (const auto &dev : gamepad::hook_instance->get_devices()) {
-
-		//        }
-		gamepad::hook_instance->get_mutex()->unlock();
-	}
-
 	start_thread();
 	connected = true;
 	return true;
@@ -102,36 +91,23 @@ void network_thread_method()
 			break;
 		}
 
-		/* Reset scroll wheel if no scroll event happened */
-		if (util::get_ticks() - uiohook::data.get_last_scroll() >= SCROLL_TIMEOUT) {
-			uiohook::data.reset_wheel();
+		std::lock_guard<std::mutex> lock(buffer_mutex);
+		/* Reset scroll wheel if no scroll event happened for a bit */
+		if (util::get_ticks() - uiohook::last_scroll_time >= SCROLL_TIMEOUT) {
+			buf.write<uint8_t>(network::MSG_BUTTON_DATA);
+			buf.write<uint16_t>(VC_MOUSE_WHEEL);
+			buf.write<uint8_t>(0);
+			buf.write<uint16_t>(0);
+			buf.write<uint64_t>(util::get_ticks());
 		}
 
-		if (need_refresh) {
-			std::lock_guard<std::mutex> lock(uiohook::m_mutex);
-
-			buffer->write_pos = 0;
-			if (!gamepad::write_data()) {
-				DEBUG_LOG("Failed to write gamepad event data to buffer. Exiting...\n");
+		/* Send any data written to the buffer */
+		if (buf.write_pos() > 0) {
+			if (!netlib_tcp_send(sock, buf.get(), buf.write_pos())) {
+				DEBUG_LOG("netlib_tcp_send: %s\n", netlib_get_error());
 				break;
 			}
-
-			if (!uiohook::data.write_to_buffer(network::buffer)) {
-				DEBUG_LOG("Writing uiohook data to buffer failed: %s\n", netlib_get_error());
-				break;
-			}
-
-			if (!netlib_write_uint8(network::buffer, MSG_END_BUFFER)) {
-				DEBUG_LOG("Writing buffer end failed: %s\n", netlib_get_error());
-				break;
-			}
-
-			if (buffer->write_pos > 0 && !netlib_tcp_send_buf_smart(sock, buffer)) {
-				DEBUG_LOG("netlib_tcp_send_buf_smart: %s\n", netlib_get_error());
-				break;
-			}
-
-			need_refresh = false;
+			buf.reset();
 		}
 	}
 
@@ -182,13 +158,6 @@ bool init()
 		DEBUG_LOG("netlib_init failed: %s\n", netlib_get_error());
 		return false;
 	}
-
-	buffer = netlib_alloc_byte_buf(BUFFER_SIZE);
-
-	if (!buffer) {
-		DEBUG_LOG("netlib_alloc_byte_buf failed: %s\n", netlib_get_error());
-		return false;
-	}
 	state = true;
 	return true;
 }
@@ -201,9 +170,9 @@ void close()
 
 	/* Tell server we're disconnecting */
 	if (connected) {
-		buffer->write_pos = 0;
-		netlib_write_uint8(buffer, MSG_CLIENT_DC);
-		netlib_tcp_send_buf_smart(sock, buffer);
+		buf.reset();
+		buf.write<uint8_t>(MSG_CLIENT_DC);
+		netlib_tcp_send(sock, buf.get(), buf.write_pos());
 	}
 
 	/* Give server time to process DC message */
@@ -211,8 +180,6 @@ void close()
 	network_loop = false;
 	network_thread.join();
 	netlib_tcp_close(sock);
-	netlib_free_byte_buf(buffer);
 	netlib_quit();
-	buffer = NULL;
 }
 }

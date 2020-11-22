@@ -21,13 +21,38 @@
 #include "network.hpp"
 #include "client_util.hpp"
 #include <messages.hpp>
+
 namespace gamepad {
 
 std::shared_ptr<hook> hook_instance;
 
 bool start(hook_type t)
 {
+	/* Make sure that the network is established, otherwise we might send device connections too early */
+	::util::sleep_ms(500);
 	hook_instance = hook::make(t);
+	hook_instance->set_plug_and_play(true);
+
+	auto writer = [](const gamepad::input_event *e, uint8_t dev_idx) {
+		std::lock_guard<std::mutex> lock(network::buffer_mutex);
+		network::buf.write<uint8_t>(network::MSG_GAMEPAD_DATA);
+		network::buf.write<uint8_t>(dev_idx);
+		network::buf.write<uint16_t>(e->vc);
+		network::buf.write<float>(e->virtual_value);
+		network::buf.write<uint64_t>(e->time);
+	};
+
+	hook_instance->set_axis_event_handler(
+		[writer](std::shared_ptr<device> d) { writer(d->last_axis_event(), d->get_index()); });
+	hook_instance->set_button_event_handler(
+		[writer](std::shared_ptr<device> d) { writer(d->last_button_event(), d->get_index()); });
+	hook_instance->set_connect_event_handler([](std::shared_ptr<device> d) {
+		std::lock_guard<std::mutex> lock(network::buffer_mutex);
+		network::buf.write<uint8_t>(network::MSG_GAMEPAD_CONNECTED);
+		network::buf.write<uint8_t>(d->get_index());
+		network::buf.write<uint16_t>(d->get_name().length());
+		network::buf.write(d->get_name().c_str(), d->get_name().length());
+	});
 	return hook_instance->start();
 }
 
@@ -35,39 +60,6 @@ void stop()
 {
 	if (hook_instance)
 		hook_instance->stop();
-}
-
-bool write_data()
-{
-	static uint64_t last_event = 0;
-	uint64_t n = last_event;
-	auto result = false;
-	netlib_write_uint8(network::buffer, network::MSG_GAMEPAD_DATA);
-
-	hook_instance->get_mutex()->lock();
-	for (auto &dev : gamepad::hook_instance->get_devices()) {
-		uint64_t e = std::max(dev->last_axis_event()->time, dev->last_button_event()->time);
-		if (e > last_event) {
-			n = std::max(n, e);
-
-			result |= netlib_write_uint8(network::buffer, dev->get_index());
-			result |= netlib_write_uint16(network::buffer, dev->last_axis_event()->vc);
-			result |= netlib_write_float(network::buffer, dev->last_axis_event()->virtual_value);
-			result |= netlib_write_uint16(network::buffer, dev->last_button_event()->vc);
-			result |= netlib_write_float(network::buffer, dev->last_button_event()->virtual_value);
-		}
-
-		if (netlib_tcp_send_buf_smart(network::sock, network::buffer) != network::buffer->write_pos) {
-			result = 0;
-		}
-	}
-	hook_instance->get_mutex()->unlock();
-	last_event = n;
-
-	if (!result)
-		DEBUG_LOG("Writing event data to buffer failed: %s\n", netlib_get_error());
-
-	return result;
 }
 
 }
