@@ -21,7 +21,6 @@
 #include "element_button.hpp"
 #include "element_mouse_wheel.hpp"
 #include "element_trigger.hpp"
-#include "../../sources/input_history.hpp"
 #include <algorithm>
 #include <keycodes.h>
 #include <util/platform.h>
@@ -128,103 +127,6 @@ bool inline is_new_key(const std::vector<uint16_t> &vec, uint16_t vc)
 		if (k == vc)
 			return false;
 	return true;
-}
-
-void element_data_holder::populate_vector(std::vector<uint16_t> &vec, sources::history_settings *settings)
-{
-	for (const auto &data : m_input_data) {
-		if (!data.second)
-			continue;
-		/* Mouse data is persistent and shouldn't be included
-         * Any mouse buttons should only be included if enabled
-         * MOUSE_DATA is only used in mouse movement, so it'll
-         * always be excluded
-         */
-		if (data.first == VC_MOUSE_DATA)
-			continue;
-		if ((data.first >> 8) == (VC_MOUSE_MASK >> 8) &&
-			!(settings->flags & static_cast<int>(sources::history_flags::INCLUDE_MOUSE)))
-			continue;
-
-		if (data.second->get_type() == ET_BUTTON) {
-			if (dynamic_cast<element_data_button *>(data.second.get())->get_state() == BS_RELEASED)
-				continue;
-		} else if (data.second->get_type() == ET_WHEEL) {
-			auto *wheel = dynamic_cast<element_data_wheel *>(data.second.get());
-			if (wheel) {
-				if (wheel->get_dir() == DIR_UP && is_new_key(vec, VC_MOUSE_WHEEL_UP))
-					vec.emplace_back(VC_MOUSE_WHEEL_UP);
-				else if (wheel->get_dir() == DIR_DOWN && is_new_key(vec, VC_MOUSE_WHEEL_DOWN))
-					vec.emplace_back(VC_MOUSE_WHEEL_DOWN);
-				if (wheel->get_state() == BS_PRESSED && is_new_key(vec, VC_MOUSE_WHEEL))
-					vec.emplace_back(VC_MOUSE_WHEEL);
-				continue;
-			}
-		}
-
-		if (is_new_key(vec, data.first)) /* if not add it */
-			vec.emplace_back(data.first);
-	}
-
-	/* Same procedure for the gamepad */
-	if (settings->flags & static_cast<int>(sources::history_flags::INCLUDE_PAD)) {
-		//        for (const auto &data : m_gamepad_data[settings->target_gamepad]) {
-		//            auto add = true;
-		//            auto code = data.first;
-		//            element_data_analog_stick *stick = nullptr;
-		//            element_data_button *button = nullptr;
-		//            element_data_trigger *trigger = nullptr;
-
-		//            if (data.second) {
-		//                switch (data.second->get_type()) {
-		//                case ET_BUTTON:
-		//                    button = dynamic_cast<element_data_button *>(data.second.get());
-		//                    if (button && button->get_state() == BS_RELEASED)
-		//                        continue;
-		//                    break;
-		//                case ET_ANALOG_STICK:
-		//                    stick = dynamic_cast<element_data_analog_stick *>(data.second.get());
-		//                    if (stick) {
-		//                        if (stick->left_pressed() && is_new_key(vec, VC_PAD_L_ANALOG))
-		//                            vec.emplace_back(VC_PAD_L_ANALOG);
-
-		//                        if (stick->right_pressed() && is_new_key(vec, VC_PAD_R_ANALOG))
-		//                            vec.emplace_back(VC_PAD_R_ANALOG);
-		//                        add = false;
-		//                    }
-		//                    break;
-		//                case ET_TRIGGER:
-		//                    trigger = dynamic_cast<element_data_trigger *>(data.second.get());
-
-		//                    if (trigger) {
-		//                        if (trigger->get_left() > TRIGGER_THRESHOLD && is_new_key(vec, VC_PAD_LT))
-		//                            vec.emplace_back(VC_PAD_LT);
-
-		//                        if (trigger->get_right() > TRIGGER_THRESHOLD && is_new_key(vec, VC_PAD_RT))
-		//                            vec.emplace_back(VC_PAD_RT);
-		//                        add = false;
-		//                    }
-		//                    break;
-		//                default:;
-		//                }
-		//            }
-
-		//            if (add && is_new_key(vec, code)) {
-		//                switch (code) {
-		//                case VC_STICK_DATA:
-		//                case VC_TRIGGER_DATA:
-		//                case VC_DPAD_DATA:
-		//                    break;
-		//                default:
-		//                    vec.emplace_back(code);
-		//                }
-		//            }
-		//        }
-	}
-	/* Sort the vector, so keycombinations are always displayed the same way
-     * Sorting is done in reverse so modifier keys like shift are at the
-     * beginning */
-	//    std::sort(vec.rbegin(), vec.rend());
 }
 
 bool element_data_holder::data_exists(const uint16_t keycode)

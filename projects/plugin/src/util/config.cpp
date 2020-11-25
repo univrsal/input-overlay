@@ -32,7 +32,6 @@ bool remote = false;
 bool gamepad = true;
 bool uiohook = true;
 bool overlay = true;
-bool history = true;
 bool regex = false;
 bool log_flag = false;
 int filter_mode = 0;
@@ -45,7 +44,6 @@ void set_defaults()
 	CDEF_BOOL(S_UIOHOOK, io_config::uiohook);
 	CDEF_BOOL(S_GAMEPAD, io_config::gamepad);
 	CDEF_BOOL(S_OVERLAY, io_config::overlay);
-	CDEF_BOOL(S_HISTORY, io_config::history);
 
 	CDEF_BOOL(S_REMOTE, io_config::remote);
 	CDEF_BOOL(S_LOGGING, io_config::log_flag);
@@ -82,7 +80,6 @@ void save()
 	CSET_BOOL(S_GAMEPAD, io_config::gamepad);
 	CSET_BOOL(S_REMOTE, io_config::remote);
 	CSET_BOOL(S_CONTROL, io_config::control);
-	CSET_BOOL(S_HISTORY, io_config::history);
 	CSET_BOOL(S_OVERLAY, io_config::overlay);
 	CSET_INT(S_PORT, io_config::port);
 	CSET_INT(S_REFRESH, io_config::refresh_rate);

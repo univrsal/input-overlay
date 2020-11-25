@@ -62,7 +62,6 @@ io_settings_dialog::io_settings_dialog(QWidget *parent) : QDialog(parent, Qt::Di
 	ui->cb_iohook->setChecked(io_config::uiohook);
 	ui->cb_gamepad_hook->setChecked(io_config::gamepad);
 	ui->cb_enable_overlay->setChecked(io_config::overlay);
-	ui->cb_enable_history->setChecked(io_config::history);
 	ui->cb_enable_control->setChecked(io_config::control);
 	ui->cb_enable_remote->setChecked(io_config::remote);
 	ui->cb_log->setChecked(io_config::log_flag);
@@ -212,7 +211,6 @@ void io_settings_dialog::FormAccepted()
 	io_config::uiohook = ui->cb_iohook->isChecked();
 	io_config::gamepad = ui->cb_gamepad_hook->isChecked();
 	io_config::overlay = ui->cb_enable_overlay->isChecked();
-	io_config::history = ui->cb_enable_history->isChecked();
 
 	io_config::remote = ui->cb_enable_remote->isChecked();
 	io_config::log_flag = ui->cb_log->isChecked();

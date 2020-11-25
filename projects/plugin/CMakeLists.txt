@@ -54,8 +54,6 @@ set(input-overlay_SOURCES
         src/sources/input_source.cpp
         src/sources/input_source.hpp
         src/sources/input_source.cpp
-        src/sources/input_history.cpp
-        src/sources/input_history.hpp
         src/hook/uiohook_helper.cpp
         src/hook/uiohook_helper.hpp
         src/hook/gamepad_hook_helper.cpp
@@ -86,25 +84,6 @@ set(input-overlay_SOURCES
         src/util/element/element_dpad.hpp
         src/util/element/element_data_holder.cpp
         src/util/element/element_data_holder.hpp
-        src/util/history/effect.cpp
-        src/util/history/effect.hpp
-        src/util/history/scale_effect.cpp
-        src/util/history/scale_effect.hpp
-        src/util/history/translate_effect.cpp
-        src/util/history/translate_effect.hpp
-        src/util/history/input_entry.cpp
-        src/util/history/input_entry.hpp
-        src/util/history/input_queue.cpp
-        src/util/history/input_queue.hpp
-        src/util/history/history_icons.cpp
-        src/util/history/history_icons.hpp
-        src/util/history/key_names.cpp
-        src/util/history/key_names.hpp
-        src/util/history/handler.hpp
-        src/util/history/icon_handler.cpp
-        src/util/history/icon_handler.hpp
-        src/util/history/text_handler.cpp
-        src/util/history/text_handler.hpp
         src/network/remote_connection.cpp
         src/network/remote_connection.hpp
         src/network/io_server.cpp

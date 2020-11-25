@@ -46,8 +46,6 @@ public:
 
 	void clear_data();
 
-	void populate_vector(std::vector<uint16_t> &vec, sources::history_settings *settings);
-
 	bool is_empty() const;
 
 	bool is_local() const;

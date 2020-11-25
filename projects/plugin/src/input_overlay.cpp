@@ -26,7 +26,6 @@
 #include "hook/gamepad_hook_helper.hpp"
 #include "hook/uiohook_helper.hpp"
 #include "network/remote_connection.hpp"
-#include "sources/input_history.hpp"
 #include "sources/input_source.hpp"
 #include "util/config.hpp"
 #include "util/lang.h"
@@ -46,8 +45,6 @@ bool obs_module_load()
 	io_config::set_defaults();
 	io_config::load();
 
-	if (io_config::history)
-		sources::register_history();
 	if (io_config::overlay)
 		sources::register_overlay_source();
 

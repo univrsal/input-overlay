@@ -52,7 +52,6 @@ extern bool remote;
 extern bool gamepad;
 extern bool uiohook;
 extern bool overlay;
-extern bool history;
 extern bool regex;
 extern int filter_mode;
 /* Netowork config */
