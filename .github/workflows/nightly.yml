@@ -130,14 +130,6 @@ jobs:
         with:
           path: ${{ github.workspace }}/${{ env.project }}
           submodules: 'recursive'
-      - name: 'Get ${{ env.project }} git info'
-        shell: bash
-        working-directory: ${{ github.workspace }}
-        run: |
-          git fetch --prune --unshallow
-          echo "GIT_BRANCH=${{ github.event.pull_request.head.ref }}" >> $GITHUB_ENV
-          echo "GIT_HASH=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
-          echo "GIT_TAG=$(git describe --tags --abbrev=0)" >> $GITHUB_ENV  
       - name: 'Checkout OBS'
         uses: actions/checkout@v2
         with:
@@ -163,9 +155,9 @@ jobs:
         working-directory: ${{ github.workspace }}/${{ env.project}}
         run: |
           git fetch --prune --unshallow
-          echo "OBS_GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD)" >> $GITHUB_ENV
-          echo "OBS_GIT_HASH=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
-          echo "OBS_GIT_TAG=$(git describe --tags --abbrev=0)" >> $GITHUB_ENV
+          echo "GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD)" >> $GITHUB_ENV
+          echo "GIT_HASH=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+          echo "GIT_TAG=$(git describe --tags --abbrev=0)" >> $GITHUB_ENV
       - name: 'Install prerequisite: QT'
         run: |
           curl -kLO https://cdn-fastly.obsproject.com/downloads/Qt_${{ env.QT_VERSION }}.7z -f --retry 5 -C -
