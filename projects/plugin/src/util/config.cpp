@@ -20,6 +20,7 @@
 #include "settings.h"
 #include "log.h"
 #include <QDir>
+#include <obs-frontend-api.h>
 
 namespace io_config {
 config_t *instance = nullptr;
@@ -40,6 +41,7 @@ uint16_t port = 1608;
 
 void set_defaults()
 {
+	io_config::instance = obs_frontend_get_global_config();
 	CDEF_BOOL(S_UIOHOOK, io_config::uiohook);
 	CDEF_BOOL(S_GAMEPAD, io_config::gamepad);
 	CDEF_BOOL(S_OVERLAY, io_config::overlay);

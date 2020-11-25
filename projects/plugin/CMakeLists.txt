@@ -18,7 +18,6 @@ set(input-overlay_UI
 option(LOCAL_INSTALLATION "Wether to install the obs plugin in the user config directory (default: OFF)" OFF)
 option(DEB_INSTALLER "Wether to use the folder structure for a *.deb installer on linux (default: OFF)" OFF)
 
-include(${CMAKE_SOURCE_DIR}/cmake/ObsPluginHelpers.cmake)
 if (WIN32 OR APPLE)
     include(${CMAKE_SOURCE_DIR}/cmake/FindLibObs.cmake)
 endif()
@@ -168,8 +167,38 @@ if(WIN32)
     target_link_libraries(input-overlay
         "${OBS_FRONTEND_LIB}"
     )
-    message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}/data")
-    install_external_plugin_with_data(input-overlay "data")
+
+    if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+        set(ARCH_NAME "64bit")
+        set(OBS_BUILDDIR_ARCH "build64")
+    else()
+        set(ARCH_NAME "32bit")
+        set(OBS_BUILDDIR_ARCH "build32")
+    endif()
+
+    get_filename_component(LibOBS_DIR ${LIBOBS_LIB} DIRECTORY)
+
+    add_custom_command(TARGET input-overlay POST_BUILD
+        # Copy to obs-studio dev environment for immediate testing
+        COMMAND if $<CONFIG:Debug>==1 (
+            "${CMAKE_COMMAND}" -E copy
+                "$<TARGET_FILE:input-overlay>"
+                "${LibOBS_DIR}/../../rundir/$<CONFIG>/obs-plugins/${ARCH_NAME}")
+
+        COMMAND if $<CONFIG:Debug>==1 (
+            "${CMAKE_COMMAND}" -E copy
+                "$<TARGET_PDB_FILE:input-overlay>"
+                "${LibOBS_DIR}/../../rundir/$<CONFIG>/obs-plugins/${ARCH_NAME}")
+
+        COMMAND if $<CONFIG:Debug>==1 (
+            "${CMAKE_COMMAND}" -E make_directory
+                "${LibOBS_DIR}/../../rundir/$<CONFIG>/data/obs-plugins/${CMAKE_PROJECT_NAME}")
+
+        COMMAND if $<CONFIG:Debug>==1 (
+            "${CMAKE_COMMAND}" -E copy_directory
+                "${PROJECT_SOURCE_DIR}/data"
+                "${LibOBS_DIR}/../../rundir/$<CONFIG>/data/obs-plugins/input-overlay")
+    )
 endif()
 
 if(UNIX AND NOT APPLE)
