@@ -23,39 +23,39 @@
 
 QString util_file_filter(const char *display, const char *formats)
 {
-	QString filter = display;
-	filter += " (";
-	filter += formats;
-	filter += ");;";
-	filter += T_FILTER_ALL_FILES;
-	filter += " (*.*)";
+    QString filter = display;
+    filter += " (";
+    filter += formats;
+    filter += ");;";
+    filter += T_FILTER_ALL_FILES;
+    filter += " (*.*)";
 
-	return filter;
+    return filter;
 }
 
 void util_format_path(QString &path)
 {
-	path.replace('\\', '/');
-	if (path.endsWith('/'))
-		path.chop(1);
+    path.replace('\\', '/');
+    if (path.endsWith('/'))
+        path.chop(1);
 }
 
 bool util_open_json(const QString &path, QJsonDocument &doc)
 {
-	QFile file(path);
+    QFile file(path);
 
-	if (!file.open(QIODevice::ReadOnly)) {
-		berr("couldn't open %s", qt_to_utf8(path));
-		return false;
-	}
+    if (!file.open(QIODevice::ReadOnly)) {
+        berr("couldn't open %s", qt_to_utf8(path));
+        return false;
+    }
 
-	QJsonParseError err;
-	bool result = true;
-	doc = QJsonDocument::fromJson(file.readAll(), &err);
+    QJsonParseError err;
+    bool result = true;
+    doc = QJsonDocument::fromJson(file.readAll(), &err);
 
-	if (err.error != QJsonParseError::NoError) {
-		result = false;
-		berr("Json parse error for %s: %s", qt_to_utf8(path), qt_to_utf8(err.errorString()));
-	}
-	return result;
+    if (err.error != QJsonParseError::NoError) {
+        result = false;
+        berr("Json parse error for %s: %s", qt_to_utf8(path), qt_to_utf8(err.errorString()));
+    }
+    return result;
 }

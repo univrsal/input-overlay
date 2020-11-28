@@ -20,43 +20,26 @@
 
 #include "element_texture.hpp"
 
-class element_data_dpad : public element_data {
-public:
-	/*
-        Separate constructors are used on linux
-        because the values can't be queried together
-    */
-
-	/* Xinput directly generates direction */
-	element_data_dpad(dpad_direction a, dpad_direction b);
-
-	element_data_dpad(dpad_direction d = DD_LEFT, button_state state = BS_RELEASED);
-
-	bool is_persistent() override;
-
-	bool merge(element_data *other) override;
-
-	dpad_texture get_direction() const;
-
-	button_state get_state() const;
-
-private:
-	uint16_t m_direction;
-	button_state m_state;
-};
-
 class element_dpad : public element_texture {
 public:
-	element_dpad();
+    element_dpad();
 
-	void load(const QJsonObject &obj) override;
+    void load(const QJsonObject &obj) override;
 
-	void draw(gs_effect_t *effect, gs_image_file_t *image, element_data *data,
-			  sources::overlay_settings *settings) override;
+    void draw(gs_effect_t *effect, gs_image_file_t *image, sources::overlay_settings *settings) override;
 
-	data_source get_source() override;
+    enum {
+        TEXTURE_LEFT,
+        TEXTURE_RIGHT,
+        TEXTURE_UP,
+        TEXTURE_DOWN,
+        TEXTURE_TOP_LEFT,
+        TEXTURE_TOP_RIGHT,
+        TEXTURE_BOTTOM_LEFT,
+        TEXTURE_BOTTOM_RIGHT
+    };
 
 private:
-	/* Center is in m_mapping */
-	gs_rect m_mappings[8]; /* Left, Right, Up, Down, Top Left, Top Right, Bottom Left, Bottom Right */
+    /* Center is in m_mapping */
+    gs_rect m_mappings[8]; /* Left, Right, Up, Down, Top Left, Top Right, Bottom Left, Bottom Right */
 };

@@ -19,9 +19,9 @@
 #pragma once
 
 #include "../util/overlay.hpp"
+#include "../util/input_data.hpp"
 #include <obs-module.h>
 #include <string>
-#include <uiohook.h>
 
 extern "C" {
 #include <graphics/image-file.h>
@@ -32,46 +32,46 @@ typedef struct obs_data obs_data_t;
 namespace sources {
 class overlay_settings {
 public:
-	std::string image_file;
-	std::string layout_file;
+    /* clang-format: off */
+    std::string image_file;
+    std::string layout_file;
 
-	uint32_t cx = 0, cy = 0; /* Source width/height */
-	bool use_center = false; /* true if monitor center is used for mouse movement */
-	uint32_t monitor_w = 0, monitor_h = 0;
-	uint8_t mouse_deadzone = 0;
-	uint16_t mouse_sens = 0; /* mouse_delta / mouse_sens = mouse movement */
-	uint8_t gamepad = 0;     /* selected gamepad id */
+    input_data data{};                        /* Copy of input data used for visualization            */
+    uint32_t cx = 0, cy = 0;                  /* Source width/height									*/
+    bool use_center = false;                  /* true if monitor center is used for mouse movement	*/
+    uint32_t monitor_w = 0, monitor_h = 0;    /* Monitor size used for mouse movement                 */
+    uint8_t mouse_deadzone = 0;               /* Region in which to ignore mouse movements            */
+    uint16_t mouse_sens = 0;                  /* mouse_delta / mouse_sens = mouse movement			*/
+    std::shared_ptr<gamepad::device> gamepad; /* selected gamepad                                     */
 
-#ifdef _WIN32
-	float left_dz = 0.f, right_dz = 0.f; /* Windows gamepad analog sticks deadzone  (in %)*/
-#endif
-	uint8_t selected_source = 0; /* 0 = Local input */
-	uint8_t layout_flags = 0;    /* See overlay_flags in layout_constants.hpp */
-	obs_data_t *data = nullptr;  /* Pointer to source property data */
+    uint8_t selected_source = 0;  /* 0 = Local input, 0< remote computers                 */
+    uint8_t layout_flags = 0;     /* See overlay_flags in layout_constants.hpp            */
+    obs_data_t *source = nullptr; /* Pointer to source property data                      */
+    /* clang-format: on */
 };
 
 class input_source {
 public:
-	obs_source_t *m_source = nullptr;
+    obs_source_t *m_source = nullptr;
 
-	uint32_t cx = 0, cy = 0;
-	std::unique_ptr<overlay> m_overlay{};
-	overlay_settings m_settings;
+    uint32_t cx = 0, cy = 0;
+    std::unique_ptr<overlay> m_overlay{};
+    overlay_settings m_settings;
 
-	input_source(obs_source_t *source, obs_data_t *settings) : m_source(source)
-	{
-		m_overlay = std::make_unique<overlay>(&m_settings);
-		m_settings.data = settings;
-		obs_source_update(m_source, settings);
-	}
+    input_source(obs_source_t *source, obs_data_t *settings) : m_source(source)
+    {
+        m_overlay = std::make_unique<overlay>(&m_settings);
+        m_settings.source = settings;
+        obs_source_update(m_source, settings);
+    }
 
-	~input_source() = default;
+    ~input_source();
 
-	inline void update(obs_data_t *settings);
+    inline void update(obs_data_t *settings);
 
-	inline void tick(float seconds);
+    inline void tick(float seconds);
 
-	inline void render(gs_effect_t *effect) const;
+    inline void render(gs_effect_t *effect) const;
 };
 
 /* Event handlers */

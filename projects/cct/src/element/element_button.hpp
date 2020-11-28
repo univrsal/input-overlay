@@ -22,30 +22,30 @@
 
 class element_button : public element_texture {
 public:
-	element_button() : element_texture(), m_pressed_mapping()
-	{ /* NO-OP */
-	}
+    element_button() : element_texture(), m_pressed_mapping()
+    { /* NO-OP */
+    }
 
-	element_button(const std::string &id, SDL_Point pos, SDL_Rect mapping, uint16_t vc, uint8_t z);
+    element_button(const std::string &id, SDL_Point pos, SDL_Rect mapping, uint16_t vc, uint8_t z);
 
-	element_error is_valid(notifier *n, sdl_helper *h) override;
+    element_error is_valid(notifier *n, sdl_helper *h) override;
 
-	void draw(texture *atlas, coordinate_system *cs, bool selected, bool alpha) override;
+    void draw(texture *atlas, coordinate_system *cs, bool selected, bool alpha) override;
 
-	void write_to_json(json_obj &j, SDL_Point *default_dim, uint8_t &layout_flags) override;
+    void write_to_json(json_obj &j, SDL_Point *default_dim, uint8_t &layout_flags) override;
 
-	void update_settings(dialog_new_element *dialog) override;
+    void update_settings(dialog_new_element *dialog) override;
 
-	void update_settings(dialog_element_settings *dialog) override;
+    void update_settings(dialog_element_settings *dialog) override;
 
-	void handle_event(SDL_Event *event, sdl_helper *helper) override;
+    void handle_event(SDL_Event *event, sdl_helper *helper) override;
 
-	int get_vc() override { return m_keycode; }
+    int get_vc() override { return m_keycode; }
 
-	static element_button *read_from_json(const json &j, SDL_Point *default_dim);
+    static element_button *read_from_json(const json &j, SDL_Point *default_dim);
 
 private:
-	SDL_Rect m_pressed_mapping;
-	uint16_t m_keycode = 0;
-	bool m_pressed = false;
+    SDL_Rect m_pressed_mapping;
+    uint16_t m_keycode = 0;
+    bool m_pressed = false;
 };

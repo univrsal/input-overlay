@@ -23,44 +23,44 @@
 #include "elements/combobox.hpp"
 
 DialogElementType::DialogElementType(sdl_helper *sdl, tool *tool)
-	: dialog(sdl, SDL_Point{350, 120}, LANG_DIALOG_ELEMENT_TYPE)
+    : dialog(sdl, SDL_Point{350, 120}, LANG_DIALOG_ELEMENT_TYPE)
 {
-	m_tool = tool;
+    m_tool = tool;
 }
 
 void DialogElementType::init()
 {
-	dialog::init();
-	add<label>(8, 32, LANG_LABEL_SELECT_ELEMENT_TYPE, this);
+    dialog::init();
+    add<label>(8, 32, LANG_LABEL_SELECT_ELEMENT_TYPE, this);
 
-	m_type = add<combobox>(8, 52, m_dimensions.w - 16, 20, this);
+    m_type = add<combobox>(8, 52, m_dimensions.w - 16, 20, this);
 
-	/* Populate combobox with element types */
-	m_type->add_item(LANG_ELEMENT_TEXTURE);
-	m_type->add_item(LANG_ELEMENT_BUTTON);
-	m_type->add_item(LANG_ELEMENT_MOUSE_WHEEL);
-	m_type->add_item(LANG_ELEMENT_MOUSE_MOVEMENT);
-	m_type->add_item(LANG_ELEMENT_ANALOG_STICK);
-	m_type->add_item(LANG_ELEMENT_TRIGGER);
-	m_type->add_item(LANG_ELEMENT_GAMEPAD_ID);
-	m_type->add_item(LANG_ELEMENT_DPAD_STICK);
+    /* Populate combobox with element types */
+    m_type->add_item(LANG_ELEMENT_TEXTURE);
+    m_type->add_item(LANG_ELEMENT_BUTTON);
+    m_type->add_item(LANG_ELEMENT_MOUSE_WHEEL);
+    m_type->add_item(LANG_ELEMENT_MOUSE_MOVEMENT);
+    m_type->add_item(LANG_ELEMENT_ANALOG_STICK);
+    m_type->add_item(LANG_ELEMENT_TRIGGER);
+    m_type->add_item(LANG_ELEMENT_GAMEPAD_ID);
+    m_type->add_item(LANG_ELEMENT_DPAD_STICK);
 
-	add<button>(8, m_dimensions.h - 32, LANG_BUTTON_OK, this)->set_id(ACTION_OK);
-	add<button>(124, m_dimensions.h - 32, LANG_BUTTON_CANCEL, this)->set_id(ACTION_CANCEL);
+    add<button>(8, m_dimensions.h - 32, LANG_BUTTON_OK, this)->set_id(ACTION_OK);
+    add<button>(124, m_dimensions.h - 32, LANG_BUTTON_CANCEL, this)->set_id(ACTION_CANCEL);
 
-	set_flags(DIALOG_CENTERED | DIALOG_TOP_MOST);
+    set_flags(DIALOG_CENTERED | DIALOG_TOP_MOST);
 }
 
 void DialogElementType::action_performed(const int8_t action_id)
 {
-	switch (action_id) {
-	case ACTION_CANCEL:
-		m_tool->queue_dialog_close();
-		break;
-	case ACTION_OK:
-		m_tool->set_new_element_type(static_cast<element_type>(m_type->get_selected()));
-		m_tool->queue_dialog_open(NEW_ELEMENT);
-		break;
-	default:;
-	}
+    switch (action_id) {
+    case ACTION_CANCEL:
+        m_tool->queue_dialog_close();
+        break;
+    case ACTION_OK:
+        m_tool->set_new_element_type(static_cast<element_type>(m_type->get_selected()));
+        m_tool->queue_dialog_open(NEW_ELEMENT);
+        break;
+    default:;
+    }
 }

@@ -19,42 +19,37 @@
 #include "element_gamepad_id.hpp"
 #include "element_button.hpp"
 #include "../../sources/input_source.hpp"
+#include "../../hook/gamepad_hook_helper.hpp"
 #include <libgamepad.hpp>
-#include <keycodes.h>
 
 element_gamepad_id::element_gamepad_id() : element_texture(ET_GAMEPAD_ID), m_mappings{}
 {
-	m_keycode = gamepad::button::GUIDE;
+    m_keycode = gamepad::button::GUIDE;
 }
 
 void element_gamepad_id::load(const QJsonObject &obj)
 {
-	element_texture::load(obj);
-	auto i = 1;
-	for (auto &map : m_mappings) {
-		map = m_mapping;
-		map.x += i++ * (m_mapping.cx + CFG_INNER_BORDER);
-	}
+    element_texture::load(obj);
+    auto i = 1;
+    for (auto &map : m_mappings) {
+        map = m_mapping;
+        map.x += i++ * (m_mapping.cx + CFG_INNER_BORDER);
+    }
 }
 
-void element_gamepad_id::draw(gs_effect_t *effect, gs_image_file_t *image, element_data *data,
-							  sources::overlay_settings *settings)
+void element_gamepad_id::draw(gs_effect_t *effect, gs_image_file_t *image, sources::overlay_settings *settings)
 {
-	if (data) {
-		const auto d = dynamic_cast<element_data_button *>(data);
-		if (d && (int)d->get_state()) {
-			element_texture::draw(effect, image, &m_mappings[ID_PRESSED]);
-		}
-	}
+    if (settings->data.gamepad_buttons[m_keycode])
+        element_texture::draw(effect, image, &m_mappings[ID_PRESSED]);
 
-	if (settings->gamepad > 0) {
-		element_texture::draw(effect, image, &m_mappings[settings->gamepad - 1]);
-	} else {
-		element_texture::draw(effect, image, &m_mapping);
-	}
-}
-
-data_source element_gamepad_id::get_source()
-{
-	return DS_GAMEPAD;
+    if (settings->gamepad) {
+        gamepad::hook_instance->get_mutex()->lock();
+        if (settings->gamepad->is_valid() > 0) {
+            int index = settings->gamepad->get_index() < 4 ? settings->gamepad->get_index() : 0;
+            element_texture::draw(effect, image, &m_mappings[index]);
+        } else {
+            element_texture::draw(effect, image, &m_mapping);
+        }
+        gamepad::hook_instance->get_mutex()->unlock();
+    }
 }

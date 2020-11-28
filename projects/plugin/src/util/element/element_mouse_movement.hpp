@@ -21,39 +21,21 @@
 #include "element_texture.hpp"
 #include <layout_constants.h>
 
-/* Contains all information about mouse movement,
- * button clicks and scroll motion
- */
-class element_data_mouse_pos : public element_data {
-public:
-	element_data_mouse_pos(int16_t x = 0, int16_t y = 0);
-
-	bool is_persistent() override;
-	bool merge(element_data *other) override;
-	float get_mouse_angle(sources::overlay_settings *settings);
-	void get_mouse_offset(sources::overlay_settings *settings, const vec2 &center, vec2 &out, uint8_t radius) const;
-	int16_t get_mouse_x() const;
-	int16_t get_mouse_y() const;
-
-private:
-	int16_t m_x{}, m_y{};
-	int16_t m_last_x{}, m_last_y{};
-	float m_old_angle{};
-};
-
 class element_mouse_movement : public element_texture {
 public:
-	element_mouse_movement();
+    element_mouse_movement();
 
-	void load(const QJsonObject &obj) override;
+    void load(const QJsonObject &obj) override;
 
-	void draw(gs_effect_t *effect, gs_image_file_t *image, element_data *data,
-			  sources::overlay_settings *settings) override;
-
-	data_source get_source() override { return DS_MOUSE_POS; }
+    void draw(gs_effect_t *effect, gs_image_file_t *image, sources::overlay_settings *settings) override;
 
 private:
-	mouse_movement m_movement_type;
-	vec2 m_offset_pos = {};
-	uint8_t m_radius = 0;
+    float get_mouse_angle(sources::overlay_settings *settings);
+    void get_mouse_offset(sources::overlay_settings *settings, const vec2 &center, vec2 &out,
+                          const uint8_t radius) const;
+    mouse_movement m_movement_type;
+    vec2 m_offset_pos = {};
+    uint8_t m_radius = 0;
+    int m_last_x{}, m_last_y{};
+    float m_last_angle = 0.0f;
 };

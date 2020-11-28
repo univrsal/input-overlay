@@ -82,8 +82,8 @@ set(input-overlay_SOURCES
         src/util/element/element_mouse_movement.hpp
         src/util/element/element_dpad.cpp
         src/util/element/element_dpad.hpp
-        src/util/element/element_data_holder.cpp
-        src/util/element/element_data_holder.hpp
+	src/util/input_data.hpp
+	src/util/input_data.cpp
         src/network/remote_connection.cpp
         src/network/remote_connection.hpp
         src/network/io_server.cpp

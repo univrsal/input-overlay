@@ -39,72 +39,72 @@ class gui_element;
 
 class dialog {
 public:
-	dialog(sdl_helper *sdl, SDL_Rect size, const std::string &title);
+    dialog(sdl_helper *sdl, SDL_Rect size, const std::string &title);
 
-	dialog(sdl_helper *sdl, SDL_Point size, const std::string &title);
+    dialog(sdl_helper *sdl, SDL_Point size, const std::string &title);
 
-	virtual ~dialog();
+    virtual ~dialog();
 
-	virtual void init();
+    virtual void init();
 
-	virtual void draw_background();
+    virtual void draw_background();
 
-	virtual void draw_foreground();
+    virtual void draw_foreground();
 
-	virtual void close();
+    virtual void close();
 
-	virtual bool handle_events(SDL_Event *event);
+    virtual bool handle_events(SDL_Event *event);
 
-	virtual void action_performed(int8_t action_id);
+    virtual void action_performed(int8_t action_id);
 
-	void add(gui_element *e);
+    void add(gui_element *e);
 
-	template<class T, typename... Args> T *add(Args &&... args)
-	{
-		auto id = m_screen_elements.size();
-		auto elem = new T(std::forward<Args>(args)...);
-		m_screen_elements.emplace_back(elem);
-		if (elem->can_select())
-			m_tab_items.emplace_back(elem);
-		return elem;
-	}
+    template<class T, typename... Args> T *add(Args &&... args)
+    {
+        auto id = m_screen_elements.size();
+        auto elem = new T(std::forward<Args>(args)...);
+        m_screen_elements.emplace_back(elem);
+        if (elem->can_select())
+            m_tab_items.emplace_back(elem);
+        return elem;
+    }
 
-	void set_dimension(uint16_t w, uint16_t h);
+    void set_dimension(uint16_t w, uint16_t h);
 
-	void set_flags(uint16_t flags);
+    void set_flags(uint16_t flags);
 
-	void reload_lang();
+    void reload_lang();
 
-	void change_focus(int8_t id);
+    void change_focus(int8_t id);
 
-	SDL_Point position() const;
+    SDL_Point position() const;
 
-	sdl_helper *helper() const;
+    sdl_helper *helper() const;
 
-	int get_left() const;
+    int get_left() const;
 
-	int get_top() const;
+    int get_top() const;
 
-	int get_right() const;
+    int get_right() const;
 
-	int get_bottom() const;
+    int get_bottom() const;
 
-	int8_t get_next_id() const { return int8_t(m_screen_elements.size()); }
+    int8_t get_next_id() const { return int8_t(m_screen_elements.size()); }
 
 protected:
-	/* Tab handling */
-	gui_element *m_focused_element = nullptr;
-	int8_t m_focused_element_id = 0;
+    /* Tab handling */
+    gui_element *m_focused_element = nullptr;
+    int8_t m_focused_element_id = 0;
 
-	std::vector<std::unique_ptr<gui_element>> m_screen_elements;
-	std::vector<gui_element *> m_tab_items;
-	std::string m_title;
+    std::vector<std::unique_ptr<gui_element>> m_screen_elements;
+    std::vector<gui_element *> m_tab_items;
+    std::string m_title;
 
-	int m_offset_x, m_offset_y{};
-	bool m_is_dragging = false;
-	uint16_t m_flags = 0x0000;
+    int m_offset_x, m_offset_y{};
+    bool m_is_dragging = false;
+    uint16_t m_flags = 0x0000;
 
-	sdl_helper *m_helper;
-	SDL_Rect m_dimensions{};
-	SDL_Rect m_title_bar{};
+    sdl_helper *m_helper;
+    SDL_Rect m_dimensions{};
+    SDL_Rect m_title_bar{};
 };

@@ -102,6 +102,6 @@ SpacesInSquareBrackets: false
 TabWidth: 4
 #TypenameMacros:  # requires clang-format 9
 #  - 'DARRAY'
-UseTab: ForContinuationAndIndentation
+UseTab: Never
 ---
 Language: ObjC

@@ -17,52 +17,38 @@
  *************************************************************************/
 
 #pragma once
-
+#include <map>
 #include <mutex>
+#include <netlib.h>
 #include <uiohook.h>
 
-#ifdef LINUX
-#include <stdint.h>
-#else
-#define VC_EXTRALEAN
-#define WIN32_LEAN_AND_MEAN
-#include <Windows.h>
+#define SCROLL_TIMEOUT 120
+
+namespace uiohook {
+extern std::mutex hook_mutex;
+extern uint32_t last_scroll_time;
+enum wheel_dir { wheel_up = -1, wheel_none, wheel_down };
+
+inline uint16_t util_mouse_fix(int m)
+{
+#ifndef _WIN32 /* Linux mixes right mouse and middle mouse or is windows getting it wrong? */
+    if (m == 3)
+        m = 2;
+    else if (m == 2)
+        m = 3;
 #endif
+    return m;
+}
 
-class element_data_holder;
+inline bool is_middle_mouse(int m)
+{
+    return util_mouse_fix(m) == MOUSE_BUTTON3;
+}
 
-namespace hook {
-extern element_data_holder *input_data;
-
-extern uint64_t last_wheel;
-extern wint_t last_character;
-extern int16_t mouse_x, mouse_y, mouse_x_smooth, mouse_y_smooth, mouse_last_x, mouse_last_y;
-extern bool hook_initialized;
-extern bool data_initialized;
-extern std::mutex mutex;
-
-#ifdef _WIN32
-DWORD WINAPI hook_thread_proc(LPVOID arg);
-#else
-
-void *hook_thread_proc(void *arg);
-
-#endif
-
-/* Checks if mouse scrolling timed out */
-void check_wheel();
+extern volatile bool hook_state;
+bool logger_proc(unsigned level, const char *format, ...);
 
 void dispatch_proc(uiohook_event *event);
-
-bool logger_proc(unsigned int level, const char *format, ...);
-
-void init_data_holder();
-
-void start_hook();
-
-void end_hook();
-
-int hook_enable();
-
-void process_event(uiohook_event *event);
+bool start();
+void stop();
 }

@@ -29,42 +29,42 @@ class sdl_helper;
 
 class lang_file {
 public:
-	lang_file(const std::string &name, const std::string &lang)
-	{
-		m_file_path = name;
-		m_language = lang;
-	}
+    lang_file(const std::string &name, const std::string &lang)
+    {
+        m_file_path = name;
+        m_language = lang;
+    }
 
-	std::string m_file_path;
-	std::string m_language;
+    std::string m_file_path;
+    std::string m_language;
 };
 
 class localization {
 public:
-	localization(const char *lang_folder, sdl_helper *helper);
+    localization(const char *lang_folder, sdl_helper *helper);
 
-	void load_lang_by_id(uint8_t id);
+    void load_lang_by_id(uint8_t id);
 
-	const std::vector<lang_file> *get_languages() const { return &m_langfiles; }
+    const std::vector<lang_file> *get_languages() const { return &m_langfiles; }
 
-	std::string localize(const char *id) const;
+    std::string localize(const char *id) const;
 
-	uint8_t get_english_id() const { return m_english_id; }
+    uint8_t get_english_id() const { return m_english_id; }
 
 private:
-	void scan_lang_folder();
+    void scan_lang_folder();
 
-	void load_default_language();
+    void load_default_language();
 
-	bool m_have_default = false;
+    bool m_have_default = false;
 
-	uint8_t m_english_id = 0;
+    uint8_t m_english_id = 0;
 
-	std::string m_lang_folder;
-	std::vector<lang_file> m_langfiles;
+    std::string m_lang_folder;
+    std::vector<lang_file> m_langfiles;
 
-	sdl_helper *m_helper = nullptr;
+    sdl_helper *m_helper = nullptr;
 
-	json11::Json m_english;
-	json11::Json m_current;
+    json11::Json m_english;
+    json11::Json m_current;
 };

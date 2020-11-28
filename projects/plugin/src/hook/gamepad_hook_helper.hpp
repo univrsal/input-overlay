@@ -19,21 +19,13 @@
 #pragma once
 
 #include <mutex>
-
 namespace gamepad {
+
+extern std::shared_ptr<class hook> hook_instance;
+extern std::shared_ptr<hook> hook_instance;
+extern bool state;
 
 void start_pad_hook();
 void end_pad_hook();
-bool init_pad_devices();
-void *hook_method(void *);
-
-/* Mutex for thread safety */
-extern std::mutex mutex;
-/* Four structs containing info to query gamepads */
-//extern std::vector<std::shared_ptr<handle>> pads;
-/* Init state of hook */
-extern bool gamepad_hook_state;
-/* False will end thread */
-extern bool gamepad_hook_run_flag;
 
 }

@@ -22,25 +22,25 @@
 
 class element_dpad : public element_texture {
 public:
-	element_dpad(){
-		/* NO-OP */
-	};
+    element_dpad(){
+        /* NO-OP */
+    };
 
-	element_dpad(const std::string &id, const SDL_Point pos, const SDL_Rect mapping, const uint8_t z)
-		: element_texture(id, pos, mapping, z)
-	{
-		/* NO-OP */
-	}
+    element_dpad(const std::string &id, const SDL_Point pos, const SDL_Rect mapping, const uint8_t z)
+        : element_texture(id, pos, mapping, z)
+    {
+        /* NO-OP */
+    }
 
-	void draw(texture *atlas, coordinate_system *cs, bool selected, bool alpha) override;
+    void draw(texture *atlas, coordinate_system *cs, bool selected, bool alpha) override;
 
-	void handle_event(SDL_Event *event, sdl_helper *helper) override;
+    void handle_event(SDL_Event *event, sdl_helper *helper) override;
 
-	static element_dpad *read_from_json(const json &file, SDL_Point *default_dim);
+    static element_dpad *read_from_json(const json &file, SDL_Point *default_dim);
 
-	void write_to_json(json_obj &cfg, SDL_Point *default_dim, uint8_t &layout_flags) override;
+    void write_to_json(json_obj &cfg, SDL_Point *default_dim, uint8_t &layout_flags) override;
 
 private:
-	uint8_t m_dir = DD_CENTER;
-	int8_t m_last_button = SDL_CONTROLLER_BUTTON_INVALID;
+    uint8_t m_dir = DD_CENTER;
+    int8_t m_last_button = SDL_CONTROLLER_BUTTON_INVALID;
 };

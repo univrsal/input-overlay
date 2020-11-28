@@ -19,6 +19,7 @@
 #pragma once
 
 #include "messages.hpp"
+#include <buffer.hpp>
 #include <netlib.h>
 
 #define TIMEOUT_NS (1000 * 1000 * 1000)
@@ -41,7 +42,7 @@ void network_handler();
 
 char *read_text(tcp_socket sock, char **buf);
 
-message read_msg_from_buffer(netlib_byte_buf *buf);
+message read_msg_from_buffer(buffer &buf);
 
 int send_message(tcp_socket sock, message msg);
 

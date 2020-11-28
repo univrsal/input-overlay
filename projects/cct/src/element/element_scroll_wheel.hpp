@@ -30,29 +30,29 @@
 
 class element_scroll_wheel : public element_texture {
 public:
-	element_scroll_wheel()
-		: element_texture(){
-			  /* NO-OP */
-		  };
+    element_scroll_wheel()
+        : element_texture(){
+              /* NO-OP */
+          };
 
-	element_scroll_wheel(const std::string &id, SDL_Point pos, SDL_Rect mapping, uint8_t z);
+    element_scroll_wheel(const std::string &id, SDL_Point pos, SDL_Rect mapping, uint8_t z);
 
-	void draw(texture *atlas, coordinate_system *cs, bool selected, bool alpha) override;
+    void draw(texture *atlas, coordinate_system *cs, bool selected, bool alpha) override;
 
-	void handle_event(SDL_Event *event, sdl_helper *helper) override;
+    void handle_event(SDL_Event *event, sdl_helper *helper) override;
 
-	void refresh_mappings();
+    void refresh_mappings();
 
-	void update_settings(dialog_new_element *dialog) override;
+    void update_settings(dialog_new_element *dialog) override;
 
-	void update_settings(dialog_element_settings *dialog) override;
+    void update_settings(dialog_element_settings *dialog) override;
 
-	static element_scroll_wheel *read_from_json(const json &j, SDL_Point *default_dim);
+    static element_scroll_wheel *read_from_json(const json &j, SDL_Point *default_dim);
 
 private:
-	SDL_Rect m_mapping_pressed = {}, m_mapping_down = {}, m_mapping_up = {};
-	timer m_wheel_reset;
-	bool m_pressed = false;
-	bool m_up = false;
-	bool m_down = false;
+    SDL_Rect m_mapping_pressed = {}, m_mapping_down = {}, m_mapping_up = {};
+    timer m_wheel_reset;
+    bool m_pressed = false;
+    bool m_up = false;
+    bool m_down = false;
 };

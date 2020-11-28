@@ -24,18 +24,15 @@
 
 class element_gamepad_id : public element_texture {
 public:
-	element_gamepad_id();
+    element_gamepad_id();
 
-	void load(const QJsonObject &obj) override;
+    void load(const QJsonObject &obj) override;
 
-	void draw(gs_effect_t *effect, gs_image_file_t *image, element_data *data,
-			  sources::overlay_settings *settings) override;
-
-	data_source get_source() override;
+    void draw(gs_effect_t *effect, gs_image_file_t *image, sources::overlay_settings *settings) override;
 
 private:
-	/* 0 - 2 Player 2 - 4 (Player 1 is default)
+    /* 0 - 2 Player 2 - 4 (Player 1 is default)
      * 3     Middle pressed down
      */
-	gs_rect m_mappings[4];
+    gs_rect m_mappings[4];
 };

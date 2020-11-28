@@ -31,23 +31,23 @@ enum wheel_dir { wheel_up = -1, wheel_none, wheel_down };
 inline uint16_t util_mouse_fix(int m)
 {
 #ifndef _WIN32 /* Linux mixes right mouse and middle mouse or is windows getting it wrong? */
-	if (m == 3)
-		m = 2;
-	else if (m == 2)
-		m = 3;
+    if (m == 3)
+        m = 2;
+    else if (m == 2)
+        m = 3;
 #endif
-	return m;
+    return m;
 }
 
 inline bool is_middle_mouse(int m)
 {
-	return util_mouse_fix(m) == MOUSE_BUTTON3;
+    return util_mouse_fix(m) == MOUSE_BUTTON3;
 }
 
 extern volatile bool hook_state;
 bool logger_proc(unsigned level, const char *format, ...);
 
 void dispatch_proc(uiohook_event *event);
-bool init();
-void close();
+bool start();
+void stop();
 }

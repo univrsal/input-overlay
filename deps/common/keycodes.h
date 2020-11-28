@@ -26,8 +26,6 @@
 #define VC_NONE             0xFFFFu
 
 #define VC_MOUSE_MASK       0xED00u /* 'u' for unsigned to fix clang tidy warning */
-#define VC_MOUSE_WHEEL_UP   0xED11u
-#define VC_MOUSE_WHEEL_DOWN 0xED12u
 #define VC_MOUSE_WHEEL      (MOUSE_BUTTON3 | VC_MOUSE_MASK)
 
 /* Contains mouse position */

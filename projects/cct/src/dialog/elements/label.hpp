@@ -30,34 +30,34 @@ class gui_element;
 
 class label : public gui_element {
 public:
-	label(int x, int y, const char *text, dialog *parent, uint16_t flags = 0x0);
+    label(int x, int y, const char *text, dialog *parent, uint16_t flags = 0x0);
 
-	label(int x, int y, const char *text, uint8_t font, dialog *parent, uint16_t flags = 0x0);
+    label(int x, int y, const char *text, uint8_t font, dialog *parent, uint16_t flags = 0x0);
 
-	label(int x, int y, const char *text, dialog *parent, SDL_Color *color);
+    label(int x, int y, const char *text, dialog *parent, SDL_Color *color);
 
-	label() = default;
-	~label();
+    label() = default;
+    ~label();
 
-	void close() override;
+    void close() override;
 
-	void draw_background() override;
+    void draw_background() override;
 
-	void draw_foreground() override;
+    void draw_foreground() override;
 
-	bool handle_events(SDL_Event *event, bool was_handled) override;
+    bool handle_events(SDL_Event *event, bool was_handled) override;
 
-	void set_text(std::string text);
+    void set_text(std::string text);
 
-	void refresh() override;
+    void refresh() override;
 
-	void set_font(const uint8_t font) { m_font = UTIL_CLAMP(FONT_WSTRING, font, FONT_WSTRING_LARGE); }
+    void set_font(const uint8_t font) { m_font = UTIL_CLAMP(FONT_WSTRING, font, FONT_WSTRING_LARGE); }
 
 private:
-	std::string m_unlocalized_text;
-	std::vector<std::unique_ptr<std::string>> m_lines;
+    std::string m_unlocalized_text;
+    std::vector<std::unique_ptr<std::string>> m_lines;
 
-	SDL_Color *m_color;
+    SDL_Color *m_color;
 
-	uint8_t m_font = FONT_WSTRING;
+    uint8_t m_font = FONT_WSTRING;
 };

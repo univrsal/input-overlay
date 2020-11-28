@@ -30,24 +30,24 @@
 
 namespace util {
 typedef struct {
-	bool monitor_gamepad;
-	bool monitor_mouse;
-	bool monitor_keyboard;
-	char username[64];
-	gamepad::hook_type gamepad_hook_type;
-	uint16_t port;
-	ip_address ip;
+    bool monitor_gamepad;
+    bool monitor_mouse;
+    bool monitor_keyboard;
+    char username[64];
+    gamepad::hook_type gamepad_hook_type;
+    uint16_t port;
+    ip_address ip;
 } config;
 
 extern config cfg;
 
 enum return_codes {
-	RET_NETWORK_INIT,
-	RET_ARGUMENT_PARSING,
-	RET_NO_HOOKS,
-	RET_CONNECTION,
-	RET_GAMEPAD_INIT,
-	RET_UIOHOOK_INIT
+    RET_NETWORK_INIT,
+    RET_ARGUMENT_PARSING,
+    RET_NO_HOOKS,
+    RET_CONNECTION,
+    RET_GAMEPAD_INIT,
+    RET_UIOHOOK_INIT
 };
 
 void sleep_ms(uint32_t ms);
@@ -59,7 +59,7 @@ int send_text(char *buf);
 
 inline uint16_t swap_be16(uint16_t in)
 {
-	return (in >> 8) | (in << 8);
+    return (in >> 8) | (in << 8);
 }
 
 uint32_t get_ticks();

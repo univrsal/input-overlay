@@ -19,44 +19,25 @@
 #include "element_button.hpp"
 #include <keycodes.h>
 
-bool element_data_button::merge(element_data *other)
-{
-	bool result = false;
-	if (other && other->get_type() == ET_BUTTON) {
-		const auto other_btn = dynamic_cast<element_data_button *>(other);
-		if (other_btn) {
-			if (m_state == BS_RELEASED && other_btn->m_state == BS_PRESSED)
-				result = true;
-			m_state = other_btn->m_state;
-		}
-	}
-	return result;
-}
+#include "src/sources/input_source.hpp"
 
 void element_button::load(const QJsonObject &obj)
 {
-	element_texture::load(obj);
-	m_keycode = static_cast<uint16_t>(obj[CFG_KEY_CODE].toInt());
-	m_pressed = m_mapping;
-	m_pressed.y = m_mapping.y + m_mapping.cy + CFG_INNER_BORDER;
-	/* Checks whether first 8 bits are equal */
-	is_gamepad = (m_keycode >> 8) == (VC_PAD_MASK >> 8);
+    element_texture::load(obj);
+    m_keycode = static_cast<uint16_t>(obj[CFG_KEY_CODE].toInt());
+    m_pressed = m_mapping;
+    m_pressed.y = m_mapping.y + m_mapping.cy + CFG_INNER_BORDER;
 }
 
-void element_button::draw(gs_effect_t *effect, gs_image_file_t *image, element_data *data,
-						  sources::overlay_settings *settings)
+void element_button::draw(gs_effect_t *effect, gs_image_file_t *image, sources::overlay_settings *settings)
 {
-	UNUSED_PARAMETER(settings);
-	if (data) {
-		const auto button = dynamic_cast<element_data_button *>(data);
-		if (button) {
-			if (button->get_state() == BS_PRESSED) {
-				element_texture::draw(effect, image, &m_pressed);
-			} else {
-				element_texture::draw(effect, image, nullptr);
-			}
-		}
-	} else {
-		element_texture::draw(effect, image, nullptr);
-	}
+    /* TODO: this should only check either mouse buttons,
+     * keyboard keys or gamepad buttons
+     */
+    if (settings->data.gamepad_buttons[m_keycode] || settings->data.keyboard[m_keycode] ||
+        settings->data.mouse[m_keycode]) {
+        element_texture::draw(effect, image, &m_pressed);
+    } else {
+        element_texture::draw(effect, image, nullptr);
+    }
 }

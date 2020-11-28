@@ -27,111 +27,111 @@
 #include "../dialog/dialog_element_settings.hpp"
 
 element_analog_stick::element_analog_stick(const std::string &id, const SDL_Point pos, const SDL_Rect mapping,
-										   const element_side side, const uint8_t radius, const uint8_t z)
-	: element_texture(ET_ANALOG_STICK, id, pos, mapping, z), m_static_scaled()
+                                           const element_side side, const uint8_t radius, const uint8_t z)
+    : element_texture(ET_ANALOG_STICK, id, pos, mapping, z), m_static_scaled()
 {
-	m_stick = side;
-	m_radius = radius;
+    m_stick = side;
+    m_radius = radius;
 }
 
 SDL_Rect *element_analog_stick::get_abs_dim(coordinate_system *cs)
 {
-	m_static_scaled = *element::get_abs_dim(cs);
+    m_static_scaled = *element::get_abs_dim(cs);
 
-	m_dimensions_scaled.x += int(m_x_axis * m_radius * cs->get_scale());
-	m_dimensions_scaled.y += int(m_y_axis * m_radius * cs->get_scale());
-	return &m_dimensions_scaled;
+    m_dimensions_scaled.x += int(m_x_axis * m_radius * cs->get_scale());
+    m_dimensions_scaled.y += int(m_y_axis * m_radius * cs->get_scale());
+    return &m_dimensions_scaled;
 }
 
 element_error element_analog_stick::is_valid(notifier *n, sdl_helper *h)
 {
-	auto error = element_texture::is_valid(n, h);
+    auto error = element_texture::is_valid(n, h);
 
-	if (error == EE_VALID && m_radius == 0) {
-		n->add_msg(MESSAGE_ERROR, h->loc(LANG_ERROR_RADIUS_INVALID));
-		error = EE_STICK_RADIUS;
-	}
-	return error;
+    if (error == EE_VALID && m_radius == 0) {
+        n->add_msg(MESSAGE_ERROR, h->loc(LANG_ERROR_RADIUS_INVALID));
+        error = EE_STICK_RADIUS;
+    }
+    return error;
 }
 
 void element_analog_stick::draw(texture *atlas, coordinate_system *cs, const bool selected, const bool alpha)
 {
-	get_abs_dim(cs);
-	if (m_pressed) {
-		auto temp = m_mapping;
-		temp.y += temp.h + CFG_INNER_BORDER;
-		atlas->draw(cs->get_helper()->renderer(), &m_dimensions_scaled, &temp,
-					(alpha && !selected) ? ELEMENT_HIDE_ALPHA : 255);
-	} else {
-		atlas->draw(cs->get_helper()->renderer(), &m_dimensions_scaled, &m_mapping,
-					(alpha && !selected) ? ELEMENT_HIDE_ALPHA : 255);
-	}
+    get_abs_dim(cs);
+    if (m_pressed) {
+        auto temp = m_mapping;
+        temp.y += temp.h + CFG_INNER_BORDER;
+        atlas->draw(cs->get_helper()->renderer(), &m_dimensions_scaled, &temp,
+                    (alpha && !selected) ? ELEMENT_HIDE_ALPHA : 255);
+    } else {
+        atlas->draw(cs->get_helper()->renderer(), &m_dimensions_scaled, &m_mapping,
+                    (alpha && !selected) ? ELEMENT_HIDE_ALPHA : 255);
+    }
 
-	if (selected) {
-		cs->get_helper()->util_draw_rect(&m_static_scaled, cs->get_helper()->get_palette()->red());
-	}
+    if (selected) {
+        cs->get_helper()->util_draw_rect(&m_static_scaled, cs->get_helper()->get_palette()->red());
+    }
 
-	if (m_movement_reset.started() && m_movement_reset.get_time() >= STICK_RESET) {
-		m_movement_reset.stop();
-		m_x_axis = 0.f, m_y_axis = 0.f;
-	}
+    if (m_movement_reset.started() && m_movement_reset.get_time() >= STICK_RESET) {
+        m_movement_reset.stop();
+        m_x_axis = 0.f, m_y_axis = 0.f;
+    }
 }
 
 void element_analog_stick::write_to_json(json_obj &j, SDL_Point *default_dim, uint8_t &flags)
 {
-	element_texture::write_to_json(j, default_dim, flags);
-	j[CFG_SIDE] = static_cast<int>(m_stick);
-	j[CFG_STICK_RADIUS] = static_cast<int>(m_radius);
-	flags |= OF_GAMEPAD | (m_stick == ES_LEFT ? OF_LEFT_STICK : OF_RIGHT_STICK);
+    element_texture::write_to_json(j, default_dim, flags);
+    j[CFG_SIDE] = static_cast<int>(m_stick);
+    j[CFG_STICK_RADIUS] = static_cast<int>(m_radius);
+    flags |= OF_GAMEPAD | (m_stick == element_side::LEFT ? OF_LEFT_STICK : OF_RIGHT_STICK);
 }
 
 void element_analog_stick::update_settings(dialog_new_element *dialog)
 {
-	element_texture::update_settings(dialog);
-	m_radius = dialog->get_radius();
-	m_stick = dialog->get_side();
+    element_texture::update_settings(dialog);
+    m_radius = dialog->get_radius();
+    m_stick = dialog->get_side();
 }
 
 void element_analog_stick::update_settings(dialog_element_settings *dialog)
 {
-	element_texture::update_settings(dialog);
+    element_texture::update_settings(dialog);
 }
 
 void element_analog_stick::handle_event(SDL_Event *event, sdl_helper *helper)
 {
-	if (event->type == SDL_CONTROLLERAXISMOTION && SDL_abs(event->caxis.value) >= STICK_DEAD_ZONE) {
-		if (m_stick == ES_LEFT) {
-			if (event->caxis.axis == SDL_CONTROLLER_AXIS_LEFTX) {
-				m_x_axis = ((float)event->caxis.value) / AXIS_MAX_AMPLITUDE;
-				m_movement_reset.start();
-			} else if (event->caxis.axis == SDL_CONTROLLER_AXIS_LEFTY) {
-				m_y_axis = static_cast<float>(event->caxis.value) / AXIS_MAX_AMPLITUDE;
-				m_movement_reset.start();
-			}
-		} else {
-			if (event->caxis.axis == SDL_CONTROLLER_AXIS_RIGHTX) {
-				m_x_axis = static_cast<float>(event->caxis.value) / AXIS_MAX_AMPLITUDE;
-				m_movement_reset.start();
-			} else if (event->caxis.axis == SDL_CONTROLLER_AXIS_RIGHTY) {
-				m_y_axis = static_cast<float>(event->caxis.value) / AXIS_MAX_AMPLITUDE;
-				m_movement_reset.start();
-			}
-		}
-	} else if (event->type == SDL_CONTROLLERBUTTONDOWN || event->type == SDL_CONTROLLERBUTTONUP) {
-		if (m_stick == ES_LEFT) {
-			if (event->cbutton.button == SDL_CONTROLLER_BUTTON_LEFTSTICK)
-				m_pressed = event->cbutton.state == SDL_PRESSED;
-		} else {
-			if (event->cbutton.button == SDL_CONTROLLER_BUTTON_RIGHTSTICK)
-				m_pressed = event->cbutton.state == SDL_PRESSED;
-		}
-	}
+    if (event->type == SDL_CONTROLLERAXISMOTION && SDL_abs(event->caxis.value) >= STICK_DEAD_ZONE) {
+        if (m_stick == element_side::LEFT) {
+            if (event->caxis.axis == SDL_CONTROLLER_AXIS_LEFTX) {
+                m_x_axis = ((float)event->caxis.value) / AXIS_MAX_AMPLITUDE;
+                m_movement_reset.start();
+            } else if (event->caxis.axis == SDL_CONTROLLER_AXIS_LEFTY) {
+                m_y_axis = static_cast<float>(event->caxis.value) / AXIS_MAX_AMPLITUDE;
+                m_movement_reset.start();
+            }
+        } else {
+            if (event->caxis.axis == SDL_CONTROLLER_AXIS_RIGHTX) {
+                m_x_axis = static_cast<float>(event->caxis.value) / AXIS_MAX_AMPLITUDE;
+                m_movement_reset.start();
+            } else if (event->caxis.axis == SDL_CONTROLLER_AXIS_RIGHTY) {
+                m_y_axis = static_cast<float>(event->caxis.value) / AXIS_MAX_AMPLITUDE;
+                m_movement_reset.start();
+            }
+        }
+    } else if (event->type == SDL_CONTROLLERBUTTONDOWN || event->type == SDL_CONTROLLERBUTTONUP) {
+        if (m_stick == element_side::LEFT) {
+            if (event->cbutton.button == SDL_CONTROLLER_BUTTON_LEFTSTICK)
+                m_pressed = event->cbutton.state == SDL_PRESSED;
+        } else {
+            if (event->cbutton.button == SDL_CONTROLLER_BUTTON_RIGHTSTICK)
+                m_pressed = event->cbutton.state == SDL_PRESSED;
+        }
+    }
 }
 
 element_analog_stick *element_analog_stick::read_from_json(const json &j, SDL_Point *default_dim)
 {
-	const auto s = read_side(j);
+    const auto s = read_side(j);
 
-	return new element_analog_stick(j[CFG_ID].string_value(), read_position(j), read_mapping(j, default_dim), s,
-									uint8_t(j[CFG_STICK_RADIUS].int_value()), uint8_t(j[CFG_Z_LEVEL].number_value()));
+    return new element_analog_stick(j[CFG_ID].string_value(), read_position(j), read_mapping(j, default_dim), s,
+                                    uint8_t(j[CFG_STICK_RADIUS].int_value()), uint8_t(j[CFG_Z_LEVEL].number_value()));
 }

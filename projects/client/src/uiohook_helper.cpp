@@ -30,161 +30,151 @@ volatile bool hook_state = false;
 
 bool logger_proc(unsigned level, const char *format, ...)
 {
-	auto status = false;
+    auto status = false;
 
-	va_list args;
-	switch (level) {
-	default:
+    va_list args;
+    switch (level) {
+    default:
 #ifdef USE_DEBUG
 
-	case LOG_LEVEL_DEBUG:
-	case LOG_LEVEL_INFO:
-		va_start(args, format);
-		status = vfprintf(stdout, format, args) >= 0;
-		va_end(args);
+    case LOG_LEVEL_DEBUG:
+    case LOG_LEVEL_INFO:
+        va_start(args, format);
+        status = vfprintf(stdout, format, args) >= 0;
+        va_end(args);
 
 #endif
-		break;
-	case LOG_LEVEL_WARN:
-	case LOG_LEVEL_ERROR:
-		va_start(args, format);
-		status = vfprintf(stderr, format, args) >= 0;
-		va_end(args);
-		break;
-	}
+        break;
+    case LOG_LEVEL_WARN:
+    case LOG_LEVEL_ERROR:
+        va_start(args, format);
+        status = vfprintf(stderr, format, args) >= 0;
+        va_end(args);
+        break;
+    }
 
-	return status;
+    return status;
 }
 
 void dispatch_proc(uiohook_event *const event)
 {
-	std::lock_guard<std::mutex> lock(network::buffer_mutex);
-	switch (event->type) {
-	case EVENT_HOOK_ENABLED:
-		DEBUG_LOG("uiohook started\n");
-		hook_state = true;
-		break;
-	case EVENT_HOOK_DISABLED:
-		DEBUG_LOG("uiohook exited\n");
-		break;
-	//case EVENT_MOUSE_CLICKED:
-	case EVENT_MOUSE_PRESSED:
-	case EVENT_MOUSE_RELEASED:
-		if (util::cfg.monitor_mouse) {
-			network::buf.write<uint8_t>(network::MSG_BUTTON_DATA);
-			network::buf.write<uint16_t>(event->data.mouse.button | VC_MOUSE_MASK);
-			network::buf.write<uint8_t>(event->type == EVENT_MOUSE_PRESSED);
-			network::buf.write<uint16_t>(event->mask);
-			network::buf.write<uint64_t>(event->time);
-		}
-		break;
-	case EVENT_MOUSE_WHEEL:
-		if (util::cfg.monitor_mouse) {
-			last_scroll_time = util::get_ticks();
-			network::buf.write<uint8_t>(network::MSG_MOUSE_WHEEL_DATA);
-			network::buf.write<mouse_wheel_event_data>(event->data.wheel);
-			network::buf.write<uint16_t>(event->mask);
-			network::buf.write<uint64_t>(event->time);
-		}
-		break;
-	case EVENT_MOUSE_MOVED:
-	case EVENT_MOUSE_DRAGGED:
-		if (util::cfg.monitor_mouse) {
-			network::buf.write<uint8_t>(network::MSG_MOUSE_POS_DATA);
-			network::buf.write<mouse_event_data>(event->data.mouse);
-			network::buf.write<uint16_t>(event->mask);
-			network::buf.write<uint64_t>(event->time);
-		}
-		break;
-	//case EVENT_KEY_TYPED: /* TODO: how to handle this */
-	case EVENT_KEY_PRESSED:
-	case EVENT_KEY_RELEASED:
-		if (util::cfg.monitor_keyboard) {
-			network::buf.write<uint8_t>(network::MSG_BUTTON_DATA);
-			network::buf.write<uint16_t>(event->data.keyboard.keycode);
-			network::buf.write<uint8_t>(event->type == EVENT_KEY_PRESSED);
-			network::buf.write<uint16_t>(event->mask);
-			network::buf.write<uint64_t>(event->time);
-		}
-		break;
-	default:;
-	}
+    std::lock_guard<std::mutex> lock(network::buffer_mutex);
+    switch (event->type) {
+    case EVENT_HOOK_ENABLED:
+        DEBUG_LOG("uiohook started\n");
+        hook_state = true;
+        break;
+    case EVENT_HOOK_DISABLED:
+        DEBUG_LOG("uiohook exited\n");
+        break;
+    //case EVENT_MOUSE_CLICKED:
+    case EVENT_MOUSE_PRESSED:
+    case EVENT_MOUSE_RELEASED:
+        if (util::cfg.monitor_mouse) {
+            network::buf.write<uint8_t>(network::MSG_UIOHOOK_EVENT);
+            network::buf.write<uiohook_event>(*event);
+        }
+        break;
+    case EVENT_MOUSE_WHEEL:
+        if (util::cfg.monitor_mouse) {
+            last_scroll_time = util::get_ticks();
+            network::buf.write<uint8_t>(network::MSG_UIOHOOK_EVENT);
+            network::buf.write<uiohook_event>(*event);
+        }
+        break;
+    case EVENT_MOUSE_MOVED:
+    case EVENT_MOUSE_DRAGGED:
+        if (util::cfg.monitor_mouse) {
+            network::buf.write<uint8_t>(network::MSG_UIOHOOK_EVENT);
+            network::buf.write<uiohook_event>(*event);
+        }
+        break;
+    //case EVENT_KEY_TYPED: /* TODO: how to handle this */
+    case EVENT_KEY_PRESSED:
+    case EVENT_KEY_RELEASED:
+        if (util::cfg.monitor_keyboard) {
+            network::buf.write<uint8_t>(network::MSG_UIOHOOK_EVENT);
+            network::buf.write<uiohook_event>(*event);
+        }
+        break;
+    default:;
+    }
 }
 
-bool init()
+bool start()
 {
-	hook_set_logger_proc(&logger_proc);
-	hook_set_dispatch_proc(&dispatch_proc);
+    hook_set_logger_proc(&logger_proc);
+    hook_set_dispatch_proc(&dispatch_proc);
 
-	const auto status = hook_run();
+    const auto status = hook_run();
 
-	switch (status) {
-	case UIOHOOK_SUCCESS:
-		hook_state = true;
-		return true;
-	case UIOHOOK_ERROR_OUT_OF_MEMORY:
-		logger_proc(LOG_LEVEL_ERROR, "[uiohook] Failed to allocate memory. (%#X)", status);
-		return false;
-	case UIOHOOK_ERROR_X_OPEN_DISPLAY:
-		logger_proc(LOG_LEVEL_ERROR, "[uiohook] Failed to open X11 display. (%#X)", status);
-		return false;
-	case UIOHOOK_ERROR_X_RECORD_NOT_FOUND:
-		logger_proc(LOG_LEVEL_ERROR, "[uiohook] Unable to locate XRecord extension. (%#X)", status);
-		return false;
-	case UIOHOOK_ERROR_X_RECORD_ALLOC_RANGE:
-		logger_proc(LOG_LEVEL_ERROR, "[uiohook] Unable to allocate XRecord range. (%#X)", status);
-		return false;
-	case UIOHOOK_ERROR_X_RECORD_CREATE_CONTEXT:
-		logger_proc(LOG_LEVEL_ERROR, "[uiohook] Unable to allocate XRecord context. (%#X)", status);
-		return false;
-	case UIOHOOK_ERROR_X_RECORD_ENABLE_CONTEXT:
-		logger_proc(LOG_LEVEL_ERROR, "[uiohook] Failed to enable XRecord context. (%#X)", status);
-		return false;
-	case UIOHOOK_ERROR_SET_WINDOWS_HOOK_EX:
-		logger_proc(LOG_LEVEL_ERROR, "[uiohook] Failed to register low level windows hook. (%#X)", status);
-		return false;
-	case UIOHOOK_ERROR_AXAPI_DISABLED:
-		logger_proc(LOG_LEVEL_ERROR, "[uiohook] Failed to enable access for assistive devices. (%#X)", status);
-		return false;
-	case UIOHOOK_ERROR_CREATE_EVENT_PORT:
-		logger_proc(LOG_LEVEL_ERROR, "[uiohook] Failed to create apple event port. (%#X)", status);
-		return false;
-	case UIOHOOK_ERROR_CREATE_RUN_LOOP_SOURCE:
-		logger_proc(LOG_LEVEL_ERROR, "[uiohook] Failed to create apple run loop source. (%#X)", status);
-		return false;
-	case UIOHOOK_ERROR_GET_RUNLOOP:
-		logger_proc(LOG_LEVEL_ERROR, "[uiohook] Failed to acquire apple run loop. (%#X)", status);
-		return false;
-	case UIOHOOK_ERROR_CREATE_OBSERVER:
-		logger_proc(LOG_LEVEL_ERROR, "[uiohook] Failed to create apple run loop observer. (%#X)", status);
-		return false;
-	case UIOHOOK_FAILURE:
-		logger_proc(LOG_LEVEL_ERROR, "[uiohook] An unknown hook error occurred. (%#X)", status);
-		return false;
-	default:;
-		return true; /* Unknown error but we can still try */
-	}
+    switch (status) {
+    case UIOHOOK_SUCCESS:
+        hook_state = true;
+        return true;
+    case UIOHOOK_ERROR_OUT_OF_MEMORY:
+        logger_proc(LOG_LEVEL_ERROR, "[uiohook] Failed to allocate memory. (%#X)", status);
+        return false;
+    case UIOHOOK_ERROR_X_OPEN_DISPLAY:
+        logger_proc(LOG_LEVEL_ERROR, "[uiohook] Failed to open X11 display. (%#X)", status);
+        return false;
+    case UIOHOOK_ERROR_X_RECORD_NOT_FOUND:
+        logger_proc(LOG_LEVEL_ERROR, "[uiohook] Unable to locate XRecord extension. (%#X)", status);
+        return false;
+    case UIOHOOK_ERROR_X_RECORD_ALLOC_RANGE:
+        logger_proc(LOG_LEVEL_ERROR, "[uiohook] Unable to allocate XRecord range. (%#X)", status);
+        return false;
+    case UIOHOOK_ERROR_X_RECORD_CREATE_CONTEXT:
+        logger_proc(LOG_LEVEL_ERROR, "[uiohook] Unable to allocate XRecord context. (%#X)", status);
+        return false;
+    case UIOHOOK_ERROR_X_RECORD_ENABLE_CONTEXT:
+        logger_proc(LOG_LEVEL_ERROR, "[uiohook] Failed to enable XRecord context. (%#X)", status);
+        return false;
+    case UIOHOOK_ERROR_SET_WINDOWS_HOOK_EX:
+        logger_proc(LOG_LEVEL_ERROR, "[uiohook] Failed to register low level windows hook. (%#X)", status);
+        return false;
+    case UIOHOOK_ERROR_AXAPI_DISABLED:
+        logger_proc(LOG_LEVEL_ERROR, "[uiohook] Failed to enable access for assistive devices. (%#X)", status);
+        return false;
+    case UIOHOOK_ERROR_CREATE_EVENT_PORT:
+        logger_proc(LOG_LEVEL_ERROR, "[uiohook] Failed to create apple event port. (%#X)", status);
+        return false;
+    case UIOHOOK_ERROR_CREATE_RUN_LOOP_SOURCE:
+        logger_proc(LOG_LEVEL_ERROR, "[uiohook] Failed to create apple run loop source. (%#X)", status);
+        return false;
+    case UIOHOOK_ERROR_GET_RUNLOOP:
+        logger_proc(LOG_LEVEL_ERROR, "[uiohook] Failed to acquire apple run loop. (%#X)", status);
+        return false;
+    case UIOHOOK_ERROR_CREATE_OBSERVER:
+        logger_proc(LOG_LEVEL_ERROR, "[uiohook] Failed to create apple run loop observer. (%#X)", status);
+        return false;
+    case UIOHOOK_FAILURE:
+        logger_proc(LOG_LEVEL_ERROR, "[uiohook] An unknown hook error occurred. (%#X)", status);
+        return false;
+    default:;
+        return true; /* Unknown error but we can still try */
+    }
 }
 
-void close()
+void stop()
 {
-	if (!hook_state)
-		return;
-	hook_state = false;
-	const auto status = hook_stop();
+    if (!hook_state)
+        return;
+    hook_state = false;
+    const auto status = hook_stop();
 
-	DEBUG_LOG("Closing hook\n");
-	switch (status) {
-	case UIOHOOK_ERROR_OUT_OF_MEMORY:
-		logger_proc(LOG_LEVEL_ERROR, "[uiohook] Failed to allocate memory. (%#X)", status);
-		break;
-	case UIOHOOK_ERROR_X_RECORD_GET_CONTEXT:
-		logger_proc(LOG_LEVEL_ERROR, "[uiohook] Failed to get XRecord context. (%#X)", status);
-		break;
-	case UIOHOOK_FAILURE:
-		logger_proc(LOG_LEVEL_ERROR, "[uiohook] An unknown hook error occurred. (%#X)", status);
-		break;
-	default:;
-	}
+    DEBUG_LOG("Closing hook\n");
+    switch (status) {
+    case UIOHOOK_ERROR_OUT_OF_MEMORY:
+        logger_proc(LOG_LEVEL_ERROR, "[uiohook] Failed to allocate memory. (%#X)", status);
+        break;
+    case UIOHOOK_ERROR_X_RECORD_GET_CONTEXT:
+        logger_proc(LOG_LEVEL_ERROR, "[uiohook] Failed to get XRecord context. (%#X)", status);
+        break;
+    case UIOHOOK_FAILURE:
+        logger_proc(LOG_LEVEL_ERROR, "[uiohook] An unknown hook error occurred. (%#X)", status);
+        break;
+    default:;
+    }
 }
 }
