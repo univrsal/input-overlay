@@ -107,7 +107,7 @@ jobs:
     - name: Upload installer
       uses: actions/upload-artifact@v2
       with:
-        name: '${{ env.project }}.v${{ env.GIT_TAG }}-${{ env.GIT_HASH }}.linux'
+        name: '${{ env.project }}.${{ env.GIT_TAG }}-${{ env.GIT_HASH }}.linux'
         path: ${{github.workspace}}/package/*.deb
   windows:
     name: 'Windows 32+64bit'
@@ -334,6 +334,6 @@ jobs:
         if: success()
         uses: actions/upload-artifact@v2-preview
         with:
-          name: '${{ env.project }}.v${{ env.GIT_TAG }}-${{ env.GIT_HASH }}.win'
+          name: '${{ env.project }}.${{ env.GIT_TAG }}-${{ env.GIT_HASH }}.win'
           path: ${{ github.workspace }}\${{ env.project }}\build-package
           
