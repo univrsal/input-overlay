@@ -329,6 +329,7 @@ jobs:
           robocopy .\build32\projects\cct\RelWithDebInfo .\build-package\cct\x86\ *.dll
           robocopy /E .\projects\cct\res .\build-package\cct\x86\res
           robocopy /E .\projects\cct\res .\build-package\cct\x64\res
+          exit 0 # Robocopy returns 1 on success which is interpreted as failure
       - name: 'Publish ${{ env.WIN_FILENAME }}.zip'
         if: success()
         uses: actions/upload-artifact@v2-preview
