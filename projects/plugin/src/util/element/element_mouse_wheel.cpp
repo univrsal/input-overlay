@@ -43,7 +43,7 @@ void element_wheel::draw(gs_effect_t *effect, gs_image_file_t *image, sources::o
     if (settings->data.mouse[VC_MOUSE_WHEEL])
         element_texture::draw(effect, image, &m_mappings[WHEEL_MAP_MIDDLE]);
 
-    switch (settings->data.last_wheel_event.direction) {
+    switch (settings->data.last_wheel_event.rotation) {
     case WHEEL_UP:
         element_texture::draw(effect, image, &m_mappings[WHEEL_MAP_UP]);
         break;

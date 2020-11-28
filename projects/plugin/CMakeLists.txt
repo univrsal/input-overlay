@@ -191,7 +191,7 @@ if(UNIX AND NOT APPLE)
             LIBRARY DESTINATION "$ENV{HOME}/.config/obs-studio/plugins/input-overlay/bin/${OBS_ARCH_NAME}")
 
         install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/data
-            DESTINATION "$ENV{HOME}/.config/obs-studio/plugins/input-overlay/data/locale/")
+            DESTINATION "$ENV{HOME}/.config/obs-studio/plugins/input-overlay/")
     elseif(DEB_INSTALLER)
         # For *.deb installer
         install(TARGETS input-overlay

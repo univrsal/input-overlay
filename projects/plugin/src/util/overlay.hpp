@@ -30,8 +30,6 @@
 
 class ccl_config;
 
-class element_data;
-
 typedef struct gs_image_file gs_image_file_t;
 
 class overlay {

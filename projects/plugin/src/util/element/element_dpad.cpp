@@ -57,6 +57,7 @@ inline int get_direction(std::map<uint16_t, bool> &buttons)
         if (buttons[gamepad::button::DPAD_DOWN])
             return element_dpad::TEXTURE_BOTTOM_LEFT;
     }
+    return -1;
 }
 
 void element_dpad::draw(gs_effect_t *effect, gs_image_file_t *image, sources::overlay_settings *settings)

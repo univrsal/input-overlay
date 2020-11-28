@@ -203,7 +203,6 @@ void overlay::load_element(const QJsonObject &obj, const bool debug)
 {
     const auto type = obj[CFG_TYPE].toInt();
     element *new_element = nullptr;
-    element_data *data = nullptr;
 
     switch (type) {
     case ET_TEXTURE:
@@ -270,6 +269,7 @@ const char *overlay::element_type_to_string(const element_type t)
         return "Gamepad ID";
     case ET_DPAD_STICK:
         return "DPad";
+    default:
     case ET_INVALID:
         return "Invalid";
     }

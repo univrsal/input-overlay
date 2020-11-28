@@ -53,8 +53,6 @@
 #define PAD_COUNT 4
 #define AXIS_MAX_AMPLITUDE 32767
 #define STICK_DEAD_ZONE 100
-/* ns after last scroll message until reset */
-#define SCROLL_TIMEOUT (120 * 1000 * 1000)
 
 #define TRIGGER_THRESHOLD 0.2f
 

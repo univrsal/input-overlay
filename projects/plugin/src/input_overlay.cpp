@@ -29,7 +29,6 @@
 #include "sources/input_source.hpp"
 #include "util/config.hpp"
 #include "util/lang.h"
-#include "util/util.hpp"
 
 #ifdef LINUX
 

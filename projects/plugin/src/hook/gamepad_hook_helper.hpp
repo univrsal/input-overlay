@@ -19,10 +19,11 @@
 #pragma once
 
 #include <mutex>
+#include <memory>
+
 namespace gamepad {
 
 extern std::shared_ptr<class hook> hook_instance;
-extern std::shared_ptr<hook> hook_instance;
 extern bool state;
 
 void start_pad_hook();
