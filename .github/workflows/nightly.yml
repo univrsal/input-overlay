@@ -17,11 +17,12 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v2
+      path: ${{ github.workspace }}
       with:
           submodules: true
     - name: 'Get ${{ env.project}} git info'
       shell: bash
-      working-directory: ${{ github.workspace }}/${{ env.project}}
+      working-directory: ${{ github.workspace }}
       run: |
         git fetch --prune --unshallow
         echo "GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD)" >> $GITHUB_ENV
