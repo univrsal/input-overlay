@@ -17,8 +17,8 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v2
-      path: ${{ github.workspace }}
       with:
+          path: ${{ github.workspace }}
           submodules: true
     - name: 'Get ${{ env.project}} git info'
       shell: bash
