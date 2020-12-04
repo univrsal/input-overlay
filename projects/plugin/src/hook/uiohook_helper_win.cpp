@@ -92,70 +92,6 @@ void stop()
     CloseHandle(hook_control_cond);
 }
 
-void start()
-{
-    hook_running_mutex = CreateMutex(nullptr, FALSE, TEXT("hook_running_mutex"));
-    hook_control_mutex = CreateMutex(nullptr, FALSE, TEXT("hook_control_mutex"));
-    hook_control_cond = CreateEvent(nullptr, TRUE, FALSE, TEXT("hook_control_cond"));
-
-    /* Set the logger callback for library output. */
-    hook_set_logger_proc(&logger_proc);
-
-    /* Set the event callback for uiohook events. */
-    hook_set_dispatch_proc(&dispatch_proc);
-
-    const auto status = hook_enable();
-    switch (status) {
-    case UIOHOOK_SUCCESS:
-        /* We no longer block, so we need to explicitly wait for the thread to die. */
-        hook_initialized = true;
-        break;
-    case UIOHOOK_ERROR_OUT_OF_MEMORY:
-        blog(LOG_ERROR, "[input-overlay] Failed to allocate memory. (%#X)\n", status);
-        break;
-    case UIOHOOK_ERROR_X_OPEN_DISPLAY:
-        blog(LOG_ERROR, "[input-overlay] Failed to open X11 display. (%#X)\n", status);
-        break;
-    case UIOHOOK_ERROR_X_RECORD_NOT_FOUND:
-        blog(LOG_ERROR, "[input-overlay] Unable to locate XRecord extension. (%#X)\n", status);
-        break;
-    case UIOHOOK_ERROR_X_RECORD_ALLOC_RANGE:
-        blog(LOG_ERROR, "[input-overlay] Unable to allocate XRecord range. (%#X)\n", status);
-        break;
-    case UIOHOOK_ERROR_X_RECORD_CREATE_CONTEXT:
-        blog(LOG_ERROR, "[input-overlay] Unable to allocate XRecord context. (%#X)\n", status);
-        break;
-    case UIOHOOK_ERROR_X_RECORD_ENABLE_CONTEXT:
-        blog(LOG_ERROR, "[input-overlay] Failed to enable XRecord context. (%#X)\n", status);
-        break;
-    case UIOHOOK_ERROR_SET_WINDOWS_HOOK_EX:
-        blog(LOG_ERROR, "[input-overlay] Failed to register low level windows hook. (%#X)\n", status);
-        break;
-    case UIOHOOK_ERROR_CREATE_EVENT_PORT:
-        blog(LOG_ERROR, "[input-overlay] Failed to create apple event port. (%#X)\n", status);
-        break;
-    case UIOHOOK_ERROR_CREATE_RUN_LOOP_SOURCE:
-        blog(LOG_ERROR, "[input-overlay] Failed to create apple run loop source. (%#X)\n", status);
-        break;
-    case UIOHOOK_ERROR_GET_RUNLOOP:
-        blog(LOG_ERROR, "[input-overlay] Failed to acquire apple run loop. (%#X)\n", status);
-        break;
-    case UIOHOOK_ERROR_CREATE_OBSERVER:
-        blog(LOG_ERROR, "[input-overlay] Failed to create apple run loop observer. (%#X)\n", status);
-        break;
-    case UIOHOOK_FAILURE:
-    default:
-        blog(LOG_ERROR, "[input-overlay] An unknown hook error occurred. (%#X)\n", status);
-        break;
-    }
-}
-
-void process_event(uiohook_event *const event)
-{
-    std::lock_guard<std::mutex> lock(local_data::data_mutex);
-    local_data::data.dispatch_uiohook_event(event);
-    check_wheel();
-}
 
 int hook_enable()
 {
@@ -213,5 +149,63 @@ int hook_enable()
     /* Make sure the control mutex is unlocked. */
     ReleaseMutex(hook_control_mutex);
     return status;
+}
+
+void start()
+{
+    hook_running_mutex = CreateMutex(nullptr, FALSE, TEXT("hook_running_mutex"));
+    hook_control_mutex = CreateMutex(nullptr, FALSE, TEXT("hook_control_mutex"));
+    hook_control_cond = CreateEvent(nullptr, TRUE, FALSE, TEXT("hook_control_cond"));
+
+    /* Set the logger callback for library output. */
+    hook_set_logger_proc(&logger_proc);
+
+    /* Set the event callback for uiohook events. */
+    hook_set_dispatch_proc(&dispatch_proc);
+
+    const auto status = hook_enable();
+    switch (status) {
+    case UIOHOOK_SUCCESS:
+        /* We no longer block, so we need to explicitly wait for the thread to die. */
+        state = true;
+        break;
+    case UIOHOOK_ERROR_OUT_OF_MEMORY:
+        blog(LOG_ERROR, "[input-overlay] Failed to allocate memory. (%#X)\n", status);
+        break;
+    case UIOHOOK_ERROR_X_OPEN_DISPLAY:
+        blog(LOG_ERROR, "[input-overlay] Failed to open X11 display. (%#X)\n", status);
+        break;
+    case UIOHOOK_ERROR_X_RECORD_NOT_FOUND:
+        blog(LOG_ERROR, "[input-overlay] Unable to locate XRecord extension. (%#X)\n", status);
+        break;
+    case UIOHOOK_ERROR_X_RECORD_ALLOC_RANGE:
+        blog(LOG_ERROR, "[input-overlay] Unable to allocate XRecord range. (%#X)\n", status);
+        break;
+    case UIOHOOK_ERROR_X_RECORD_CREATE_CONTEXT:
+        blog(LOG_ERROR, "[input-overlay] Unable to allocate XRecord context. (%#X)\n", status);
+        break;
+    case UIOHOOK_ERROR_X_RECORD_ENABLE_CONTEXT:
+        blog(LOG_ERROR, "[input-overlay] Failed to enable XRecord context. (%#X)\n", status);
+        break;
+    case UIOHOOK_ERROR_SET_WINDOWS_HOOK_EX:
+        blog(LOG_ERROR, "[input-overlay] Failed to register low level windows hook. (%#X)\n", status);
+        break;
+    case UIOHOOK_ERROR_CREATE_EVENT_PORT:
+        blog(LOG_ERROR, "[input-overlay] Failed to create apple event port. (%#X)\n", status);
+        break;
+    case UIOHOOK_ERROR_CREATE_RUN_LOOP_SOURCE:
+        blog(LOG_ERROR, "[input-overlay] Failed to create apple run loop source. (%#X)\n", status);
+        break;
+    case UIOHOOK_ERROR_GET_RUNLOOP:
+        blog(LOG_ERROR, "[input-overlay] Failed to acquire apple run loop. (%#X)\n", status);
+        break;
+    case UIOHOOK_ERROR_CREATE_OBSERVER:
+        blog(LOG_ERROR, "[input-overlay] Failed to create apple run loop observer. (%#X)\n", status);
+        break;
+    case UIOHOOK_FAILURE:
+    default:
+        blog(LOG_ERROR, "[input-overlay] An unknown hook error occurred. (%#X)\n", status);
+        break;
+    }
 }
 }
