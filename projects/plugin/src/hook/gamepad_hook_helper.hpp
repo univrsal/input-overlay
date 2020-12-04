@@ -22,8 +22,14 @@
 #include <memory>
 
 namespace gamepad {
+class hook;
+}
 
-extern std::shared_ptr<class hook> hook_instance;
+namespace libgamepad {
+
+extern uint16_t last_input;
+extern uint64_t last_input_time;
+extern std::shared_ptr<gamepad::hook> hook_instance;
 extern bool state;
 
 void start_pad_hook();

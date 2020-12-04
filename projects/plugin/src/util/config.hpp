@@ -44,6 +44,7 @@ extern input_filter io_window_filters;
 extern std::mutex filter_mutex;
 
 /* Global boolean config values */
+extern bool use_dinput;
 extern bool control;
 extern bool remote;
 extern bool gamepad;

@@ -24,6 +24,7 @@
 #include "../util/lang.h"
 #include "../util/obs_util.hpp"
 #include "../util/settings.h"
+#include "../hook/gamepad_hook_helper.hpp"
 #include <QDesktopServices>
 #include <QTimer>
 #include <obs-frontend-api.h>
@@ -35,18 +36,8 @@ io_settings_dialog *settings_dialog = nullptr;
 
 io_settings_dialog::io_settings_dialog(QWidget *parent) : QDialog(parent, Qt::Dialog), ui(new Ui::io_config_dialog)
 {
-    const auto cfg = obs_frontend_get_global_config();
     ui->setupUi(this);
 
-#ifndef LINUX
-    ui->tab_gamepad->setVisible(false);
-#endif
-    //	for (const auto &binding : gamepad::default_bindings) {
-    //		auto text_box = findChild<QLineEdit *>(binding.text_box_id);
-    //		if (text_box) {
-    //			text_box->setText(QString::number(config_get_int(cfg, S_REGION, binding.setting)));
-    //		}
-    //	}
     /* Connect QSlots */
     connect(ui->btn_github, &QPushButton::clicked, this, &io_settings_dialog::OpenGitHub);
     connect(ui->btn_forums, &QPushButton::clicked, this, &io_settings_dialog::OpenForums);
@@ -101,6 +92,11 @@ io_settings_dialog::io_settings_dialog(QWidget *parent) : QDialog(parent, Qt::Di
     /* Set red color on label so people don't miss it */
     ui->lbl_local_features->setStyleSheet("QLabel { color: red; "
                                           "font-weight: bold;}");
+
+#ifndef _WIN32
+    ui->rb_dinput->setVisible(false);
+    ui->rb_xinput->setVisible(false);
+#endif
 }
 
 void io_settings_dialog::showEvent(QShowEvent *event)
@@ -117,6 +113,7 @@ void io_settings_dialog::toggleShowHide()
 void io_settings_dialog::RefreshUi()
 {
     /* Populate client list */
+    std::lock_guard<std::mutex> lock(network::mutex);
     if (network::network_flag && network::server_instance && network::server_instance->clients_changed()) {
         ui->box_connections->clear();
         QStringList list;
@@ -131,22 +128,38 @@ void io_settings_dialog::RefreshUi()
         ui->box_connections->addItems(list);
     }
 
-    //    if (gamepad::last_input != 0xff) {
-    //        auto mylineEdits = this->findChildren<QWidget *>();
-    //        QListIterator<QWidget *> it(mylineEdits);
-    //        QWidget *lineEditField;
-    //        while (it.hasNext()) {
-    //            lineEditField = it.next();
-    //            if (auto lineE = qobject_cast<QLineEdit *>(lineEditField)) {
-    //                if (lineE->hasFocus()) {
-    //                    /* Set the binding of this textbox */
-    //                    lineE->setText(QString::number(gamepad::last_input));
-    //                    gamepad::last_input = 0xff;
-    //                    break;
-    //                }
-    //            }
-    //        }
-    //    }
+    if (libgamepad::state) {
+        libgamepad::hook_instance->get_mutex()->lock();
+
+        /* Fill device list */
+        auto devs = libgamepad::hook_instance->get_devices();
+        if (int(devs.size()) != ui->cb_device->count()) {
+            auto selected = ui->cb_device->currentIndex();
+            ui->cb_device->clear();
+            for (const auto &dev : devs) {
+                ui->cb_device->addItem(utf8_to_qt(dev->get_name().c_str()), QVariant::fromValue(dev->get_index()));
+            }
+            ui->cb_device->setCurrentIndex(selected);
+        }
+
+        if (m_last_gamepad_input < libgamepad::last_input_time) {
+            m_last_gamepad_input = libgamepad::last_input_time;
+            auto mylineEdits = this->findChildren<QWidget *>();
+            QListIterator<QWidget *> it(mylineEdits);
+            QWidget *lineEditField;
+            while (it.hasNext()) {
+                lineEditField = it.next();
+                if (auto lineE = qobject_cast<QLineEdit *>(lineEditField)) {
+                    if (lineE->hasFocus()) {
+                        /* Set the binding of this textbox */
+                        lineE->setText(QString::number(libgamepad::last_input));
+                        break;
+                    }
+                }
+            }
+        }
+        libgamepad::hook_instance->get_mutex()->unlock();
+    }
 }
 
 void io_settings_dialog::CbRemoteStateChanged(int state)
@@ -223,6 +236,7 @@ void io_settings_dialog::FormAccepted()
     io_config::io_window_filters.set_whitelist(ui->cb_list_mode->currentIndex() == 0);
     io_config::io_window_filters.write_to_config();
 
+    io_config::use_dinput = ui->rb_dinput->isChecked();
     //    for (const auto &binding : gamepad::default_bindings) {
     //        auto text_box = findChild<QLineEdit *>(binding.text_box_id);
     //        if (text_box) {

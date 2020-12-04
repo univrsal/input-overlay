@@ -17,38 +17,38 @@
  *************************************************************************/
 
 #pragma once
+#include "../util/input_data.hpp"
 #include <map>
 #include <mutex>
 #include <netlib.h>
 #include <uiohook.h>
-
+#include <util/platform.h>
 #define SCROLL_TIMEOUT 120
 
 namespace uiohook {
-extern std::mutex hook_mutex;
-extern uint32_t last_scroll_time;
+extern uint64_t last_scroll_time;
+extern bool state;
 enum wheel_dir { wheel_up = -1, wheel_none, wheel_down };
 
-inline uint16_t util_mouse_fix(int m)
+inline void check_wheel()
 {
-#ifndef _WIN32 /* Linux mixes right mouse and middle mouse or is windows getting it wrong? */
-    if (m == 3)
-        m = 2;
-    else if (m == 2)
-        m = 3;
-#endif
-    return m;
+    if (last_scroll_time && os_gettime_ns() - last_scroll_time >= SCROLL_TIMEOUT) {
+        last_scroll_time = 0;
+        local_data::data.last_wheel_event = {};
+    }
 }
 
-inline bool is_middle_mouse(int m)
+inline void process_event(uiohook_event *event)
 {
-    return util_mouse_fix(m) == MOUSE_BUTTON3;
+    std::lock_guard<std::mutex> lock(local_data::data_mutex);
+    local_data::data.dispatch_uiohook_event(event);
+    if (event->type == EVENT_MOUSE_WHEEL)
+        last_scroll_time = os_gettime_ns();
+    check_wheel();
 }
 
-extern volatile bool hook_state;
-bool logger_proc(unsigned level, const char *format, ...);
+void start();
 
-void dispatch_proc(uiohook_event *event);
-bool start();
 void stop();
+
 }

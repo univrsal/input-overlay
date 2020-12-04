@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 project(io-base VERSION 5.0.0)
+set(INPUT_OVERLAY_VERSION "5.0.0" CACHE STRING "" FORCE)
 
 option(ENABLE_CLIENT "Wether to build the client (default: ON)" ON)
 option(ENABLE_TOOL "Wether to build the config creation tool (default: ON)" ON)

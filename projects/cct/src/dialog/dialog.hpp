@@ -59,7 +59,7 @@ public:
 
     void add(gui_element *e);
 
-    template<class T, typename... Args> T *add(Args &&... args)
+    template<class T, typename... Args> T *add(Args &&...args)
     {
         auto id = m_screen_elements.size();
         auto elem = new T(std::forward<Args>(args)...);

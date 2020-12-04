@@ -44,9 +44,9 @@ inline void input_source::update(obs_data_t *settings)
         m_overlay->load();
     }
 
-    gamepad::hook_instance->get_mutex()->lock();
-    m_settings.gamepad = gamepad::hook_instance->get_device_by_id(obs_data_get_string(settings, S_CONTROLLER_ID));
-    gamepad::hook_instance->get_mutex()->unlock();
+    libgamepad::hook_instance->get_mutex()->lock();
+    m_settings.gamepad = libgamepad::hook_instance->get_device_by_id(obs_data_get_string(settings, S_CONTROLLER_ID));
+    libgamepad::hook_instance->get_mutex()->unlock();
 
     m_settings.mouse_sens = obs_data_get_int(settings, S_MOUSE_SENS);
 
@@ -60,9 +60,8 @@ inline void input_source::update(obs_data_t *settings)
 inline void input_source::tick(float seconds)
 {
     UNUSED_PARAMETER(seconds);
-    if (m_overlay->is_loaded()) {
+    if (m_overlay->is_loaded())
         m_overlay->refresh_data();
-    }
 }
 
 inline void input_source::render(gs_effect_t *effect) const
@@ -81,9 +80,9 @@ inline void input_source::render(gs_effect_t *effect) const
 bool cfg_path_changed(void *data, obs_properties_t *props, obs_property_t *p, obs_data_t *s)
 {
     UNUSED_PARAMETER(p);
+    UNUSED_PARAMETER(s);
     const int flags = static_cast<input_source *>(data)->m_settings.layout_flags;
 
-    /* TODO: get the actual flags */
     obs_property_set_visible(GET_PROPS(S_CONTROLLER_L_DEAD_ZONE), flags & OF_LEFT_STICK);
     obs_property_set_visible(GET_PROPS(S_CONTROLLER_R_DEAD_ZONE), flags & OF_RIGHT_STICK);
     obs_property_set_visible(GET_PROPS(S_CONTROLLER_ID),
@@ -110,6 +109,7 @@ bool reload_connections(obs_properties_t *props, obs_property_t *property, void 
     UNUSED_PARAMETER(property);
     UNUSED_PARAMETER(data);
 
+    std::lock_guard<std::mutex> lock(network::mutex);
     auto *connection_list = obs_properties_get(props, S_INPUT_SOURCE);
 
     if (connection_list)
@@ -120,10 +120,19 @@ bool reload_connections(obs_properties_t *props, obs_property_t *property, void 
 
 bool reload_pads(obs_properties_t *props, obs_property_t *property, void *data)
 {
-    UNUSED_PARAMETER(props);
     UNUSED_PARAMETER(property);
     UNUSED_PARAMETER(data);
-    /* TODO load gamepads */
+
+    auto *gamepad_list = obs_properties_get(props, S_GAMEPAD);
+
+    if (gamepad_list) {
+        obs_property_list_clear(gamepad_list);
+        libgamepad::hook_instance->get_mutex()->lock();
+        for (const auto &pad : libgamepad::hook_instance->get_devices()) {
+            obs_property_list_add_string(gamepad_list, pad->get_name().c_str(), pad->get_id().c_str());
+        }
+        libgamepad::hook_instance->get_mutex()->unlock();
+    }
     return true;
 }
 
@@ -174,7 +183,7 @@ obs_properties_t *get_properties_for_overlay(void *data)
                              false);
 
     auto *btn = obs_properties_add_button(props, S_RELOAD_PAD_DEVICES, T_RELOAD_PAD_DEVICES, reload_pads);
-
+    obs_property_set_visible(btn, false);
     return props;
 }
 

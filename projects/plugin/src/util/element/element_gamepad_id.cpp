@@ -43,13 +43,13 @@ void element_gamepad_id::draw(gs_effect_t *effect, gs_image_file_t *image, sourc
         element_texture::draw(effect, image, &m_mappings[ID_PRESSED]);
 
     if (settings->gamepad) {
-        gamepad::hook_instance->get_mutex()->lock();
+        libgamepad::hook_instance->get_mutex()->lock();
         if (settings->gamepad->is_valid() > 0) {
             int index = settings->gamepad->get_index() < 4 ? settings->gamepad->get_index() : 0;
             element_texture::draw(effect, image, &m_mappings[index]);
         } else {
             element_texture::draw(effect, image, &m_mapping);
         }
-        gamepad::hook_instance->get_mutex()->unlock();
+        libgamepad::hook_instance->get_mutex()->unlock();
     }
 }

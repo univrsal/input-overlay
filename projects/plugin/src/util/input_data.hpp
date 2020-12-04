@@ -46,6 +46,8 @@ struct input_data {
 
     /* Mutex needs to be locked */
     void copy(const input_data *other);
+
+    void dispatch_uiohook_event(const uiohook_event *event);
 };
 
 namespace local_data {

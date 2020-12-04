@@ -26,7 +26,7 @@ namespace io_config {
 config_t *instance = nullptr;
 input_filter io_window_filters; /* Global filters */
 std::mutex filter_mutex;        /* Thread safety for writing/reading filters */
-
+bool use_dinput = false;
 bool control = false;
 bool remote = false;
 bool gamepad = true;

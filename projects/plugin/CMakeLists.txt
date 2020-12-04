@@ -25,9 +25,14 @@ endif()
 find_package(LibObs REQUIRED)
 find_package(Qt5 REQUIRED COMPONENTS Core Widgets)
 
+string(TIMESTAMP TODAY "%Y.%m.%d %H:%M")
+add_definitions(-DBUILD_TIME="${TODAY}")
+add_definitions(-DINPUT_OVERLAY_VERSION="${INPUT_OVERLAY_VERSION}")
+
 if (MSVC)
     set(input-overlay_PLATFORM_SOURCES
-            src/util/window_helper_win.cpp)
+            src/util/window_helper_win.cpp
+            src/hook/uiohook_helper_win.cpp)
     set(OBS_FRONTEND_INCLUDE "${LIBOBS_INCLUDE_DIR}/../UI/")
 else()
     find_path(OBS_FRONTEND_INCLUDE obs-frontend-api.h)
@@ -38,7 +43,8 @@ if ("${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
     add_definitions(-DUNIX=1)
 
     set(input-overlay_PLATFORM_SOURCES
-        src/util/window_helper_nix.cpp)
+        src/util/window_helper_nix.cpp
+        src/hook/uiohook_helper_linux.cpp)
 endif ()
 
 if (APPLE)
@@ -54,10 +60,9 @@ set(input-overlay_SOURCES
         src/sources/input_source.cpp
         src/sources/input_source.hpp
         src/sources/input_source.cpp
-        src/hook/uiohook_helper.cpp
         src/hook/uiohook_helper.hpp
-        src/hook/gamepad_hook_helper.cpp
         src/hook/gamepad_hook_helper.hpp
+        src/hook/gamepad_hook_helper.cpp
         src/gui/io_settings_dialog.cpp
         src/gui/io_settings_dialog.hpp
         src/util/obs_util.cpp
@@ -82,8 +87,8 @@ set(input-overlay_SOURCES
         src/util/element/element_mouse_movement.hpp
         src/util/element/element_dpad.cpp
         src/util/element/element_dpad.hpp
-	src/util/input_data.hpp
-	src/util/input_data.cpp
+        src/util/input_data.hpp
+        src/util/input_data.cpp
         src/network/remote_connection.cpp
         src/network/remote_connection.hpp
         src/network/io_server.cpp
@@ -107,7 +112,9 @@ if (OBS_FRONTEND_INCLUDE)
     include_directories(${OBS_FRONTEND_INCLUDE})
 endif()
 
-include_directories(
+target_include_directories(
+    input-overlay
+    PUBLIC
     ${COMMON_HEADERS}
     ${JSON_11_HEADER}
     ${GAMEPAD_INCLUDE_DIR}
@@ -126,6 +133,14 @@ target_link_libraries(input-overlay
         uiohook_static
         netlib_static
         gamepad_static)
+
+if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+    set(ARCH_NAME "64bit")
+    set(OBS_BUILDDIR_ARCH "build64")
+else()
+    set(ARCH_NAME "32bit")
+    set(OBS_BUILDDIR_ARCH "build32")
+endif()
 
 # --- Windows-specific build settings and tasks ---
 if(WIN32)
@@ -146,14 +161,6 @@ if(WIN32)
     target_link_libraries(input-overlay
         "${OBS_FRONTEND_LIB}"
     )
-
-    if(CMAKE_SIZEOF_VOID_P EQUAL 8)
-        set(ARCH_NAME "64bit")
-        set(OBS_BUILDDIR_ARCH "build64")
-    else()
-        set(ARCH_NAME "32bit")
-        set(OBS_BUILDDIR_ARCH "build32")
-    endif()
 
     get_filename_component(LibOBS_DIR ${LIBOBS_LIB} DIRECTORY)
 
@@ -188,7 +195,7 @@ if(UNIX AND NOT APPLE)
     if (LOCAL_INSTALLATION)
         # Installs into home directory
         install(TARGETS input-overlay
-            LIBRARY DESTINATION "$ENV{HOME}/.config/obs-studio/plugins/input-overlay/bin/${OBS_ARCH_NAME}")
+            LIBRARY DESTINATION "$ENV{HOME}/.config/obs-studio/plugins/input-overlay/bin/${ARCH_NAME}")
 
         install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/data
             DESTINATION "$ENV{HOME}/.config/obs-studio/plugins/input-overlay/")
@@ -204,7 +211,7 @@ if(UNIX AND NOT APPLE)
     else()
         # For *.zip binary
         install(TARGETS input-overlay
-            LIBRARY DESTINATION "input-overlay/bin/${OBS_ARCH_NAME}")
+            LIBRARY DESTINATION "input-overlay/bin/${ARCH_NAME}")
 
         install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/data
             DESTINATION "input-overlay")

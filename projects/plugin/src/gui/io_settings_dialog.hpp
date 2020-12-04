@@ -60,6 +60,7 @@ private Q_SLOTS:
     void OpenForums();
 
 private:
+    uint64_t m_last_gamepad_input = UINT64_MAX;
     Ui::io_config_dialog *ui;
     QTimer *m_refresh = nullptr;
 };

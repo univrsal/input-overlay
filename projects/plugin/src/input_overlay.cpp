@@ -29,6 +29,7 @@
 #include "sources/input_source.hpp"
 #include "util/config.hpp"
 #include "util/lang.h"
+#include "util/log.h"
 
 #ifdef LINUX
 
@@ -41,6 +42,7 @@ OBS_MODULE_USE_DEFAULT_LOCALE("input-overlay", "en-US")
 
 bool obs_module_load()
 {
+    binfo("Loading v%s build time %s", INPUT_OVERLAY_VERSION, BUILD_TIME);
     io_config::set_defaults();
     io_config::load();
 
@@ -51,7 +53,7 @@ bool obs_module_load()
         uiohook::start();
 
     if (io_config::gamepad)
-        gamepad::start_pad_hook();
+        libgamepad::start_pad_hook();
 
     if (io_config::remote) {
         network::local_input = io_config::gamepad || io_config::uiohook;
@@ -82,7 +84,7 @@ void obs_module_unload()
     /* Save config values again */
     io_config::save();
 
-    gamepad::end_pad_hook();
+    libgamepad::end_pad_hook();
     uiohook::stop();
 
 #ifdef LINUX
