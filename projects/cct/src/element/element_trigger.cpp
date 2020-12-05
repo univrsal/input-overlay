@@ -97,8 +97,8 @@ void element_trigger::update_settings(dialog_element_settings *dialog)
 void element_trigger::handle_event(SDL_Event *event, sdl_helper *helper)
 {
     if (event->type == SDL_CONTROLLERAXISMOTION) {
-        if (m_side == element_side::LEFT && event->caxis.axis == SDL_CONTROLLER_AXIS_TRIGGERLEFT ||
-            m_side == element_side::RIGHT && event->caxis.axis == SDL_CONTROLLER_AXIS_TRIGGERRIGHT) {
+        if ((m_side == element_side::LEFT && event->caxis.axis == SDL_CONTROLLER_AXIS_TRIGGERLEFT) ||
+            (m_side == element_side::RIGHT && event->caxis.axis == SDL_CONTROLLER_AXIS_TRIGGERRIGHT)) {
             m_progress = static_cast<float>(event->caxis.value) / AXIS_MAX_AMPLITUDE;
         }
     }

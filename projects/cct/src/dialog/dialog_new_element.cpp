@@ -247,7 +247,7 @@ element_side dialog_new_element::get_side() const
 direction dialog_new_element::get_direction() const
 {
     if (m_direction) {
-        return static_cast<direction>(UTIL_CLAMP(0, m_direction->get_selected(), DIR_MAX - 1));
+        return static_cast<direction>(UTIL_CLAMP(0, m_direction->get_selected() + 1, DIR_MAX - 1));
     }
     return DIR_UP;
 }

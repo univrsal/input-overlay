@@ -66,7 +66,7 @@
     "label_trigger_side": "Trigger:",
     "label_trigger_direction": "Fill direction:",
     "checkbox_trigger_button": "Is button",
-    "label_gamepad_id_info": "Select only the texture with\nPlayer 1 lit up\nNext to it in order:\n Player 2\n Player 3\n Player 4 ",
+    "label_gamepad_id_info": "Select only the texture with\nPlayer 1 lit up\nNext to it in order:\n Player 2\n Player 3\n Player 4\n Guide button pressed",
     "label_dpad_info": "Select only the texture with\nThe stick centered\nNext to it in order:\n Left\n Right\n Up\n Down\n Top left\n Top right\n Bottom left\n Bottom right",
     "button_add_element": "Add new Element",
     "button_delete_element": "Delete selected",
