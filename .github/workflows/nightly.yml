@@ -111,7 +111,7 @@ jobs:
         name: '${{ env.project }}.${{ env.GIT_TAG }}-${{ env.GIT_HASH }}.linux'
         path: ${{github.workspace}}/package/*.deb
     - name: Upload presets
-      uses: actions/upload-artifacts@v2
+      uses: actions/upload-artifact@v2
       with:
         name: '${{ env.project }}.${{ env.GIT_TAG }}-${{ env.GIT_HASH }}.presets'
         path: ${{github.workspace}}/projects/presets
