@@ -97,6 +97,7 @@ jobs:
       shell: bash
       run: |
         rm -rf ${{github.workspace}}/dist/include ${{github.workspace}}/dist/lib
+        rm ${{github.workspace}}/projects/presets/README.md
         chmod a+x ${{github.workspace}}/dist/client/client
         chmod a+x ${{github.workspace}}/dist/io-cct/io-cct
         sudo chmod ao+r ${{github.workspace}}/package/*
