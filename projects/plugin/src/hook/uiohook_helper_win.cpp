@@ -92,7 +92,6 @@ void stop()
     CloseHandle(hook_control_cond);
 }
 
-
 int hook_enable()
 {
     /* Lock the thread control mutex.  This will be unlocked when the

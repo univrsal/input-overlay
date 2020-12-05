@@ -249,5 +249,6 @@ template<typename... Args> std::string sdl_helper::format_loc(const char *unloca
     const size_t size = snprintf(nullptr, 0, localized.c_str(), args...) + 1ull;
     std::unique_ptr<char[]> buf(new char[size]);
     snprintf(buf.get(), size, localized.c_str(), args...);
+
     return std::string(buf.get(), buf.get() + size - 1);
 }

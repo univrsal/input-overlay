@@ -57,6 +57,7 @@ class texture;
 
 class element {
 public:
+    virtual ~element() {}
     virtual void draw(texture *atlas, coordinate_system *cs, bool selected, bool alpha) = 0;
 
     virtual void write_to_json(json_obj &j, SDL_Point *default_dim, uint8_t &layout_flags);

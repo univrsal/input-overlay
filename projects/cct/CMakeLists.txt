@@ -19,7 +19,6 @@ string(TIMESTAMP TODAY "%Y.%m.%d %H:%M")
 add_compile_definitions(TIMESTAMP="${TODAY}")
 
 use_cxx14()
-add_compile_definitions(LGP_ENABLE_JSON)
 
 if (MSVC)
     find_path(SDL2_INCLUDE_DIRS SDL.h)

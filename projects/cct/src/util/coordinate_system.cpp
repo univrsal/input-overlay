@@ -95,25 +95,20 @@ bool coordinate_system::handle_events(SDL_Event *e)
         }
     } else if (e->type == SDL_MOUSEWHEEL && m_mouse_over) {
         auto mouse = *m_helper->util_mouse_pos();
-        mouse.x -= get_origin_left();
-        mouse.y -= get_origin_top();
-
-        //        SDL_Point old_scale = {mouse.x * m_scale_f + m_origin.x, mouse.y * m_scale_f + m_origin.y};
-
+        mouse.y -= m_origin.y;
+        mouse.x -= m_origin.x;
+        SDL_Point old_scale = {mouse.x / m_scale_f, mouse.y / m_scale_f};
         if (e->wheel.y > 0) /* TRIGGER_UP */
         {
             m_scale_f = UTIL_MIN(++m_scale_f, 8);
         } else {
             m_scale_f = UTIL_MAX(--m_scale_f, 1);
         }
-        //mouse = { e->button.x, e->button.y };
-        // translate(mouse.x, mouse.y);
-        //        SDL_Point new_scale = {mouse.x * m_scale_f + m_origin.x, mouse.y * m_scale_f + m_origin.y};
-
         /* Move origin so the original center stays centered */
-
-        //m_origin.x += (new_scale.x - old_scale.x);
-        //m_origin.y += (new_scale.y - old_scale.y);
+        SDL_Point new_scale = {mouse.x / m_scale_f, mouse.y / m_scale_f};
+        m_origin.x += (new_scale.x - old_scale.x) * m_scale_f;
+        m_origin.y += (new_scale.y - old_scale.y) * m_scale_f;
+        printf("ol: %i/%i\n", (old_scale.x - new_scale.x) / 2, (old_scale.y - new_scale.y) / 2);
 
         m_origin.x = UTIL_MIN(m_origin.x, get_origin_left());
         m_origin.y = UTIL_MIN(m_origin.y, get_origin_top());
