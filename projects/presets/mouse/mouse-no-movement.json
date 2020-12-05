@@ -1,0 +1,105 @@
+{
+    "default_height": 0,
+    "default_width": 0,
+    "elements": [
+        {
+            "id": "body",
+            "mapping": [
+                328,
+                1,
+                283,
+                242
+            ],
+            "pos": [
+                2,
+                179
+            ],
+            "type": 0,
+            "z_level": 1
+        },
+        {
+            "code": 60673,
+            "id": "lmb",
+            "mapping": [
+                1,
+                1,
+                139,
+                174
+            ],
+            "pos": [
+                2,
+                0
+            ],
+            "type": 1,
+            "z_level": 1
+        },
+        {
+            "code": 60674,
+            "id": "rmb",
+            "mapping": [
+                143,
+                1,
+                139,
+                174
+            ],
+            "pos": [
+                146,
+                0
+            ],
+            "type": 1,
+            "z_level": 1
+        },
+        {
+            "id": "wheel",
+            "mapping": [
+                285,
+                246,
+                48,
+                95
+            ],
+            "pos": [
+                117,
+                79
+            ],
+            "type": 2,
+            "z_level": 1
+        },
+        {
+            "code": 60677,
+            "id": "smb1",
+            "mapping": [
+                285,
+                1,
+                40,
+                62
+            ],
+            "pos": [
+                0,
+                210
+            ],
+            "type": 1,
+            "z_level": 1
+        },
+        {
+            "code": 60676,
+            "id": "smb2",
+            "mapping": [
+                284,
+                1,
+                41,
+                62
+            ],
+            "pos": [
+                11,
+                273
+            ],
+            "type": 1,
+            "z_level": 1
+        }
+    ],
+    "flags": 0,
+    "overlay_height": 421,
+    "overlay_width": 285,
+    "space_h": 0,
+    "space_v": 0
+}

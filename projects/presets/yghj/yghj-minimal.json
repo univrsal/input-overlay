@@ -1,0 +1,155 @@
+{
+    "default_height": 128,
+    "default_width": 157,
+    "elements": [
+        {
+            "code": 20,
+            "id": "t",
+            "mapping": [
+                1,
+                1,
+                157,
+                128
+            ],
+            "pos": [
+                137,
+                0
+            ],
+            "type": 1,
+            "z_level": 1
+        },
+        {
+            "code": 21,
+            "id": "y",
+            "mapping": [
+                161,
+                1,
+                157,
+                128
+            ],
+            "pos": [
+                274,
+                0
+            ],
+            "type": 1,
+            "z_level": 1
+        },
+        {
+            "code": 22,
+            "id": "u",
+            "mapping": [
+                321,
+                1,
+                157,
+                128
+            ],
+            "pos": [
+                411,
+                0
+            ],
+            "type": 1,
+            "z_level": 1
+        },
+        {
+            "code": 33,
+            "id": "f",
+            "mapping": [
+                481,
+                1,
+                157,
+                128
+            ],
+            "pos": [
+                0,
+                133
+            ],
+            "type": 1,
+            "z_level": 1
+        },
+        {
+            "code": 34,
+            "id": "g",
+            "mapping": [
+                641,
+                1,
+                157,
+                128
+            ],
+            "pos": [
+                137,
+                133
+            ],
+            "type": 1,
+            "z_level": 1
+        },
+        {
+            "code": 35,
+            "id": "h",
+            "mapping": [
+                801,
+                1,
+                157,
+                128
+            ],
+            "pos": [
+                274,
+                133
+            ],
+            "type": 1,
+            "z_level": 1
+        },
+        {
+            "code": 36,
+            "id": "j",
+            "mapping": [
+                961,
+                1,
+                157,
+                128
+            ],
+            "pos": [
+                411,
+                133
+            ],
+            "type": 1,
+            "z_level": 1
+        },
+        {
+            "code": 46,
+            "id": "c",
+            "mapping": [
+                1121,
+                1,
+                157,
+                128
+            ],
+            "pos": [
+                0,
+                266
+            ],
+            "type": 1,
+            "z_level": 1
+        },
+        {
+            "code": 57,
+            "id": "space",
+            "mapping": [
+                1301,
+                1,
+                421,
+                128
+            ],
+            "pos": [
+                137,
+                266
+            ],
+            "type": 1,
+            "z_level": 1
+        }
+    ],
+    "flags": 0,
+    "overlay_height": 394,
+    "overlay_width": 568,
+    "space_h": -20,
+    "space_v": 5
+}
