@@ -22,6 +22,28 @@
 #include "../util/palette.hpp"
 #include "../util/texture.hpp"
 
+inline dpad_texture from_direction(uint8_t dir)
+{
+    if (dir & DD_UP) {
+        if (dir & DD_LEFT)
+            return DT_TOP_LEFT;
+        else if (dir & DD_RIGHT)
+            return DT_TOP_RIGHT;
+        return DT_UP;
+    } else if (dir & DD_DOWN) {
+        if (dir & DD_LEFT)
+            return DT_BOTTOM_LEFT;
+        else if (dir & DD_RIGHT)
+            return DT_BOTTOM_RIGHT;
+        return DT_DOWN;
+    } else if (dir & DD_LEFT) {
+        return DT_LEFT;
+    } else if (dir & DD_RIGHT) {
+        return DT_RIGHT;
+    }
+    return DT_CENTER;
+}
+
 void element_dpad::draw(texture *atlas, coordinate_system *cs, const bool selected, const bool alpha)
 {
     get_abs_dim(cs);
@@ -30,7 +52,7 @@ void element_dpad::draw(texture *atlas, coordinate_system *cs, const bool select
                     (alpha && !selected) ? ELEMENT_HIDE_ALPHA : 255);
     } else {
         auto temp = m_mapping;
-        temp.x += (CFG_INNER_BORDER + temp.w) * m_dir;
+        temp.x += (CFG_INNER_BORDER + temp.w) * from_direction(m_dir);
         atlas->draw(cs->get_helper()->renderer(), &m_dimensions_scaled, &temp,
                     (alpha && !selected) ? ELEMENT_HIDE_ALPHA : 255);
     }

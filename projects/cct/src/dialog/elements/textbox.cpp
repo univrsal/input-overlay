@@ -86,14 +86,19 @@ bool textbox::handle_events(SDL_Event *event, const bool was_handled)
     auto handled = false;
     if (event->type == SDL_MOUSEBUTTONDOWN) {
         /* Handle focus */
-        if (!was_handled && event->button.button == SDL_BUTTON_LEFT) {
+        if (!was_handled) {
             sdl_helper::util_set_flag(m_flags, ELEMENT_FOCUSED, is_mouse_over());
-
             if (m_flags & ELEMENT_FOCUSED) {
-                m_alert = false;
-                SDL_SetTextInputRect(get_dimensions());
-                handled = true;
-                m_parent_dialog->change_focus(m_element_id);
+                if (event->button.button == SDL_BUTTON_LEFT) {
+                    m_alert = false;
+                    SDL_SetTextInputRect(get_dimensions());
+                    handled = true;
+                    m_parent_dialog->change_focus(m_element_id);
+                }
+                if (m_flags & TEXTBOX_KEYBIND) {
+                    set_hex_int(sdl_helper::sdl_key_to_vc(TO_MOUSE_MASK(event->button.button)));
+                    handled = true;
+                }
             } else if (m_flags & TEXTBOX_NUMERIC) {
                 if (m_text.empty())
                     set_text("0");
@@ -152,12 +157,17 @@ bool textbox::handle_events(SDL_Event *event, const bool was_handled)
         else if (event->type == SDL_TEXTEDITING && !(m_flags & TEXTBOX_KEYBIND)) {
             m_composition = event->edit.text;
             handled = true;
-        } else if (m_flags & TEXTBOX_DROP_FILE && event->type == SDL_DROPFILE) {
+        }
+    }
+
+    if (!was_handled && m_flags & TEXTBOX_DROP_FILE) {
+        if (event->type == SDL_DROPFILE && is_mouse_over()) {
             const auto dropped_file = event->drop.file;
             if (dropped_file)
                 set_text(std::string(dropped_file));
             SDL_free(dropped_file);
             m_parent_dialog->action_performed(ACTION_FILE_DROPPED);
+            handled = true;
         }
     }
 

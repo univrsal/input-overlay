@@ -27,24 +27,24 @@ void dialog_element_settings::init()
 
     /* Labels */
     add<label>(8, 35, LANG_LABEL_WIDTH, this);
-    add<label>((m_dimensions.w / 2) + 4, 35, LANG_LABEL_HEIGHT, this);
+    add<label>((m_dimensions.w / 2) + 2, 35, LANG_LABEL_HEIGHT, this);
     add<label>(8, 65, LANG_LABEL_X, this);
-    add<label>((m_dimensions.w / 2) + 4, 65, LANG_LABEL_Y, this);
+    add<label>((m_dimensions.w / 2) + 2, 65, LANG_LABEL_Y, this);
     add<label>(8, 95, LANG_LABEL_U, this);
-    add<label>((m_dimensions.w / 2) + 4, 95, LANG_LABEL_V, this);
+    add<label>((m_dimensions.w / 2) + 2, 95, LANG_LABEL_V, this);
     add<label>(8, 125, LANG_LABEL_ELEMENT_ID, this);
     add<label>(8, 170, LANG_LABEL_KEY_CODE, this);
     add<label>((m_dimensions.w / 2) + 8, 170, LANG_LABEL_Z_LEVEL, this);
 
     /* Text boxes */
-    m_element_width = new textbox(55, 32, (m_dimensions.w / 2) - 63, 20, "0", this);
-    m_element_height = new textbox((m_dimensions.w / 2) + 55, 32, (m_dimensions.w / 2) - 63, 20, "0", this);
+    m_element_width = add<textbox>(55, 32, (m_dimensions.w / 2) - 63, 20, "0", this);
+    m_element_height = add<textbox>((m_dimensions.w / 2) + 55, 32, (m_dimensions.w / 2) - 63, 20, "0", this);
 
-    m_element_x = new textbox(55, 62, (m_dimensions.w / 2) - 63, 20, "0", this);
-    m_element_y = new textbox((m_dimensions.w / 2) + 55, 62, (m_dimensions.w / 2) - 63, 20, "0", this);
+    m_element_x = add<textbox>(55, 62, (m_dimensions.w / 2) - 63, 20, "0", this);
+    m_element_y = add<textbox>((m_dimensions.w / 2) + 55, 62, (m_dimensions.w / 2) - 63, 20, "0", this);
 
-    m_element_u = new textbox(55, 92, (m_dimensions.w / 2) - 63, 20, "0", this);
-    m_element_v = new textbox((m_dimensions.w / 2) + 55, 92, (m_dimensions.w / 2) - 63, 20, "0", this);
+    m_element_u = add<textbox>(55, 92, (m_dimensions.w / 2) - 63, 20, "0", this);
+    m_element_v = add<textbox>((m_dimensions.w / 2) + 55, 92, (m_dimensions.w / 2) - 63, 20, "0", this);
 
     m_element_width->set_flags(TEXTBOX_NUMERIC);
     m_element_height->set_flags(TEXTBOX_NUMERIC);
@@ -60,17 +60,9 @@ void dialog_element_settings::init()
     m_element_u->set_cutoff(20);
     m_element_v->set_cutoff(20);
 
-    add(m_element_width);
-    add(m_element_height);
-    add(m_element_x);
-    add(m_element_y);
-    add(m_element_u);
-    add(m_element_v);
-
-    add(m_element_id = new textbox(8, 145, m_dimensions.w - 16, 20, "", this));
-    add(m_element_vc = new textbox(8, 190, m_dimensions.w / 2 - 16, 20, "", this));
-
-    add(m_element_z_level = new textbox(m_dimensions.w / 2 + 8, 190, m_dimensions.w / 2 - 16, 20, "0", this));
+    m_element_id = add<textbox>(8, 145, m_dimensions.w - 16, 20, "", this);
+    m_element_vc = add<textbox>(8, 190, m_dimensions.w / 2 - 16, 20, "", this);
+    m_element_z_level = add<textbox>(m_dimensions.w / 2 + 8, 190, m_dimensions.w / 2 - 16, 20, "0", this);
 
     m_element_id->set_flags(TEXTBOX_NO_SPACE | TEXTBOX_ALPHA_NUMERIC);
     m_element_vc->set_flags(TEXTBOX_HEX | TEXTBOX_NO_SPACE);

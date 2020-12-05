@@ -46,7 +46,7 @@
     "down": "Down",
     "label_help_about": "input-overlay config creation tool\n  licensed under the GNU General Public License 2.0\n  github.com/univrsal/input-overlay\n\nThanks to:\n  The OBS Studio team and contributers\n  obsproject.com\n  The SDL developers (also SDL_image and SDL_ttf)\n  libsdl.org\n  Translators: Kuer hyrious\n\nUsage:\n  Scroll wheel: Zoom in/out\n  Left mouse: move elements\n  Right mouse: move preview\n  Ctrl: Make unselected elements transparent\n\n  Some keys will work within the preview\n  and light up when pressed",
     "button_open_url": "Open in webbrowser",
-    "label_info": "You can drag and drop files into focused text fields",
+    "label_info": "You can drag and drop files onto the textboxes",
     "label_texture_path": "Enter the path to the texture file:",
     "label_config_path": "Enter config path for saving or loading:",
     "label_default_width": "Default element width:",

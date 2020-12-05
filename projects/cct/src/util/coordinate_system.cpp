@@ -108,7 +108,6 @@ bool coordinate_system::handle_events(SDL_Event *e)
         SDL_Point new_scale = {mouse.x / m_scale_f, mouse.y / m_scale_f};
         m_origin.x += (new_scale.x - old_scale.x) * m_scale_f;
         m_origin.y += (new_scale.y - old_scale.y) * m_scale_f;
-        printf("ol: %i/%i\n", (old_scale.x - new_scale.x) / 2, (old_scale.y - new_scale.y) / 2);
 
         m_origin.x = UTIL_MIN(m_origin.x, get_origin_left());
         m_origin.y = UTIL_MIN(m_origin.y, get_origin_top());
