@@ -6,6 +6,11 @@ option(ENABLE_CLIENT "Wether to build the client (default: ON)" ON)
 option(ENABLE_TOOL "Wether to build the config creation tool (default: ON)" ON)
 option(ENABLE_PLUGIN "Wether to build the obs plugin (default: ON)" ON)
 
+set(PLUGIN_AUTHOR "univrsal")
+set(PLUGIN_GIT input-overlay)
+set(LINUX_MAINTAINER_EMAIL "uni@vrsal.cf")
+set(MACOS_BUNDLEID "cf.vrsal.inputoverlay")
+
 add_subdirectory(deps)
 
 if (ENABLE_CLIENT)

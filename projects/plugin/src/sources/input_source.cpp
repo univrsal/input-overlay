@@ -45,7 +45,8 @@ inline void input_source::update(obs_data_t *settings)
     }
 
     libgamepad::hook_instance->get_mutex()->lock();
-    m_settings.gamepad = libgamepad::hook_instance->get_device_by_id(obs_data_get_string(settings, S_CONTROLLER_ID));
+    m_settings.gamepad_id = obs_data_get_string(settings, S_CONTROLLER_ID);
+    m_settings.gamepad = libgamepad::hook_instance->get_device_by_id(m_settings.gamepad_id);
     libgamepad::hook_instance->get_mutex()->unlock();
 
     m_settings.mouse_sens = obs_data_get_int(settings, S_MOUSE_SENS);
@@ -62,6 +63,16 @@ inline void input_source::tick(float seconds)
     UNUSED_PARAMETER(seconds);
     if (m_overlay->is_loaded())
         m_overlay->refresh_data();
+
+    if (m_settings.layout_flags & OF_GAMEPAD && !m_settings.gamepad) {
+        m_settings.gamepad_check_timer += seconds;
+        if (m_settings.gamepad_check_timer >= 1) {
+            m_settings.gamepad_check_timer = 0.0f;
+            libgamepad::hook_instance->get_mutex()->lock();
+            m_settings.gamepad = libgamepad::hook_instance->get_device_by_id(m_settings.gamepad_id);
+            libgamepad::hook_instance->get_mutex()->unlock();
+        }
+    }
 }
 
 inline void input_source::render(gs_effect_t *effect) const
@@ -77,23 +88,6 @@ inline void input_source::render(gs_effect_t *effect) const
     }
 }
 
-bool cfg_path_changed(void *data, obs_properties_t *props, obs_property_t *p, obs_data_t *s)
-{
-    UNUSED_PARAMETER(p);
-    UNUSED_PARAMETER(s);
-    const int flags = static_cast<input_source *>(data)->m_settings.layout_flags;
-
-    obs_property_set_visible(GET_PROPS(S_CONTROLLER_L_DEAD_ZONE), flags & OF_LEFT_STICK);
-    obs_property_set_visible(GET_PROPS(S_CONTROLLER_R_DEAD_ZONE), flags & OF_RIGHT_STICK);
-    obs_property_set_visible(GET_PROPS(S_CONTROLLER_ID),
-                             flags & OF_GAMEPAD || (flags & OF_LEFT_STICK || flags & OF_RIGHT_STICK));
-    obs_property_set_visible(GET_PROPS(S_MOUSE_SENS), flags & OF_MOUSE);
-    obs_property_set_visible(GET_PROPS(S_MONITOR_USE_CENTER), flags & OF_MOUSE);
-    obs_property_set_visible(GET_PROPS(S_MOUSE_DEAD_ZONE), flags & OF_MOUSE);
-    obs_property_set_visible(GET_PROPS(S_RELOAD_PAD_DEVICES), flags & OF_GAMEPAD);
-    return true;
-}
-
 bool use_monitor_center_changed(obs_properties_t *props, obs_property_t *p, obs_data_t *data)
 {
     UNUSED_PARAMETER(p);
@@ -106,41 +100,34 @@ bool use_monitor_center_changed(obs_properties_t *props, obs_property_t *p, obs_
 
 bool reload_connections(obs_properties_t *props, obs_property_t *property, void *data)
 {
-    UNUSED_PARAMETER(property);
+    UNUSED_PARAMETER(props);
     UNUSED_PARAMETER(data);
-
     std::lock_guard<std::mutex> lock(network::mutex);
-    auto *connection_list = obs_properties_get(props, S_INPUT_SOURCE);
-
-    if (connection_list)
-        network::server_instance->get_clients(connection_list, network::local_input);
-
+    network::server_instance->get_clients(property, network::local_input);
     return true;
 }
 
 bool reload_pads(obs_properties_t *props, obs_property_t *property, void *data)
 {
-    UNUSED_PARAMETER(property);
+    UNUSED_PARAMETER(props);
     UNUSED_PARAMETER(data);
 
-    auto *gamepad_list = obs_properties_get(props, S_GAMEPAD);
-
-    if (gamepad_list) {
-        obs_property_list_clear(gamepad_list);
-        libgamepad::hook_instance->get_mutex()->lock();
-        for (const auto &pad : libgamepad::hook_instance->get_devices()) {
-            obs_property_list_add_string(gamepad_list, pad->get_name().c_str(), pad->get_id().c_str());
-        }
-        libgamepad::hook_instance->get_mutex()->unlock();
+    obs_property_list_clear(property);
+    libgamepad::hook_instance->get_mutex()->lock();
+    for (const auto &pad : libgamepad::hook_instance->get_devices()) {
+        obs_property_list_add_string(property, pad->get_name().c_str(), pad->get_id().c_str());
     }
+    libgamepad::hook_instance->get_mutex()->unlock();
     return true;
 }
 
 obs_properties_t *get_properties_for_overlay(void *data)
 {
-    UNUSED_PARAMETER(data);
+    auto* src = static_cast<input_source*>(data);
+
     QString img_path, layout_path;
     auto *const props = obs_properties_create();
+    const int flags = src->m_settings.layout_flags;
 
     /* If enabled add dropdown to select input source */
     if (CGET_BOOL(S_REMOTE)) {
@@ -153,29 +140,23 @@ obs_properties_t *get_properties_for_overlay(void *data)
     }
 
     const auto filter_img = util_file_filter(T_FILTER_IMAGE_FILES, "*.jpg *.png *.bmp");
-    const auto filter_text = util_file_filter(T_FILTER_TEXT_FILES, "*.ini");
+    const auto filter_text = util_file_filter(T_FILTER_TEXT_FILES, "*.json");
 
     /* Config and texture file path */
     obs_properties_add_path(props, S_OVERLAY_FILE, T_TEXTURE_FILE, OBS_PATH_FILE, qt_to_utf8(filter_img),
                             qt_to_utf8(img_path));
-
-    auto *const cfg = obs_properties_add_path(props, S_LAYOUT_FILE, T_LAYOUT_FILE, OBS_PATH_FILE,
-                                              qt_to_utf8(filter_text), qt_to_utf8(layout_path));
-
-    obs_property_set_modified_callback2(cfg, cfg_path_changed, data);
+    obs_properties_add_path(props, S_LAYOUT_FILE, T_LAYOUT_FILE, OBS_PATH_FILE,
+                                                  qt_to_utf8(filter_text), qt_to_utf8(layout_path));
 
     /* Mouse stuff */
-    obs_property_set_visible(obs_properties_add_int_slider(props, S_MOUSE_SENS, T_MOUSE_SENS, 1, 500, 1), false);
+    obs_properties_add_int_slider(props, S_MOUSE_SENS, T_MOUSE_SENS, 1, 500, 1);
 
     const auto use_center = obs_properties_add_bool(props, S_MONITOR_USE_CENTER, T_MONITOR_USE_CENTER);
     obs_property_set_modified_callback(use_center, use_monitor_center_changed);
 
-    obs_property_set_visible(obs_properties_add_int(props, S_MONITOR_H_CENTER, T_MONITOR_H_CENTER, -9999, 9999, 1),
-                             false);
-    obs_property_set_visible(obs_properties_add_int(props, S_MONITOR_V_CENTER, T_MONITOR_V_CENTER, -9999, 9999, 1),
-                             false);
-    obs_property_set_visible(obs_properties_add_int_slider(props, S_MOUSE_DEAD_ZONE, T_MOUSE_DEAD_ZONE, 0, 500, 1),
-                             false);
+    obs_properties_add_int(props, S_MONITOR_H_CENTER, T_MONITOR_H_CENTER, -9999, 9999, 1);
+    obs_properties_add_int(props, S_MONITOR_V_CENTER, T_MONITOR_V_CENTER, -9999, 9999, 1);
+    obs_properties_add_int_slider(props, S_MOUSE_DEAD_ZONE, T_MOUSE_DEAD_ZONE, 0, 500, 1);
 
     /* Gamepad stuff */
     obs_property_set_visible(obs_properties_add_list(props, S_CONTROLLER_ID, T_CONTROLLER_ID, OBS_COMBO_TYPE_LIST,
@@ -184,6 +165,16 @@ obs_properties_t *get_properties_for_overlay(void *data)
 
     auto *btn = obs_properties_add_button(props, S_RELOAD_PAD_DEVICES, T_RELOAD_PAD_DEVICES, reload_pads);
     obs_property_set_visible(btn, false);
+
+    obs_property_set_visible(GET_PROPS(S_CONTROLLER_L_DEAD_ZONE), flags & OF_LEFT_STICK);
+    obs_property_set_visible(GET_PROPS(S_CONTROLLER_R_DEAD_ZONE), flags & OF_RIGHT_STICK);
+    obs_property_set_visible(GET_PROPS(S_CONTROLLER_ID),
+                             flags & OF_GAMEPAD || (flags & OF_LEFT_STICK || flags & OF_RIGHT_STICK));
+    obs_property_set_visible(GET_PROPS(S_MOUSE_SENS), flags & OF_MOUSE);
+    obs_property_set_visible(GET_PROPS(S_MONITOR_USE_CENTER), flags & OF_MOUSE);
+    obs_property_set_visible(GET_PROPS(S_MOUSE_DEAD_ZONE), flags & OF_MOUSE);
+    obs_property_set_visible(GET_PROPS(S_RELOAD_PAD_DEVICES), flags & OF_GAMEPAD);
+    reload_pads(nullptr, GET_PROPS(S_CONTROLLER_ID), nullptr);
     return props;
 }
 

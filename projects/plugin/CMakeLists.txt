@@ -1,10 +1,5 @@
 project(input-overlay)
 
-set(PLUGIN_AUTHOR "univrsal")
-set(PLUGIN_GIT input-overlay)
-set(LINUX_MAINTAINER_EMAIL "uni@vrsal.cf")
-set(MACOS_BUNDLEID "cf.vrsal.inputoverlay")
-
 set(CMAKE_PREFIX_PATH "${QTDIR}")
 set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -28,6 +23,11 @@ find_package(Qt5 REQUIRED COMPONENTS Core Widgets)
 string(TIMESTAMP TODAY "%Y.%m.%d %H:%M")
 add_definitions(-DBUILD_TIME="${TODAY}")
 add_definitions(-DINPUT_OVERLAY_VERSION="${INPUT_OVERLAY_VERSION}")
+
+#if (WIN32)
+   configure_file(${CMAKE_SOURCE_DIR}/package/installer-plugin.iss.in
+       ${CMAKE_SOURCE_DIR}/package/installer-plugin.iss)
+#endif()
 
 if (MSVC)
     set(input-overlay_PLATFORM_SOURCES

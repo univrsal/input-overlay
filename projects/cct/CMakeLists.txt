@@ -42,6 +42,11 @@ endif ()
 set(APP_ICON_RC "${CMAKE_CURRENT_SOURCE_DIR}/res/icon.ico")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GCC_FLAGS}")
 
+#if (WIN32)
+   configure_file(${CMAKE_SOURCE_DIR}/package/installer-cct.iss.in
+       ${CMAKE_SOURCE_DIR}/package/installer-cct.iss)
+#endif()
+
 set(io-cct_SOURCES
         main.cpp
         src/tool.cpp

@@ -1,0 +1,50 @@
+ 
+#define MyAppName "io-cct"
+#define MyAppVersion "@CMAKE_PROJECT_VERSION@"
+#define MyAppPublisher "@PLUGIN_AUTHOR@"
+#define MyAppURL "https://github.com/univrsal/@PLUGIN_GIT@"
+
+[Setup]
+; NOTE: The value of AppId uniquely identifies this application.
+; Do not use the same AppId value in installers for other applications.
+; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
+AppId={{5c975f38-6407-4b8a-a6a8-d847a77b2d7b}
+AppName={#MyAppName}
+AppVersion={#MyAppVersion}
+AppPublisher={#MyAppPublisher}
+AppPublisherURL={#MyAppURL}
+AppSupportURL={#MyAppURL}
+AppUpdatesURL={#MyAppURL}
+DefaultDirName={{pf}\#MyAppName}
+DefaultGroupName={#MyAppName}
+OutputBaseFilename={#MyAppName}-{#MyAppVersion}-Windows-Installer
+Compression=lzma
+SolidCompression=yes
+
+[Languages]
+Name: "english"; MessagesFile: "compiler:Default.isl"
+
+[Files]
+Source: "..\build-package\cct\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\COPYING.txt"; Flags: dontcopy
+; NOTE: Don't use "Flags: ignoreversion" on any shared system files
+
+[Icons]
+Name: "{group}\{cm:ProgramOnTheWeb,{#MyAppName}}"; Filename: "{#MyAppURL}"
+Name: "{group}\{cm:UninstallProgram,{#MyAppName}}"; Filename: "{uninstallexe}"
+
+[Code]
+procedure InitializeWizard();
+var
+  GPLText: AnsiString;
+  Page: TOutputMsgMemoWizardPage;
+begin
+  ExtractTemporaryFile('COPYING.txt');
+  LoadStringFromFile(ExpandConstant('{tmp}\COPYING.txt'), GPLText);
+  Page := CreateOutputMsgMemoPage(wpWelcome,
+    'License Information', 'Please review the license terms before installing {#MyAppName}',
+    'Press Page Down to see the rest of the agreement. Once you are aware of your rights, click Next to continue.',
+    String(GPLText)
+  );
+end;
+

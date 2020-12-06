@@ -36,40 +36,14 @@ void element_analog_stick::draw(gs_effect_t *effect, gs_image_file_t *image, sou
     auto pos = m_pos;
     gs_rect *temp = nullptr;
 
-    if (m_side == element_side::LEFT)
+    if (m_side == element_side::LEFT) {
+        pos.y += (settings->data.gamepad_axis[gamepad::axis::LEFT_STICK_Y] - 0.5) * m_radius * 2;
+        pos.x += (settings->data.gamepad_axis[gamepad::axis::LEFT_STICK_X] - 0.5) * m_radius * 2;
         temp = settings->data.gamepad_buttons[gamepad::button::L_THUMB] ? &m_pressed : &m_mapping;
-    else
+    } else {
+        pos.y += (settings->data.gamepad_axis[gamepad::axis::RIGHT_STICK_Y] - 0.5) * m_radius * 2;
+        pos.x += (settings->data.gamepad_axis[gamepad::axis::RIGHT_STICK_X] - 0.5) * m_radius * 2;
         temp = settings->data.gamepad_buttons[gamepad::button::R_THUMB] ? &m_pressed : &m_mapping;
-    //calc_position(&pos, stick, settings);
+    }
     element_texture::draw(effect, image, temp, &pos);
 }
-
-//void element_analog_stick::calc_position(vec2 *v, element_data_analog_stick *d,
-//										 sources::overlay_settings *settings) const
-//{
-//	UNUSED_PARAMETER(settings);
-//	/* TODO: deadzones combined with bindings? */
-//	switch (m_side) {
-//	case ES_LEFT:
-//		//#if _WIN32
-//		//		if (!DEAD_ZONE(d->get_left_stick()->x, settings->left_dz))
-//		//#endif
-//		//			v->x += d->get_left_stick()->x * m_radius;
-//		//#if _WIN32
-//		//		if (!DEAD_ZONE(d->get_left_stick()->y, settings->left_dz))
-//		//#endif
-//		//			v->y += d->get_left_stick()->y * m_radius;
-//		//		break;
-//		//	case ES_RIGHT:
-//		//#if _WIN32
-//		//		if (!DEAD_ZONE(d->get_right_stick()->x, settings->right_dz))
-//		//#endif
-//		//			v->x += d->get_right_stick()->x * m_radius;
-//		//#if _WIN32
-//		//		if (!DEAD_ZONE(d->get_right_stick()->y, settings->right_dz))
-//		//#endif
-//		v->y += d->get_right_stick()->y * m_radius;
-//		break;
-//	default:;
-//	}
-//}

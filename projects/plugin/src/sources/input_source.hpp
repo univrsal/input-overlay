@@ -36,17 +36,19 @@ public:
     std::string image_file;
     std::string layout_file;
 
-    input_data data{};                        /* Copy of input data used for visualization            */
-    uint32_t cx = 0, cy = 0;                  /* Source width/height									*/
+    input_data data{};                        /* Copy of input data used for visualization          */
+    uint32_t cx = 0, cy = 0;                  /* Source width/height                                */
     bool use_center = false;                  /* true if monitor center is used for mouse movement	*/
-    uint32_t monitor_w = 0, monitor_h = 0;    /* Monitor size used for mouse movement                 */
-    uint8_t mouse_deadzone = 0;               /* Region in which to ignore mouse movements            */
+    uint32_t monitor_w = 0, monitor_h = 0;    /* Monitor size used for mouse movement               */
+    uint8_t mouse_deadzone = 0;               /* Region in which to ignore mouse movements          */
     uint16_t mouse_sens = 0;                  /* mouse_delta / mouse_sens = mouse movement			*/
-    std::shared_ptr<gamepad::device> gamepad; /* selected gamepad                                     */
+    std::shared_ptr<gamepad::device> gamepad; /* selected gamepad                                   */
 
-    uint8_t selected_source = 0;  /* 0 = Local input, 0< remote computers                 */
-    uint8_t layout_flags = 0;     /* See overlay_flags in layout_constants.hpp            */
-    obs_data_t *source = nullptr; /* Pointer to source property data                      */
+    uint8_t selected_source = 0;        /* 0 = Local input, 0< remote computers                 */
+    uint8_t layout_flags = 0;           /* See overlay_flags in layout_constants.hpp            */
+    obs_data_t *source = nullptr;       /* Pointer to source property data                      */
+    float gamepad_check_timer = 0.0f;   /* Counter to check if selected game pad is connected   */
+    std::string gamepad_id;
     /* clang-format: on */
 };
 
