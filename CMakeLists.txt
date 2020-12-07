@@ -27,5 +27,5 @@ endif()
 
 # Don't install the license when building the deb installer
 if (ENABLE_CLIENT OR ENABLE_TOOL)
-    install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/LICENSE DESTINATION ./)
+    install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/COPYING.txt DESTINATION ./)
 endif()
