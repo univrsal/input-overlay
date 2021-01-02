@@ -20,6 +20,13 @@
 #include "log.h"
 #include "lang.h"
 #include <QFile>
+#include <QDir>
+
+QString util_get_data_file(const QString& file_name)
+{
+    QDir home = QDir::homePath();
+    return QDir::toNativeSeparators(home.absoluteFilePath(file_name));
+}
 
 QString util_file_filter(const char *display, const char *formats)
 {

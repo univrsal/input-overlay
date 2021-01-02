@@ -43,6 +43,11 @@ void util_format_path(QString &path);
 
 bool util_open_json(const QString &path, QJsonDocument &doc);
 
+/* Get file path to /home/user/.config/*
+ * or C:\Users\user\*
+ */
+QString util_get_data_file(const QString& file_name);
+
 /* Source:
  * github.com/obsproject/obs-studio/blob/master/UI/frontend-plugins/frontend-tools/auto-scene-switcher-win.cpp
  * github.com/obsproject/obs-studio/blob/master/UI/frontend-plugins/frontend-tools/auto-scene-switcher-nix.cpp
