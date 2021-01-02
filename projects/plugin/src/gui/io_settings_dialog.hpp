@@ -21,6 +21,7 @@
 #include <QDialog>
 #include <mutex>
 #include <netlib.h>
+#include <memory>
 
 namespace gamepad {
 namespace cfg {

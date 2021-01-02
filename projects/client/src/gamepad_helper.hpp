@@ -22,6 +22,6 @@
 namespace gamepad {
 extern std::shared_ptr<hook> hook_instance;
 
-extern bool start(hook_type t);
+extern bool start(uint16_t flags);
 extern void stop();
 }

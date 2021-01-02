@@ -26,11 +26,11 @@ namespace gamepad {
 
 std::shared_ptr<hook> hook_instance;
 
-bool start(hook_type t)
+bool start(uint16_t flags)
 {
     /* Make sure that the network is established, otherwise we might send device connections too early */
     ::util::sleep_ms(500);
-    hook_instance = hook::make(t);
+    hook_instance = hook::make(flags);
     hook_instance->set_plug_and_play(true);
 
     auto writer = [](const gamepad::input_event *e, uint8_t dev_idx) {

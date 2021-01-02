@@ -34,7 +34,7 @@ typedef struct {
     bool monitor_mouse;
     bool monitor_keyboard;
     char username[64];
-    gamepad::hook_type gamepad_hook_type;
+    gamepad::hook_type::type gamepad_hook_type;
     uint16_t port;
     ip_address ip;
 } config;
