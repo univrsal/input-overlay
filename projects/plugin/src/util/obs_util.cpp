@@ -22,9 +22,20 @@
 #include <QFile>
 #include <QDir>
 
-QString util_get_data_file(const QString& file_name)
+QString util_get_data_file(const QString &file_name)
 {
     QDir home = QDir::homePath();
+#if UNIX
+    if (!home.mkpath(".config/input-ovleray")) {
+        berr("Couldn't create .config/input-overlay directory!");
+    }
+    home.cd(".config/input-overlay");
+#else
+    if (!home.mkpath("input-ovleray")) {
+        berr("Couldn't create .config/input-overlay directory!");
+    }
+    home.cd("input-overlay");
+#endif
     return QDir::toNativeSeparators(home.absoluteFilePath(file_name));
 }
 
@@ -63,6 +74,25 @@ bool util_open_json(const QString &path, QJsonDocument &doc)
     if (err.error != QJsonParseError::NoError) {
         result = false;
         berr("Json parse error for %s: %s", qt_to_utf8(path), qt_to_utf8(err.errorString()));
+    }
+    return result;
+}
+
+bool util_write_json(const QString &path, const QJsonDocument &doc)
+{
+    QFile file(path);
+
+    if (!file.open(QIODevice::WriteOnly)) {
+        berr("couldn't open %s", qt_to_utf8(path));
+        return false;
+    }
+
+    bool result = true;
+    auto data = doc.toJson(QJsonDocument::Indented);
+    auto wrote = file.write(data);
+    if (wrote != data.length()) {
+        berr("Only write %llx out of %i bytes", wrote, data.length());
+        result = false;
     }
     return result;
 }

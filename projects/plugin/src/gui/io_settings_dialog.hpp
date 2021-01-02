@@ -22,6 +22,12 @@
 #include <mutex>
 #include <netlib.h>
 
+namespace gamepad {
+namespace cfg {
+class binding;
+}
+}
+
 namespace Ui {
 class io_config_dialog;
 }
@@ -59,8 +65,18 @@ private Q_SLOTS:
 
     void OpenForums();
 
+    void on_btn_add_bind_clicked();
+
+    void on_cb_device_currentIndexChanged(int index);
+
+    void on_cb_bindings_currentIndexChanged(int index);
+
+    void on_box_binding_accepted();
+
 private:
-    uint64_t m_last_gamepad_input = UINT64_MAX;
+    void load_bindings();
+    void load_binding(std::shared_ptr<gamepad::cfg::binding> binding);
+    uint64_t m_last_gamepad_input = 0;
     Ui::io_config_dialog *ui;
     QTimer *m_refresh = nullptr;
 };

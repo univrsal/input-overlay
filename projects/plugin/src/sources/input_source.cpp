@@ -123,7 +123,7 @@ bool reload_pads(obs_properties_t *props, obs_property_t *property, void *data)
 
 obs_properties_t *get_properties_for_overlay(void *data)
 {
-    auto* src = static_cast<input_source*>(data);
+    auto *src = static_cast<input_source *>(data);
 
     QString img_path, layout_path;
     auto *const props = obs_properties_create();
@@ -145,8 +145,8 @@ obs_properties_t *get_properties_for_overlay(void *data)
     /* Config and texture file path */
     obs_properties_add_path(props, S_OVERLAY_FILE, T_TEXTURE_FILE, OBS_PATH_FILE, qt_to_utf8(filter_img),
                             qt_to_utf8(img_path));
-    obs_properties_add_path(props, S_LAYOUT_FILE, T_LAYOUT_FILE, OBS_PATH_FILE,
-                                                  qt_to_utf8(filter_text), qt_to_utf8(layout_path));
+    obs_properties_add_path(props, S_LAYOUT_FILE, T_LAYOUT_FILE, OBS_PATH_FILE, qt_to_utf8(filter_text),
+                            qt_to_utf8(layout_path));
 
     /* Mouse stuff */
     obs_properties_add_int_slider(props, S_MOUSE_SENS, T_MOUSE_SENS, 1, 500, 1);

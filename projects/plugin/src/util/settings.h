@@ -32,8 +32,6 @@
 #define S_CONTROL                       "control"
 #define S_REGEX                         "regex"
 #define S_FILTER_MODE                   "filter_mode"
-#define S_FILTER_COUNT                  "filter_count"
-#define S_FILTER_BASE                   "filter_"
 
 /* Misc values */
 #define S_INPUT_SOURCE                  "io.input_source"

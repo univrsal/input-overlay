@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>491</width>
-    <height>671</height>
+    <width>487</width>
+    <height>676</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -35,7 +35,7 @@
       <enum>QTabWidget::Rounded</enum>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <property name="elideMode">
       <enum>Qt::ElideRight</enum>
@@ -257,19 +257,12 @@
         </widget>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_24">
+        <layout class="QHBoxLayout" name="horizontalLayout_25">
          <item>
-          <widget class="QComboBox" name="comboBox_2">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-          </widget>
+          <widget class="QLineEdit" name="txt_new_binding_name"/>
          </item>
          <item>
-          <widget class="QPushButton" name="btn_remove_bind">
+          <widget class="QPushButton" name="btn_add_bind">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
              <horstretch>0</horstretch>
@@ -287,8 +280,22 @@
            </property>
           </widget>
          </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_24">
          <item>
-          <widget class="QPushButton" name="btn_add_bind">
+          <widget class="QComboBox" name="cb_bindings">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="btn_remove_bind">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -320,8 +327,8 @@
           <property name="geometry">
            <rect>
             <x>0</x>
-            <y>0</y>
-            <width>437</width>
+            <y>-258</y>
+            <width>433</width>
             <height>630</height>
            </rect>
           </property>
@@ -1351,6 +1358,13 @@
            </item>
           </layout>
          </widget>
+        </widget>
+       </item>
+       <item>
+        <widget class="QDialogButtonBox" name="box_binding">
+         <property name="standardButtons">
+          <set>QDialogButtonBox::Save</set>
+         </property>
         </widget>
        </item>
       </layout>

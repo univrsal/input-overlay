@@ -29,6 +29,7 @@ namespace libgamepad {
 
 extern uint16_t last_input;
 extern uint64_t last_input_time;
+extern std::mutex last_input_mutex;
 extern std::shared_ptr<gamepad::hook> hook_instance;
 extern bool state;
 

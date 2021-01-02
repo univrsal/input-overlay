@@ -19,22 +19,29 @@
 #include "input_filter.hpp"
 #include "config.hpp"
 #include "obs_util.hpp"
+#include "log.h"
 #include "settings.h"
+#include <QJsonArray>
 #include <util/config-file.h>
-
-static std::string base_id = S_FILTER_BASE;
 
 void input_filter::read_from_config()
 {
     io_config::filter_mutex.lock();
+    m_filters.clear();
     m_regex = CGET_BOOL(S_REGEX);
     m_whitelist = CGET_INT(S_FILTER_MODE) == 0;
-    const int filter_count = CGET_INT(S_FILTER_COUNT);
+    QJsonDocument j;
+    if (!util_open_json(util_get_data_file("filters.json"), j)) {
+        berr("Couldn't load filters.json");
+        return;
+    }
 
-    for (auto i = 0; i < filter_count; ++i) {
-        const auto str = CGET_STR((base_id + std::to_string(i)).c_str());
-        if (str && strlen(str) > 0)
-            m_filters.append(str);
+    if (j.isArray()) {
+        for (const auto &item : j.array()) {
+            if (item.isString()) {
+                m_filters.append(item.toString());
+            }
+        }
     }
     io_config::filter_mutex.unlock();
 }
@@ -43,11 +50,13 @@ void input_filter::write_to_config()
 {
     io_config::filter_mutex.lock();
 
-    CSET_INT(S_FILTER_COUNT, m_filters.size());
+    QJsonDocument j;
+    QJsonArray arr;
 
-    for (auto i = 0; i < m_filters.size(); i++)
-        CSET_STR((base_id + std::to_string(i)).c_str(), m_filters[i].toStdString().c_str());
-
+    for (const auto &filter : m_filters)
+        arr.append(filter);
+    j.setArray(arr);
+    util_write_json(util_get_data_file("filters.json"), j);
     io_config::filter_mutex.unlock();
 }
 

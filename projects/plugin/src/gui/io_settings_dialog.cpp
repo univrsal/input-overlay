@@ -25,12 +25,15 @@
 #include "../util/obs_util.hpp"
 #include "../util/settings.h"
 #include "../hook/gamepad_hook_helper.hpp"
+#include <libgamepad.hpp>
 #include <QDesktopServices>
 #include <QTimer>
+#include <QPair>
 #include <obs-frontend-api.h>
 #include <obs-module.h>
 #include <string>
 #include <util/platform.h>
+#include <QMessageBox>
 
 io_settings_dialog *settings_dialog = nullptr;
 
@@ -58,6 +61,8 @@ io_settings_dialog::io_settings_dialog(QWidget *parent) : QDialog(parent, Qt::Di
     ui->cb_log->setChecked(io_config::log_flag);
     ui->box_port->setValue(io_config::port);
     ui->cb_regex->setChecked(io_config::regex);
+
+    load_bindings();
 
     /* Tooltips aren't translated by obs */
     ui->box_refresh_rate->setToolTip(T_REFRESH_RATE_TOOLTIP);
@@ -137,11 +142,13 @@ void io_settings_dialog::RefreshUi()
             auto selected = ui->cb_device->currentIndex();
             ui->cb_device->clear();
             for (const auto &dev : devs) {
-                ui->cb_device->addItem(utf8_to_qt(dev->get_name().c_str()), QVariant::fromValue(dev->get_index()));
+                ui->cb_device->addItem(utf8_to_qt(dev->get_name().c_str()),
+                                       QVariant::fromValue(utf8_to_qt(dev->get_id().c_str())));
             }
             ui->cb_device->setCurrentIndex(selected);
         }
 
+        libgamepad::last_input_mutex.lock();
         if (m_last_gamepad_input < libgamepad::last_input_time) {
             m_last_gamepad_input = libgamepad::last_input_time;
             auto mylineEdits = this->findChildren<QWidget *>();
@@ -158,6 +165,7 @@ void io_settings_dialog::RefreshUi()
                 }
             }
         }
+        libgamepad::last_input_mutex.unlock();
         libgamepad::hook_instance->get_mutex()->unlock();
     }
 }
@@ -237,17 +245,6 @@ void io_settings_dialog::FormAccepted()
     io_config::io_window_filters.write_to_config();
 
     io_config::use_dinput = ui->rb_dinput->isChecked();
-    //    for (const auto &binding : gamepad::default_bindings) {
-    //        auto text_box = findChild<QLineEdit *>(binding.text_box_id);
-    //        if (text_box) {
-    //            bool ok = false;
-    //            int value = text_box->text().toInt(&ok, 10);
-    //            if (ok) {
-    //                CSET_INT(binding.setting, value);
-    //                gamepad::bindings.set_binding(binding.default_value, value, binding.axis_event);
-    //            }
-    //        }
-    //    }
 }
 
 io_settings_dialog::~io_settings_dialog()
@@ -265,4 +262,147 @@ void io_settings_dialog::OpenGitHub()
 void io_settings_dialog::OpenForums()
 {
     QDesktopServices::openUrl(QUrl("https://obsproject.com/forum/resources/input-overlay.552/"));
+}
+
+void io_settings_dialog::load_bindings()
+{
+    std::lock_guard<std::mutex> lock(*libgamepad::hook_instance->get_mutex());
+    ui->cb_bindings->clear();
+    for (const auto &binding : libgamepad::hook_instance->get_bindings()) {
+        ui->cb_bindings->addItem(utf8_to_qt(binding->get_name().c_str()));
+    }
+}
+
+static QPair<const char *, uint16_t> button_map[] = {{"txt_a", gamepad::button::A},
+                                                     {"txt_b", gamepad::button::B},
+                                                     {"txt_x", gamepad::button::X},
+                                                     {"txt_y", gamepad::button::Y},
+                                                     {"txt_rb", gamepad::button::RB},
+                                                     {"txt_lb", gamepad::button::LB},
+                                                     {"txt_guide", gamepad::button::GUIDE},
+                                                     {"txt_analog_left", gamepad::button::L_THUMB},
+                                                     {"txt_analog_right", gamepad::button::R_THUMB},
+                                                     {"txt_back", gamepad::button::BACK},
+                                                     {"txt_start", gamepad::button::START},
+                                                     {"txt_dpad_up", gamepad::button::DPAD_UP},
+                                                     {"txt_dpad_down", gamepad::button::DPAD_DOWN},
+                                                     {"txt_dpad_left", gamepad::button::DPAD_LEFT},
+                                                     {"txt_dpad_right", gamepad::button::DPAD_RIGHT}};
+static QPair<const char *, uint16_t> axis_map[] = {
+    {"txt_rx", gamepad::axis::LEFT_STICK_X},  {"txt_ry", gamepad::axis::LEFT_STICK_Y},
+    {"txt_lx", gamepad::axis::RIGHT_STICK_X}, {"txt_ly", gamepad::axis::RIGHT_STICK_Y},
+    {"txt_lt", gamepad::axis::LEFT_TRIGGER},  {"txt_rt", gamepad::axis::RIGHT_TRIGGER}};
+
+int find_by_code(const QPair<const char *, uint16_t> &needle, const gamepad::cfg::mappings &haystack)
+{
+    for (const auto &p : haystack) {
+        if (p.second == needle.second)
+            return p.first;
+    }
+    return -1;
+}
+
+void io_settings_dialog::load_binding(std::shared_ptr<gamepad::cfg::binding> binding)
+{
+    for (const auto &pair : button_map) {
+        // transfer binds to textboxes
+        auto text_box = findChild<QLineEdit *>(pair.first);
+        if (text_box) {
+            auto native_value = find_by_code(pair, binding->get_button_mappings());
+            if (native_value > -1)
+                text_box->setText(QString::number(native_value));
+        }
+    }
+
+    for (const auto &pair : axis_map) {
+        // transfer binds to textboxes
+        auto text_box = findChild<QLineEdit *>(pair.first);
+        if (text_box) {
+            auto native_value = find_by_code(pair, binding->get_axis_mappings());
+            if (native_value > -1)
+                text_box->setText(QString::number(native_value));
+        }
+    }
+
+    /* Select it if the binding exists */
+    auto idx = ui->cb_bindings->findText(utf8_to_qt(binding->get_name().c_str()));
+    if (idx > -1)
+        ui->cb_bindings->setCurrentIndex(idx);
+}
+
+void io_settings_dialog::on_btn_add_bind_clicked()
+{
+    if (ui->txt_new_binding_name->text().isEmpty())
+        return;
+    if (ui->cb_bindings->findText(ui->txt_new_binding_name->text()) != -1) {
+        QMessageBox::information(this, "Error", "Binding name must be unique");
+        return;
+    }
+
+    std::lock_guard<std::mutex> lock(*libgamepad::hook_instance->get_mutex());
+    ui->cb_bindings->addItem(ui->txt_new_binding_name->text());
+
+    auto dev = libgamepad::hook_instance->get_device_by_id(qt_to_utf8(ui->cb_device->currentData().toString()));
+    if (dev) {
+        auto has_custom_binding = libgamepad::hook_instance->get_binding_by_name(dev->get_binding()->get_name()) !=
+                                  nullptr;
+        /* If this device has a custom set binding, we load it, otherwise
+         * we keep whatever is already set by the user in the UI and set the binding
+         * for the device
+         */
+        if (has_custom_binding) {
+            load_binding(dev->get_binding());
+        } else {
+            auto binding = libgamepad::hook_instance->get_binding_by_name(qt_to_utf8(ui->cb_bindings->currentText()));
+            if (!binding) {
+                /* No binding exists with this name so we create it */
+                binding = libgamepad::hook_instance->make_native_binding();
+            }
+            dev->set_binding(binding);
+        }
+    }
+}
+
+void io_settings_dialog::on_cb_device_currentIndexChanged(int)
+{
+    std::lock_guard<std::mutex> lock(*libgamepad::hook_instance->get_mutex());
+    auto dev = libgamepad::hook_instance->get_device_by_id(qt_to_utf8(ui->cb_device->currentData().toString()));
+    if (dev)
+        load_binding(dev->get_binding());
+}
+
+void io_settings_dialog::on_cb_bindings_currentIndexChanged(int index)
+{
+    std::lock_guard<std::mutex> lock(*libgamepad::hook_instance->get_mutex());
+    auto dev = libgamepad::hook_instance->get_device_by_id(qt_to_utf8(ui->cb_device->currentData().toString()));
+    auto binding = libgamepad::hook_instance->get_binding_by_name(qt_to_utf8(ui->cb_bindings->currentText()));
+    if (dev && binding)
+        dev->set_binding(binding);
+}
+
+void io_settings_dialog::on_box_binding_accepted()
+{
+    auto binding = libgamepad::hook_instance->get_binding_by_name(qt_to_utf8(ui->cb_bindings->currentText()));
+    /* Read bindings from UI and set them to the current device bindings */
+    for (const auto &pair : button_map) {
+        // transfer binds to textboxes
+        auto text_box = findChild<QLineEdit *>(pair.first);
+        if (text_box) {
+            bool ok = false;
+            auto i = text_box->text().toInt(&ok);
+            if (ok)
+                binding->get_button_mappings()[i] = pair.second;
+        }
+    }
+
+    for (const auto &pair : axis_map) {
+        // transfer binds to textboxes
+        auto text_box = findChild<QLineEdit *>(pair.first);
+        if (text_box) {
+            bool ok = false;
+            auto i = text_box->text().toInt(&ok);
+            if (ok)
+                binding->get_axis_mappings()[i] = pair.second;
+        }
+    }
 }
