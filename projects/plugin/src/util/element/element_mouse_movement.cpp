@@ -51,7 +51,7 @@ float element_mouse_movement::get_mouse_angle(sources::overlay_settings *setting
         d_y = settings->data.last_mouse_movement.y - settings->monitor_w;
     } else {
         d_x = settings->data.last_mouse_movement.x - m_last_x;
-        d_y = settings->data.last_mouse_movement.x - m_last_y;
+        d_y = settings->data.last_mouse_movement.y - m_last_y;
     }
 
     const float new_angle = (0.5 * M_PI) + (atan2f(d_y, d_x));
