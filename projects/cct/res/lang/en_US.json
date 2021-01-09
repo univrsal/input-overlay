@@ -73,6 +73,7 @@
     "button_modify_element": "Modify selected",
     "button_save_config": "Save config",
     "button_help": "Help and about",
+    "button_docs": "Open online documentation",
     "label_element_type": "Select element type:",
     "element_texture": "Static texture",
     "element_button": "Button (Keyboard, Gamepad, Mouse)",

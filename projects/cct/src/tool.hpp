@@ -40,7 +40,7 @@ class dialog_new_element;
 
 class texture;
 
-enum tool_state { IN_INFO, IN_SETUP, IN_BUILD, IN_HELP, IN_ELEMENT_TYPE, IN_NEW_ELEMENT };
+enum tool_state { IN_SETUP, IN_BUILD, IN_HELP, IN_ELEMENT_TYPE, IN_NEW_ELEMENT };
 
 #define TOOL_ACTION_NEW_ELEMENT_ADD 4
 #define TOOL_ACTION_MOD_ELEMENT_APPLY 6

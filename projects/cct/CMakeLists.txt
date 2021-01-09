@@ -72,8 +72,6 @@ set(io-cct_SOURCES
         src/util/localization.hpp
         src/dialog/dialog.hpp
         src/dialog/dialog.cpp
-        src/dialog/dialog_info.hpp
-        src/dialog/dialog_info.cpp
         src/dialog/dialog_setup.cpp
         src/dialog/dialog_setup.hpp
         src/dialog/dialog_help.cpp

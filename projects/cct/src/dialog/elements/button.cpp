@@ -31,6 +31,8 @@ button::button(const int x, const int y, const int w, const char *text, dialog *
     m_unlocalized_text = text;
     gui_element::init(parent, temp_rect);
     button::refresh();
+    m_hovered_color = get_helper()->get_palette()->light_gray();
+    m_default_color = get_helper()->get_palette()->dark_gray();
 }
 
 button::~button()
@@ -70,8 +72,8 @@ void button::select_state(const bool state)
 
 void button::draw_background()
 {
-    const auto color = (m_hovered || m_tab_focused) ? get_helper()->get_palette()->light_gray()
-                                                    : get_helper()->get_palette()->dark_gray();
+    const auto color = (m_hovered || m_tab_focused) ? m_hovered_color
+                                                    : m_default_color;
 
     if (m_pressed) {
         auto dim = *get_dimensions();

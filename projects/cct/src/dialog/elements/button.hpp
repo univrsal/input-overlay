@@ -35,6 +35,12 @@ public:
 
     bool can_select() override;
 
+    void set_color(const SDL_Color* normal, const SDL_Color* hovered)
+    {
+        m_hovered_color = hovered;
+        m_default_color = normal;
+    }
+
     void select_state(bool state) override;
 
     void draw_background() override;
@@ -49,6 +55,11 @@ public:
 
     void refresh() override;
 
+    void set_font(uint8_t font)
+    {
+        m_font = font;
+
+    }
 protected:
     bool m_pressed = false;
     bool m_hovered = false;
@@ -57,5 +68,7 @@ protected:
     std::string m_localized_text;
     std::string m_unlocalized_text;
     SDL_Point m_text_pos;
+    const SDL_Color* m_hovered_color{};
+    const SDL_Color* m_default_color{};
     uint8_t m_font = FONT_WSTRING;
 };

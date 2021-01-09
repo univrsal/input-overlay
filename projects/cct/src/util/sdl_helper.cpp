@@ -156,7 +156,7 @@ void sdl_helper::close()
 
 void sdl_helper::clear() const
 {
-    util_set_color(m_palette->dark_gray());
+    util_set_color(m_palette->get_bg());
     SDL_RenderClear(m_sdl_renderer);
 }
 

@@ -53,7 +53,8 @@ enum actions {
     ACTION_SAVE_CONFIG,
     ACTION_DEL_ELEMENT,
     ACTION_MOD_ELEMENT,
-    ACTION_TEXT_TYPED
+    ACTION_TEXT_TYPED,
+    ACTION_OPEN_DOCS
 };
 
 class gui_element {

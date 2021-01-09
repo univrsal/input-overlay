@@ -20,6 +20,7 @@
 #include "../tool.hpp"
 #include "../util/constants.hpp"
 #include "../util/localization.hpp"
+#include "../util/palette.hpp"
 #include "../util/notifier.hpp"
 #include <fstream>
 
@@ -34,7 +35,6 @@
 void dialog_setup::init()
 {
     dialog::init();
-    int8_t id = 2;
 
     // info labels
     auto info = std::string(LABEL_BUILD);
@@ -42,6 +42,11 @@ void dialog_setup::init()
 
     add<label>(8, 22, info.c_str(), FONT_WSTRING_LARGE, this, ELEMENT_UNLOCALIZED | ELEMENT_ABSOLUTE_POSITION);
     add<label>(8, 58, LANG_LABEL_INFO, this, ELEMENT_ABSOLUTE_POSITION);
+    auto docs_btn = add<button>(8, 80, LANG_BUTTON_DOCS, this);
+    docs_btn->set_flags(ELEMENT_ABSOLUTE_POSITION);
+    docs_btn->set_id(ACTION_OPEN_DOCS);
+    docs_btn->set_color(m_helper->get_palette()->blue(), m_helper->get_palette()->light_blue());
+
     add<label>(8, 35, LANG_LABEL_TEXTURE_PATH, this);
     m_texture_path = add<textbox>(8, 55, m_dimensions.w - 16, 20, TEXTURE_PATH, this);
 
@@ -134,6 +139,9 @@ void dialog_setup::action_performed(const int8_t action_id)
                 m_notifier->add_msg(MESSAGE_ERROR, m_helper->loc(LANG_ERROR_INVALID_CONFIG_PATH));
             }
         }
+        break;
+    case ACTION_OPEN_DOCS:
+        m_helper->util_open_url("https://github.com/univrsal/input-overlay/wiki/Usage#io-cct");
         break;
     case ACTION_CANCEL:
         m_helper->exit_loop();

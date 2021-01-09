@@ -46,6 +46,8 @@ public:
 
     SDL_Color *blue();
 
+    SDL_Color *light_blue();
+
     SDL_Color *red();
 
     SDL_Color *green();
@@ -67,6 +69,7 @@ private:
     SDL_Color m_dark_gray{};
 
     SDL_Color m_blue{};
+    SDL_Color m_light_blue{};
     SDL_Color m_red{};
     SDL_Color m_green{};
 

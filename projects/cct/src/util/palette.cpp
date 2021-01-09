@@ -24,7 +24,7 @@ palette::palette()
     m_white = {213, 213, 213, 255};
 
     m_foreground = {255, 255, 255, 255};
-    m_background = {255, 255, 255, 255};
+    m_background = {40, 40, 40, 255};
     m_accent = {64, 64, 64, 255};
 
     m_tooltip_body = {248, 230, 177, 128};
@@ -33,6 +33,7 @@ palette::palette()
     m_red = {240, 20, 20, 255};
     m_green = {33, 135, 55, 255};
     m_blue = {33, 118, 243, 255};
+    m_light_blue = {43, 148, 255, 255};
     m_gray = {55, 55, 55, 255};
     m_dark_gray = {45, 45, 45, 255};
     m_light_gray = {80, 80, 80, 255};
@@ -83,6 +84,11 @@ SDL_Color *palette::light_gray()
 SDL_Color *palette::blue()
 {
     return &m_blue;
+}
+
+SDL_Color *palette::light_blue()
+{
+    return &m_light_blue;
 }
 
 SDL_Color *palette::red()

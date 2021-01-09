@@ -30,10 +30,7 @@
 tool::tool(sdl_helper *helper, const char *texture, const char *config) : m_event()
 {
     m_helper = helper;
-    if (std::fstream("./res/firststart"))
-        m_state = IN_SETUP;
-    else
-        m_state = IN_INFO;
+    m_state = IN_SETUP;
 
     m_texture_path = texture;
     m_config_path = config;
@@ -68,7 +65,6 @@ void tool::program_loop()
             // Drawing
             switch (m_state) {
             case IN_SETUP:
-            case IN_INFO:
                 m_toplevel->draw_background();
                 m_toplevel->draw_foreground();
                 break;

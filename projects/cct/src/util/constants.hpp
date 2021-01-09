@@ -104,6 +104,7 @@
 #define LANG_LABEL_DEFAULT_HEIGHT "label_default_height"
 #define LANG_LABEL_ELEMENT_H_SPACE "label_element_h_space"
 #define LANG_LABEL_ELEMENT_V_SPACE "label_element_v_space"
+#define LANG_BUTTON_DOCS "button_docs"
 
 /* Reusable elements */
 #define LANG_BUTTON_OK "button_ok"
