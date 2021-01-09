@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2020 univrsal <uni@vrsal.cf>.
+ * Copyright 2021 univrsal <uni@vrsal.de>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,10 +25,16 @@
 #include "dialog/dialog_setup.hpp"
 #include "util/notifier.hpp"
 
+#include <fstream>
+
 tool::tool(sdl_helper *helper, const char *texture, const char *config) : m_event()
 {
     m_helper = helper;
-    m_state = IN_SETUP;
+    if (std::fstream("./res/firststart"))
+        m_state = IN_SETUP;
+    else
+        m_state = IN_INFO;
+
     m_texture_path = texture;
     m_config_path = config;
 }
@@ -62,6 +68,7 @@ void tool::program_loop()
             // Drawing
             switch (m_state) {
             case IN_SETUP:
+            case IN_INFO:
                 m_toplevel->draw_background();
                 m_toplevel->draw_foreground();
                 break;
@@ -184,9 +191,9 @@ bool tool::element_id_unique(const char *id) const
 element_error tool::verify_element(dialog_new_element *d, const bool modify_mode) const
 {
     /*
-		Only check uniqueness if the element is newly added or
-		it's id was modified
-	*/
+        Only check uniqueness if the element is newly added or
+        it's id was modified
+    */
     if (!modify_mode) {
         if (!element_id_unique(d->get_id()->c_str())) {
             m_notify->add_msg(MESSAGE_ERROR, m_helper->loc(LANG_ERROR_ID_NOT_UNIQUE));
