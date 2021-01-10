@@ -11,6 +11,8 @@ set(PLUGIN_GIT input-overlay)
 set(LINUX_MAINTAINER_EMAIL "uni@vrsal.cf")
 set(MACOS_BUNDLEID "cf.vrsal.inputoverlay")
 
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D_DEBUG")
+
 add_subdirectory(deps)
 
 if (ENABLE_CLIENT)
