@@ -100,10 +100,13 @@ bool coordinate_system::handle_events(SDL_Event *e)
         SDL_Point old_scale = {mouse.x / m_scale_f, mouse.y / m_scale_f};
         if (e->wheel.y > 0) /* TRIGGER_UP */
         {
-            m_scale_f = UTIL_MIN(++m_scale_f, 8);
+            ++m_scale_f;
+            m_scale_f = UTIL_MIN(m_scale_f, 8);
         } else {
-            m_scale_f = UTIL_MAX(--m_scale_f, 1);
+            --m_scale_f;
+            m_scale_f = UTIL_MAX(m_scale_f, 1);
         }
+
         /* Move origin so the original center stays centered */
         SDL_Point new_scale = {mouse.x / m_scale_f, mouse.y / m_scale_f};
         m_origin.x += (new_scale.x - old_scale.x) * m_scale_f;
