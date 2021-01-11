@@ -128,6 +128,20 @@ public:
     /* Translates any point to the viewport*/
     void translate(int &x, int &y) const;
 
+    /* Take a rectangle in screen space and put it into the coordinate space */
+    void transpose_rect(SDL_Rect& r);
+
+    /* Scale & Offset rectangle */
+    SDL_Rect to_absolute_rect(const SDL_Rect& r)
+    {
+        SDL_Rect result = { r.x * get_scale() + get_origin_x(),
+                            r.y * get_scale() + get_origin_y(),
+                            r.w * get_scale(),
+                            r.h * get_scale()};
+        return result;
+
+    }
+
     void draw_selection() const;
 
     bool changing_selection() const { return m_sizing || m_dragging || m_selecting; }

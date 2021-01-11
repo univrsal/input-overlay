@@ -74,7 +74,7 @@ public:
 
 private:
     /* Move selected elements*/
-    void move_elements(int new_x, int new_y);
+    void move_elements(int new_x, int new_y, bool absolute = false);
 
     inline void move_element(int mouse_x, int mouse_y);
 

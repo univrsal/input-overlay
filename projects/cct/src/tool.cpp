@@ -25,8 +25,6 @@
 #include "dialog/dialog_setup.hpp"
 #include "util/notifier.hpp"
 
-#include <fstream>
-
 tool::tool(sdl_helper *helper, const char *texture, const char *config) : m_event()
 {
     m_helper = helper;
@@ -225,9 +223,14 @@ void tool::handle_input()
 
         if (m_event.type == SDL_QUIT) {
             m_run_flag = false;
-        } else if (m_helper->is_ctrl_down() && m_event.type == SDL_KEYDOWN) {
-            if (m_event.key.keysym.sym == SDLK_s) // CTRL + S
-                action_performed(TOOL_ACTION_SAVE_CONFIG);
+        } else if (m_event.type == SDL_KEYDOWN) {
+            if (m_helper->is_ctrl_down()) {
+                if (m_event.key.keysym.sym == SDLK_s) // CTRL + S
+                    action_performed(TOOL_ACTION_SAVE_CONFIG);
+            } else if (m_event.key.keysym.sym == SDLK_DELETE) {
+                if (get_selected() && get_selected_id() >= 0)
+                    delete_element(get_selected_id());
+            }
         } else if (m_event.type == SDL_CONTROLLERDEVICEADDED) {
             if (m_helper->handle_controller_connect(m_event.cdevice.which))
                 m_notify->add_msg(MESSAGE_INFO, m_helper->loc(LANG_MSG_GAMEPAD_CONNECTED));

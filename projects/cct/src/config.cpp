@@ -62,12 +62,12 @@ void config::draw_elements()
     m_cs.draw_background();
     m_cs.draw_foreground();
 
-    /* Draw elements */
     m_cs.begin_draw();
     {
         auto elements_drawn = 0ull;
         auto layer = 0;
 
+        /* Draw elements */
         while (elements_drawn < m_elements.size()) {
             for (auto const &element : m_elements) {
                 if (element->get_z_level() == layer) {
@@ -78,9 +78,9 @@ void config::draw_elements()
             layer++;
         }
 
+        /* Draw red rectangle around multi selection */
         if (!SDL_RectEmpty(&m_total_selection)) {
             auto temp = m_total_selection;
-
             temp.x = temp.x * m_cs.get_scale() + m_cs.get_origin_x();
             temp.y = temp.y * m_cs.get_scale() + m_cs.get_origin_y();
             temp.w *= m_cs.get_scale();
@@ -89,13 +89,9 @@ void config::draw_elements()
             m_helper->util_draw_rect(&temp, m_helper->get_palette()->red());
         }
 
+        /* Draw white rectangle around area selected via mouse dragging */
         if (!SDL_RectEmpty(&m_temp_selection)) {
-            auto temp = m_temp_selection;
-            temp.x = temp.x * m_cs.get_scale() + m_cs.get_origin_x();
-            temp.y = temp.y * m_cs.get_scale() + m_cs.get_origin_y();
-            temp.w *= m_cs.get_scale();
-            temp.h *= m_cs.get_scale();
-            m_helper->util_draw_rect(&temp, m_helper->get_palette()->white());
+            m_helper->util_draw_rect(&m_temp_selection, m_helper->get_palette()->white());
         }
 
         if (m_element_to_delete >= 0 && m_element_to_delete < m_elements.size()) {
@@ -107,6 +103,7 @@ void config::draw_elements()
             m_element_to_delete = -1;
         }
     }
+
     m_cs.end_draw();
 }
 
@@ -116,10 +113,11 @@ void config::handle_events(SDL_Event *e)
     auto m_x = e->button.x, m_y = e->button.y;
 
     if (e->type == SDL_MOUSEBUTTONDOWN) {
+        SDL_Rect absolute_selection = m_cs.to_absolute_rect(m_total_selection);
+
         if (e->button.button == SDL_BUTTON_LEFT) {
             /* Handle selection of elements */
             m_cs.translate(m_x, m_y);
-
             if (SDL_RectEmpty(&m_total_selection))
             /* No multiple items already selected */ {
                 auto i = 0;
@@ -148,9 +146,11 @@ void config::handle_events(SDL_Event *e)
                     reset_selection();
                     m_selection_start = {e->button.x, e->button.y};
                 }
-            } else if (sdl_helper::util_is_in_rect(&m_total_selection, e->button.x, e->button.y)) {
+            } else if (sdl_helper::util_is_in_rect(&absolute_selection, m_x, m_y)) {
                 m_dragging_elements = true;
-                m_drag_offset = {e->button.x - m_total_selection.x, e->button.y - m_total_selection.y};
+                m_drag_offset = { e->button.x, e->button.y };
+                m_drag_offset = {(e->button.x - (m_total_selection.x * m_cs.get_scale()) + m_cs.get_origin()->x),
+                                 (e->button.y - (m_total_selection.y * m_cs.get_scale()) + m_cs.get_origin()->y)};
             } else {
                 m_total_selection = {};
             }
@@ -162,42 +162,42 @@ void config::handle_events(SDL_Event *e)
         m_in_multi_selection = false;
     } else if (e->type == SDL_MOUSEMOTION) {
         if (m_in_single_selection && m_selected)
-        /* Dragging single element */ {
+            /* Dragging single element */
+        {
             move_element(e->button.x, e->button.y);
         } else if (m_in_multi_selection)
-        /* Selecting multiple elements */ {
-            SDL_Rect elem_dim;
-            SDL_Rect elem_abs_dim;
-
+            /* Selecting multiple elements */
+        {
             m_temp_selection.x = UTIL_MIN(e->button.x, m_selection_start.x);
             m_temp_selection.y = UTIL_MIN(e->button.y, m_selection_start.y);
-
-            m_cs.translate(m_temp_selection.x, m_temp_selection.y);
-
-            m_temp_selection.x =
-                int(ceil(UTIL_MAX((m_temp_selection.x - m_cs.get_origin_x()) / ((float)m_cs.get_scale()), 0)));
-            m_temp_selection.y =
-                int(ceil(UTIL_MAX((m_temp_selection.y - m_cs.get_origin_y()) / ((float)m_cs.get_scale()), 0)));
-
-            m_temp_selection.w =
-                int(ceil(SDL_abs(m_selection_start.x - e->button.x) / static_cast<float>(m_cs.get_scale())));
-            m_temp_selection.h =
-                int(ceil(SDL_abs(m_selection_start.y - e->button.y) / static_cast<float>(m_cs.get_scale())));
-
+            m_temp_selection.w = SDL_abs(m_selection_start.x - e->button.x);
+            m_temp_selection.h = SDL_abs(m_selection_start.y - e->button.y);
             m_selected_elements.clear();
-
+            m_total_selection = {};
             uint16_t index = 0;
+            SDL_Rect elem_abs_dim;
+
+            /* Go over all elements and see which are within the selection */
             for (auto const &elem : m_elements) {
-                if (is_rect_in_rect(elem->get_mapping(), &m_temp_selection)) {
-                    m_cs.translate(elem_abs_dim.x, elem_abs_dim.y);
+                elem_abs_dim = *elem->get_abs_dim(&m_cs);
+                elem_abs_dim.x += m_cs.get_origin_left();
+                elem_abs_dim.y += m_cs.get_origin_top();
+
+                if (is_rect_in_rect(&elem_abs_dim, &m_temp_selection)) {
                     m_selected_elements.emplace_back(index);
-                    SDL_UnionRect(&m_total_selection, &elem_dim, &m_total_selection);
+                    SDL_Rect pos = {
+                        elem->get_x(), elem->get_y(),
+                        elem->get_w(), elem->get_h()
+                    };
+
+                    SDL_UnionRect(&m_total_selection, &pos, &m_total_selection);
                 }
                 index++;
             }
+            m_cs.transpose_rect(m_temp_selection);
         } else if (m_dragging_elements)
-        /* Dragging multiple elements */ {
-            move_elements(e->button.x - m_drag_offset.x, e->button.y - m_drag_offset.y);
+            /* Dragging multiple elements */ {
+            move_elements(e->button.x, e->button.y);
         }
     } else if (e->type == SDL_KEYDOWN) {
         if (m_selected)
@@ -213,7 +213,7 @@ void config::handle_events(SDL_Event *e)
             auto x = m_total_selection.x, y = m_total_selection.y;
 
             if (util_move_element(&x, &y, e->key.keysym.sym))
-                move_elements(x, y);
+                move_elements(x, y, true);
         }
     } else if (e->type == SDL_WINDOWEVENT && e->window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
         const auto w = m_helper->util_window_size();
@@ -353,28 +353,31 @@ void config::reset_selection()
     m_total_selection = {};
 }
 
-void config::move_elements(const int new_x, const int new_y)
+void config::move_elements(int new_x, int new_y, bool absolute)
 {
     if (!m_selected_elements.empty()) {
-        const auto delta_x = new_x - m_total_selection.x;
-        const auto delta_y = new_y - m_total_selection.y;
+        int x, y;
+        if (absolute) {
+            x = new_x;
+            y = new_y;
+        } else {
+            x = SDL_max((new_x - m_drag_offset.x + m_cs.get_origin()->x) / m_cs.get_scale(), 0);
+            y = SDL_max((new_y - m_drag_offset.y + m_cs.get_origin()->y) / m_cs.get_scale(), 0);
+        }
 
-        const auto flag_x = new_x >= 0, flag_y = new_y >= 0;
-
-        if (flag_x)
-            m_total_selection.x = new_x;
-        if (flag_y)
-            m_total_selection.y = new_y;
-
-        if (flag_x || flag_y)
-            for (auto const &index : m_selected_elements) {
-                if (index < m_elements.size()) {
-                    auto e = m_elements[index].get();
-                    if (e) {
-                        e->set_pos(e->get_x() + (flag_x ? delta_x : 0), e->get_y() + (flag_y ? delta_y : 0));
-                    }
+        for (auto const &index : m_selected_elements) {
+            if (index < m_elements.size()) {
+                auto e = m_elements[index].get();
+                if (e) {
+                    auto diff_x = e->get_x() - m_total_selection.x;
+                    auto diff_y = e->get_y() - m_total_selection.y;
+                    e->set_pos(x + diff_x, y + diff_y);
                 }
             }
+        }
+
+        m_total_selection.x = x;
+        m_total_selection.y = y;
     }
 }
 

@@ -25,8 +25,8 @@
 #include <fstream>
 
 #if _DEBUG
-#define TEXTURE_PATH "E:\\projects\\obs-plugins\\input-overlay\\build\\presets\\wasd.png"
-#define CONFIG_PATH "E:\\projects\\obs-plugins\\input-overlay\\build\\presets\\wasd.json"
+#define TEXTURE_PATH "/home/usr/projects/input-overlay/wasd.png"
+#define CONFIG_PATH "/home/usr/projects/input-overlay/wasd.json"
 #else
 #define TEXTURE_PATH m_tool->get_texture_path()
 #define CONFIG_PATH m_tool->get_config_path()

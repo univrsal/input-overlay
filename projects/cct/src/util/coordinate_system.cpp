@@ -291,6 +291,12 @@ void coordinate_system::translate(int &x, int &y) const
     y -= m_dimensions.y + m_origin_anchor.y;
 }
 
+void coordinate_system::transpose_rect(SDL_Rect &r)
+{
+    r.x -= get_origin_left();
+    r.y -= get_origin_top();
+}
+
 void coordinate_system::draw_selection() const
 {
     /* Draw selection separate, since it needs to be topmost */
