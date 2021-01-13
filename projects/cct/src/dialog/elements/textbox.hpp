@@ -92,6 +92,7 @@ private:
     SDL_Rect m_text_dim{};
     int m_offset = 0;
     int m_cursor_pos = 0;
+    int m_text_width_until_cursor = 0;
     int m_cursor_pixel_pos = 0;
 
     bool m_alert = false;

@@ -234,7 +234,6 @@ void textbox::set_text(const std::string &s)
 
     m_wtext = sdl_helper::util_utf8_to_wstring(m_text);
     m_text_dim = get_helper()->util_text_dim(&m_text);
-    m_offset = SDL_min(0, get_dimensions()->w - m_text_dim.w - 5);
     /* refresh cursor */
     move_cursor(m_cursor_pos);
 }
@@ -335,5 +334,7 @@ void textbox::move_cursor(int new_pos)
     m_cursor_pos = SDL_min(SDL_max(new_pos, 0), int(m_wtext.length()));
     std::wstring left(m_wtext.begin(), m_wtext.begin() + m_cursor_pos);
     auto convert = sdl_helper::util_wstring_to_utf8(left);
-    m_cursor_pixel_pos = 2 + get_helper()->util_text_dim(&convert).w + m_offset;
+    m_text_width_until_cursor = get_helper()->util_text_dim(&convert).w;
+    m_offset = SDL_min(0, get_dimensions()->w - m_text_width_until_cursor - 15);
+    m_cursor_pixel_pos = 2 + m_text_width_until_cursor + m_offset;
 }
