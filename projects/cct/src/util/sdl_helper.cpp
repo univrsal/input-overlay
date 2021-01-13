@@ -300,13 +300,6 @@ void sdl_helper::util_cut_string(std::string &s, const int max_width, const bool
         w = util_text_dim(&s).w;
         was_cut = true;
     }
-
-    if (was_cut) {
-        if (front)
-            s.append("...");
-        else
-            s = "..." + s;
-    }
 }
 
 void sdl_helper::util_open_url(std::string url)

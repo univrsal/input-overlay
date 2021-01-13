@@ -28,7 +28,7 @@ class gui_element;
 
 class textbox : public gui_element {
 public:
-    textbox(int x, int y, int w, int h, std::string text, dialog *parent);
+    textbox(int x, int y, int w, int h, const std::string &text, dialog *parent);
 
     ~textbox();
 
@@ -46,7 +46,9 @@ public:
 
     uint8_t get_cursor() override;
 
-    void set_text(std::string s);
+    void set_text(const std::string &s);
+
+    void set_text(const std::wstring &s);
 
     void set_text(int i);
 
@@ -56,7 +58,7 @@ public:
 
     void set_hex_int(uint16_t i);
 
-    void append_text(const std::string &s);
+    void insert_text(const std::string &s);
 
     const std::string *get_text();
 
@@ -65,6 +67,8 @@ public:
     void set_alert(bool state);
 
     void set_cutoff(uint8_t c);
+
+    void move_cursor(int new_pos);
 
 private:
     static inline bool is_numeric(const std::string &s);
@@ -76,14 +80,19 @@ private:
     static inline bool is_hex(const std::string &s);
 
     /*
-		Properly deletes last character in
+		Properly character in
 		unicode utf8 strings
 	*/
-    static void pop_back(std::string &s);
+    bool pop_at(int pos = -1);
 
-    std::string m_text;
-    std::string m_composition;
-    std::string m_cut_text;
-    uint8_t m_cut_off = 38;
+    /* Saving the text as wstrings makes string manipluation easier */
+    std::wstring m_wtext, m_wcomposition;
+    std::string m_text, m_composition;
+    uint32_t m_cut_off = 38;
+    SDL_Rect m_text_dim{};
+    int m_offset = 0;
+    int m_cursor_pos = 0;
+    int m_cursor_pixel_pos = 0;
+
     bool m_alert = false;
 };

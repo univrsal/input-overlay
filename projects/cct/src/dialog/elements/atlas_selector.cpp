@@ -77,7 +77,7 @@ bool atlas_selector::handle_events(SDL_Event *event, bool was_handled)
 {
     auto handled = false;
 
-    if (m_cs->handle_events(event))
+    if (!was_handled && m_cs->handle_events(event))
         handled = true;
 
     return handled;

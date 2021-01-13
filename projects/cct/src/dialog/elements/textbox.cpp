@@ -25,11 +25,11 @@
 
 class sdl_helper;
 
-textbox::textbox(const int x, const int y, const int w, const int h, std::string text, dialog *parent)
+textbox::textbox(const int x, const int y, const int w, const int h, const std::string &text, dialog *parent)
 {
     const SDL_Rect temp = {x, y, w, h};
     gui_element::init(parent, temp);
-    set_text(std::move(text));
+    set_text(text);
 }
 
 textbox::~textbox()
@@ -40,7 +40,8 @@ textbox::~textbox()
 void textbox::close()
 {
     gui_element::close();
-    m_cut_text.clear();
+    m_text.clear();
+    m_wtext.clear();
 }
 
 void textbox::draw_foreground()
@@ -61,24 +62,24 @@ void textbox::draw_background()
         }
     }
 
-    auto cursor_pos = get_left() + 2;
+    auto pos = 2 + m_offset;
+    SDL_RenderSetViewport(get_helper()->renderer(), get_dimensions());
 
-    if (!m_cut_text.empty()) {
-        get_helper()->util_text(&m_cut_text, cursor_pos, get_top() + 2, get_helper()->get_palette()->white(),
-                                FONT_WSTRING);
-        cursor_pos += get_helper()->util_text_dim(&m_cut_text, FONT_WSTRING).w;
+    if (!m_text.empty()) {
+        get_helper()->util_text(&m_text, pos, 2, get_helper()->get_palette()->white(), FONT_WSTRING);
+        pos += m_text_dim.w;
     }
 
     if (!m_composition.empty()) {
-        get_helper()->util_text(&m_composition, 2 + cursor_pos, get_top() + 2, get_helper()->get_palette()->blue(),
+        get_helper()->util_text(&m_composition, 2 + pos, get_top() + 2, get_helper()->get_palette()->blue(),
                                 FONT_WSTRING);
-        cursor_pos += get_helper()->util_text_dim(&m_composition, FONT_WSTRING).w;
     }
 
     if (m_flags & ELEMENT_FOCUSED) {
-        SDL_Rect temp = {cursor_pos, get_top() + 2, 2, get_dimensions()->h - 4};
+        SDL_Rect temp = {m_cursor_pixel_pos, 2, 2, get_dimensions()->h - 4};
         get_helper()->util_fill_rect(&temp, get_helper()->get_palette()->white());
     }
+    SDL_RenderSetViewport(get_helper()->renderer(), nullptr);
 }
 
 bool textbox::handle_events(SDL_Event *event, const bool was_handled)
@@ -100,7 +101,7 @@ bool textbox::handle_events(SDL_Event *event, const bool was_handled)
                     handled = true;
                 }
             } else if (m_flags & TEXTBOX_NUMERIC) {
-                if (m_text.empty())
+                if (m_wtext.empty())
                     set_text("0");
             }
         }
@@ -118,15 +119,31 @@ bool textbox::handle_events(SDL_Event *event, const bool was_handled)
                     const auto d = !(m_flags & TEXTBOX_ALPHA_NUMERIC) || is_alpha_numeric(temp);
 
                     if (a && b && c && d) {
-                        append_text(temp);
+                        insert_text(temp);
                     }
                     handled = true;
                 }
+
+                /* Move cursor */
+                else if (event->key.keysym.sym == SDLK_LEFT) {
+                    move_cursor(m_cursor_pos - 1);
+                    handled = true;
+                } else if (event->key.keysym.sym == SDLK_RIGHT) {
+                    move_cursor(m_cursor_pos + 1);
+                    handled = true;
+                } else if (event->key.keysym.sym == SDLK_HOME) {
+                    move_cursor(0);
+                    handled = true;
+                } else if (event->key.keysym.sym == SDLK_END) {
+                    move_cursor(0xffff); // will be clamped
+                    handled = true;
+                }
                 /* Deleting */
-                else if (event->key.keysym.sym == SDLK_BACKSPACE) {
-                    if (!m_text.empty() && m_composition.empty()) {
-                        pop_back(m_text);
-                        set_text(m_text);
+                else if (event->key.keysym.sym == SDLK_BACKSPACE || event->key.keysym.sym == SDLK_DELETE) {
+                    if (!m_wtext.empty() && m_wcomposition.empty()) {
+                        auto right = event->key.keysym.sym == SDLK_DELETE;
+                        if (pop_at(m_cursor_pos - !right))
+                            move_cursor(m_cursor_pos - !right);
                     }
                     handled = true;
                 }
@@ -142,14 +159,14 @@ bool textbox::handle_events(SDL_Event *event, const bool was_handled)
         }
         /* Added IME input to text */
         else if (event->type == SDL_TEXTINPUT && !(m_flags & TEXTBOX_KEYBIND)) {
-            const auto temp = m_text + std::string(event->text.text);
+            const auto temp = std::string(event->text.text);
             const auto a = !(m_flags & TEXTBOX_NUMERIC) || is_numeric(temp);
             const auto b = !(m_flags & TEXTBOX_HEX) || is_hex(temp);
             const auto c = !(m_flags & TEXTBOX_NO_SPACE) || is_space_free(temp);
             const auto d = !(m_flags & TEXTBOX_ALPHA_NUMERIC) || is_alpha_numeric(temp);
 
             if (a && b && c && d) {
-                set_text(temp);
+                insert_text(temp);
             }
             handled = true;
         }
@@ -203,21 +220,23 @@ void textbox::set_text(float f)
     set_text(std::to_string(f));
 }
 
-void textbox::set_text(std::string s)
+void textbox::set_text(const std::wstring &s)
 {
-    m_text = std::move(s);
+    set_text(sdl_helper::util_wstring_to_utf8(s));
+}
+
+void textbox::set_text(const std::string &s)
+{
+    m_text = s;
     if (m_flags & TEXTBOX_NUMERIC || m_flags & TEXTBOX_HEX) {
         m_text = m_text.substr(0, 6); /* 5 digits is more than enough */
     }
-    m_cut_text = m_text;
 
-    /*
-        We have to leave space for the composition
-        which is the currently written text through
-        the IME (Only for Japanese, Chinese etc.)
-    */
-
-    get_helper()->util_cut_string(m_cut_text.append(m_composition), get_dimensions()->w - m_cut_off, false);
+    m_wtext = sdl_helper::util_utf8_to_wstring(m_text);
+    m_text_dim = get_helper()->util_text_dim(&m_text);
+    m_offset = SDL_min(0, get_dimensions()->w - m_text_dim.w - 5);
+    /* refresh cursor */
+    move_cursor(m_cursor_pos);
 }
 
 void textbox::set_hex_int(const uint16_t i)
@@ -227,9 +246,15 @@ void textbox::set_hex_int(const uint16_t i)
     set_text(stream.str());
 }
 
-void textbox::append_text(const std::string &s)
+void textbox::insert_text(const std::string &s)
 {
-    set_text(m_text + s);
+    std::wstring left(m_wtext.begin(), m_wtext.begin() + m_cursor_pos);
+    std::wstring right(m_wtext.begin() + m_cursor_pos, m_wtext.end());
+    std::wstring insert = sdl_helper::util_utf8_to_wstring(s);
+    size_t len = m_wtext.length();
+    set_text(left + insert + right);
+    // move it by the amount of characters inserted
+    move_cursor(m_cursor_pos + m_wtext.length() - len);
 }
 
 uint8_t textbox::get_cursor()
@@ -239,9 +264,9 @@ uint8_t textbox::get_cursor()
 
 const std::string *textbox::get_text()
 {
-    if (m_flags & TEXTBOX_NUMERIC && m_text.empty())
+    if (m_flags & TEXTBOX_NUMERIC && m_wtext.empty())
         set_text("0");
-    if (m_flags & TEXTBOX_HEX && m_text.empty())
+    if (m_flags & TEXTBOX_HEX && m_wtext.empty())
         set_text("0x0");
     return &m_text;
 }
@@ -281,11 +306,18 @@ bool textbox::is_hex(const std::string &s)
     return c[strspn(c, "0123456789xabcdefABCDEF")] == 0;
 }
 
-void textbox::pop_back(std::string &s)
+bool textbox::pop_at(int pos)
 {
-    auto convert = sdl_helper::util_utf8_to_wstring(s);
-    convert.pop_back();
-    s = sdl_helper::util_wstring_to_utf8(convert);
+    if (pos < 0)
+        return false;
+    if (pos > int(m_wtext.length()))
+        return false;
+
+    auto orig_len = m_wtext.length();
+    auto is_at_end = pos == int(m_wtext.length()) - 1;
+    m_wtext.erase(pos, 1);
+    set_text(sdl_helper::util_wstring_to_utf8(m_wtext));
+    return orig_len != m_wtext.length() && !is_at_end;
 }
 
 void textbox::set_alert(const bool state)
@@ -296,4 +328,12 @@ void textbox::set_alert(const bool state)
 void textbox::set_cutoff(const uint8_t c)
 {
     m_cut_off = c;
+}
+
+void textbox::move_cursor(int new_pos)
+{
+    m_cursor_pos = SDL_min(SDL_max(new_pos, 0), int(m_wtext.length()));
+    std::wstring left(m_wtext.begin(), m_wtext.begin() + m_cursor_pos);
+    auto convert = sdl_helper::util_wstring_to_utf8(left);
+    m_cursor_pixel_pos = 2 + get_helper()->util_text_dim(&convert).w + m_offset;
 }
