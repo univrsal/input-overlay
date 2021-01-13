@@ -52,16 +52,6 @@ void textbox::draw_foreground()
 void textbox::draw_background()
 {
     get_helper()->util_fill_rect(get_dimensions(), get_helper()->get_palette()->gray());
-    if (m_flags & ELEMENT_FOCUSED) {
-        get_helper()->util_draw_rect(get_dimensions(), get_helper()->get_palette()->light_gray());
-    } else {
-        if (m_alert) {
-            get_helper()->util_draw_rect(get_dimensions(), get_helper()->get_palette()->red());
-        } else {
-            get_helper()->util_draw_rect(get_dimensions(), get_helper()->get_palette()->dark_gray());
-        }
-    }
-
     auto pos = 2 + m_offset;
     SDL_RenderSetViewport(get_helper()->renderer(), get_dimensions());
 
@@ -80,6 +70,31 @@ void textbox::draw_background()
         get_helper()->util_fill_rect(&temp, get_helper()->get_palette()->white());
     }
     SDL_RenderSetViewport(get_helper()->renderer(), nullptr);
+
+    // draw last to overwrite text that can end up exactly on the border
+    if (m_flags & ELEMENT_FOCUSED) {
+        get_helper()->util_draw_rect(get_dimensions(), get_helper()->get_palette()->light_gray());
+    } else {
+        if (m_alert) {
+            get_helper()->util_draw_rect(get_dimensions(), get_helper()->get_palette()->red());
+        } else {
+            get_helper()->util_draw_rect(get_dimensions(), get_helper()->get_palette()->dark_gray());
+        }
+    }
+}
+
+int get_cursor_index(sdl_helper *h, int click_x, const std::string &text)
+{
+    int index = 0;
+    auto it = text.begin();
+    while (*it) {
+        it++;
+        std::string tmp(text.begin(), it);
+        if (h->util_text_dim(&tmp).w > click_x)
+            break;
+        index++;
+    }
+    return index;
 }
 
 bool textbox::handle_events(SDL_Event *event, const bool was_handled)
@@ -95,6 +110,9 @@ bool textbox::handle_events(SDL_Event *event, const bool was_handled)
                     SDL_SetTextInputRect(get_dimensions());
                     handled = true;
                     m_parent_dialog->change_focus(m_element_id);
+
+                    int mouse_x = event->button.x - get_dimensions()->x - m_offset;
+                    move_cursor(get_cursor_index(get_helper(), mouse_x, m_text));
                 }
                 if (m_flags & TEXTBOX_KEYBIND) {
                     set_hex_int(sdl_helper::sdl_key_to_vc(TO_MOUSE_MASK(event->button.button)));
