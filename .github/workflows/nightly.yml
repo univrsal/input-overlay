@@ -3,8 +3,18 @@ name: CI
 on:
   push:
     branches: [ master, dev ]
+    paths-ignore:
+      - '**.md'
+      - '**.ini'
+      - 'docs/**'
+    tags:
+      - "v*"
   pull_request:
     branches: [ master, dev ]
+    paths-ignore:
+      - '**.md'
+      - '**.ini'
+      - 'docs/**'
 
 jobs:
   linux:
