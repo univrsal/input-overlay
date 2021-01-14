@@ -5,3 +5,5 @@
 todo
 buil*/
 *.iss
+*.vscode/
+docs/cct/server.sh
