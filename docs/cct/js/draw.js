@@ -91,7 +91,8 @@ $(function() {
     $(canvas).on('click', e => cs.click(e));
     $(canvas).on('mousemove', e => cs.move(e));
     $(canvas).on('mouseup', e => cs.mouseup(e));
-
+    $(window).on('keydown', e => config.on_button(e, true));
+    $(window).on('keyup', e => config.on_button(e, false));
     $(canvas).on('contextmenu', function(e) {
         cs.click(e);
         e.preventDefault();
