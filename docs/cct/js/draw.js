@@ -27,6 +27,15 @@ var painter = {
         context.fill();
     },
 
+    rect_outline(x, y, w, h, width = 1, color = lineColor) {
+        let context = this.get_context();
+        context.beginPath();
+        context.rect(x, y, w, h);
+        context.strokeStyle = color;
+        context.lineWidth = width;
+        context.stroke();
+    },
+
     text(str, x, y, rotate = 0, align = "right", color = lineColor, size = 13, font = "Arial") {
         let ctx = this.get_context();
         ctx.save();
@@ -89,8 +98,15 @@ $(function() {
     $(window).on('resize', painter.resize_canvas);
     $(canvas).on('mousewheel', e => cs.scroll(e));
     $(canvas).on('click', e => cs.click(e));
-    $(canvas).on('mousemove', e => cs.move(e));
-    $(canvas).on('mouseup', e => cs.mouseup(e));
+    $(canvas).on('mousemove', e => {
+        cs.move(e);
+        config.move(e, cs);
+    });
+    $(canvas).on('mouseup', e => {
+        cs.mouseup(e);
+        config.mouseup(e, cs);
+    });
+    $(canvas).on('mousedown', e => config.mousedown(e, cs));
     $(window).on('keydown', e => config.on_button(e, true));
     $(window).on('keyup', e => config.on_button(e, false));
     $(canvas).on('contextmenu', function(e) {
@@ -100,8 +116,10 @@ $(function() {
     });
 
     painter.resize_canvas(); // Run once to get correct window size
-    painter.load_image("../res/wasd.png").then(function(img) { atlas = img; });
+    painter.load_image("https://raw.githubusercontent.com/univrsal/input-overlay/master/docs/cct/res/wasd.png")
+        .then(function(img) { atlas = img; });
     painter.get_context().imageSmoothingEnabled = false;
 
-    $.getJSON('../res/wasd.json', function(data) { config.load_from_json(data); });
+    $.getJSON('https://raw.githubusercontent.com/univrsal/input-overlay/master/docs/cct/res/wasd.json',
+              function(data) { config.load_from_json(data); });
 });

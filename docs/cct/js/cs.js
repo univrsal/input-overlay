@@ -61,8 +61,17 @@ var cs = {
         ctx.restore();
     },
 
+    is_mouse_over(event) { return this.origin.lt(event.clientX, event.clientY); },
+
+    translate(x, y) { return new vec2(x + cs.offset.x / cs.scale, y + cs.offset.y / cs.scale); },
+
+    translate_rect(r) {
+        return new r4(r.x * cs.scale - cs.offset.x + cs.origin.x, r.y * cs.scale - cs.offset.y + cs.origin.y,
+                      r.w * this.scale, r.h * this.scale);
+    },
+
     click(event) {
-        if (event.button === 2 && this.origin.lt(event.clientX, event.clientY)) {
+        if (event.button === 2 && this.is_mouse_over(event)) {
             this.drag_start = new vec2(event.clientX, event.clientY);
             this.orig_offset = this.offset;
             this.dragging = true;

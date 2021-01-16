@@ -19,6 +19,15 @@ class element {
 
     draw(painter, cs) {}
     on_button_input(vc, state) {}
+
+    scaled_dim(cs)
+    {
+        return new r4(cs.origin.x - cs.offset.x + this.data.pos[0] * cs.scale,
+                      cs.origin.y - cs.offset.y + this.data.pos[1] * cs.scale, this.data.mapping[2] * cs.scale,
+                      this.data.mapping[3] * cs.scale);
+    }
+
+    dim() { return new r4(this.data.pos[0], this.data.pos[1], this.data.mapping[2], this.data.mapping[3]); }
 };
 
 class texture extends element {

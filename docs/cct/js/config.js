@@ -1,67 +1,46 @@
 function to_vc(key)
 {
-    switch (key) {
-    case "a":
-        return 0x001E;
-    case "b":
-        return 0x0030;
-    case "c":
-        return 0x002E;
-    case "d":
-        return 0x0020;
-    case "e":
-        return 0x0012;
-    case "f":
-        return 0x0021;
-    case "g":
-        return 0x0022;
-    case "h":
-        return 0x0023;
-    case "i":
-        return 0x0017;
-    case "j":
-        return 0x0024;
-    case "k":
-        return 0x0025;
-    case "l":
-        return 0x0026;
-    case "m":
-        return 0x0032;
-    case "n":
-        return 0x0031;
-    case "o":
-        return 0x0018;
-    case "p":
-        return 0x0019;
-    case "q":
-        return 0x0010;
-    case "r":
-        return 0x0013;
-    case "s":
-        return 0x001F;
-    case "t":
-        return 0x0014;
-    case "u":
-        return 0x0016;
-    case "v":
-        return 0x002F;
-    case "w":
-        return 0x0011;
-    case "x":
-        return 0x002D;
-    case "y":
-        return 0x0015;
-    case "z":
-        return 0x002C;
-    default:
-        return 0;
+    /* clang-format off */
+    switch(key) {
+        case "a": return 0x001E;
+        case "b": return 0x0030;
+        case "c": return 0x002E;
+        case "d": return 0x0020;
+        case "e": return 0x0012;
+        case "f": return 0x0021;
+        case "g": return 0x0022;
+        case "h": return 0x0023;
+        case "i": return 0x0017;
+        case "j": return 0x0024;
+        case "k": return 0x0025;
+        case "l": return 0x0026;
+        case "m": return 0x0032;
+        case "n": return 0x0031;
+        case "o": return 0x0018;
+        case "p": return 0x0019;
+        case "q": return 0x0010;
+        case "r": return 0x0013;
+        case "s": return 0x001F;
+        case "t": return 0x0014;
+        case "u": return 0x0016;
+        case "v": return 0x002F;
+        case "w": return 0x0011;
+        case "x": return 0x002D;
+        case "y": return 0x0015;
+        case "z": return 0x002C;
+        default: return 0;
     }
+    /* clang-format on */
 }
 
 var config = {
     data: {},
     elements: [],
-
+    selected_elements: [],
+    selecting: false,
+    selection_start: new vec2(0, 0),
+    selection_end: new vec2(0, 0),
+    selection_rect: new r4(0, 0, 0, 0),
     load_from_json(json) {
         this.data = json;
         this.data["elements"].forEach(data => {
@@ -76,12 +55,50 @@ var config = {
         ctx.save();
         ctx.rect(cs.origin.x, cs.origin.y, cs.dimensions.w, cs.dimensions.h);
         ctx.clip();
+
         this.elements.forEach(element => element.draw(painter, cs));
+        if (this.selecting) {
+            painter.rect_outline(this.selection_start.x - 0.5, this.selection_start.y - 0.5,
+                                 this.selection_end.x - this.selection_start.x,
+                                 this.selection_end.y - this.selection_start.y);
+        }
+
+        if (!this.selection_rect.is_empty()) {
+            let r = cs.translate_rect(this.selection_rect);
+            painter.rect_outline(r.x + 0.5, r.y + 0.5, r.w - 1, r.h - 1, 1, "#ff0000ff");
+        }
+
         ctx.restore();
     },
 
     on_button(event, state) {
         let vc = to_vc(event.key);
         this.elements.forEach(element => element.on_button_input(vc, state));
+    },
+
+    mouseup(event, cs) { this.selecting = false; },
+
+    mousedown(event, cs) {
+        if (event.button == 0 && cs.is_mouse_over(event)) {
+            this.selecting = true;
+            this.selection_start = new vec2(event.clientX, event.clientY);
+            this.selection_end = this.selection_start;
+            this.selected_elements = [];
+            this.selection_rect = new r4(0, 0, 0, 0);
+            // Select individual element
+            this.elements.forEach(e => {
+                if (e.scaled_dim(cs).is_point_inside(this.selection_start)) {
+                    this.selected_elements.push(e);
+                    this.selection_rect = e.dim();
+                    return false;
+                }
+            });
+        }
+    },
+
+    move(event, cs) {
+        if (this.selecting) {
+            this.selection_end = new vec2(event.clientX, event.clientY);
+        }
     }
 }
