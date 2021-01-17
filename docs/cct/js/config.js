@@ -38,9 +38,8 @@ var config = {
     elements: [],
     selected_elements: [],
     selecting: false,
-    selection_start: new vec2(0, 0),
-    selection_end: new vec2(0, 0),
-    selection_rect: new r4(0, 0, 0, 0),
+    drag_selection: new r4(),
+    selection_rect: new r4(),
     load_from_json(json) {
         this.data = json;
         this.data["elements"].forEach(data => {
@@ -57,10 +56,9 @@ var config = {
         ctx.clip();
 
         this.elements.forEach(element => element.draw(painter, cs));
-        if (this.selecting) {
-            painter.rect_outline(this.selection_start.x - 0.5, this.selection_start.y - 0.5,
-                                 this.selection_end.x - this.selection_start.x,
-                                 this.selection_end.y - this.selection_start.y);
+        if (this.selecting && !this.drag_selection.is_empty()) {
+            painter.rect_outline(this.drag_selection.x - 0.5, this.drag_selection.y - 0.5, this.drag_selection.w,
+                                 this.drag_selection.h);
         }
 
         if (!this.selection_rect.is_empty()) {
@@ -81,13 +79,15 @@ var config = {
     mousedown(event, cs) {
         if (event.button == 0 && cs.is_mouse_over(event)) {
             this.selecting = true;
-            this.selection_start = new vec2(event.clientX, event.clientY);
-            this.selection_end = this.selection_start;
+            this.drag_selection.x = event.clientX;
+            this.drag_selection.y = event.clientY;
+            this.drag_selection.w = 0;
+            this.drag_selection.h = 0;
             this.selected_elements = [];
-            this.selection_rect = new r4(0, 0, 0, 0);
+            this.selection_rect = new r4();
             // Select individual element
             this.elements.forEach(e => {
-                if (e.scaled_dim(cs).is_point_inside(this.selection_start)) {
+                if (e.scaled_dim(cs).is_point_inside(new vec2(event.clientX, event.clientY))) {
                     this.selected_elements.push(e);
                     this.selection_rect = e.dim();
                     return false;
@@ -98,7 +98,29 @@ var config = {
 
     move(event, cs) {
         if (this.selecting) {
-            this.selection_end = new vec2(event.clientX, event.clientY);
+            this.drag_selection.w = event.clientX - this.drag_selection.x;
+            this.drag_selection.h = event.clientY - this.drag_selection.y;
+
+            let selected_elements = [];
+            let rect = new r4();
+            let first = true;
+            let pos = new vec2(event.clientX, event.clientY);
+            this.elements.forEach(e => {
+                if (e.scaled_dim(cs).is_inside(this.drag_selection)) {
+                    selected_elements.push(e);
+                    if (first) {
+                        rect = e.dim();
+                        first = false;
+                    } else {
+                        rect.union(e.dim());
+                    }
+                }
+            });
+
+            if (!rect.is_empty()) {
+                this.selected_elements = selected_elements;
+                this.selection_rect = rect;
+            }
         }
     }
 }

@@ -24,7 +24,7 @@ class vec2 {
 };
 
 class r4 {
-    constructor(x, y, w, h)
+    constructor(x = 0, y = 0, w = 0, h = 0)
     {
         this.x = x;
         this.y = y;
@@ -32,14 +32,32 @@ class r4 {
         this.h = h;
     }
 
-    is_point_inside(v) { return this.x <= v.x && this.y <= v.y && v.x <= this.x + this.w && v.y <= this.y + this.h; }
+    get_left() { return this.w < 0 ? this.x + this.w : this.x; }
+
+    get_right() { return this.w >= 0 ? this.x + this.w : this.x; }
+
+    get_top() { return this.h < 0 ? this.y + this.h : this.y; }
+
+    get_bottom() { return this.h >= 0 ? this.y + this.h : this.y; }
+
+    is_point_inside(v)
+    {
+        return v.x >= this.get_left() && v.x <= this.get_right() && v.y >= this.get_top() && v.y <= this.get_bottom();
+    }
+
+    /* true when this is inside other */
+    is_inside(other)
+    {
+        return other.get_left() <= this.get_left() && other.get_right() >= this.get_right() &&
+               other.get_top() <= this.get_top() && other.get_bottom() >= this.get_bottom();
+    }
 
     union(other)
     {
-        this.x = Math.min(other.x, this.x);
-        this.y = Math.min(other.x, this.y);
-        this.w = other.w + this.w - Math.abs(this.w - other.w);
-        this.h = other.h + this.h - Math.abs(this.h - other.h);
+        this.x = Math.min(other.get_left(), this.get_left());
+        this.y = Math.min(other.get_top(), this.get_top());
+        this.w = Math.max(other.get_right(), this.get_right()) - this.x;
+        this.h = Math.max(other.get_bottom(), this.get_bottom()) - this.y;
     }
 
     is_empty() { return this.w === 0 && this.h === 0; }
