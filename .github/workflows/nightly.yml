@@ -6,7 +6,11 @@ on:
     paths-ignore:
       - '**.md'
       - '**.ini'
-      - 'docs/**'
+      - '**.js'
+      - '**.html'
+      - '**.json'
+      - '**.png'
+
     tags:
       - "v*"
   pull_request:
@@ -14,7 +18,10 @@ on:
     paths-ignore:
       - '**.md'
       - '**.ini'
-      - 'docs/**'
+      - '**.js'
+      - '**.html'
+      - '**.json'
+      - '**.png'
 
 jobs:
   linux:
