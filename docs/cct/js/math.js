@@ -1,5 +1,5 @@
 class vec2 {
-    constructor(x, y)
+    constructor(x = 0, y = 0)
     {
         this.x = x;
         this.y = y;
@@ -60,10 +60,19 @@ class r4 {
         this.h = Math.max(other.get_bottom(), this.get_bottom()) - this.y;
     }
 
+    max(x = 0, y = 0)
+    {
+        this.x = Math.max(this.x, x);
+        this.y = Math.max(this.y, y);
+    }
+
     is_empty() { return this.w === 0 && this.h === 0; }
 }
 
-function r2(_w, _h)
-{
-    return {w: _w, h: _h};
+class r2 {
+    constructor(w = 0, h = 0)
+    {
+        this.w = w;
+        this.h = h;
+    }
 }

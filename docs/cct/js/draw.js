@@ -96,7 +96,7 @@ requestAnimationFrame(painter.update); // start animation
 
 $(function() {
     $(window).on('resize', painter.resize_canvas);
-    $(canvas).on('mousewheel', e => cs.scroll(e));
+    $(canvas).on('mousewheel', e => cs.scroll(e, config));
     $(canvas).on('click', e => cs.click(e));
     $(canvas).on('mousemove', e => {
         cs.move(e);

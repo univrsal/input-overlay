@@ -38,8 +38,10 @@ var config = {
     elements: [],
     selected_elements: [],
     selecting: false,
-    drag_selection: new r4(),
-    selection_rect: new r4(),
+    dragging: false,
+    drag_selection: new r4(), // Mouse dragged selection in screen space
+    selection_rect: new r4(), // Actual selected element(s) in coordinate space
+    drag_offset: new vec2(),  // MousePos - SelectionRect (unscaled)
     load_from_json(json) {
         this.data = json;
         this.data["elements"].forEach(data => {
@@ -62,7 +64,7 @@ var config = {
         }
 
         if (!this.selection_rect.is_empty()) {
-            let r = cs.translate_rect(this.selection_rect);
+            let r = cs.translate_rect_to_screen(this.selection_rect);
             painter.rect_outline(r.x + 0.5, r.y + 0.5, r.w - 1, r.h - 1, 1, "#ff0000ff");
         }
 
@@ -74,25 +76,41 @@ var config = {
         this.elements.forEach(element => element.on_button_input(vc, state));
     },
 
-    mouseup(event, cs) { this.selecting = false; },
+    mouseup(event, cs) {
+        this.selecting = false;
+        this.dragging = false;
+    },
 
     mousedown(event, cs) {
         if (event.button == 0 && cs.is_mouse_over(event)) {
-            this.selecting = true;
-            this.drag_selection.x = event.clientX;
-            this.drag_selection.y = event.clientY;
-            this.drag_selection.w = 0;
-            this.drag_selection.h = 0;
-            this.selected_elements = [];
-            this.selection_rect = new r4();
-            // Select individual element
-            this.elements.forEach(e => {
-                if (e.scaled_dim(cs).is_point_inside(new vec2(event.clientX, event.clientY))) {
-                    this.selected_elements.push(e);
-                    this.selection_rect = e.dim();
-                    return false;
-                }
-            });
+            let r = cs.translate_rect_to_screen(this.selection_rect);
+            if (r.is_point_inside(new vec2(event.clientX, event.clientY))) {
+                // Element dragging
+                let tv = cs.translate_point_to_cs(event.clientX, event.clientY);
+                this.drag_offset.x = tv.x - this.selection_rect.x;
+                this.drag_offset.y = tv.y - this.selection_rect.y;
+                this.dragging = true;
+                this.selecting = false;
+            } else {
+                // Element selection
+                this.selecting = true;
+                this.dragging = false;
+                this.drag_selection.x = event.clientX;
+                this.drag_selection.y = event.clientY;
+                this.drag_selection.w = 0;
+                this.drag_selection.h = 0;
+                this.selected_elements = [];
+                this.selection_rect = new r4();
+
+                // Select individual element
+                this.elements.forEach(e => {
+                    if (e.scaled_dim(cs).is_point_inside(new vec2(event.clientX, event.clientY))) {
+                        this.selected_elements.push(e);
+                        this.selection_rect = e.dim();
+                        return false;
+                    }
+                });
+            }
         }
     },
 
@@ -117,10 +135,13 @@ var config = {
                 }
             });
 
-            if (!rect.is_empty()) {
-                this.selected_elements = selected_elements;
-                this.selection_rect = rect;
-            }
+            this.selected_elements = selected_elements;
+            this.selection_rect = rect;
+        } else if (this.dragging) {
+            let tv = cs.translate_point_to_cs(event.clientX, event.clientY);
+            this.selection_rect.x = tv.x - this.drag_offset.x;
+            this.selection_rect.y = tv.y - this.drag_offset.y;
+            this.selection_rect.max();
         }
     }
 }

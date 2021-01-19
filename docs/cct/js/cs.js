@@ -1,11 +1,11 @@
 var cs = {
     origin: new vec2(100, 100),
-    offset: new vec2(0, 0),
-    orig_offset: new vec2(0, 0),
-    drag_start: new vec2(0, 0),
+    offset: new vec2(),
+    orig_offset: new vec2(),
+    drag_start: new vec2(),
     dragging: false,
     scale: 1,
-    dimensions: r2(0, 0),
+    dimensions: new r2(),
     step: 10,
 
     draw(painter) {
@@ -63,9 +63,14 @@ var cs = {
 
     is_mouse_over(event) { return this.origin.lt(event.clientX, event.clientY); },
 
-    translate(x, y) { return new vec2(x + cs.offset.x / cs.scale, y + cs.offset.y / cs.scale); },
+    /* screen space to coordinate space */
+    translate_point_to_cs(x, y) {
+        return new vec2(Math.round((x - cs.origin.x) / cs.scale + cs.offset.x),
+                        Math.round((y - cs.origin.y) / cs.scale + cs.offset.y));
+    },
 
-    translate_rect(r) {
+    /* coordinate space to screen space */
+    translate_rect_to_screen(r) {
         return new r4(r.x * cs.scale - cs.offset.x + cs.origin.x, r.y * cs.scale - cs.offset.y + cs.origin.y,
                       r.w * this.scale, r.h * this.scale);
     },
@@ -80,7 +85,9 @@ var cs = {
 
     mouseup(event) { this.dragging = false; },
 
-    scroll(event) {
+    scroll(event, config) {
+        if (config.dragging || config.selecting)
+            return;
         let old_x = (event.clientX - cs.origin.x) + this.offset.x / this.scale;
         let old_y = (event.clientY - cs.origin.y) + this.offset.y / this.scale;
 
@@ -107,6 +114,6 @@ var cs = {
 
     resize(painter) {
         this.dimensions =
-            r2($('#main-canvas').attr("width") - this.origin.x, $('#main-canvas').attr("height") - this.origin.y);
+            new r2($('#main-canvas').attr("width") - this.origin.x, $('#main-canvas').attr("height") - this.origin.y);
     }
 };
