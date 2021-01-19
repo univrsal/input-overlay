@@ -81,35 +81,45 @@ var config = {
         this.dragging = false;
     },
 
+    start_dragging(event, cs) {
+        let tv = cs.translate_point_to_cs(event.clientX, event.clientY);
+        this.drag_offset.x = tv.x - this.selection_rect.x;
+        this.drag_offset.y = tv.y - this.selection_rect.y;
+        this.dragging = true;
+        this.selecting = false;
+    },
+
     mousedown(event, cs) {
         if (event.button == 0 && cs.is_mouse_over(event)) {
             let r = cs.translate_rect_to_screen(this.selection_rect);
-            if (r.is_point_inside(new vec2(event.clientX, event.clientY))) {
-                // Element dragging
-                let tv = cs.translate_point_to_cs(event.clientX, event.clientY);
-                this.drag_offset.x = tv.x - this.selection_rect.x;
-                this.drag_offset.y = tv.y - this.selection_rect.y;
-                this.dragging = true;
-                this.selecting = false;
+            let m = new vec2(event.clientX, event.clientY);
+            if (r.is_point_inside(m)) {
+                this.start_dragging(event, cs);
             } else {
                 // Element selection
-                this.selecting = true;
-                this.dragging = false;
-                this.drag_selection.x = event.clientX;
-                this.drag_selection.y = event.clientY;
-                this.drag_selection.w = 0;
-                this.drag_selection.h = 0;
                 this.selected_elements = [];
                 this.selection_rect = new r4();
 
                 // Select individual element
                 this.elements.forEach(e => {
-                    if (e.scaled_dim(cs).is_point_inside(new vec2(event.clientX, event.clientY))) {
+                    if (e.scaled_dim(cs).is_point_inside(m)) {
                         this.selected_elements.push(e);
                         this.selection_rect = e.dim();
                         return false;
                     }
                 });
+
+                // No element was directly selected -> allow drag selection
+                if (this.selection_rect.is_empty()) {
+                    this.selecting = true;
+                    this.dragging = false;
+                    this.drag_selection.x = event.clientX;
+                    this.drag_selection.y = event.clientY;
+                    this.drag_selection.w = 0;
+                    this.drag_selection.h = 0;
+                } else {
+                    this.start_dragging(event, cs);
+                }
             }
         }
     },
