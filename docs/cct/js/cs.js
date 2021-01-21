@@ -83,14 +83,18 @@ var cs = {
 
     /* screen space to coordinate space */
     translate_point_to_cs(x, y) {
-        return new vec2(Math.round((x - cs.origin.x) / cs.scale + cs.offset.x),
-                        Math.round((y - cs.origin.y) / cs.scale + cs.offset.y));
+        return new vec2(Math.round((x - this.origin.x + this.offset.x) / this.scale),
+                        Math.round((y - this.origin.y + this.offset.y) / this.scale));
     },
 
     /* coordinate space to screen space */
     translate_rect_to_screen(r) {
-        return new r4(r.x * cs.scale - cs.offset.x + cs.origin.x, r.y * cs.scale - cs.offset.y + cs.origin.y,
-                      r.w * this.scale, r.h * this.scale);
+        return new r4(r.x * this.scale - this.offset.x + this.origin.x,
+                      r.y * this.scale - this.offset.y + this.origin.y, r.w * this.scale, r.h * this.scale);
+    },
+
+    translate_point_to_screen(x, y) {
+        return new vec2(x * this.scale - this.offset.x + this.origin.x, y * this.scale - this.offset.y + this.origin.y);
     },
 
     click(event) {
@@ -106,8 +110,9 @@ var cs = {
     scroll(event, config) {
         if (config.dragging || config.selecting)
             return;
-        let old_x = (event.clientX - cs.origin.x) + this.offset.x / this.scale;
-        let old_y = (event.clientY - cs.origin.y) + this.offset.y / this.scale;
+
+        let old_mouse = this.translate_point_to_cs(event.clientX, event.clientY);
+        let old_scale = this.scale;
 
         if (event.originalEvent.wheelDelta / 120 > 0) {
             this.scale = Math.min(8, cs.scale + 1);
@@ -115,17 +120,21 @@ var cs = {
             this.scale = Math.max(1, cs.scale - 1);
         }
 
-        let new_x = (event.clientX - this.origin.x) + this.offset.x / this.scale;
-        let new_y = (event.clientY - this.origin.y) + this.offset.y / this.scale;
+        // Adjust to mouse position
+        let new_mouse = this.translate_point_to_cs(event.clientX, event.clientY);
+        console.log("old: " + old_mouse.x + "/" + old_mouse.y + ", " + new_mouse.x + "/" + new_mouse.y + ", " +
+                    (new_mouse.x - old_mouse.x) + "/" + (new_mouse.y - old_mouse.y));
+        let offset_factor = cs.scale / old_scale;
+        this.offset = this.offset.scale(cs.scale / old_scale);
+        //this.offset = this.offset.sub((new_mouse.x - old_mouse.x) * offset_factor, (new_mouse.x - old_mouse.y) * offset_factor);
 
-        this.offset = this.offset.add((new_x - old_x), (new_y - old_y));
-        this.offset.max();
+        this.offset.limit();
     },
 
     move(event) {
         if (this.dragging) {
             this.offset = this.orig_offset.addv(this.drag_start.sub(event.clientX, event.clientY));
-            this.offset.max();
+            this.offset.limit();
         }
     },
 

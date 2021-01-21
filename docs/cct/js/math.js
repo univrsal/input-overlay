@@ -34,10 +34,12 @@ class vec2 {
     lt(x, y) { return this.x < x && this.y < y; }
     ltv(v) { return this.x < v.x && this.y < v.y; }
 
-    max(x = 0, y = 0)
+    scale(s) { return new vec2(this.x * s, this.y * s); }
+
+    limit(min_x = 0, min_y = 0, max_x = 3000, max_y = 3000)
     {
-        this.x = Math.max(this.x, x);
-        this.y = Math.max(this.y, y);
+        this.x = Math.min(Math.max(this.x, min_x), max_x);
+        this.y = Math.min(Math.max(this.y, min_y), max_y);
     }
 };
 
