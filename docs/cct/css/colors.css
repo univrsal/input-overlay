@@ -1,0 +1,91 @@
+/**
+ * Copyright (C) 2021 universal
+ * 
+ * This file is part of input-overlay.
+ * 
+ * input-overlay is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 2 of the License.
+ * 
+ * input-overlay is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with input-overlay.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+ :root {
+    /* Both theme colors */
+    --theme-red: #fd5754;
+    --theme-dark-red: #7f0508;
+    --theme-orange: #febb40;
+    --theme-dark-orange: #995712;
+    --theme-green: #34c848;
+    --theme-dark-green: #0b650d;
+
+    --theme-bright-red: #ff8380;
+    --theme-bright-orange: #ffcf78;
+    --theme-bright-green: #79e488;
+    
+    --theme-stroke: white;
+    --theme-item-selected: gray;
+
+    --theme-accent: #1768e4; 
+    --theme-accent-dark: #1d52c1;
+    --theme-accent-bright: #3863c0; 
+    --theme-accent-hovered: #3d82ea; 
+    
+    --theme-accept-gradient: linear-gradient(var(--theme-accent-hovered),
+        var(--theme-accent) 30%, var(--theme-accent) 100%);
+    --theme-accept-gradient-hovered: linear-gradient(var(--theme-accent-bright),
+        var(--theme-accent-hovered) 30%, var(--theme-accent-hovered) 100%);
+    --theme-spinbox-gradient: linear-gradient(var(--theme-accent-hovered),
+        var(--theme-accent));
+    --theme-spinbox-gradient-hovered: linear-gradient(var(--theme-accent-hovered),
+        var(--theme-accent-bright));
+
+    /* Dark theme colors */
+    --dark-window-bg: #393b3d;
+    --dark-window-border: #6c6d7188 #6c6d7188 #51515588 #6c6d7188;
+    --dark-window-gradient: repeating-linear-gradient(#414446, #393b3d 4%, #393b3d 100%);
+    --dark-text: white;
+    --dark-shadow: drop-shadow(0px 0px 5px #292828bb);
+    --dark-disabled:rgb(53, 53, 53);
+    --dark-text-disabled:rgb(78, 78, 78);
+    --dark-textbox: white;
+    --dark-control: #6c6d71;
+    --dark-tab-button: #717274;
+    --dark-border: #ffffff3d;
+    --dark-tab-left-border: #ffffff3d #3d3d3d44 #0000005b;
+    --dark-tab-right-border: #ffffff3d transparent #0000005b;
+    --dark-control-border: #ffffff33 transparent rgb(46, 46, 46) transparent;
+    --dark-control-hover: #8c8d91;
+    --dark-link: #7da6ff;
+    /* Check box & Radio buttons */
+    --dark-control-gradient-top: #474749;
+    --dark-control-gradient-bottom: #606062;
+    --dark-control-gradient: linear-gradient(var(--dark-control-gradient-top),
+       var(--dark-control-gradient-bottom));
+    --dark-control-inset: inset 0 1px 1px rgba(255,255,255,0.15), inset 0 -1px 1px rgba(0,0,0,0.15);
+
+    /* Bright */
+    --bright-window-bg: #e4e4e4;
+    --bright-window-border: #6c6d7188;
+    --bright-window-gradient: repeating-linear-gradient(#efefef, #e4e4e4 4%, #e4e4e4 100%);
+    --bright-text: rgb(29, 29, 29);
+    --bright-shadow: drop-shadow(0px 0px 5px #aaaaaabb);
+    --bright-disabled:rgb(119, 119, 119);
+    --bright-text-disabled:rgb(78, 78, 78);
+    --bright-textbox: black;
+    --bright-control-border: transparent #00000000 rgba(128, 128, 128, 0.616);
+    --bright-control: #fcfcfc;
+    --bright-control-hover: #d3cdcd;
+    /* Check box & Radio buttons */
+    --bright-control-gradient-top: white;
+    --bright-control-gradient-bottom: #606062;
+    --bright-control-gradient: linear-gradient(var(--bright-control),
+       var(--bright-control));
+    --bright-control-inset: inset 0 2px 2px rgba(255,255,255,0.15), inset 0 -1px 1px rgba(0,0,0,0.15);
+}

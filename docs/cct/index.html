@@ -32,7 +32,7 @@
         <script src="./js/config.js"></script>
         <script src="./js/cs.js"></script>
         <script src="./js/draw.js"></script>
-
+        <link rel="stylesheet" href="./css/dialog.css">
         <style>
             #main-canvas {
                 /* IE, only works on <img> tags */
@@ -48,6 +48,49 @@
     <body style="margin: 0px; overflow: hidden;">
         <div id="canvas-container">
             <canvas id="main-canvas"></canvas>
+        </div>
+
+        <div id="element-dialog" class="dialog">
+            <p class="dialog-title noselect">Element settings</p>
+            <!-- Position -->
+            <div class="h-layout">
+
+                <div class="value">
+                    <label for="selected-element-x">X</label>
+                    <input type="text" class="coord" id="selected-element-x" value="0">
+                </div>
+                <div class="spacer"></div>
+                <div class="value">
+                    <label for="selected-element-y">Y</label>
+                    <input type="text" class="coord" id="selected-element-y" value="0">
+                </div>
+            </div>
+            <!-- UV -->
+            <div class="h-layout">
+
+                <div class="value">
+                    <label for="selected-element-u">U</label>
+                    <input type="text" class="coord" id="selected-element-u" value="0">
+                </div>
+                <div class="spacer"></div>
+                <div class="value">
+                    <label for="selected-element-v">V</label>
+                    <input type="text" class="coord" id="selected-element-v" value="0">
+                </div>
+            </div>
+            <!-- WH -->
+            <div class="h-layout">
+
+                <div class="value">
+                    <label for="selected-element-w">W</label>
+                    <input type="text" class="coord" id="selected-element-w" value="0">
+                </div>
+                <div class="spacer"></div>
+                <div class="value">
+                    <label for="selected-element-h">H</label>
+                    <input type="text" class="coord" id="selected-element-h" value="0">
+                </div>
+            </div>
         </div>
     </body>
 

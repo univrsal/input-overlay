@@ -123,8 +123,7 @@ var config = {
                 this.selected_elements = [];
                 this.selection_rect = new r4();
 
-                // Select individual element
-                let top_level_element = null;
+                this.deselect();
 
                 // Array is sorted lowest to highest, so the highest layer is drawn
                 // last, but for clicking we want the highest layer first
@@ -132,6 +131,7 @@ var config = {
                     if (e.scaled_dim(cs).is_point_inside(m)) {
                         this.selected_elements.push(e);
                         this.selection_rect = e.dim();
+                        this.select_element(e);
                         return true;
                     }
                     return false;
@@ -150,6 +150,24 @@ var config = {
                 }
             }
         }
+    },
+
+    deselect() {
+        $("#selected-element-x").val(0);
+        $("#selected-element-y").val(0);
+        $("#selected-element-w").val(0);
+        $("#selected-element-h").val(0);
+        $("#selected-element-u").val(0);
+        $("#selected-element-v").val(0);
+    },
+
+    select_element(e) {
+        $("#selected-element-x").val(e.x());
+        $("#selected-element-y").val(e.y());
+        $("#selected-element-w").val(e.w());
+        $("#selected-element-h").val(e.h());
+        $("#selected-element-u").val(e.u());
+        $("#selected-element-v").val(e.v());
     },
 
     move(event, cs) {
@@ -186,6 +204,8 @@ var config = {
                 let d = e.dim();
                 e.set_pos(d.x - diff.x, d.y - diff.y);
             });
+            if (this.selected_elements.length < 2)
+                this.select_element(this.selected_elements[0]);
         }
     }
 }

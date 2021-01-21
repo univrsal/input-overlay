@@ -1,0 +1,102 @@
+/**
+ * Copyright (C) 2021 universal
+ * 
+ * This file is part of input-overlay.
+ * 
+ * input-overlay is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 2 of the License.
+ * 
+ * input-overlay is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with input-overlay.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+ @import url("colors.css");
+
+
+#element-dialog
+{
+    width: 110pt;
+}
+.dialog {
+    overflow: hidden;
+    padding: 7px;
+    border-radius: 6px;
+    border-style: solid;
+    border-width: 1px;
+    box-shadow: 0px 0px 5px 5px #29282850;
+    top: 50%;
+    right: 5px;
+    transform: translate3d(0%, -50%, 0);
+    position: absolute;
+    background-color: var(--dark-window-bg);
+    background-image: var(--dark-window-gradient); 
+    border-color: var(--dark-window-border);
+}
+
+.dialog-title {
+    text-align: center;
+    font-size: 12pt !important;
+    padding: 0px 4px 6px 4px;
+}
+
+.noselect, p{
+    -webkit-touch-callout: none; /* ios safari */
+    -webkit-user-select: none; /* safari */
+     -khtml-user-select: none; /* konqueror html */
+       -moz-user-select: none; /* old versions of firefox */
+        -ms-user-select: none; /* internet explorer/edge */
+            user-select: none; /* non-prefixed version, currently
+                                  supported by chrome, opera and firefox */
+}
+
+.label, p, label {
+    font-family: "Arial", Times, serif;
+    font-size: 11pt;
+    color: var(--dark-text);
+    margin-bottom: 0px;
+    margin-top: 0px;
+}
+
+
+input[type=text] {
+    padding: 3px 5px 3px 5px;
+    border-radius: 3px;
+    border-style: solid none none none;
+    border-width: 1px;
+    background: var(--dark-control);
+    border-color: var(--dark-control-border);
+    color: var(--dark-textbox);
+}
+
+.h-layout {
+    display: flex;
+    
+    padding-bottom: 4px;
+}
+
+.spacer {
+    width: 15%;
+}
+
+.value > p, .value > input {
+    display: inline;
+}
+
+.value > label {
+    padding-right: 4px;
+    padding-top: 3.5px;
+    width: 25px;
+}
+.value > input {
+    width: 100%;
+}
+
+.value {
+    display: flex;
+}
