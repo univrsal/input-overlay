@@ -1,3 +1,21 @@
+/*************************************************************************
+ * This file is part of input-overlay
+ * github.con/univrsal/input-overlay
+ * Copyright 2021 univrsal <uni@vrsal.de>.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, version 2 of the License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *************************************************************************/
+
 class vec2 {
     constructor(x = 0, y = 0)
     {
@@ -54,10 +72,47 @@ class r4 {
 
     union(other)
     {
-        this.x = Math.min(other.get_left(), this.get_left());
-        this.y = Math.min(other.get_top(), this.get_top());
-        this.w = Math.max(other.get_right(), this.get_right()) - this.x;
-        this.h = Math.max(other.get_bottom(), this.get_bottom()) - this.y;
+        if (this.is_empty() && other.is_empty())
+            return;
+
+        if (this.is_empty()) {
+            this.x = other.x;
+            this.y = other.y;
+            this.w = other.w;
+            this.h = other.h;
+        }
+
+        if (other.is_empty())
+            return;
+
+        let tmin, tmax, omin, omax;
+
+        /* Horizontal union */
+        tmin = this.get_left();
+        tmax = this.get_right();
+        omin = other.get_left();
+        omax = other.get_right();
+
+        if (omin < tmin)
+            tmin = omin;
+
+        this.x = tmin;
+        if (omax > tmax)
+            tmax = omax;
+        this.w = tmax - tmin;
+
+        /* Vertical union */
+        tmin = this.get_top();
+        tmax = this.get_bottom();
+        omin = other.get_top();
+        omax = other.get_bottom();
+
+        if (omin < tmin)
+            tmin = omin;
+        this.y = tmin;
+        if (omax > tmax)
+            tmax = omax;
+        this.h = tmax - tmin;
     }
 
     max(x = 0, y = 0)

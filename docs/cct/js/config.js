@@ -1,3 +1,21 @@
+/*************************************************************************
+ * This file is part of input-overlay
+ * github.con/univrsal/input-overlay
+ * Copyright 2021 univrsal <uni@vrsal.de>.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, version 2 of the License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *************************************************************************/
+
 function to_vc(key)
 {
     /* clang-format off */
@@ -42,6 +60,7 @@ var config = {
     drag_selection: new r4(), // Mouse dragged selection in screen space
     selection_rect: new r4(), // Actual selected element(s) in coordinate space
     drag_offset: new vec2(),  // MousePos - SelectionRect (unscaled)
+
     load_from_json(json) {
         this.data = json;
         this.data["elements"].forEach(data => {
@@ -49,7 +68,11 @@ var config = {
             if (new_element !== null)
                 this.elements.push(new_element);
         });
+
+        this.sort_elements();
     },
+
+    sort_elements() { this.elements.sort((a, b) => { return a.layer() - b.layer(); }); },
 
     draw(painter, cs) {
         let ctx = painter.get_context();
@@ -101,12 +124,17 @@ var config = {
                 this.selection_rect = new r4();
 
                 // Select individual element
-                this.elements.forEach(e => {
+                let top_level_element = null;
+
+                // Array is sorted lowest to highest, so the highest layer is drawn
+                // last, but for clicking we want the highest layer first
+                this.elements.slice().reverse().some(e => {
                     if (e.scaled_dim(cs).is_point_inside(m)) {
                         this.selected_elements.push(e);
                         this.selection_rect = e.dim();
-                        return false;
+                        return true;
                     }
+                    return false;
                 });
 
                 // No element was directly selected -> allow drag selection
@@ -132,7 +160,6 @@ var config = {
             let selected_elements = [];
             let rect = new r4();
             let first = true;
-            let pos = new vec2(event.clientX, event.clientY);
             this.elements.forEach(e => {
                 if (e.scaled_dim(cs).is_inside(this.drag_selection)) {
                     selected_elements.push(e);
@@ -149,9 +176,16 @@ var config = {
             this.selection_rect = rect;
         } else if (this.dragging) {
             let tv = cs.translate_point_to_cs(event.clientX, event.clientY);
+            let old_pos = new vec2(this.selection_rect.x, this.selection_rect.y);
             this.selection_rect.x = tv.x - this.drag_offset.x;
             this.selection_rect.y = tv.y - this.drag_offset.y;
             this.selection_rect.max();
+
+            let diff = old_pos.sub(this.selection_rect.x, this.selection_rect.y);
+            this.selected_elements.forEach(e => {
+                let d = e.dim();
+                e.set_pos(d.x - diff.x, d.y - diff.y);
+            });
         }
     }
 }

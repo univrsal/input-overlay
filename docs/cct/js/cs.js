@@ -1,3 +1,21 @@
+/*************************************************************************
+ * This file is part of input-overlay
+ * github.con/univrsal/input-overlay
+ * Copyright 2021 univrsal <uni@vrsal.de>.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, version 2 of the License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *************************************************************************/
+
 var cs = {
     origin: new vec2(100, 100),
     offset: new vec2(),
@@ -100,7 +118,6 @@ var cs = {
         let new_x = (event.clientX - this.origin.x) + this.offset.x / this.scale;
         let new_y = (event.clientY - this.origin.y) + this.offset.y / this.scale;
 
-        console.log("Orig X: " + old_x + ", new x: " + new_x + ", offset x:" + (new_x - old_x));
         this.offset = this.offset.add((new_x - old_x), (new_y - old_y));
         this.offset.max();
     },
