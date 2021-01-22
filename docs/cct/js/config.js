@@ -51,17 +51,29 @@ function to_vc(key)
     /* clang-format on */
 }
 
-var config = {
-    data: {},
-    elements: [],
-    selected_elements: [],
-    selecting: false,
-    dragging: false,
-    drag_selection: new r4(), // Mouse dragged selection in screen space
-    selection_rect: new r4(), // Actual selected element(s) in coordinate space
-    drag_offset: new vec2(),  // MousePos - SelectionRect (unscaled)
+class config {
 
-    load_from_json(json) {
+    constructor(canvas_id, painter)
+    {
+        this.data = {};
+        this.elements = [];
+        this.selected_elements = [];
+        this.selecting = false;
+        this.dragging = false;
+        this.drag_selection = new r4(); // Mouse dragged selection in screen space
+        this.selection_rect = new r4(); // Actual selected element(s) in coordinate space
+        this.drag_offset = new vec2();  // MousePos - SelectionRect (unscaled)
+        this.painter = painter;
+
+        $(canvas_id).on('mousemove', e => this.move(e, this.painter.cs()));
+        $(canvas_id).on('mouseup', e => this.mouseup(e, this.painter.cs()));
+        $(canvas_id).on('mousedown', e => this.mousedown(e, this.painter.cs()));
+        $(window).on('keydown', e => this.on_button(e, true));
+        $(window).on('keyup', e => this.on_button(e, false));
+    }
+
+    load_from_json(json)
+    {
         this.data = json;
         this.data["elements"].forEach(data => {
             let new_element = create_element(data);
@@ -70,17 +82,24 @@ var config = {
         });
 
         this.sort_elements();
-    },
+    }
 
-    sort_elements() { this.elements.sort((a, b) => { return a.layer() - b.layer(); }); },
+    sort_elements()
+    {
+        this.elements.sort((a, b) => { return a.layer() - b.layer(); });
+    }
 
-    draw(painter, cs) {
+    draw(painter)
+    {
+        if (atlas === null) // Don't draw if image hasn't loaded yet
+            return;
         let ctx = painter.get_context();
+        let cs = painter.cs();
         ctx.save();
         ctx.rect(cs.origin.x, cs.origin.y, cs.dimensions.w, cs.dimensions.h);
         ctx.clip();
 
-        this.elements.forEach(element => element.draw(painter, cs));
+        this.elements.forEach(element => element.draw(painter));
         if (this.selecting && !this.drag_selection.is_empty()) {
             painter.rect_outline(this.drag_selection.x - 0.5, this.drag_selection.y - 0.5, this.drag_selection.w,
                                  this.drag_selection.h);
@@ -92,27 +111,31 @@ var config = {
         }
 
         ctx.restore();
-    },
+    }
 
-    on_button(event, state) {
+    on_button(event, state)
+    {
         let vc = to_vc(event.key);
         this.elements.forEach(element => element.on_button_input(vc, state));
-    },
+    }
 
-    mouseup(event, cs) {
+    mouseup(event, cs)
+    {
         this.selecting = false;
         this.dragging = false;
-    },
+    }
 
-    start_dragging(event, cs) {
+    start_dragging(event, cs)
+    {
         let tv = cs.translate_point_to_cs(event.clientX, event.clientY);
         this.drag_offset.x = tv.x - this.selection_rect.x;
         this.drag_offset.y = tv.y - this.selection_rect.y;
         this.dragging = true;
         this.selecting = false;
-    },
+    }
 
-    mousedown(event, cs) {
+    mousedown(event, cs)
+    {
         if (event.button == 0 && cs.is_mouse_over(event)) {
             let r = cs.translate_rect_to_screen(this.selection_rect);
             let m = new vec2(event.clientX, event.clientY);
@@ -150,27 +173,30 @@ var config = {
                 }
             }
         }
-    },
+    }
 
-    deselect() {
+    deselect()
+    {
         $("#selected-element-x").val(0);
         $("#selected-element-y").val(0);
         $("#selected-element-w").val(0);
         $("#selected-element-h").val(0);
         $("#selected-element-u").val(0);
         $("#selected-element-v").val(0);
-    },
+    }
 
-    select_element(e) {
+    select_element(e)
+    {
         $("#selected-element-x").val(e.x());
         $("#selected-element-y").val(e.y());
         $("#selected-element-w").val(e.w());
         $("#selected-element-h").val(e.h());
         $("#selected-element-u").val(e.u());
         $("#selected-element-v").val(e.v());
-    },
+    }
 
-    move(event, cs) {
+    move(event, cs)
+    {
         if (this.selecting) {
             this.drag_selection.w = event.clientX - this.drag_selection.x;
             this.drag_selection.h = event.clientY - this.drag_selection.y;

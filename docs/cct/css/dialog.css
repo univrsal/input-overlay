@@ -45,7 +45,7 @@
     padding: 0px 4px 6px 4px;
 }
 
-.noselect, p{
+.noselect, p, label {
     -webkit-touch-callout: none; /* ios safari */
     -webkit-user-select: none; /* safari */
      -khtml-user-select: none; /* konqueror html */
@@ -55,7 +55,7 @@
                                   supported by chrome, opera and firefox */
 }
 
-.label, p, label {
+.label, p, label, input[type=button] {
     font-family: "Arial", Times, serif;
     font-size: 11pt;
     color: var(--dark-text);
@@ -63,8 +63,12 @@
     margin-top: 0px;
 }
 
+input[type=button] {
+    cursor: pointer;
+}
 
-input[type=text] {
+
+input[type=text], input[type=button] {
     padding: 3px 5px 3px 5px;
     border-radius: 3px;
     border-style: solid none none none;
@@ -93,7 +97,7 @@ input[type=text] {
     padding-top: 3.5px;
     width: 25px;
 }
-.value > input {
+.value > input, .fullwidth {
     width: 100%;
 }
 

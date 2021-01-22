@@ -35,7 +35,7 @@ let element_map = new Map();
 class element {
     constructor(json) { this.data = json; }
 
-    draw(painter, cs) {}
+    draw(painter) {}
     on_button_input(vc, state) {}
 
     scaled_dim(cs)
@@ -65,9 +65,10 @@ class element {
 
 class texture extends element {
 
-    draw(painter, cs)
+    draw(painter)
     {
         // default draw handling
+        let cs = painter.cs();
         painter.image_crop(atlas, cs.origin.x - cs.offset.x + this.data.pos[0] * cs.scale,
                            cs.origin.y - cs.offset.y + this.data.pos[1] * cs.scale, this.data.mapping[2] * cs.scale,
                            this.data.mapping[3] * cs.scale, this.data.mapping[0], this.data.mapping[1],
@@ -82,9 +83,10 @@ class button extends texture {
         this.pressed = false;
     }
 
-    draw(painter, cs)
+    draw(painter)
     {
         if (this.pressed) {
+            let cs = painter.cs();
             painter.image_crop(atlas, cs.origin.x - cs.offset.x + this.data.pos[0] * cs.scale,
                                cs.origin.y - cs.offset.y + this.data.pos[1] * cs.scale, this.data.mapping[2] * cs.scale,
                                this.data.mapping[3] * cs.scale, this.data.mapping[0],
