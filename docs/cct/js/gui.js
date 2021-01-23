@@ -16,24 +16,30 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *************************************************************************/
 
+function apply_settings()
+{
+    if (cfg !== null &&
+        cfg.selected_elements.length === 1) { // We only apply settings if a single element is selected
+        let pos = new vec2($("#selected-element-x").val(), $("#selected-element-y").val());
+        let dim = new r4($("#selected-element-u").val(), $("#selected-element-v").val(),
+                        $("#selected-element-w").val(), $("#selected-element-h").val());
+
+        dim.validate();
+        pos.validate();
+
+        cfg.selected_elements[0].set_dim(pos, dim);
+        cfg.set_selection(cfg.selected_elements[0]);
+    }
+}
+
 $(function() {
     $(".coord").on("keydown", e => {
         if (!e)
             var e = window.event;
         if (e.keyCode == 13) {
-            if (cfg !== null &&
-                cfg.selected_elements.length === 1) { // We only apply settings if a single element is selected
-                let pos = new vec2($("#selected-element-x").val(), $("#selected-element-y").val());
-                let dim = new r4($("#selected-element-u").val(), $("#selected-element-v").val(),
-                                 $("#selected-element-w").val(), $("#selected-element-h").val());
-
-                dim.validate();
-                pos.validate();
-
-                cfg.selected_elements[0].set_dim(pos, dim);
-                cfg.set_selection(cfg.selected_elements[0]);
-            }
+            apply_settings();
             e.preventDefault();
         }
     });
+    $("#ok").on("click", e => apply_settings());
 });
