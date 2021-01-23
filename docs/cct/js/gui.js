@@ -18,11 +18,10 @@
 
 function apply_settings()
 {
-    if (cfg !== null &&
-        cfg.selected_elements.length === 1) { // We only apply settings if a single element is selected
+    if (cfg !== null && cfg.selected_elements.length === 1) { // We only apply settings if a single element is selected
         let pos = new vec2($("#selected-element-x").val(), $("#selected-element-y").val());
-        let dim = new r4($("#selected-element-u").val(), $("#selected-element-v").val(),
-                        $("#selected-element-w").val(), $("#selected-element-h").val());
+        let dim = new r4($("#selected-element-u").val(), $("#selected-element-v").val(), $("#selected-element-w").val(),
+                         $("#selected-element-h").val());
 
         dim.validate();
         pos.validate();

@@ -21,8 +21,9 @@
 
 #element-dialog
 {
-    width: 110pt;
+    width: 130pt;
 }
+
 .dialog {
     overflow: hidden;
     padding: 7px;
@@ -63,13 +64,17 @@
     margin-top: 0px;
 }
 
-input[type=button] {
-    cursor: pointer;
+input[type=text]
+{
+    height: 18px;
 }
 
+input[type="text" i] {
+    padding-left: 3px;
+    padding-right: 3px;
+}
 
 input[type=text], input[type=button] {
-    padding: 3px 5px 3px 5px;
     border-radius: 3px;
     border-style: solid none none none;
     border-width: 1px;
@@ -78,9 +83,16 @@ input[type=text], input[type=button] {
     color: var(--dark-textbox);
 }
 
+
+input[type=button]
+{
+    height: 22px;
+    cursor: pointer;
+}
+
 .h-layout {
     display: flex;
-    
+    height: 100%;
     padding-bottom: 4px;
 }
 
