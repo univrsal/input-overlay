@@ -60,6 +60,7 @@ class config {
         this.selected_elements = [];
         this.selecting = false;
         this.dragging = false;
+        this.allow_arrow_movement = true;
         this.drag_selection = new r4(); // Mouse dragged selection in screen space
         this.selection_rect = new r4(); // Actual selected element(s) in coordinate space
         this.drag_offset = new vec2();  // MousePos - SelectionRect (unscaled)
@@ -117,6 +118,41 @@ class config {
     {
         let vc = to_vc(event.key);
         this.elements.forEach(element => element.on_button_input(vc, state));
+        if (this.selected_elements.length > 0 && state) {
+            let old_pos = new vec2(this.selection_rect.x, this.selection_rect.y);
+            let moved = false;
+
+            switch (event.key) {
+            case "ArrowUp":
+                moved = true;
+                this.selection_rect.y--;
+                break;
+            case "ArrowDown":
+                moved = true;
+                this.selection_rect.y++;
+                break;
+            case "ArrowLeft":
+                moved = true;
+                this.selection_rect.x--;
+                break;
+            case "ArrowRight":
+                moved = true;
+                this.selection_rect.x++;
+                break;
+            }
+
+            if (moved) {
+                this.selection_rect.max();
+
+                let diff = old_pos.sub(this.selection_rect.x, this.selection_rect.y);
+                this.selected_elements.forEach(e => {
+                    let d = e.dim();
+                    e.set_pos(d.x - diff.x, d.y - diff.y);
+                });
+                if (this.selected_elements.length < 2)
+                    this.select_element(this.selected_elements[0]);
+            }
+        }
     }
 
     mouseup(event, cs)
@@ -133,6 +169,8 @@ class config {
         this.dragging = true;
         this.selecting = false;
     }
+
+    set_selection(element) { this.selection_rect = element.dim(); }
 
     mousedown(event, cs)
     {

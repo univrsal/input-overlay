@@ -47,6 +47,16 @@ class element {
 
     dim() { return new r4(this.data.pos[0], this.data.pos[1], this.data.mapping[2], this.data.mapping[3]); }
 
+    set_dim(pos, uvwh)
+    {
+        this.data.pos[0] = pos.x;
+        this.data.pos[1] = pos.y;
+        this.data.mapping[0] = uvwh.x;
+        this.data.mapping[1] = uvwh.y;
+        this.data.mapping[2] = uvwh.w;
+        this.data.mapping[3] = uvwh.h;
+    }
+
     x() { return this.data.pos[0]; }
     y() { return this.data.pos[1]; }
     u() { return this.data.mapping[0]; }

@@ -17,13 +17,19 @@
  *************************************************************************/
 
 $(function() {
-    $("#coord").on("keydown", e => {
+    $(".coord").on("keydown", e => {
         if (!e)
             var e = window.event;
-
-        e.preventDefault();
         if (e.keyCode == 13) {
-            login();
+            if (cfg !== null &&
+                cfg.selected_elements.length === 1) { // We only apply settings if a single element is selected
+                cfg.selected_elements[0].set_dim(
+                    new vec2($("#selected-element-x").val(), $("#selected-element-y").val()),
+                    new r4($("#selected-element-u").val(), $("#selected-element-v").val(),
+                           $("#selected-element-w").val(), $("#selected-element-h").val()));
+                cfg.set_selection(cfg.selected_elements[0]);
+            }
+            e.preventDefault();
         }
     });
 });
