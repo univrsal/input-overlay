@@ -33,7 +33,7 @@ class cs {
         $(canvas_id).on('click', e => this.click(e));
         $(canvas_id).on('mousemove', e => this.move(e));
         $(canvas_id).on('mouseup', e => this.mouseup(e));
-        $(canvas_id).on('contextmenu', function(e) {
+        $(canvas_id).on('contextmenu', e => {
             this.click(e);
             e.preventDefault();
             return false;

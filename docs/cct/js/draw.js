@@ -28,7 +28,7 @@ class painter {
         this.canvas_id = canvas_id;
         this.coordinate_system = new cs(canvas_id);
         this.draw_callback = draw_callback;
-        $(window).on('resize', this.resize_canvas);
+        $(window).on('resize', () => this.resize_canvas());
 
         requestAnimationFrame(seconds => this.update(seconds)); // start animation
     }
