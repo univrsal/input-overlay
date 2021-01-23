@@ -6,6 +6,7 @@ on:
     paths-ignore:
       - '**.md'
       - '**.ini'
+      - '**.css'
       - '**.js'
       - '**.html'
       - '**.json'
@@ -18,6 +19,7 @@ on:
     paths-ignore:
       - '**.md'
       - '**.ini'
+      - '**.css'
       - '**.js'
       - '**.html'
       - '**.json'
