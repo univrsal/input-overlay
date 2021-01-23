@@ -16,6 +16,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *************************************************************************/
 
+function parseIntSafe(val, fallback = 0)
+{
+    let parsed = parseInt(val);
+    return isNaN(parsed) ? fallback : parsed;
+}
+
 class vec2 {
     constructor(x = 0, y = 0)
     {
@@ -41,6 +47,12 @@ class vec2 {
         this.x = Math.min(Math.max(this.x, min_x), max_x);
         this.y = Math.min(Math.max(this.y, min_y), max_y);
     }
+
+    validate()
+    {
+        this.x = parseIntSafe(this.x);
+        this.y = parseIntSafe(this.y);
+    }
 };
 
 class r4 {
@@ -50,6 +62,14 @@ class r4 {
         this.y = y;
         this.w = w;
         this.h = h;
+    }
+
+    validate()
+    {
+        this.x = parseIntSafe(this.x);
+        this.y = parseIntSafe(this.y);
+        this.w = parseIntSafe(this.w);
+        this.h = parseIntSafe(this.h);
     }
 
     get_left() { return this.w < 0 ? this.x + this.w : this.x; }
