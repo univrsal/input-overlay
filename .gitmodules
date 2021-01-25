@@ -9,4 +9,4 @@
 	url = https://github.com/kwhat/libuiohook
 [submodule "deps/mongoose"]
 	path = deps/mongoose
-	url = https://github.com/cesanta/mongoose/
+	url = https://github.com/cesanta/mongoose
