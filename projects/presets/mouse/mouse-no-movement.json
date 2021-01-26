@@ -18,7 +18,7 @@
             "z_level": 1
         },
         {
-            "code": 60673,
+            "code": 1,
             "id": "lmb",
             "mapping": [
                 1,
@@ -30,11 +30,11 @@
                 2,
                 0
             ],
-            "type": 1,
+            "type": 3,
             "z_level": 1
         },
         {
-            "code": 60674,
+            "code": 2,
             "id": "rmb",
             "mapping": [
                 143,
@@ -46,7 +46,7 @@
                 146,
                 0
             ],
-            "type": 1,
+            "type": 3,
             "z_level": 1
         },
         {
@@ -61,11 +61,11 @@
                 117,
                 79
             ],
-            "type": 2,
+            "type": 4,
             "z_level": 1
         },
         {
-            "code": 60677,
+            "code": 5,
             "id": "smb1",
             "mapping": [
                 285,
@@ -77,11 +77,11 @@
                 0,
                 210
             ],
-            "type": 1,
+            "type": 3,
             "z_level": 1
         },
         {
-            "code": 60676,
+            "code": 4,
             "id": "smb2",
             "mapping": [
                 284,
@@ -93,7 +93,7 @@
                 11,
                 273
             ],
-            "type": 1,
+            "type": 3,
             "z_level": 1
         }
     ],
