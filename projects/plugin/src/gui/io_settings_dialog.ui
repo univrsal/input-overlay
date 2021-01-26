@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>487</width>
-    <height>676</height>
+    <height>821</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -35,7 +35,7 @@
       <enum>QTabWidget::Rounded</enum>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <property name="elideMode">
       <enum>Qt::ElideRight</enum>
@@ -103,6 +103,20 @@
         </layout>
        </item>
        <item>
+        <widget class="QRadioButton" name="rb_js">
+         <property name="text">
+          <string>Dialog.GamepadHook.Js</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QRadioButton" name="rb_by_id">
+         <property name="text">
+          <string>Dialog.GamepadHook.ById</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QCheckBox" name="cb_enable_overlay">
          <property name="text">
           <string>Dialog.InputOverlay.Enable</string>
@@ -151,13 +165,6 @@
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="lbl_new_entry">
-         <property name="text">
-          <string>Dialog.InputControl.NewEntry</string>
-         </property>
-        </widget>
-       </item>
-       <item>
         <widget class="QFrame" name="frame_entry">
          <property name="frameShape">
           <enum>QFrame::NoFrame</enum>
@@ -178,27 +185,34 @@
           <property name="bottomMargin">
            <number>0</number>
           </property>
-          <item>
-           <widget class="QComboBox" name="cb_text">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="editable">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="btn_refresh_cb">
-            <property name="text">
-             <string>Source.InputSource.Reload</string>
-            </property>
-           </widget>
-          </item>
          </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="lbl_new_entry">
+         <property name="text">
+          <string>Dialog.InputControl.NewEntry</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="btn_refresh_cb">
+         <property name="text">
+          <string>Source.InputSource.Reload</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QComboBox" name="cb_text">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="editable">
+          <bool>true</bool>
+         </property>
         </widget>
        </item>
        <item>
@@ -327,7 +341,7 @@
           <property name="geometry">
            <rect>
             <x>0</x>
-            <y>-258</y>
+            <y>0</y>
             <width>433</width>
             <height>630</height>
            </rect>

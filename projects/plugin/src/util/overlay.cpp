@@ -220,8 +220,14 @@ void overlay::load_element(const QJsonObject &obj, const bool debug)
     case ET_GAMEPAD_ID:
         new_element = new element_gamepad_id;
         break;
-    case ET_BUTTON:
-        new_element = new element_button;
+    case ET_KEYBOARD_KEY:
+        new_element = new element_keyboard_Key;
+        break;
+    case ET_MOUSE_BUTTON:
+        new_element = new element_mouse_button;
+        break;
+    case ET_GAMEPAD_BUTTON:
+        new_element = new element_gamepad_button;
         break;
     case ET_WHEEL:
         new_element = new element_wheel;
@@ -235,7 +241,7 @@ void overlay::load_element(const QJsonObject &obj, const bool debug)
     case ET_DPAD_STICK:
         new_element = new element_dpad;
         break;
-    case ET_MOUSE_STATS:
+    case ET_MOUSE_MOVEMENT:
         new_element = new element_mouse_movement;
         break;
     default:
@@ -264,13 +270,17 @@ const char *overlay::element_type_to_string(const element_type t)
     switch (t) {
     case ET_TEXTURE:
         return "Texture";
-    case ET_BUTTON:
-        return "Button";
+    case ET_KEYBOARD_KEY:
+        return "Keyboard key";
+    case ET_MOUSE_BUTTON:
+        return "Mouse button";
+    case ET_GAMEPAD_BUTTON:
+        return "Gamepad button";
     case ET_ANALOG_STICK:
         return "Analog stick";
     case ET_WHEEL:
         return "Scroll wheel";
-    case ET_MOUSE_STATS:
+    case ET_MOUSE_MOVEMENT:
         return "Mouse movement";
     case ET_TRIGGER:
         return "Trigger";

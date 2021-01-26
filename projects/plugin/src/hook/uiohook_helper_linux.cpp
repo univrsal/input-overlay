@@ -105,7 +105,7 @@ int hook_enable()
     int *hook_thread_status = (int *)malloc(sizeof(int));
     if (pthread_create(&hook_thread, &hook_thread_attr, hook_thread_proc, hook_thread_status) == 0) {
         /* Some POSIX revisions do not support pthread_setschedprio so we will
-               use pthread_setschedparam instead. */
+         * use pthread_setschedparam instead. */
         struct sched_param param = {.sched_priority = priority};
         if (pthread_setschedparam(hook_thread, SCHED_OTHER, &param) != 0) {
             blog(LOG_WARNING, "[input-overlay] %s [%u]: Could not set thread priority %i for thread 0x%lX!",

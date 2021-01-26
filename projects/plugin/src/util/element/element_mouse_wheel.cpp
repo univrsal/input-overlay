@@ -17,9 +17,9 @@
  *************************************************************************/
 
 #include "element_mouse_wheel.hpp"
-#include <keycodes.h>
-
+#include "src/util/log.h"
 #include "src/sources/input_source.hpp"
+#include <keycodes.h>
 
 element_wheel::element_wheel() : element_texture(ET_WHEEL), m_mappings{}
 {
@@ -29,7 +29,6 @@ element_wheel::element_wheel() : element_texture(ET_WHEEL), m_mappings{}
 void element_wheel::load(const QJsonObject &obj)
 {
     element_texture::load(obj);
-    m_keycode = VC_MOUSE_WHEEL;
     auto i = 1;
     for (auto &map : m_mappings) {
         map = m_mapping;
@@ -40,8 +39,9 @@ void element_wheel::load(const QJsonObject &obj)
 
 void element_wheel::draw(gs_effect_t *effect, gs_image_file_t *image, sources::overlay_settings *settings)
 {
-    if (settings->data.mouse[VC_MOUSE_WHEEL])
+    if (settings->data.mouse[MOUSE_BUTTON3])
         element_texture::draw(effect, image, &m_mappings[WHEEL_MAP_MIDDLE]);
+    binfo("bruh: %zu", settings->data.last_event.time);
 
     switch (settings->data.last_wheel_event.rotation) {
     case WHEEL_UP:

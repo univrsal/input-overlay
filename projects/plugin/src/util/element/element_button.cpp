@@ -29,15 +29,26 @@ void element_button::load(const QJsonObject &obj)
     m_pressed.y = m_mapping.y + m_mapping.cy + CFG_INNER_BORDER;
 }
 
-void element_button::draw(gs_effect_t *effect, gs_image_file_t *image, sources::overlay_settings *settings)
+void element_keyboard_Key::draw(gs_effect_t *effect, gs_image_file_t *image, sources::overlay_settings *settings)
 {
-    /* TODO: this should only check either mouse buttons,
-     * keyboard keys or gamepad buttons
-     */
-    if (settings->data.gamepad_buttons[m_keycode] || settings->data.keyboard[m_keycode] ||
-        settings->data.mouse[m_keycode]) {
+    if (settings->data.keyboard[m_keycode])
         element_texture::draw(effect, image, &m_pressed);
-    } else {
+    else
         element_texture::draw(effect, image, nullptr);
-    }
+}
+
+void element_mouse_button::draw(gs_effect_t *effect, gs_image_file_t *image, sources::overlay_settings *settings)
+{
+    if (settings->data.mouse[m_keycode])
+        element_texture::draw(effect, image, &m_pressed);
+    else
+        element_texture::draw(effect, image, nullptr);
+}
+
+void element_gamepad_button::draw(gs_effect_t *effect, gs_image_file_t *image, sources::overlay_settings *settings)
+{
+    if (settings->data.gamepad_buttons[m_keycode])
+        element_texture::draw(effect, image, &m_pressed);
+    else
+        element_texture::draw(effect, image, nullptr);
 }

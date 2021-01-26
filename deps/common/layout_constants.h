@@ -95,12 +95,14 @@ enum button_state { BS_RELEASED = 0, BS_PRESSED = 1 };
 enum element_type {
     ET_INVALID = -1,
     ET_TEXTURE,
-    ET_BUTTON,
+    ET_KEYBOARD_KEY,
+    ET_GAMEPAD_BUTTON,
+    ET_MOUSE_BUTTON,
     ET_WHEEL,
-    ET_MOUSE_STATS,
     ET_ANALOG_STICK,
     ET_TRIGGER,
     /* Shows game pad number 1 through 4 */
     ET_GAMEPAD_ID,
     ET_DPAD_STICK,
+    ET_MOUSE_MOVEMENT
 };

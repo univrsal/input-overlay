@@ -21,12 +21,11 @@
 #include <keycodes.h>
 #include <util.hpp>
 
-element_mouse_movement::element_mouse_movement() : element_texture(ET_MOUSE_STATS) {}
+element_mouse_movement::element_mouse_movement() : element_texture(ET_MOUSE_MOVEMENT) {}
 
 void element_mouse_movement::load(const QJsonObject &obj)
 {
     element_texture::load(obj);
-    m_keycode = VC_MOUSE_DATA;
     m_radius = static_cast<uint8_t>(obj[CFG_MOUSE_RADIUS].toInt());
     m_movement_type = obj[CFG_MOUSE_TYPE].toBool() ? MM_DOT : MM_ARROW;
 }

@@ -36,10 +36,11 @@ inline void input_source::update(obs_data_t *settings)
     m_settings.selected_source = obs_data_get_int(settings, S_INPUT_SOURCE);
 
     const auto *config = obs_data_get_string(settings, S_LAYOUT_FILE);
+    auto old_image_file = m_settings.image_file;
     m_settings.image_file = obs_data_get_string(settings, S_OVERLAY_FILE);
 
-    if (m_settings.layout_file != config) /* Only reload config file if path changed */
-    {
+    /* Only reload config file if path changed */
+    if (m_settings.layout_file != config || m_settings.image_file != old_image_file) {
         m_settings.layout_file = config;
         m_overlay->load();
     }

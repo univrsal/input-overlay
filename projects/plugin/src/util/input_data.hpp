@@ -26,6 +26,7 @@
 /* Holds all input data for a computer, local or remote */
 struct input_data {
     std::mutex m_mutex;
+
     /* State of all keyboard keys*/
     std::map<uint16_t, bool> keyboard{};
 
@@ -37,6 +38,7 @@ struct input_data {
     mouse_event_data last_mouse_pressed{}, last_mouse_released{}, last_mouse_clicked{}, last_mouse_movement{},
         last_mouse_dragged{};
     mouse_wheel_event_data last_wheel_event{};
+    uiohook_event last_event{};
 
     /* Gamepad data */
     std::map<uint16_t, float> gamepad_axis{};

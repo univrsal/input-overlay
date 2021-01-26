@@ -44,6 +44,8 @@ void input_data::copy(const input_data *other)
 void input_data::dispatch_uiohook_event(const uiohook_event *event)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
+    last_event = *event;
+
     switch (event->type) {
     case EVENT_KEY_PRESSED:
         last_key_pressed = event->data.keyboard;
