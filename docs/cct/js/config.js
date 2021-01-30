@@ -65,7 +65,7 @@ class config {
         this.selection_rect = new r4(); // Actual selected element(s) in coordinate space
         this.drag_offset = new vec2();  // MousePos - SelectionRect (unscaled)
         this.painter = painter;
-
+        this.last_button = "";
         $(canvas_id).on('mousemove', e => this.move(e, this.painter.cs()));
         $(canvas_id).on('mouseup', e => this.mouseup(e, this.painter.cs()));
         $(canvas_id).on('mousedown', e => this.mousedown(e, this.painter.cs()));
@@ -110,12 +110,26 @@ class config {
             let r = cs.translate_rect_to_screen(this.selection_rect);
             painter.rect_outline(r.x + 0.5, r.y + 0.5, r.w - 1, r.h - 1, 1, "#ff0000ff");
         }
-
         ctx.restore();
+        painter.text("Button id: " + this.last_button, 220, 50);
+
+    }
+
+    delete_selection()
+    {
+        let new_elements = this.elements.filter(function(to_filter) {
+            return this.selected_elements.find(function(to_find) {
+                return to_filter.id() === to_find.id();
+            }) === undefined;
+        }, this);
+        this.elements = new_elements;
+        this.deselect();
     }
 
     on_button(event, state)
     {
+        if (state)
+            this.last_button = event.key;
         let vc = to_vc(event.key);
         this.elements.forEach(element => element.on_button_input(vc, state));
         if (this.selected_elements.length > 0 && state) {
@@ -138,6 +152,16 @@ class config {
             case "ArrowRight":
                 moved = true;
                 this.selection_rect.x++;
+                break;
+            case "Delete":
+                if (this.selected_elements.length > 1) {
+                    // Ask for comfirmation when deleting more than one element
+                    if (confirm("You are about to delete " + this.selected_elements.length + " elements. Are you sure?")) {
+                        this.delete_selection();
+                    }
+                } else {
+                    this.delete_selection();
+                }
                 break;
             }
 
@@ -223,6 +247,8 @@ class config {
         $("#selected-element-v").val(0);
         $("#selected-element-id").val("");
         $("#selected-element-layer").val(0);
+        this.selected_elements = [];
+        this.selection_rect.reset();
     }
 
     select_element(e)
