@@ -221,6 +221,8 @@ class config {
         $("#selected-element-h").val(0);
         $("#selected-element-u").val(0);
         $("#selected-element-v").val(0);
+        $("#selected-element-id").val("");
+        $("#selected-element-layer").val(0);
     }
 
     select_element(e)
@@ -231,6 +233,8 @@ class config {
         $("#selected-element-h").val(e.h());
         $("#selected-element-u").val(e.u());
         $("#selected-element-v").val(e.v());
+        $("#selected-element-id").val(e.id());
+        $("#selected-element-layer").val(e.layer());
     }
 
     move(event, cs)

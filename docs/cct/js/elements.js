@@ -57,6 +57,7 @@ class element {
         this.data.mapping[3] = uvwh.h;
     }
 
+    id() { return this.data.id; }
     x() { return this.data.pos[0]; }
     y() { return this.data.pos[1]; }
     u() { return this.data.mapping[0]; }

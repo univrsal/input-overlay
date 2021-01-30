@@ -159,6 +159,6 @@ class cs {
     resize(painter)
     {
         this.dimensions =
-            new r2($('#main-canvas').attr("width") - this.origin.x, $('#main-canvas').attr("height") - this.origin.y);
+            new r2($(this.canvas_id).attr("width") - this.origin.x, $(this.canvas_id).attr("height") - this.origin.y);
     }
 };
