@@ -26,8 +26,9 @@ class hook;
 }
 
 namespace libgamepad {
-
+extern uint16_t flags;
 extern uint16_t last_input;
+extern uint16_t last_input_value;
 extern uint64_t last_input_time;
 extern std::mutex last_input_mutex;
 extern std::shared_ptr<gamepad::hook> hook_instance;

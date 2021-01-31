@@ -31,8 +31,8 @@ QString util_get_data_file(const QString &file_name)
     }
     home.cd(".config/input-overlay");
 #else
-    if (!home.mkpath("input-ovleray")) {
-        berr("Couldn't create .config/input-overlay directory!");
+    if (!home.mkpath("input-overlay")) {
+        berr("Couldn't create ~/input-overlay directory!");
     }
     home.cd("input-overlay");
 #endif

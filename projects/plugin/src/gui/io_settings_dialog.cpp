@@ -23,7 +23,6 @@
 #include "../util/config.hpp"
 #include "../util/lang.h"
 #include "../util/obs_util.hpp"
-#include "../util/settings.h"
 #include "../hook/gamepad_hook_helper.hpp"
 #include <libgamepad.hpp>
 #include <QDesktopServices>
@@ -34,6 +33,26 @@
 #include <string>
 #include <util/platform.h>
 #include <QMessageBox>
+
+static QPair<const char *, uint16_t> button_map[] = {{"txt_a", gamepad::button::A},
+                                                     {"txt_b", gamepad::button::B},
+                                                     {"txt_x", gamepad::button::X},
+                                                     {"txt_y", gamepad::button::Y},
+                                                     {"txt_rb", gamepad::button::RB},
+                                                     {"txt_lb", gamepad::button::LB},
+                                                     {"txt_guide", gamepad::button::GUIDE},
+                                                     {"txt_analog_left", gamepad::button::L_THUMB},
+                                                     {"txt_analog_right", gamepad::button::R_THUMB},
+                                                     {"txt_back", gamepad::button::BACK},
+                                                     {"txt_start", gamepad::button::START},
+                                                     {"txt_dpad_up", gamepad::button::DPAD_UP},
+                                                     {"txt_dpad_down", gamepad::button::DPAD_DOWN},
+                                                     {"txt_dpad_left", gamepad::button::DPAD_LEFT},
+                                                     {"txt_dpad_right", gamepad::button::DPAD_RIGHT}};
+static QPair<const char *, uint16_t> axis_map[] = {
+    {"txt_rx", gamepad::axis::LEFT_STICK_X},  {"txt_ry", gamepad::axis::LEFT_STICK_Y},
+    {"txt_lx", gamepad::axis::RIGHT_STICK_X}, {"txt_ly", gamepad::axis::RIGHT_STICK_Y},
+    {"txt_lt", gamepad::axis::LEFT_TRIGGER},  {"txt_rt", gamepad::axis::RIGHT_TRIGGER}};
 
 io_settings_dialog *settings_dialog = nullptr;
 
@@ -102,6 +121,10 @@ io_settings_dialog::io_settings_dialog(QWidget *parent) : QDialog(parent, Qt::Di
     ui->rb_dinput->setVisible(false);
     ui->rb_xinput->setVisible(false);
 #endif
+#ifndef __linux__
+    ui->rb_js->setVisible(false);
+    ui->rb_by_id->setVisible(false);
+#endif
 }
 
 void io_settings_dialog::showEvent(QShowEvent *event)
@@ -136,7 +159,8 @@ void io_settings_dialog::RefreshUi()
     if (libgamepad::state) {
         gamepad::device_list devs;
         {
-            std::lock_guard<std::mutex> lock(*libgamepad::hook_instance->get_mutex());
+            auto &mutex = *libgamepad::hook_instance->get_mutex();
+            std::lock_guard<std::mutex> lock(mutex);
             devs = libgamepad::hook_instance->get_devices();
         }
 
@@ -166,8 +190,18 @@ void io_settings_dialog::RefreshUi()
                 lineEditField = it.next();
                 if (auto lineE = qobject_cast<QLineEdit *>(lineEditField)) {
                     if (lineE->hasFocus()) {
-                        /* Set the binding of this textbox */
-                        lineE->setText(QString::number(libgamepad::last_input));
+                        // LT and RT are the same axis in DInput, so we save the polarity here
+                        if (libgamepad::flags & gamepad::hook_type::DIRECT_INPUT &&
+                            (lineE->objectName() == "txt_lt" ||
+                            lineE->objectName() == "txt_rt"))
+                        {
+                            /* Set the binding of this textbox */
+                            lineE->setText((libgamepad::last_input_value < 0 ? "-" : "+") +  QString::number(libgamepad::last_input));
+                        } else {
+                            /* Set the binding of this textbox */
+                            lineE->setText(QString::number(libgamepad::last_input));
+                        }
+                        
                         break;
                     }
                 }
@@ -252,6 +286,7 @@ void io_settings_dialog::FormAccepted()
     io_config::io_window_filters.write_to_config();
 
     io_config::use_dinput = ui->rb_dinput->isChecked();
+    io_config::save();
 }
 
 io_settings_dialog::~io_settings_dialog()
@@ -275,7 +310,8 @@ void io_settings_dialog::load_bindings()
 {
     gamepad::bindings_list bindings;
     {
-        std::lock_guard<std::mutex> lock(*libgamepad::hook_instance->get_mutex());
+        auto &mutex = *libgamepad::hook_instance->get_mutex();
+        std::lock_guard<std::mutex> lock(mutex);
         bindings = libgamepad::hook_instance->get_bindings();
     }
     ui->cb_bindings->clear();
@@ -283,26 +319,6 @@ void io_settings_dialog::load_bindings()
         ui->cb_bindings->addItem(utf8_to_qt(binding->get_name().c_str()));
     }
 }
-
-static QPair<const char *, uint16_t> button_map[] = {{"txt_a", gamepad::button::A},
-                                                     {"txt_b", gamepad::button::B},
-                                                     {"txt_x", gamepad::button::X},
-                                                     {"txt_y", gamepad::button::Y},
-                                                     {"txt_rb", gamepad::button::RB},
-                                                     {"txt_lb", gamepad::button::LB},
-                                                     {"txt_guide", gamepad::button::GUIDE},
-                                                     {"txt_analog_left", gamepad::button::L_THUMB},
-                                                     {"txt_analog_right", gamepad::button::R_THUMB},
-                                                     {"txt_back", gamepad::button::BACK},
-                                                     {"txt_start", gamepad::button::START},
-                                                     {"txt_dpad_up", gamepad::button::DPAD_UP},
-                                                     {"txt_dpad_down", gamepad::button::DPAD_DOWN},
-                                                     {"txt_dpad_left", gamepad::button::DPAD_LEFT},
-                                                     {"txt_dpad_right", gamepad::button::DPAD_RIGHT}};
-static QPair<const char *, uint16_t> axis_map[] = {
-    {"txt_rx", gamepad::axis::LEFT_STICK_X},  {"txt_ry", gamepad::axis::LEFT_STICK_Y},
-    {"txt_lx", gamepad::axis::RIGHT_STICK_X}, {"txt_ly", gamepad::axis::RIGHT_STICK_Y},
-    {"txt_lt", gamepad::axis::LEFT_TRIGGER},  {"txt_rt", gamepad::axis::RIGHT_TRIGGER}};
 
 int find_by_code(const QPair<const char *, uint16_t> &needle, const gamepad::cfg::mappings &haystack)
 {
@@ -315,6 +331,8 @@ int find_by_code(const QPair<const char *, uint16_t> &needle, const gamepad::cfg
 
 void io_settings_dialog::load_binding(std::shared_ptr<gamepad::cfg::binding> binding)
 {
+    auto dinput_binding = dynamic_cast<gamepad::cfg::binding_dinput*>(binding.get());
+
     for (const auto &pair : button_map) {
         // transfer binds to textboxes
         auto text_box = findChild<QLineEdit *>(pair.first);
@@ -324,14 +342,24 @@ void io_settings_dialog::load_binding(std::shared_ptr<gamepad::cfg::binding> bin
                 text_box->setText(QString::number(native_value));
         }
     }
-
+    
     for (const auto &pair : axis_map) {
         // transfer binds to textboxes
         auto text_box = findChild<QLineEdit *>(pair.first);
         if (text_box) {
             auto native_value = find_by_code(pair, binding->get_axis_mappings());
-            if (native_value > -1)
-                text_box->setText(QString::number(native_value));
+            if (native_value > -1) {
+                QString val = QString::number(native_value);
+
+                // This is bad, but so is DirectInput
+                if (dinput_binding) {
+                    if (text_box->objectName() == "txt_lt")
+                        val = val.prepend(dinput_binding->left_trigger_polarity() > 0 ? "+" : "-");
+                    else if (text_box->objectName() == "txt_rt")
+                        val = val.prepend(dinput_binding->right_trigger_polarity() > 0 ? "+" : "-");
+                }
+                text_box->setText(val);
+            }
         }
     }
 
@@ -352,9 +380,10 @@ void io_settings_dialog::on_btn_add_bind_clicked()
 
     /* The callback locks the mutex so we cant lock it here */
     ui->cb_bindings->addItem(ui->txt_new_binding_name->text());
-    std::lock_guard<std::mutex> lock(*libgamepad::hook_instance->get_mutex());
+    auto &mutex = *libgamepad::hook_instance->get_mutex();
+    std::lock_guard<std::mutex> lock(mutex);
 
-    auto dev = libgamepad::hook_instance->get_device_by_id(qt_to_utf8(ui->cb_device->currentData().toString()));
+    auto dev = get_selected_device();
     if (dev) {
         auto has_custom_binding = libgamepad::hook_instance->get_binding_by_name(dev->get_binding()->get_name()) !=
                                   nullptr;
@@ -365,10 +394,12 @@ void io_settings_dialog::on_btn_add_bind_clicked()
         if (has_custom_binding) {
             load_binding(dev->get_binding());
         } else {
-            auto binding = libgamepad::hook_instance->get_binding_by_name(qt_to_utf8(ui->cb_bindings->currentText()));
+            auto binding = get_selected_binding();
             if (!binding) {
                 /* No binding exists with this name so we create it */
                 binding = libgamepad::hook_instance->make_native_binding();
+                binding->set_name(qt_to_utf8(ui->txt_new_binding_name->text()));
+                libgamepad::hook_instance->add_binding(binding);
             }
             dev->set_binding(binding);
         }
@@ -379,34 +410,43 @@ void io_settings_dialog::on_cb_device_currentIndexChanged(int)
 {
     std::shared_ptr<gamepad::device> dev;
     {
-        std::lock_guard<std::mutex> lock(*libgamepad::hook_instance->get_mutex());
-        dev = libgamepad::hook_instance->get_device_by_id(qt_to_utf8(ui->cb_device->currentData().toString()));
+        auto &mutex = *libgamepad::hook_instance->get_mutex();
+        std::lock_guard<std::mutex> lock(mutex);
+        dev = get_selected_device();
     }
     if (dev)
         load_binding(dev->get_binding());
 }
 
-void io_settings_dialog::on_cb_bindings_currentIndexChanged(int index)
+void io_settings_dialog::on_cb_bindings_currentIndexChanged(int)
 {
-    std::shared_ptr<gamepad::device> dev;
-    std::shared_ptr<gamepad::cfg::binding> binding;
-
-    {
-        std::lock_guard<std::mutex> lock(*libgamepad::hook_instance->get_mutex());
-        dev = libgamepad::hook_instance->get_device_by_id(qt_to_utf8(ui->cb_device->currentData().toString()));
-        binding = libgamepad::hook_instance->get_binding_by_name(qt_to_utf8(ui->cb_bindings->currentText()));
-    }
+    auto &mutex = *libgamepad::hook_instance->get_mutex();
+    std::lock_guard<std::mutex> lock(mutex);
+    auto binding = get_selected_binding();
+    auto dev = get_selected_device();
 
     if (dev && binding)
         dev->set_binding(binding);
+    load_binding(binding);
 }
 
 void io_settings_dialog::on_box_binding_accepted()
 {
-    auto binding = libgamepad::hook_instance->get_binding_by_name(qt_to_utf8(ui->cb_bindings->currentText()));
+    auto &mutex = *libgamepad::hook_instance->get_mutex();
+    std::lock_guard<std::mutex> lock(mutex);
+    auto binding = get_selected_binding();
+    
+    if (!binding) {
+        /* No binding exists with this name so we create it */
+        binding = libgamepad::hook_instance->make_native_binding();
+        binding->set_name(qt_to_utf8(ui->cb_bindings->currentText()));
+        libgamepad::hook_instance->add_binding(binding);
+    }
+
+    auto dinput_binding = dynamic_cast<gamepad::cfg::binding_dinput*>(binding.get());
     /* Read bindings from UI and set them to the current device bindings */
     for (const auto &pair : button_map) {
-        // transfer binds to textboxes
+        // transfer binds from ui
         auto text_box = findChild<QLineEdit *>(pair.first);
         if (text_box) {
             bool ok = false;
@@ -417,13 +457,32 @@ void io_settings_dialog::on_box_binding_accepted()
     }
 
     for (const auto &pair : axis_map) {
-        // transfer binds to textboxes
+        // transfer binds from ui
         auto text_box = findChild<QLineEdit *>(pair.first);
         if (text_box) {
             bool ok = false;
-            auto i = text_box->text().toInt(&ok);
-            if (ok)
+            auto i = abs(text_box->text().toInt(&ok)); // ignore -/+ used for direct input
+            if (ok) {
                 binding->get_axis_mappings()[i] = pair.second;
+
+                // This is bad, but so is DirectInput
+                if (dinput_binding) {
+                    if (text_box->objectName() == "txt_lt")
+                        dinput_binding->left_trigger_polarity() = text_box->text().contains("-") ? -1 : 1;
+                    else if (text_box->objectName() == "txt_rt")
+                        dinput_binding->right_trigger_polarity() = text_box->text().contains("-") ? -1 : 1;
+                }
+            }
         }
     }
+}
+
+std::shared_ptr<gamepad::device> io_settings_dialog::get_selected_device() const
+{
+    return libgamepad::hook_instance->get_device_by_id(qt_to_utf8(ui->cb_device->currentData().toString()));
+}
+
+std::shared_ptr<gamepad::cfg::binding> io_settings_dialog::get_selected_binding() const
+{
+    return libgamepad::hook_instance->get_binding_by_name(qt_to_utf8(ui->cb_bindings->currentText()));
 }
