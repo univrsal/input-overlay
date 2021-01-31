@@ -25,8 +25,8 @@ add_definitions(-DBUILD_TIME="${TODAY}")
 add_definitions(-DINPUT_OVERLAY_VERSION="${INPUT_OVERLAY_VERSION}")
 
 #if (WIN32)
-   configure_file(${CMAKE_SOURCE_DIR}/package/installer-plugin.iss.in
-       ${CMAKE_SOURCE_DIR}/package/installer-plugin.iss)
+   configure_file(${CMAKE_SOURCE_DIR}/package/installer.iss.in
+       ${CMAKE_SOURCE_DIR}/package/installer.iss)
 #endif()
 
 if (MSVC)
