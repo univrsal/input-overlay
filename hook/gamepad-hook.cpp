@@ -93,6 +93,15 @@ void* hook_method(void*)
                 case PAD_AXIS_RT:
                     pad.set_key(axis > 0.3f, PAD_RT);
                     break;
+                /* In case the dpad is a hat */
+                case PAD_AXIS_DX:
+                    pad.set_key(axis < -0.3f, PAD_DPAD_LEFT);
+                    pad.set_key(axis > 0.3f, PAD_DPAD_RIGHT);
+                    break;
+                case PAD_AXIS_DY:
+                    pad.set_key(axis < -0.3f, PAD_DPAD_UP);
+                    pad.set_key(axis > 0.3f, PAD_DPAD_DOWN);
+                    break;
                 case PAD_AXIS_LX:
                     pad.l_x = axis;
                     break;
