@@ -16,16 +16,99 @@
  * along with input-overlay.  If not, see <http://www.gnu.org/licenses/>.
  */
 
- @import url("colors.css");
+@import url("colors.css");
 
+.blurred {
+    filter: blur(4px);
+    -webkit-filter: blur(4px);
+}
 
-#element-dialog
-{
+.left-column {
+    width: 180pt;
+}
+
+.modal-dialog {
+    position: fixed;
+    background-color: rgba(20, 20, 20, 0.5);
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    display: none;
+    margin-left: 35px;
+    margin-right: 35px;
+    z-index: 999;
+    opacity: 0;
+    pointer-events: none;
+    -webkit-transition: all 0.5s;
+    -moz-transition: all 0.5s;
+    transition: all 0.5s;
+}
+
+.modal-window>div {
+    border-radius: 6px;
+    position: relative;
+    margin: 10% auto;
+    padding: 8px;
+    border-style: solid;
+    border-width: 1px;
+    /* box-shadow: 0px 0px 9px 9px #b6b5b546; */
+}
+
+/* The container <div> - needed to position the dropdown content */
+.dropdown {
+    margin-top: 50px;
+    position: relative;
+    display: inline-block;
+}
+
+/* Dropdown Content (Hidden by Default) */
+.dropdown-content {
+    display: none;
+    transform: translate3d(0%, +18pt, 0);
+    position: absolute;
+    z-index: 1;
+}
+
+/* Links inside the dropdown */
+.dropdown-content a {
+    text-decoration: none;
+    display: block;
+    padding-left: 5px;
+    padding-right: 5px;
+    padding-top: 2px !important;
+    padding-bottom: 2px !important;
+}
+
+/* Change color of dropdown links on hover */
+.dropdown-content a:hover {
+    background-color: var(--theme-accent-hovered);
+
+}
+
+/* Show the dropdown menu (use JS to add this class to the .dropdown-content container when the user clicks on the dropdown button) */
+.show {
+    display: block;
+}
+
+#element-dialog {
     width: 130pt;
 }
 
-.dialog {
-    overflow: hidden;
+.dropdown-content {
+    padding-bottom: 3px;
+    padding-top: 3px;
+    border-radius: 6px;
+    border-style: solid;
+    border-width: 1px;
+    
+    background-color: var(--dark-window-bg);
+    background-image: var(--dark-window-gradient);
+    border-color: var(--dark-window-border);
+
+}
+
+.dialog, .modal-dialog {
     padding: 7px;
     border-radius: 6px;
     border-style: solid;
@@ -36,7 +119,7 @@
     transform: translate3d(0%, -50%, 0);
     position: absolute;
     background-color: var(--dark-window-bg);
-    background-image: var(--dark-window-gradient); 
+    background-image: var(--dark-window-gradient);
     border-color: var(--dark-window-border);
 }
 
@@ -46,17 +129,24 @@
     padding: 0px 4px 6px 4px;
 }
 
-.noselect, p, label {
+.noselect,
+p,
+label,
+.dropdown-content a {
     -webkit-touch-callout: none; /* ios safari */
     -webkit-user-select: none; /* safari */
-     -khtml-user-select: none; /* konqueror html */
-       -moz-user-select: none; /* old versions of firefox */
-        -ms-user-select: none; /* internet explorer/edge */
-            user-select: none; /* non-prefixed version, currently
+    -khtml-user-select: none; /* konqueror html */
+    -moz-user-select: none; /* old versions of firefox */
+    -ms-user-select: none; /* internet explorer/edge */
+    user-select: none; /* non-prefixed version, currently
                                   supported by chrome, opera and firefox */
 }
 
-.label, p, label, input[type=button] {
+.label,
+.dropdown-content a,
+p,
+label,
+input[type="button"] {
     font-family: "Arial", Times, serif;
     font-size: 11pt;
     color: var(--dark-text);
@@ -64,8 +154,7 @@
     margin-top: 0px;
 }
 
-input[type=text]
-{
+input[type="text"] {
     height: 18px;
 }
 
@@ -74,7 +163,8 @@ input[type="text" i] {
     padding-right: 3px;
 }
 
-input[type=text], input[type=button] {
+input[type="text"],
+input[type="button"] {
     border-radius: 3px;
     border-style: solid none none none;
     border-width: 1px;
@@ -83,9 +173,7 @@ input[type=text], input[type=button] {
     color: var(--dark-textbox);
 }
 
-
-input[type=button]
-{
+input[type="button"] {
     height: 22px;
     cursor: pointer;
 }
@@ -100,7 +188,8 @@ input[type=button]
     width: 15%;
 }
 
-.value > p, .value > input {
+.value > p,
+.value > input {
     display: inline;
 }
 
@@ -109,7 +198,8 @@ input[type=button]
     padding-top: 3.5px;
     width: 25px;
 }
-.value > input, .fullwidth {
+.value > input,
+.fullwidth {
     width: 100%;
 }
 

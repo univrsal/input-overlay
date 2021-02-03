@@ -112,15 +112,13 @@ class config {
         }
         ctx.restore();
         painter.text("Button id: " + this.last_button, 220, 50);
-
     }
 
     delete_selection()
     {
         let new_elements = this.elements.filter(function(to_filter) {
-            return this.selected_elements.find(function(to_find) {
-                return to_filter.id() === to_find.id();
-            }) === undefined;
+            return this.selected_elements.find(function(to_find) { return to_filter.id() === to_find.id(); }) ===
+                   undefined;
         }, this);
         this.elements = new_elements;
         this.deselect();
@@ -156,7 +154,8 @@ class config {
             case "Delete":
                 if (this.selected_elements.length > 1) {
                     // Ask for comfirmation when deleting more than one element
-                    if (confirm("You are about to delete " + this.selected_elements.length + " elements. Are you sure?")) {
+                    if (confirm("You are about to delete " + this.selected_elements.length +
+                                " elements. Are you sure?")) {
                         this.delete_selection();
                     }
                 } else {

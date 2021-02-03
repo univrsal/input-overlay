@@ -72,7 +72,13 @@ class r4 {
         this.h = parseIntSafe(this.h);
     }
 
-    reset() { this.x = 0; this.y = 0; this.w = 0; this.h = 0; }
+    reset()
+    {
+        this.x = 0;
+        this.y = 0;
+        this.w = 0;
+        this.h = 0;
+    }
 
     get_left() { return this.w < 0 ? this.x + this.w : this.x; }
 

@@ -18,14 +18,16 @@
 
 let element_types = {
     TEXTURE: 0,
-    BUTTON: 1,
-    WHEEL: 2,
-    /* MOUSE_STATS, */
-    ANALOG_STICK: 3,
-    ET_TRIGGER: 4,
+    KEYBOARD_KEY: 1,
+    GAMEPAD_BUTTON: 2,
+    MOUSE_BUTTON: 3,
+    WHEEL: 4,
+    ANALOG_STICK: 5,
+    TRIGGER: 6,
     /* Shows game pad number 1 through 4 */
-    ET_GAMEPAD_ID: 5,
-    ET_DPAD_STICK: 6,
+    GAMEPAD_ID: 7,
+    DPAD_STICK: 8,
+    MOUSE_MOVEMENT: 9
 };
 
 let constants = {texture_space: 3};
@@ -85,7 +87,7 @@ class texture extends element {
                            this.data.mapping[3] * cs.scale, this.data.mapping[0], this.data.mapping[1],
                            this.data.mapping[2], this.data.mapping[3]);
     }
-}
+};
 
 class button extends texture {
     constructor(json)
@@ -93,6 +95,7 @@ class button extends texture {
         super(json);
         this.pressed = false;
     }
+    on_button_input(vc, state) {}
 
     draw(painter)
     {
@@ -107,15 +110,22 @@ class button extends texture {
             super.draw(painter, cs);
         }
     }
+};
+
+class keyboard_button extends button {
+    constructor(json)
+    {
+        super(json);
+    }
 
     on_button_input(vc, state)
     {
         if (vc == this.data["code"])
             this.pressed = state;
     }
-}
+};
 
-element_map.set(element_types.BUTTON, json => { return new button(json); });
+element_map.set(element_types.KEYBOARD_KEY, json => { return new keyboard_button(json); });
 element_map.set(element_types.TEXTURE, json => { return new element(json); });
 
 function create_element(json)
