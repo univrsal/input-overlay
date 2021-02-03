@@ -35,7 +35,7 @@
       <enum>QTabWidget::Rounded</enum>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <property name="elideMode">
       <enum>Qt::ElideRight</enum>
@@ -342,8 +342,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>433</width>
-            <height>630</height>
+            <width>447</width>
+            <height>559</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -402,7 +402,7 @@
                  </sizepolicy>
                 </property>
                 <property name="inputMask">
-                 <string>009</string>
+                 <string>#00009</string>
                 </property>
                 <property name="readOnly">
                  <bool>false</bool>
@@ -452,7 +452,7 @@
                  </sizepolicy>
                 </property>
                 <property name="inputMask">
-                 <string>009</string>
+                 <string>#00009</string>
                 </property>
                 <property name="readOnly">
                  <bool>false</bool>
@@ -502,7 +502,7 @@
                  </sizepolicy>
                 </property>
                 <property name="inputMask">
-                 <string>009</string>
+                 <string>#00009</string>
                 </property>
                 <property name="readOnly">
                  <bool>false</bool>
@@ -552,7 +552,7 @@
                  </sizepolicy>
                 </property>
                 <property name="inputMask">
-                 <string>009</string>
+                 <string>#00009</string>
                 </property>
                 <property name="readOnly">
                  <bool>false</bool>
@@ -599,7 +599,7 @@
                  </sizepolicy>
                 </property>
                 <property name="inputMask">
-                 <string>009</string>
+                 <string>#00009</string>
                 </property>
                 <property name="readOnly">
                  <bool>false</bool>
@@ -649,7 +649,7 @@
                  </sizepolicy>
                 </property>
                 <property name="inputMask">
-                 <string>009</string>
+                 <string>#00009</string>
                 </property>
                 <property name="readOnly">
                  <bool>false</bool>
@@ -699,7 +699,7 @@
                  </sizepolicy>
                 </property>
                 <property name="inputMask">
-                 <string>009</string>
+                 <string>#00009</string>
                 </property>
                 <property name="readOnly">
                  <bool>false</bool>
@@ -749,7 +749,7 @@
                  </sizepolicy>
                 </property>
                 <property name="inputMask">
-                 <string>009</string>
+                 <string>#00009</string>
                 </property>
                 <property name="readOnly">
                  <bool>false</bool>
@@ -796,7 +796,7 @@
                  </sizepolicy>
                 </property>
                 <property name="inputMask">
-                 <string>009</string>
+                 <string>#00009</string>
                 </property>
                 <property name="readOnly">
                  <bool>false</bool>
@@ -843,7 +843,7 @@
                  </sizepolicy>
                 </property>
                 <property name="inputMask">
-                 <string>009</string>
+                 <string>#00009</string>
                 </property>
                 <property name="readOnly">
                  <bool>false</bool>
@@ -890,7 +890,7 @@
                  </sizepolicy>
                 </property>
                 <property name="inputMask">
-                 <string>009</string>
+                 <string>#00009</string>
                 </property>
                 <property name="readOnly">
                  <bool>false</bool>
@@ -937,7 +937,7 @@
                  </sizepolicy>
                 </property>
                 <property name="inputMask">
-                 <string>009</string>
+                 <string>#00009</string>
                 </property>
                 <property name="readOnly">
                  <bool>false</bool>
@@ -984,7 +984,7 @@
                  </sizepolicy>
                 </property>
                 <property name="inputMask">
-                 <string>009</string>
+                 <string>#00009</string>
                 </property>
                 <property name="readOnly">
                  <bool>false</bool>
@@ -1031,7 +1031,7 @@
                  </sizepolicy>
                 </property>
                 <property name="inputMask">
-                 <string>009</string>
+                 <string>#00009</string>
                 </property>
                 <property name="readOnly">
                  <bool>false</bool>
@@ -1078,7 +1078,7 @@
                  </sizepolicy>
                 </property>
                 <property name="inputMask">
-                 <string>009</string>
+                 <string>#00009</string>
                 </property>
                 <property name="readOnly">
                  <bool>false</bool>
@@ -1125,7 +1125,7 @@
                  </sizepolicy>
                 </property>
                 <property name="inputMask">
-                 <string>009</string>
+                 <string>#00009</string>
                 </property>
                 <property name="readOnly">
                  <bool>false</bool>
@@ -1172,7 +1172,7 @@
                  </sizepolicy>
                 </property>
                 <property name="inputMask">
-                 <string>009</string>
+                 <string>#00009</string>
                 </property>
                 <property name="readOnly">
                  <bool>false</bool>
@@ -1219,7 +1219,7 @@
                  </sizepolicy>
                 </property>
                 <property name="inputMask">
-                 <string>009</string>
+                 <string>#00009</string>
                 </property>
                 <property name="readOnly">
                  <bool>false</bool>
@@ -1266,7 +1266,7 @@
                  </sizepolicy>
                 </property>
                 <property name="inputMask">
-                 <string>009</string>
+                 <string>#00009</string>
                 </property>
                 <property name="readOnly">
                  <bool>false</bool>
@@ -1313,7 +1313,7 @@
                  </sizepolicy>
                 </property>
                 <property name="inputMask">
-                 <string>009</string>
+                 <string>#00009</string>
                 </property>
                 <property name="readOnly">
                  <bool>false</bool>
@@ -1360,7 +1360,7 @@
                  </sizepolicy>
                 </property>
                 <property name="inputMask">
-                 <string>009</string>
+                 <string>#00009</string>
                 </property>
                 <property name="readOnly">
                  <bool>false</bool>
@@ -1519,7 +1519,7 @@
           <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Arial'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Noto Sans'; font-size:14pt; font-weight:600;&quot;&gt;input-overlay&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Noto Sans'; font-size:10pt;&quot;&gt;licensed under the GPL v2.0&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Noto Sans'; font-size:10pt;&quot;&gt;created by univrsal &amp;lt;uni@vrsal.de&amp;gt;&lt;/span&gt;&lt;/p&gt;

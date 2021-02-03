@@ -9,19 +9,27 @@ namespace libgamepad {
 std::shared_ptr<gamepad::hook> hook_instance = nullptr;
 bool state;
 uint16_t last_input;
+uint16_t last_input_value;
 uint64_t last_input_time;
+uint16_t flags;
 std::mutex last_input_mutex;
 
 void start_pad_hook()
 {
     if (state)
         return;
-    uint16_t flags = io_config::use_js ? gamepad::hook_type::JS : gamepad::hook_type::BY_ID;
+    flags = io_config::use_js ? gamepad::hook_type::JS : gamepad::hook_type::BY_ID;
     flags |= io_config::use_dinput ? gamepad::hook_type::DIRECT_INPUT : gamepad::hook_type::NATIVE_DEFAULT;
     hook_instance = gamepad::hook::make(flags);
     hook_instance->set_plug_and_play(true);
     hook_instance->set_sleep_time(1); // 1ms should be fast enough to prevent events from queueing up
 
+#if defined(WIN32)
+    binfo("Using '%s' gamepad backend", flags & gamepad::hook_type::DIRECT_INPUT ? "Direct Input" : "XInput");
+#else
+    binfo("Using '%s' for gamepad discovery", flags & gamepad::hook_type::JS ? "/dev/js*" : "/dev/input/by-id");
+#endif
+    
     /* Pipe gamepad log to obs log */
     auto log_pipe = [](int level, const char *msg, va_list args, void *) {
         switch (level) {
@@ -45,6 +53,7 @@ void start_pad_hook()
     hook_instance->set_axis_event_handler([](std::shared_ptr<gamepad::device> d) {
         std::lock_guard<std::mutex> lock(last_input_mutex);
         last_input = d->last_axis_event()->native_id;
+        last_input_value = d->last_axis_event()->value;
         last_input_time = d->last_axis_event()->time;
     });
     hook_instance->set_button_event_handler([](std::shared_ptr<gamepad::device> d) {
@@ -72,8 +81,8 @@ void start_pad_hook()
 
 void end_pad_hook()
 {
-    hook_instance->stop();
     hook_instance->save_bindings(std::string(qt_to_utf8(util_get_data_file("gamepad_bindings.json"))));
+    hook_instance->stop();
     state = false;
 }
 

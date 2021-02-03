@@ -27,6 +27,7 @@ namespace gamepad {
 namespace cfg {
 class binding;
 }
+class device;
 }
 
 namespace Ui {
@@ -75,6 +76,8 @@ private Q_SLOTS:
     void on_box_binding_accepted();
 
 private:
+    std::shared_ptr<gamepad::device> get_selected_device() const;
+    std::shared_ptr<gamepad::cfg::binding> get_selected_binding() const;
     void load_bindings();
     void load_binding(std::shared_ptr<gamepad::cfg::binding> binding);
     uint64_t m_last_gamepad_input = 0;
