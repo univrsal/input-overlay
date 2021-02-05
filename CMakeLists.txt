@@ -1,7 +1,9 @@
-project(input-overlay)
+cmake_minimum_required(VERSION 3.5)
+project(input-overlay VERSION 4.9)
 
 find_path(UIOHOOK_INCLUDE_DIR uiohook.h)
 find_library(UIOHOOK_LIBRARY uiohook)
+find_package(LibObs REQUIRED)
 
 if (MSVC)
     set(input-overlay_PLATFORM_DEPS
@@ -48,4 +50,25 @@ target_link_libraries(input-overlay
         ${input-overlay_PLATFORM_DEPS}
         ${UIOHOOK_LIBRARY})
 
-install_obs_plugin_with_data(input-overlay data)
+if(UNIX AND NOT APPLE)
+    # This makes it possible to build this plugin without including it in
+	# a full build of OBS Studio.
+    include(GNUInstallDirs)
+
+    set_target_properties(input-overlay PROPERTIES PREFIX "")
+
+    file(GLOB locale_files data/locale/*.ini)
+
+    set(CMAKE_INSTALL_DEFAULT_DIRECTORY_PERMISSIONS
+        OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_WRITE GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+
+    install(TARGETS input-overlay LIBRARY
+        DESTINATION "${CMAKE_INSTALL_FULL_LIBDIR}/obs-plugins"
+        PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ)
+
+    install(FILES ${locale_files}
+        DESTINATION "${CMAKE_INSTALL_FULL_DATAROOTDIR}/obs/obs-plugins/input-overlay/locale")
+else()
+    # There isn't much need for Windows to build separately.
+    install_obs_plugin_with_data(input-overlay data)
+endif()

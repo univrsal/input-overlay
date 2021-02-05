@@ -206,6 +206,8 @@
 #define PAD_AXIS_RX			3
 #define PAD_AXIS_RY			4
 #define PAD_AXIS_RT			5
+#define PAD_AXIS_DX			6
+#define PAD_AXIS_DY			7
 
 // Get default keynames from a libuiohook keycode
 const char* key_to_text(int key_code);
