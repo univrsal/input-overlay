@@ -18,6 +18,36 @@
 
 @import url("colors.css");
 
+.canvas-container {
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+}
+
+#editor-title {
+    grid-column-start: 1;
+    grid-column-end: 3;
+    grid-row: 1;
+}
+
+.editor-properties {
+    padding-right: 5px;
+}
+
+.edit-grid {
+    display: grid; 
+    width: 100%;
+    height: 100%;
+    grid-template-columns: 200px;
+    grid-template-rows: 25px auto;
+}
+
+.properties {
+    display: grid; 
+    width: 100%;
+    grid-template-columns: 16% 34% 16% 34%; 
+}
+
 .blurred {
     filter: blur(4px);
     -webkit-filter: blur(4px);
@@ -31,18 +61,20 @@
     position: fixed;
     background-color: rgba(20, 20, 20, 0.5);
     top: 0;
-    right: 0;
+    right: 0 !important;
     bottom: 0;
     left: 0;
+    height: 80% !important;
     display: none;
-    margin-left: 35px;
-    margin-right: 35px;
+    margin-left: 150px;
+    margin-right: 150px;
     z-index: 999;
-    opacity: 0;
+    
     pointer-events: none;
     -webkit-transition: all 0.5s;
     -moz-transition: all 0.5s;
-    transition: all 0.5s;
+    transition: all 0.5s; 
+    opacity: 0;
 }
 
 .modal-window>div {
@@ -57,7 +89,6 @@
 
 /* The container <div> - needed to position the dropdown content */
 .dropdown {
-    margin-top: 50px;
     position: relative;
     display: inline-block;
 }
@@ -65,7 +96,6 @@
 /* Dropdown Content (Hidden by Default) */
 .dropdown-content {
     display: none;
-    transform: translate3d(0%, +18pt, 0);
     position: absolute;
     z-index: 1;
 }
@@ -156,11 +186,30 @@ input[type="button"] {
 
 input[type="text"] {
     height: 18px;
+    width: 100%;
 }
 
-input[type="text" i] {
-    padding-left: 3px;
-    padding-right: 3px;
+.textbox-container, .textbox-container-wide {
+    display: flex;
+    width:100%;
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+
+.textbox-container-wide {
+    grid-column-start: 2;
+    grid-column-end: 5;
+}
+
+.full-width { 
+    width: 100%;
+}
+
+.grid-full-width {
+    grid-column-start: 1;
+    grid-column-end: 5;
+    padding-top: 2px;
+    padding-bottom: 2px;
 }
 
 input[type="text"],
@@ -178,31 +227,14 @@ input[type="button"] {
     cursor: pointer;
 }
 
-.h-layout {
-    display: flex;
-    height: 100%;
-    padding-bottom: 4px;
-}
-
-.spacer {
-    width: 15%;
-}
-
 .value > p,
 .value > input {
     display: inline;
 }
 
-.value > label {
-    padding-right: 4px;
-    padding-top: 3.5px;
-    width: 25px;
-}
-.value > input,
-.fullwidth {
-    width: 100%;
-}
-
-.value {
-    display: flex;
+.properties > div > label {
+    padding-left: 9px;
+    padding-top: 5px;
+    width: 20px;
+    display: inline-table;
 }

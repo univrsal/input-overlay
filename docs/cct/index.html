@@ -33,11 +33,13 @@
     <script src="./js/config.js"></script>
     <script src="./js/cs.js"></script>
     <script src="./js/draw.js"></script>
+    <script src="./js/editor.js"></script>
     <script src="./js/main.js"></script>
     <script src="./js/gui.js"></script>
 
     <link rel="stylesheet" href="./css/dialog.css">
     <style>
+        #editor-canvas,
         #main-canvas {
             /* IE, only works on <img> tags */
             -ms-interpolation-mode: nearest-neighbor;
@@ -46,115 +48,132 @@
             /* Chromium + Safari */
             image-rendering: pixelated;
         }
+        body, html {
+            height: 100%;
+        }
     </style>
 </head>
 
 <body style="margin: 0px; overflow: hidden;">
-    <div id="canvas-container">
+    <div class="canvas-container" id="main-canvas-container">
         <canvas id="main-canvas"></canvas>
     </div>
-
     <div id="element-dialog" class="dialog">
         <p class="dialog-title noselect">Element settings</p>
-        <!-- Position -->
-        <div class="h-layout">
 
-            <div class="value">
-                <label for="selected-element-x">X</label>
-                <input type="text" class="coord" id="selected-element-x" value="0">
-            </div>
-            <div class="spacer"></div>
-            <div class="value">
-                <label for="selected-element-y">Y</label>
-                <input type="text" class="coord" id="selected-element-y" value="0">
-            </div>
-        </div>
-        <!-- UV -->
-        <div class="h-layout">
+        <div class="properties">
+            <!-- Position -->
+            <div><label for="selected-element-x">X</label></div>
+            <div class="textbox-container"><input type="text" class="coord" id="selected-element-x" value="0"></div>
 
-            <div class="value">
-                <label for="selected-element-u">U</label>
-                <input type="text" class="coord" id="selected-element-u" value="0">
-            </div>
-            <div class="spacer"></div>
-            <div class="value">
-                <label for="selected-element-v">V</label>
-                <input type="text" class="coord" id="selected-element-v" value="0">
-            </div>
-        </div>
-        <!-- WH -->
-        <div class="h-layout">
-            <div class="value">
-                <label for="selected-element-w">W</label>
-                <input type="text" class="coord" id="selected-element-w" value="0">
-            </div>
-            <div class="spacer"></div>
-            <div class="value">
-                <label for="selected-element-h">H</label>
-                <input type="text" class="coord" id="selected-element-h" value="0">
-            </div>
-        </div>
-        <!-- Element layer -->
-        <div class="h-layout">
-            <div class="value">
-                <label for="selected-element-layer">Z</label>
-                <input type="text" class="coord" id="selected-element-layer" value="0">
-            </div>
-        </div>
-        <!-- Element id -->
-        <div class="h-layout">
-            <div class="value">
-                <label for="selected-element-id">ID</label>
-                <input type="text" class="coord" id="selected-element-id" value="">
-            </div>
-        </div>
+            <div><label for="selected-element-y">Y</label></div>
+            <div class="textbox-container"><input type="text" class="coord" id="selected-element-y" value="0"></div>
 
-        <!-- OK button -->
-        <div class="h-layout">
-            <input type="button" class="fullwidth" id="ok" value="Apply">
-        </div>
+            <!-- UV -->
+            <div><label for="selected-element-u">U</label></div>
+            <div class="textbox-container"><input type="text" class="coord" id="selected-element-u" value="0"></div>
 
-        <!-- New button -->
-        <div class="h-layout">
-            <input type="button" class="fullwidth dropbtn" id="new" value="Add new element"
-                onclick="new_type_dropdown()">
-            <div id="type-dropdown" class="dropdown-content">
-                <a href="#">Texture</a>
-                <a href="#">Keyboard button</a>
-                <a href="#">Mouse button</a>
-                <a href="#">Mouse wheel</a>
-                <a href="#">Analog stick</a>
-                <a href="#">Gamepad trigger</a>
-                <a href="#">Gamepad player id</a>
-                <a href="#">DPad</a>
-                <a href="#">Mouse movement</a>
+            <div><label for="selected-element-v">V</label></div>
+            <div class="textbox-container"><input type="text" class="coord" id="selected-element-v" value="0"></div>
+
+            <!-- W/H -->
+            <div><label for="selected-element-w">W</label></div>
+            <div class="textbox-container"><input type="text" class="coord" id="selected-element-w" value="0"></div>
+
+            <div><label for="selected-element-h">H</label></div>
+            <div class="textbox-container"><input type="text" class="coord" id="selected-element-h" value="0"></div>
+
+            <!-- Z -->
+            <div><label for="selected-element-layer">Z</label></div>
+            <div class="textbox-container-wide"><input type="text" class="coord" id="selected-element-layer" value="0">
+            </div>
+
+            <div><label for="selected-element-id">ID</label></div>
+            <div class="textbox-container-wide"><input type="text" class="coord" id="selected-element-id" value="">
+            </div>
+
+            <!-- Buttons -->
+            <div class="grid-full-width"><input type="button" class="full-width" id="ok" value="Apply"></div>
+
+            <div class="grid-full-width">
+                <input type="button" class="full-width dropbtn" id="new" value="Add new element"
+                    onclick="new_type_dropdown()">
+                <div id="type-dropdown" class="dropdown-content ">
+                    <a onclick="open_editor('texture', false)" href="#">Texture</a>
+                    <a onclick="open_editor('keyboard_button', false)" href="#">Keyboard button</a>
+                    <a onclick="open_editor('mouse_button', false)" href="#">Mouse button</a>
+                    <a onclick="open_editor('mouse_wheel', false)" href="#">Mouse wheel</a>
+                    <a onclick="open_editor('anaolog_stick', false)" href="#">Analog stick</a>
+                    <a onclick="open_editor('trigger', false)" href="#">Gamepad trigger</a>
+                    <a onclick="open_editor('player_id', false)" href="#">Gamepad player id</a>
+                    <a onclick="open_editor('dpad', false)" href="#">DPad</a>
+                    <a onclick="open_editor('mouse_movement', false)" href="#">Mouse movement</a>
+                </div>
+            </div>
+
+
+            <div class="grid-full-width"><input type="button" class="full-width" id="mod" value="Edit selected element">
+            </div>
+            <div class="grid-full-width"><input type="button" class="full-width" id="del"
+                    value="Delete selected element"></div>
+
+            <div class="grid-full-width"><input type="button" class="full-width" id="export" value="Export to JSON">
             </div>
         </div>
-
-        <!-- Modify button -->
-        <div class="h-layout">
-            <input type="button" class="fullwidth" id="mod" value="Edit selected element">
-        </div>
-
-        <!-- Delete button -->
-        <div class="h-layout">
-            <input type="button" class="fullwidth" id="del" value="Delete selected element">
-        </div>
-
-        <!-- Export button -->
-        <input type="button" class="fullwidth" id="export" value="Export to JSON">
     </div>
-
     <!-- Element edit dialog -->
     <div id="edit-element-dialog" class="modal-dialog">
-        <p class="dialog-title noselect">Element editor</p>
-        <div class="left-column">
-            <div class="h-layout">
-                <input type="button" class="fullwidth" id="edit-ok" value="Apply">
+        <div class="edit-grid">
+            <p class="dialog-title noselect" id="editor-title">Element editor</p>
+
+            <div class="editor-properties">
+                <div class="properties">
+                    <!-- Position -->
+                    <div><label for="editor-element-x">X</label></div>
+                    <div class="textbox-container"><input type="text" class="coord" id="editor-element-x" value="0">
+                    </div>
+
+                    <div><label for="editor-element-y">Y</label></div>
+                    <div class="textbox-container"><input type="text" class="coord" id="editor-element-y" value="0">
+                    </div>
+
+                    <!-- UV -->
+                    <div><label for="editor-element-u">U</label></div>
+                    <div class="textbox-container"><input type="text" class="coord" id="editor-element-u" value="0">
+                    </div>
+
+                    <div><label for="editor-element-v">V</label></div>
+                    <div class="textbox-container"><input type="text" class="coord" id="editor-element-v" value="0">
+                    </div>
+
+                    <!-- W/H -->
+                    <div><label for="editor-element-w">W</label></div>
+                    <div class="textbox-container"><input type="text" class="coord" id="editor-element-w" value="0">
+                    </div>
+
+                    <div><label for="editor-element-h">H</label></div>
+                    <div class="textbox-container"><input type="text" class="coord" id="editor-element-h" value="0">
+                    </div>
+
+                    <!-- Z -->
+                    <div><label for="editor-element-layer">Z</label></div>
+                    <div class="textbox-container-wide"><input type="text" class="coord" id="editor-element-layer"
+                            value="0">
+                    </div>
+
+                    <div><label for="editor-element-id">ID</label></div>
+                    <div class="textbox-container-wide"><input type="text" class="coord" id="editor-element-id"
+                            value="">
+                    </div>
+
+                    <!-- Buttons -->
+                    <div class="grid-full-width ">
+                        <input type="button" class="" id="export" value="OK">
+                        <input type="button" class="" id="export" value="Cancel">
+                    </div>
+                </div>
             </div>
-        </div>
-        <div class="right-column">
-            <div id="canvas-container">
+            <div class="canvas-container" id="editor-canvas-container">
                 <canvas id="editor-canvas"></canvas>
             </div>
         </div>

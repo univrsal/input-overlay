@@ -16,11 +16,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *************************************************************************/
 
-function apply_settings() {
+function apply_settings()
+{
     if (cfg !== null && cfg.selected_elements.length === 1) { // We only apply settings if a single element is selected
         let pos = new vec2($("#selected-element-x").val(), $("#selected-element-y").val());
         let dim = new r4($("#selected-element-u").val(), $("#selected-element-v").val(), $("#selected-element-w").val(),
-            $("#selected-element-h").val());
+                         $("#selected-element-h").val());
 
         dim.validate();
         pos.validate();
@@ -30,25 +31,45 @@ function apply_settings() {
     }
 }
 
-function new_type_dropdown() {
+function new_type_dropdown()
+{
     document.getElementById("type-dropdown").classList.toggle("show");
 }
 
-function open_editor(element_type) {
-    var d = document.getElementById("edit-element-dialog");
+function open_editor(element_type, edit)
+{
+    let d = $("#edit-element-dialog")[0];
+    let c = $('#main-canvas-container')[0];
+    let e = $('#element-dialog')[0];
+    let title = $('#editor-title')[0];
+
+    if (edit) {
+        if (cfg.selected_elements.length > 0) {
+            title.innerText = 'Edit ' + cfg.selected_elements[0].id();
+        } else {
+            alert('Please select at least one element first');
+            return;
+        }
+    } else {
+        let id = element_type.replace('_', ' ');
+        title.innerText = 'Create new ' + id;
+    }
 
     if (d !== null) {
         d.style.opacity = 1;
         d.style.pointerEvents = "all";
         d.style.display = "block";
-        main.style.pointerEvents = "none";
-        main.classList.add("blurred");
-        bg.classList.add("blurred");
+        c.style.pointerEvents = "none";
+        c.classList.add("blurred");
+        e.style.pointerEvents = "none";
+        e.classList.add("blurred");
     }
+    editor_painter.resize_canvas();
 }
 
-function close_dialog(handler) {
-    var d = document.getElementById("edit-element-dialog");
+function close_dialog(handler)
+{
+    let d = document.getElementById("edit-element-dialog");
     if (handler !== undefined)
         handler();
     if (d !== null) {
@@ -60,7 +81,7 @@ function close_dialog(handler) {
     }
 }
 
-$(function () {
+$(function() {
     $(".coord").on("keydown", e => {
         if (!e)
             var e = window.event;
@@ -76,10 +97,10 @@ $(function () {
     });
     $(window).on("click", e => {
         if (!e.target.matches('.dropbtn')) {
-            var dropdowns = document.getElementsByClassName("dropdown-content");
-            var i;
+            let dropdowns = document.getElementsByClassName("dropdown-content");
+            let i;
             for (i = 0; i < dropdowns.length; i++) {
-                var openDropdown = dropdowns[i];
+                let openDropdown = dropdowns[i];
                 if (openDropdown.classList.contains('show')) {
                     openDropdown.classList.remove('show');
                 }

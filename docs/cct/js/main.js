@@ -18,16 +18,23 @@
 
 var atlas = null;
 var cfg = null;
+var edit = null;
 var main_painter = null;
+var editor_painter = null;
 
 $(function() {
-    main_painter = new painter("#main-canvas", (p, c) => cfg.draw(p, c));
+    main_painter = new painter("main-canvas", (p, c) => cfg.draw(p, c));
+    editor_painter = new painter("editor-canvas", (p, c) => edit.draw(p, c));
     cfg = new config("#main-canvas", main_painter);
+    edit = new editor("#editor-canvas", editor_painter);
+
     main_painter.resize_canvas(); // Run once to get correct window size
+    editor_painter.resize_canvas();
+
     main_painter.load_image("https://raw.githubusercontent.com/univrsal/input-overlay/master/docs/cct/res/wasd.png")
         .then(function(img) { atlas = img; });
     main_painter.get_context().imageSmoothingEnabled = false;
-
+    editor_painter.get_context().imageSmoothingEnabled = false;
     $.getJSON('https://raw.githubusercontent.com/univrsal/input-overlay/master/docs/cct/res/wasd.json',
               function(data) { cfg.load_from_json(data); });
 });

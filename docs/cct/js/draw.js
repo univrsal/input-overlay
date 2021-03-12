@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *************************************************************************/
 
-var backgroundColor = "#333333";
+var backgroundColor = "#393b3d";
 var lineColor = "#ffffffff";
 var darkLineColor = "#555555";
 
@@ -25,8 +25,9 @@ class painter {
     constructor(canvas_id, draw_callback)
     {
         this.scale = 1; // HiDPI support at some point maybe
-        this.canvas_id = canvas_id;
-        this.coordinate_system = new cs(canvas_id);
+        this.canvas_id = '#' + canvas_id;
+        this.canvas_container_id = '#' + canvas_id + '-container';
+        this.coordinate_system = new cs(this.canvas_id);
         this.draw_callback = draw_callback;
         $(window).on('resize', () => this.resize_canvas());
 
@@ -106,10 +107,12 @@ class painter {
 
     resize_canvas()
     {
-        $(this.canvas_id).css({"height": window.innerHeight, "width": window.innerWidth});
-        $(this.canvas_id).attr("width", window.innerWidth);
-        $(this.canvas_id).attr("height", window.innerHeight);
-        this.fill(window.innerWidth, window.innerHeight, backgroundColor);
+        let w = $(this.canvas_container_id).innerWidth();
+        let h = $(this.canvas_container_id).innerHeight();
+        $(this.canvas_id).css({"height": h, "width": w});
+        $(this.canvas_id).attr("width", w);
+        $(this.canvas_id).attr("height", h);
+        this.fill(w, h, backgroundColor);
         this.coordinate_system.resize(this);
         this.get_context().imageSmoothingEnabled = false;
     }

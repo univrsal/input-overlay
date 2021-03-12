@@ -113,10 +113,7 @@ class button extends texture {
 };
 
 class keyboard_button extends button {
-    constructor(json)
-    {
-        super(json);
-    }
+    constructor(json) { super(json); }
 
     on_button_input(vc, state)
     {
