@@ -159,6 +159,13 @@
     padding: 0px 4px 6px 4px;
 }
 
+a { 
+    color: var(--theme-accent-hovered);
+}
+
+a:visited {
+    color: var(--theme-accent-bright);
+}
 .noselect,
 p,
 label,
@@ -189,7 +196,7 @@ input[type="text"] {
     width: 100%;
 }
 
-.textbox-container, .textbox-container-wide {
+.textbox-container, .textbox-container-wide, .textbox-container-medium {
     display: flex;
     width:100%;
     padding-top: 2px;
@@ -198,6 +205,16 @@ input[type="text"] {
 
 .textbox-container-wide {
     grid-column-start: 2;
+    grid-column-end: 5;
+}
+
+.label-container-wide {
+    grid-column-start: 1;
+    grid-column-end: 3;
+}
+
+.textbox-container-medium {
+    grid-column-start: 4;
     grid-column-end: 5;
 }
 
@@ -235,6 +252,54 @@ input[type="button"] {
 .properties > div > label {
     padding-left: 9px;
     padding-top: 5px;
-    width: 20px;
+    width: 100%;
     display: inline-table;
+}
+
+/* Checkbox */
+.cbx {
+    position: relative;
+    display: block;
+    float: left;
+    width: 15px;
+    height: 15px;
+    border-radius: 4px;
+    transition: all 0.15s ease;
+    background-color: var(--bright-control-gradient-bottom);
+    background-image: var(--bright-control-gradient);
+    box-shadow: var(--bright-control-inset);
+}
+
+.cbx svg {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke: var(--theme-stroke);
+    stroke-width: 2;
+    stroke-dasharray: 17;
+    stroke-dashoffset: 17;
+    transform: translate3d(0, 0, 0);
+}
+
+.cbx + span {
+    float: left;
+    margin-left: 6px;
+}
+
+input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+}
+
+input[type="checkbox"]:checked + .cbx {
+    background-color: var(--dark-control-gradient-bottom);
+    background-image: linear-gradient(var(--theme-accent), var(--theme-accent));
+}
+
+input[type="checkbox"]:checked + .cbx svg {
+    stroke-dashoffset: 0;
+    transition: all 0.25s ease;
 }

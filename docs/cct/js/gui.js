@@ -36,12 +36,108 @@ function new_type_dropdown()
     document.getElementById("type-dropdown").classList.toggle("show");
 }
 
+function show_property(prop)
+{
+    prop.label.css({"display": "flex"});
+    if (prop.div)
+        prop.div.css({"display": "flex"});
+}
+
+function hide_property(prop)
+{
+    if (prop.div)
+        prop.label.css({"display": "none"});
+    if (prop.div)
+        prop.div.css({"display": "none"});
+}
+
+function set_description(desc_element, text)
+{
+    desc_element.label[0].innerHTML = '<p>' + text + '</p>';
+    show_property(desc_element)
+}
+
+function get_property(type)
+{
+    return { label: $('#editor-element-' + type + '-label'), div: $('#editor-element-' + type + '-container') }
+}
+
+function setup_editor(type)
+{
+    let analog_stick_side = get_property('analog-stick-side');
+    let analog_stick_radius = get_property('analog-stick-radius');
+    let keycode = get_property('keycode');
+    let trigger_dir = get_property('trigger-direction');
+    let movement_type = get_property('movement-type');
+    let description = get_property('description');
+    let button = get_property('trigger-button');
+    let record = get_property('record-code');
+
+    // First hide all optional settings
+    hide_property(analog_stick_side);
+    hide_property(analog_stick_radius);
+    hide_property(trigger_dir);
+    hide_property(keycode);
+    hide_property(movement_type);
+    hide_property(description);
+    hide_property(button);
+    hide_property(record);
+
+    switch (type) {
+    case 'mouse_button':
+    case 'keyboard_button': {
+        show_property(keycode);
+        show_property(record);
+        break;
+    }
+    case 'analog_stick': {
+        show_property(analog_stick_radius);
+        show_property(analog_stick_side);
+        break;
+    }
+    case 'trigger': {
+        show_property(trigger_dir);
+        show_property(button);
+        set_description(description, `The trigger can either be a button, meaning that it'll
+                only be either on or off, or it can display the position it is in by filling up
+                in a direction.`);
+        break;
+    }
+    case 'mouse_movement': {
+        show_property(movement_type);
+        break;
+    }
+    case 'mouse_wheel': {
+        set_description(description, `The mouse wheel expects the following three textures 
+                to be next to eachother in the atlas:<br>
+                &nbsp;- neutral<br>
+                &nbsp;- clicked<br>
+                &nbsp;- scrolling up<br>
+                &nbsp;- scrolling down<br>You only have to select the first one.`);
+        break;
+    }
+    case 'player_id': {
+        set_description(description, `Displays the controller id from one to four. Usually in the order they
+            were connected in. The following textures have to be next to eachother in the atlas:<br>
+            &nbsp;- Player 1<br>
+            &nbsp;- Player 2<br>
+            &nbsp;- Player 3<br>
+            &nbsp;- Player 4<br>
+            &nbsp;- <a href="https://i.imgur.com/LdH3nnz.png" target="_tab">Guide</a> pressed<br>
+            You only have to select the first one.<br>`);
+        break;
+    }
+    }
+}
+
 function open_editor(element_type, edit)
 {
     let d = $("#edit-element-dialog")[0];
     let c = $('#main-canvas-container')[0];
     let e = $('#element-dialog')[0];
     let title = $('#editor-title')[0];
+
+    setup_editor(element_type);
 
     if (edit) {
         if (cfg.selected_elements.length > 0) {
@@ -53,6 +149,7 @@ function open_editor(element_type, edit)
     } else {
         let id = element_type.replace('_', ' ');
         title.innerText = 'Create new ' + id;
+        $('#editor-element-id').val(id + cfg.elements.length);
     }
 
     if (d !== null) {
@@ -67,17 +164,22 @@ function open_editor(element_type, edit)
     editor_painter.resize_canvas();
 }
 
-function close_dialog(handler)
+function close_editor(handler)
 {
-    let d = document.getElementById("edit-element-dialog");
+    let d = $("#edit-element-dialog")[0];
+    let c = $('#main-canvas-container')[0];
+    let e = $('#element-dialog')[0];
+    let title = $('#editor-title')[0];
+
     if (handler !== undefined)
         handler();
     if (d !== null) {
         d.style.opacity = 0;
         d.style.pointerEvents = "none";
-        main.style.pointerEvents = "all";
-        main.classList.remove("blurred");
-        bg.classList.remove("blurred");
+        c.style.pointerEvents = "all";
+        c.classList.remove("blurred");
+        e.classList.remove("blurred");
+        e.style.pointerEvents = "all";
     }
 }
 

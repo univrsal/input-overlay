@@ -36,8 +36,10 @@
     <script src="./js/editor.js"></script>
     <script src="./js/main.js"></script>
     <script src="./js/gui.js"></script>
+    <script src="./js/select.js"></script>
 
     <link rel="stylesheet" href="./css/dialog.css">
+    <link rel="stylesheet" href="./css/select.css">
     <style>
         #editor-canvas,
         #main-canvas {
@@ -48,7 +50,9 @@
             /* Chromium + Safari */
             image-rendering: pixelated;
         }
-        body, html {
+
+        body,
+        html {
             height: 100%;
         }
     </style>
@@ -103,14 +107,13 @@
                     <a onclick="open_editor('keyboard_button', false)" href="#">Keyboard button</a>
                     <a onclick="open_editor('mouse_button', false)" href="#">Mouse button</a>
                     <a onclick="open_editor('mouse_wheel', false)" href="#">Mouse wheel</a>
-                    <a onclick="open_editor('anaolog_stick', false)" href="#">Analog stick</a>
+                    <a onclick="open_editor('analog_stick', false)" href="#">Analog stick</a>
                     <a onclick="open_editor('trigger', false)" href="#">Gamepad trigger</a>
                     <a onclick="open_editor('player_id', false)" href="#">Gamepad player id</a>
                     <a onclick="open_editor('dpad', false)" href="#">DPad</a>
                     <a onclick="open_editor('mouse_movement', false)" href="#">Mouse movement</a>
                 </div>
             </div>
-
 
             <div class="grid-full-width"><input type="button" class="full-width" id="mod" value="Edit selected element">
             </div>
@@ -128,6 +131,10 @@
 
             <div class="editor-properties">
                 <div class="properties">
+                    <div><label for="editor-element-id">ID</label></div>
+                    <div class="textbox-container-wide"><input type="text" class="coord" id="editor-element-id"
+                            value="">
+                    </div>
                     <!-- Position -->
                     <div><label for="editor-element-x">X</label></div>
                     <div class="textbox-container"><input type="text" class="coord" id="editor-element-x" value="0">
@@ -161,18 +168,101 @@
                             value="0">
                     </div>
 
-                    <div><label for="editor-element-id">ID</label></div>
-                    <div class="textbox-container-wide"><input type="text" class="coord" id="editor-element-id"
-                            value="">
+                    <!-- Misc stuff -->
+
+                    <!-- Key code-->
+                    <div class="label-container-wide" id="editor-element-keycode-label"><label
+                            for="editor-element-keycode">Keycode</label></div>
+                    <div class="textbox-container-medium" id="editor-element-keycode-container"><input type="text"
+                            class="coord" id="editor-element-keycode" value="0">
+                    </div>
+                    <div id="editor-element-record-code-container" class="grid-full-width">
+                        <label for="editor-element-record-code">
+                            <input type="checkbox" id="editor-element-trigger-button">
+                            <span class="cbx">
+                                <svg width="12px" height="11px" viewBox="0 0 12 11">
+                                    <polyline points="0.75 4.721 3.375 7.5 8.25 0.75"></polyline>
+                                </svg>
+                            </span>
+                            <span>Record keycode</span>
+                        </label>
                     </div>
 
+                    <!-- Analog stick -->
+                    <div id="editor-element-analog-stick-side-label" class="label-container-wide"><label
+                            for="editor-element-analog-stick-side">Stick side</label>
+                    </div>
+                    <div class="textbox-container-medium" id="editor-element-analog-stick-side-container">
+                        <div class="custom-select" style="width:100%">
+                            <select id="editor-element-analog-stick-side">
+                                <option value="left">Left</option>
+                                <!-- The w3 code uses the first one as a placeholder, which i don't want -->
+                                <option value="left">Left</option>
+                                <option value="right">Right</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div id="editor-element-analog-stick-radius-label" class="label-container-wide"><label
+                            for="editor-element-analog-stick-side">Radius</label>
+                    </div>
+                    <div class="textbox-container-medium" id="editor-element-analog-stick-radius-container">
+                        <input type="text" class="coord" id="editor-element-analog-stick-radius" value="0">
+                    </div>
+
+                    <!-- trigger -->
+                    <div id="editor-element-trigger-button-container" class="grid-full-width">
+                        <label for="editor-element-trigger-button">
+                            <input type="checkbox" id="editor-element-trigger-button">
+                            <span class="cbx">
+                                <svg width="12px" height="11px" viewBox="0 0 12 11">
+                                    <polyline points="0.75 4.721 3.375 7.5 8.25 0.75"></polyline>
+                                </svg>
+                            </span>
+                            <span>Button</span>
+                        </label>
+                    </div>
+
+                    <div id="editor-element-trigger-direction-label" class="label-container-wide"><label
+                            for="editor-element-analog-stick-side">Fill</label>
+                    </div>
+                    <div id="editor-element-trigger-direction-container" class="textbox-container-medium">
+                        <div class="custom-select" style="width:100%">
+                            <select id="editor-element-trigger-direction-side">
+                                <option value="left">Left</option>
+                                <option value="left">Left</option>
+                                <option value="right">Right</option>
+                                <option value="up">Up</option>
+                                <option value="down">Down</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- mouse movement type -->
+                    <div id="editor-element-movement-type-label" class="label-container-wide"><label
+                            for="editor-element-movement-type">Type</label>
+                    </div>
+                    <div id="editor-element-movement-type-container" class="textbox-container-medium">
+                        <div class="custom-select" style="width:100%">
+                            <select id="editor-element-movement-type">
+                                <option value="arrow">Point</option>
+                                <option value="arrow">Point</option>
+                                <option value="dot">Move</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div id="editor-element-description-label" class="grid-full-width">
+                        <p  class="label-container-wide label" id="editor-info-label"></label>
+                    </div>
                     <!-- Buttons -->
                     <div class="grid-full-width ">
-                        <input type="button" class="" id="export" value="OK">
-                        <input type="button" class="" id="export" value="Cancel">
+                        <input type="button" onclick="close_editor()" id="export" value="OK">
+                        <input type="button" onclick="close_editor()" id="export" value="Cancel">
                     </div>
                 </div>
             </div>
+            
             <div class="canvas-container" id="editor-canvas-container">
                 <canvas id="editor-canvas"></canvas>
             </div>

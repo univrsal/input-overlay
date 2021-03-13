@@ -16,7 +16,8 @@ class editor {
         ctx.save();
         ctx.rect(cs.origin.x, cs.origin.y, cs.dimensions.w, cs.dimensions.h);
         ctx.clip();
-        painter.image(atlas, cs.origin.x - cs.offset.x, cs.origin.y - cs.offset.y);
+        painter.image_crop(atlas, cs.origin.x - cs.offset.x, cs.origin.y - cs.offset.y, atlas.width * cs.scale,
+                           atlas.height * cs.scale, 0, 0, atlas.width, atlas.height);
         ctx.restore();
     }
 }
