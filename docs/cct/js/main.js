@@ -28,6 +28,8 @@ $(function() {
     cfg = new config("#main-canvas", main_painter);
     edit = new editor("#editor-canvas", editor_painter);
 
+    cfg.add_load_callback(() => edit.on_config_load());
+
     main_painter.resize_canvas(); // Run once to get correct window size
     editor_painter.resize_canvas();
 

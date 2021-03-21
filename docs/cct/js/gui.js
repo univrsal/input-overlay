@@ -161,15 +161,19 @@ function open_editor(element_type, edit)
         e.style.pointerEvents = "none";
         e.classList.add("blurred");
     }
+    main_painter.enabled = false;
+    cfg.enabled = false;
     editor_painter.resize_canvas();
 }
 
 function close_editor(handler)
 {
+    main_painter.enabled = true;
+    cfg.enabled = true;
+
     let d = $("#edit-element-dialog")[0];
     let c = $('#main-canvas-container')[0];
     let e = $('#element-dialog')[0];
-    let title = $('#editor-title')[0];
 
     if (handler !== undefined)
         handler();

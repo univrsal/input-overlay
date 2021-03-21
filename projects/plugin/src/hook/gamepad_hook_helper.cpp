@@ -29,7 +29,7 @@ void start_pad_hook()
 #else
     binfo("Using '%s' for gamepad discovery", flags & gamepad::hook_type::JS ? "/dev/js*" : "/dev/input/by-id");
 #endif
-    
+
     /* Pipe gamepad log to obs log */
     auto log_pipe = [](int level, const char *msg, va_list args, void *) {
         switch (level) {

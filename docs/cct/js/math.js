@@ -80,6 +80,8 @@ class r4 {
         this.h = 0;
     }
 
+    copy() { return new r4(this.x, this.y, this.w, this.h); }
+
     get_left() { return this.w < 0 ? this.x + this.w : this.x; }
 
     get_right() { return this.w >= 0 ? this.x + this.w : this.x; }
@@ -87,6 +89,11 @@ class r4 {
     get_top() { return this.h < 0 ? this.y + this.h : this.y; }
 
     get_bottom() { return this.h >= 0 ? this.y + this.h : this.y; }
+
+    is_coord_inside(x, y)
+    {
+        return x >= this.get_left() && x <= this.get_right() && y >= this.get_top() && y <= this.get_bottom();
+    }
 
     is_point_inside(v)
     {
@@ -145,10 +152,18 @@ class r4 {
         this.h = tmax - tmin;
     }
 
+    grow(i) { return new r4(this.x - i, this.y - i, this.w + i * 2, this.h + i * 2); }
+
     max(x = 0, y = 0)
     {
         this.x = Math.max(this.x, x);
         this.y = Math.max(this.y, y);
+    }
+
+    maxw(w = 0, h = 0)
+    {
+        this.w = Math.max(this.w, w);
+        this.h = Math.max(this.h, h);
     }
 
     is_empty() { return this.w === 0 && this.h === 0; }

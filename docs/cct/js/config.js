@@ -66,12 +66,16 @@ class config {
         this.drag_offset = new vec2();  // MousePos - SelectionRect (unscaled)
         this.painter = painter;
         this.last_button = "";
+        this.enabled = true; // false when a dialog is open
         $(canvas_id).on('mousemove', e => this.move(e, this.painter.cs()));
         $(canvas_id).on('mouseup', e => this.mouseup(e, this.painter.cs()));
         $(canvas_id).on('mousedown', e => this.mousedown(e, this.painter.cs()));
         $(window).on('keydown', e => this.on_button(e, true));
         $(window).on('keyup', e => this.on_button(e, false));
+        this.load_callbacks = [];
     }
+
+    add_load_callback(cb) { this.load_callbacks.push(cb); }
 
     load_from_json(json)
     {
@@ -83,6 +87,7 @@ class config {
         });
 
         this.sort_elements();
+        this.load_callbacks.forEach(cb => cb());
     }
 
     sort_elements()
@@ -126,6 +131,8 @@ class config {
 
     on_button(event, state)
     {
+        if (!this.enabled)
+            return;
         if (state)
             this.last_button = event.key;
         let vc = to_vc(event.key);

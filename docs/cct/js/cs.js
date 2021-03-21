@@ -96,6 +96,8 @@ class cs {
 
     is_mouse_over(event) { return this.origin.lt(event.clientX, event.clientY); }
 
+    is_mouse_over2(event) { return this.origin.lt(event.offsetX, event.offsetX); }
+
     /* screen space to coordinate space */
     translate_point_to_cs(x, y)
     {

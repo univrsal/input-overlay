@@ -24,6 +24,7 @@ class painter {
 
     constructor(canvas_id, draw_callback)
     {
+        this.enabled = true;
         this.scale = 1; // HiDPI support at some point maybe
         this.canvas_id = '#' + canvas_id;
         this.canvas_container_id = '#' + canvas_id + '-container';
@@ -119,11 +120,13 @@ class painter {
 
     update(time)
     {
-        let c = $(this.canvas_id)[0];
-        this.fill(c.width, c.height, backgroundColor);
-        this.coordinate_system.draw(this);
-        if (this.draw_callback !== null)
-            this.draw_callback(this, this.coordinate_system);
+        if (this.enabled) {
+            let c = $(this.canvas_id)[0];
+            this.fill(c.width, c.height, backgroundColor);
+            this.coordinate_system.draw(this);
+            if (this.draw_callback !== null)
+                this.draw_callback(this, this.coordinate_system);
+        }
         requestAnimationFrame(seconds => this.update(seconds)); // get next frame
     }
 };
