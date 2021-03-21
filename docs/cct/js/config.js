@@ -16,10 +16,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *************************************************************************/
 
-function to_vc(key)
-{
+function to_vc(key) {
     /* clang-format off */
-    switch(key) {
+    switch (key) {
         case "a": return 0x001E;
         case "b": return 0x0030;
         case "c": return 0x002E;
@@ -53,8 +52,7 @@ function to_vc(key)
 
 class config {
 
-    constructor(canvas_id, painter)
-    {
+    constructor(canvas_id, painter) {
         this.data = {};
         this.elements = [];
         this.selected_elements = [];
@@ -66,6 +64,7 @@ class config {
         this.drag_offset = new vec2();  // MousePos - SelectionRect (unscaled)
         this.painter = painter;
         this.last_button = "";
+        this.is_ctrl_down = false;
         this.enabled = true; // false when a dialog is open
         $(canvas_id).on('mousemove', e => this.move(e, this.painter.cs()));
         $(canvas_id).on('mouseup', e => this.mouseup(e, this.painter.cs()));
@@ -77,8 +76,7 @@ class config {
 
     add_load_callback(cb) { this.load_callbacks.push(cb); }
 
-    load_from_json(json)
-    {
+    load_from_json(json) {
         this.data = json;
         this.data["elements"].forEach(data => {
             let new_element = create_element(data);
@@ -90,13 +88,11 @@ class config {
         this.load_callbacks.forEach(cb => cb());
     }
 
-    sort_elements()
-    {
+    sort_elements() {
         this.elements.sort((a, b) => { return a.layer() - b.layer(); });
     }
 
-    draw(painter)
-    {
+    draw(painter) {
         if (atlas === null) // Don't draw if image hasn't loaded yet
             return;
         let ctx = painter.get_context();
@@ -108,7 +104,7 @@ class config {
         this.elements.forEach(element => element.draw(painter));
         if (this.selecting && !this.drag_selection.is_empty()) {
             painter.rect_outline(this.drag_selection.x - 0.5, this.drag_selection.y - 0.5, this.drag_selection.w,
-                                 this.drag_selection.h);
+                this.drag_selection.h);
         }
 
         if (!this.selection_rect.is_empty()) {
@@ -119,22 +115,23 @@ class config {
         painter.text("Button id: " + this.last_button, 220, 50);
     }
 
-    delete_selection()
-    {
-        let new_elements = this.elements.filter(function(to_filter) {
-            return this.selected_elements.find(function(to_find) { return to_filter.id() === to_find.id(); }) ===
-                   undefined;
+    delete_selection() {
+        let new_elements = this.elements.filter(function (to_filter) {
+            return this.selected_elements.find(function (to_find) { return to_filter.id() === to_find.id(); }) ===
+                undefined;
         }, this);
         this.elements = new_elements;
         this.deselect();
     }
 
-    on_button(event, state)
-    {
+    on_button(event, state) {
         if (!this.enabled)
             return;
         if (state)
             this.last_button = event.key;
+        if (event.key == 'Control')
+            this.is_ctrl_down = state;
+
         let vc = to_vc(event.key);
         this.elements.forEach(element => element.on_button_input(vc, state));
         if (this.selected_elements.length > 0 && state) {
@@ -142,33 +139,35 @@ class config {
             let moved = false;
 
             switch (event.key) {
-            case "ArrowUp":
-                moved = true;
-                this.selection_rect.y--;
-                break;
-            case "ArrowDown":
-                moved = true;
-                this.selection_rect.y++;
-                break;
-            case "ArrowLeft":
-                moved = true;
-                this.selection_rect.x--;
-                break;
-            case "ArrowRight":
-                moved = true;
-                this.selection_rect.x++;
-                break;
-            case "Delete":
-                if (this.selected_elements.length > 1) {
-                    // Ask for comfirmation when deleting more than one element
-                    if (confirm("You are about to delete " + this.selected_elements.length +
+                case "ArrowUp":
+                    moved = true;
+                    this.selection_rect.y--;
+                    break;
+                case "ArrowDown":
+                    moved = true;
+                    this.selection_rect.y++;
+                    break;
+                case "ArrowLeft":
+                    moved = true;
+                    this.selection_rect.x--;
+                    break;
+                case "ArrowRight":
+                    moved = true;
+                    this.selection_rect.x++;
+                    break;
+                case "Delete":
+                    if (document.activeElement === document.body) {
+                        if (this.selected_elements.length > 1) {
+                            // Ask for comfirmation when deleting more than one element
+                            if (confirm("You are about to delete " + this.selected_elements.length +
                                 " elements. Are you sure?")) {
-                        this.delete_selection();
+                                this.delete_selection();
+                            }
+                        } else {
+                            this.delete_selection();
+                        }
                     }
-                } else {
-                    this.delete_selection();
-                }
-                break;
+                    break;
             }
 
             if (moved) {
@@ -185,14 +184,12 @@ class config {
         }
     }
 
-    mouseup(event, cs)
-    {
+    mouseup(event, cs) {
         this.selecting = false;
         this.dragging = false;
     }
 
-    start_dragging(event, cs)
-    {
+    start_dragging(event, cs) {
         let tv = cs.translate_point_to_cs(event.clientX, event.clientY);
         this.drag_offset.x = tv.x - this.selection_rect.x;
         this.drag_offset.y = tv.y - this.selection_rect.y;
@@ -202,8 +199,7 @@ class config {
 
     set_selection(element) { this.selection_rect = element.dim(); }
 
-    mousedown(event, cs)
-    {
+    mousedown(event, cs) {
         if (event.button == 0 && cs.is_mouse_over(event)) {
             let r = cs.translate_rect_to_screen(this.selection_rect);
             let m = new vec2(event.clientX, event.clientY);
@@ -211,17 +207,19 @@ class config {
                 this.start_dragging(event, cs);
             } else {
                 // Element selection
-                this.selected_elements = [];
-                this.selection_rect = new r4();
+                if (!this.is_ctrl_down) {
+                    this.selected_elements = [];
+                    this.selection_rect = new r4();
 
-                this.deselect();
+                    this.deselect();
+                }
 
                 // Array is sorted lowest to highest, so the highest layer is drawn
                 // last, but for clicking we want the highest layer first
                 this.elements.slice().reverse().some(e => {
                     if (e.scaled_dim(cs).is_point_inside(m)) {
                         this.selected_elements.push(e);
-                        this.selection_rect = e.dim();
+                        this.selection_rect.union(e.dim());
                         this.select_element(e);
                         return true;
                     }
@@ -243,8 +241,7 @@ class config {
         }
     }
 
-    deselect()
-    {
+    deselect() {
         $("#selected-element-x").val(0);
         $("#selected-element-y").val(0);
         $("#selected-element-w").val(0);
@@ -257,8 +254,7 @@ class config {
         this.selection_rect.reset();
     }
 
-    select_element(e)
-    {
+    select_element(e) {
         $("#selected-element-x").val(e.x());
         $("#selected-element-y").val(e.y());
         $("#selected-element-w").val(e.w());
@@ -269,8 +265,7 @@ class config {
         $("#selected-element-layer").val(e.layer());
     }
 
-    move(event, cs)
-    {
+    move(event, cs) {
         if (this.selecting) {
             this.drag_selection.w = event.clientX - this.drag_selection.x;
             this.drag_selection.h = event.clientY - this.drag_selection.y;
