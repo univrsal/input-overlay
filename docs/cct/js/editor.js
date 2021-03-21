@@ -58,11 +58,12 @@ class editor {
             }
 
             // prevent the selection from getting to small
-            if (new_selection.w < leniency + 3) {
+
+            if (new_selection.w < leniency + 3 || new_selection.x < 0) {
                 new_selection.w = this.selection_rect.w;
                 new_selection.x = this.selection_rect.x;
             }
-            if (new_selection.h < leniency + 3) {
+            if (new_selection.h < leniency + 3 || new_selection.y < 0) {
                 new_selection.h = this.selection_rect.h;
                 new_selection.y = this.selection_rect.y;
             }
