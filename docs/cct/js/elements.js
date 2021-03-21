@@ -73,7 +73,8 @@ class element {
         this.data.pos[1] = y;
     }
 
-    layer() { return this.data["z_level"]; }
+    layer() { return this.data.z_level; }
+    set_layer(layer) { this.data.z_level = layer; }
 };
 
 class texture extends element {
