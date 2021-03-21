@@ -9,6 +9,7 @@ class editor {
         this.move_flags = 0x0;
         this.drag_offset = new vec2();
         this.dragging = false;
+        this.selection_rect = new r4();
 
         $(canvas_id).on('mousemove', e => this.move(e, this.painter.cs()));
         $(canvas_id).on('mouseup', e => this.mouseup(e, this.painter.cs()));
