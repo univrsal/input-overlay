@@ -2,8 +2,7 @@ var leniency = 10;
 
 class editor {
 
-    constructor(canvas_id, painter)
-    {
+    constructor(canvas_id, painter) {
         this.canvas_id = canvas_id;
         this.painter = painter;
         this.move_flags = 0x0;
@@ -16,10 +15,27 @@ class editor {
         $(canvas_id).on('mousedown', e => this.mousedown(e, this.painter.cs()));
         $(window).on('keydown', e => this.on_button(e, true));
         $(window).on('keyup', e => this.on_button(e, false));
+
+        let hex_numeric = $('.hex-numeric')[0];
+        if (hex_numeric) {
+            // jquery doesn't forward the location variable
+            hex_numeric.addEventListener('keydown', e => {
+                if ($('#editor-element-record-code').val() === "on") {
+                    e.target.value = "0x" + key_to_vc(e).toString(16).toUpperCase();
+                    e.preventDefault();
+                    return false;
+                }
+                let text = e.target.value + e.key;
+                if (!/^0x[0-9a-fA-F]+$/g.test(text)) {
+                    e.target.value = "0x0";
+                    e.preventDefault();
+                    return false;
+                }
+            });
+        }
     }
 
-    on_config_load()
-    {
+    on_config_load() {
         if (cfg.data.default_height !== undefined && cfg.data.default_width !== undefined) {
             this.selection_rect = new r4(1, 1, cfg.data.default_width, cfg.data.default_height);
         } else {
@@ -28,12 +44,11 @@ class editor {
         this.update_selection_values();
     }
 
-    on_button(event, down) {}
+    on_button(event, down) { }
 
-    set_cursor(c) { $(this.canvas_id).css({"cursor": c}); }
+    set_cursor(c) { $(this.canvas_id).css({ "cursor": c }); }
 
-    move(event, cs)
-    {
+    move(event, cs) {
         let tv = cs.translate_point_to_cs(event.offsetX, event.offsetY);
         if (this.dragging) {
             let new_selection = this.selection_rect.copy();
@@ -129,16 +144,14 @@ class editor {
 
     mouseup(event, cs) { this.dragging = false; }
 
-    update_selection_values()
-    {
+    update_selection_values() {
         $("#editor-element-u").val(this.selection_rect.x);
         $("#editor-element-v").val(this.selection_rect.y);
         $("#editor-element-w").val(this.selection_rect.w);
         $("#editor-element-h").val(this.selection_rect.h);
     }
 
-    mousedown(event, cs)
-    {
+    mousedown(event, cs) {
         if (event.button == 0 && cs.is_mouse_over2(event)) {
             let tv = cs.translate_point_to_cs(event.offsetX, event.offsetY);
             this.drag_offset.x = tv.x - this.selection_rect.x;
@@ -147,8 +160,7 @@ class editor {
         }
     }
 
-    draw(painter)
-    {
+    draw(painter) {
         if (atlas === null) // Don't draw if image hasn't loaded yet
             return;
         let ctx = painter.get_context();
@@ -158,7 +170,7 @@ class editor {
         ctx.rect(cs.origin.x, cs.origin.y, cs.dimensions.w, cs.dimensions.h);
         ctx.clip();
         painter.image_crop(atlas, cs.origin.x - cs.offset.x, cs.origin.y - cs.offset.y, atlas.width * cs.scale,
-                           atlas.height * cs.scale, 0, 0, atlas.width, atlas.height);
+            atlas.height * cs.scale, 0, 0, atlas.width, atlas.height);
 
         // Draw selection
         let r = cs.translate_rect_to_screen(this.selection_rect);

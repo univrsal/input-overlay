@@ -289,10 +289,11 @@ $(function () {
 
     // setup numeric textboxes
     let numerics = $('.numeric');
+ 
     for (let i = 0; i < numerics.length; i++) {
         let e = numerics[i];
         $(e).on('keydown', e => {
-            var k = e.which;
+            let k = e.which;
             console.log(k);
             /* numeric inputs can come from the keypad or the numeric row at the top
              * also arrows, home & end and backspace
