@@ -124,6 +124,18 @@ class config {
         this.deselect();
     }
 
+    is_name_unique(name) {
+        let unique = true;
+        this.elements.some(e => {
+            if (e.id() === name) {
+                unique = false;
+                return true;
+            }
+            return false;
+        });
+        return unique;
+    }
+
     on_button(event, state) {
         if (!this.enabled)
             return;

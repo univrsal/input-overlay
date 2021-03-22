@@ -16,8 +16,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *************************************************************************/
 
+var current_type = -1;
+var is_editing_element = false;
+
 function apply_settings() {
-    if (cfg !== null) {
+    if (cfg !== null && cfg.selected_elements.length > 0) {
+
+        if (!cfg.is_name_unique($("#selected-element-id").val())) {
+            alert('The element id is not unique.');
+            return;
+        }
+
         if (cfg.selected_elements.length === 1) {
             // We only apply these settings if a single element is selected
             let pos = new vec2($("#selected-element-x").val(), $("#selected-element-y").val());
@@ -65,6 +74,30 @@ function get_property(type) {
     return { label: $('#editor-element-' + type + '-label'), div: $('#editor-element-' + type + '-container') }
 }
 
+function type_from_string(type) {
+    switch (type) {
+        case 'mouse_button':
+            return element_types.MOUSE_BUTTON;
+        case 'keyboard_button':
+            return element_types.KEYBOARD_KEY;
+        case 'texture':
+            return element_types.TEXTURE;
+        case 'gamepad_button':
+            return element_types.GAMEPAD_BUTTON;
+        case 'analog_stick':
+            return element_types.ANALOG_STICK;
+        case 'trigger':
+            return element_types.TRIGGER;
+        case 'mouse_movement':
+            return element_types.MOUSE_MOVEMENT;
+        case 'mouse_wheel':
+            return element_types.WHEEL;
+        case 'player_id':
+            return element_types.GAMEPAD_ID;
+        default: return -1;
+    }
+}
+
 function setup_editor(type) {
     let analog_stick_side = get_property('analog-stick-side');
     let analog_stick_radius = get_property('analog-stick-radius');
@@ -75,6 +108,7 @@ function setup_editor(type) {
     let button = get_property('trigger-button');
     let record = get_property('record-code');
 
+    current_type = type_from_string(type);
     // First hide all optional settings
     hide_property(analog_stick_side);
     hide_property(analog_stick_radius);
@@ -86,6 +120,7 @@ function setup_editor(type) {
     hide_property(record);
 
     switch (type) {
+        case 'gamepad_button':
         case 'mouse_button':
         case 'keyboard_button': {
             show_property(keycode);
@@ -137,7 +172,7 @@ function open_editor(element_type, edit) {
     let c = $('#main-canvas-container')[0];
     let e = $('#element-dialog')[0];
     let title = $('#editor-title')[0];
-
+    is_editing_element = edit;
     setup_editor(element_type);
 
     if (edit) {
@@ -187,6 +222,36 @@ function close_editor(handler) {
     }
 }
 
+
+function apply_editor() {
+    if (!cfg.is_name_unique($("#editor-element-id").val())) {
+        alert("Element id isn't unique");
+        return;
+    }
+
+    if (is_editing_element) {
+
+    } else {
+        let json = {
+            type: current_type,
+            mapping: [
+                parseInt($("#editor-element-u").val()),
+                parseInt($("#editor-element-v").val()),
+                parseInt($("#editor-element-w").val()),
+                parseInt($("#editor-element-h").val())
+            ],
+            pos: [0, 0],
+            id: $("#editor-element-id").val(),
+            z_level: parseInt($("#editor-element-layer").val())
+        };
+
+        let new_element = create_element(json);
+        new_element.read_data_from_gui();
+        cfg.elements.push(new_element);
+    }
+    close_editor();
+}
+
 $(function () {
     $(".coord").on("keydown", e => {
         if (!e)
@@ -198,9 +263,17 @@ $(function () {
     });
     $("#ok").on("click", e => apply_settings());
     $("#del").on("click", e => {
-        if (cfg.selected_elements.length < 2)
+        if (cfg.selected_elements.length > 1) {
+            // Ask for comfirmation when deleting more than one element
+            if (confirm("You are about to delete " + cfg.selected_elements.length +
+                " elements. Are you sure?")) {
+                cfg.delete_selection();
+            }
+        } else {
             cfg.delete_selection();
+        }
     });
+
     $(window).on("click", e => {
         if (!e.target.matches('.dropbtn')) {
             let dropdowns = document.getElementsByClassName("dropdown-content");
@@ -213,4 +286,21 @@ $(function () {
             }
         }
     });
+
+    // setup numeric textboxes
+    let numerics = $('.numeric');
+    for (let i = 0; i < numerics.length; i++) {
+        let e = numerics[i];
+        $(e).on('keydown', e => {
+            var k = e.which;
+            console.log(k);
+            /* numeric inputs can come from the keypad or the numeric row at the top
+             * also arrows, home & end and backspace
+             */
+            if (!((k >= 48 && k <=57) || (k >= 96 && k <= 105) || (k >= 35 && k <= 40) || k === 8)) {
+                e.preventDefault();
+                return false;
+            }
+        });
+    }
 });

@@ -46,6 +46,7 @@ class element {
                       cs.origin.y - cs.offset.y + this.data.pos[1] * cs.scale, this.data.mapping[2] * cs.scale,
                       this.data.mapping[3] * cs.scale);
     }
+    read_data_from_gui() {}
 
     dim() { return new r4(this.data.pos[0], this.data.pos[1], this.data.mapping[2], this.data.mapping[3]); }
 
@@ -66,6 +67,7 @@ class element {
     v() { return this.data.mapping[1]; }
     w() { return this.data.mapping[2]; }
     h() { return this.data.mapping[3]; }
+    set_id(id) { this.data.id = id; }
 
     set_pos(x, y)
     {
@@ -96,7 +98,6 @@ class button extends texture {
         super(json);
         this.pressed = false;
     }
-    on_button_input(vc, state) {}
 
     draw(painter)
     {
@@ -118,17 +119,22 @@ class keyboard_button extends button {
 
     on_button_input(vc, state)
     {
-        if (vc == this.data["code"])
+        if (vc == this.data.code)
             this.pressed = state;
+    }
+
+    read_data_from_gui()
+    {
+        this.data.code = parseInt($('#editor-element-keycode').val(), 16);
     }
 };
 
 element_map.set(element_types.KEYBOARD_KEY, json => { return new keyboard_button(json); });
-element_map.set(element_types.TEXTURE, json => { return new element(json); });
+element_map.set(element_types.TEXTURE, json => { return new texture(json); });
 
 function create_element(json)
 {
-    if (element_map.has(json["type"]))
-        return element_map.get(json["type"])(json);
+    if (element_map.has(json.type))
+        return element_map.get(json.type)(json);
     return null;
 }

@@ -303,3 +303,7 @@ input[type="checkbox"]:checked + .cbx svg {
     stroke-dashoffset: 0;
     transition: all 0.25s ease;
 }
+
+.cbx-label {
+    padding-bottom: 5px;
+}

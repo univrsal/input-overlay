@@ -68,28 +68,28 @@
         <div class="properties">
             <!-- Position -->
             <div><label for="selected-element-x">X</label></div>
-            <div class="textbox-container"><input type="text" class="coord" id="selected-element-x" value="0"></div>
+            <div class="textbox-container"><input type="text" class="numeric" id="selected-element-x" value="0"></div>
 
             <div><label for="selected-element-y">Y</label></div>
-            <div class="textbox-container"><input type="text" class="coord" id="selected-element-y" value="0"></div>
+            <div class="textbox-container"><input type="text" class="numeric" id="selected-element-y" value="0"></div>
 
             <!-- UV -->
             <div><label for="selected-element-u">U</label></div>
-            <div class="textbox-container"><input type="text" class="coord" id="selected-element-u" value="0"></div>
+            <div class="textbox-container"><input type="text" class="numeric" id="selected-element-u" value="0"></div>
 
             <div><label for="selected-element-v">V</label></div>
-            <div class="textbox-container"><input type="text" class="coord" id="selected-element-v" value="0"></div>
+            <div class="textbox-container"><input type="text" class="numeric" id="selected-element-v" value="0"></div>
 
             <!-- W/H -->
             <div><label for="selected-element-w">W</label></div>
-            <div class="textbox-container"><input type="text" class="coord" id="selected-element-w" value="0"></div>
+            <div class="textbox-container"><input type="text" class="numeric" id="selected-element-w" value="0"></div>
 
             <div><label for="selected-element-h">H</label></div>
-            <div class="textbox-container"><input type="text" class="coord" id="selected-element-h" value="0"></div>
+            <div class="textbox-container"><input type="text" class="numeric" id="selected-element-h" value="0"></div>
 
             <!-- Z -->
             <div><label for="selected-element-layer">Z</label></div>
-            <div class="textbox-container-wide"><input type="text" class="coord" id="selected-element-layer" value="0">
+            <div class="textbox-container-wide"><input type="text" class="numeric" id="selected-element-layer" value="0">
             </div>
 
             <div><label for="selected-element-id">ID</label></div>
@@ -105,6 +105,7 @@
                 <div id="type-dropdown" class="dropdown-content ">
                     <a onclick="open_editor('texture', false)" href="#">Texture</a>
                     <a onclick="open_editor('keyboard_button', false)" href="#">Keyboard button</a>
+                    <a onclick="open_editor('gamepad_button', false)" href="#">Gamepad button</a>
                     <a onclick="open_editor('mouse_button', false)" href="#">Mouse button</a>
                     <a onclick="open_editor('mouse_wheel', false)" href="#">Mouse wheel</a>
                     <a onclick="open_editor('analog_stick', false)" href="#">Analog stick</a>
@@ -132,31 +133,31 @@
             <div class="editor-properties">
                 <div class="properties">
                     <div><label for="editor-element-id">ID</label></div>
-                    <div class="textbox-container-wide"><input type="text" class="coord" id="editor-element-id"
+                    <div class="textbox-container-wide"><input type="text" id="editor-element-id"
                             value="">
                     </div>
 
                     <!-- UV -->
                     <div><label for="editor-element-u">U</label></div>
-                    <div class="textbox-container"><input type="text" class="coord" id="editor-element-u" value="0">
+                    <div class="textbox-container"><input type="text" class="numeric" id="editor-element-u" value="0">
                     </div>
 
                     <div><label for="editor-element-v">V</label></div>
-                    <div class="textbox-container"><input type="text" class="coord" id="editor-element-v" value="0">
+                    <div class="textbox-container"><input type="text" class="numeric" id="editor-element-v" value="0">
                     </div>
 
                     <!-- W/H -->
                     <div><label for="editor-element-w">W</label></div>
-                    <div class="textbox-container"><input type="text" class="coord" id="editor-element-w" value="0">
+                    <div class="textbox-container"><input type="text" class="numeric" id="editor-element-w" value="0">
                     </div>
 
                     <div><label for="editor-element-h">H</label></div>
-                    <div class="textbox-container"><input type="text" class="coord" id="editor-element-h" value="0">
+                    <div class="textbox-container"><input type="text" class="numeric" id="editor-element-h" value="0">
                     </div>
 
                     <!-- Z -->
                     <div><label for="editor-element-layer">Z</label></div>
-                    <div class="textbox-container-wide"><input type="text" class="coord" id="editor-element-layer"
+                    <div class="textbox-container-wide"><input type="text" class="numeric" id="editor-element-layer"
                             value="0">
                     </div>
 
@@ -166,11 +167,11 @@
                     <div class="label-container-wide" id="editor-element-keycode-label"><label
                             for="editor-element-keycode">Keycode</label></div>
                     <div class="textbox-container-medium" id="editor-element-keycode-container"><input type="text"
-                            class="coord" id="editor-element-keycode" value="0">
+                            class="hex-numeric" id="editor-element-keycode" value="0">
                     </div>
                     <div id="editor-element-record-code-container" class="grid-full-width">
-                        <label for="editor-element-record-code">
-                            <input type="checkbox" id="editor-element-trigger-button">
+                        <label for="editor-element-record-code" class="cbx-label">
+                            <input type="checkbox" id="editor-element-record-code" onclick="" checked>
                             <span class="cbx">
                                 <svg width="12px" height="11px" viewBox="0 0 12 11">
                                     <polyline points="0.75 4.721 3.375 7.5 8.25 0.75"></polyline>
@@ -249,8 +250,8 @@
                     </div>
                     <!-- Buttons -->
                     <div class="grid-full-width ">
-                        <input type="button" onclick="close_editor()" id="export" value="OK">
-                        <input type="button" onclick="close_editor()" id="export" value="Cancel">
+                        <input type="button" onclick="apply_editor()" id="ok-editor" value="OK">
+                        <input type="button" onclick="close_editor()" id="cancel-editor" value="Cancel">
                     </div>
                 </div>
             </div>
