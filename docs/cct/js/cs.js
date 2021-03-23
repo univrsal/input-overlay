@@ -32,7 +32,8 @@ class cs {
         $(canvas_id).on('mousewheel', e => this.scroll(e));
         $(canvas_id).on('click', e => this.click(e));
         $(canvas_id).on('mousemove', e => this.move(e));
-        $(canvas_id).on('mouseup', e => this.mouseup(e));
+        $(canvas_id).on('mouseup', e => this.mouseup());
+        $(canvas_id).on('mouseleave', () => this.mouseup());
         $(canvas_id).on('contextmenu', e => {
             this.click(e);
             e.preventDefault();
@@ -126,7 +127,7 @@ class cs {
         }
     }
 
-    mouseup(event) { this.dragging = false; }
+    mouseup() { this.dragging = false; }
 
     scroll(event)
     {

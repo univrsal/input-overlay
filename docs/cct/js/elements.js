@@ -158,7 +158,7 @@ class keyboard_button extends button {
 
     write_data_to_gui() {
         super.write_data_to_gui();
-        $('#editor-element-keycode').val('0x' + this.data.code.toString(16));
+        $('#editor-element-keycode').val('0x' + this.data.code.toString(16).toUpperCase());
     }
 };
 

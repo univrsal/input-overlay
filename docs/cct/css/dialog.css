@@ -292,6 +292,7 @@ input[type="button"] {
 input[type="checkbox"] {
     position: absolute;
     opacity: 0;
+    cursor: pointer;
 }
 
 input[type="checkbox"]:checked + .cbx {
@@ -306,4 +307,8 @@ input[type="checkbox"]:checked + .cbx svg {
 
 .cbx-label {
     padding-bottom: 5px;
+}
+
+.cbx-label > span {
+    cursor: pointer;
 }
