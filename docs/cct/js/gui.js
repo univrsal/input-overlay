@@ -18,6 +18,7 @@
 
 var current_type = -1;
 var is_editing_element = false;
+var selected_element = null;
 
 function apply_settings() {
     if (cfg !== null && cfg.selected_elements.length > 0) {
@@ -167,19 +168,25 @@ function setup_editor(type) {
     }
 }
 
-function open_editor(element_type, edit) {
+function open_editor(element_type, is_editing) {
     let d = $("#edit-element-dialog")[0];
     let c = $('#main-canvas-container')[0];
     let e = $('#element-dialog')[0];
     let title = $('#editor-title')[0];
-    is_editing_element = edit;
-    setup_editor(element_type);
+    is_editing_element = is_editing;
 
-    if (edit) {
+    if (is_editing) {
         if (cfg.selected_elements.length > 0) {
             title.innerText = 'Edit ' + cfg.selected_elements[0].id();
+            selected_element = cfg.selected_elements[0];
+            selected_element.write_data_to_gui();
+            element_type = selected_element.type();
+            edit.selection_rect = new r4(
+                selected_element.u(), selected_element.v(),
+                selected_element.w(), selected_element.h()
+            );
         } else {
-            alert('Please select at least one element first');
+            alert('Please select an element first');
             return;
         }
     } else {
@@ -187,6 +194,8 @@ function open_editor(element_type, edit) {
         title.innerText = 'Create new ' + id;
         $('#editor-element-id').val(id + cfg.elements.length);
     }
+
+    setup_editor(element_type);
 
     if (d !== null) {
         d.style.opacity = 1;
@@ -224,25 +233,18 @@ function close_editor(handler) {
 
 
 function apply_editor() {
-    if (!cfg.is_name_unique($("#editor-element-id").val())) {
+    if (!cfg.is_name_unique($("#editor-element-id").val(), selected_element)) {
         alert("Element id isn't unique");
         return;
     }
 
     if (is_editing_element) {
-
+        selected_element.read_data_from_gui();
     } else {
+        // basic json
         let json = {
             type: current_type,
-            mapping: [
-                parseInt($("#editor-element-u").val()),
-                parseInt($("#editor-element-v").val()),
-                parseInt($("#editor-element-w").val()),
-                parseInt($("#editor-element-h").val())
-            ],
-            pos: [0, 0],
-            id: $("#editor-element-id").val(),
-            z_level: parseInt($("#editor-element-layer").val())
+            pos: [0, 0]
         };
 
         let new_element = create_element(json);

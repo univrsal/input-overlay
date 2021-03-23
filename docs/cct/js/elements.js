@@ -69,6 +69,7 @@ class element {
         this.data.mapping[3] = uvwh.h;
     }
 
+    type() { return 'element'; }
     id() { return this.data.id; }
     x() { return this.data.pos[0]; }
     y() { return this.data.pos[1]; }
@@ -88,7 +89,8 @@ class element {
 };
 
 class texture extends element {
-
+    type() { return 'texture'; }
+    
     draw(painter) {
         // default draw handling
         let cs = painter.cs();
@@ -123,6 +125,8 @@ class button extends texture {
         this.pressed = false;
     }
 
+    type() { return 'button'; }
+
     draw(painter) {
         if (this.pressed) {
             let cs = painter.cs();
@@ -140,6 +144,8 @@ class button extends texture {
 class keyboard_button extends button {
     constructor(json) { super(json); }
 
+    type() { return 'keyboard_button'; }
+
     on_button_input(vc, state) {
         if (vc == this.data.code)
             this.pressed = state;
@@ -152,7 +158,7 @@ class keyboard_button extends button {
 
     write_data_to_gui() {
         super.write_data_to_gui();
-        $('#editor-element-keycode').val(this.data.code);
+        $('#editor-element-keycode').val('0x' + this.data.code.toString(16));
     }
 };
 

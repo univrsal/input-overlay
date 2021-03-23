@@ -90,12 +90,14 @@ class config {
         this.deselect();
     }
 
-    is_name_unique(name) {
+    is_name_unique(name, editing_element) {
         let unique = true;
         this.elements.some(e => {
             if (e.id() === name) {
-                unique = false;
-                return true;
+                if (!editing_element || e !== editing_element) {
+                    unique = false;
+                    return true;
+                }
             }
             return false;
         });
