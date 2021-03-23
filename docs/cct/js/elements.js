@@ -30,10 +30,64 @@ let element_types = {
     MOUSE_MOVEMENT: 9
 };
 
+let overlay_flags = {
+    LEFT_STICK: 1 << 0,
+    RIGHT_STICK: 1 << 1,
+    GAMEPAD: 1 << 2,
+    MOUSE: 1 << 3
+};
+
 let constants = { texture_space: 3 };
 
 let element_map = new Map();
 
+function type_from_string(type) {
+    switch (type) {
+        case 'mouse_button':
+            return element_types.MOUSE_BUTTON;
+        case 'keyboard_button':
+            return element_types.KEYBOARD_KEY;
+        case 'texture':
+            return element_types.TEXTURE;
+        case 'gamepad_button':
+            return element_types.GAMEPAD_BUTTON;
+        case 'analog_stick':
+            return element_types.ANALOG_STICK;
+        case 'trigger':
+            return element_types.TRIGGER;
+        case 'mouse_movement':
+            return element_types.MOUSE_MOVEMENT;
+        case 'mouse_wheel':
+            return element_types.WHEEL;
+        case 'player_id':
+            return element_types.GAMEPAD_ID;
+        default: return -1;
+    }
+}
+
+function type_from_id(type) {
+    switch (type) {
+        case element_types.MOUSE_BUTTON:
+            return 'mouse_button';
+        case element_types.KEYBOARD_KEY:
+            return 'keyboard_button';
+        case element_types.TEXTURE:
+            return 'texture';
+        case element_types.GAMEPAD_BUTTON:
+            return 'gamepad_button';
+        case element_types.ANALOG_STICK:
+            return 'analog_stick';
+        case element_types.TRIGGER:
+            return 'trigger';
+        case element_types.MOUSE_MOVEMENT:
+            return 'mouse_movement';
+        case element_types.WHEEL:
+            return 'mouse_wheel';
+        case element_types.GAMEPAD_ID:
+            return 'player_id';
+        default: return '';
+    }
+}
 class element {
     constructor(json) { this.data = json; }
 
@@ -69,7 +123,7 @@ class element {
         this.data.mapping[3] = uvwh.h;
     }
 
-    type() { return 'element'; }
+    type() { return this.data.type }
     id() { return this.data.id; }
     x() { return this.data.pos[0]; }
     y() { return this.data.pos[1]; }
@@ -89,8 +143,6 @@ class element {
 };
 
 class texture extends element {
-    type() { return 'texture'; }
-    
     draw(painter) {
         // default draw handling
         let cs = painter.cs();
@@ -125,8 +177,6 @@ class button extends texture {
         this.pressed = false;
     }
 
-    type() { return 'button'; }
-
     draw(painter) {
         if (this.pressed) {
             let cs = painter.cs();
@@ -143,8 +193,6 @@ class button extends texture {
 
 class keyboard_button extends button {
     constructor(json) { super(json); }
-
-    type() { return 'keyboard_button'; }
 
     on_button_input(vc, state) {
         if (vc == this.data.code)

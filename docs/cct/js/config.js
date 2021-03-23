@@ -54,6 +54,34 @@ class config {
         this.load_callbacks.forEach(cb => cb());
     }
 
+    write_to_json() {
+        this.data.flags = 0;
+        this.elements.forEach(e => {
+            switch (e.type()) {
+                case element_types.ANALOG_STICK:
+                    if (e.is_left_stick())
+                        this.data.flags |= overlay_flags.LEFT_STICK;
+                    else
+                        this.data.flags |= overlay_flags.RIGHT_STICK;
+                case element_types.GAMEPAD_BUTTON:
+                case element_types.ANALOG_STICK:
+                case element_types.TRIGGER:
+                case element_types.DPAD_STICK:
+                case element_types.GAMEPAD_ID:
+                    this.data.flags |= overlay_flags.GAMEPAD;
+                    break;
+                case element_types.WHEEL:
+                case element_types.MOUSE_MOVEMENT:
+                case element_types.MOUSE_BUTTON:
+                    this.data.flags |= overlay_flags.MOUSE;
+                    break;
+            }
+            this.data.overlay_height = Math.max(this.data.overlay_height, e.x() + e.w());
+            this.data.overlay_width = Math.max(this.data.overlay_width, e.y() + e.h());
+        });
+        return this.data;
+    }
+
     sort_elements() {
         this.elements.sort((a, b) => { return a.layer() - b.layer(); });
     }

@@ -16,6 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *************************************************************************/
 
+var cfg_name = 'overlay.json'
 var atlas = null;
 var cfg = null;
 var edit = null;

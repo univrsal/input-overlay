@@ -75,30 +75,6 @@ function get_property(type) {
     return { label: $('#editor-element-' + type + '-label'), div: $('#editor-element-' + type + '-container') }
 }
 
-function type_from_string(type) {
-    switch (type) {
-        case 'mouse_button':
-            return element_types.MOUSE_BUTTON;
-        case 'keyboard_button':
-            return element_types.KEYBOARD_KEY;
-        case 'texture':
-            return element_types.TEXTURE;
-        case 'gamepad_button':
-            return element_types.GAMEPAD_BUTTON;
-        case 'analog_stick':
-            return element_types.ANALOG_STICK;
-        case 'trigger':
-            return element_types.TRIGGER;
-        case 'mouse_movement':
-            return element_types.MOUSE_MOVEMENT;
-        case 'mouse_wheel':
-            return element_types.WHEEL;
-        case 'player_id':
-            return element_types.GAMEPAD_ID;
-        default: return -1;
-    }
-}
-
 function setup_editor(type) {
     let analog_stick_side = get_property('analog-stick-side');
     let analog_stick_radius = get_property('analog-stick-radius');
@@ -180,7 +156,7 @@ function open_editor(element_type, is_editing) {
             title.innerText = 'Edit ' + cfg.selected_elements[0].id();
             selected_element = cfg.selected_elements[0];
             selected_element.write_data_to_gui();
-            element_type = selected_element.type();
+            element_type = type_from_id(selected_element.type());
             edit.selection_rect = new r4(
                 selected_element.u(), selected_element.v(),
                 selected_element.w(), selected_element.h()
@@ -252,6 +228,11 @@ function apply_editor() {
         cfg.elements.push(new_element);
     }
     close_editor();
+}
+
+function download_config()
+{
+    download_json(cfg_name, cfg.write_to_json());
 }
 
 $(function () {

@@ -35,6 +35,7 @@
     <script src="./js/cs.js"></script>
     <script src="./js/draw.js"></script>
     <script src="./js/editor.js"></script>
+    <script src="./js/dl.js"></script>
     <script src="./js/main.js"></script>
     <script src="./js/gui.js"></script>
     <script src="./js/select.js"></script>
@@ -123,7 +124,7 @@
             <div class="grid-full-width"><input type="button" class="full-width" id="del"
                     value="Delete selected element"></div>
 
-            <div class="grid-full-width"><input type="button" class="full-width" id="export" value="Export to JSON">
+            <div class="grid-full-width"><input type="button" class="full-width" id="export" onclick="download_config()" value="Export to JSON">
             </div>
         </div>
     </div>
