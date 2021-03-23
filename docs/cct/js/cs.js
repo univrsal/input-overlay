@@ -147,14 +147,14 @@ class cs {
         this.offset = this.offset.scale(this.scale / old_scale);
         //this.offset = this.offset.sub((new_mouse.x - old_mouse.x) * offset_factor, (new_mouse.x - old_mouse.y) * offset_factor);
 
-        this.offset.limit();
+        this.offset.limit(0, 0, 3000 * this.scale, 3000 * this.scale);
     }
 
     move(event)
     {
         if (this.dragging) {
             this.offset = this.orig_offset.addv(this.drag_start.sub(event.clientX, event.clientY));
-            this.offset.limit();
+            this.offset.limit(0, 0, 3000 * this.scale, 3000 * this.scale);
         }
     }
 
