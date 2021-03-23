@@ -142,8 +142,6 @@ class cs {
 
         // Adjust to mouse position
         let new_mouse = this.translate_point_to_cs(event.clientX, event.clientY);
-        console.log("old: " + old_mouse.x + "/" + old_mouse.y + ", " + new_mouse.x + "/" + new_mouse.y + ", " +
-                    (new_mouse.x - old_mouse.x) + "/" + (new_mouse.y - old_mouse.y));
         let offset_factor = this.scale / old_scale;
         this.offset = this.offset.scale(this.scale / old_scale);
         //this.offset = this.offset.sub((new_mouse.x - old_mouse.x) * offset_factor, (new_mouse.x - old_mouse.y) * offset_factor);
