@@ -29,7 +29,7 @@ class cs {
         this.step = 10;
         this.canvas_id = canvas_id;
 
-        $(canvas_id).on('mousewheel', e => this.scroll(e));
+        $(canvas_id).on('wheel', e => this.scroll(e));
         $(canvas_id).on('click', e => this.click(e));
         $(canvas_id).on('mousemove', e => this.move(e));
         $(canvas_id).on('mouseup', e => this.mouseup());
@@ -134,7 +134,7 @@ class cs {
         let old_mouse = this.translate_point_to_cs(event.clientX, event.clientY);
         let old_scale = this.scale;
 
-        if (event.originalEvent.wheelDelta / 120 > 0) {
+        if (event.originalEvent.deltaY < 0) {
             this.scale = Math.min(8, this.scale + 1);
         } else {
             this.scale = Math.max(1, this.scale - 1);
