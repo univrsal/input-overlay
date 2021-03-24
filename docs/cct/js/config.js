@@ -195,6 +195,8 @@ class config {
     mouseup(event, cs) {
         this.selecting = false;
         this.dragging = false;
+        let vc = mouse_to_vc(event);
+        this.elements.forEach(element => element.on_button_input(vc, false));
     }
 
     start_dragging(event, cs) {
@@ -208,6 +210,8 @@ class config {
     set_selection(element) { this.selection_rect = element.dim(); }
 
     mousedown(event, cs) {
+        let vc = mouse_to_vc(event);
+        this.elements.forEach(element => element.on_button_input(vc, true));
         if (event.button == 0 && cs.is_mouse_over(event)) {
             let r = cs.translate_rect_to_screen(this.selection_rect);
             let m = new vec2(event.clientX, event.clientY);

@@ -140,7 +140,21 @@ $(function () {
     vc("MetaLeft", 0x0E5B);
     vc("MetaRight", 0x0E5C);
     vc("ContextMenu", 0x0E5D);
+
+    mouse2vc.set(0, 1);
+    mouse2vc.set(1, 3);
+    mouse2vc.set(2, 2);
+    mouse2vc.set(3, 4);
+    mouse2vc.set(4, 5);
 });
+
+function mouse_to_vc(e) {
+    let button = e.button;
+
+    if (mouse2vc.has(button))
+        return mouse2vc.get(button);
+    return 0;
+}
 
 function key_to_vc(e) {
     let key = e.code;

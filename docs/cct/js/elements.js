@@ -211,6 +211,7 @@ class keyboard_button extends button {
 };
 
 element_map.set(element_types.KEYBOARD_KEY, json => { return new keyboard_button(json); });
+element_map.set(element_types.MOUSE_BUTTON, json => { return new keyboard_button(json); }); // behaves exactly like keyboard key
 element_map.set(element_types.TEXTURE, json => { return new texture(json); });
 
 function create_element(json) {
