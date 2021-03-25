@@ -18,7 +18,8 @@
 
 class config {
 
-    constructor(canvas_id, painter) {
+    constructor(canvas_id, painter)
+    {
         this.data = {};
         this.elements = [];
         this.selected_elements = [];
@@ -37,12 +38,14 @@ class config {
         $(canvas_id).on('mousedown', e => this.mousedown(e, this.painter.cs()));
         $(window).on('keydown', e => this.on_button(e, true));
         $(window).on('keyup', e => this.on_button(e, false));
+        pad.on('input', p => this.gamepad_input(p));
         this.load_callbacks = [];
     }
 
     add_load_callback(cb) { this.load_callbacks.push(cb); }
 
-    load_from_json(json) {
+    load_from_json(json)
+    {
         this.data = json;
         this.data["elements"].forEach(data => {
             let new_element = create_element(data);
@@ -54,27 +57,28 @@ class config {
         this.load_callbacks.forEach(cb => cb());
     }
 
-    write_to_json() {
+    write_to_json()
+    {
         this.data.flags = 0;
         this.elements.forEach(e => {
             switch (e.type()) {
-                case element_types.ANALOG_STICK:
-                    if (e.is_left_stick())
-                        this.data.flags |= overlay_flags.LEFT_STICK;
-                    else
-                        this.data.flags |= overlay_flags.RIGHT_STICK;
-                case element_types.GAMEPAD_BUTTON:
-                case element_types.ANALOG_STICK:
-                case element_types.TRIGGER:
-                case element_types.DPAD_STICK:
-                case element_types.GAMEPAD_ID:
-                    this.data.flags |= overlay_flags.GAMEPAD;
-                    break;
-                case element_types.WHEEL:
-                case element_types.MOUSE_MOVEMENT:
-                case element_types.MOUSE_BUTTON:
-                    this.data.flags |= overlay_flags.MOUSE;
-                    break;
+            case element_types.ANALOG_STICK:
+                if (e.is_left_stick())
+                    this.data.flags |= overlay_flags.LEFT_STICK;
+                else
+                    this.data.flags |= overlay_flags.RIGHT_STICK;
+            case element_types.GAMEPAD_BUTTON:
+            case element_types.ANALOG_STICK:
+            case element_types.TRIGGER:
+            case element_types.DPAD_STICK:
+            case element_types.GAMEPAD_ID:
+                this.data.flags |= overlay_flags.GAMEPAD;
+                break;
+            case element_types.WHEEL:
+            case element_types.MOUSE_MOVEMENT:
+            case element_types.MOUSE_BUTTON:
+                this.data.flags |= overlay_flags.MOUSE;
+                break;
             }
             this.data.overlay_height = Math.max(this.data.overlay_height, e.x() + e.w());
             this.data.overlay_width = Math.max(this.data.overlay_width, e.y() + e.h());
@@ -82,11 +86,13 @@ class config {
         return this.data;
     }
 
-    sort_elements() {
+    sort_elements()
+    {
         this.elements.sort((a, b) => { return a.layer() - b.layer(); });
     }
 
-    draw(painter) {
+    draw(painter)
+    {
         if (atlas === null) // Don't draw if image hasn't loaded yet
             return;
         let ctx = painter.get_context();
@@ -98,7 +104,7 @@ class config {
         this.elements.forEach(element => element.draw(painter));
         if (this.selecting && !this.drag_selection.is_empty()) {
             painter.rect_outline(this.drag_selection.x - 0.5, this.drag_selection.y - 0.5, this.drag_selection.w,
-                this.drag_selection.h);
+                                 this.drag_selection.h);
         }
 
         if (!this.selection_rect.is_empty()) {
@@ -109,16 +115,18 @@ class config {
         painter.text("Button id: " + this.last_button, 220, 50);
     }
 
-    delete_selection() {
-        let new_elements = this.elements.filter(function (to_filter) {
-            return this.selected_elements.find(function (to_find) { return to_filter.id() === to_find.id(); }) ===
-                undefined;
+    delete_selection()
+    {
+        let new_elements = this.elements.filter(function(to_filter) {
+            return this.selected_elements.find(function(to_find) { return to_filter.id() === to_find.id(); }) ===
+                   undefined;
         }, this);
         this.elements = new_elements;
         this.deselect();
     }
 
-    is_name_unique(name, editing_element) {
+    is_name_unique(name, editing_element)
+    {
         let unique = true;
         this.elements.some(e => {
             if (e.id() === name) {
@@ -132,7 +140,10 @@ class config {
         return unique;
     }
 
-    on_button(event, state) {
+    gamepad_input(pad) { this.elements.forEach(e => e.on_gamepad_input(pad)); }
+
+    on_button(event, state)
+    {
         if (!this.enabled)
             return;
         if (state)
@@ -141,41 +152,41 @@ class config {
             this.is_ctrl_down = state;
 
         let vc = key_to_vc(event);
-        this.elements.forEach(element => element.on_button_input(vc, state));
+        this.elements.forEach(element => element.on_keyboard_input(vc, state));
         if (this.selected_elements.length > 0 && state) {
             let old_pos = new vec2(this.selection_rect.x, this.selection_rect.y);
             let moved = false;
 
             switch (event.key) {
-                case "ArrowUp":
-                    moved = true;
-                    this.selection_rect.y--;
-                    break;
-                case "ArrowDown":
-                    moved = true;
-                    this.selection_rect.y++;
-                    break;
-                case "ArrowLeft":
-                    moved = true;
-                    this.selection_rect.x--;
-                    break;
-                case "ArrowRight":
-                    moved = true;
-                    this.selection_rect.x++;
-                    break;
-                case "Delete":
-                    if (document.activeElement === document.body) {
-                        if (this.selected_elements.length > 1) {
-                            // Ask for comfirmation when deleting more than one element
-                            if (confirm("You are about to delete " + this.selected_elements.length +
-                                " elements. Are you sure?")) {
-                                this.delete_selection();
-                            }
-                        } else {
+            case "ArrowUp":
+                moved = true;
+                this.selection_rect.y--;
+                break;
+            case "ArrowDown":
+                moved = true;
+                this.selection_rect.y++;
+                break;
+            case "ArrowLeft":
+                moved = true;
+                this.selection_rect.x--;
+                break;
+            case "ArrowRight":
+                moved = true;
+                this.selection_rect.x++;
+                break;
+            case "Delete":
+                if (document.activeElement === document.body) {
+                    if (this.selected_elements.length > 1) {
+                        // Ask for comfirmation when deleting more than one element
+                        if (confirm("You are about to delete " + this.selected_elements.length +
+                                    " elements. Are you sure?")) {
                             this.delete_selection();
                         }
+                    } else {
+                        this.delete_selection();
                     }
-                    break;
+                }
+                break;
             }
 
             if (moved) {
@@ -192,14 +203,16 @@ class config {
         }
     }
 
-    mouseup(event, cs) {
+    mouseup(event, cs)
+    {
         this.selecting = false;
         this.dragging = false;
         let vc = mouse_to_vc(event);
-        this.elements.forEach(element => element.on_button_input(vc, false));
+        this.elements.forEach(element => element.on_mouse_input(vc, false));
     }
 
-    start_dragging(event, cs) {
+    start_dragging(event, cs)
+    {
         let tv = cs.translate_point_to_cs(event.clientX, event.clientY);
         this.drag_offset.x = tv.x - this.selection_rect.x;
         this.drag_offset.y = tv.y - this.selection_rect.y;
@@ -209,9 +222,11 @@ class config {
 
     set_selection(element) { this.selection_rect = element.dim(); }
 
-    mousedown(event, cs) {
+    mousedown(event, cs)
+    {
         let vc = mouse_to_vc(event);
-        this.elements.forEach(element => element.on_button_input(vc, true));
+        this.elements.forEach(element => element.on_mouse_input(vc, true));
+
         if (event.button == 0 && cs.is_mouse_over(event)) {
             let r = cs.translate_rect_to_screen(this.selection_rect);
             let m = new vec2(event.clientX, event.clientY);
@@ -253,7 +268,8 @@ class config {
         }
     }
 
-    deselect() {
+    deselect()
+    {
         $("#selected-element-x").val(0);
         $("#selected-element-y").val(0);
         $("#selected-element-w").val(0);
@@ -266,7 +282,8 @@ class config {
         this.selection_rect.reset();
     }
 
-    select_element(e) {
+    select_element(e)
+    {
         $("#selected-element-x").val(e.x());
         $("#selected-element-y").val(e.y());
         $("#selected-element-w").val(e.w());
@@ -277,7 +294,8 @@ class config {
         $("#selected-element-layer").val(e.layer());
     }
 
-    move(event, cs) {
+    move(event, cs)
+    {
         if (this.selecting) {
             this.drag_selection.w = event.clientX - this.drag_selection.x;
             this.drag_selection.h = event.clientY - this.drag_selection.y;

@@ -1,5 +1,6 @@
-function download_json (file_name, content) {
-    var json_data = new Blob([JSON.stringify(content, null, 4)], { type: 'text/json' });
+function download_json(file_name, content)
+{
+    var json_data = new Blob([JSON.stringify(content, null, 4)], {type: 'text/json'});
     if (window.navigator && window.navigator.msSaveOrOpenBlob) { // for IE
         window.navigator.msSaveOrOpenBlob(json_data, file_name);
     } else { // for Non-IE (chrome, firefox etc.)
@@ -13,4 +14,4 @@ function download_json (file_name, content) {
         URL.revokeObjectURL(a.href)
         a.remove();
     }
-};
+}

@@ -20,7 +20,8 @@ var current_type = -1;
 var is_editing_element = false;
 var selected_element = null;
 
-function apply_settings() {
+function apply_settings()
+{
     if (cfg !== null && cfg.selected_elements.length > 0) {
 
         if (!cfg.is_name_unique($("#selected-element-id").val())) {
@@ -31,8 +32,8 @@ function apply_settings() {
         if (cfg.selected_elements.length === 1) {
             // We only apply these settings if a single element is selected
             let pos = new vec2($("#selected-element-x").val(), $("#selected-element-y").val());
-            let dim = new r4($("#selected-element-u").val(), $("#selected-element-v").val(), $("#selected-element-w").val(),
-                $("#selected-element-h").val());
+            let dim = new r4($("#selected-element-u").val(), $("#selected-element-v").val(),
+                             $("#selected-element-w").val(), $("#selected-element-h").val());
 
             dim.validate();
             pos.validate();
@@ -42,40 +43,44 @@ function apply_settings() {
             cfg.set_selection(cfg.selected_elements[0]);
         } else {
             // Only set the layer if there's multiple elements selected
-            cfg.selected_elements.forEach(element => {
-                element.set_layer($("#selected-element-layer").val());
-            });
+            cfg.selected_elements.forEach(element => { element.set_layer($("#selected-element-layer").val()); });
         }
     }
 }
 
-function new_type_dropdown() {
+function new_type_dropdown()
+{
     document.getElementById("type-dropdown").classList.toggle("show");
 }
 
-function show_property(prop) {
-    prop.label.css({ "display": "flex" });
+function show_property(prop)
+{
+    prop.label.css({"display": "flex"});
     if (prop.div)
-        prop.div.css({ "display": "flex" });
+        prop.div.css({"display": "flex"});
 }
 
-function hide_property(prop) {
+function hide_property(prop)
+{
     if (prop.div)
-        prop.label.css({ "display": "none" });
+        prop.label.css({"display": "none"});
     if (prop.div)
-        prop.div.css({ "display": "none" });
+        prop.div.css({"display": "none"});
 }
 
-function set_description(desc_element, text) {
+function set_description(desc_element, text)
+{
     desc_element.label[0].innerHTML = '<p>' + text + '</p>';
     show_property(desc_element)
 }
 
-function get_property(type) {
+function get_property(type)
+{
     return { label: $('#editor-element-' + type + '-label'), div: $('#editor-element-' + type + '-container') }
 }
 
-function setup_editor(type) {
+function setup_editor(type)
+{
     let analog_stick_side = get_property('analog-stick-side');
     let analog_stick_radius = get_property('analog-stick-radius');
     let keycode = get_property('keycode');
@@ -97,41 +102,41 @@ function setup_editor(type) {
     hide_property(record);
 
     switch (type) {
-        case 'gamepad_button':
-        case 'mouse_button':
-        case 'keyboard_button': {
-            show_property(keycode);
-            show_property(record);
-            break;
-        }
-        case 'analog_stick': {
-            show_property(analog_stick_radius);
-            show_property(analog_stick_side);
-            break;
-        }
-        case 'trigger': {
-            show_property(trigger_dir);
-            show_property(button);
-            set_description(description, `The trigger can either be a button, meaning that it'll
+    case 'gamepad_button':
+    case 'mouse_button':
+    case 'keyboard_button': {
+        show_property(keycode);
+        show_property(record);
+        break;
+    }
+    case 'analog_stick': {
+        show_property(analog_stick_radius);
+        show_property(analog_stick_side);
+        break;
+    }
+    case 'trigger': {
+        show_property(trigger_dir);
+        show_property(button);
+        set_description(description, `The trigger can either be a button, meaning that it'll
                 only be either on or off, or it can display the position it is in by filling up
                 in a direction.`);
-            break;
-        }
-        case 'mouse_movement': {
-            show_property(movement_type);
-            break;
-        }
-        case 'mouse_wheel': {
-            set_description(description, `The mouse wheel expects the following three textures 
+        break;
+    }
+    case 'mouse_movement': {
+        show_property(movement_type);
+        break;
+    }
+    case 'mouse_wheel': {
+        set_description(description, `The mouse wheel expects the following three textures 
                 to be next to eachother in the atlas:<br>
                 &nbsp;- neutral<br>
                 &nbsp;- clicked<br>
                 &nbsp;- scrolling up<br>
                 &nbsp;- scrolling down<br>You only have to select the first one.`);
-            break;
-        }
-        case 'player_id': {
-            set_description(description, `Displays the controller id from one to four. Usually in the order they
+        break;
+    }
+    case 'player_id': {
+        set_description(description, `Displays the controller id from one to four. Usually in the order they
             were connected in. The following textures have to be next to eachother in the atlas:<br>
             &nbsp;- Player 1<br>
             &nbsp;- Player 2<br>
@@ -139,12 +144,13 @@ function setup_editor(type) {
             &nbsp;- Player 4<br>
             &nbsp;- <a href="https://i.imgur.com/LdH3nnz.png" target="_tab">Guide</a> pressed<br>
             You only have to select the first one.<br>`);
-            break;
-        }
+        break;
+    }
     }
 }
 
-function open_editor(element_type, is_editing) {
+function open_editor(element_type, is_editing)
+{
     let d = $("#edit-element-dialog")[0];
     let c = $('#main-canvas-container')[0];
     let e = $('#element-dialog')[0];
@@ -157,10 +163,8 @@ function open_editor(element_type, is_editing) {
             selected_element = cfg.selected_elements[0];
             selected_element.write_data_to_gui();
             element_type = type_from_id(selected_element.type());
-            edit.selection_rect = new r4(
-                selected_element.u(), selected_element.v(),
-                selected_element.w(), selected_element.h()
-            );
+            edit.selection_rect =
+                new r4(selected_element.u(), selected_element.v(), selected_element.w(), selected_element.h());
         } else {
             alert('Please select an element first');
             return;
@@ -187,7 +191,8 @@ function open_editor(element_type, is_editing) {
     editor_painter.resize_canvas();
 }
 
-function close_editor(handler) {
+function close_editor(handler)
+{
     main_painter.enabled = true;
     cfg.enabled = true;
 
@@ -207,8 +212,8 @@ function close_editor(handler) {
     }
 }
 
-
-function apply_editor() {
+function apply_editor()
+{
     if (!cfg.is_name_unique($("#editor-element-id").val(), selected_element)) {
         alert("Element id isn't unique");
         return;
@@ -218,10 +223,7 @@ function apply_editor() {
         selected_element.read_data_from_gui();
     } else {
         // basic json
-        let json = {
-            type: current_type,
-            pos: [0, 0]
-        };
+        let json = {type: current_type, pos: [0, 0]};
 
         let new_element = create_element(json);
         new_element.read_data_from_gui();
@@ -235,7 +237,7 @@ function download_config()
     download_json(cfg_name, cfg.write_to_json());
 }
 
-$(function () {
+$(function() {
     $(".coord").on("keydown", e => {
         if (!e)
             var e = window.event;
@@ -248,8 +250,7 @@ $(function () {
     $("#del").on("click", e => {
         if (cfg.selected_elements.length > 1) {
             // Ask for comfirmation when deleting more than one element
-            if (confirm("You are about to delete " + cfg.selected_elements.length +
-                " elements. Are you sure?")) {
+            if (confirm("You are about to delete " + cfg.selected_elements.length + " elements. Are you sure?")) {
                 cfg.delete_selection();
             }
         } else {
@@ -272,7 +273,7 @@ $(function () {
 
     // setup numeric textboxes
     let numerics = $('.numeric');
- 
+
     for (let i = 0; i < numerics.length; i++) {
         let e = numerics[i];
         $(e).on('keydown', e => {
@@ -281,7 +282,7 @@ $(function () {
             /* numeric inputs can come from the keypad or the numeric row at the top
              * also arrows, home & end and backspace
              */
-            if (!((k >= 48 && k <=57) || (k >= 96 && k <= 105) || (k >= 35 && k <= 40) || k === 8)) {
+            if (!((k >= 48 && k <= 57) || (k >= 96 && k <= 105) || (k >= 35 && k <= 40) || k === 8)) {
                 e.preventDefault();
                 return false;
             }

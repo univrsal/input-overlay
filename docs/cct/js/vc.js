@@ -1,9 +1,15 @@
 var key2vc = new Map();
 var mouse2vc = new Map();
 var gamepad2vc = new Map();
+var vc2gamepad = new Map();
 
-$(function () {
+$(function() {
     let vc = (id, vc) => key2vc.set(id, vc);
+    let gp = (id, vc) => {
+        gamepad2vc.set(id, vc);
+        vc2gamepad.set(vc, id);
+    };
+
     // some keys are postfixed with their DOM3 location
     // No postfix = location 0
     // 1 = Left, 2 = Right, 3 = Numpad
@@ -146,9 +152,40 @@ $(function () {
     mouse2vc.set(2, 2);
     mouse2vc.set(3, 4);
     mouse2vc.set(4, 5);
+
+    gp(0, 0xEC00);
+    gp(1, 0xEC01);
+    gp(2, 0xEC02);
+    gp(3, 0xEC03);
+    gp(4, 0xEC04);
+    gp(5, 0xEC05);
+    gp(8, 0xEC06);
+    gp(9, 0xEC07);
+    gp(10, 0xEC09);
+    gp(11, 0xEC10);
+    gp(12, 0xEC13);
+    gp(13, 0xEC14);
+    gp(14, 0xEC11);
+    gp(15, 0xEC12);
+    gp(16, 0xEC08);
 });
 
-function mouse_to_vc(e) {
+function gamepad_to_vc(button)
+{
+    if (gamepad2vc.has(button))
+        return gamepad2vc.get(button);
+    return 0;
+}
+
+function gamepad_from_vc(vc)
+{
+    if (vc2gamepad.has(vc))
+        return vc2gamepad.get(vc);
+    return 0;
+}
+
+function mouse_to_vc(e)
+{
     let button = e.button;
 
     if (mouse2vc.has(button))
@@ -156,7 +193,8 @@ function mouse_to_vc(e) {
     return 0;
 }
 
-function key_to_vc(e) {
+function key_to_vc(e)
+{
     let key = e.code;
 
     if (key.indexOf("Numpad") >= 0 && /^[0-9]$/g.test(key.slice(-1))) {

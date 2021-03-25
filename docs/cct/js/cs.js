@@ -162,4 +162,4 @@ class cs {
         this.dimensions =
             new r2($(this.canvas_id).attr("width") - this.origin.x, $(this.canvas_id).attr("height") - this.origin.y);
     }
-};
+}

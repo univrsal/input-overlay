@@ -129,4 +129,4 @@ class painter {
         }
         requestAnimationFrame(seconds => this.update(seconds)); // get next frame
     }
-};
+}

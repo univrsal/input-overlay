@@ -22,10 +22,12 @@ var cfg = null;
 var edit = null;
 var main_painter = null;
 var editor_painter = null;
+var pad = null;
 
 $(function() {
     main_painter = new painter("main-canvas", (p, c) => cfg.draw(p, c));
     editor_painter = new painter("editor-canvas", (p, c) => edit.draw(p, c));
+    pad = new gamepad();
     cfg = new config("#main-canvas", main_painter);
     edit = new editor("#editor-canvas", editor_painter);
 

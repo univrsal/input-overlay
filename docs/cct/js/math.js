@@ -53,7 +53,7 @@ class vec2 {
         this.x = parseIntSafe(this.x);
         this.y = parseIntSafe(this.y);
     }
-};
+}
 
 class r4 {
     constructor(x = 0, y = 0, w = 0, h = 0)
