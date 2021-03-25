@@ -30,7 +30,6 @@ class config {
         this.selection_rect = new r4(); // Actual selected element(s) in coordinate space
         this.drag_offset = new vec2();  // MousePos - SelectionRect (unscaled)
         this.painter = painter;
-        this.last_button = "";
         this.is_ctrl_down = false;
         this.internal_clipboard = null;
         this.enabled = true; // false when a dialog is open
@@ -160,7 +159,6 @@ class config {
             painter.rect_outline(r.x + 0.5, r.y + 0.5, r.w - 1, r.h - 1, 1, "#ff0000ff");
         }
         ctx.restore();
-        painter.text("Button id: " + this.last_button, 220, 50);
     }
 
     delete_selection()
@@ -194,8 +192,6 @@ class config {
     {
         if (!this.enabled)
             return;
-        if (state)
-            this.last_button = event.key;
         if (event.key == 'Control')
             this.is_ctrl_down = state;
 
