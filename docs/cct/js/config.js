@@ -32,14 +32,62 @@ class config {
         this.painter = painter;
         this.last_button = "";
         this.is_ctrl_down = false;
+        this.internal_clipboard = null;
         this.enabled = true; // false when a dialog is open
         $(canvas_id).on('mousemove', e => this.move(e, this.painter.cs()));
         $(canvas_id).on('mouseup', e => this.mouseup(e, this.painter.cs()));
         $(canvas_id).on('mousedown', e => this.mousedown(e, this.painter.cs()));
+        $(window).on('copy', () => this.on_copy());
+        $(window).on('paste', () => this.on_paste());
         $(window).on('keydown', e => this.on_button(e, true));
         $(window).on('keyup', e => this.on_button(e, false));
         pad.on('input', p => this.gamepad_input(p));
         this.load_callbacks = [];
+    }
+
+    on_copy()
+    {
+        if (!this.enabled)
+            return;
+        let data = [];
+        this.selected_elements.forEach(e => data.push(e.data));
+        this.internal_clipboard = data;
+        navigator.clipboard.writeText(JSON.stringify(data));
+    }
+
+    add_elements(j)
+    {
+        if (j) {
+            if (j.length > 0)
+                this.selected_elements = [];
+            j.forEach(e => {
+                let id = e.id;
+                let counter = 0;
+                e.pos[1] += 4; // offset so you can see the pasted elements
+                while (!this.is_name_unique(id))
+                    id = e.id + counter++;
+                e.id = id;
+                let new_element = create_element(e);
+                this.elements.push(new_element);
+                this.selected_elements.push(new_element);
+            });
+        }
+    }
+
+    on_paste()
+    {
+        if (!this.enabled)
+            return;
+        let cfg = this;
+        navigator.clipboard.readText()
+            .then(text => {
+                cfg.add_elements(JSON.parse(text));
+            })
+            .catch(err => {
+                console.log('Failed to read clipboard text: ' + err);
+                // fallback to internal clip board
+                this.add_elements(this.internal_clipboard);
+            });
     }
 
     add_load_callback(cb) { this.load_callbacks.push(cb); }
