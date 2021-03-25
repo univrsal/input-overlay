@@ -19,6 +19,7 @@
 var backgroundColor = "#393b3d";
 var lineColor = "#ffffffff";
 var darkLineColor = "#555555";
+var brightLineColor = "#f055559c"
 
 class painter {
 
