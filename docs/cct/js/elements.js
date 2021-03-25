@@ -95,7 +95,9 @@ class element {
     on_keyboard_input(vc, state) {}
     on_mouse_input(vc, state) {}
     on_gamepad_input(pad) {}
-    on_wheel_input(event) {}
+    on_scroll_input(event) {}
+
+    tick() {}
 
     scaled_dim(cs)
     {
@@ -238,10 +240,68 @@ class gamepad_button extends button {
     }
 }
 
+class mouse_wheel extends texture {
+    constructor(json) {
+        super(json);
+        this.direction = 0;
+        this.pressed = false;
+        this.lastWheelInput = Date.now();
+    }
+
+    on_mouse_input(vc, state)
+    {
+        if (vc === 3)
+            this.pressed = state;
+    }
+
+    on_scroll_input(event) {
+        if (event.originalEvent.deltaY < 0) {
+            this.direction = -1;
+        } else {
+            this.direction = 1;
+        }
+        this.lastWheelInput = Date.now();
+    }
+
+    tick()
+    {
+        if (Date.now() - this.lastWheelInput > 250)
+            this.direction = 0;
+    }
+
+    draw(painter)
+    {
+        let cs = painter.cs();
+        super.draw(painter, cs);
+        if (this.pressed) {
+            painter.image_crop(atlas, cs.origin.x - cs.offset.x + this.data.pos[0] * cs.scale,
+                               cs.origin.y - cs.offset.y + this.data.pos[1] * cs.scale, this.data.mapping[2] * cs.scale,
+                               this.data.mapping[3] * cs.scale, this.data.mapping[0] + constants.texture_space + this.data.mapping[2],
+                               this.data.mapping[1],
+                               this.data.mapping[2], this.data.mapping[3]);
+        }
+
+        if (this.direction === 1) {
+            painter.image_crop(atlas, cs.origin.x - cs.offset.x + this.data.pos[0] * cs.scale,
+                cs.origin.y - cs.offset.y + this.data.pos[1] * cs.scale, this.data.mapping[2] * cs.scale,
+                this.data.mapping[3] * cs.scale, this.data.mapping[0] + (constants.texture_space + this.data.mapping[2]) * 2,
+                this.data.mapping[1],
+                this.data.mapping[2], this.data.mapping[3]);
+        } else if (this.direction === -1) {
+            painter.image_crop(atlas, cs.origin.x - cs.offset.x + this.data.pos[0] * cs.scale,
+                cs.origin.y - cs.offset.y + this.data.pos[1] * cs.scale, this.data.mapping[2] * cs.scale,
+                this.data.mapping[3] * cs.scale, this.data.mapping[0] + (constants.texture_space + this.data.mapping[2]) * 3,
+                this.data.mapping[1],
+                this.data.mapping[2], this.data.mapping[3]);
+        }
+    }
+}
+
 element_map.set(element_types.KEYBOARD_KEY, json => { return new keyboard_button(json); });
 element_map.set(element_types.MOUSE_BUTTON, json => { return new mouse_button(json); });
 element_map.set(element_types.TEXTURE, json => { return new texture(json); });
 element_map.set(element_types.GAMEPAD_BUTTON, json => { return new gamepad_button(json); });
+element_map.set(element_types.WHEEL, json => { return new mouse_wheel(json); });
 
 function create_element(json)
 {

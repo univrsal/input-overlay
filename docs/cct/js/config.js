@@ -32,16 +32,29 @@ class config {
         this.painter = painter;
         this.is_ctrl_down = false;
         this.internal_clipboard = null;
+        this.grid = new vec2();
         this.enabled = true; // false when a dialog is open
         $(canvas_id).on('mousemove', e => this.move(e, this.painter.cs()));
         $(canvas_id).on('mouseup', e => this.mouseup(e, this.painter.cs()));
         $(canvas_id).on('mousedown', e => this.mousedown(e, this.painter.cs()));
+        $(canvas_id).on('wheel', e => this.on_scroll(e));
         $(window).on('copy', () => this.on_copy());
         $(window).on('paste', () => this.on_paste());
         $(window).on('keydown', e => this.on_button(e, true));
         $(window).on('keyup', e => this.on_button(e, false));
         pad.on('input', p => this.gamepad_input(p));
         this.load_callbacks = [];
+        setInterval(() => this.tick(), 250);
+    }
+
+    tick()
+    {
+        this.elements.forEach(e => e.tick());
+    }
+
+    on_scroll(e)
+    {
+        this.elements.forEach(element => element.on_scroll_input(e));
     }
 
     on_copy()
@@ -99,7 +112,8 @@ class config {
             if (new_element !== null)
                 this.elements.push(new_element);
         });
-
+        this.grid.x = this.data.default_width + this.data.space_h;
+        this.grid.y = this.data.default_height + this.data.space_v;
         this.sort_elements();
         this.load_callbacks.forEach(cb => cb());
     }
@@ -142,11 +156,20 @@ class config {
     {
         if (atlas === null) // Don't draw if image hasn't loaded yet
             return;
+
+
         let ctx = painter.get_context();
         let cs = painter.cs();
         ctx.save();
         ctx.rect(cs.origin.x, cs.origin.y, cs.dimensions.w, cs.dimensions.h);
         ctx.clip();
+        
+        for (var x = cs.origin.x - cs.offset.x; x < cs.dimensions.w + cs.origin.x; x += this.grid.x * cs.scale) {
+            painter.line(x - 0.5, cs.origin.y, x - 0.5, cs.origin.y + cs.dimensions.h, 1, brightLineColor);
+        }
+        for (var y = cs.origin.y - cs.offset.y; y < cs.dimensions.h + cs.origin.y; y += this.grid.y * cs.scale) {
+            painter.line(cs.origin.x, y - 0.5, cs.origin.x + cs.dimensions.w, y - 0.5, 1, brightLineColor);
+        }
 
         this.elements.forEach(element => element.draw(painter));
         if (this.selecting && !this.drag_selection.is_empty()) {
