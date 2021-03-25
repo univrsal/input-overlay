@@ -21,7 +21,8 @@ class gamepad {
     {
         this.lastTimestamp = new Map();
         this.lastState = new Map();
-        this.connect = [] this.disconnect = [];
+        this.connect = [];
+        this.disconnect = [];
         this.button = [];       // (gamepad, button index, button)
         this.axis = [];         // (gamepad, axis index, new axis value)
         this.event = [];        // (gamepad)
