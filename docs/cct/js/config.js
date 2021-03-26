@@ -47,15 +47,9 @@ class config {
         setInterval(() => this.tick(), 250);
     }
 
-    tick()
-    {
-        this.elements.forEach(e => e.tick());
-    }
+    tick() { this.elements.forEach(e => e.tick()); }
 
-    on_scroll(e)
-    {
-        this.elements.forEach(element => element.on_scroll_input(e));
-    }
+    on_scroll(e) { this.elements.forEach(element => element.on_scroll_input(e)); }
 
     on_copy()
     {
@@ -91,15 +85,11 @@ class config {
         if (!this.enabled)
             return;
         let cfg = this;
-        navigator.clipboard.readText()
-            .then(text => {
-                cfg.add_elements(JSON.parse(text));
-            })
-            .catch(err => {
-                console.log('Failed to read clipboard text: ' + err);
-                // fallback to internal clip board
-                this.add_elements(this.internal_clipboard);
-            });
+        navigator.clipboard.readText().then(text => { cfg.add_elements(JSON.parse(text)); }).catch(err => {
+            console.log('Failed to read clipboard text: ' + err);
+            // fallback to internal clip board
+            this.add_elements(this.internal_clipboard);
+        });
     }
 
     add_load_callback(cb) { this.load_callbacks.push(cb); }
@@ -157,13 +147,12 @@ class config {
         if (atlas === null) // Don't draw if image hasn't loaded yet
             return;
 
-
         let ctx = painter.get_context();
         let cs = painter.cs();
         ctx.save();
         ctx.rect(cs.origin.x, cs.origin.y, cs.dimensions.w, cs.dimensions.h);
         ctx.clip();
-        
+
         for (var x = cs.origin.x - cs.offset.x; x < cs.dimensions.w + cs.origin.x; x += this.grid.x * cs.scale) {
             painter.line(x - 0.5, cs.origin.y, x - 0.5, cs.origin.y + cs.dimensions.h, 1, brightLineColor);
         }

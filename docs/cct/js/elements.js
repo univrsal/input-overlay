@@ -241,7 +241,8 @@ class gamepad_button extends button {
 }
 
 class mouse_wheel extends texture {
-    constructor(json) {
+    constructor(json)
+    {
         super(json);
         this.direction = 0;
         this.pressed = false;
@@ -254,7 +255,8 @@ class mouse_wheel extends texture {
             this.pressed = state;
     }
 
-    on_scroll_input(event) {
+    on_scroll_input(event)
+    {
         if (event.originalEvent.deltaY < 0) {
             this.direction = -1;
         } else {
@@ -276,24 +278,82 @@ class mouse_wheel extends texture {
         if (this.pressed) {
             painter.image_crop(atlas, cs.origin.x - cs.offset.x + this.data.pos[0] * cs.scale,
                                cs.origin.y - cs.offset.y + this.data.pos[1] * cs.scale, this.data.mapping[2] * cs.scale,
-                               this.data.mapping[3] * cs.scale, this.data.mapping[0] + constants.texture_space + this.data.mapping[2],
-                               this.data.mapping[1],
-                               this.data.mapping[2], this.data.mapping[3]);
+                               this.data.mapping[3] * cs.scale,
+                               this.data.mapping[0] + constants.texture_space + this.data.mapping[2],
+                               this.data.mapping[1], this.data.mapping[2], this.data.mapping[3]);
         }
 
         if (this.direction === 1) {
             painter.image_crop(atlas, cs.origin.x - cs.offset.x + this.data.pos[0] * cs.scale,
-                cs.origin.y - cs.offset.y + this.data.pos[1] * cs.scale, this.data.mapping[2] * cs.scale,
-                this.data.mapping[3] * cs.scale, this.data.mapping[0] + (constants.texture_space + this.data.mapping[2]) * 2,
-                this.data.mapping[1],
-                this.data.mapping[2], this.data.mapping[3]);
+                               cs.origin.y - cs.offset.y + this.data.pos[1] * cs.scale, this.data.mapping[2] * cs.scale,
+                               this.data.mapping[3] * cs.scale,
+                               this.data.mapping[0] + (constants.texture_space + this.data.mapping[2]) * 2,
+                               this.data.mapping[1], this.data.mapping[2], this.data.mapping[3]);
         } else if (this.direction === -1) {
             painter.image_crop(atlas, cs.origin.x - cs.offset.x + this.data.pos[0] * cs.scale,
-                cs.origin.y - cs.offset.y + this.data.pos[1] * cs.scale, this.data.mapping[2] * cs.scale,
-                this.data.mapping[3] * cs.scale, this.data.mapping[0] + (constants.texture_space + this.data.mapping[2]) * 3,
-                this.data.mapping[1],
-                this.data.mapping[2], this.data.mapping[3]);
+                               cs.origin.y - cs.offset.y + this.data.pos[1] * cs.scale, this.data.mapping[2] * cs.scale,
+                               this.data.mapping[3] * cs.scale,
+                               this.data.mapping[0] + (constants.texture_space + this.data.mapping[2]) * 3,
+                               this.data.mapping[1], this.data.mapping[2], this.data.mapping[3]);
         }
+    }
+}
+
+class analog_stick extends texture {
+    constructor(json)
+    {
+        super(json);
+        this.side = 0;
+    }
+
+    draw(painter)
+    {
+        let cs = painter.cs();
+        let xPos = 0;
+        let yPos = 0;
+        let pressed = false;
+        if (pad.lastInput) {
+            if (this.data.side === 0) { // left
+                xPos = pad.lastInput.axes[0] * this.data.stick_radius;
+                yPos = pad.lastInput.axes[1] * this.data.stick_radius;
+                pressed = pad.lastInput.buttons[10].pressed;
+            } else { // right
+                xPos = pad.lastInput.axes[2] * this.data.stick_radius;
+                yPos = pad.lastInput.axes[3] * this.data.stick_radius;
+                pressed = pad.lastInput.buttons[11].pressed;
+            }
+
+            if (pressed) {
+                painter.image_crop(atlas, cs.origin.x - cs.offset.x + (this.data.pos[0] + xPos) * cs.scale,
+                                   cs.origin.y - cs.offset.y + (this.data.pos[1] + yPos) * cs.scale,
+                                   this.data.mapping[2] * cs.scale, this.data.mapping[3] * cs.scale,
+                                   this.data.mapping[0],
+                                   this.data.mapping[1] + constants.texture_space + this.data.mapping[3],
+                                   this.data.mapping[2], this.data.mapping[3]);
+            } else {
+                painter.image_crop(atlas, cs.origin.x - cs.offset.x + (this.data.pos[0] + xPos) * cs.scale,
+                                   cs.origin.y - cs.offset.y + (this.data.pos[1] + yPos) * cs.scale,
+                                   this.data.mapping[2] * cs.scale, this.data.mapping[3] * cs.scale,
+                                   this.data.mapping[0], this.data.mapping[1], this.data.mapping[2],
+                                   this.data.mapping[3]);
+            }
+        } else {
+            super.draw(painter);
+        }
+    }
+
+    read_data_from_gui()
+    {
+        super.read_data_from_gui();
+        this.data.stick_radius = parseInt($('#editor-element-analog-stick-radius').val());
+        this.data.side = parseInt($('#editor-element-analog-stick-side').val());
+    }
+
+    write_data_to_gui()
+    {
+        super.write_data_to_gui();
+        $('#editor-element-analog-stick-radius').val(this.data.stick_radius);
+        $('#editor-element-analog-stick-side').val(this.data.side);
     }
 }
 
@@ -302,6 +362,7 @@ element_map.set(element_types.MOUSE_BUTTON, json => { return new mouse_button(js
 element_map.set(element_types.TEXTURE, json => { return new texture(json); });
 element_map.set(element_types.GAMEPAD_BUTTON, json => { return new gamepad_button(json); });
 element_map.set(element_types.WHEEL, json => { return new mouse_wheel(json); });
+element_map.set(element_types.ANALOG_STICK, json => { return new analog_stick(json); });
 
 function create_element(json)
 {

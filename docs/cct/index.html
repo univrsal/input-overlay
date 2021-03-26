@@ -170,7 +170,7 @@
                     <div class="label-container-wide" id="editor-element-keycode-label"><label
                             for="editor-element-keycode">Keycode</label></div>
                     <div class="textbox-container-medium" id="editor-element-keycode-container"><input type="text"
-                            class="hex-numeric" id="editor-element-keycode" value="0">
+                            class="hex-numeric" id="editor-element-keycode" value="0x0">
                     </div>
                     <div id="editor-element-record-code-container" class="grid-full-width">
                         <label for="editor-element-record-code" class="cbx-label">
@@ -191,10 +191,10 @@
                     <div class="textbox-container-medium" id="editor-element-analog-stick-side-container">
                         <div class="custom-select" style="width:100%">
                             <select id="editor-element-analog-stick-side">
-                                <option value="left">Left</option>
+                                <option value="0">Left</option>
                                 <!-- The w3 code uses the first one as a placeholder, which i don't want -->
-                                <option value="left">Left</option>
-                                <option value="right">Right</option>
+                                <option value="0">Left</option>
+                                <option value="1">Right</option>
                             </select>
                         </div>
                     </div>
@@ -203,7 +203,7 @@
                             for="editor-element-analog-stick-side">Radius</label>
                     </div>
                     <div class="textbox-container-medium" id="editor-element-analog-stick-radius-container">
-                        <input type="text" class="coord" id="editor-element-analog-stick-radius" value="0">
+                        <input type="text" class="coord" id="editor-element-analog-stick-radius" value="20">
                     </div>
 
                     <!-- trigger -->

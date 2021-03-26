@@ -21,6 +21,7 @@ class gamepad {
     {
         this.lastTimestamp = new Map();
         this.lastState = new Map();
+        this.lastInput = null;
         this.connect = [];
         this.disconnect = [];
         this.button = [];       // (gamepad, button index, button)
@@ -74,12 +75,14 @@ class gamepad {
     {
         this.axis.forEach(h => h(pad, index, pad.axes[index]));
         this.event.forEach(h => h(pad));
+        this.lastInput = pad;
     }
 
     onButton(pad, index)
     {
         this.button.forEach(h => h(pad, index, pad.buttons[index]));
         this.event.forEach(h => h(pad));
+        this.lastInput = pad;
     }
 
     on(id, handler)
