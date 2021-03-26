@@ -11,14 +11,19 @@
 }
 
 .select-selected {
-    background-color: DodgerBlue;
+    background-color:  var(--dark-control);
+    border-color: var(--dark-control-border);
+    color: var(--dark-textbox);
+    border-radius: 3px;
+    border-style: solid none none none;
+    border-width: 1px;
 }
 
 /* Style the arrow inside the select element: */
 .select-selected:after {
     position: absolute;
     content: "";
-    top: 8px;
+    top: 9px;
     right: 5px;
     width: 0;
     height: 0;
@@ -32,27 +37,37 @@
     top: 2px;
 }
 
+.select-selected.select-arrow-active {
+    border-radius: 3px 3px 0px 0px !important;
+}
+
 /* style the items (options), including the selected item: */
 .select-items div,
 .select-selected {
-    border-radius: 3px;
-    border-style: solid none none none;
-    border-width: 1px;
-    background: var(--dark-control);
-    border-color: var(--dark-control-border);
-    color: var(--dark-textbox);
+    /* padding-left: 5px; */
+    padding-top: 2px;
     height: 20px;
     cursor: pointer;
+    padding-left: 5px;
 }
 
 /* Style items (options): */
 .select-items {
     position: absolute;
-    background-color: var(--dark-control-border);
+    background: var(--dark-control);
+    border-color: var(--dark-control-border);
+    color: var(--dark-textbox);
     top: 100%;
+    border-radius: 0px 0px 3px 3px;
     left: 0;
     right: 0;
     z-index: 99;
+    overflow: hidden;
+
+}
+
+.select-items > div:hover {
+    background-color: var(--theme-accent);
 }
 
 /* Hide the items when the select box is closed: */
@@ -60,7 +75,3 @@
     display: none;
 }
 
-.select-items div:hover,
-.same-as-selected {
-    background-color: rgba(0, 0, 0, 0.1);
-}
