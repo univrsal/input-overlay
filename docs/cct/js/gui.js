@@ -116,6 +116,7 @@ function setup_editor(type)
     }
     case 'trigger': {
         show_property(trigger_dir);
+        show_property(analog_stick_side);
         show_property(button);
         set_description(description, `The trigger can either be a button, meaning that it'll
                 only be either on or off, or it can display the position it is in by filling up

@@ -101,9 +101,8 @@ class element {
 
     scaled_dim(cs)
     {
-        return new r4(cs.origin.x - cs.offset.x + this.data.pos[0] * cs.scale,
-                      cs.origin.y - cs.offset.y + this.data.pos[1] * cs.scale, this.data.mapping[2] * cs.scale,
-                      this.data.mapping[3] * cs.scale);
+        return new r4(cs.origin.x - cs.offset.x + this.x() * cs.scale, cs.origin.y - cs.offset.y + this.y() * cs.scale,
+                      this.w() * cs.scale, this.h() * cs.scale);
     }
 
     read_data_from_gui()
@@ -118,16 +117,16 @@ class element {
         $("#editor-element-layer").val(this.data.z_level);
     }
 
-    dim() { return new r4(this.data.pos[0], this.data.pos[1], this.data.mapping[2], this.data.mapping[3]); }
+    dim() { return new r4(this.x(), this.y(), this.w(), this.h()); }
 
     set_dim(pos, uvwh)
     {
-        this.data.pos[0] = pos.x;
-        this.data.pos[1] = pos.y;
-        this.data.mapping[0] = uvwh.x;
-        this.data.mapping[1] = uvwh.y;
-        this.data.mapping[2] = uvwh.w;
-        this.data.mapping[3] = uvwh.h;
+        this.x() = pos.x;
+        this.y() = pos.y;
+        this.u() = uvwh.x;
+        this.v() = uvwh.y;
+        this.w() = uvwh.w;
+        this.h() = uvwh.h;
     }
 
     type() { return this.data.type }
@@ -155,10 +154,9 @@ class texture extends element {
     {
         // default draw handling
         let cs = painter.cs();
-        painter.image_crop(atlas, cs.origin.x - cs.offset.x + this.data.pos[0] * cs.scale,
-                           cs.origin.y - cs.offset.y + this.data.pos[1] * cs.scale, this.data.mapping[2] * cs.scale,
-                           this.data.mapping[3] * cs.scale, this.data.mapping[0], this.data.mapping[1],
-                           this.data.mapping[2], this.data.mapping[3]);
+        painter.image_crop(atlas, cs.origin.x - cs.offset.x + this.x() * cs.scale,
+                           cs.origin.y - cs.offset.y + this.y() * cs.scale, this.w() * cs.scale, this.h() * cs.scale,
+                           this.u(), this.v(), this.w(), this.h());
     }
 
     read_data_from_gui()
@@ -173,10 +171,10 @@ class texture extends element {
     write_data_to_gui()
     {
         super.write_data_to_gui();
-        $("#editor-element-u").val(this.data.mapping[0]);
-        $("#editor-element-v").val(this.data.mapping[1]);
-        $("#editor-element-w").val(this.data.mapping[2]);
-        $("#editor-element-h").val(this.data.mapping[3]);
+        $("#editor-element-u").val(this.u());
+        $("#editor-element-v").val(this.v());
+        $("#editor-element-w").val(this.w());
+        $("#editor-element-h").val(this.h());
     }
 }
 
@@ -191,11 +189,10 @@ class button extends texture {
     {
         if (this.pressed) {
             let cs = painter.cs();
-            painter.image_crop(atlas, cs.origin.x - cs.offset.x + this.data.pos[0] * cs.scale,
-                               cs.origin.y - cs.offset.y + this.data.pos[1] * cs.scale, this.data.mapping[2] * cs.scale,
-                               this.data.mapping[3] * cs.scale, this.data.mapping[0],
-                               this.data.mapping[1] + constants.texture_space + this.data.mapping[3],
-                               this.data.mapping[2], this.data.mapping[3]);
+            painter.image_crop(atlas, cs.origin.x - cs.offset.x + this.x() * cs.scale,
+                               cs.origin.y - cs.offset.y + this.y() * cs.scale, this.w() * cs.scale,
+                               this.h() * cs.scale, this.u(), this.v() + constants.texture_space + this.h(), this.w(),
+                               this.h());
         } else {
             super.draw(painter, cs);
         }
@@ -276,36 +273,27 @@ class mouse_wheel extends texture {
         let cs = painter.cs();
         super.draw(painter, cs);
         if (this.pressed) {
-            painter.image_crop(atlas, cs.origin.x - cs.offset.x + this.data.pos[0] * cs.scale,
-                               cs.origin.y - cs.offset.y + this.data.pos[1] * cs.scale, this.data.mapping[2] * cs.scale,
-                               this.data.mapping[3] * cs.scale,
-                               this.data.mapping[0] + constants.texture_space + this.data.mapping[2],
-                               this.data.mapping[1], this.data.mapping[2], this.data.mapping[3]);
+            painter.image_crop(atlas, cs.origin.x - cs.offset.x + this.x() * cs.scale,
+                               cs.origin.y - cs.offset.y + this.y() * cs.scale, this.w() * cs.scale,
+                               this.h() * cs.scale, this.u() + constants.texture_space + this.w(), this.v(), this.w(),
+                               this.h());
         }
 
         if (this.direction === 1) {
-            painter.image_crop(atlas, cs.origin.x - cs.offset.x + this.data.pos[0] * cs.scale,
-                               cs.origin.y - cs.offset.y + this.data.pos[1] * cs.scale, this.data.mapping[2] * cs.scale,
-                               this.data.mapping[3] * cs.scale,
-                               this.data.mapping[0] + (constants.texture_space + this.data.mapping[2]) * 2,
-                               this.data.mapping[1], this.data.mapping[2], this.data.mapping[3]);
+            painter.image_crop(atlas, cs.origin.x - cs.offset.x + this.x() * cs.scale,
+                               cs.origin.y - cs.offset.y + this.y() * cs.scale, this.w() * cs.scale,
+                               this.h() * cs.scale, this.u() + (constants.texture_space + this.w()) * 2, this.v(),
+                               this.w(), this.h());
         } else if (this.direction === -1) {
-            painter.image_crop(atlas, cs.origin.x - cs.offset.x + this.data.pos[0] * cs.scale,
-                               cs.origin.y - cs.offset.y + this.data.pos[1] * cs.scale, this.data.mapping[2] * cs.scale,
-                               this.data.mapping[3] * cs.scale,
-                               this.data.mapping[0] + (constants.texture_space + this.data.mapping[2]) * 3,
-                               this.data.mapping[1], this.data.mapping[2], this.data.mapping[3]);
+            painter.image_crop(atlas, cs.origin.x - cs.offset.x + this.x() * cs.scale,
+                               cs.origin.y - cs.offset.y + this.y() * cs.scale, this.w() * cs.scale,
+                               this.h() * cs.scale, this.u() + (constants.texture_space + this.w()) * 3, this.v(),
+                               this.w(), this.h());
         }
     }
 }
 
 class analog_stick extends texture {
-    constructor(json)
-    {
-        super(json);
-        this.side = 0;
-    }
-
     draw(painter)
     {
         let cs = painter.cs();
@@ -324,18 +312,14 @@ class analog_stick extends texture {
             }
 
             if (pressed) {
-                painter.image_crop(atlas, cs.origin.x - cs.offset.x + (this.data.pos[0] + xPos) * cs.scale,
-                                   cs.origin.y - cs.offset.y + (this.data.pos[1] + yPos) * cs.scale,
-                                   this.data.mapping[2] * cs.scale, this.data.mapping[3] * cs.scale,
-                                   this.data.mapping[0],
-                                   this.data.mapping[1] + constants.texture_space + this.data.mapping[3],
-                                   this.data.mapping[2], this.data.mapping[3]);
+                painter.image_crop(atlas, cs.origin.x - cs.offset.x + (this.x() + xPos) * cs.scale,
+                                   cs.origin.y - cs.offset.y + (this.y() + yPos) * cs.scale, this.w() * cs.scale,
+                                   this.h() * cs.scale, this.u(), this.v() + constants.texture_space + this.h(),
+                                   this.w(), this.h());
             } else {
-                painter.image_crop(atlas, cs.origin.x - cs.offset.x + (this.data.pos[0] + xPos) * cs.scale,
-                                   cs.origin.y - cs.offset.y + (this.data.pos[1] + yPos) * cs.scale,
-                                   this.data.mapping[2] * cs.scale, this.data.mapping[3] * cs.scale,
-                                   this.data.mapping[0], this.data.mapping[1], this.data.mapping[2],
-                                   this.data.mapping[3]);
+                painter.image_crop(atlas, cs.origin.x - cs.offset.x + (this.x() + xPos) * cs.scale,
+                                   cs.origin.y - cs.offset.y + (this.y() + yPos) * cs.scale, this.w() * cs.scale,
+                                   this.h() * cs.scale, this.u(), this.v(), this.w(), this.h());
             }
         } else {
             super.draw(painter);
@@ -357,12 +341,91 @@ class analog_stick extends texture {
     }
 }
 
+class trigger extends texture {
+    draw(painter)
+    {
+        let cs = painter.cs();
+        let progress = 0;
+        let pressed = false;
+
+        if (pad.lastInput) {
+            if (this.data.side === 0) { // left
+                progress = pad.lastInput.buttons[6].value;
+                pressed = pad.lastInput.buttons[6].pressed;
+            } else { // right
+                progress = pad.lastInput.buttons[7].value;
+                pressed = pad.lastInput.buttons[7].pressed;
+            }
+
+            if (this.data.trigger_mode) {
+                if (pressed) {
+                    painter.image_crop(atlas, cs.origin.x - cs.offset.x + this.x() * cs.scale,
+                                       cs.origin.y - cs.offset.y + this.y() * cs.scale, this.w() * cs.scale,
+                                       this.h() * cs.scale, this.u(), this.v() + constants.texture_space + this.h(),
+                                       this.w(), this.h());
+                } else {
+                    painter.image_crop(atlas, cs.origin.x - cs.offset.x + this.x() * cs.scale,
+                                       cs.origin.y - cs.offset.y + this.y() * cs.scale, this.w() * cs.scale,
+                                       this.h() * cs.scale, this.u(), this.v(), this.w(), this.h());
+                }
+            } else {
+                super.draw(painter);
+                if (this.data.direction === 1) { // fill upwards
+                    let offset = (1 - progress) * this.h();
+                    painter.image_crop(atlas, cs.origin.x - cs.offset.x + this.x() * cs.scale,
+                                       cs.origin.y - cs.offset.y + (this.y() + offset) * cs.scale, this.w() * cs.scale,
+                                       (this.h() * progress) * cs.scale, this.u(),
+                                       this.v() + this.h() + constants.texture_space + offset, this.w(),
+                                       this.h() * progress);
+                } else if (this.data.direction === 2) { // fill downwards
+                    painter.image_crop(atlas, cs.origin.x - cs.offset.x + this.x() * cs.scale,
+                                       cs.origin.y - cs.offset.y + this.y() * cs.scale, this.w() * cs.scale,
+                                       (this.h() * progress) * cs.scale, this.u(),
+                                       this.v() + constants.texture_space + this.h(), this.w(), this.h() * progress);
+                } else if (this.data.direction === 3) { // fill to the left
+                    let offset = (1 - progress) * this.w();
+                    painter.image_crop(atlas, cs.origin.x - cs.offset.x + (this.x() + offset) * cs.scale,
+                                       cs.origin.y - cs.offset.y + this.y() * cs.scale, this.w() * progress * cs.scale,
+                                       this.h() * cs.scale, this.u() + offset,
+                                       this.v() + constants.texture_space + this.h(), this.w() * progress, this.h());
+
+                } else if (this.data.direction === 4) { // fill to the right
+                    painter.image_crop(atlas, cs.origin.x - cs.offset.x + this.x() * cs.scale,
+                                       cs.origin.y - cs.offset.y + this.y() * cs.scale, this.w() * progress * cs.scale,
+                                       this.h() * cs.scale, this.u(), this.v() + constants.texture_space + this.h(),
+                                       this.w() * progress, this.h());
+                }
+            }
+
+        } else {
+            super.draw(painter);
+        }
+    }
+
+    read_data_from_gui()
+    {
+        super.read_data_from_gui();
+        this.data.direction = parseInt($('#editor-element-trigger-direction-side').val());
+        this.data.trigger_mode = $('#editor-element-trigger-button')[0].checked;
+        this.data.side = parseInt($('#editor-element-analog-stick-side').val());
+    }
+
+    write_data_to_gui()
+    {
+        super.write_data_to_gui();
+        $('#editor-element-trigger-direction-side').val(this.data.direction);
+        $('#editor-element-trigger-button')[0].checked = this.data.trigger_mode ? true : false;
+        $('#editor-element-analog-stick-side').val(this.data.side);
+    }
+}
+
 element_map.set(element_types.KEYBOARD_KEY, json => { return new keyboard_button(json); });
 element_map.set(element_types.MOUSE_BUTTON, json => { return new mouse_button(json); });
 element_map.set(element_types.TEXTURE, json => { return new texture(json); });
 element_map.set(element_types.GAMEPAD_BUTTON, json => { return new gamepad_button(json); });
 element_map.set(element_types.WHEEL, json => { return new mouse_wheel(json); });
 element_map.set(element_types.ANALOG_STICK, json => { return new analog_stick(json); });
+element_map.set(element_types.TRIGGER, json => { return new trigger(json); });
 
 function create_element(json)
 {

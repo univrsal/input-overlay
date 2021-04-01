@@ -39,26 +39,39 @@
 
 .select-selected.select-arrow-active {
     border-radius: 3px 3px 0px 0px !important;
+    border-color: rgb(150 150 150);
+    border-style: solid solid none solid;
+    border-width: 1px;
+    padding-left: 5px !important;
 }
 
 /* style the items (options), including the selected item: */
 .select-items div,
 .select-selected {
-    /* padding-left: 5px; */
     padding-top: 2px;
     height: 20px;
     cursor: pointer;
+}
+
+.select-items div {
     padding-left: 5px;
+}
+
+.select-selected {
+    padding-left: 6px;
 }
 
 /* Style items (options): */
 .select-items {
     position: absolute;
     background: var(--dark-control);
-    border-color: var(--dark-control-border);
+    border-color: rgb(150 150 150);
     color: var(--dark-textbox);
     top: 100%;
-    border-radius: 0px 0px 3px 3px;
+    border-radius: 0px 0px 4px 4px;
+    border-style: none solid solid;
+    border-width: 1px;
+    margin-top: -1px;
     left: 0;
     right: 0;
     z-index: 99;
