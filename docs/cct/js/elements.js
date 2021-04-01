@@ -341,6 +341,40 @@ class analog_stick extends texture {
     }
 }
 
+class gamepad_id extends texture {
+    constructor(json) {
+        super(json)
+        this.pressed = false;
+    }
+
+    on_gamepad_input(pad)
+    {
+        let btn = gamepad_from_vc(this.data.code);
+
+        if (pad.buttons.length > 16)
+            this.pressed = pad.buttons[16].pressed;
+    }
+
+    draw(painter)
+    {
+        let cs = painter.cs();
+        if (pad.lastInput) {
+            if (this.pressed) {
+                painter.image_crop(atlas, cs.origin.x - cs.offset.x + this.x() * cs.scale,
+                cs.origin.y - cs.offset.y + this.y() * cs.scale, this.w() * cs.scale, this.h() * cs.scale,
+                this.u() + (constants.texture_space + this.w()) * 4, this.v(), this.w(), this.h());
+            }
+            painter.image_crop(atlas, cs.origin.x - cs.offset.x + this.x() * cs.scale,
+            cs.origin.y - cs.offset.y + this.y() * cs.scale, this.w() * cs.scale, this.h() * cs.scale,
+            this.u() + (constants.texture_space + this.w()) * pad.lastInput.index, this.v(), this.w(), this.h());
+        } else {
+            painter.image_crop(atlas, cs.origin.x - cs.offset.x + this.x() * cs.scale,
+                cs.origin.y - cs.offset.y + this.y() * cs.scale, this.w() * cs.scale, this.h() * cs.scale,
+                this.u(), this.v(), this.w(), this.h());
+        }        
+    }
+}
+
 class trigger extends texture {
     draw(painter)
     {
@@ -426,6 +460,7 @@ element_map.set(element_types.GAMEPAD_BUTTON, json => { return new gamepad_butto
 element_map.set(element_types.WHEEL, json => { return new mouse_wheel(json); });
 element_map.set(element_types.ANALOG_STICK, json => { return new analog_stick(json); });
 element_map.set(element_types.TRIGGER, json => { return new trigger(json); });
+element_map.set(element_types.GAMEPAD_ID, json => { return new gamepad_id(json); });
 
 function create_element(json)
 {
