@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *************************************************************************/
 
-var cfg_name = 'overlay.json'
+var cfg_name = "overlay.json";
 var atlas = null;
 var cfg = null;
 var edit = null;
@@ -24,22 +24,65 @@ var main_painter = null;
 var editor_painter = null;
 var pad = null;
 
-$(function() {
-    main_painter = new painter("main-canvas", (p, c) => cfg.draw(p, c));
-    editor_painter = new painter("editor-canvas", (p, c) => edit.draw(p, c));
-    pad = new gamepad();
-    cfg = new config("#main-canvas", main_painter);
-    edit = new editor("#editor-canvas", editor_painter);
+$(function () {
+  main_painter = new painter("main-canvas", (p, c) => cfg.draw(p, c));
+  editor_painter = new painter("editor-canvas", (p, c) => edit.draw(p, c));
+  pad = new gamepad();
+  cfg = new config("#main-canvas", main_painter);
+  edit = new editor("#editor-canvas", editor_painter);
 
-    cfg.add_load_callback(() => edit.on_config_load());
+  cfg.add_load_callback(() => edit.on_config_load());
+  
+  main_painter.get_context().imageSmoothingEnabled = false;
+  editor_painter.get_context().imageSmoothingEnabled = false;
 
+  new drop_area("config-drop-area").handlers.push((files) => {
+    if (files && files.length > 0) {
+      let reader = new FileReader();
+      reader.readAsDataURL(files[0]);
+      reader.onloadend = function () {
+        let split = reader.result.split(',');
+        if (split.length < 1)
+            return;
+        let b64 = split[1];
+        let str = atob(b64);
+        let j = JSON.parse(str);
+        if (j) {
+          cfg_name = files[0].name;
+          cfg.load_from_json(j);
+          $('#default-width').val(j.default_width);
+          $('#default-height').val(j.default_height);
+          $('#horizontal-offset').val(j.space_h);
+          $('#vertical-offset').val(j.space_v);
+        }
+      };
+    }
+  });
+
+  new drop_area("texture-drop-area", "image/*").handlers.push((files) => {
+    if (files && files.length > 0) {
+      let reader = new FileReader();
+      reader.readAsDataURL(files[0]);
+      reader.onloadend = function () {
+        atlas = new Image();
+        atlas.src = reader.result;
+      };
+    }
+  });
+
+  setTimeout(() => {
     main_painter.resize_canvas(); // Run once to get correct window size
     editor_painter.resize_canvas();
+  }, 100);
 
-    main_painter.load_image("https://raw.githubusercontent.com/univrsal/input-overlay/master/docs/cct/res/wasd.png")
-        .then(function(img) { atlas = img; });
-    main_painter.get_context().imageSmoothingEnabled = false;
-    editor_painter.get_context().imageSmoothingEnabled = false;
-    $.getJSON('https://raw.githubusercontent.com/univrsal/input-overlay/master/docs/cct/res/wasd.json',
-              function(data) { cfg.load_from_json(data); });
+  setTimeout(() => {
+    let c = $('#main-canvas-container')[0];
+    let e = $('#element-dialog')[0];
+    c.style.pointerEvents = "none";
+    c.classList.add("blurred");
+    e.style.pointerEvents = "none";
+    e.classList.add("blurred");
+    main_painter.enabled = false;
+    cfg.enabled = false;
+  }, 200);
 });

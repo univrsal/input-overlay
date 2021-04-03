@@ -1,0 +1,50 @@
+/*************************************************************************
+ * This file is part of input-overlay
+ * github.con/univrsal/input-overlay
+ * Copyright 2021 univrsal <uni@vrsal.de>.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, version 2 of the License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *************************************************************************/
+
+#drop-area {
+  border: 2px dashed #ccc;
+  border-radius: 20px;
+  width: 480px;
+  margin: 50px auto;
+  padding: 20px;
+}
+
+.highlight > form > label {
+  background-color: var(--dark-control-hover);
+}
+
+.button {
+  font-family: "Arial", Times, serif;
+  font-size: 11pt;
+  color: var(--dark-text);
+  cursor: pointer;
+  border-radius: 3px;
+  border-style: solid none none none;
+  border-width: 1px;
+  background: var(--dark-control);
+  border-color: var(--dark-control-border);
+  color: var(--dark-textbox);
+  cursor: pointer;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin-top: 2px;
+  margin-bottom: 2px;
+  font-size: 11pt !important;
+}

@@ -40,9 +40,11 @@
     <script src="./js/main.js"></script>
     <script src="./js/gui.js"></script>
     <script src="./js/select.js"></script>
+    <script src="./js/file.js"></script>
 
     <link rel="stylesheet" href="./css/dialog.css">
     <link rel="stylesheet" href="./css/select.css">
+    <link rel="stylesheet" href="./css/file.css">
     <style>
         #editor-canvas,
         #main-canvas {
@@ -129,6 +131,60 @@
             </div>
         </div>
     </div>
+
+    <!-- Load config dialog -->
+    <div id="setup-dialog" class="modal-dialog">
+        <div class="intro-grid">
+            <p class="dialog-title noselect setup-wide">Setup</p>
+            <div>
+                <label>Texture file</label>
+            </div>
+            <div>
+                <div id="texture-drop-area">
+                </div>
+            </div>
+
+            <div>
+                <label>Config file (when editing an existing config)</label>
+            </div>
+            <div>
+                <div id="config-drop-area">
+                </div>
+            </div>
+
+            <div>
+                <label>Default width</label>
+            </div>
+            <div>
+                <label>Default height</label>
+            </div>
+            <div style="margin-right: 10px;">
+                <input type="text" class="numeric" id="default-width" value="0">
+            </div>
+            <div>
+                <input type="text" class="numeric" id="default-height" value="0">
+            </div>
+
+            <div>
+                <label>Horizontal offset</label>
+            </div>
+
+            <div>
+                <label>Vertical offset</label>
+            </div>
+            <div style="margin-right: 10px;">
+                <input type="text" class="numeric" id="horizontal-offset" value="0">
+            </div>
+            <div>
+                <input type="text" class="numeric" id="vertical-offset" value="0">
+            </div>
+
+            <div style="margin-right: 5px">
+                <input type="button" class="full-width" id="start-button" onclick="setup()" value="Start">
+            </div>
+        </div>
+    </div>
+
     <!-- Element edit dialog -->
     <div id="edit-element-dialog" class="modal-dialog">
         <div class="edit-grid">

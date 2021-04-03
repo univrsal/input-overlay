@@ -150,6 +150,34 @@ function setup_editor(type)
     }
 }
 
+function setup()
+{
+    if (!atlas) {
+        alert("Please load a texture first");
+        return;
+    }
+
+    cfg.data.default_width = $('#default-width').val();
+    cfg.data.default_height = $('#default-height').val();
+    cfg.data.space_h = $('#horizontal-offset').val();
+    cfg.data.space_v = $('#vertical-offset').val();
+
+    let d = $("#setup-dialog")[0];
+    let c = $('#main-canvas-container')[0];
+    let e = $('#element-dialog')[0];
+
+    if (d !== null) {
+        d.style.opacity = 0;
+        d.style.pointerEvents = "none";
+        c.style.pointerEvents = "all";
+        c.classList.remove("blurred");
+        e.classList.remove("blurred");
+        e.style.pointerEvents = "all";
+    }
+    main_painter.enabled = true;
+    cfg.enabled = true;
+}
+
 function open_editor(element_type, is_editing)
 {
     let d = $("#edit-element-dialog")[0];

@@ -42,6 +42,23 @@
     grid-template-rows: 25px auto;
 }
 
+.intro-grid > div {
+    padding-top: 10px;
+}
+
+.intro-grid {
+    display: grid; 
+    width: 100%;
+    grid-template-columns: 50% 50%;
+    grid-template-rows: repeat(25px);
+    grid-auto-flow: row dense;
+}
+
+.setup-wide {
+    grid-column-start: 1;
+    grid-column-end: 3;
+}
+
 .properties {
     display: grid; 
     width: 100%;
@@ -64,17 +81,26 @@
     right: 0 !important;
     bottom: 0;
     left: 0;
-    height: 80% !important;
-    display: none;
-    margin-left: 150px;
-    margin-right: 150px;
     z-index: 999;
-    
-    pointer-events: none;
     -webkit-transition: all 0.5s;
     -moz-transition: all 0.5s;
     transition: all 0.5s; 
+}
+
+#setup-dialog {
+    margin-left: auto;
+    margin-right: auto;
+    width: fit-content !important;
+    height: fit-content !important;
+}
+
+#edit-element-dialog {
     opacity: 0;
+    display: none;
+    height: 80% !important;
+    pointer-events: none;
+    margin-left: 150px;
+    margin-right: 150px;
 }
 
 .modal-window>div {
@@ -243,6 +269,11 @@ input[type="button"] {
     height: 22px;
     cursor: pointer;
 }
+
+input[type="file"] {
+    display: none;
+}
+
 
 .value > p,
 .value > input {
