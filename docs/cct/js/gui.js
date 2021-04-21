@@ -123,10 +123,6 @@ function setup_editor(type)
                 in a direction.`);
         break;
     }
-    case 'mouse_movement': {
-        show_property(movement_type);
-        break;
-    }
     case 'mouse_wheel': {
         set_description(description, `The mouse wheel expects the following three textures 
                 to be next to eachother in the atlas:<br>
@@ -134,6 +130,28 @@ function setup_editor(type)
                 &nbsp;- clicked<br>
                 &nbsp;- scrolling up<br>
                 &nbsp;- scrolling down<br>You only have to select the first one.`);
+        break;
+    }
+    case 'dpad': {
+        set_description(description, `The dpad stick expects the following textures
+        to be next to eachother in the atlas:<br>
+        &nbsp;- neutral<br>
+        &nbsp;- moved to the left<br>
+        &nbsp;- moved to the right<br>
+        &nbsp;- moved up<br>
+        &nbsp;- moved down<br>
+        &nbsp;- moved to the top left<br>
+        &nbsp;- moved to the top right<br>
+        &nbsp;- moved to bottom left<br>
+        &nbsp;- moved to bottom right<br>
+        You only have to select the first one.`);
+        break;
+    }
+    case 'mouse_movement': {
+        show_property(movement_type);
+        set_description(description, `Mouse movement can be visualized in two ways. Either through 'Point' which will rotate an image
+        in the direction the mouse is moved, for example an arrow which points up if you move the mouse up. 'Move' move an image in the direction
+        the mouse is moved within a certain radius.`);
         break;
     }
     case 'player_id': {
