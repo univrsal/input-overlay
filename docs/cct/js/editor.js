@@ -25,7 +25,10 @@ class editor {
         this.move_flags = 0x0;
         this.drag_offset = new vec2();
         this.drag_start = new vec2();
-        this.dragging = false;
+        this.selecting = false;
+        this.mouse_pos = new vec2();
+        this.mouse_over = false;
+        this.shift_pressed = false;
         this.selection_rect = new r4();
 
         $(canvas_id).on("mousemove", (e) => this.move(e, this.painter.cs()));
@@ -116,7 +119,9 @@ class editor {
         this.update_selection_values();
     }
 
-    on_button(_event, _down) {}
+    on_button(event, down) {
+        this.shift_pressed = event.shiftKey;
+    }
 
     set_cursor(c) {
         $(this.canvas_id).css({ cursor: c });
@@ -131,7 +136,10 @@ class editor {
 
     move(event, cs) {
         let tv = cs.translate_point_to_cs(event.offsetX, event.offsetY);
-        if (this.dragging) {
+        this.mouse_pos.x = event.offsetX;
+        this.mouse_pos.y = event.offsetY;
+
+        if (this.selecting) {
             let new_selection = this.selection_rect.copy();
 
             if (this.move_flags === 0) {
@@ -176,9 +184,9 @@ class editor {
         let flags = 0b0000; // left, right, up, down
         let l = leniency / (cs.scale / 2);
         let cursor_box = this.selection_rect.grow(l);
-        let mouse_over = cs.is_mouse_over2(event);
+        this.mouse_over = cs.is_mouse_over2(event);
 
-        if (mouse_over) {
+        if (this.mouse_over) {
             if (cursor_box.is_point_inside(tv)) {
                 if (Math.abs(tv.x - this.selection_rect.x) < l) flags |= 0b1000;
                 else if (
@@ -229,16 +237,18 @@ class editor {
         } else if (flags & 0b10000) {
             this.set_cursor("move");
         } else {
-            if (mouse_over)
-                this.set_cursor("crosshair")
-            else
-                this.set_cursor("auto");
+            if (cs.dragging) {
+                this.set_cursor("grabbing");
+            } else {
+                if (this.mouse_over) this.set_cursor("crosshair");
+                else this.set_cursor("auto");
+            }
         }
         this.move_flags = flags;
     }
 
     mouseup(_event, _cs) {
-        this.dragging = false;
+        this.selecting = false;
     }
 
     update_selection_values() {
@@ -249,12 +259,12 @@ class editor {
     }
 
     mousedown(event, cs) {
-        if (event.button == 0 && cs.is_mouse_over2(event)) {
+        if (event.button == 0 && this.mouse_over) {
             let tv = cs.translate_point_to_cs(event.offsetX, event.offsetY);
             this.drag_offset.x = tv.x - this.selection_rect.x;
             this.drag_offset.y = tv.y - this.selection_rect.y;
             this.drag_start = tv;
-            this.dragging = true;
+            this.selecting = true;
         }
     }
 
@@ -290,6 +300,56 @@ class editor {
             1,
             "#ff0000ff"
         );
+
+        if (this.mouse_over && !this.shift_pressed) {
+            if (this.move_flags === 0) {
+                // draw help lines at mouse pos
+                painter.dashed_line(
+                    this.mouse_pos.x - 0.5,
+                    cs.origin.y,
+                    this.mouse_pos.x - 0.5,
+                    cs.origin.y + cs.dimensions.h,
+                    1
+                );
+                painter.dashed_line(
+                    cs.origin.x,
+                    this.mouse_pos.y - 0.5,
+                    cs.origin.x + cs.dimensions.w,
+                    this.mouse_pos.y - 0.5,
+                    1
+                );
+            } else {
+                // draw help lines around selection
+                painter.dashed_line(
+                    r.x - 0.5,
+                    cs.origin.y,
+                    r.x - 0.5,
+                    cs.origin.y + cs.dimensions.h,
+                    1
+                );
+                painter.dashed_line(
+                    r.x + r.w - 0.5,
+                    cs.origin.y,
+                    r.x + r.w - 0.5,
+                    cs.origin.y + cs.dimensions.h,
+                    1
+                );
+                painter.dashed_line(
+                    cs.origin.x,
+                    r.y - 0.5,
+                    cs.origin.x + cs.dimensions.w,
+                    r.y - 0.5,
+                    1
+                );
+                painter.dashed_line(
+                    cs.origin.x,
+                    r.y + r.h - 0.5,
+                    cs.origin.x + cs.dimensions.w,
+                    r.y + r.h - 0.5,
+                    1
+                );
+            }
+        }
         ctx.restore();
     }
 }
