@@ -56,15 +56,17 @@ class drop_area {
     <form>
     <input type="file" id="${id}-input" accept="${type}" onchange="handle_file_selected(this.files, '${id}')">
     <label class="button" id="${id}-label" for="${id}-input">${label}</label>
+    <p style="display: inline" id="${id}-file-label"></p>
     </form>
     `;
-
+    this.label = document.getElementById(id + "-file-label");
     this.handlers = [];
   }
 
   on_select(files)
   {
     this.handlers.forEach((h) => h(files));
+    this.label.innerText = files[0].name;
   }
 
   highlight(e) {
