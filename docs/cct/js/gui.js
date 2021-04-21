@@ -329,7 +329,7 @@ $(function() {
             /* numeric inputs can come from the keypad or the numeric row at the top
              * also arrows, home & end and backspace
              */
-            if (!((k >= 48 && k <= 57) || (k >= 96 && k <= 105) || (k >= 35 && k <= 40) || k === 8)) {
+            if (!((k >= 48 && k <= 57) || (k >= 96 && k <= 105) || k === 109 || (k >= 35 && k <= 40) || k === 8)) {
                 e.preventDefault();
                 return false;
             }
