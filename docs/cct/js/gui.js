@@ -175,10 +175,12 @@ function setup()
         return;
     }
 
-    cfg.data.default_width = $('#default-width').val();
-    cfg.data.default_height = $('#default-height').val();
-    cfg.data.space_h = $('#horizontal-offset').val();
-    cfg.data.space_v = $('#vertical-offset').val();
+    cfg.data.default_width = parseInt($('#default-width').val());
+    cfg.data.default_height = parseInt($('#default-height').val());
+    cfg.data.space_h = parseInt($('#horizontal-offset').val());
+    cfg.data.space_v = parseInt($('#vertical-offset').val());
+    cfg.grid.x = cfg.data.default_width + cfg.data.space_h;
+    cfg.grid.y = cfg.data.default_height + cfg.data.space_v;
 
     let d = $("#setup-dialog")[0];
     let c = $('#main-canvas-container')[0];
@@ -223,7 +225,10 @@ function open_editor(element_type, is_editing)
     }
 
     setup_editor(element_type);
-
+    if (cfg.data.default_width + cfg.data.default_height > 0) {
+        edit.selection_rect = new r4(1, 1, cfg.data.default_width, cfg.data.default_height);
+        edit.update_selection_values();
+    }
     if (d !== null) {
         d.style.opacity = 1;
         d.style.pointerEvents = "all";
@@ -329,7 +334,7 @@ $(function() {
             /* numeric inputs can come from the keypad or the numeric row at the top
              * also arrows, home & end and backspace
              */
-            if (!((k >= 48 && k <= 57) || (k >= 96 && k <= 105) || k === 109 || (k >= 35 && k <= 40) || k === 8)) {
+            if (!((k >= 48 && k <= 57) || (k >= 96 && k <= 105) || k === 109 || k === 9 || (k >= 35 && k <= 40) || k === 8)) {
                 e.preventDefault();
                 return false;
             }
