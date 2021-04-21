@@ -24,7 +24,7 @@ function apply_settings()
 {
     if (cfg !== null && cfg.selected_elements.length > 0) {
 
-        if (!cfg.is_name_unique($("#selected-element-id").val())) {
+        if (!cfg.is_name_unique($("#selected-element-id").val(), cfg.selected_elements[0])) {
             alert('The element id is not unique.');
             return;
         }
@@ -40,6 +40,7 @@ function apply_settings()
 
             cfg.selected_elements[0].set_dim(pos, dim);
             cfg.selected_elements[0].set_layer($("#selected-element-layer").val());
+            cfg.selected_elements[0].set_id($("#selected-element-id").val());
             cfg.set_selection(cfg.selected_elements[0]);
         } else {
             // Only set the layer if there's multiple elements selected

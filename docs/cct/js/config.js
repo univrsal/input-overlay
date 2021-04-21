@@ -67,11 +67,12 @@ class config {
             if (j.length > 0)
                 this.selected_elements = [];
             j.forEach(e => {
-                let id = e.id;
+                let orig_id = e.id.replace(/\d+$/, "");
                 let counter = 0;
+                let id = orig_id + counter;
                 e.pos[1] += 4; // offset so you can see the pasted elements
                 while (!this.is_name_unique(id))
-                    id = e.id + counter++;
+                    id = orig_id + counter++;
                 e.id = id;
                 let new_element = create_element(e);
                 this.elements.push(new_element);

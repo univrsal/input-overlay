@@ -132,12 +132,12 @@ class element {
     }
 
     set_dim(pos, uvwh) {
-        this.x() = pos.x;
-        this.y() = pos.y;
-        this.u() = uvwh.x;
-        this.v() = uvwh.y;
-        this.w() = uvwh.w;
-        this.h() = uvwh.h;
+        this.data.pos[0] = pos.x;
+        this.data.pos[1] = pos.y;
+        this.data.mapping[0] = uvwh.x;
+        this.data.mapping[1] = uvwh.y;
+        this.data.mapping[2] = uvwh.w;
+        this.data.mapping[3] = uvwh.h;
     }
 
     type() {
