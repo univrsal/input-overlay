@@ -19,28 +19,45 @@
 var leniency = 10;
 
 class editor {
-
-    constructor(canvas_id, painter)
-    {
+    constructor(canvas_id, painter) {
         this.canvas_id = canvas_id;
         this.painter = painter;
         this.move_flags = 0x0;
         this.drag_offset = new vec2();
+        this.drag_start = new vec2();
         this.dragging = false;
         this.selection_rect = new r4();
 
-        $(canvas_id).on('mousemove', e => this.move(e, this.painter.cs()));
-        $(canvas_id).on('mouseup', e => this.mouseup(e, this.painter.cs()));
-        $(canvas_id).on('mousedown', e => this.mousedown(e, this.painter.cs()));
-        $(window).on('keydown', e => this.on_button(e, true));
-        $(window).on('keyup', e => this.on_button(e, false));
+        $(canvas_id).on("mousemove", (e) => this.move(e, this.painter.cs()));
+        $(canvas_id).on("mouseup", (e) => this.mouseup(e, this.painter.cs()));
+        $(canvas_id).on("mousedown", (e) =>
+            this.mousedown(e, this.painter.cs())
+        );
+        $(window).on("keydown", (e) => this.on_button(e, true));
+        $(window).on("keyup", (e) => this.on_button(e, false));
+        $("#editor-element-u").on("keyup", (_e) =>
+            this.update_selection_from_text()
+        );
+        $("#editor-element-v").on("keyup", (_e) =>
+            this.update_selection_from_text()
+        );
+        $("#editor-element-w").on("keyup", (_e) =>
+            this.update_selection_from_text()
+        );
+        $("#editor-element-h").on("keyup", (_e) =>
+            this.update_selection_from_text()
+        );
 
-        let hex_numeric = $('.hex-numeric')[0];
+        let hex_numeric = $(".hex-numeric")[0];
         if (hex_numeric) {
             // jquery doesn't forward the location variable
-            hex_numeric.addEventListener('keydown', e => {
-                if ($('#editor-element-record-code').val() === "on" && current_type === element_types.KEYBOARD_KEY) {
-                    e.target.value = "0x" + key_to_vc(e).toString(16).toUpperCase();
+            hex_numeric.addEventListener("keydown", (e) => {
+                if (
+                    $("#editor-element-record-code").val() === "on" &&
+                    current_type === element_types.KEYBOARD_KEY
+                ) {
+                    e.target.value =
+                        "0x" + key_to_vc(e).toString(16).toUpperCase();
                     e.preventDefault();
                     return false;
                 }
@@ -51,77 +68,106 @@ class editor {
                     return false;
                 }
             });
-            hex_numeric.addEventListener('mouseup', e => {
-                if ($('#editor-element-record-code').val() === "on" && current_type === element_types.MOUSE_BUTTON) {
+            hex_numeric.addEventListener("mouseup", (e) => {
+                if (
+                    $("#editor-element-record-code").val() === "on" &&
+                    current_type === element_types.MOUSE_BUTTON
+                ) {
                     // Scroll wheel pastes text on linux so we delay the action a bit;
                     let val = "0x" + mouse_to_vc(e).toString(16).toUpperCase();
-                    setTimeout(() => { e.target.value = val; }, 50);
+                    setTimeout(() => {
+                        e.target.value = val;
+                    }, 50);
                 }
             });
         }
 
-        pad.on('button', (pad, index, btn) => this.on_gamepad_button(pad, index, btn));
+        pad.on("button", (pad, index, btn) =>
+            this.on_gamepad_button(pad, index, btn)
+        );
     }
 
-    on_gamepad_button(pad, index, btn)
-    {
-        if ($('#editor-element-record-code').val() === "on" && btn.value > 0 &&
-            current_type === element_types.GAMEPAD_BUTTON) {
+    on_gamepad_button(_pad, index, btn) {
+        if (
+            $("#editor-element-record-code").val() === "on" &&
+            btn.value > 0 &&
+            current_type === element_types.GAMEPAD_BUTTON
+        ) {
             let vc = "0x" + gamepad_to_vc(index).toString(16).toUpperCase();
-            $('.hex-numeric').val(vc);
-            console.log($('.hex-numeric').val());
+            $(".hex-numeric").val(vc);
+            console.log($(".hex-numeric").val());
         }
     }
 
-    on_config_load()
-    {
-        if (cfg.data.default_height !== undefined && cfg.data.default_width !== undefined) {
-            this.selection_rect = new r4(1, 1, cfg.data.default_width, cfg.data.default_height);
+    on_config_load() {
+        if (
+            cfg.data.default_height !== undefined &&
+            cfg.data.default_width !== undefined
+        ) {
+            this.selection_rect = new r4(
+                1,
+                1,
+                cfg.data.default_width,
+                cfg.data.default_height
+            );
         } else {
             this.selection_rect = new r4(1, 1, 100, 100);
         }
         this.update_selection_values();
     }
 
-    on_button(event, down) {}
+    on_button(_event, _down) {}
 
-    set_cursor(c) { $(this.canvas_id).css({"cursor": c}); }
+    set_cursor(c) {
+        $(this.canvas_id).css({ cursor: c });
+    }
 
-    move(event, cs)
-    {
+    update_selection_from_text() {
+        this.selection_rect.x = parseInt($("#editor-element-u").val());
+        this.selection_rect.y = parseInt($("#editor-element-v").val());
+        this.selection_rect.w = parseInt($("#editor-element-w").val());
+        this.selection_rect.h = parseInt($("#editor-element-h").val());
+    }
+
+    move(event, cs) {
         let tv = cs.translate_point_to_cs(event.offsetX, event.offsetY);
         if (this.dragging) {
             let new_selection = this.selection_rect.copy();
 
-            if (this.move_flags & 0b0001)
-                new_selection.h = tv.y - new_selection.y;
-            if (this.move_flags & 0b0010) {
-                new_selection.h += new_selection.y - tv.y;
-                new_selection.y = tv.y;
+            if (this.move_flags === 0) {
+                // Rubber band selection
+                new_selection.from_points(this.drag_start, tv);
+            } else {
+                if (this.move_flags & 0b0001)
+                    new_selection.h = tv.y - new_selection.y;
+                if (this.move_flags & 0b0010) {
+                    new_selection.h += new_selection.y - tv.y;
+                    new_selection.y = tv.y;
+                }
+
+                if (this.move_flags & 0b0100)
+                    new_selection.w = tv.x - new_selection.x;
+                if (this.move_flags & 0b1000) {
+                    new_selection.w += new_selection.x - tv.x;
+                    new_selection.x = tv.x;
+                }
+
+                if (this.move_flags & 0b10000) {
+                    new_selection.x = tv.x - this.drag_offset.x;
+                    new_selection.y = tv.y - this.drag_offset.y;
+                }
+
+                // prevent the selection from getting to small
+                if (new_selection.w < leniency + 3 || new_selection.x < 0) {
+                    new_selection.w = this.selection_rect.w;
+                    new_selection.x = this.selection_rect.x;
+                }
+                if (new_selection.h < leniency + 3 || new_selection.y < 0) {
+                    new_selection.h = this.selection_rect.h;
+                    new_selection.y = this.selection_rect.y;
+                }
             }
 
-            if (this.move_flags & 0b0100)
-                new_selection.w = tv.x - new_selection.x;
-            if (this.move_flags & 0b1000) {
-                new_selection.w += new_selection.x - tv.x;
-                new_selection.x = tv.x;
-            }
-
-            if (this.move_flags & 0b10000) {
-                new_selection.x = tv.x - this.drag_offset.x;
-                new_selection.y = tv.y - this.drag_offset.y;
-            }
-
-            // prevent the selection from getting to small
-
-            if (new_selection.w < leniency + 3 || new_selection.x < 0) {
-                new_selection.w = this.selection_rect.w;
-                new_selection.x = this.selection_rect.x;
-            }
-            if (new_selection.h < leniency + 3 || new_selection.y < 0) {
-                new_selection.h = this.selection_rect.h;
-                new_selection.y = this.selection_rect.y;
-            }
             this.update_selection_values();
             this.selection_rect = new_selection;
             return;
@@ -130,16 +176,23 @@ class editor {
         let flags = 0b0000; // left, right, up, down
         let l = leniency / (cs.scale / 2);
         let cursor_box = this.selection_rect.grow(l);
+        let mouse_over = cs.is_mouse_over2(event);
 
-        if (cs.is_mouse_over2(event)) {
+        if (mouse_over) {
             if (cursor_box.is_point_inside(tv)) {
-                if (Math.abs(tv.x - this.selection_rect.x) < l)
-                    flags |= 0b1000;
-                else if (Math.abs(tv.x - (this.selection_rect.w + this.selection_rect.x)) < l)
+                if (Math.abs(tv.x - this.selection_rect.x) < l) flags |= 0b1000;
+                else if (
+                    Math.abs(
+                        tv.x - (this.selection_rect.w + this.selection_rect.x)
+                    ) < l
+                )
                     flags |= 0b0100;
-                if (Math.abs(tv.y - this.selection_rect.y) < l)
-                    flags |= 0b0010;
-                else if (Math.abs(tv.y - (this.selection_rect.h + this.selection_rect.y)) < l)
+                if (Math.abs(tv.y - this.selection_rect.y) < l) flags |= 0b0010;
+                else if (
+                    Math.abs(
+                        tv.y - (this.selection_rect.h + this.selection_rect.y)
+                    ) < l
+                )
                     flags |= 0b0001;
             }
 
@@ -176,35 +229,38 @@ class editor {
         } else if (flags & 0b10000) {
             this.set_cursor("move");
         } else {
-            // none
-            this.set_cursor("auto");
+            if (mouse_over)
+                this.set_cursor("crosshair")
+            else
+                this.set_cursor("auto");
         }
         this.move_flags = flags;
     }
 
-    mouseup(event, cs) { this.dragging = false; }
+    mouseup(_event, _cs) {
+        this.dragging = false;
+    }
 
-    update_selection_values()
-    {
+    update_selection_values() {
         $("#editor-element-u").val(this.selection_rect.x);
         $("#editor-element-v").val(this.selection_rect.y);
         $("#editor-element-w").val(this.selection_rect.w);
         $("#editor-element-h").val(this.selection_rect.h);
     }
 
-    mousedown(event, cs)
-    {
+    mousedown(event, cs) {
         if (event.button == 0 && cs.is_mouse_over2(event)) {
             let tv = cs.translate_point_to_cs(event.offsetX, event.offsetY);
             this.drag_offset.x = tv.x - this.selection_rect.x;
             this.drag_offset.y = tv.y - this.selection_rect.y;
+            this.drag_start = tv;
             this.dragging = true;
         }
     }
 
-    draw(painter)
-    {
-        if (atlas === null) // Don't draw if image hasn't loaded yet
+    draw(painter) {
+        if (atlas === null)
+            // Don't draw if image hasn't loaded yet
             return;
         let ctx = painter.get_context();
         let cs = painter.cs();
@@ -212,12 +268,28 @@ class editor {
         ctx.save();
         ctx.rect(cs.origin.x, cs.origin.y, cs.dimensions.w, cs.dimensions.h);
         ctx.clip();
-        painter.image_crop(atlas, cs.origin.x - cs.offset.x, cs.origin.y - cs.offset.y, atlas.width * cs.scale,
-                           atlas.height * cs.scale, 0, 0, atlas.width, atlas.height);
+        painter.image_crop(
+            atlas,
+            cs.origin.x - cs.offset.x,
+            cs.origin.y - cs.offset.y,
+            atlas.width * cs.scale,
+            atlas.height * cs.scale,
+            0,
+            0,
+            atlas.width,
+            atlas.height
+        );
 
         // Draw selection
         let r = cs.translate_rect_to_screen(this.selection_rect);
-        painter.rect_outline(r.x + 0.5, r.y + 0.5, r.w - 1, r.h - 1, 1, "#ff0000ff");
+        painter.rect_outline(
+            r.x + 0.5,
+            r.y + 0.5,
+            r.w - 1,
+            r.h - 1,
+            1,
+            "#ff0000ff"
+        );
         ctx.restore();
     }
 }

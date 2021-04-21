@@ -56,12 +56,23 @@ class vec2 {
 }
 
 class r4 {
+
+
     constructor(x = 0, y = 0, w = 0, h = 0)
     {
         this.x = x;
         this.y = y;
         this.w = w;
         this.h = h;
+    }
+
+
+    from_points(a, b)
+    {
+        this.x = Math.min(a.x, b.x);
+        this.y = Math.min(a.y, b.y);
+        this.w = Math.max(a.x, b.x) - this.x;
+        this.h = Math.max(a.y, b.y) - this.y;
     }
 
     validate()
