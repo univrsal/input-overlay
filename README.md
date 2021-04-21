@@ -18,4 +18,4 @@ input-overlay depends on [libuiohook](https://github.com/kwhat/libuiohook) by [k
 ## More Information:
 - [OBS resource page](https://obsproject.com/forum/resources/input-overlay.552/)
 - [*.psd and fonts used](https://goo.gl/kyyoXx)
-- [Making your own presets](https://vimeo.com/238275966)
+- [Config creation tool](https://univrsal.github.io/input-overlay/cct/)
