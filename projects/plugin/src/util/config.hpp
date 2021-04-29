@@ -46,17 +46,17 @@ extern std::mutex filter_mutex;
 /* Global boolean config values */
 extern bool use_dinput;
 extern bool use_js;
-extern bool control;
-extern bool remote;
-extern bool gamepad;
-extern bool uiohook;
-extern bool overlay;
+extern bool enable_input_control;
+extern bool enable_remote_connections;
+extern bool enable_gamepad_hook;
+extern bool enable_uiohook;
+extern bool enable_overlay_source;
 extern bool regex;
 extern int filter_mode;
 /* Netowork config */
 extern bool log_flag;
-extern uint16_t refresh_rate;
-extern uint16_t port;
+extern uint16_t server_refresh_rate;
+extern uint16_t server_port;
 
 extern void set_defaults();
 

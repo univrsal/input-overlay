@@ -70,16 +70,15 @@ io_settings_dialog::io_settings_dialog(QWidget *parent) : QDialog(parent, Qt::Di
     connect(ui->btn_refresh_cb, &QPushButton::clicked, this, &io_settings_dialog::RefreshWindowList);
     connect(ui->btn_add, &QPushButton::clicked, this, &io_settings_dialog::AddFilter);
     connect(ui->btn_remove, &QPushButton::clicked, this, &io_settings_dialog::RemoveFilter);
-
+    connect(ui->cb_gamepad_hook, &QCheckBox::stateChanged, this, &io_settings_dialog::CbEnableGamepadChanged);
     /* Load values */
-    ui->cb_iohook->setChecked(io_config::uiohook);
-    ui->cb_gamepad_hook->setChecked(io_config::gamepad);
-    ui->cb_enable_overlay->setChecked(io_config::overlay);
-    ui->cb_enable_control->setChecked(io_config::control);
-    ui->cb_enable_remote->setChecked(io_config::remote);
+    ui->cb_iohook->setChecked(io_config::enable_uiohook);
+    ui->cb_gamepad_hook->setChecked(io_config::enable_gamepad_hook);
+    ui->cb_enable_overlay->setChecked(io_config::enable_overlay_source);
+    ui->cb_enable_control->setChecked(io_config::enable_input_control);
+    ui->cb_enable_remote->setChecked(io_config::enable_remote_connections);
     ui->cb_log->setChecked(io_config::log_flag);
-    ui->box_port->setValue(io_config::port);
-    ui->cb_regex->setChecked(io_config::regex);
+    ui->box_port->setValue(io_config::server_port);
 
     load_bindings();
 
@@ -87,8 +86,8 @@ io_settings_dialog::io_settings_dialog(QWidget *parent) : QDialog(parent, Qt::Di
     ui->box_refresh_rate->setToolTip(T_REFRESH_RATE_TOOLTIP);
     ui->lbl_refresh_rate->setToolTip(T_REFRESH_RATE_TOOLTIP);
 
-    CbRemoteStateChanged(io_config::remote);
-    CbInputControlStateChanged(io_config::control);
+    CbRemoteStateChanged(io_config::enable_remote_connections);
+    CbInputControlStateChanged(io_config::enable_input_control);
 
     /* Sets up remote connection status label */
     auto text = ui->lbl_status->text().toStdString();
@@ -106,7 +105,7 @@ io_settings_dialog::io_settings_dialog(QWidget *parent) : QDialog(parent, Qt::Di
     m_refresh->start(250);
 
     /* Add current open windows to filter list */
-    if (io_config::control)
+    if (io_config::enable_input_control)
         RefreshWindowList();
 
     for (const auto &filter : io_config::io_window_filters.filters()) {
@@ -116,6 +115,15 @@ io_settings_dialog::io_settings_dialog(QWidget *parent) : QDialog(parent, Qt::Di
     /* Set red color on label so people don't miss it */
     ui->lbl_local_features->setStyleSheet("QLabel { color: red; "
                                           "font-weight: bold;}");
+
+    ui->rb_js->setEnabled(io_config::enable_gamepad_hook);
+    ui->rb_by_id->setEnabled(io_config::enable_gamepad_hook);
+    ui->rb_xinput->setEnabled(io_config::enable_gamepad_hook);
+    ui->rb_dinput->setEnabled(io_config::enable_gamepad_hook);
+    ui->rb_dinput->setChecked(io_config::use_dinput);
+    ui->rb_xinput->setChecked(!ui->rb_dinput->isChecked());
+    ui->rb_js->setChecked(io_config::use_js);
+    ui->rb_by_id->setChecked(!ui->rb_js->isChecked());
 
 #ifndef _WIN32
     ui->rb_dinput->setVisible(false);
@@ -269,15 +277,15 @@ void io_settings_dialog::RemoveFilter()
 
 void io_settings_dialog::FormAccepted()
 {
-    io_config::uiohook = ui->cb_iohook->isChecked();
-    io_config::gamepad = ui->cb_gamepad_hook->isChecked();
-    io_config::overlay = ui->cb_enable_overlay->isChecked();
+    io_config::enable_uiohook = ui->cb_iohook->isChecked();
+    io_config::enable_gamepad_hook = ui->cb_gamepad_hook->isChecked();
+    io_config::enable_overlay_source = ui->cb_enable_overlay->isChecked();
 
-    io_config::remote = ui->cb_enable_remote->isChecked();
+    io_config::enable_remote_connections = ui->cb_enable_remote->isChecked();
     io_config::log_flag = ui->cb_log->isChecked();
-    io_config::port = ui->box_port->value();
+    io_config::server_port = ui->box_port->value();
 
-    io_config::control = ui->cb_enable_control->isChecked();
+    io_config::enable_input_control = ui->cb_enable_control->isChecked();
     io_config::filter_mode = ui->cb_list_mode->currentIndex();
 
     io_config::io_window_filters.set_regex(ui->cb_regex->isChecked());
@@ -485,3 +493,12 @@ std::shared_ptr<gamepad::cfg::binding> io_settings_dialog::get_selected_binding(
 {
     return libgamepad::hook_instance->get_binding_by_name(qt_to_utf8(ui->cb_bindings->currentText()));
 }
+void io_settings_dialog::CbEnableGamepadChanged(int)
+{
+    auto enabled = ui->cb_gamepad_hook->isChecked();
+    ui->rb_dinput->setEnabled(enabled);
+    ui->rb_xinput->setEnabled(enabled);
+    ui->rb_js->setEnabled(enabled);
+    ui->rb_by_id->setEnabled(enabled);
+}
+

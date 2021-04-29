@@ -7,3 +7,5 @@ buil*/
 *.iss
 *.vscode/
 docs/cct/server.sh
+/cmake-build-debug/
+.idea/*

@@ -170,7 +170,7 @@ void io_server::roundtrip()
         });
         m_clients.erase(it, m_clients.end());
 
-        if ((os_gettime_ns() - m_last_refresh) / (1000 * 1000) > io_config::refresh_rate) {
+        if ((os_gettime_ns() - m_last_refresh) / (1000 * 1000) > io_config::server_refresh_rate) {
             for (auto &client : m_clients) {
                 if (!send_message(client->socket(), MSG_REFRESH))
                     client->mark_invalid();

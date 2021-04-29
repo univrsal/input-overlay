@@ -46,22 +46,22 @@ bool obs_module_load()
     io_config::set_defaults();
     io_config::load();
 
-    if (io_config::overlay)
+    if (io_config::enable_overlay_source)
         sources::register_overlay_source();
 
-    if (io_config::uiohook)
+    if (io_config::enable_uiohook)
         uiohook::start();
 
-    if (io_config::gamepad)
+    if (io_config::enable_gamepad_hook)
         libgamepad::start_pad_hook();
 
-    if (io_config::remote) {
-        network::local_input = io_config::gamepad || io_config::uiohook;
-        network::start_network(io_config::port);
+    if (io_config::enable_remote_connections) {
+        network::local_input = io_config::enable_gamepad_hook || io_config::enable_uiohook;
+        network::start_network(io_config::server_port);
     }
 
     /* Input filtering via focused window title */
-    if (io_config::control)
+    if (io_config::enable_input_control)
         io_config::io_window_filters.read_from_config();
 
     /* UI registration from

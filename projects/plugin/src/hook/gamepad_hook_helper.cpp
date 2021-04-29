@@ -32,18 +32,20 @@ void start_pad_hook()
 
     /* Pipe gamepad log to obs log */
     auto log_pipe = [](int level, const char *msg, va_list args, void *) {
+        std::string message = "[input-overlay] ";
+        message += msg;
         switch (level) {
         case gamepad::LOG_DEBUG:
-            blogva(LOG_DEBUG, msg, args);
+            blogva(LOG_DEBUG, message.c_str(), args);
             break;
         case gamepad::LOG_ERROR:
-            blogva(LOG_ERROR, msg, args);
+            blogva(LOG_ERROR, message.c_str(), args);
             break;
         case gamepad::LOG_INFO:
-            blogva(LOG_INFO, msg, args);
+            blogva(LOG_INFO, message.c_str(), args);
             break;
         case gamepad::LOG_WARNING:
-            blogva(LOG_WARNING, msg, args);
+            blogva(LOG_WARNING, message.c_str(), args);
             break;
         default:;
         }

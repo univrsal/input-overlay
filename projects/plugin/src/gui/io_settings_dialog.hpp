@@ -61,6 +61,8 @@ private Q_SLOTS:
 
     void AddFilter();
 
+    void CbEnableGamepadChanged(int state);
+
     void RemoveFilter();
 
     void OpenGitHub();

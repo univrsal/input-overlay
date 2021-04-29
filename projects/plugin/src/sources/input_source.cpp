@@ -187,7 +187,7 @@ void register_overlay_source()
     si.type = OBS_SOURCE_TYPE_INPUT;
     si.output_flags = OBS_SOURCE_VIDEO;
     si.get_properties = get_properties_for_overlay;
-
+    si.icon_type = OBS_ICON_TYPE_GAME_CAPTURE;
     si.get_name = [](void *) { return obs_module_text("InputOverlay"); };
     si.create = [](obs_data_t *settings, obs_source_t *source) {
         return static_cast<void *>(new input_source(source, settings));
