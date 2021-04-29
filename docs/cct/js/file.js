@@ -18,11 +18,11 @@
 
 var drop_areas = new Map();
 
-function preventDefaults(e) {
-  e.preventDefault();
-  e.stopPropagation();
+function preventDefaults(e)
+{
+    e.preventDefault();
+    e.stopPropagation();
 }
-
 
 function handle_file_selected(files, id)
 {
@@ -31,56 +31,52 @@ function handle_file_selected(files, id)
 }
 
 class drop_area {
-  constructor(id, type="application/json", label="Select or drag file here") {
-    drop_areas.set(id, this);
-    this.area = document.getElementById(id);
-    // Prevent default drag behaviors
-    ["dragenter", "dragover", "dragleave", "drop"].forEach((eventName) => {
-      this.area.addEventListener(eventName, preventDefaults, false);
-      document.body.addEventListener(eventName, preventDefaults, false);
-    });
+    constructor(id, type = "application/json", label = "Select or drag file here")
+    {
+        drop_areas.set(id, this);
+        this.area = document.getElementById(id);
+        // Prevent default drag behaviors
+        ["dragenter", "dragover", "dragleave", "drop"].forEach((eventName) => {
+            this.area.addEventListener(eventName, preventDefaults, false);
+            document.body.addEventListener(eventName, preventDefaults, false);
+        });
 
-    // Highlight drop area when item is dragged over it
-    ["dragenter", "dragover"].forEach((eventName) => {
-      this.area.addEventListener(eventName, (e) => this.highlight(e), false);
-    });
-    ["dragleave", "drop"].forEach((eventName) => {
-      this.area.addEventListener(eventName, (e) => this.unhighlight(e), false);
-    });
+        // Highlight drop area when item is dragged over it
+        ["dragenter", "dragover"].forEach(
+            (eventName) => { this.area.addEventListener(eventName, (e) => this.highlight(e), false); });
+        ["dragleave", "drop"].forEach(
+            (eventName) => { this.area.addEventListener(eventName, (e) => this.unhighlight(e), false); });
 
-    // Handle dropped files
-    this.area.addEventListener("drop", (e) => this.handle_drop(e), false);
+        // Handle dropped files
+        this.area.addEventListener("drop", (e) => this.handle_drop(e), false);
 
-    // Handle file select
-    this.area.innerHTML = `
+        // Handle file select
+        this.area.innerHTML = `
     <form>
     <input type="file" id="${id}-input" accept="${type}" onchange="handle_file_selected(this.files, '${id}')">
     <label class="button" id="${id}-label" for="${id}-input">${label}</label>
     <p style="display: inline" id="${id}-file-label"></p>
     </form>
     `;
-    this.label = document.getElementById(id + "-file-label");
-    this.handlers = [];
-  }
+        this.label = document.getElementById(id + "-file-label");
+        this.handlers = [];
+    }
 
-  on_select(files)
-  {
-    this.handlers.forEach((h) => h(files));
-    this.label.innerText = files[0].name;
-  }
+    on_select(files)
+    {
+        this.handlers.forEach((h) => h(files));
+        this.label.innerText = files[0].name;
+    }
 
-  highlight(e) {
-    this.area.classList.add("highlight");
-  }
+    highlight(e) { this.area.classList.add("highlight"); }
 
-  unhighlight(e) {
-    this.area.classList.remove("highlight");
-  }
+    unhighlight(e) { this.area.classList.remove("highlight"); }
 
-  handle_drop(e) {
-    var dt = e.dataTransfer;
-    var files = dt.files;
+    handle_drop(e)
+    {
+        var dt = e.dataTransfer;
+        var files = dt.files;
 
-    this.on_select(files);
-  }
+        this.on_select(files);
+    }
 }

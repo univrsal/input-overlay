@@ -150,7 +150,8 @@ function setup_editor(type)
     }
     case 'mouse_movement': {
         show_property(movement_type);
-        set_description(description, `Mouse movement can be visualized in two ways. Either through 'Point' which will rotate an image
+        set_description(description,
+                        `Mouse movement can be visualized in two ways. Either through 'Point' which will rotate an image
         in the direction the mouse is moved, for example an arrow which points up if you move the mouse up. 'Move' move an image in the direction
         the mouse is moved within a certain radius.`);
         break;
@@ -335,7 +336,8 @@ $(function() {
             /* numeric inputs can come from the keypad or the numeric row at the top
              * also arrows, home & end and backspace
              */
-            if (!((k >= 48 && k <= 57) || (k >= 96 && k <= 105) || k === 109 || k === 9 || (k >= 35 && k <= 40) || k === 8)) {
+            if (!((k >= 48 && k <= 57) || (k >= 96 && k <= 105) || k === 109 || k === 9 || (k >= 35 && k <= 40) ||
+                  k === 8)) {
                 e.preventDefault();
                 return false;
             }

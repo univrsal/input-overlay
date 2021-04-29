@@ -37,68 +37,68 @@ let overlay_flags = {
     MOUSE: 1 << 3,
 };
 
-let constants = { texture_space: 3 };
+let constants = {texture_space: 3};
 
 let element_map = new Map();
 
-function type_from_string(type) {
+function type_from_string(type)
+{
     switch (type) {
-        case "mouse_button":
-            return element_types.MOUSE_BUTTON;
-        case "keyboard_button":
-            return element_types.KEYBOARD_KEY;
-        case "texture":
-            return element_types.TEXTURE;
-        case "gamepad_button":
-            return element_types.GAMEPAD_BUTTON;
-        case "analog_stick":
-            return element_types.ANALOG_STICK;
-        case "trigger":
-            return element_types.TRIGGER;
-        case "mouse_movement":
-            return element_types.MOUSE_MOVEMENT;
-        case "mouse_wheel":
-            return element_types.WHEEL;
-        case "player_id":
-            return element_types.GAMEPAD_ID;
-        case "dpad":
-            return element_types.DPAD_STICK;
-        case "mouse_movement":
-            return element_types.MOUSE_MOVEMENT;
-        default:
-            return -1;
+    case "mouse_button":
+        return element_types.MOUSE_BUTTON;
+    case "keyboard_button":
+        return element_types.KEYBOARD_KEY;
+    case "texture":
+        return element_types.TEXTURE;
+    case "gamepad_button":
+        return element_types.GAMEPAD_BUTTON;
+    case "analog_stick":
+        return element_types.ANALOG_STICK;
+    case "trigger":
+        return element_types.TRIGGER;
+    case "mouse_movement":
+        return element_types.MOUSE_MOVEMENT;
+    case "mouse_wheel":
+        return element_types.WHEEL;
+    case "player_id":
+        return element_types.GAMEPAD_ID;
+    case "dpad":
+        return element_types.DPAD_STICK;
+    case "mouse_movement":
+        return element_types.MOUSE_MOVEMENT;
+    default:
+        return -1;
     }
 }
 
-function type_from_id(type) {
+function type_from_id(type)
+{
     switch (type) {
-        case element_types.MOUSE_BUTTON:
-            return "mouse_button";
-        case element_types.KEYBOARD_KEY:
-            return "keyboard_button";
-        case element_types.TEXTURE:
-            return "texture";
-        case element_types.GAMEPAD_BUTTON:
-            return "gamepad_button";
-        case element_types.ANALOG_STICK:
-            return "analog_stick";
-        case element_types.TRIGGER:
-            return "trigger";
-        case element_types.MOUSE_MOVEMENT:
-            return "mouse_movement";
-        case element_types.WHEEL:
-            return "mouse_wheel";
-        case element_types.GAMEPAD_ID:
-            return "player_id";
-        default:
-            return "";
+    case element_types.MOUSE_BUTTON:
+        return "mouse_button";
+    case element_types.KEYBOARD_KEY:
+        return "keyboard_button";
+    case element_types.TEXTURE:
+        return "texture";
+    case element_types.GAMEPAD_BUTTON:
+        return "gamepad_button";
+    case element_types.ANALOG_STICK:
+        return "analog_stick";
+    case element_types.TRIGGER:
+        return "trigger";
+    case element_types.MOUSE_MOVEMENT:
+        return "mouse_movement";
+    case element_types.WHEEL:
+        return "mouse_wheel";
+    case element_types.GAMEPAD_ID:
+        return "player_id";
+    default:
+        return "";
     }
 }
 
 class element {
-    constructor(json) {
-        this.data = json;
-    }
+    constructor(json) { this.data = json; }
 
     draw(painter) {}
     on_keyboard_input(vc, state) {}
@@ -108,30 +108,28 @@ class element {
 
     tick() {}
 
-    scaled_dim(cs) {
-        return new r4(
-            cs.origin.x - cs.offset.x + this.x() * cs.scale,
-            cs.origin.y - cs.offset.y + this.y() * cs.scale,
-            this.w() * cs.scale,
-            this.h() * cs.scale
-        );
+    scaled_dim(cs)
+    {
+        return new r4(cs.origin.x - cs.offset.x + this.x() * cs.scale, cs.origin.y - cs.offset.y + this.y() * cs.scale,
+                      this.w() * cs.scale, this.h() * cs.scale);
     }
 
-    read_data_from_gui() {
+    read_data_from_gui()
+    {
         this.data.id = $("#editor-element-id").val();
         this.data.z_level = parseInt($("#editor-element-layer").val());
     }
 
-    write_data_to_gui() {
+    write_data_to_gui()
+    {
         $("#editor-element-id").val(this.data.id);
         $("#editor-element-layer").val(this.data.z_level);
     }
 
-    dim() {
-        return new r4(this.x(), this.y(), this.w(), this.h());
-    }
+    dim() { return new r4(this.x(), this.y(), this.w(), this.h()); }
 
-    set_dim(pos, uvwh) {
+    set_dim(pos, uvwh)
+    {
         this.data.pos[0] = pos.x;
         this.data.pos[1] = pos.y;
         this.data.mapping[0] = uvwh.x;
@@ -140,65 +138,38 @@ class element {
         this.data.mapping[3] = uvwh.h;
     }
 
-    type() {
-        return this.data.type;
-    }
-    id() {
-        return this.data.id;
-    }
-    x() {
-        return this.data.pos[0];
-    }
-    y() {
-        return this.data.pos[1];
-    }
-    u() {
-        return this.data.mapping[0];
-    }
-    v() {
-        return this.data.mapping[1];
-    }
-    w() {
-        return this.data.mapping[2];
-    }
-    h() {
-        return this.data.mapping[3];
-    }
-    set_id(id) {
-        this.data.id = id;
-    }
+    type() { return this.data.type; }
+    id() { return this.data.id; }
+    x() { return this.data.pos[0]; }
+    y() { return this.data.pos[1]; }
+    u() { return this.data.mapping[0]; }
+    v() { return this.data.mapping[1]; }
+    w() { return this.data.mapping[2]; }
+    h() { return this.data.mapping[3]; }
+    set_id(id) { this.data.id = id; }
 
-    set_pos(x, y) {
+    set_pos(x, y)
+    {
         this.data.pos[0] = x;
         this.data.pos[1] = y;
     }
 
-    layer() {
-        return this.data.z_level;
-    }
-    set_layer(layer) {
-        this.data.z_level = layer;
-    }
+    layer() { return this.data.z_level; }
+    set_layer(layer) { this.data.z_level = layer; }
 }
 
 class texture extends element {
-    draw(painter) {
+    draw(painter)
+    {
         // default draw handling
         let cs = painter.cs();
-        painter.image_crop(
-            atlas,
-            cs.origin.x - cs.offset.x + this.x() * cs.scale,
-            cs.origin.y - cs.offset.y + this.y() * cs.scale,
-            this.w() * cs.scale,
-            this.h() * cs.scale,
-            this.u(),
-            this.v(),
-            this.w(),
-            this.h()
-        );
+        painter.image_crop(atlas, cs.origin.x - cs.offset.x + this.x() * cs.scale,
+                           cs.origin.y - cs.offset.y + this.y() * cs.scale, this.w() * cs.scale, this.h() * cs.scale,
+                           this.u(), this.v(), this.w(), this.h());
     }
 
-    read_data_from_gui() {
+    read_data_from_gui()
+    {
         super.read_data_from_gui();
         this.data.mapping = [
             parseInt($("#editor-element-u").val()),
@@ -208,7 +179,8 @@ class texture extends element {
         ];
     }
 
-    write_data_to_gui() {
+    write_data_to_gui()
+    {
         super.write_data_to_gui();
         $("#editor-element-u").val(this.u());
         $("#editor-element-v").val(this.v());
@@ -218,76 +190,81 @@ class texture extends element {
 }
 
 class button extends texture {
-    constructor(json) {
+    constructor(json)
+    {
         super(json);
         this.pressed = false;
     }
 
-    draw(painter) {
+    draw(painter)
+    {
         if (this.pressed) {
             let cs = painter.cs();
-            painter.image_crop(
-                atlas,
-                cs.origin.x - cs.offset.x + this.x() * cs.scale,
-                cs.origin.y - cs.offset.y + this.y() * cs.scale,
-                this.w() * cs.scale,
-                this.h() * cs.scale,
-                this.u(),
-                this.v() + constants.texture_space + this.h(),
-                this.w(),
-                this.h()
-            );
+            painter.image_crop(atlas, cs.origin.x - cs.offset.x + this.x() * cs.scale,
+                               cs.origin.y - cs.offset.y + this.y() * cs.scale, this.w() * cs.scale,
+                               this.h() * cs.scale, this.u(), this.v() + constants.texture_space + this.h(), this.w(),
+                               this.h());
         } else {
             super.draw(painter, cs);
         }
     }
 
-    read_data_from_gui() {
+    read_data_from_gui()
+    {
         super.read_data_from_gui();
         this.data.code = parseInt($("#editor-element-keycode").val(), 16);
     }
 
-    write_data_to_gui() {
+    write_data_to_gui()
+    {
         super.write_data_to_gui();
-        $("#editor-element-keycode").val(
-            "0x" + this.data.code.toString(16).toUpperCase()
-        );
+        $("#editor-element-keycode").val("0x" + this.data.code.toString(16).toUpperCase());
     }
 }
 
 class keyboard_button extends button {
-    on_keyboard_input(vc, state) {
-        if (vc === this.data.code) this.pressed = state;
+    on_keyboard_input(vc, state)
+    {
+        if (vc === this.data.code)
+            this.pressed = state;
     }
 }
 
 class mouse_button extends button {
-    on_mouse_input(vc, state) {
-        if (vc === this.data.code) this.pressed = state;
+    on_mouse_input(vc, state)
+    {
+        if (vc === this.data.code)
+            this.pressed = state;
     }
 }
 
 class gamepad_button extends button {
-    on_gamepad_input(pad) {
+    on_gamepad_input(pad)
+    {
         let btn = gamepad_from_vc(this.data.code);
 
-        if (btn < pad.buttons.length) this.pressed = pad.buttons[btn].pressed;
+        if (btn < pad.buttons.length)
+            this.pressed = pad.buttons[btn].pressed;
     }
 }
 
 class mouse_wheel extends texture {
-    constructor(json) {
+    constructor(json)
+    {
         super(json);
         this.direction = 0;
         this.pressed = false;
         this.lastWheelInput = Date.now();
     }
 
-    on_mouse_input(vc, state) {
-        if (vc === 3) this.pressed = state;
+    on_mouse_input(vc, state)
+    {
+        if (vc === 3)
+            this.pressed = state;
     }
 
-    on_scroll_input(event) {
+    on_scroll_input(event)
+    {
         if (event.originalEvent.deltaY < 0) {
             this.direction = -1;
         } else {
@@ -296,57 +273,40 @@ class mouse_wheel extends texture {
         this.lastWheelInput = Date.now();
     }
 
-    tick() {
-        if (Date.now() - this.lastWheelInput > 250) this.direction = 0;
+    tick()
+    {
+        if (Date.now() - this.lastWheelInput > 250)
+            this.direction = 0;
     }
 
-    draw(painter) {
+    draw(painter)
+    {
         let cs = painter.cs();
         super.draw(painter, cs);
         if (this.pressed) {
-            painter.image_crop(
-                atlas,
-                cs.origin.x - cs.offset.x + this.x() * cs.scale,
-                cs.origin.y - cs.offset.y + this.y() * cs.scale,
-                this.w() * cs.scale,
-                this.h() * cs.scale,
-                this.u() + constants.texture_space + this.w(),
-                this.v(),
-                this.w(),
-                this.h()
-            );
+            painter.image_crop(atlas, cs.origin.x - cs.offset.x + this.x() * cs.scale,
+                               cs.origin.y - cs.offset.y + this.y() * cs.scale, this.w() * cs.scale,
+                               this.h() * cs.scale, this.u() + constants.texture_space + this.w(), this.v(), this.w(),
+                               this.h());
         }
 
         if (this.direction === 1) {
-            painter.image_crop(
-                atlas,
-                cs.origin.x - cs.offset.x + this.x() * cs.scale,
-                cs.origin.y - cs.offset.y + this.y() * cs.scale,
-                this.w() * cs.scale,
-                this.h() * cs.scale,
-                this.u() + (constants.texture_space + this.w()) * 2,
-                this.v(),
-                this.w(),
-                this.h()
-            );
+            painter.image_crop(atlas, cs.origin.x - cs.offset.x + this.x() * cs.scale,
+                               cs.origin.y - cs.offset.y + this.y() * cs.scale, this.w() * cs.scale,
+                               this.h() * cs.scale, this.u() + (constants.texture_space + this.w()) * 2, this.v(),
+                               this.w(), this.h());
         } else if (this.direction === -1) {
-            painter.image_crop(
-                atlas,
-                cs.origin.x - cs.offset.x + this.x() * cs.scale,
-                cs.origin.y - cs.offset.y + this.y() * cs.scale,
-                this.w() * cs.scale,
-                this.h() * cs.scale,
-                this.u() + (constants.texture_space + this.w()) * 3,
-                this.v(),
-                this.w(),
-                this.h()
-            );
+            painter.image_crop(atlas, cs.origin.x - cs.offset.x + this.x() * cs.scale,
+                               cs.origin.y - cs.offset.y + this.y() * cs.scale, this.w() * cs.scale,
+                               this.h() * cs.scale, this.u() + (constants.texture_space + this.w()) * 3, this.v(),
+                               this.w(), this.h());
         }
     }
 }
 
 class analog_stick extends texture {
-    draw(painter) {
+    draw(painter)
+    {
         let cs = painter.cs();
         let xPos = 0;
         let yPos = 0;
@@ -365,44 +325,29 @@ class analog_stick extends texture {
             }
 
             if (pressed) {
-                painter.image_crop(
-                    atlas,
-                    cs.origin.x - cs.offset.x + (this.x() + xPos) * cs.scale,
-                    cs.origin.y - cs.offset.y + (this.y() + yPos) * cs.scale,
-                    this.w() * cs.scale,
-                    this.h() * cs.scale,
-                    this.u(),
-                    this.v() + constants.texture_space + this.h(),
-                    this.w(),
-                    this.h()
-                );
+                painter.image_crop(atlas, cs.origin.x - cs.offset.x + (this.x() + xPos) * cs.scale,
+                                   cs.origin.y - cs.offset.y + (this.y() + yPos) * cs.scale, this.w() * cs.scale,
+                                   this.h() * cs.scale, this.u(), this.v() + constants.texture_space + this.h(),
+                                   this.w(), this.h());
             } else {
-                painter.image_crop(
-                    atlas,
-                    cs.origin.x - cs.offset.x + (this.x() + xPos) * cs.scale,
-                    cs.origin.y - cs.offset.y + (this.y() + yPos) * cs.scale,
-                    this.w() * cs.scale,
-                    this.h() * cs.scale,
-                    this.u(),
-                    this.v(),
-                    this.w(),
-                    this.h()
-                );
+                painter.image_crop(atlas, cs.origin.x - cs.offset.x + (this.x() + xPos) * cs.scale,
+                                   cs.origin.y - cs.offset.y + (this.y() + yPos) * cs.scale, this.w() * cs.scale,
+                                   this.h() * cs.scale, this.u(), this.v(), this.w(), this.h());
             }
         } else {
             super.draw(painter);
         }
     }
 
-    read_data_from_gui() {
+    read_data_from_gui()
+    {
         super.read_data_from_gui();
-        this.data.stick_radius = parseInt(
-            $("#editor-element-analog-stick-radius").val()
-        );
+        this.data.stick_radius = parseInt($("#editor-element-analog-stick-radius").val());
         this.data.side = parseInt($("#editor-element-analog-stick-side").val());
     }
 
-    write_data_to_gui() {
+    write_data_to_gui()
+    {
         super.write_data_to_gui();
         $("#editor-element-analog-stick-radius").val(this.data.stick_radius);
         $("#editor-element-analog-stick-side").val(this.data.side);
@@ -410,63 +355,46 @@ class analog_stick extends texture {
 }
 
 class gamepad_id extends texture {
-    constructor(json) {
+    constructor(json)
+    {
         super(json);
         this.pressed = false;
     }
 
-    on_gamepad_input(pad) {
+    on_gamepad_input(pad)
+    {
         let btn = gamepad_from_vc(this.data.code);
 
-        if (pad.buttons.length > 16) this.pressed = pad.buttons[16].pressed;
+        if (pad.buttons.length > 16)
+            this.pressed = pad.buttons[16].pressed;
     }
 
-    draw(painter) {
+    draw(painter)
+    {
         let cs = painter.cs();
         if (pad.lastInput) {
             if (this.pressed) {
-                painter.image_crop(
-                    atlas,
-                    cs.origin.x - cs.offset.x + this.x() * cs.scale,
-                    cs.origin.y - cs.offset.y + this.y() * cs.scale,
-                    this.w() * cs.scale,
-                    this.h() * cs.scale,
-                    this.u() + (constants.texture_space + this.w()) * 4,
-                    this.v(),
-                    this.w(),
-                    this.h()
-                );
+                painter.image_crop(atlas, cs.origin.x - cs.offset.x + this.x() * cs.scale,
+                                   cs.origin.y - cs.offset.y + this.y() * cs.scale, this.w() * cs.scale,
+                                   this.h() * cs.scale, this.u() + (constants.texture_space + this.w()) * 4, this.v(),
+                                   this.w(), this.h());
             }
-            painter.image_crop(
-                atlas,
-                cs.origin.x - cs.offset.x + this.x() * cs.scale,
-                cs.origin.y - cs.offset.y + this.y() * cs.scale,
-                this.w() * cs.scale,
-                this.h() * cs.scale,
-                this.u() +
-                    (constants.texture_space + this.w()) * pad.lastInput.index,
-                this.v(),
-                this.w(),
-                this.h()
-            );
+            painter.image_crop(atlas, cs.origin.x - cs.offset.x + this.x() * cs.scale,
+                               cs.origin.y - cs.offset.y + this.y() * cs.scale, this.w() * cs.scale,
+                               this.h() * cs.scale,
+                               this.u() + (constants.texture_space + this.w()) * pad.lastInput.index, this.v(),
+                               this.w(), this.h());
         } else {
-            painter.image_crop(
-                atlas,
-                cs.origin.x - cs.offset.x + this.x() * cs.scale,
-                cs.origin.y - cs.offset.y + this.y() * cs.scale,
-                this.w() * cs.scale,
-                this.h() * cs.scale,
-                this.u(),
-                this.v(),
-                this.w(),
-                this.h()
-            );
+            painter.image_crop(atlas, cs.origin.x - cs.offset.x + this.x() * cs.scale,
+                               cs.origin.y - cs.offset.y + this.y() * cs.scale, this.w() * cs.scale,
+                               this.h() * cs.scale, this.u(), this.v(), this.w(), this.h());
         }
     }
 }
 
 class trigger extends texture {
-    draw(painter) {
+    draw(painter)
+    {
         let cs = painter.cs();
         let progress = 0;
         let pressed = false;
@@ -484,90 +412,44 @@ class trigger extends texture {
 
             if (this.data.trigger_mode) {
                 if (pressed) {
-                    painter.image_crop(
-                        atlas,
-                        cs.origin.x - cs.offset.x + this.x() * cs.scale,
-                        cs.origin.y - cs.offset.y + this.y() * cs.scale,
-                        this.w() * cs.scale,
-                        this.h() * cs.scale,
-                        this.u(),
-                        this.v() + constants.texture_space + this.h(),
-                        this.w(),
-                        this.h()
-                    );
+                    painter.image_crop(atlas, cs.origin.x - cs.offset.x + this.x() * cs.scale,
+                                       cs.origin.y - cs.offset.y + this.y() * cs.scale, this.w() * cs.scale,
+                                       this.h() * cs.scale, this.u(), this.v() + constants.texture_space + this.h(),
+                                       this.w(), this.h());
                 } else {
-                    painter.image_crop(
-                        atlas,
-                        cs.origin.x - cs.offset.x + this.x() * cs.scale,
-                        cs.origin.y - cs.offset.y + this.y() * cs.scale,
-                        this.w() * cs.scale,
-                        this.h() * cs.scale,
-                        this.u(),
-                        this.v(),
-                        this.w(),
-                        this.h()
-                    );
+                    painter.image_crop(atlas, cs.origin.x - cs.offset.x + this.x() * cs.scale,
+                                       cs.origin.y - cs.offset.y + this.y() * cs.scale, this.w() * cs.scale,
+                                       this.h() * cs.scale, this.u(), this.v(), this.w(), this.h());
                 }
             } else {
                 super.draw(painter);
                 if (this.data.direction === 1) {
                     // fill upwards
                     let offset = (1 - progress) * this.h();
-                    painter.image_crop(
-                        atlas,
-                        cs.origin.x - cs.offset.x + this.x() * cs.scale,
-                        cs.origin.y -
-                            cs.offset.y +
-                            (this.y() + offset) * cs.scale,
-                        this.w() * cs.scale,
-                        this.h() * progress * cs.scale,
-                        this.u(),
-                        this.v() + this.h() + constants.texture_space + offset,
-                        this.w(),
-                        this.h() * progress
-                    );
+                    painter.image_crop(atlas, cs.origin.x - cs.offset.x + this.x() * cs.scale,
+                                       cs.origin.y - cs.offset.y + (this.y() + offset) * cs.scale, this.w() * cs.scale,
+                                       this.h() * progress * cs.scale, this.u(),
+                                       this.v() + this.h() + constants.texture_space + offset, this.w(),
+                                       this.h() * progress);
                 } else if (this.data.direction === 2) {
                     // fill downwards
-                    painter.image_crop(
-                        atlas,
-                        cs.origin.x - cs.offset.x + this.x() * cs.scale,
-                        cs.origin.y - cs.offset.y + this.y() * cs.scale,
-                        this.w() * cs.scale,
-                        this.h() * progress * cs.scale,
-                        this.u(),
-                        this.v() + constants.texture_space + this.h(),
-                        this.w(),
-                        this.h() * progress
-                    );
+                    painter.image_crop(atlas, cs.origin.x - cs.offset.x + this.x() * cs.scale,
+                                       cs.origin.y - cs.offset.y + this.y() * cs.scale, this.w() * cs.scale,
+                                       this.h() * progress * cs.scale, this.u(),
+                                       this.v() + constants.texture_space + this.h(), this.w(), this.h() * progress);
                 } else if (this.data.direction === 3) {
                     // fill to the left
                     let offset = (1 - progress) * this.w();
-                    painter.image_crop(
-                        atlas,
-                        cs.origin.x -
-                            cs.offset.x +
-                            (this.x() + offset) * cs.scale,
-                        cs.origin.y - cs.offset.y + this.y() * cs.scale,
-                        this.w() * progress * cs.scale,
-                        this.h() * cs.scale,
-                        this.u() + offset,
-                        this.v() + constants.texture_space + this.h(),
-                        this.w() * progress,
-                        this.h()
-                    );
+                    painter.image_crop(atlas, cs.origin.x - cs.offset.x + (this.x() + offset) * cs.scale,
+                                       cs.origin.y - cs.offset.y + this.y() * cs.scale, this.w() * progress * cs.scale,
+                                       this.h() * cs.scale, this.u() + offset,
+                                       this.v() + constants.texture_space + this.h(), this.w() * progress, this.h());
                 } else if (this.data.direction === 4) {
                     // fill to the right
-                    painter.image_crop(
-                        atlas,
-                        cs.origin.x - cs.offset.x + this.x() * cs.scale,
-                        cs.origin.y - cs.offset.y + this.y() * cs.scale,
-                        this.w() * progress * cs.scale,
-                        this.h() * cs.scale,
-                        this.u(),
-                        this.v() + constants.texture_space + this.h(),
-                        this.w() * progress,
-                        this.h()
-                    );
+                    painter.image_crop(atlas, cs.origin.x - cs.offset.x + this.x() * cs.scale,
+                                       cs.origin.y - cs.offset.y + this.y() * cs.scale, this.w() * progress * cs.scale,
+                                       this.h() * cs.scale, this.u(), this.v() + constants.texture_space + this.h(),
+                                       this.w() * progress, this.h());
                 }
             }
         } else {
@@ -575,113 +457,104 @@ class trigger extends texture {
         }
     }
 
-    read_data_from_gui() {
+    read_data_from_gui()
+    {
         super.read_data_from_gui();
-        this.data.direction = parseInt(
-            $("#editor-element-trigger-direction-side").val()
-        );
+        this.data.direction = parseInt($("#editor-element-trigger-direction-side").val());
         this.data.trigger_mode = $("#editor-element-trigger-button")[0].checked;
         this.data.side = parseInt($("#editor-element-analog-stick-side").val());
     }
 
-    write_data_to_gui() {
+    write_data_to_gui()
+    {
         super.write_data_to_gui();
         $("#editor-element-trigger-direction-side").val(this.data.direction);
-        $("#editor-element-trigger-button")[0].checked = this.data.trigger_mode
-            ? true
-            : false;
+        $("#editor-element-trigger-button")[0].checked = this.data.trigger_mode ? true : false;
         $("#editor-element-analog-stick-side").val(this.data.side);
     }
 }
 
 class dpad extends texture {
-    constructor(json) {
+    constructor(json)
+    {
         super(json);
         this.offset = 0;
     }
-    on_gamepad_input(pad) {
+    on_gamepad_input(pad)
+    {
         let up = pad.buttons[12].pressed;
         let down = pad.buttons[13].pressed;
         let left = pad.buttons[14].pressed;
         let right = pad.buttons[15].pressed;
 
         if (left) {
-            if (up) this.offset = 5;
-            else if (down) this.offset = 7;
-            else this.offset = 1;
+            if (up)
+                this.offset = 5;
+            else if (down)
+                this.offset = 7;
+            else
+                this.offset = 1;
         } else if (right) {
-            if (up) this.offset = 6;
-            else if (down) this.offset = 8;
-            else this.offset = 2;
+            if (up)
+                this.offset = 6;
+            else if (down)
+                this.offset = 8;
+            else
+                this.offset = 2;
         } else if (up) {
-            if (left) this.offset = 5;
-            else if (right) this.offset = 6;
-            else this.offset = 3;
+            if (left)
+                this.offset = 5;
+            else if (right)
+                this.offset = 6;
+            else
+                this.offset = 3;
         } else if (down) {
-            if (left) this.offset = 7;
-            else if (right) this.offset = 8;
-            else this.offset = 4;
+            if (left)
+                this.offset = 7;
+            else if (right)
+                this.offset = 8;
+            else
+                this.offset = 4;
         } else {
             this.offset = 0;
         }
     }
 
-    draw(painter) {
+    draw(painter)
+    {
         let cs = painter.cs();
-        painter.image_crop(
-            atlas,
-            cs.origin.x - cs.offset.x + this.x() * cs.scale,
-            cs.origin.y - cs.offset.y + this.y() * cs.scale,
-            this.w() * cs.scale,
-            this.h() * cs.scale,
-            this.u() + (constants.texture_space + this.w()) * this.offset,
-            this.v(),
-            this.w(),
-            this.h()
-        );
+        painter.image_crop(atlas, cs.origin.x - cs.offset.x + this.x() * cs.scale,
+                           cs.origin.y - cs.offset.y + this.y() * cs.scale, this.w() * cs.scale, this.h() * cs.scale,
+                           this.u() + (constants.texture_space + this.w()) * this.offset, this.v(), this.w(), this.h());
     }
 }
 class mouse_movement extends texture {
     // TODO: Actually visualize this in the editor
-    read_data_from_gui() {
+    read_data_from_gui()
+    {
         super.read_data_from_gui();
         this.data.mouse_type = parseInt($("#editor-element-movement-type").val());
     }
 
-    write_data_to_gui() {
+    write_data_to_gui()
+    {
         super.write_data_to_gui();
         $("#editor-element-movement-type").val(this.data.mouse_type);
     }
 }
-element_map.set(element_types.KEYBOARD_KEY, (json) => {
-    return new keyboard_button(json);
-});
-element_map.set(element_types.MOUSE_BUTTON, (json) => {
-    return new mouse_button(json);
-});
-element_map.set(element_types.TEXTURE, (json) => {
-    return new texture(json);
-});
-element_map.set(element_types.GAMEPAD_BUTTON, (json) => {
-    return new gamepad_button(json);
-});
-element_map.set(element_types.WHEEL, (json) => {
-    return new mouse_wheel(json);
-});
-element_map.set(element_types.ANALOG_STICK, (json) => {
-    return new analog_stick(json);
-});
-element_map.set(element_types.TRIGGER, (json) => {
-    return new trigger(json);
-});
-element_map.set(element_types.GAMEPAD_ID, (json) => {
-    return new gamepad_id(json);
-});
-element_map.set(element_types.DPAD_STICK, (json) => {
-    return new dpad(json);
-});
+element_map.set(element_types.KEYBOARD_KEY, (json) => { return new keyboard_button(json); });
+element_map.set(element_types.MOUSE_BUTTON, (json) => { return new mouse_button(json); });
+element_map.set(element_types.TEXTURE, (json) => { return new texture(json); });
+element_map.set(element_types.GAMEPAD_BUTTON, (json) => { return new gamepad_button(json); });
+element_map.set(element_types.WHEEL, (json) => { return new mouse_wheel(json); });
+element_map.set(element_types.ANALOG_STICK, (json) => { return new analog_stick(json); });
+element_map.set(element_types.TRIGGER, (json) => { return new trigger(json); });
+element_map.set(element_types.GAMEPAD_ID, (json) => { return new gamepad_id(json); });
+element_map.set(element_types.DPAD_STICK, (json) => { return new dpad(json); });
 
-function create_element(json) {
-    if (element_map.has(json.type)) return element_map.get(json.type)(json);
+function create_element(json)
+{
+    if (element_map.has(json.type))
+        return element_map.get(json.type)(json);
     return null;
 }

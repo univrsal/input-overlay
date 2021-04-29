@@ -95,8 +95,7 @@ class painter {
         ctx.stroke();
     }
 
-
-    dashed_line(x1, y1, x2, y2, width = 2, color = lineColor, dash=5, space=3)
+    dashed_line(x1, y1, x2, y2, width = 2, color = lineColor, dash = 5, space = 3)
     {
         let ctx = this.get_context();
         ctx.setLineDash([dash, space]);

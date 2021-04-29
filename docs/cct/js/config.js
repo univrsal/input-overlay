@@ -157,14 +157,14 @@ class config {
         if (this.grid.x > 0) {
             for (var x = cs.origin.x - cs.offset.x; x < cs.dimensions.w + cs.origin.x; x += this.grid.x * cs.scale) {
                 painter.line(x - 0.5, cs.origin.y, x - 0.5, cs.origin.y + cs.dimensions.h, 1, brightLineColor);
-            }    
+            }
         }
         if (this.grid.y > 0) {
             for (var y = cs.origin.y - cs.offset.y; y < cs.dimensions.h + cs.origin.y; y += this.grid.y * cs.scale) {
                 painter.line(cs.origin.x, y - 0.5, cs.origin.x + cs.dimensions.w, y - 0.5, 1, brightLineColor);
-            }    
+            }
         }
-        
+
         this.elements.forEach(element => element.draw(painter));
         if (this.selecting && !this.drag_selection.is_empty()) {
             painter.rect_outline(this.drag_selection.x - 0.5, this.drag_selection.y - 0.5, this.drag_selection.w,
