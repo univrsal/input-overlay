@@ -145,12 +145,12 @@ jobs:
       - name: 'Add msbuild to PATH'
         uses: microsoft/setup-msbuild@v1.0.2
       - name: 'Checkout'
-        uses: actions/checkout@v2
+        uses: actions/checkout@v2.3.3
         with:
           path: ${{ github.workspace }}/${{ env.project }}
           submodules: 'recursive'
       - name: 'Checkout OBS'
-        uses: actions/checkout@v2
+        uses: actions/checkout@v2.3.3
         with:
           repository: obsproject/obs-studio
           path: ${{ github.workspace }}/obs-studio
@@ -197,12 +197,12 @@ jobs:
         if: steps.qt-cache.outputs.cache-hit != 'true'
         run: |
           curl -kLO https://cdn-fastly.obsproject.com/downloads/Qt_${{ env.QT_VERSION }}.7z -f --retry 5 -C -
-          7z x Qt_${{ env.QT_VERSION }}.7z -o"${{ github.workspace }}\cmbuild\QT"
+          7z x Qt_${{ env.QT_VERSION }}.7z -o"${{ github.workspace }}/cmbuild/QT"
       - name: 'Install prerequisite: Pre-built OBS dependencies'
         if: steps.deps-cache.outputs.cache-hit != 'true'
         run: |
           curl -kLO https://cdn-fastly.obsproject.com/downloads/dependencies${{ env.WINDOWS_DEPS_VERSION }}.zip -f --retry 5 -C -
-          7z x dependencies${{ env.WINDOWS_DEPS_VERSION }}.zip -o"${{ github.workspace }}\cmbuild\deps"
+          7z x dependencies${{ env.WINDOWS_DEPS_VERSION }}.zip -o"${{ github.workspace }}/cmbuild/deps"
       - name: 'Restore OBS 32-bit build v${{ env.OBS_GIT_TAG }} from cache'
         id: build-cache-obs-32
         uses: actions/cache@v2.1.2
@@ -217,9 +217,9 @@ jobs:
         if: steps.build-cache-obs-32.outputs.cache-hit != 'true'
         working-directory: ${{ github.workspace }}/obs-studio
         run: |
-          New-Item -ItemType Directory -Force -Path .\build32
+          mkdir .\build32
           cd .\build32
-          cmake -G "${{ env.CMAKE_GENERATOR }}" -A Win32 -DCMAKE_SYSTEM_VERSION="${{ env.CMAKE_SYSTEM_VERSION }}" -DQTDIR="${{ github.workspace }}\cmbuild\QT\${{ env.QT_VERSION }}\msvc2017" -DDepsPath="${{ github.workspace }}\cmbuild\deps\win32" -DBUILD_CAPTIONS=YES -DCOPIED_DEPENDENCIES=NO -DCOPY_DEPENDENCIES=YES ..
+          cmake -G "${{ env.CMAKE_GENERATOR }}" -A"Win32" -DCMAKE_SYSTEM_VERSION="${{ env.CMAKE_SYSTEM_VERSION }}" -DCOMPILE_LUA=OFF -DCOMPILE_PYTHON=OFF -DDISABLE_PLUGINS=ON -DENABLE_SCRIPTING=OFF -DBUILD_BROWSER=OFF -DQTDIR="${{ github.workspace }}\cmbuild\QT\${{ env.QT_VERSION }}\msvc${{ env.WINDOWS_DEPS_VERSION }}" -DDepsPath="${{ github.workspace }}\cmbuild\deps\win32" -DCOPIED_DEPENDENCIES=NO -DCOPY_DEPENDENCIES=YES ..
       - name: 'Build OBS-Studio 32-bit'
         if: steps.build-cache-obs-32.outputs.cache-hit != 'true'
         working-directory: ${{ github.workspace }}/obs-studio
@@ -240,9 +240,9 @@ jobs:
         if: steps.build-cache-obs-64.outputs.cache-hit != 'true'
         working-directory: ${{ github.workspace }}/obs-studio
         run: |
-          New-Item -ItemType Directory -Force -Path .\build64
+          mkdir .\build64
           cd .\build64
-          cmake -G "${{ env.CMAKE_GENERATOR }}" -A x64 -DCMAKE_SYSTEM_VERSION="${{ env.CMAKE_SYSTEM_VERSION }}" -DQTDIR="${{ github.workspace }}\cmbuild\QT\${{ env.QT_VERSION }}\msvc2017_64" -DDepsPath="${{ github.workspace }}\cmbuild\deps\win64" -DBUILD_CAPTIONS=YES -DCOPIED_DEPENDENCIES=NO -DCOPY_DEPENDENCIES=YES ..
+          cmake -G "${{ env.CMAKE_GENERATOR }}" -A"x64" -DCOMPILE_LUA=OFF -DCOMPILE_PYTHON=OFF -DDISABLE_PLUGINS=ON -DENABLE_SCRIPTING=OFF -DBUILD_BROWSER=OFF -DCMAKE_SYSTEM_VERSION="${{ env.CMAKE_SYSTEM_VERSION }}" -DQTDIR="${{ github.workspace }}\cmbuild\QT\${{ env.QT_VERSION }}\msvc${{ env.WINDOWS_DEPS_VERSION }}_64" -DDepsPath="${{ github.workspace }}\cmbuild\deps\win64" -DBUILD_CAPTIONS=YES -DCOPIED_DEPENDENCIES=NO -DCOPY_DEPENDENCIES=YES ..
       - name: 'Build OBS-Studio 64-bit'
         if: steps.build-cache-obs-64.outputs.cache-hit != 'true'
         working-directory: ${{ github.workspace }}/obs-studio
@@ -255,7 +255,7 @@ jobs:
           mkdir .\build64
           cd .\build64
           cmake -G "${{ env.CMAKE_GENERATOR }}" -A x64 -DCMAKE_SYSTEM_VERSION="${{ env.CMAKE_SYSTEM_VERSION }}" `
-            -DQTDIR="${{ github.workspace }}\cmbuild\QT\${{ env.QT_VERSION }}\msvc2019_64" `
+            -DQTDIR="${{ github.workspace }}\cmbuild\QT\${{ env.QT_VERSION }}\msvc${{ env.WINDOWS_DEPS_VERSION }}_64" `
             -DDepsPath="${{ github.workspace }}\cmbuild\deps\win64" `
             -DLibObs_DIR="${{ github.workspace }}\obs-studio\build64\libobs" `
             -DLIBOBS_INCLUDE_DIR="${{ github.workspace }}\obs-studio\libobs" `
@@ -268,7 +268,7 @@ jobs:
           mkdir .\build32
           cd .\build32
           cmake -G "${{ env.CMAKE_GENERATOR }}" -A Win32 -DCMAKE_SYSTEM_VERSION="${{ env.CMAKE_SYSTEM_VERSION }}" `
-          -DQTDIR="${{ github.workspace }}\cmbuild\QT\${{ env.QT_VERSION }}\msvc2019" `
+          -DQTDIR="${{ github.workspace }}\cmbuild\QT\${{ env.QT_VERSION }}\msvc${{ env.WINDOWS_DEPS_VERSION }}" `
           -DDepsPath="${{ github.workspace }}\cmbuild\deps\win32" `
           -DLibObs_DIR="${{ github.workspace }}\obs-studio\build32\libobs" `
           -DLIBOBS_INCLUDE_DIR="${{ github.workspace }}\obs-studio\libobs" `
