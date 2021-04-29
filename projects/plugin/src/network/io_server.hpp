@@ -53,13 +53,18 @@ public:
     void ping_clients();
 
     /* Checks clients and removes them
-         * if necessary
-         */
-    void roundtrip();
+     * if necessary
+     */
+    void round_trip();
 
-    io_client *get_client(const std::string& id);
+    io_client *get_client(const std::string &id);
 
     int num_clients() { return static_cast<int>(m_clients.size()); }
+
+    std::vector<std::unique_ptr<io_client>> &clients() { return m_clients; }
+
+    std::shared_ptr<gamepad::device> get_client_device_by_id(const std::string &id);
+
 private:
     bool unique_name(char *name);
 

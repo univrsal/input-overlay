@@ -23,10 +23,10 @@
 
 class element_button : public element_texture {
 public:
-    element_button(element_type t) : element_texture(t), m_pressed() {}
+    explicit element_button(element_type t) : element_texture(t), m_pressed() {}
 
     void load(const QJsonObject &objc) override;
-    virtual void draw(gs_effect_t *effect, gs_image_file_t *image, sources::overlay_settings *settings) override
+    void draw(gs_effect_t *effect, gs_image_file_t *image, sources::overlay_settings *settings) override
     {
         element_texture::draw(effect, image, settings);
     }
@@ -35,9 +35,9 @@ protected:
     gs_rect m_pressed;
 };
 
-class element_keyboard_Key : public element_button {
+class element_keyboard_key : public element_button {
 public:
-    element_keyboard_Key() : element_button(ET_KEYBOARD_KEY) {}
+    element_keyboard_key() : element_button(ET_KEYBOARD_KEY) {}
 
     void draw(gs_effect_t *effect, gs_image_file_t *image, sources::overlay_settings *settings) override;
 };

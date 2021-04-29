@@ -196,15 +196,16 @@ void overlay::refresh_data()
         }
     }
 
-    if (source)
+    if (source) {
         m_settings->data.copy(source);
-    if (m_settings->gamepad) {
-        libgamepad::hook_instance->get_mutex()->lock();
-        source->last_axis_event = *m_settings->gamepad->last_axis_event();
-        source->last_button_event = *m_settings->gamepad->last_button_event();
-        source->gamepad_axis = m_settings->gamepad->get_axis();
-        source->gamepad_buttons = m_settings->gamepad->get_buttons();
-        libgamepad::hook_instance->get_mutex()->unlock();
+        if (m_settings->gamepad) {
+            libgamepad::hook_instance->get_mutex()->lock();
+            source->last_axis_event = *m_settings->gamepad->last_axis_event();
+            source->last_button_event = *m_settings->gamepad->last_button_event();
+            source->gamepad_axis = m_settings->gamepad->get_axis();
+            source->gamepad_buttons = m_settings->gamepad->get_buttons();
+            libgamepad::hook_instance->get_mutex()->unlock();
+        }
     }
 }
 
@@ -221,7 +222,7 @@ void overlay::load_element(const QJsonObject &obj, const bool debug)
         new_element = new element_gamepad_id;
         break;
     case ET_KEYBOARD_KEY:
-        new_element = new element_keyboard_Key;
+        new_element = new element_keyboard_key;
         break;
     case ET_MOUSE_BUTTON:
         new_element = new element_mouse_button;
@@ -245,9 +246,8 @@ void overlay::load_element(const QJsonObject &obj, const bool debug)
         new_element = new element_mouse_movement;
         break;
     default:
-        if (debug) {
+        if (debug)
             binfo("Invalid element type %i for %s", type, qt_to_utf8(obj[CFG_ID].toString()));
-        }
     }
 
     if (new_element) {

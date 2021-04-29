@@ -48,6 +48,12 @@ inline void input_source::update(obs_data_t *settings)
     libgamepad::hook_instance->get_mutex()->lock();
     m_settings.gamepad_id = obs_data_get_string(settings, S_CONTROLLER_ID);
     m_settings.gamepad = libgamepad::hook_instance->get_device_by_id(m_settings.gamepad_id);
+
+    if (!m_settings.gamepad && io_config::enable_remote_connections) {
+        std::lock_guard<std::mutex> lock(network::mutex);
+        m_settings.gamepad = network::server_instance->get_client_device_by_id(m_settings.gamepad_id);
+    }
+
     libgamepad::hook_instance->get_mutex()->unlock();
 
     m_settings.mouse_sens = obs_data_get_int(settings, S_MOUSE_SENS);
@@ -110,6 +116,18 @@ bool reload_pads(obs_properties_t *, obs_property_t *property, void *)
     for (const auto &pad : libgamepad::hook_instance->get_devices())
         obs_property_list_add_string(property, pad->get_name().c_str(), pad->get_id().c_str());
     libgamepad::hook_instance->get_mutex()->unlock();
+
+    // Add remote gamepads
+    if (io_config::enable_remote_connections) {
+        std::lock_guard<std::mutex> lock(network::mutex);
+        for (const auto &client : network::server_instance->clients()) {
+            for (const auto &pad : client->gamepads()) {
+                std::string pad_id = pad.second->get_id() + "@"; // Gamepad@remotepc
+                pad_id += client->name();
+                obs_property_list_add_string(property, pad_id.c_str(), pad_id.c_str());
+            }
+        }
+    }
     return true;
 }
 
@@ -123,8 +141,8 @@ obs_properties_t *get_properties_for_overlay(void *data)
 
     /* If enabled add dropdown to select input source */
     if (CGET_BOOL(S_REMOTE)) {
-        auto *list =
-            obs_properties_add_list(props, S_INPUT_SOURCE, T_INPUT_SOURCE, OBS_COMBO_TYPE_EDITABLE, OBS_COMBO_FORMAT_STRING);
+        auto *list = obs_properties_add_list(props, S_INPUT_SOURCE, T_INPUT_SOURCE, OBS_COMBO_TYPE_EDITABLE,
+                                             OBS_COMBO_FORMAT_STRING);
         obs_properties_add_button(props, S_RELOAD_CONNECTIONS, T_RELOAD_CONNECTIONS, reload_connections);
         if (network::network_flag) {
             network::server_instance->get_clients(list, network::local_input);
@@ -151,7 +169,7 @@ obs_properties_t *get_properties_for_overlay(void *data)
     obs_properties_add_int_slider(props, S_MOUSE_DEAD_ZONE, T_MOUSE_DEAD_ZONE, 0, 500, 1);
 
     /* Gamepad stuff */
-    obs_property_set_visible(obs_properties_add_list(props, S_CONTROLLER_ID, T_CONTROLLER_ID, OBS_COMBO_TYPE_LIST,
+    obs_property_set_visible(obs_properties_add_list(props, S_CONTROLLER_ID, T_CONTROLLER_ID, OBS_COMBO_TYPE_EDITABLE,
                                                      OBS_COMBO_FORMAT_STRING),
                              false);
 

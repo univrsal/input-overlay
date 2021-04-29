@@ -44,11 +44,11 @@ public:
     uint16_t mouse_sens = 0;                  /* mouse_delta / mouse_sens = mouse movement			*/
     std::shared_ptr<gamepad::device> gamepad; /* selected gamepad                                   */
 
-    std::string selected_source;              /* Name of client or empty for local computer         */
-    uint8_t layout_flags = 0;                 /* See overlay_flags in layout_constants.hpp          */
-    float gamepad_check_timer = 0.0f;         /* Counter to check if selected game pad is connected */
+    std::string selected_source;      /* Name of client or empty for local computer         */
+    uint8_t layout_flags = 0;         /* See overlay_flags in layout_constants.hpp          */
+    float gamepad_check_timer = 0.0f; /* Counter to check if selected game pad is connected */
     std::string gamepad_id;
-    obs_data_t*obs_data;
+    obs_data_t *obs_data;
     /* clang-format: on */
 };
 

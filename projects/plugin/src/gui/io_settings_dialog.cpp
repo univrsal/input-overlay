@@ -501,4 +501,3 @@ void io_settings_dialog::CbEnableGamepadChanged(int)
     ui->rb_js->setEnabled(enabled);
     ui->rb_by_id->setEnabled(enabled);
 }
-

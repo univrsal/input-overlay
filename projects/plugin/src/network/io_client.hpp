@@ -22,11 +22,12 @@
 #include <buffer.hpp>
 #include <messages.hpp>
 #include <netlib.h>
+#include <map>
 
 namespace network {
 class io_client {
 public:
-    io_client(const std::string& name, tcp_socket socket);
+    io_client(const std::string &name, tcp_socket socket);
 
     ~io_client();
 
@@ -37,11 +38,18 @@ public:
     void mark_invalid();
     bool valid() const;
 
+    std::map<uint8_t, std::shared_ptr<gamepad::device>> &gamepads() { return m_gamepads; }
+    std::shared_ptr<gamepad::device> get_pad(const std::string &id);
+
 private:
+    bool dispatch_gamepad_input(buffer &buf);
     input_data m_holder;
     tcp_socket m_socket;
-    /* Set to false if this client should be disconnected on next roundtrip */
+    /* Set to false if this client should be disconnected on next round_trip */
     bool m_valid;
     std::string m_name;
+
+    /* Manually managed */
+    std::map<uint8_t, std::shared_ptr<gamepad::device>> m_gamepads;
 };
 }

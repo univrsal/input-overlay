@@ -52,24 +52,24 @@ void start_pad_hook()
     };
     gamepad::set_logger(log_pipe, nullptr);
 
-    hook_instance->set_axis_event_handler([](std::shared_ptr<gamepad::device> d) {
+    hook_instance->set_axis_event_handler([](const std::shared_ptr<gamepad::device> &d) {
         std::lock_guard<std::mutex> lock(last_input_mutex);
         last_input = d->last_axis_event()->native_id;
         last_input_value = d->last_axis_event()->value;
         last_input_time = d->last_axis_event()->time;
     });
-    hook_instance->set_button_event_handler([](std::shared_ptr<gamepad::device> d) {
+    hook_instance->set_button_event_handler([](const std::shared_ptr<gamepad::device> &d) {
         std::lock_guard<std::mutex> lock(last_input_mutex);
         last_input = d->last_button_event()->native_id;
         last_input_time = d->last_button_event()->time;
     });
 
     hook_instance->set_connect_event_handler(
-        [](std::shared_ptr<gamepad::device> d) { binfo("'%s' connected", d->get_name().c_str()); });
+        [](const std::shared_ptr<gamepad::device> &d) { binfo("'%s' connected", d->get_name().c_str()); });
     hook_instance->set_disconnect_event_handler(
-        [](std::shared_ptr<gamepad::device> d) { binfo("'%s' disconnected", d->get_name().c_str()); });
+        [](const std::shared_ptr<gamepad::device> &d) { binfo("'%s' disconnected", d->get_name().c_str()); });
     hook_instance->set_reconnect_event_handler(
-        [](std::shared_ptr<gamepad::device> d) { binfo("'%s' reconnected", d->get_name().c_str()); });
+        [](const std::shared_ptr<gamepad::device> &d) { binfo("'%s' reconnected", d->get_name().c_str()); });
 
     hook_instance->load_bindings(std::string(qt_to_utf8(util_get_data_file("gamepad_bindings.json"))));
 

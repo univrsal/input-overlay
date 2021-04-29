@@ -98,7 +98,7 @@ void network_handler()
 
     while (network_flag) {
         int numready;
-        server_instance->roundtrip();
+        server_instance->round_trip();
         server_instance->listen(numready);
 
         if (numready == -1) {

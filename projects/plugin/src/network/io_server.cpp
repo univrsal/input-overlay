@@ -53,7 +53,7 @@ bool io_server::init()
     } else {
         const auto ipaddr = netlib_swap_BE32(m_ip.host);
         binfo("Remote connection open on %d.%d.%d.%d:%hu", ipaddr >> 24, ipaddr >> 16 & 0xff, ipaddr >> 8 & 0xff,
-             ipaddr & 0xff, m_ip.port);
+              ipaddr & 0xff, m_ip.port);
 
         m_server = netlib_tcp_open(&m_ip);
         m_buffer.resize(8192); // Most likely will never need more than 8KB
@@ -152,7 +152,7 @@ void io_server::ping_clients()
     }
 }
 
-void io_server::roundtrip()
+void io_server::round_trip()
 {
     mutex.lock();
 
@@ -182,9 +182,9 @@ void io_server::roundtrip()
     mutex.unlock();
 }
 
-io_client *io_server::get_client(const std::string& id)
+io_client *io_server::get_client(const std::string &id)
 {
-    for (auto& client : m_clients) {
+    for (auto &client : m_clients) {
         if (client->name() == id)
             return client.get();
     }
@@ -260,5 +260,19 @@ bool io_server::create_sockets()
         netlib_tcp_add_socket(sockets, client->socket());
 
     return true;
+}
+std::shared_ptr<gamepad::device> io_server::get_client_device_by_id(const std::string &id)
+{
+    auto at = id.rfind('@');
+
+    if (at + 1 < id.length() && at > 0) {
+        std::string client_id = id.substr(at + 1);
+        std::string pad_id = id.substr(0, at);
+
+        auto client = get_client(client_id);
+        if (client)
+            return client->get_pad(pad_id);
+    }
+    return nullptr;
 }
 }
