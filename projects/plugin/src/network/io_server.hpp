@@ -57,8 +57,9 @@ public:
          */
     void roundtrip();
 
-    io_client *get_client(uint8_t id);
+    io_client *get_client(const std::string& id);
 
+    int num_clients() { return static_cast<int>(m_clients.size()); }
 private:
     bool unique_name(char *name);
 
@@ -69,9 +70,8 @@ private:
     uint64_t m_last_refresh = 0;
     buffer m_buffer;                /* Used for temporarily storing sent data */
     bool m_clients_changed = false; /* Set to true on connection/disconnect and false after get_clients() */
-    uint8_t m_num_clients;
     ip_address m_ip{};
     tcp_socket m_server;
-    std::vector<std::unique_ptr<io_client>> m_clients;
+    std::vector<std::unique_ptr<io_client>> m_clients; /* map client name to client instance */
 };
 }

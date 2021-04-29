@@ -127,6 +127,7 @@ void network_handler()
                     berr("Failed to receive client name.");
                     netlib_tcp_close(sock);
                 }
+                free(name);
             }
         }
 

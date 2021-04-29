@@ -29,11 +29,11 @@
 #include <obs-frontend-api.h>
 
 namespace sources {
-input_source::~input_source() {}
+input_source::~input_source() = default;
 
 inline void input_source::update(obs_data_t *settings)
 {
-    m_settings.selected_source = obs_data_get_int(settings, S_INPUT_SOURCE);
+    m_settings.selected_source = obs_data_get_string(settings, S_INPUT_SOURCE);
 
     const auto *config = obs_data_get_string(settings, S_LAYOUT_FILE);
     auto old_image_file = m_settings.image_file;
@@ -61,7 +61,6 @@ inline void input_source::update(obs_data_t *settings)
 
 inline void input_source::tick(float seconds)
 {
-    UNUSED_PARAMETER(seconds);
     if (m_overlay->is_loaded())
         m_overlay->refresh_data();
 
@@ -89,35 +88,27 @@ inline void input_source::render(gs_effect_t *effect) const
     }
 }
 
-bool use_monitor_center_changed(obs_properties_t *props, obs_property_t *p, obs_data_t *data)
+bool use_monitor_center_changed(obs_properties_t *props, obs_property_t *, obs_data_t *data)
 {
-    UNUSED_PARAMETER(p);
-
     const auto use_center = obs_data_get_bool(data, S_MONITOR_USE_CENTER);
     obs_property_set_visible(GET_PROPS(S_MONITOR_H_CENTER), use_center);
     obs_property_set_visible(GET_PROPS(S_MONITOR_V_CENTER), use_center);
     return true;
 }
 
-bool reload_connections(obs_properties_t *props, obs_property_t *property, void *data)
+bool reload_connections(obs_properties_t *, obs_property_t *property, void *)
 {
-    UNUSED_PARAMETER(props);
-    UNUSED_PARAMETER(data);
     std::lock_guard<std::mutex> lock(network::mutex);
     network::server_instance->get_clients(property, network::local_input);
     return true;
 }
 
-bool reload_pads(obs_properties_t *props, obs_property_t *property, void *data)
+bool reload_pads(obs_properties_t *, obs_property_t *property, void *)
 {
-    UNUSED_PARAMETER(props);
-    UNUSED_PARAMETER(data);
-
     obs_property_list_clear(property);
     libgamepad::hook_instance->get_mutex()->lock();
-    for (const auto &pad : libgamepad::hook_instance->get_devices()) {
+    for (const auto &pad : libgamepad::hook_instance->get_devices())
         obs_property_list_add_string(property, pad->get_name().c_str(), pad->get_id().c_str());
-    }
     libgamepad::hook_instance->get_mutex()->unlock();
     return true;
 }
@@ -133,7 +124,7 @@ obs_properties_t *get_properties_for_overlay(void *data)
     /* If enabled add dropdown to select input source */
     if (CGET_BOOL(S_REMOTE)) {
         auto *list =
-            obs_properties_add_list(props, S_INPUT_SOURCE, T_INPUT_SOURCE, OBS_COMBO_TYPE_LIST, OBS_COMBO_FORMAT_INT);
+            obs_properties_add_list(props, S_INPUT_SOURCE, T_INPUT_SOURCE, OBS_COMBO_TYPE_EDITABLE, OBS_COMBO_FORMAT_STRING);
         obs_properties_add_button(props, S_RELOAD_CONNECTIONS, T_RELOAD_CONNECTIONS, reload_connections);
         if (network::network_flag) {
             network::server_instance->get_clients(list, network::local_input);

@@ -34,7 +34,6 @@ std::mutex mutex;
 io_server::io_server(const uint16_t port) : m_server(nullptr)
 {
     sockets = nullptr;
-    m_num_clients = 0;
     m_ip.port = port;
     m_last_refresh = os_gettime_ns();
 }
@@ -53,7 +52,7 @@ bool io_server::init()
         flag = false;
     } else {
         const auto ipaddr = netlib_swap_BE32(m_ip.host);
-        berr("Remote connection open on %d.%d.%d.%d:%hu", ipaddr >> 24, ipaddr >> 16 & 0xff, ipaddr >> 8 & 0xff,
+        binfo("Remote connection open on %d.%d.%d.%d:%hu", ipaddr >> 24, ipaddr >> 16 & 0xff, ipaddr >> 8 & 0xff,
              ipaddr & 0xff, m_ip.port);
 
         m_server = netlib_tcp_open(&m_ip);
@@ -134,11 +133,10 @@ void io_server::get_clients(obs_property_t *prop, const bool enable_local)
     obs_property_list_clear(prop);
 
     if (enable_local)
-        obs_property_list_add_int(prop, T_LOCAL_SOURCE, 0);
+        obs_property_list_add_string(prop, T_LOCAL_SOURCE, "");
 
-    for (const auto &client : m_clients) {
-        obs_property_list_add_int(prop, client->name(), client->id() + 1); /* 0 is for local input */
-    }
+    for (const auto &client : m_clients)
+        obs_property_list_add_string(prop, client->name(), client->name());
 }
 
 bool io_server::clients_changed() const
@@ -159,10 +157,9 @@ void io_server::roundtrip()
     mutex.lock();
 
     if (!m_clients.empty()) {
-        const auto old = server_instance->m_num_clients;
+        const auto old = server_instance->num_clients();
         const auto it = std::remove_if(m_clients.begin(), m_clients.end(), [](const std::unique_ptr<io_client> &o) {
             if (!o->valid()) {
-                server_instance->m_num_clients--;
                 binfo("%s disconnected.", o->name());
                 return true;
             }
@@ -178,17 +175,19 @@ void io_server::roundtrip()
             m_last_refresh = os_gettime_ns();
         }
 
-        if (old != server_instance->m_num_clients)
+        if (old != server_instance->num_clients())
             m_clients_changed = true;
     }
 
     mutex.unlock();
 }
 
-io_client *io_server::get_client(const uint8_t id)
+io_client *io_server::get_client(const std::string& id)
 {
-    if (id < m_clients.size())
-        return m_clients[id].get();
+    for (auto& client : m_clients) {
+        if (client->name() == id)
+            return client.get();
+    }
     return nullptr;
 }
 
@@ -212,11 +211,10 @@ void io_server::add_client(tcp_socket socket, char *name)
         return;
     }
 
-    binfo("Received connection from '%s'.", name);
+    bdebug("Received connection from '%s'.", name);
 
     m_clients_changed = true;
-    m_clients.emplace_back(new io_client(name, socket, m_num_clients));
-    m_num_clients++;
+    m_clients.emplace_back(new io_client(name, socket));
 }
 
 bool io_server::unique_name(char *name)
@@ -249,9 +247,9 @@ bool io_server::create_sockets()
     if (sockets)
         netlib_free_socket_set(sockets);
 
-    sockets = netlib_alloc_socket_set(m_num_clients + 1);
+    sockets = netlib_alloc_socket_set(num_clients() + 1);
     if (!sockets) {
-        berr("netlib_alloc_socket_set failed with %i clients.", m_num_clients + 1);
+        berr("netlib_alloc_socket_set failed with %i clients.", num_clients() + 1);
         network_flag = false;
         return false;
     }

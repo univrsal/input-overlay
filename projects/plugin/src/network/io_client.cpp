@@ -17,23 +17,20 @@
  *************************************************************************/
 
 #include "io_client.hpp"
-#include "../util/config.hpp"
 #include <keycodes.h>
 
 #include "src/util/log.h"
 
 namespace network {
-io_client::io_client(char *name, tcp_socket socket, uint8_t id) : m_holder()
+io_client::io_client(const std::string& name, tcp_socket socket) : m_holder()
 {
     m_name = name;
     m_socket = socket;
-    m_id = id;
     m_valid = true;
 }
 
 io_client::~io_client()
 {
-    delete m_name;
     netlib_tcp_close(m_socket);
 }
 
@@ -44,12 +41,7 @@ tcp_socket io_client::socket() const
 
 const char *io_client::name() const
 {
-    return m_name;
-}
-
-uint8_t io_client::id() const
-{
-    return m_id;
+    return m_name.c_str();
 }
 
 input_data *io_client::get_data()
@@ -64,7 +56,7 @@ bool io_client::read_event(buffer &buf, const message msg)
     if (msg == MSG_UIOHOOK_EVENT) {
         auto *event = buf.read<uiohook_event>();
         if (event) {
-
+            m_holder.dispatch_uiohook_event(event);
         } else {
             flag = false;
         }

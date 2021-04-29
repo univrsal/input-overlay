@@ -189,8 +189,8 @@ void overlay::refresh_data()
     std::lock_guard<std::mutex> lck2(network::mutex);
 
     if (uiohook::state || network::network_flag) {
-        if (network::server_instance && m_settings->selected_source > 0) {
-            source = network::server_instance->get_client(m_settings->selected_source - 1)->get_data();
+        if (network::server_instance && !m_settings->selected_source.empty()) {
+            source = network::server_instance->get_client(m_settings->selected_source)->get_data();
         } else {
             source = &local_data::data;
         }
