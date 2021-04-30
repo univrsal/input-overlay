@@ -3,14 +3,15 @@
 #include "../util/settings.h"
 #include "../util/log.h"
 #include "../util/obs_util.hpp"
-#include "../hook/gamepad_hook_helper.hpp"
+#include <QJsonObject>
+#include <QJsonDocument>
+#include <QJsonValue>
 #include <mongoose.h>
 #include <thread>
 #include <mutex>
 #include <deque>
 #include <atomic>
 #include <util/threading.h>
-#include <jansson.h>
 
 namespace wss {
 std::atomic<bool> thread_flag;
@@ -75,7 +76,8 @@ bool start()
                 break;
         }
     });
-    result = thread_handle.native_handle();
+    if (thread_handle.native_handle())
+        result = false;
 
     thread_flag = result;
     return result;
@@ -92,9 +94,9 @@ void stop()
     mg_mgr_free(&mgr);
 }
 
-char *serialize_uiohook(const uiohook_event *e, const std::string &source_name)
+QString serialize_uiohook(const uiohook_event *e, const std::string &source_name)
 {
-    json_t *j = nullptr;
+    QJsonObject obj;
     auto ev_to_str = [](int e) {
         switch (e) {
         case EVENT_KEY_TYPED:
@@ -124,39 +126,44 @@ char *serialize_uiohook(const uiohook_event *e, const std::string &source_name)
     case EVENT_KEY_TYPED:
     case EVENT_KEY_PRESSED:
     case EVENT_KEY_RELEASED:
-        j = json_pack("{ss, ss, si, si, si, si, ss}", "event_source", source_name.c_str(), "event_type",
-                      ev_to_str(e->type), "time", e->time, "mask", e->mask,
-
-                      "keycode", e->data.keyboard.keycode, "rawcode", e->data.keyboard.rawcode, "char",
-                      qt_to_utf8(QString(e->data.keyboard.keychar)));
+        obj["event_source"] = utf8_to_qt(source_name.c_str());
+        obj["event_type"] = QString(ev_to_str(e->type));
+        obj["time"] = int(e->time);
+        obj["mask"] = e->mask;
+        obj["keycode"] = e->data.keyboard.keycode;
+        obj["rawcode"] = e->data.keyboard.rawcode;
+        obj["char"] = QString(e->data.keyboard.keychar);
         break;
     case EVENT_MOUSE_CLICKED:
     case EVENT_MOUSE_PRESSED:
     case EVENT_MOUSE_RELEASED:
     case EVENT_MOUSE_MOVED:
     case EVENT_MOUSE_DRAGGED:
-        j = json_pack("{ss, ss, si, si, si, si, si, si}", "event_source", source_name.c_str(), "event_type",
-                      ev_to_str(e->type), "time", e->time, "mask", e->mask,
-
-                      "button", e->data.mouse.button, "clicks", e->data.mouse.clicks, "x", e->data.mouse.x, "y",
-                      e->data.mouse.y);
+        obj["event_source"] = utf8_to_qt(source_name.c_str());
+        obj["event_type"] = QString(ev_to_str(e->type));
+        obj["time"] = int(e->time);
+        obj["mask"] = e->mask;
+        obj["button"] = e->data.mouse.button;
+        obj["clicks"] = e->data.mouse.clicks;
+        obj["x"] = e->data.mouse.x;
+        obj["y"] = e->data.mouse.y;
         break;
     case EVENT_MOUSE_WHEEL:
-        j = json_pack("{ss, ss, si, si, si, si, si, si}", "event_source", source_name.c_str(), "event_type",
-                      ev_to_str(e->type), "time", e->time, "mask", e->mask,
-
-                      "clicks", e->data.wheel.clicks, "type", e->data.wheel.type, "amount", e->data.wheel.amount,
-                      "rotation", e->data.wheel.rotation, "x", e->data.mouse.x, "y", e->data.mouse.y);
+        obj["event_source"] = utf8_to_qt(source_name.c_str());
+        obj["event_type"] = QString(ev_to_str(e->type));
+        obj["time"] = int(e->time);
+        obj["mask"] = e->mask;
+        obj["clicks"] = e->data.wheel.clicks;
+        obj["type"] = e->data.wheel.type;
+        obj["amount"] = e->data.wheel.amount;
+        obj["rotation"] = e->data.wheel.rotation;
+        obj["x"] = e->data.wheel.x;
+        obj["y"] = e->data.wheel.y;
         break;
     default:;
     }
-
-    if (j) {
-        auto *result = json_dumps(j, JSON_COMPACT);
-        json_decref(j);
-        return result;
-    }
-    return nullptr;
+    QJsonDocument doc(obj);
+    return QString(doc.toJson(QJsonDocument::Compact));
 }
 
 void dispatch_uiohook_event(const uiohook_event *e, const std::string &source_name)
@@ -164,11 +171,9 @@ void dispatch_uiohook_event(const uiohook_event *e, const std::string &source_na
     if (!thread_flag)
         return;
     std::lock_guard<std::mutex> lock(poll_mutex);
-    auto *json = serialize_uiohook(e, source_name);
-    if (json) {
-        message_queue.emplace_back(json);
-        free(json);
-    }
+    auto json = serialize_uiohook(e, source_name);
+    if (!json.isEmpty())
+        message_queue.emplace_back(qt_to_utf8(json));
 }
 
 void dispatch_gamepad_event(const gamepad::input_event *e, const std::shared_ptr<gamepad::device> &device, bool is_axis,
@@ -176,19 +181,23 @@ void dispatch_gamepad_event(const gamepad::input_event *e, const std::shared_ptr
 {
     if (!thread_flag)
         return;
+    QJsonObject obj;
     std::lock_guard<std::mutex> lock(poll_mutex);
-    auto *j = json_pack("{ss, ss, ss, si, si, si, sf, si, si}", "event_source", source_name.c_str(), "event_type",
-                        is_axis ? "gamepad_axis" : "gamepad_button", "device_name", device->get_id().c_str(),
-                        "device_index", device->get_index(), "time", e->time, "virtual_code", e->vc, "virtual_value",
-                        e->virtual_value, "native_code", e->native_id, "native_value", e->native_id);
-    if (j) {
-        auto *json = json_dumps(j, JSON_COMPACT);
-        if (json) {
-            message_queue.emplace_back(json);
-            free(json);
-        }
-        json_decref(j);
-    }
+    obj["event_source"] = source_name.c_str();
+    obj["event_type"] = is_axis ? "gamepad_axis" : "gamepad_button";
+    obj["device_name"] = utf8_to_qt(device->get_id().c_str());
+    obj["device_index"] = device->get_index();
+    obj["time"] = int(e->time);
+    obj["virtual_code"] = e->vc;
+    obj["virtual_value"] = e->virtual_value;
+    obj["native_code"] = e->native_id;
+    obj["native_value"] = e->value;
+
+    QJsonDocument doc(obj);
+    QString str(doc.toJson(QJsonDocument::Compact));
+
+    if (!str.isEmpty())
+        message_queue.emplace_back(qt_to_utf8(str));
 }
 
 void dispatch_gamepad_event(const std::shared_ptr<gamepad::device> &device, const char *state,
@@ -196,18 +205,18 @@ void dispatch_gamepad_event(const std::shared_ptr<gamepad::device> &device, cons
 {
     if (!thread_flag)
         return;
+    QJsonObject obj;
     std::lock_guard<std::mutex> lock(poll_mutex);
-    auto *j = json_pack("{ss, ss, ss, si, si}", "event_source", source_name.c_str(), "event_type", state, "device_name",
-                        device->get_id().c_str(), "device_index", device->get_index(), "time",
-                        gamepad::hook::ms_ticks());
-    if (j) {
-        auto *json = json_dumps(j, JSON_COMPACT);
-        if (json) {
-            message_queue.emplace_back(json);
-            free(json);
-        }
-        json_decref(j);
-    }
+    obj["event_source"] = source_name.c_str();
+    obj["event_type"] = state;
+    obj["device_name"] = utf8_to_qt(device->get_id().c_str());
+    obj["time"] = int(gamepad::hook::ms_ticks());
+
+    QJsonDocument doc(obj);
+    QString str(doc.toJson(QJsonDocument::Compact));
+
+    if (!str.isEmpty())
+        message_queue.emplace_back(qt_to_utf8(str));
 }
 
 }

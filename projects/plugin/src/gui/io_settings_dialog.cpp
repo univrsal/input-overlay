@@ -317,7 +317,7 @@ void io_settings_dialog::OpenForums()
 
 void io_settings_dialog::load_bindings()
 {
-    if (!io_config::enable_gamepad_hook)
+    if (!libgamepad::hook_instance)
         return;
     gamepad::bindings_list bindings;
     {

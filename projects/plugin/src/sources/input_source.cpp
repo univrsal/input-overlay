@@ -46,7 +46,7 @@ inline void input_source::update(obs_data_t *settings)
     }
 
     m_settings.gamepad_id = obs_data_get_string(settings, S_CONTROLLER_ID);
-    if (m_settings.selected_source == T_LOCAL_SOURCE && io_config::enable_gamepad_hook) {
+    if (m_settings.selected_source == T_LOCAL_SOURCE && libgamepad::hook_instance) {
         libgamepad::hook_instance->get_mutex()->lock();
         m_settings.gamepad = libgamepad::hook_instance->get_device_by_id(m_settings.gamepad_id);
         libgamepad::hook_instance->get_mutex()->unlock();
@@ -70,7 +70,7 @@ inline void input_source::tick(float seconds)
     if (m_overlay->is_loaded())
         m_overlay->refresh_data();
 
-    if (io_config::enable_gamepad_hook && m_settings.layout_flags & OF_GAMEPAD && !m_settings.gamepad) {
+    if (libgamepad::hook_instance && m_settings.layout_flags & OF_GAMEPAD && !m_settings.gamepad) {
         m_settings.gamepad_check_timer += seconds;
         if (m_settings.gamepad_check_timer >= 1) {
             m_settings.gamepad_check_timer = 0.0f;
@@ -114,7 +114,7 @@ bool reload_pads(obs_properties_t *, obs_property_t *property, void *data)
     auto *src = static_cast<input_source *>(data);
     obs_property_list_clear(property);
 
-    if (src->m_settings.selected_source == T_LOCAL_SOURCE && io_config::enable_gamepad_hook) {
+    if (src->m_settings.selected_source == T_LOCAL_SOURCE && libgamepad::hook_instance) {
         libgamepad::hook_instance->get_mutex()->lock();
         for (const auto &pad : libgamepad::hook_instance->get_devices())
             obs_property_list_add_string(property, pad->get_id().c_str(), pad->get_id().c_str());
