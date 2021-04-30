@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 3.5)
 project(io-base VERSION 5.0.0)
 set(INPUT_OVERLAY_VERSION "5.0.0" CACHE STRING "" FORCE)
 
-option(ENABLE_CLIENT "Wether to build the client (default: ON)" ON)
-option(ENABLE_PLUGIN "Wether to build the obs plugin (default: ON)" ON)
+option(ENABLE_CLIENT "Whether to build the client (default: ON)" ON)
+option(ENABLE_PLUGIN "Whether to build the obs plugin (default: ON)" ON)
 
 set(PLUGIN_AUTHOR "univrsal")
 set(PLUGIN_GIT input-overlay)

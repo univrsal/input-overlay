@@ -10,8 +10,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(input-overlay_UI
         src/gui/io_settings_dialog.ui)
 
-option(LOCAL_INSTALLATION "Wether to install the obs plugin in the user config directory (default: OFF)" OFF)
-option(DEB_INSTALLER "Wether to use the folder structure for a *.deb installer on linux (default: OFF)" OFF)
+option(LOCAL_INSTALLATION "Whether to install the obs plugin in the user config directory (default: OFF)" OFF)
+option(DEB_INSTALLER "Whether to use the folder structure for a *.deb installer on linux (default: OFF)" OFF)
 
 if (WIN32 OR APPLE)
     include(${CMAKE_SOURCE_DIR}/cmake/FindLibObs.cmake)
@@ -101,7 +101,9 @@ set(input-overlay_SOURCES
         src/util/input_filter.hpp
         src/util/log.h
         src/util/settings.h
-        src/util/lang.h)
+        src/util/lang.h src/network/websocket_server.hpp
+        src/network/websocket_server.cpp
+        ${MONGOOSE_SOURCE})
 
 add_library(input-overlay MODULE
         ${input-overlay_SOURCES}
@@ -119,6 +121,7 @@ target_include_directories(
     ${JSON_11_HEADER}
     ${GAMEPAD_INCLUDE_DIR}
     ${UIOHOOK_INCLUDE_DIR}
+    ${MONGOOSE_INCLUDE_DIR}
     "${LIBOBS_INCLUDE_DIR}/../UI/obs-frontend-api"
     ${NETLIB_INCLUDE_DIR}
     ${Qt5Core_INCLUDES}
