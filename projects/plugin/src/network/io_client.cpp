@@ -17,9 +17,9 @@
  *************************************************************************/
 
 #include "io_client.hpp"
+#include "../util/log.h"
+#include "websocket_server.hpp"
 #include <keycodes.h>
-
-#include "src/util/log.h"
 
 namespace network {
 io_client::io_client(const std::string &name, tcp_socket socket) : m_holder()
@@ -67,10 +67,12 @@ bool io_client::read_event(buffer &buf, const message msg)
 
     if (msg == MSG_UIOHOOK_EVENT) {
         auto *event = buf.read<uiohook_event>();
-        if (event)
+        if (event) {
             m_holder.dispatch_uiohook_event(event);
-        else
+            wss::dispatch_uiohook_event(event, m_name);
+        } else {
             flag = false;
+        }
     } else if (msg == MSG_GAMEPAD_EVENT) {
         flag = dispatch_gamepad_input(buf);
     } else if (msg == MSG_GAMEPAD_CONNECTED) {
@@ -89,13 +91,21 @@ bool io_client::read_event(buffer &buf, const message msg)
             new_pad->set_index(index);
             new_pad->set_id(name);
             m_gamepads[index] = new_pad;
+            wss::dispatch_gamepad_event(new_pad, WSS_PAD_CONNECTED, m_name);
         }
     } else if (msg == MSG_GAMEPAD_RECONNECTED) {
         auto *index = buf.read<uint8_t>();
         auto name = read_string(buf);
         if (index) {
-            // We just keep devices in the list so we don't have to do anything here
-            binfo("'%s' (id %i) reconnected to '%s'", name.c_str(), *index, m_name.c_str());
+            auto pad = get_pad(name);
+            if (pad) {
+                // We just keep devices in the list so we don't have to do anything here
+                binfo("'%s' (id %i) reconnected to '%s'", name.c_str(), *index, m_name.c_str());
+                wss::dispatch_gamepad_event(pad, WSS_PAD_CONNECTED, m_name);
+            } else {
+                berr("Received reconnect event from '%s' with invalid gamepad name '%s' (id %i)", m_name.c_str(),
+                     name.c_str(), *index);
+            }
         } else {
             flag = false;
             berr("Couldn't read gamepad device index");
@@ -104,8 +114,15 @@ bool io_client::read_event(buffer &buf, const message msg)
         auto *index = buf.read<uint8_t>();
         auto name = read_string(buf);
         if (index) {
-            // We just keep devices in the list so we don't have to do anything here
-            binfo("'%s' (id %i) disconnected from '%s'", name.c_str(), *index, m_name.c_str());
+            auto pad = get_pad(name);
+            if (pad) {
+                // We just keep devices in the list so we don't have to do anything here
+                binfo("'%s' (id %i) disconnected from '%s'", name.c_str(), *index, m_name.c_str());
+                wss::dispatch_gamepad_event(pad, WSS_PAD_DISCONNECTED, m_name);
+            } else {
+                berr("Received disconnect event from '%s' with invalid gamepad name '%s' (id %i)", m_name.c_str(),
+                     name.c_str(), *index);
+            }
         } else {
             flag = false;
             berr("Couldn't read gamepad device index");
@@ -147,7 +164,7 @@ bool io_client::dispatch_gamepad_input(buffer &buf)
     auto pad = m_gamepads.find(*index);
 
     if (pad == m_gamepads.end()) {
-        berr("Received gamepad input events for non existing gamepad");
+        berr("'%s' received gamepad input events for non existing gamepad (id %i)", m_name.c_str(), *index);
         return false;
     } else {
         gamepad::input_event *output;
@@ -163,6 +180,7 @@ bool io_client::dispatch_gamepad_input(buffer &buf)
             output->vc = *buf.read<uint16_t>();
             output->virtual_value = *buf.read<float>();
             output->time = *buf.read<uint64_t>();
+            wss::dispatch_gamepad_event(output, pad->second, *is_axis, m_name);
         } else {
             berr("Couldn't read gamepad event body.");
             return false;

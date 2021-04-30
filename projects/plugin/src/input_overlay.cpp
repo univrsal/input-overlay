@@ -86,6 +86,7 @@ void obs_module_unload()
 
     libgamepad::end_pad_hook();
     uiohook::stop();
+    network::close_network();
 
 #ifdef LINUX
     cleanupDisplay();

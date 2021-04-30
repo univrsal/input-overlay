@@ -51,12 +51,14 @@ extern bool enable_remote_connections;
 extern bool enable_gamepad_hook;
 extern bool enable_uiohook;
 extern bool enable_overlay_source;
+extern bool enable_websocket_server;
 extern bool regex;
 extern int filter_mode;
 /* Netowork config */
 extern bool log_flag;
 extern uint16_t server_refresh_rate;
 extern uint16_t server_port;
+extern uint16_t wss_port;
 
 extern void set_defaults();
 

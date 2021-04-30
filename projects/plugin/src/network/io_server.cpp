@@ -261,18 +261,12 @@ bool io_server::create_sockets()
 
     return true;
 }
-std::shared_ptr<gamepad::device> io_server::get_client_device_by_id(const std::string &id)
+std::shared_ptr<gamepad::device> io_server::get_client_device_by_id(const std::string &client_id,
+                                                                    const std::string &device_id)
 {
-    auto at = id.rfind('@');
-
-    if (at + 1 < id.length() && at > 0) {
-        std::string client_id = id.substr(at + 1);
-        std::string pad_id = id.substr(0, at);
-
-        auto client = get_client(client_id);
-        if (client)
-            return client->get_pad(pad_id);
-    }
+    auto client = get_client(client_id);
+    if (client)
+        return client->get_pad(device_id);
     return nullptr;
 }
 }

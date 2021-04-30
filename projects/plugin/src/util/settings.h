@@ -30,6 +30,8 @@
 #define S_REMOTE                        "remote"
 #define S_LOGGING                       "logging"
 #define S_PORT                          "server_port"
+#define S_WSS_PORT                      "wss_port"
+#define S_ENABLE_WSS                    "enable_wss"
 #define S_REFRESH                       "server_refresh_rate"
 #define S_CONTROL                       "control"
 #define S_REGEX                         "regex"

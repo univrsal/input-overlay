@@ -28,10 +28,8 @@
 #include <QDesktopServices>
 #include <QTimer>
 #include <QPair>
-#include <obs-frontend-api.h>
 #include <obs-module.h>
 #include <string>
-#include <util/platform.h>
 #include <QMessageBox>
 
 static QPair<const char *, uint16_t> button_map[] = {{"txt_a", gamepad::button::A},
@@ -71,6 +69,8 @@ io_settings_dialog::io_settings_dialog(QWidget *parent) : QDialog(parent, Qt::Di
     connect(ui->btn_add, &QPushButton::clicked, this, &io_settings_dialog::AddFilter);
     connect(ui->btn_remove, &QPushButton::clicked, this, &io_settings_dialog::RemoveFilter);
     connect(ui->cb_gamepad_hook, &QCheckBox::stateChanged, this, &io_settings_dialog::CbEnableGamepadChanged);
+    connect(ui->cb_enable_wss, &QCheckBox::stateChanged, this, &io_settings_dialog::CbWssStateChanged);
+
     /* Load values */
     ui->cb_iohook->setChecked(io_config::enable_uiohook);
     ui->cb_gamepad_hook->setChecked(io_config::enable_gamepad_hook);
@@ -149,19 +149,21 @@ void io_settings_dialog::toggleShowHide()
 void io_settings_dialog::RefreshUi()
 {
     /* Populate client list */
-    std::lock_guard<std::mutex> lock(network::mutex);
-    if (network::network_flag && network::server_instance && network::server_instance->clients_changed()) {
-        ui->box_connections->clear();
-        QStringList list;
-        std::vector<const char *> names;
-        /* I'd do it differently, but including Qt headers and obs headers
+    if (network::network_flag && network::server_instance) {
+        std::lock_guard<std::mutex> lock(network::mutex);
+        if (network::server_instance->clients_changed()) {
+            ui->box_connections->clear();
+            QStringList list;
+            std::vector<const char *> names;
+            /* I'd do it differently, but including Qt headers and obs headers
          * creates conflicts with LOG_WARNING...
          */
-        network::server_instance->get_clients(names);
+            network::server_instance->get_clients(names);
 
-        for (auto &name : names)
-            list.append(name);
-        ui->box_connections->addItems(list);
+            for (auto &name : names)
+                list.append(name);
+            ui->box_connections->addItems(list);
+        }
     }
 
     if (libgamepad::state) {
@@ -184,7 +186,7 @@ void io_settings_dialog::RefreshUi()
         }
 
         // Select something if nothing is selected
-        if (ui->cb_device->currentText().isEmpty() && devs.size() > 0) {
+        if (ui->cb_device->currentText().isEmpty() && !devs.empty()) {
             ui->cb_device->setCurrentIndex(0);
         }
 
@@ -315,6 +317,8 @@ void io_settings_dialog::OpenForums()
 
 void io_settings_dialog::load_bindings()
 {
+    if (!io_config::enable_gamepad_hook)
+        return;
     gamepad::bindings_list bindings;
     {
         auto &mutex = *libgamepad::hook_instance->get_mutex();
@@ -336,7 +340,7 @@ int find_by_code(const QPair<const char *, uint16_t> &needle, const gamepad::cfg
     return -1;
 }
 
-void io_settings_dialog::load_binding(std::shared_ptr<gamepad::cfg::binding> binding)
+void io_settings_dialog::load_binding_to_ui(const std::shared_ptr<gamepad::cfg::binding> &binding)
 {
     auto dinput_binding = dynamic_cast<gamepad::cfg::binding_dinput *>(binding.get());
 
@@ -386,31 +390,27 @@ void io_settings_dialog::on_btn_add_bind_clicked()
     }
 
     /* The callback locks the mutex so we cant lock it here */
-    ui->cb_bindings->addItem(ui->txt_new_binding_name->text());
-    auto &mutex = *libgamepad::hook_instance->get_mutex();
-    std::lock_guard<std::mutex> lock(mutex);
+    auto *mutex = libgamepad::hook_instance->get_mutex();
 
     auto dev = get_selected_device();
     if (dev) {
+        mutex->lock();
         auto has_custom_binding = libgamepad::hook_instance->get_binding_by_name(dev->get_binding()->get_name()) !=
                                   nullptr;
         /* If this device has a custom set binding, we load it, otherwise
          * we keep whatever is already set by the user in the UI and set the binding
          * for the device
          */
-        if (has_custom_binding) {
-            load_binding(dev->get_binding());
-        } else {
-            auto binding = get_selected_binding();
-            if (!binding) {
-                /* No binding exists with this name so we create it */
-                binding = libgamepad::hook_instance->make_native_binding();
-                binding->set_name(qt_to_utf8(ui->txt_new_binding_name->text()));
-                libgamepad::hook_instance->add_binding(binding);
-            }
-            dev->set_binding(binding);
-        }
+        auto binding = libgamepad::hook_instance->make_native_binding();
+        binding->set_name(qt_to_utf8(ui->txt_new_binding_name->text()));
+        libgamepad::hook_instance->add_binding(binding);
+        if (has_custom_binding)
+            load_binding_from_ui(binding);
+        mutex->unlock();
+        ui->cb_bindings->addItem(ui->txt_new_binding_name->text());
     }
+    mutex->unlock();
+    ui->txt_new_binding_name->clear();
 }
 
 void io_settings_dialog::on_cb_device_currentIndexChanged(int)
@@ -422,7 +422,7 @@ void io_settings_dialog::on_cb_device_currentIndexChanged(int)
         dev = get_selected_device();
     }
     if (dev)
-        load_binding(dev->get_binding());
+        load_binding_to_ui(dev->get_binding());
 }
 
 void io_settings_dialog::on_cb_bindings_currentIndexChanged(int)
@@ -432,9 +432,10 @@ void io_settings_dialog::on_cb_bindings_currentIndexChanged(int)
     auto binding = get_selected_binding();
     auto dev = get_selected_device();
 
-    if (dev && binding)
+    if (dev)
         dev->set_binding(binding);
-    load_binding(binding);
+    if (binding)
+        load_binding_to_ui(binding);
 }
 
 void io_settings_dialog::on_box_binding_accepted()
@@ -493,6 +494,7 @@ std::shared_ptr<gamepad::cfg::binding> io_settings_dialog::get_selected_binding(
 {
     return libgamepad::hook_instance->get_binding_by_name(qt_to_utf8(ui->cb_bindings->currentText()));
 }
+
 void io_settings_dialog::CbEnableGamepadChanged(int)
 {
     auto enabled = ui->cb_gamepad_hook->isChecked();
@@ -500,4 +502,43 @@ void io_settings_dialog::CbEnableGamepadChanged(int)
     ui->rb_xinput->setEnabled(enabled);
     ui->rb_js->setEnabled(enabled);
     ui->rb_by_id->setEnabled(enabled);
+}
+
+void io_settings_dialog::CbWssStateChanged(int state)
+{
+    ui->sb_wss_port->setEnabled(ui->cb_enable_wss->isChecked());
+}
+
+void io_settings_dialog::load_binding_from_ui(std::shared_ptr<gamepad::cfg::binding> binding)
+{
+    auto dinput_binding = dynamic_cast<gamepad::cfg::binding_dinput *>(binding.get());
+
+    for (const auto &pair : button_map) {
+        // transfer textbox value to bind
+        auto text_box = findChild<QLineEdit *>(pair.first);
+        if (text_box) {
+            bool ok = false;
+            auto i = abs(text_box->text().toInt(&ok)); // ignore -/+ used for direct input
+            if (ok)
+                binding->get_button_mappings()[i] = pair.second;
+        }
+    }
+
+    for (const auto &pair : axis_map) {
+        // transfer binds to textboxes
+        auto text_box = findChild<QLineEdit *>(pair.first);
+        if (text_box) {
+            bool ok = false;
+            auto i = text_box->text().toInt(&ok); // ignore -/+ used for direct input
+            if (ok)
+                binding->get_button_mappings()[abs(i)] = pair.second;
+
+            if (dinput_binding) {
+                if (text_box->objectName() == "txt_lt")
+                    dinput_binding->left_trigger_polarity() = i > 0 ? 1 : -1;
+                else if (text_box->objectName() == "txt_rt")
+                    dinput_binding->right_trigger_polarity() = i > 0 ? 1 : -1;
+            }
+        }
+    }
 }

@@ -33,6 +33,7 @@
 #include "../network/io_server.hpp"
 #include "../network/remote_connection.hpp"
 #include "obs_util.hpp"
+#include "lang.h"
 #include <QFile>
 #include <QJsonArray>
 #include <QJsonDocument>
@@ -189,7 +190,7 @@ void overlay::refresh_data()
     std::lock_guard<std::mutex> lck2(network::mutex);
 
     if (uiohook::state || network::network_flag) {
-        if (network::server_instance && !m_settings->selected_source.empty()) {
+        if (network::server_instance && m_settings->selected_source != T_LOCAL_SOURCE) {
             source = network::server_instance->get_client(m_settings->selected_source)->get_data();
         } else {
             source = &local_data::data;

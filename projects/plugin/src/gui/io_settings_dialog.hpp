@@ -55,6 +55,8 @@ private Q_SLOTS:
 
     void CbInputControlStateChanged(int state);
 
+    void CbWssStateChanged(int state);
+
     void PingClients();
 
     void RefreshWindowList();
@@ -65,9 +67,9 @@ private Q_SLOTS:
 
     void RemoveFilter();
 
-    void OpenGitHub();
+    static void OpenGitHub();
 
-    void OpenForums();
+    static void OpenForums();
 
     void on_btn_add_bind_clicked();
 
@@ -81,7 +83,8 @@ private:
     std::shared_ptr<gamepad::device> get_selected_device() const;
     std::shared_ptr<gamepad::cfg::binding> get_selected_binding() const;
     void load_bindings();
-    void load_binding(std::shared_ptr<gamepad::cfg::binding> binding);
+    void load_binding_to_ui(const std::shared_ptr<gamepad::cfg::binding> &binding);
+    void load_binding_from_ui(std::shared_ptr<gamepad::cfg::binding> binding);
     uint64_t m_last_gamepad_input = 0;
     Ui::io_config_dialog *ui;
     QTimer *m_refresh = nullptr;

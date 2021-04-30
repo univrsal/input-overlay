@@ -45,16 +45,16 @@ inline void input_source::update(obs_data_t *settings)
         m_overlay->load();
     }
 
-    libgamepad::hook_instance->get_mutex()->lock();
     m_settings.gamepad_id = obs_data_get_string(settings, S_CONTROLLER_ID);
-    m_settings.gamepad = libgamepad::hook_instance->get_device_by_id(m_settings.gamepad_id);
-
-    if (!m_settings.gamepad && io_config::enable_remote_connections) {
+    if (m_settings.selected_source == T_LOCAL_SOURCE && io_config::enable_gamepad_hook) {
+        libgamepad::hook_instance->get_mutex()->lock();
+        m_settings.gamepad = libgamepad::hook_instance->get_device_by_id(m_settings.gamepad_id);
+        libgamepad::hook_instance->get_mutex()->unlock();
+    } else if (io_config::enable_remote_connections) {
         std::lock_guard<std::mutex> lock(network::mutex);
-        m_settings.gamepad = network::server_instance->get_client_device_by_id(m_settings.gamepad_id);
+        m_settings.gamepad =
+            network::server_instance->get_client_device_by_id(m_settings.selected_source, m_settings.gamepad_id);
     }
-
-    libgamepad::hook_instance->get_mutex()->unlock();
 
     m_settings.mouse_sens = obs_data_get_int(settings, S_MOUSE_SENS);
 
@@ -70,7 +70,7 @@ inline void input_source::tick(float seconds)
     if (m_overlay->is_loaded())
         m_overlay->refresh_data();
 
-    if (m_settings.layout_flags & OF_GAMEPAD && !m_settings.gamepad) {
+    if (io_config::enable_gamepad_hook && m_settings.layout_flags & OF_GAMEPAD && !m_settings.gamepad) {
         m_settings.gamepad_check_timer += seconds;
         if (m_settings.gamepad_check_timer >= 1) {
             m_settings.gamepad_check_timer = 0.0f;
@@ -109,25 +109,26 @@ bool reload_connections(obs_properties_t *, obs_property_t *property, void *)
     return true;
 }
 
-bool reload_pads(obs_properties_t *, obs_property_t *property, void *)
+bool reload_pads(obs_properties_t *, obs_property_t *property, void *data)
 {
+    auto *src = static_cast<input_source *>(data);
     obs_property_list_clear(property);
-    libgamepad::hook_instance->get_mutex()->lock();
-    for (const auto &pad : libgamepad::hook_instance->get_devices())
-        obs_property_list_add_string(property, pad->get_name().c_str(), pad->get_id().c_str());
-    libgamepad::hook_instance->get_mutex()->unlock();
 
-    // Add remote gamepads
-    if (io_config::enable_remote_connections) {
+    if (src->m_settings.selected_source == T_LOCAL_SOURCE && io_config::enable_gamepad_hook) {
+        libgamepad::hook_instance->get_mutex()->lock();
+        for (const auto &pad : libgamepad::hook_instance->get_devices())
+            obs_property_list_add_string(property, pad->get_id().c_str(), pad->get_id().c_str());
+        libgamepad::hook_instance->get_mutex()->unlock();
+    } else if (io_config::enable_remote_connections) {
+        // Add remote gamepads
         std::lock_guard<std::mutex> lock(network::mutex);
-        for (const auto &client : network::server_instance->clients()) {
-            for (const auto &pad : client->gamepads()) {
-                std::string pad_id = pad.second->get_id() + "@"; // Gamepad@remotepc
-                pad_id += client->name();
-                obs_property_list_add_string(property, pad_id.c_str(), pad_id.c_str());
-            }
+        auto client = network::server_instance->get_client(src->m_settings.selected_source);
+        if (client) {
+            for (const auto &pad : client->gamepads())
+                obs_property_list_add_string(property, pad.second->get_id().c_str(), pad.second->get_id().c_str());
         }
     }
+
     return true;
 }
 
@@ -173,7 +174,7 @@ obs_properties_t *get_properties_for_overlay(void *data)
                                                      OBS_COMBO_FORMAT_STRING),
                              false);
 
-    auto *btn = obs_properties_add_button(props, S_RELOAD_PAD_DEVICES, T_RELOAD_PAD_DEVICES, reload_pads);
+    auto *btn = obs_properties_add_button2(props, S_RELOAD_PAD_DEVICES, T_RELOAD_PAD_DEVICES, reload_pads, src);
     obs_property_set_visible(btn, false);
 
     obs_property_set_visible(GET_PROPS(S_CONTROLLER_L_DEAD_ZONE), flags & OF_LEFT_STICK);
@@ -184,7 +185,7 @@ obs_properties_t *get_properties_for_overlay(void *data)
     obs_property_set_visible(GET_PROPS(S_MONITOR_USE_CENTER), flags & OF_MOUSE);
     obs_property_set_visible(GET_PROPS(S_MOUSE_DEAD_ZONE), flags & OF_MOUSE);
     obs_property_set_visible(GET_PROPS(S_RELOAD_PAD_DEVICES), flags & OF_GAMEPAD);
-    reload_pads(nullptr, GET_PROPS(S_CONTROLLER_ID), nullptr);
+    reload_pads(nullptr, GET_PROPS(S_CONTROLLER_ID), src);
     return props;
 }
 

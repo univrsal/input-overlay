@@ -1,5 +1,6 @@
 #include "gamepad_hook_helper.hpp"
 #include <libgamepad.hpp>
+#include "../network/websocket_server.hpp"
 #include "../util/obs_util.hpp"
 #include "../util/log.h"
 #include "../util/config.hpp"
@@ -32,7 +33,7 @@ void start_pad_hook()
 
     /* Pipe gamepad log to obs log */
     auto log_pipe = [](int level, const char *msg, va_list args, void *) {
-        std::string message = "[input-overlay] ";
+        std::string message = "[input-overlay::libgamepad] ";
         message += msg;
         switch (level) {
         case gamepad::LOG_DEBUG:
@@ -57,19 +58,27 @@ void start_pad_hook()
         last_input = d->last_axis_event()->native_id;
         last_input_value = d->last_axis_event()->value;
         last_input_time = d->last_axis_event()->time;
+        wss::dispatch_gamepad_event(d->last_axis_event(), d, true, "local");
     });
     hook_instance->set_button_event_handler([](const std::shared_ptr<gamepad::device> &d) {
         std::lock_guard<std::mutex> lock(last_input_mutex);
         last_input = d->last_button_event()->native_id;
         last_input_time = d->last_button_event()->time;
+        wss::dispatch_gamepad_event(d->last_button_event(), d, false, "local");
     });
 
-    hook_instance->set_connect_event_handler(
-        [](const std::shared_ptr<gamepad::device> &d) { binfo("'%s' connected", d->get_name().c_str()); });
-    hook_instance->set_disconnect_event_handler(
-        [](const std::shared_ptr<gamepad::device> &d) { binfo("'%s' disconnected", d->get_name().c_str()); });
-    hook_instance->set_reconnect_event_handler(
-        [](const std::shared_ptr<gamepad::device> &d) { binfo("'%s' reconnected", d->get_name().c_str()); });
+    hook_instance->set_connect_event_handler([](const std::shared_ptr<gamepad::device> &d) {
+        binfo("'%s' connected", d->get_name().c_str());
+        wss::dispatch_gamepad_event(d, WSS_PAD_CONNECTED, "local");
+    });
+    hook_instance->set_disconnect_event_handler([](const std::shared_ptr<gamepad::device> &d) {
+        binfo("'%s' disconnected", d->get_name().c_str());
+        wss::dispatch_gamepad_event(d, WSS_PAD_DISCONNECTED, "local");
+    });
+    hook_instance->set_reconnect_event_handler([](const std::shared_ptr<gamepad::device> &d) {
+        binfo("'%s' reconnected", d->get_name().c_str());
+        wss::dispatch_gamepad_event(d, WSS_PAD_RECONNECTED, "local");
+    });
 
     hook_instance->load_bindings(std::string(qt_to_utf8(util_get_data_file("gamepad_bindings.json"))));
 
@@ -83,8 +92,10 @@ void start_pad_hook()
 
 void end_pad_hook()
 {
-    hook_instance->save_bindings(std::string(qt_to_utf8(util_get_data_file("gamepad_bindings.json"))));
-    hook_instance->stop();
+    if (state) {
+        hook_instance->save_bindings(std::string(qt_to_utf8(util_get_data_file("gamepad_bindings.json"))));
+        hook_instance->stop();
+    }
     state = false;
 }
 

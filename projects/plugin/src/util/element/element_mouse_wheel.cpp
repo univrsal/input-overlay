@@ -41,8 +41,6 @@ void element_wheel::draw(gs_effect_t *effect, gs_image_file_t *image, sources::o
 {
     if (settings->data.mouse[MOUSE_BUTTON3])
         element_texture::draw(effect, image, &m_mappings[WHEEL_MAP_MIDDLE]);
-    binfo("bruh: %zu", settings->data.last_event.time);
-
     switch (settings->data.last_wheel_event.rotation) {
     case WHEEL_UP:
         element_texture::draw(effect, image, &m_mappings[WHEEL_MAP_UP]);

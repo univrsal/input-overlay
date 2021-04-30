@@ -26,16 +26,18 @@ QString util_get_data_file(const QString &file_name)
 {
     QDir home = QDir::homePath();
 #if UNIX
-    if (!home.mkpath(".config/input-ovleray")) {
+    if (!home.mkpath(".config/input-overlay")) {
         berr("Couldn't create .config/input-overlay directory!");
     }
-    home.cd(".config/input-overlay");
+    home.cd(".config");
+    home.cd("input-overlay");
 #else
     if (!home.mkpath("input-overlay")) {
         berr("Couldn't create ~/input-overlay directory!");
     }
     home.cd("input-overlay");
 #endif
+    bdebug("Getting data file in %s", qt_to_utf8(QDir::toNativeSeparators(home.absoluteFilePath(file_name))));
     return QDir::toNativeSeparators(home.absoluteFilePath(file_name));
 }
 

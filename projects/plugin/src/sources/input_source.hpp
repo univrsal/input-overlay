@@ -48,7 +48,6 @@ public:
     uint8_t layout_flags = 0;         /* See overlay_flags in layout_constants.hpp          */
     float gamepad_check_timer = 0.0f; /* Counter to check if selected game pad is connected */
     std::string gamepad_id;
-    obs_data_t *obs_data;
     /* clang-format: on */
 };
 
@@ -63,7 +62,6 @@ public:
     input_source(obs_source_t *source, obs_data_t *settings) : m_source(source)
     {
         m_overlay = std::make_unique<overlay>(&m_settings);
-        m_settings.obs_data = settings;
         obs_source_update(m_source, settings);
     }
 
