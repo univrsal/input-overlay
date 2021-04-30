@@ -115,7 +115,8 @@ char *serialize_uiohook(const uiohook_event *e, const std::string &source_name)
             return "mouse_dragged";
         case EVENT_MOUSE_WHEEL:
             return "mouse_wheel";
-        default:;
+        default:
+            return "";
         }
     };
 

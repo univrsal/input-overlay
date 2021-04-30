@@ -59,7 +59,7 @@ bool logger_proc(const unsigned int level, const char *format, ...)
     case LOG_LEVEL_ERROR:
         va_start(args, format);
         f = std::string(format);
-        f.insert(0, "[input-overlay] ");
+        f.insert(0, "[input-overlay::uiohook] ");
         blog(LOG_WARNING, f.c_str(), args);
         va_end(args);
     default:;

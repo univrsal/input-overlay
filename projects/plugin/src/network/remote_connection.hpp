@@ -19,15 +19,14 @@
 #pragma once
 
 #include "messages.hpp"
+#include <atomic>
 #include <buffer.hpp>
 #include <netlib.h>
 
 #define TIMEOUT_NS (1000 * 1000 * 1000)
 namespace network {
 class io_server;
-
-extern bool network_state; /* Initialization state*/
-extern bool network_flag;  /* Running state */
+extern std::atomic<bool> network_flag; /* Running state */
 /* Set in obs_module_load */
 extern bool local_input;
 extern char local_ip[16];

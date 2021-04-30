@@ -26,8 +26,7 @@
 #include "src/util/log.h"
 
 namespace network {
-bool network_state = false;
-bool network_flag = false;
+std::atomic<bool> network_flag;
 bool local_input = false; /* True if either of the local hooks is running */
 char local_ip[16] = "127.0.0.1\0";
 
@@ -36,12 +35,12 @@ std::thread network_thread;
 
 const char *get_status()
 {
-    return network_state ? "UP" : "DOWN";
+    return network_flag ? "UP" : "DOWN";
 }
 
 void start_network(uint16_t port)
 {
-    if (network_state)
+    if (network_flag)
         return;
 
     /* Get ip of first interface */
@@ -50,8 +49,6 @@ void start_network(uint16_t port)
         snprintf(local_ip, sizeof(local_ip), "%d.%d.%d.%d", (addresses[0].host >> 0) & 0xFF,
                  (addresses[0].host >> 8) & 0xFF, (addresses[0].host >> 16) & 0xFF, (addresses[0].host >> 24) & 0xFF);
     }
-
-    network_state = true;
     auto failed = false;
 
     if (netlib_init() == 0) {
@@ -61,11 +58,6 @@ void start_network(uint16_t port)
             auto error = 0;
             network_flag = true;
             network_thread = std::thread(network_handler);
-
-            if (!network_state) {
-                berr("Server thread creation failed with code: %i", error);
-                failed = true;
-            }
         } else {
             berr("Server init failed");
             failed = true;
@@ -83,11 +75,10 @@ void start_network(uint16_t port)
 
 void close_network()
 {
-    if (network_state) {
+    if (network_flag) {
         network_flag = false;
         network_thread.join();
         delete server_instance;
-
         netlib_quit();
     }
 }
