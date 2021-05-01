@@ -99,6 +99,9 @@ void io_server::update_clients()
                 switch (msg) {
                 case MSG_UIOHOOK_EVENT:
                 case MSG_GAMEPAD_EVENT:
+                case MSG_GAMEPAD_CONNECTED:
+                case MSG_GAMEPAD_RECONNECTED:
+                case MSG_GAMEPAD_DISCONNECTED:
                     if (!client->read_event(m_buffer, msg))
                         berr("Failed to receive event data from %s.", client->name());
                     break;
@@ -108,7 +111,6 @@ void io_server::update_clients()
                 case MSG_CLIENT_DC:
                     client->mark_invalid();
                     break;
-                case MSG_GAMEPAD_CONNECTED:
                     break;
                 default:
                 case MSG_END_BUFFER:

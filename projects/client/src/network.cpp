@@ -68,7 +68,7 @@ bool start_connection()
         DEBUG_LOG("Failed to send username (%s): %s\n", util::cfg.username, netlib_get_error());
         return false;
     }
-
+    network_loop = true;
     start_thread();
     connected = true;
     return true;

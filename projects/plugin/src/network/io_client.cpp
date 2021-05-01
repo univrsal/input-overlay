@@ -60,7 +60,7 @@ bool io_client::read_event(buffer &buf, const message msg)
             void *str = nullptr;
             buf.read(&str, result.length());
             if (str)
-                result.insert(0, static_cast<char *>(str), result.length());
+                result.insert(0, static_cast<char *>(str), *len);
         }
         return result;
     };
@@ -76,7 +76,7 @@ bool io_client::read_event(buffer &buf, const message msg)
     } else if (msg == MSG_GAMEPAD_EVENT) {
         flag = dispatch_gamepad_input(buf);
     } else if (msg == MSG_GAMEPAD_CONNECTED) {
-        auto index = *buf.read<uint8_t>();
+        auto* index = buf.read<uint8_t>();
         auto name = read_string(buf);
 
         if (!index) {
@@ -86,11 +86,11 @@ bool io_client::read_event(buffer &buf, const message msg)
             berr("'%s' already exists on '%s'", name.c_str(), m_name.c_str());
             flag = false;
         } else {
-            binfo("'%s' (id %i) connected to '%s'", name.c_str(), index, m_name.c_str());
+            binfo("'%s' (id %i) connected to '%s'", name.c_str(), *index, m_name.c_str());
             auto new_pad = std::make_shared<gamepad::device>();
-            new_pad->set_index(index);
+            new_pad->set_index(*index);
             new_pad->set_id(name);
-            m_gamepads[index] = new_pad;
+            m_gamepads[*index] = new_pad;
             wss::dispatch_gamepad_event(new_pad, WSS_PAD_CONNECTED, m_name);
         }
     } else if (msg == MSG_GAMEPAD_RECONNECTED) {

@@ -20,7 +20,7 @@ std::atomic<bool> thread_flag;
 struct mg_mgr mgr;
 std::mutex poll_mutex;
 std::thread thread_handle;
-std::vector<struct mg_connection *> sockets;
+std::vector<struct mg_connection *> web_sockets;
 std::deque<std::string> message_queue;
 
 void event_handler(struct mg_connection *c, int ev, void *ev_data, void *fn_data)
@@ -32,9 +32,9 @@ void event_handler(struct mg_connection *c, int ev, void *ev_data, void *fn_data
             // Websocket connection, which will receive MG_EV_WS_MSG events.
             mg_ws_upgrade(c, hm, nullptr);
 
-            if (sockets.empty()) // we don't want stale events
+            if (web_sockets.empty()) // we don't want stale events
                 message_queue.clear();
-            sockets.emplace_back(c);
+            web_sockets.emplace_back(c);
         }
     } else if (ev == MG_EV_WS_MSG) {
         // Just echo data
@@ -49,6 +49,12 @@ bool start()
     if (thread_flag)
         return true;
     thread_flag = true;
+
+    mg_log_set_callback([](const void* buf, int length, void*) {
+        std::string str(static_cast<const char*>(buf), length);
+        if (str != "\n")
+            bdebug("%s", str.c_str());
+    }, nullptr);
 
     bool result = true;
     auto port = CGET_INT(S_WSS_PORT);
@@ -71,11 +77,18 @@ bool start()
             poll_mutex.lock();
             while (!message_queue.empty()) {
                 auto &msg = message_queue.back();
-                for (auto socket : sockets)
-                    mg_ws_send(socket, msg.c_str(), msg.length(), WEBSOCKET_OP_TEXT);
+                for (auto socket : web_sockets) {
+                    if (!socket->is_draining && !socket->is_closing)
+                        mg_ws_send(socket, msg.c_str(), msg.length(), WEBSOCKET_OP_TEXT);
+                }
                 message_queue.pop_back();
             }
             poll_mutex.unlock();
+            const auto it = std::remove_if(web_sockets.begin(), web_sockets.end(), [](const struct mg_connection* o) {
+                return o->is_closing || o->is_draining;
+            });
+            web_sockets.erase(it, web_sockets.end());
+
             if (!thread_flag)
                 break;
         }
@@ -177,7 +190,7 @@ void dispatch_uiohook_event(const uiohook_event *e, const std::string &source_na
     if (!thread_flag)
         return;
     std::lock_guard<std::mutex> lock(poll_mutex);
-    if (sockets.empty())
+    if (web_sockets.empty())
         return;
     auto json = serialize_uiohook(e, source_name);
     if (!json.isEmpty())
@@ -190,7 +203,7 @@ void dispatch_gamepad_event(const gamepad::input_event *e, const std::shared_ptr
     if (!thread_flag)
         return;
     std::lock_guard<std::mutex> lock(poll_mutex);
-    if (sockets.empty())
+    if (web_sockets.empty())
         return;
     QJsonObject obj;
     obj["event_source"] = source_name.c_str();
@@ -216,7 +229,7 @@ void dispatch_gamepad_event(const std::shared_ptr<gamepad::device> &device, cons
     if (!thread_flag)
         return;
     std::lock_guard<std::mutex> lock(poll_mutex);
-    if (sockets.empty())
+    if (web_sockets.empty())
         return;
     QJsonObject obj;
     obj["event_source"] = source_name.c_str();

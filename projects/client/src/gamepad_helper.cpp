@@ -52,6 +52,19 @@ bool start(uint16_t flags)
         network::buf.write<uint8_t>(d->get_index());
         network::buf.write<uint16_t>(d->get_id().length());
         network::buf.write(d->get_id().c_str(), d->get_id().length());
+
+        const char* state = "";
+        switch (m) {
+        case network::MSG_GAMEPAD_DISCONNECTED:
+            state = "disconnected";
+            break;
+        case network::MSG_GAMEPAD_RECONNECTED:
+            state = "resconnected";
+            break;
+        default:
+            state = "connected";
+        }
+        DEBUG_LOG("Device '%s' %s\n", d->get_id().c_str(), state);
     };
 
     hook_instance->set_axis_event_handler(
