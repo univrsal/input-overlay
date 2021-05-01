@@ -5,18 +5,19 @@
 #include "../util/obs_util.hpp"
 #include <QJsonObject>
 #include <QJsonDocument>
-#include <QJsonValue>
-#include <mongoose.h>
 #include <thread>
 #include <mutex>
 #include <deque>
 #include <atomic>
 #include <util/threading.h>
+#include <util/platform.h>
+extern "C" {
+#include <mongoose.h>
+}
 
 namespace wss {
 std::atomic<bool> thread_flag;
 struct mg_mgr mgr;
-struct mg_connection *nc;
 std::mutex poll_mutex;
 std::thread thread_handle;
 std::vector<struct mg_connection *> sockets;
@@ -26,10 +27,13 @@ void event_handler(struct mg_connection *c, int ev, void *ev_data, void *fn_data
 {
     if (ev == MG_EV_HTTP_MSG) {
         auto *hm = (struct mg_http_message *)ev_data;
-        if (mg_http_match_uri(hm, "/websocket")) {
+        if (mg_http_match_uri(hm, "/")) {
             // Upgrade to websocket. From now on, a connection is a full-duplex
             // Websocket connection, which will receive MG_EV_WS_MSG events.
             mg_ws_upgrade(c, hm, nullptr);
+
+            if (sockets.empty()) // we don't want stale events
+                message_queue.clear();
             sockets.emplace_back(c);
         }
     } else if (ev == MG_EV_WS_MSG) {
@@ -48,11 +52,11 @@ bool start()
 
     bool result = true;
     auto port = CGET_INT(S_WSS_PORT);
-    std::string url = "http://localhost:";
+    std::string url = "ws://localhost:";
     url = url.append(std::to_string(port));
     binfo("Starting web server on %ld", port);
     mg_mgr_init(&mgr);
-    nc = mg_listen(&mgr, url.c_str(), event_handler, nullptr);
+    auto* nc = mg_http_listen(&mgr, url.c_str(), event_handler, nullptr);
 
     if (!nc) {
         berr("Failed to start listener");
@@ -60,11 +64,11 @@ bool start()
     }
 
     thread_handle = std::thread([] {
-        os_set_thread_name("input-overlay-wss");
+        os_set_thread_name("inputovrly-wss");
 
         for (;;) {
+            mg_mgr_poll(&mgr, 5);
             poll_mutex.lock();
-            mg_mgr_poll(&mgr, 100);
             while (!message_queue.empty()) {
                 auto &msg = message_queue.back();
                 for (auto socket : sockets)
@@ -76,7 +80,8 @@ bool start()
                 break;
         }
     });
-    if (thread_handle.native_handle())
+
+    if (!thread_handle.native_handle())
         result = false;
 
     thread_flag = result;
@@ -124,6 +129,8 @@ QString serialize_uiohook(const uiohook_event *e, const std::string &source_name
 
     switch (e->type) {
     case EVENT_KEY_TYPED:
+        obj["char"] = QString(e->data.keyboard.keychar);
+        /* fallthrough */
     case EVENT_KEY_PRESSED:
     case EVENT_KEY_RELEASED:
         obj["event_source"] = utf8_to_qt(source_name.c_str());
@@ -132,7 +139,6 @@ QString serialize_uiohook(const uiohook_event *e, const std::string &source_name
         obj["mask"] = e->mask;
         obj["keycode"] = e->data.keyboard.keycode;
         obj["rawcode"] = e->data.keyboard.rawcode;
-        obj["char"] = QString(e->data.keyboard.keychar);
         break;
     case EVENT_MOUSE_CLICKED:
     case EVENT_MOUSE_PRESSED:
@@ -171,6 +177,8 @@ void dispatch_uiohook_event(const uiohook_event *e, const std::string &source_na
     if (!thread_flag)
         return;
     std::lock_guard<std::mutex> lock(poll_mutex);
+    if (sockets.empty())
+        return;
     auto json = serialize_uiohook(e, source_name);
     if (!json.isEmpty())
         message_queue.emplace_back(qt_to_utf8(json));
@@ -181,8 +189,10 @@ void dispatch_gamepad_event(const gamepad::input_event *e, const std::shared_ptr
 {
     if (!thread_flag)
         return;
-    QJsonObject obj;
     std::lock_guard<std::mutex> lock(poll_mutex);
+    if (sockets.empty())
+        return;
+    QJsonObject obj;
     obj["event_source"] = source_name.c_str();
     obj["event_type"] = is_axis ? "gamepad_axis" : "gamepad_button";
     obj["device_name"] = utf8_to_qt(device->get_id().c_str());
@@ -205,8 +215,10 @@ void dispatch_gamepad_event(const std::shared_ptr<gamepad::device> &device, cons
 {
     if (!thread_flag)
         return;
-    QJsonObject obj;
     std::lock_guard<std::mutex> lock(poll_mutex);
+    if (sockets.empty())
+        return;
+    QJsonObject obj;
     obj["event_source"] = source_name.c_str();
     obj["event_type"] = state;
     obj["device_name"] = utf8_to_qt(device->get_id().c_str());

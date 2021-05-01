@@ -18,6 +18,7 @@
 
 #pragma once
 #include "../util/input_data.hpp"
+#include "../network/websocket_server.hpp"
 #include <map>
 #include <mutex>
 #include <netlib.h>
@@ -28,7 +29,6 @@
 namespace uiohook {
 extern uint64_t last_scroll_time;
 extern bool state;
-enum wheel_dir { wheel_up = -1, wheel_none, wheel_down };
 
 inline void check_wheel()
 {
@@ -44,6 +44,7 @@ inline void process_event(uiohook_event *event)
     local_data::data.dispatch_uiohook_event(event);
     if (event->type == EVENT_MOUSE_WHEEL)
         last_scroll_time = os_gettime_ns();
+    wss::dispatch_uiohook_event(event, "local");
     check_wheel();
 }
 

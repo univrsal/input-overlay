@@ -77,6 +77,7 @@ io_settings_dialog::io_settings_dialog(QWidget *parent) : QDialog(parent, Qt::Di
     ui->cb_enable_overlay->setChecked(io_config::enable_overlay_source);
     ui->cb_enable_control->setChecked(io_config::enable_input_control);
     ui->cb_enable_remote->setChecked(io_config::enable_remote_connections);
+    ui->cb_enable_wss->setChecked(io_config::enable_websocket_server);
     ui->cb_log->setChecked(io_config::log_flag);
     ui->box_port->setValue(io_config::server_port);
 
@@ -294,6 +295,7 @@ void io_settings_dialog::FormAccepted()
     io_config::io_window_filters.set_whitelist(ui->cb_list_mode->currentIndex() == 0);
     io_config::io_window_filters.write_to_config();
 
+    io_config::enable_websocket_server = ui->cb_enable_wss->isChecked();
     io_config::use_dinput = ui->rb_dinput->isChecked();
     io_config::save();
 }

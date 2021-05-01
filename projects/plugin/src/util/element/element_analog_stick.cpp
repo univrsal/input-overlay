@@ -34,15 +34,15 @@ void element_analog_stick::load(const QJsonObject &obj)
 void element_analog_stick::draw(gs_effect_t *effect, gs_image_file_t *image, sources::overlay_settings *settings)
 {
     auto pos = m_pos;
-    gs_rect *temp = nullptr;
+    gs_rect *temp;
 
     if (m_side == element_side::LEFT) {
-        pos.y += (settings->data.gamepad_axis[gamepad::axis::LEFT_STICK_Y] - 0.5) * m_radius * 2;
-        pos.x += (settings->data.gamepad_axis[gamepad::axis::LEFT_STICK_X] - 0.5) * m_radius * 2;
+        pos.y += (settings->data.gamepad_axis[gamepad::axis::LEFT_STICK_Y] - 0.5f) * m_radius * 2;
+        pos.x += (settings->data.gamepad_axis[gamepad::axis::LEFT_STICK_X] - 0.5f) * m_radius * 2;
         temp = settings->data.gamepad_buttons[gamepad::button::L_THUMB] ? &m_pressed : &m_mapping;
     } else {
-        pos.y += (settings->data.gamepad_axis[gamepad::axis::RIGHT_STICK_Y] - 0.5) * m_radius * 2;
-        pos.x += (settings->data.gamepad_axis[gamepad::axis::RIGHT_STICK_X] - 0.5) * m_radius * 2;
+        pos.y += (settings->data.gamepad_axis[gamepad::axis::RIGHT_STICK_Y] - 0.5f) * m_radius * 2;
+        pos.x += (settings->data.gamepad_axis[gamepad::axis::RIGHT_STICK_X] - 0.5f) * m_radius * 2;
         temp = settings->data.gamepad_buttons[gamepad::button::R_THUMB] ? &m_pressed : &m_mapping;
     }
     element_texture::draw(effect, image, temp, &pos);

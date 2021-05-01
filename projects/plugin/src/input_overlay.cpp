@@ -26,6 +26,7 @@
 #include "hook/gamepad_hook_helper.hpp"
 #include "hook/uiohook_helper.hpp"
 #include "network/remote_connection.hpp"
+#include "network/websocket_server.hpp"
 #include "sources/input_source.hpp"
 #include "util/config.hpp"
 #include "util/lang.h"
@@ -54,6 +55,9 @@ bool obs_module_load()
 
     if (io_config::enable_gamepad_hook)
         libgamepad::start_pad_hook();
+
+    if (io_config::enable_websocket_server)
+        wss::start();
 
     if (io_config::enable_remote_connections) {
         network::local_input = io_config::enable_gamepad_hook || io_config::enable_uiohook;
@@ -87,6 +91,7 @@ void obs_module_unload()
     libgamepad::end_pad_hook();
     uiohook::stop();
     network::close_network();
+    wss::stop();
 
 #ifdef LINUX
     cleanupDisplay();

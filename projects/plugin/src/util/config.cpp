@@ -95,6 +95,7 @@ void save()
     CSET_BOOL(S_USE_DINPUT, use_dinput);
     CSET_BOOL(S_USE_JS, use_js);
     CSET_INT(S_WSS_PORT, wss_port);
+    CSET_BOOL(S_ENABLE_WSS, enable_websocket_server);
 }
 
 }

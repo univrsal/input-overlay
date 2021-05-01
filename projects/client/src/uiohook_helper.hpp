@@ -26,7 +26,6 @@
 namespace uiohook {
 extern std::mutex m_mutex;
 extern uint32_t last_scroll_time;
-enum wheel_dir { wheel_up = -1, wheel_none, wheel_down };
 
 inline uint16_t util_mouse_fix(int m)
 {

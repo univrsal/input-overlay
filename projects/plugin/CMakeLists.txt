@@ -24,16 +24,17 @@ string(TIMESTAMP TODAY "%Y.%m.%d %H:%M")
 add_definitions(-DBUILD_TIME="${TODAY}")
 add_definitions(-DINPUT_OVERLAY_VERSION="${INPUT_OVERLAY_VERSION}")
 
-#if (WIN32)
+if (WIN32)
    configure_file(${CMAKE_SOURCE_DIR}/package/installer.iss.in
        ${CMAKE_SOURCE_DIR}/package/installer.iss)
-#endif()
+endif()
 
 if (MSVC)
     set(input-overlay_PLATFORM_SOURCES
             src/util/window_helper_win.cpp
             src/hook/uiohook_helper_win.cpp)
     set(OBS_FRONTEND_INCLUDE "${LIBOBS_INCLUDE_DIR}/../UI/")
+    set(input-overlay_PLATFORM_DEPS wsock32)
 else()
     find_path(OBS_FRONTEND_INCLUDE obs-frontend-api.h)
 endif ()
