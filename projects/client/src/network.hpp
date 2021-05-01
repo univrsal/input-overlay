@@ -21,9 +21,9 @@
 #include <thread>
 #include <buffer.hpp>
 #include <mutex>
+#include <atomic>
 #include "util.hpp"
 
-#define BUFFER_SIZE 512
 #define LISTEN_TIMEOUT 25
 
 namespace network {
@@ -31,9 +31,9 @@ extern tcp_socket sock;
 extern netlib_socket_set set;
 extern bool connected;
 extern bool state;
-extern volatile bool network_loop;
-extern volatile bool need_refresh; /* Set to true by other threads */
-extern volatile bool data_block; /* Set to true to prevent other threads from modifying data, which is about to be sent */
+extern std::atomic<bool> network_loop;
+/* Set to true by other threads */
+/* Set to true to prevent other threads from modifying data, which is about to be sent */
 extern buffer buf;
 extern std::mutex buffer_mutex;
 extern std::thread network_thread;

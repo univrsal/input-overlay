@@ -173,7 +173,6 @@ network::message recv_msg()
 
 void close_all()
 {
-    uiohook::stop();
     gamepad::stop();
     network::close();
 }

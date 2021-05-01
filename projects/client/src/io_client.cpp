@@ -28,14 +28,16 @@
 #endif
 
 /* Catch Application closing */
-void sig_int__handler(int signal)
+void sig_int__handler(int)
 {
     network::network_loop = false;
+    uiohook::stop();
 }
 
-void sig_break__handler(int signal)
+void sig_break__handler(int)
 {
     network::network_loop = false;
+    uiohook::stop();
 }
 
 int main(int argc, char **argv)

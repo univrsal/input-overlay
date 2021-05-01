@@ -57,11 +57,6 @@ bool parse_arguments(int argc, char **args);
 
 int send_text(char *buf);
 
-inline uint16_t swap_be16(uint16_t in)
-{
-    return (in >> 8) | (in << 8);
-}
-
 uint32_t get_ticks();
 
 network::message recv_msg();

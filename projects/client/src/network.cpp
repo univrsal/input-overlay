@@ -26,9 +26,7 @@ namespace network {
 tcp_socket sock = nullptr;
 netlib_socket_set set = nullptr;
 buffer buf;
-volatile bool need_refresh = false;
-volatile bool data_block = false;
-volatile bool network_loop = true;
+std::atomic<bool> network_loop;
 
 bool connected = false;
 bool state = false;
@@ -137,8 +135,7 @@ bool listen()
         case MSG_READ_ERROR:
             DEBUG_LOG("Couldn't read message.\n");
             return false;
-        case MSG_REFRESH:
-            need_refresh = true; /* fallthrough */
+        case MSG_REFRESH:;       /* fallthrough */
         case MSG_PING_CLIENT:    /* NO-OP needed */
             return true;
         default:
