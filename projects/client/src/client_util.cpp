@@ -175,5 +175,6 @@ void close_all()
 {
     gamepad::stop();
     network::close();
+    uiohook::stop();
 }
 }

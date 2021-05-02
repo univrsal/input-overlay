@@ -56,7 +56,7 @@ bool io_server::init()
               ipaddr & 0xff, m_ip.port);
 
         m_server = netlib_tcp_open(&m_ip);
-        m_buffer.resize(8192); // Most likely will never need more than 8KB
+        m_buffer.resize(1024); // Most likely will never need more than 1K
         if (!m_server) {
             berr("netlib_tcp_open failed: %s", netlib_get_error());
             flag = false;
@@ -92,31 +92,27 @@ void io_server::update_clients()
                 continue;
             }
 
-            while (m_buffer.read_pos() < read) /* Buffer can contain multiple messages */
-            {
-                const auto msg = read_msg_from_buffer(m_buffer);
+            const auto msg = read_msg_from_buffer(m_buffer);
 
-                switch (msg) {
-                case MSG_UIOHOOK_EVENT:
-                case MSG_GAMEPAD_EVENT:
-                case MSG_GAMEPAD_CONNECTED:
-                case MSG_GAMEPAD_RECONNECTED:
-                case MSG_GAMEPAD_DISCONNECTED:
-                    if (!client->read_event(m_buffer, msg))
-                        berr("Failed to receive event data from %s.", client->name());
-                    break;
-                case MSG_MOUSE_WHEEL_RESET:
-                    client->get_data()->last_wheel_event = {};
-                    break;
-                case MSG_CLIENT_DC:
-                    client->mark_invalid();
-                    break;
-                    break;
-                default:
-                case MSG_END_BUFFER:
-                case MSG_INVALID:
-                    break;
-                }
+            switch (msg) {
+            case MSG_UIOHOOK_EVENT:
+            case MSG_GAMEPAD_EVENT:
+            case MSG_GAMEPAD_CONNECTED:
+            case MSG_GAMEPAD_RECONNECTED:
+            case MSG_GAMEPAD_DISCONNECTED:
+                if (!client->read_event(m_buffer, msg))
+                    berr("Failed to receive event data from %s.", client->name());
+                break;
+            case MSG_MOUSE_WHEEL_RESET:
+                client->get_data()->last_wheel_event = {};
+                break;
+            case MSG_CLIENT_DC:
+                client->mark_invalid();
+                break;
+            default:
+            case MSG_END_BUFFER:
+            case MSG_INVALID:
+                break;
             }
         }
     }

@@ -30,14 +30,12 @@
 /* Catch Application closing */
 void sig_int__handler(int)
 {
-    network::network_loop = false;
-    uiohook::stop();
+    util::close_all();
 }
 
 void sig_break__handler(int)
 {
-    network::network_loop = false;
-    uiohook::stop();
+    util::close_all();
 }
 
 int main(int argc, char **argv)

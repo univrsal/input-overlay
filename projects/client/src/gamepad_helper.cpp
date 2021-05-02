@@ -31,6 +31,7 @@ bool start(uint16_t flags)
     /* Make sure that the network is established, otherwise we might send device connections too early */
     ::util::sleep_ms(500);
     hook_instance = hook::make(flags);
+    hook_instance->set_sleep_time(1);
     hook_instance->set_plug_and_play(true);
 
     // try to load bindings, currently the file has to be provided manually
@@ -59,7 +60,7 @@ bool start(uint16_t flags)
             state = "disconnected";
             break;
         case network::MSG_GAMEPAD_RECONNECTED:
-            state = "resconnected";
+            state = "reconnected";
             break;
         default:
             state = "connected";

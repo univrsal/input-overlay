@@ -24,7 +24,7 @@
 #include <atomic>
 #include "util.hpp"
 
-#define LISTEN_TIMEOUT 25
+#define LISTEN_TIMEOUT 1
 
 namespace network {
 extern tcp_socket sock;

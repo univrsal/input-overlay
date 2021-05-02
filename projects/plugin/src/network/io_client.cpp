@@ -170,16 +170,17 @@ bool io_client::dispatch_gamepad_input(buffer &buf)
         gamepad::input_event *output;
         auto *is_axis = buf.read<uint8_t>();
         auto *vc = buf.read<uint16_t>();
+        auto *vv = buf.read<float>();
         auto *time = buf.read<uint64_t>();
 
-        if (is_axis && vc && time) {
+        if (is_axis && vc && vv && time) {
             if (*is_axis)
                 output = pad->second->last_axis_event();
             else
                 output = pad->second->last_button_event();
-            output->vc = *buf.read<uint16_t>();
-            output->virtual_value = *buf.read<float>();
-            output->time = *buf.read<uint64_t>();
+            output->vc = *vc;
+            output->virtual_value = *vv;
+            output->time = *time;
             wss::dispatch_gamepad_event(output, pad->second, *is_axis, m_name);
         } else {
             berr("Couldn't read gamepad event body.");

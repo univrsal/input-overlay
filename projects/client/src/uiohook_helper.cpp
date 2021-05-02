@@ -67,7 +67,7 @@ void dispatch_proc(uiohook_event *const event)
     case EVENT_HOOK_DISABLED:
         DEBUG_LOG("uiohook exited\n");
         break;
-    //case EVENT_MOUSE_CLICKED:
+    case EVENT_MOUSE_CLICKED:
     case EVENT_MOUSE_PRESSED:
     case EVENT_MOUSE_RELEASED:
         if (util::cfg.monitor_mouse) {
@@ -89,7 +89,7 @@ void dispatch_proc(uiohook_event *const event)
             network::buf.write<uiohook_event>(*event);
         }
         break;
-    //case EVENT_KEY_TYPED: /* TODO: how to handle this */
+    case EVENT_KEY_TYPED:
     case EVENT_KEY_PRESSED:
     case EVENT_KEY_RELEASED:
         if (util::cfg.monitor_keyboard) {

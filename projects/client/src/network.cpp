@@ -27,9 +27,7 @@ tcp_socket sock = nullptr;
 netlib_socket_set set = nullptr;
 buffer buf;
 std::atomic<bool> network_loop;
-
 bool connected = false;
-bool state = false;
 
 std::thread network_thread;
 std::mutex buffer_mutex;
@@ -91,7 +89,7 @@ void network_thread_method()
 
         std::lock_guard<std::mutex> lock(buffer_mutex);
         /* Reset scroll wheel if no scroll event happened for a bit */
-        if (util::get_ticks() - uiohook::last_scroll_time >= SCROLL_TIMEOUT) {
+        if (uiohook::last_scroll_time > 0 && util::get_ticks() - uiohook::last_scroll_time >= SCROLL_TIMEOUT) {
             buf.write<uint8_t>(MSG_MOUSE_WHEEL_RESET);
         }
 
@@ -152,15 +150,14 @@ bool init()
         DEBUG_LOG("netlib_init failed: %s\n", netlib_get_error());
         return false;
     }
-    state = true;
     return true;
 }
 
 void close()
 {
-    if (!state)
+    if (!network_loop)
         return;
-    state = false;
+    network_loop = false;
 
     /* Tell server we're disconnecting */
     if (connected) {
@@ -171,7 +168,6 @@ void close()
 
     /* Give server time to process DC message */
     util::sleep_ms(100);
-    network_loop = false;
     network_thread.join();
     netlib_tcp_close(sock);
     netlib_quit();
