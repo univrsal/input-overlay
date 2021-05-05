@@ -21,10 +21,10 @@
 #include <mutex>
 #include <netlib.h>
 #include <uiohook.h>
+#include <atomic>
 
 #define SCROLL_TIMEOUT 120
 namespace uiohook {
-extern std::mutex m_mutex;
 extern uint32_t last_scroll_time;
 
 inline uint16_t util_mouse_fix(int m)
@@ -38,12 +38,7 @@ inline uint16_t util_mouse_fix(int m)
     return m;
 }
 
-inline bool is_middle_mouse(int m)
-{
-    return util_mouse_fix(m) == MOUSE_BUTTON3;
-}
-
-extern volatile bool hook_state;
+extern std::atomic<bool> hook_state;
 bool logger_proc(unsigned level, const char *format, ...);
 
 void dispatch_proc(uiohook_event *event);

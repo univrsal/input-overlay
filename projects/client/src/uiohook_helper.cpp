@@ -24,9 +24,8 @@
 #include <util.hpp>
 
 namespace uiohook {
-std::mutex m_mutex;
 uint32_t last_scroll_time;
-volatile bool hook_state = false;
+std::atomic<bool> hook_state;
 
 bool logger_proc(unsigned level, const char *format, ...)
 {

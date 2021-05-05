@@ -83,7 +83,7 @@ void network_thread_method()
         if (!listen()) /* Has a timeout of 25ms*/
         {
             DEBUG_LOG("Received quit signal\n");
-            util::close_all();
+            network_loop = false; // The rest will be taken care of in the main thread
             break;
         }
 
@@ -105,6 +105,10 @@ void network_thread_method()
     }
 
     DEBUG_LOG("Network loop exited\n");
+    if (util::cfg.monitor_keyboard || util::cfg.monitor_mouse) {
+        // We have to stop the hook here since the main thread is blocked by uiohook
+        uiohook::stop();
+    }
 }
 
 int numready = 0;
