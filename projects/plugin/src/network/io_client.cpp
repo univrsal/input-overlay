@@ -82,9 +82,11 @@ bool io_client::read_event(buffer &buf, const message msg)
         if (!index) {
             flag = false;
             berr("Couldn't read gamepad device index");
-        } else if (get_pad(name)) {
-            berr("'%s' already exists on '%s'", name.c_str(), m_name.c_str());
-            flag = false;
+        } else if (auto existing_pad = get_pad(name)) {
+            binfo("'%s' (id %i) reconnected to '%s'", name.c_str(), *index, m_name.c_str());
+            existing_pad->set_index(*index);
+            existing_pad->set_id(name);
+            wss::dispatch_gamepad_event(existing_pad, WSS_PAD_RECONNECTED, m_name);
         } else {
             binfo("'%s' (id %i) connected to '%s'", name.c_str(), *index, m_name.c_str());
             auto new_pad = std::make_shared<gamepad::device>();

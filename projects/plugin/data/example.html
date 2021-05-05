@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+    <!-- Example program to receive data from input overlay via the websocket server
+         This can be used to visualize inputs through css or html5 canvas methods
+         instead of the builtin overlay source.
+    -->
+    <head>
+        <meta charset="utf-8" />
+        <title>input-overlay websocket example</title>
+    </head>
+    <body>
+        <ul id="log" style="list-style-type: none"></ul>
+    </body>
+    <script>
+        var l = document.getElementById("log");
+        var require_clear = false;
+        var count = 0;
+
+        function on_data(e) {
+            console.log(e.data);
+            l.insertAdjacentHTML("beforeend", `<li>${e.data}</li>`);
+            // Only keep last 50 entries
+            if (!require_clear) {
+                count++;
+                if (count > 50) require_clear = true;
+            } else {
+                l.children[0].remove();
+            }
+        }
+
+        function start_websocket() {
+            var ws = new WebSocket("ws://localhost:16899/");
+
+            ws.onmessage = on_data;
+            ws.onopen = on_open;
+            ws.onmessage = on_data;
+            ws.onerror = (e) => console.log('WebSocket error: ' + e);
+
+            ws.onclose = () => {
+                // connection closed, discard old websocket and create a new one in 5s
+                ws = null;
+                setTimeout(startWebsocket, 2000);
+            };
+        }
+        
+        start_websocket();
+    </script>
+</html>
