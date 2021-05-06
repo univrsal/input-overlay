@@ -411,7 +411,6 @@ void io_settings_dialog::on_btn_add_bind_clicked()
         mutex->unlock();
         ui->cb_bindings->addItem(ui->txt_new_binding_name->text());
     }
-    mutex->unlock();
     ui->txt_new_binding_name->clear();
 }
 

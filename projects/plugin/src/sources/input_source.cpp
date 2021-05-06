@@ -28,6 +28,11 @@
 #include <obs-frontend-api.h>
 
 namespace sources {
+bool overlay_settings::use_local_input()
+{
+    return selected_source.empty() || selected_source == T_LOCAL_SOURCE;
+}
+
 input_source::~input_source() = default;
 
 inline void input_source::update(obs_data_t *settings)
@@ -45,7 +50,7 @@ inline void input_source::update(obs_data_t *settings)
     }
 
     m_settings.gamepad_id = obs_data_get_string(settings, S_CONTROLLER_ID);
-    if (m_settings.selected_source == T_LOCAL_SOURCE && libgamepad::hook_instance) {
+    if (m_settings.use_local_input() && libgamepad::hook_instance) {
         libgamepad::hook_instance->get_mutex()->lock();
         m_settings.gamepad = libgamepad::hook_instance->get_device_by_id(m_settings.gamepad_id);
         libgamepad::hook_instance->get_mutex()->unlock();
@@ -113,7 +118,7 @@ bool reload_pads(obs_properties_t *, obs_property_t *property, void *data)
     auto *src = static_cast<input_source *>(data);
     obs_property_list_clear(property);
 
-    if (src->m_settings.selected_source == T_LOCAL_SOURCE && libgamepad::hook_instance) {
+    if (src->m_settings.use_local_input() && libgamepad::hook_instance) {
         libgamepad::hook_instance->get_mutex()->lock();
         for (const auto &pad : libgamepad::hook_instance->get_devices())
             obs_property_list_add_string(property, pad->get_id().c_str(), pad->get_id().c_str());

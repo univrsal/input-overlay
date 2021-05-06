@@ -189,8 +189,8 @@ void overlay::refresh_data()
     std::lock_guard<std::mutex> lck1(local_data::data_mutex);
     std::lock_guard<std::mutex> lck2(network::mutex);
 
-    if (uiohook::state || network::network_flag) {
-        if (network::server_instance && m_settings->selected_source != T_LOCAL_SOURCE) {
+    if (uiohook::state || network::network_flag || libgamepad::state) {
+        if (network::server_instance && m_settings->use_local_input()) {
             source = network::server_instance->get_client(m_settings->selected_source)->get_data();
         } else {
             source = &local_data::data;

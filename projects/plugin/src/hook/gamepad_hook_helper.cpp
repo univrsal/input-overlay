@@ -58,6 +58,7 @@ void start_pad_hook()
         last_input = d->last_axis_event()->native_id;
         last_input_value = d->last_axis_event()->value;
         last_input_time = d->last_axis_event()->time;
+        bdebug("Axis event: %i, %f", d->last_axis_event()->value, d->last_axis_event()->virtual_value);
         wss::dispatch_gamepad_event(d->last_axis_event(), d, true, "local");
     });
     hook_instance->set_button_event_handler([](const std::shared_ptr<gamepad::device> &d) {

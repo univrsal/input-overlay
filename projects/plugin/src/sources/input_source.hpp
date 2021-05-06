@@ -49,6 +49,8 @@ public:
     float gamepad_check_timer = 0.0f; /* Counter to check if selected game pad is connected */
     std::string gamepad_id;
     /* clang-format: on */
+
+    bool use_local_input();
 };
 
 class input_source {
