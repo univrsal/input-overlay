@@ -218,8 +218,10 @@ void io_settings_dialog::RefreshUi()
                         if (libgamepad::flags & gamepad::hook_type::DIRECT_INPUT &&
                             (lineE->objectName() == "txt_lt" || lineE->objectName() == "txt_rt")) {
                             /* Set the binding of this textbox */
-                            lineE->setText((libgamepad::last_input_value < 0 ? "-" : "+") +
+                            if (libgamepad::last_input_value != 0) { // 0 is both left and right trigger
+                                lineE->setText((libgamepad::last_input_value < 0 ? "-" : "+") +
                                            QString::number(libgamepad::last_input));
+                            }
                         } else {
                             /* Set the binding of this textbox */
                             lineE->setText(QString::number(libgamepad::last_input));
