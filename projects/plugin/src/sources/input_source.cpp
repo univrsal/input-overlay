@@ -39,16 +39,6 @@ inline void input_source::update(obs_data_t *settings)
 {
     m_settings.selected_source = obs_data_get_string(settings, S_INPUT_SOURCE);
 
-    const auto *config = obs_data_get_string(settings, S_LAYOUT_FILE);
-    auto old_image_file = m_settings.image_file;
-    m_settings.image_file = obs_data_get_string(settings, S_OVERLAY_FILE);
-
-    /* Only reload config file if path changed */
-    if (m_settings.layout_file != config || m_settings.image_file != old_image_file) {
-        m_settings.layout_file = config;
-        m_overlay->load();
-    }
-
     m_settings.gamepad_id = obs_data_get_string(settings, S_CONTROLLER_ID);
     if (m_settings.use_local_input() && libgamepad::hook_instance) {
         libgamepad::hook_instance->get_mutex()->lock();
@@ -106,14 +96,7 @@ bool use_monitor_center_changed(obs_properties_t *props, obs_property_t *, obs_d
     return true;
 }
 
-bool reload_connections(obs_properties_t *, obs_property_t *property, void *)
-{
-    std::lock_guard<std::mutex> lock(network::mutex);
-    network::server_instance->get_clients(property, network::local_input);
-    return true;
-}
-
-bool reload_pads(obs_properties_t *, obs_property_t *property, void *data)
+bool reload_pads(obs_properties_t *props, obs_property_t *property, void *data)
 {
     auto *src = static_cast<input_source *>(data);
     obs_property_list_clear(property);
@@ -136,6 +119,42 @@ bool reload_pads(obs_properties_t *, obs_property_t *property, void *data)
     return true;
 }
 
+bool file_changed(void *d, obs_properties_t *props, obs_property_t *, obs_data_t *data)
+{
+    auto *src = static_cast<input_source *>(d);
+    const auto *config = obs_data_get_string(data, S_LAYOUT_FILE);
+    auto old_image_file = src->m_settings.image_file;
+    src->m_settings.image_file = obs_data_get_string(data, S_OVERLAY_FILE);
+
+    /* Only reload config file if path changed */
+    if (src->m_settings.layout_file != config || src->m_settings.image_file != old_image_file) {
+        src->m_settings.layout_file = config;
+        if (!src->m_overlay->load()) {
+            src->m_settings.layout_flags = 0;
+        }
+    }
+
+    auto const &flags = src->m_settings.layout_flags;
+    obs_property_set_visible(GET_PROPS(S_CONTROLLER_L_DEAD_ZONE), flags & OF_LEFT_STICK);
+    obs_property_set_visible(GET_PROPS(S_CONTROLLER_R_DEAD_ZONE), flags & OF_RIGHT_STICK);
+    obs_property_set_visible(GET_PROPS(S_CONTROLLER_ID),
+                             flags & OF_GAMEPAD || (flags & OF_LEFT_STICK || flags & OF_RIGHT_STICK));
+    obs_property_set_visible(GET_PROPS(S_MOUSE_SENS), flags & OF_MOUSE);
+    obs_property_set_visible(GET_PROPS(S_MONITOR_USE_CENTER), flags & OF_MOUSE);
+    obs_property_set_visible(GET_PROPS(S_MOUSE_DEAD_ZONE), flags & OF_MOUSE);
+    obs_property_set_visible(GET_PROPS(S_RELOAD_PAD_DEVICES), flags & OF_GAMEPAD);
+    reload_pads(nullptr, GET_PROPS(S_CONTROLLER_ID), src);
+
+    return true;
+}
+
+bool reload_connections(obs_properties_t *, obs_property_t *property, void *)
+{
+    std::lock_guard<std::mutex> lock(network::mutex);
+    network::server_instance->get_clients(property, network::local_input);
+    return true;
+}
+
 obs_properties_t *get_properties_for_overlay(void *data)
 {
     auto *src = static_cast<input_source *>(data);
@@ -143,6 +162,18 @@ obs_properties_t *get_properties_for_overlay(void *data)
     QString img_path, layout_path;
     auto *const props = obs_properties_create();
     const int flags = src->m_settings.layout_flags;
+
+    const auto filter_img = util_file_filter(T_FILTER_IMAGE_FILES, "*.jpg *.png *.bmp");
+    const auto filter_text = util_file_filter(T_FILTER_TEXT_FILES, "*.json");
+
+    /* Config and texture file path */
+    auto *texture = obs_properties_add_path(props, S_OVERLAY_FILE, T_TEXTURE_FILE, OBS_PATH_FILE,
+                                            qt_to_utf8(filter_img), qt_to_utf8(img_path));
+    auto *cfg = obs_properties_add_path(props, S_LAYOUT_FILE, T_LAYOUT_FILE, OBS_PATH_FILE, qt_to_utf8(filter_text),
+                                        qt_to_utf8(layout_path));
+
+    obs_property_set_modified_callback2(cfg, file_changed, data);
+    obs_property_set_modified_callback2(texture, file_changed, data);
 
     /* If enabled add dropdown to select input source */
     if (CGET_BOOL(S_REMOTE)) {
@@ -153,16 +184,6 @@ obs_properties_t *get_properties_for_overlay(void *data)
             network::server_instance->get_clients(list, network::local_input);
         }
     }
-
-    const auto filter_img = util_file_filter(T_FILTER_IMAGE_FILES, "*.jpg *.png *.bmp");
-    const auto filter_text = util_file_filter(T_FILTER_TEXT_FILES, "*.json");
-
-    /* Config and texture file path */
-    obs_properties_add_path(props, S_OVERLAY_FILE, T_TEXTURE_FILE, OBS_PATH_FILE, qt_to_utf8(filter_img),
-                            qt_to_utf8(img_path));
-    obs_properties_add_path(props, S_LAYOUT_FILE, T_LAYOUT_FILE, OBS_PATH_FILE, qt_to_utf8(filter_text),
-                            qt_to_utf8(layout_path));
-
     /* Mouse stuff */
     obs_properties_add_int_slider(props, S_MOUSE_SENS, T_MOUSE_SENS, 1, 500, 1);
 

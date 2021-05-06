@@ -79,6 +79,8 @@ public:
 /* Event handlers */
 static bool use_monitor_center_changed(obs_properties_t *props, obs_property_t *p, obs_data_t *data);
 
+static bool file_changed(void *d, obs_properties_t *props, obs_property_t *, obs_data_t *data);
+
 static bool reload_connections(obs_properties_t *props, obs_property_t *property, void *data);
 
 /* For registering */
