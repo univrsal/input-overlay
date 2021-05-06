@@ -190,7 +190,7 @@ void overlay::refresh_data()
     std::lock_guard<std::mutex> lck2(network::mutex);
 
     if (uiohook::state || network::network_flag || libgamepad::state) {
-        if (network::server_instance && m_settings->use_local_input()) {
+        if (network::server_instance && !m_settings->use_local_input()) {
             source = network::server_instance->get_client(m_settings->selected_source)->get_data();
         } else {
             source = &local_data::data;
@@ -198,7 +198,6 @@ void overlay::refresh_data()
     }
 
     if (source) {
-        m_settings->data.copy(source);
         if (m_settings->gamepad) {
             libgamepad::hook_instance->get_mutex()->lock();
             source->last_axis_event = *m_settings->gamepad->last_axis_event();
@@ -207,6 +206,7 @@ void overlay::refresh_data()
             source->gamepad_buttons = m_settings->gamepad->get_buttons();
             libgamepad::hook_instance->get_mutex()->unlock();
         }
+        m_settings->data.copy(source);
     }
 }
 
