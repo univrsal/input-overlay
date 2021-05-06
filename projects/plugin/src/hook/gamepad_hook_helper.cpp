@@ -10,7 +10,7 @@ namespace libgamepad {
 std::shared_ptr<gamepad::hook> hook_instance = nullptr;
 bool state;
 uint16_t last_input;
-uint16_t last_input_value;
+int last_input_value;
 uint64_t last_input_time;
 uint16_t flags;
 std::mutex last_input_mutex;
