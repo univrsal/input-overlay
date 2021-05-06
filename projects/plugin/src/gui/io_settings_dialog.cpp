@@ -194,7 +194,7 @@ void io_settings_dialog::RefreshUi()
         libgamepad::last_input_mutex.lock();
         if (m_last_gamepad_input < libgamepad::last_input_time) {
             m_last_gamepad_input = libgamepad::last_input_time;
-            auto mylineEdits = this->findChildren<QWidget *>();
+            auto mylineEdits = ui->scrollArea->findChildren<QWidget *>();
             QListIterator<QWidget *> it(mylineEdits);
             QWidget *lineEditField;
             while (it.hasNext()) {
