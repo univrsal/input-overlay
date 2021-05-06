@@ -72,6 +72,8 @@ private Q_SLOTS:
 
     void on_btn_add_bind_clicked();
 
+    void on_btn_remove_bind_clicked();
+
     void on_cb_device_currentIndexChanged(int index);
 
     void on_cb_bindings_currentIndexChanged(int index);
@@ -87,6 +89,7 @@ private:
     uint64_t m_last_gamepad_input = 0;
     Ui::io_config_dialog *ui;
     QTimer *m_refresh = nullptr;
+    std::vector<std::string> m_bindings_to_remove;
 };
 
 extern io_settings_dialog *settings_dialog;

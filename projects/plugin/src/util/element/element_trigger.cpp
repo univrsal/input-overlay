@@ -48,7 +48,6 @@ void element_trigger::draw(gs_effect_t *effect, gs_image_file_t *image, sources:
         break;
     default:;
     }
-    
 
     if (m_button_mode) {
         if (progress >= 0.1)

@@ -158,6 +158,7 @@ void io_settings_dialog::showEvent(QShowEvent *event)
 void io_settings_dialog::toggleShowHide()
 {
     setVisible(!isVisible());
+    load_bindings();
 }
 
 void io_settings_dialog::RefreshUi()
@@ -220,7 +221,7 @@ void io_settings_dialog::RefreshUi()
                             /* Set the binding of this textbox */
                             if (libgamepad::last_input_value != 0) { // 0 is both left and right trigger
                                 lineE->setText((libgamepad::last_input_value < 0 ? "-" : "+") +
-                                           QString::number(libgamepad::last_input));
+                                               QString::number(libgamepad::last_input));
                             }
                         } else {
                             /* Set the binding of this textbox */
@@ -313,6 +314,40 @@ void io_settings_dialog::FormAccepted()
     io_config::enable_websocket_server = ui->cb_enable_wss->isChecked();
     io_config::use_dinput = ui->rb_dinput->isChecked();
     io_config::save();
+
+    libgamepad::hook_instance->get_mutex()->lock();
+    auto &binds = libgamepad::hook_instance->get_bindings();
+    const auto it = std::remove_if(binds.begin(), binds.end(), [&](std::shared_ptr<gamepad::cfg::binding> b) {
+        for (const auto &bind : m_bindings_to_remove) {
+            if (b->get_name() == bind)
+                return true;
+        }
+        return false;
+    });
+
+    auto &map = libgamepad::hook_instance->get_binding_map();
+    for (auto it2 = map.begin(); it2 != map.end();) {
+        for (const auto &bind_name : m_bindings_to_remove) {
+            if (it2->second == bind_name) {
+                it2 = map.erase(it2);
+                break;
+            }
+        }
+        if (map.empty())
+            break;
+        ++it2;
+    }
+    m_bindings_to_remove.clear();
+
+    // Make sure that every device has at least the default binding
+    auto devs = libgamepad::hook_instance->get_devices();
+    for (auto &dev : devs) {
+        if (!dev->get_binding())
+            dev->set_binding(libgamepad::hook_instance->make_native_binding());
+    }
+
+    binds.erase(it, binds.end());
+    libgamepad::hook_instance->get_mutex()->unlock();
 }
 
 io_settings_dialog::~io_settings_dialog()
@@ -388,7 +423,7 @@ void io_settings_dialog::load_binding_to_ui(const std::shared_ptr<gamepad::cfg::
                     native_value = find_by_code(lt, binding->get_axis_mappings());
                 }
             }
-            
+
             if (native_value > -1) {
                 QString val = QString::number(native_value);
 
@@ -440,6 +475,14 @@ void io_settings_dialog::on_btn_add_bind_clicked()
         ui->cb_bindings->addItem(ui->txt_new_binding_name->text());
     }
     ui->txt_new_binding_name->clear();
+}
+
+void io_settings_dialog::on_btn_remove_bind_clicked()
+{
+    if (ui->cb_bindings->currentIndex() > -1) {
+        m_bindings_to_remove.emplace_back(qt_to_utf8(ui->cb_bindings->currentText()));
+        ui->cb_bindings->removeItem(ui->cb_bindings->currentIndex());
+    }
 }
 
 void io_settings_dialog::on_cb_device_currentIndexChanged(int)
