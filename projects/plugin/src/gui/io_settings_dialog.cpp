@@ -141,6 +141,12 @@ io_settings_dialog::io_settings_dialog(QWidget *parent) : QDialog(parent, Qt::Di
     ui->rb_js->setVisible(false);
     ui->rb_by_id->setVisible(false);
 #endif
+
+    // Load first binding to ui
+    libgamepad::hook_instance->get_mutex()->lock();
+    if (!libgamepad::hook_instance->get_bindings().empty())
+        load_binding_to_ui(libgamepad::hook_instance->get_bindings()[0]);
+    libgamepad::hook_instance->get_mutex()->unlock();
 }
 
 void io_settings_dialog::showEvent(QShowEvent *event)
@@ -491,6 +497,13 @@ void io_settings_dialog::on_box_binding_accepted()
             }
         }
     }
+
+    // This is usually already the case, since it'll be done if the selected
+    // device changes or the selected binding changes, but if we only have
+    // one device and one binding the comboboxes can't be changed so we do it
+    // here as well
+    if (auto dev = get_selected_device())
+        dev->set_binding(binding);
 }
 
 std::shared_ptr<gamepad::device> io_settings_dialog::get_selected_device() const
