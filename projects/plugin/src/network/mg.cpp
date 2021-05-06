@@ -15,7 +15,8 @@ extern "C" {
 }
 
 namespace mg {
-struct mg_mgr mgr {};
+struct mg_mgr mgr {
+};
 std::vector<struct mg_connection *> web_sockets;
 std::deque<std::string> message_queue;
 std::mutex poll_mutex;
@@ -56,13 +57,13 @@ bool start(const std::string &addr)
         },
         nullptr);
     mg_mgr_init(&mgr);
-    auto* nc = mg_http_listen(&mgr, addr.c_str(), event_handler, nullptr);
+    auto *nc = mg_http_listen(&mgr, addr.c_str(), event_handler, nullptr);
     if (!nc) {
         berr("Failed to start mongoose listener");
         return false;
     }
 
-        thread_handle = std::thread([] {
+    thread_handle = std::thread([] {
         os_set_thread_name("inputovrly-mg");
 
         for (;;) {

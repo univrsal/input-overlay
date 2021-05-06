@@ -136,8 +136,8 @@ bool listen()
         case MSG_READ_ERROR:
             DEBUG_LOG("Couldn't read message.\n");
             return false;
-        case MSG_REFRESH:;       /* fallthrough */
-        case MSG_PING_CLIENT:    /* NO-OP needed */
+        case MSG_REFRESH:;    /* fallthrough */
+        case MSG_PING_CLIENT: /* NO-OP needed */
             return true;
         default:
         case MSG_INVALID:

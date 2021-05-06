@@ -54,7 +54,7 @@ bool start(uint16_t flags)
         network::buf.write<uint16_t>(d->get_id().length());
         network::buf.write(d->get_id().c_str(), d->get_id().length());
 
-        const char* state = "";
+        const char *state = "";
         switch (m) {
         case network::MSG_GAMEPAD_DISCONNECTED:
             state = "disconnected";

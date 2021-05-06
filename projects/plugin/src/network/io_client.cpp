@@ -75,7 +75,7 @@ bool io_client::read_event(buffer &buf, const message msg)
     } else if (msg == MSG_GAMEPAD_EVENT) {
         flag = dispatch_gamepad_input(buf);
     } else if (msg == MSG_GAMEPAD_CONNECTED) {
-        auto* index = buf.read<uint8_t>();
+        auto *index = buf.read<uint8_t>();
         auto name = read_string(buf);
 
         if (!index) {
