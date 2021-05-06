@@ -48,8 +48,8 @@ static QPair<const char *, uint16_t> button_map[] = {{"txt_a", gamepad::button::
                                                      {"txt_dpad_left", gamepad::button::DPAD_LEFT},
                                                      {"txt_dpad_right", gamepad::button::DPAD_RIGHT}};
 static QPair<const char *, uint16_t> axis_map[] = {
-    {"txt_rx", gamepad::axis::LEFT_STICK_X},  {"txt_ry", gamepad::axis::LEFT_STICK_Y},
-    {"txt_lx", gamepad::axis::RIGHT_STICK_X}, {"txt_ly", gamepad::axis::RIGHT_STICK_Y},
+    {"txt_lx", gamepad::axis::LEFT_STICK_X},  {"txt_ly", gamepad::axis::LEFT_STICK_Y},
+    {"txt_rx", gamepad::axis::RIGHT_STICK_X}, {"txt_ry", gamepad::axis::RIGHT_STICK_Y},
     {"txt_lt", gamepad::axis::LEFT_TRIGGER},  {"txt_rt", gamepad::axis::RIGHT_TRIGGER}};
 
 io_settings_dialog *settings_dialog = nullptr;
