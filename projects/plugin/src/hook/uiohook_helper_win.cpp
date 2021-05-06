@@ -17,7 +17,6 @@
  *************************************************************************/
 
 #include "uiohook_helper.hpp"
-#include "../util/input_data.hpp"
 #include <cstdarg>
 #include <obs-module.h>
 

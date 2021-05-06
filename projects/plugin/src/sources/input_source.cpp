@@ -25,7 +25,6 @@
 #include "../network/io_server.hpp"
 #include "../network/remote_connection.hpp"
 #include <QFile>
-#include <QJsonDocument>
 #include <obs-frontend-api.h>
 
 namespace sources {

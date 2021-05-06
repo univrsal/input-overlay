@@ -17,9 +17,6 @@
  *************************************************************************/
 
 #pragma once
-#include <map>
-#include <mutex>
-#include <netlib.h>
 #include <uiohook.h>
 #include <atomic>
 

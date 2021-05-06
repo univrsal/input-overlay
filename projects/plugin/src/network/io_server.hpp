@@ -27,7 +27,6 @@
 #include <buffer.hpp>
 
 #ifdef _WIN32
-#include <Windows.h>
 #endif
 #define LISTEN_TIMEOUT 25
 

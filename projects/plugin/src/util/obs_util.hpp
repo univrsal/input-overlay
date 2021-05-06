@@ -18,7 +18,6 @@
 
 #pragma once
 
-#include <QString>
 #include <QJsonDocument>
 #include <vector>
 
@@ -26,7 +25,6 @@
 #define M_PI 3.14159265358979323846
 #endif
 
-#include <obs-module.h>
 /* clang-format off */
 #define GET_PROPS(S)                    (obs_properties_get(props, S))
 #define GET_BOOL(X)                     (obs_data_get_bool(s, X))

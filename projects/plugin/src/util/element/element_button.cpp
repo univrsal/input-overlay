@@ -17,7 +17,6 @@
  *************************************************************************/
 
 #include "element_button.hpp"
-#include <keycodes.h>
 
 #include "src/sources/input_source.hpp"
 

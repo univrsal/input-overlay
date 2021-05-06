@@ -17,7 +17,6 @@
  *************************************************************************/
 
 #include "network.hpp"
-#include "gamepad_helper.hpp"
 #include "uiohook_helper.hpp"
 #include "client_util.hpp"
 #include <cstdio>

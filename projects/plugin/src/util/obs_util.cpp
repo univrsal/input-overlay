@@ -19,7 +19,6 @@
 #include "obs_util.hpp"
 #include "log.h"
 #include "lang.h"
-#include <QFile>
 #include <QDir>
 
 QString util_get_data_file(const QString &file_name)

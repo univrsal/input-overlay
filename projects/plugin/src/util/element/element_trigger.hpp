@@ -19,7 +19,6 @@
 #pragma once
 
 #include "element_texture.hpp"
-#include <netlib.h>
 
 class element_trigger : public element_texture {
 public:

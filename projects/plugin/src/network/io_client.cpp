@@ -19,7 +19,6 @@
 #include "io_client.hpp"
 #include "../util/log.h"
 #include "websocket_server.hpp"
-#include <keycodes.h>
 
 namespace network {
 io_client::io_client(const std::string &name, tcp_socket socket) : m_holder()

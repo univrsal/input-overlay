@@ -17,7 +17,6 @@
  *************************************************************************/
 
 #include "element_mouse_wheel.hpp"
-#include "src/util/log.h"
 #include "src/sources/input_source.hpp"
 #include <keycodes.h>
 

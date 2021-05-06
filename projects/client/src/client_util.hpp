@@ -22,7 +22,6 @@
 #endif
 
 #include <netlib.h>
-#include <uiohook.h>
 #include <messages.hpp>
 #include <gamepad/hook.hpp>
 

@@ -1,115 +1,23 @@
 #include "websocket_server.hpp"
 #include "../util/config.hpp"
 #include "../util/settings.h"
-#include "../util/log.h"
 #include "../util/obs_util.hpp"
+#include "mg.hpp"
 #include <QJsonObject>
 #include <QJsonDocument>
-#include <thread>
-#include <mutex>
-#include <deque>
-#include <atomic>
-#include <util/threading.h>
-#include <util/platform.h>
-extern "C" {
-#include <mongoose.h>
-}
 
 namespace wss {
-std::atomic<bool> thread_flag;
-struct mg_mgr mgr;
-std::mutex poll_mutex;
-std::thread thread_handle;
-std::vector<struct mg_connection *> web_sockets;
-std::deque<std::string> message_queue;
-
-void event_handler(struct mg_connection *c, int ev, void *ev_data, void *fn_data)
-{
-    if (ev == MG_EV_HTTP_MSG) {
-        auto *hm = (struct mg_http_message *)ev_data;
-        if (mg_http_match_uri(hm, "/")) {
-            // Upgrade to websocket. From now on, a connection is a full-duplex
-            // Websocket connection, which will receive MG_EV_WS_MSG events.
-            mg_ws_upgrade(c, hm, nullptr);
-
-            if (web_sockets.empty()) // we don't want stale events
-                message_queue.clear();
-            web_sockets.emplace_back(c);
-        }
-    } else if (ev == MG_EV_WS_MSG) {
-        // Just echo data
-        auto *wm = (struct mg_ws_message *)ev_data;
-        mg_ws_send(c, wm->data.ptr, wm->data.len, WEBSOCKET_OP_TEXT);
-        mg_iobuf_delete(&c->recv, c->recv.len);
-    }
-}
-
 bool start()
 {
-    if (thread_flag)
-        return true;
-    thread_flag = true;
-
-    mg_log_set_callback([](const void* buf, int length, void*) {
-        std::string str(static_cast<const char*>(buf), length);
-        if (str != "\n")
-            bdebug("%s", str.c_str());
-    }, nullptr);
-
-    bool result = true;
-    auto port = CGET_INT(S_WSS_PORT);
+    const auto port = CGET_INT(S_WSS_PORT);
     std::string url = "ws://localhost:";
     url = url.append(std::to_string(port));
-    binfo("Starting web server on %ld", port);
-    mg_mgr_init(&mgr);
-    auto* nc = mg_http_listen(&mgr, url.c_str(), event_handler, nullptr);
-
-    if (!nc) {
-        berr("Failed to start listener");
-        result = false;
-    }
-
-    thread_handle = std::thread([] {
-        os_set_thread_name("inputovrly-wss");
-
-        for (;;) {
-            mg_mgr_poll(&mgr, 5);
-            poll_mutex.lock();
-            while (!message_queue.empty()) {
-                auto &msg = message_queue.back();
-                for (auto socket : web_sockets) {
-                    if (!socket->is_draining && !socket->is_closing)
-                        mg_ws_send(socket, msg.c_str(), msg.length(), WEBSOCKET_OP_TEXT);
-                }
-                message_queue.pop_back();
-            }
-            poll_mutex.unlock();
-            const auto it = std::remove_if(web_sockets.begin(), web_sockets.end(), [](const struct mg_connection* o) {
-                return o->is_closing || o->is_draining;
-            });
-            web_sockets.erase(it, web_sockets.end());
-
-            if (!thread_flag)
-                break;
-        }
-    });
-
-    if (!thread_handle.native_handle())
-        result = false;
-
-    thread_flag = result;
-    return result;
+    return mg::start(url);
 }
 
 void stop()
 {
-    if (!thread_flag)
-        return;
-    binfo("Stopping web server running on %ld", CGET_INT(S_WSS_PORT));
-
-    thread_flag = false;
-    thread_handle.join();
-    mg_mgr_free(&mgr);
+    mg::stop();
 }
 
 QString serialize_uiohook(const uiohook_event *e, const std::string &source_name)
@@ -187,23 +95,16 @@ QString serialize_uiohook(const uiohook_event *e, const std::string &source_name
 
 void dispatch_uiohook_event(const uiohook_event *e, const std::string &source_name)
 {
-    if (!thread_flag)
-        return;
-    std::lock_guard<std::mutex> lock(poll_mutex);
-    if (web_sockets.empty())
-        return;
-    auto json = serialize_uiohook(e, source_name);
-    if (!json.isEmpty())
-        message_queue.emplace_back(qt_to_utf8(json));
+    std::lock_guard<std::mutex> lock(mg::poll_mutex);
+    if (mg::can_queue_message())
+        mg::queue_message(qt_to_utf8(serialize_uiohook(e, source_name)));
 }
 
 void dispatch_gamepad_event(const gamepad::input_event *e, const std::shared_ptr<gamepad::device> &device, bool is_axis,
                             const std::string &source_name)
 {
-    if (!thread_flag)
-        return;
-    std::lock_guard<std::mutex> lock(poll_mutex);
-    if (web_sockets.empty())
+    std::lock_guard<std::mutex> lock(mg::poll_mutex);
+    if (!mg::can_queue_message())
         return;
     QJsonObject obj;
     obj["event_source"] = source_name.c_str();
@@ -219,17 +120,14 @@ void dispatch_gamepad_event(const gamepad::input_event *e, const std::shared_ptr
     QJsonDocument doc(obj);
     QString str(doc.toJson(QJsonDocument::Compact));
 
-    if (!str.isEmpty())
-        message_queue.emplace_back(qt_to_utf8(str));
+    mg::queue_message(qt_to_utf8(str));
 }
 
 void dispatch_gamepad_event(const std::shared_ptr<gamepad::device> &device, const char *state,
                             const std::string &source_name)
 {
-    if (!thread_flag)
-        return;
-    std::lock_guard<std::mutex> lock(poll_mutex);
-    if (web_sockets.empty())
+    std::lock_guard<std::mutex> lock(mg::poll_mutex);
+    if (!mg::can_queue_message())
         return;
     QJsonObject obj;
     obj["event_source"] = source_name.c_str();
@@ -240,8 +138,7 @@ void dispatch_gamepad_event(const std::shared_ptr<gamepad::device> &device, cons
     QJsonDocument doc(obj);
     QString str(doc.toJson(QJsonDocument::Compact));
 
-    if (!str.isEmpty())
-        message_queue.emplace_back(qt_to_utf8(str));
+    mg::queue_message(qt_to_utf8(str));
 }
 
 }

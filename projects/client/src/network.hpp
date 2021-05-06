@@ -22,7 +22,6 @@
 #include <buffer.hpp>
 #include <mutex>
 #include <atomic>
-#include "util.hpp"
 
 #define LISTEN_TIMEOUT 1
 

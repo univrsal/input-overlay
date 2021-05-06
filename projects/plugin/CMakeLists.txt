@@ -96,6 +96,8 @@ set(input-overlay_SOURCES
         src/network/io_server.hpp
         src/network/io_client.cpp
         src/network/io_client.hpp
+        src/network/mg.cpp
+        src/network/mg.hpp
         src/util/config.cpp
         src/util/config.hpp
         src/util/input_filter.cpp

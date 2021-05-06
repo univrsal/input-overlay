@@ -19,7 +19,6 @@
 #pragma once
 
 #include "element_texture.hpp"
-#include <netlib.h>
 
 enum stick_data_type {
     SD_BOTH,
