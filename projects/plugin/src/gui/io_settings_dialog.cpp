@@ -376,6 +376,19 @@ void io_settings_dialog::load_binding_to_ui(const std::shared_ptr<gamepad::cfg::
         auto text_box = findChild<QLineEdit *>(pair.first);
         if (text_box) {
             auto native_value = find_by_code(pair, binding->get_axis_mappings());
+            // if we didn't find anything and this is a DirectInput binding
+            // we'll search for the other trigger side
+            // quite the cluster fuck, but once again DirectInput is trash
+            if (dinput_binding && native_value == -1) {
+                if (pair.second == gamepad::axis::RIGHT_TRIGGER) {
+                    QPair<const char *, uint16_t> lt = {"txt_lt", gamepad::axis::LEFT_TRIGGER};
+                    native_value = find_by_code(lt, binding->get_axis_mappings());
+                } else {
+                    QPair<const char *, uint16_t> lt = {"txt_lt", gamepad::axis::RIGHT_TRIGGER};
+                    native_value = find_by_code(lt, binding->get_axis_mappings());
+                }
+            }
+            
             if (native_value > -1) {
                 QString val = QString::number(native_value);
 
