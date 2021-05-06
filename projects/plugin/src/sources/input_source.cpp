@@ -33,6 +33,15 @@ bool overlay_settings::use_local_input()
     return selected_source.empty() || selected_source == T_LOCAL_SOURCE;
 }
 
+input_source::input_source(obs_source_t *source, obs_data_t *settings) : m_source(source)
+{
+    m_overlay = std::make_unique<overlay>(&m_settings);
+    obs_source_update(m_source, settings);
+    m_settings.image_file = obs_data_get_string(settings, S_OVERLAY_FILE);
+    m_settings.layout_file = obs_data_get_string(settings, S_LAYOUT_FILE);
+    m_overlay->load();
+}
+
 input_source::~input_source() = default;
 
 inline void input_source::update(obs_data_t *settings)

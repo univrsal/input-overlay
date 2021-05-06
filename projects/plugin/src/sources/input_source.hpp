@@ -61,11 +61,7 @@ public:
     std::unique_ptr<overlay> m_overlay{};
     overlay_settings m_settings;
 
-    input_source(obs_source_t *source, obs_data_t *settings) : m_source(source)
-    {
-        m_overlay = std::make_unique<overlay>(&m_settings);
-        obs_source_update(m_source, settings);
-    }
+    input_source(obs_source_t *source, obs_data_t *settings);
 
     ~input_source();
 
