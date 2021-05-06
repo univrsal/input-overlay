@@ -121,10 +121,17 @@ io_settings_dialog::io_settings_dialog(QWidget *parent) : QDialog(parent, Qt::Di
     ui->rb_by_id->setEnabled(io_config::enable_gamepad_hook);
     ui->rb_xinput->setEnabled(io_config::enable_gamepad_hook);
     ui->rb_dinput->setEnabled(io_config::enable_gamepad_hook);
+
+#ifdef _WIN32
     ui->rb_dinput->setChecked(io_config::use_dinput);
     ui->rb_xinput->setChecked(!ui->rb_dinput->isChecked());
+#endif
+
+    // If we set these on all platforms they'll deselect the other radio buttons
+#ifdef __linux__
     ui->rb_js->setChecked(io_config::use_js);
     ui->rb_by_id->setChecked(!ui->rb_js->isChecked());
+#endif
 
 #ifndef _WIN32
     ui->rb_dinput->setVisible(false);
