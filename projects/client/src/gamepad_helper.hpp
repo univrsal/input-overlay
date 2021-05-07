@@ -18,10 +18,12 @@
 
 #pragma once
 #include <libgamepad.hpp>
+#include <buffer.hpp>
 
-namespace gamepad {
-extern std::shared_ptr<hook> hook_instance;
-
+namespace libgamepad {
+extern std::shared_ptr<gamepad::hook> hook_instance;
+extern std::mutex buffer_mutex;
+extern buffer buf;
 extern bool start(uint16_t flags);
 extern void stop();
 }

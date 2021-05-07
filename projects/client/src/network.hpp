@@ -32,7 +32,6 @@ extern std::atomic<bool> network_loop;
 /* Set to true by other threads */
 /* Set to true to prevent other threads from modifying data, which is about to be sent */
 extern buffer buf;
-extern std::mutex buffer_mutex;
 extern std::thread network_thread;
 
 bool init();

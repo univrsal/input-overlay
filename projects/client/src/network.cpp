@@ -21,6 +21,8 @@
 #include "client_util.hpp"
 #include <cstdio>
 
+#include "gamepad_helper.hpp"
+
 namespace network {
 tcp_socket sock = nullptr;
 netlib_socket_set set = nullptr;
@@ -29,7 +31,6 @@ std::atomic<bool> network_loop;
 bool connected = false;
 
 std::thread network_thread;
-std::mutex buffer_mutex;
 
 bool start_connection()
 {
@@ -91,7 +92,23 @@ void network_thread_method()
             }
         }
 
-        buffer_mutex.lock();
+        /* Copy buffered data from hooks */
+        if (util::cfg.monitor_gamepad) {
+            std::lock_guard<std::mutex> lock(libgamepad::buffer_mutex);
+            if (libgamepad::buf.write_pos() > 0) {
+                buf.write(libgamepad::buf.get(), libgamepad::buf.write_pos());
+                libgamepad::buf.reset();
+            }
+        }
+
+        if (util::cfg.monitor_keyboard || util::cfg.monitor_mouse) {
+            std::lock_guard<std::mutex> lock(uiohook::buffer_mutex);
+            if (uiohook::buf.write_pos() > 0) {
+                buf.write(uiohook::buf.get(), uiohook::buf.write_pos());
+                uiohook::buf.reset();
+            }
+        }
+
         /* Reset scroll wheel if no scroll event happened for a bit */
         if (uiohook::last_scroll_time > 0 && util::get_ticks() - uiohook::last_scroll_time >= SCROLL_TIMEOUT) {
             buf.write<uint8_t>(MSG_MOUSE_WHEEL_RESET);
@@ -102,14 +119,12 @@ void network_thread_method()
         if (buf.write_pos() > 0) {
             if (!netlib_tcp_send(sock, buf.get(), buf.write_pos())) {
                 DEBUG_LOG("netlib_tcp_send: %s\n", netlib_get_error());
-                buffer_mutex.unlock();
                 break;
             }
             buf.reset();
         }
 
-        buffer_mutex.unlock();
-        std::this_thread::sleep_for(std::chrono::microseconds(100));
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
 
     DEBUG_LOG("Network loop exited\n");

@@ -187,10 +187,10 @@ void overlay::refresh_data()
         return;
     input_data *source = nullptr;
     std::mutex *m = nullptr;
-
+    std::shared_ptr<network::io_client> client = nullptr; // Holds the reference until we've copied the data
     if (uiohook::state || network::network_flag || libgamepad::state) {
         if (network::server_instance && !m_settings->use_local_input()) {
-            auto client = network::server_instance->get_client(m_settings->selected_source);
+            client = network::server_instance->get_client(m_settings->selected_source);
             if (client && client->valid()) {
                 source = client->get_data();
                 m = &network::mutex;

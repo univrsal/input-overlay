@@ -22,51 +22,55 @@
 #include "client_util.hpp"
 #include <messages.hpp>
 
-namespace gamepad {
+namespace libgamepad {
 
-std::shared_ptr<hook> hook_instance;
+std::shared_ptr<gamepad::hook> hook_instance;
+std::mutex buffer_mutex;
+buffer buf;
 
 bool start(uint16_t flags)
 {
     /* Make sure that the network is established, otherwise we might send device connections too early */
     ::util::sleep_ms(1000);
-    hook_instance = hook::make(flags);
-    hook_instance->set_sleep_time(mcs(600));
-    hook_instance->set_plug_and_play(true, ms(1000));
+    hook_instance = gamepad::hook::make(flags);
+    hook_instance->set_sleep_time(gamepad::mcs(600));
+    hook_instance->set_plug_and_play(true, gamepad::ms(1000));
 
     // try to load bindings, currently the file has to be provided manually
     hook_instance->load_bindings(std::string("./bindings.json"));
 
-    auto input_writer = [](const std::shared_ptr<device> d) {
-        std::lock_guard<std::mutex> lock(network::buffer_mutex);
-        network::buf.write<uint8_t>(network::MSG_GAMEPAD_EVENT);
-        network::buf.write<uint8_t>(d->get_index());
-        network::buf.write<uint8_t>(d->get_buttons().size());
+    auto input_writer = [](const std::shared_ptr<gamepad::device> d) {
+        std::lock_guard<std::mutex> lock(buffer_mutex);
+        buf.write<uint8_t>(network::MSG_GAMEPAD_EVENT);
+        buf.write<uint8_t>(d->get_index());
+        buf.write<uint8_t>(d->get_buttons().size());
         for (const auto &btn : d->get_buttons()) {
-            network::buf.write<uint16_t>(btn.first);
-            network::buf.write<uint16_t>(btn.second);
+            buf.write<uint16_t>(btn.first);
+            buf.write<uint16_t>(btn.second);
         }
 
-        network::buf.write<uint8_t>(d->get_axis().size());
+        buf.write<uint8_t>(d->get_axis().size());
         for (const auto &axis : d->get_axis()) {
-            network::buf.write<uint16_t>(axis.first);
-            network::buf.write<float>(axis.second);
+            buf.write<uint16_t>(axis.first);
+            buf.write<float>(axis.second);
         }
 
-        network::buf.write<uint16_t>(d->last_axis_event()->vc);
-        network::buf.write<float>(d->last_axis_event()->virtual_value);
-        network::buf.write<uint64_t>(d->last_axis_event()->time);
-        network::buf.write<uint16_t>(d->last_button_event()->vc);
-        network::buf.write<float>(d->last_button_event()->virtual_value);
-        network::buf.write<uint64_t>(d->last_button_event()->time);
+        buf.write<uint16_t>(d->last_axis_event()->vc);
+        buf.write<float>(d->last_axis_event()->virtual_value);
+        buf.write<uint64_t>(d->last_axis_event()->time);
+        buf.write<uint16_t>(d->last_button_event()->vc);
+        buf.write<float>(d->last_button_event()->virtual_value);
+        buf.write<uint64_t>(d->last_button_event()->time);
     };
 
-    auto event_writer = [](const std::shared_ptr<device> &d, network::message m) {
-        std::lock_guard<std::mutex> lock(network::buffer_mutex);
-        network::buf.write<uint8_t>(m);
-        network::buf.write<uint8_t>(d->get_index());
-        network::buf.write<uint16_t>(d->get_id().length());
-        network::buf.write(d->get_id().c_str(), d->get_id().length());
+    auto event_writer = [](const std::shared_ptr<gamepad::device> &d, network::message m) {
+        {
+            std::lock_guard<std::mutex> lock(buffer_mutex);
+            buf.write<uint8_t>(m);
+            buf.write<uint8_t>(d->get_index());
+            buf.write<uint16_t>(d->get_id().length());
+            buf.write(d->get_id().c_str(), d->get_id().length());
+        }
 
         const char *state;
         switch (m) {
@@ -85,11 +89,13 @@ bool start(uint16_t flags)
     hook_instance->set_axis_event_handler(input_writer);
     hook_instance->set_button_event_handler(input_writer);
     hook_instance->set_connect_event_handler(
-        [event_writer](const std::shared_ptr<device> &d) { event_writer(d, network::MSG_GAMEPAD_CONNECTED); });
-    hook_instance->set_reconnect_event_handler(
-        [event_writer](const std::shared_ptr<device> &d) { event_writer(d, network::MSG_GAMEPAD_RECONNECTED); });
-    hook_instance->set_disconnect_event_handler(
-        [event_writer](const std::shared_ptr<device> &d) { event_writer(d, network::MSG_GAMEPAD_DISCONNECTED); });
+        [event_writer](const std::shared_ptr<gamepad::device> &d) { event_writer(d, network::MSG_GAMEPAD_CONNECTED); });
+    hook_instance->set_reconnect_event_handler([event_writer](const std::shared_ptr<gamepad::device> &d) {
+        event_writer(d, network::MSG_GAMEPAD_RECONNECTED);
+    });
+    hook_instance->set_disconnect_event_handler([event_writer](const std::shared_ptr<gamepad::device> &d) {
+        event_writer(d, network::MSG_GAMEPAD_DISCONNECTED);
+    });
     return hook_instance->start();
 }
 

@@ -19,6 +19,8 @@
 #pragma once
 #include <uiohook.h>
 #include <atomic>
+#include <mutex>
+#include <buffer.hpp>
 
 #define SCROLL_TIMEOUT 120
 namespace uiohook {
@@ -36,6 +38,8 @@ inline uint16_t util_mouse_fix(int m)
 }
 
 extern std::atomic<bool> hook_state;
+extern std::mutex buffer_mutex;
+extern buffer buf;
 bool logger_proc(unsigned level, const char *format, ...);
 
 void dispatch_proc(uiohook_event *event);

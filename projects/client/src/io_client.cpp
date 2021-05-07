@@ -63,7 +63,7 @@ int main(int argc, char **argv)
     }
 
     if (util::cfg.monitor_gamepad) {
-        if (!gamepad::start(util::cfg.gamepad_hook_type)) {
+        if (!libgamepad::start(util::cfg.gamepad_hook_type)) {
             printf("Gamepad hook initialization failed!\n");
             return util::RET_GAMEPAD_INIT;
         }

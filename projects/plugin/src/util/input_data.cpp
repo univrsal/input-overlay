@@ -63,6 +63,7 @@ void input_data::dispatch_uiohook_event(const uiohook_event *event)
         break;
     case EVENT_MOUSE_WHEEL:
         last_wheel_event = event->data.wheel;
+        binfo("WEEEE");
         break;
     case EVENT_MOUSE_PRESSED:
         last_mouse_pressed = event->data.mouse;

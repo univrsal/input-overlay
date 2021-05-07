@@ -26,6 +26,8 @@
 namespace uiohook {
 uint32_t last_scroll_time;
 std::atomic<bool> hook_state;
+std::mutex buffer_mutex;
+buffer buf;
 
 bool logger_proc(unsigned level, const char *format, ...)
 {
@@ -57,7 +59,7 @@ bool logger_proc(unsigned level, const char *format, ...)
 
 void dispatch_proc(uiohook_event *const event)
 {
-    std::lock_guard<std::mutex> lock(network::buffer_mutex);
+    std::lock_guard<std::mutex> lock(buffer_mutex);
     switch (event->type) {
     case EVENT_HOOK_ENABLED:
         DEBUG_LOG("uiohook started\n");
@@ -70,30 +72,30 @@ void dispatch_proc(uiohook_event *const event)
     case EVENT_MOUSE_PRESSED:
     case EVENT_MOUSE_RELEASED:
         if (util::cfg.monitor_mouse) {
-            network::buf.write<uint8_t>(network::MSG_UIOHOOK_EVENT);
-            network::buf.write<uiohook_event>(*event);
+            buf.write<uint8_t>(network::MSG_UIOHOOK_EVENT);
+            buf.write<uiohook_event>(*event);
         }
         break;
     case EVENT_MOUSE_WHEEL:
         if (util::cfg.monitor_mouse) {
             last_scroll_time = util::get_ticks();
-            network::buf.write<uint8_t>(network::MSG_UIOHOOK_EVENT);
-            network::buf.write<uiohook_event>(*event);
+            buf.write<uint8_t>(network::MSG_UIOHOOK_EVENT);
+            buf.write<uiohook_event>(*event);
         }
         break;
     case EVENT_MOUSE_MOVED:
     case EVENT_MOUSE_DRAGGED:
         if (util::cfg.monitor_mouse) {
-            network::buf.write<uint8_t>(network::MSG_UIOHOOK_EVENT);
-            network::buf.write<uiohook_event>(*event);
+            buf.write<uint8_t>(network::MSG_UIOHOOK_EVENT);
+            buf.write<uiohook_event>(*event);
         }
         break;
     case EVENT_KEY_TYPED:
     case EVENT_KEY_PRESSED:
     case EVENT_KEY_RELEASED:
         if (util::cfg.monitor_keyboard) {
-            network::buf.write<uint8_t>(network::MSG_UIOHOOK_EVENT);
-            network::buf.write<uiohook_event>(*event);
+            buf.write<uint8_t>(network::MSG_UIOHOOK_EVENT);
+            buf.write<uiohook_event>(*event);
         }
         break;
     default:;
