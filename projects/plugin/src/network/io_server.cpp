@@ -158,7 +158,7 @@ void io_server::round_trip()
 
     if (!m_clients.empty()) {
         const auto old = server_instance->num_clients();
-        const auto it = std::remove_if(m_clients.begin(), m_clients.end(), [](const std::unique_ptr<io_client> &o) {
+        const auto it = std::remove_if(m_clients.begin(), m_clients.end(), [](const std::shared_ptr<io_client> &o) {
             if (!o->valid()) {
                 binfo("%s disconnected.", o->name());
                 return true;
@@ -182,11 +182,11 @@ void io_server::round_trip()
     mutex.unlock();
 }
 
-io_client *io_server::get_client(const std::string &id)
+std::shared_ptr<io_client> io_server::get_client(const std::string &id)
 {
     for (auto &client : m_clients) {
         if (client->name() == id)
-            return client.get();
+            return client;
     }
     return nullptr;
 }

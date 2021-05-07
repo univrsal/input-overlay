@@ -56,11 +56,11 @@ public:
      */
     void round_trip();
 
-    io_client *get_client(const std::string &id);
+    std::shared_ptr<io_client> get_client(const std::string &id);
 
     int num_clients() { return static_cast<int>(m_clients.size()); }
 
-    std::vector<std::unique_ptr<io_client>> &clients() { return m_clients; }
+    std::vector<std::shared_ptr<io_client>> &clients() { return m_clients; }
 
     std::shared_ptr<gamepad::device> get_client_device_by_id(const std::string &client_id,
                                                              const std::string &device_id);
@@ -77,7 +77,7 @@ private:
     bool m_clients_changed = false; /* Set to true on connection/disconnect and false after get_clients() */
     ip_address m_ip{};
     tcp_socket m_server;
-    std::vector<std::unique_ptr<io_client>> m_clients; /* map client name to client instance */
+    std::vector<std::shared_ptr<io_client>> m_clients; /* map client name to client instance */
     size_t m_last_client_count = 0;
 };
 }

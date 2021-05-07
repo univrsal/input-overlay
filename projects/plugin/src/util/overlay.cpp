@@ -190,8 +190,11 @@ void overlay::refresh_data()
 
     if (uiohook::state || network::network_flag || libgamepad::state) {
         if (network::server_instance && !m_settings->use_local_input()) {
-            source = network::server_instance->get_client(m_settings->selected_source)->get_data();
-            m = &network::mutex;
+            auto client = network::server_instance->get_client(m_settings->selected_source);
+            if (client->valid()) {
+                source = client->get_data();
+                m = &network::mutex;
+            }
         } else {
             source = &local_data::data;
             m = &local_data::data_mutex;
