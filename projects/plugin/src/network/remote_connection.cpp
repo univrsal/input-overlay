@@ -98,7 +98,7 @@ void network_handler()
         }
 
         if (!numready) {
-            os_sleep_ms(LISTEN_TIMEOUT); /* Should be fast enough */
+            os_sleepto_ns(100000); /* Should be fast enough */
             continue;
         }
 

@@ -78,5 +78,6 @@ private:
     ip_address m_ip{};
     tcp_socket m_server;
     std::vector<std::unique_ptr<io_client>> m_clients; /* map client name to client instance */
+    size_t m_last_client_count = 0;
 };
 }

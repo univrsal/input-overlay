@@ -92,6 +92,8 @@ void io_server::update_clients()
                 continue;
             }
 
+            binfo("Received %i bytes", read);
+
             auto msg = read_msg_from_buffer(m_buffer);
             while (msg != MSG_INVALID && m_buffer.read_pos() < read) {
                 switch (msg) {
@@ -244,10 +246,13 @@ void io_server::fix_name(char *name)
 
 bool io_server::create_sockets()
 {
+    if (sockets && m_last_client_count == num_clients())
+        return true; // No reason to reallocate
     if (sockets)
         netlib_free_socket_set(sockets);
 
     sockets = netlib_alloc_socket_set(num_clients() + 1);
+    m_last_client_count = num_clients();
     if (!sockets) {
         berr("netlib_alloc_socket_set failed with %i clients.", num_clients() + 1);
         network_flag = false;
