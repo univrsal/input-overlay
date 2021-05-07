@@ -218,6 +218,8 @@ void overlay::refresh_data()
             }
             m->lock();
             m_settings->data.copy(source);
+            if (uiohook::state)
+                uiohook::check_wheel();
             m->unlock();
         } else {
             m->lock();

@@ -23,7 +23,7 @@
 #include <netlib.h>
 #include <uiohook.h>
 #include <util/platform.h>
-#define SCROLL_TIMEOUT 120
+#define SCROLL_TIMEOUT 120000000
 
 namespace uiohook {
 extern uint64_t last_scroll_time;
@@ -44,7 +44,6 @@ inline void process_event(uiohook_event *event)
     if (event->type == EVENT_MOUSE_WHEEL)
         last_scroll_time = os_gettime_ns();
     wss::dispatch_uiohook_event(event, "local");
-    check_wheel();
 }
 
 void start();
