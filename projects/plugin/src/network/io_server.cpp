@@ -92,8 +92,6 @@ void io_server::update_clients()
                 continue;
             }
 
-            binfo("Received %i bytes", read);
-
             auto msg = read_msg_from_buffer(m_buffer);
             while (msg != MSG_INVALID && m_buffer.read_pos() < read) {
                 switch (msg) {
