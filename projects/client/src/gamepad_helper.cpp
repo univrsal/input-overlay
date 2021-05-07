@@ -31,20 +31,34 @@ bool start(uint16_t flags)
     /* Make sure that the network is established, otherwise we might send device connections too early */
     ::util::sleep_ms(1000);
     hook_instance = hook::make(flags);
-    hook_instance->set_sleep_time(mcs(1000));
+    hook_instance->set_sleep_time(mcs(600));
     hook_instance->set_plug_and_play(true, ms(1000));
 
     // try to load bindings, currently the file has to be provided manually
     hook_instance->load_bindings(std::string("./bindings.json"));
 
-    auto input_writer = [](const gamepad::input_event *e, uint8_t dev_idx, bool is_axis) {
+    auto input_writer = [](const std::shared_ptr<device> d) {
         std::lock_guard<std::mutex> lock(network::buffer_mutex);
         network::buf.write<uint8_t>(network::MSG_GAMEPAD_EVENT);
-        network::buf.write<uint8_t>(dev_idx);
-        network::buf.write<uint8_t>(is_axis);
-        network::buf.write<uint16_t>(e->vc);
-        network::buf.write<float>(e->virtual_value);
-        network::buf.write<uint64_t>(e->time);
+        network::buf.write<uint8_t>(d->get_index());
+        network::buf.write<uint8_t>(d->get_buttons().size());
+        for (const auto &btn : d->get_buttons()) {
+            network::buf.write<uint16_t>(btn.first);
+            network::buf.write<uint16_t>(btn.second);
+        }
+
+        network::buf.write<uint8_t>(d->get_axis().size());
+        for (const auto &axis : d->get_axis()) {
+            network::buf.write<uint16_t>(axis.first);
+            network::buf.write<float>(axis.second);
+        }
+
+        network::buf.write<uint16_t>(d->last_axis_event()->vc);
+        network::buf.write<float>(d->last_axis_event()->virtual_value);
+        network::buf.write<uint64_t>(d->last_axis_event()->time);
+        network::buf.write<uint16_t>(d->last_button_event()->vc);
+        network::buf.write<float>(d->last_button_event()->virtual_value);
+        network::buf.write<uint64_t>(d->last_button_event()->time);
     };
 
     auto event_writer = [](const std::shared_ptr<device> &d, network::message m) {
@@ -68,11 +82,8 @@ bool start(uint16_t flags)
         DEBUG_LOG("Device '%s' %s\n", d->get_id().c_str(), state);
     };
 
-    hook_instance->set_axis_event_handler(
-        [input_writer](const std::shared_ptr<device> &d) { input_writer(d->last_axis_event(), d->get_index(), true); });
-    hook_instance->set_button_event_handler([input_writer](const std::shared_ptr<device> &d) {
-        input_writer(d->last_button_event(), d->get_index(), false);
-    });
+    hook_instance->set_axis_event_handler(input_writer);
+    hook_instance->set_button_event_handler(input_writer);
     hook_instance->set_connect_event_handler(
         [event_writer](const std::shared_ptr<device> &d) { event_writer(d, network::MSG_GAMEPAD_CONNECTED); });
     hook_instance->set_reconnect_event_handler(

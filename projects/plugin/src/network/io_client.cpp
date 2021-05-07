@@ -166,34 +166,78 @@ bool io_client::dispatch_gamepad_input(buffer &buf)
     }
     auto pad = m_gamepads.find(*index);
 
-    if (pad == m_gamepads.end()) {
-        berr("'%s' received gamepad input events for non existing gamepad (id %i)", m_name.c_str(), *index);
-        return false;
-    } else {
-        gamepad::input_event *output;
-        auto *is_axis = buf.read<uint8_t>();
+    auto read_buttons = [&] {
+        auto *count = buf.read<uint8_t>();
+        auto &buttons = pad->second->get_buttons();
+        bool result = true;
+        if (count) {
+            for (int i = 0; i < *count; i++) {
+                auto *vc = buf.read<uint16_t>();
+                auto *vv = buf.read<uint16_t>();
+                if (vc && vv) {
+                    buttons[*vc] = *vv;
+                } else {
+                    result = false;
+                    break;
+                }
+            }
+        }
+        return result;
+    };
+
+    auto read_axis = [&] {
+        auto *count = buf.read<uint8_t>();
+        auto &axis = pad->second->get_axis();
+        bool result = true;
+        if (count) {
+            for (int i = 0; i < *count; i++) {
+                auto *vc = buf.read<uint16_t>();
+                auto *vv = buf.read<float>();
+                if (vc && vv) {
+                    axis[*vc] = *vv;
+                } else {
+                    result = false;
+                    break;
+                }
+            }
+        }
+        return result;
+    };
+
+    auto handle_last_event = [&](gamepad::input_event *output, bool is_axis) {
         auto *vc = buf.read<uint16_t>();
         auto *vv = buf.read<float>();
         auto *time = buf.read<uint64_t>();
 
-        if (is_axis && vc && vv && time) {
-            if (*is_axis) {
-                output = pad->second->last_axis_event();
-                pad->second->get_axis()[*vc] = *vv;
-            } else {
-                output = pad->second->last_button_event();
-                pad->second->get_buttons()[*vc] = *vv;
+        if (vc && vv && time) {
+            if (*time > output->time) {
+                output->virtual_value = *vv;
+                output->vc = *vc;
+                output->time = *time;
+                wss::dispatch_gamepad_event(output, pad->second, is_axis, m_name.c_str());
             }
-            output->vc = *vc;
-            output->virtual_value = *vv;
-            output->time = *time;
-
-            wss::dispatch_gamepad_event(output, pad->second, *is_axis, m_name);
-        } else {
-            berr("Couldn't read gamepad event body.");
-            return false;
+            return true;
         }
+        return false;
+    };
+
+    if (pad == m_gamepads.end()) {
+        berr("'%s' received gamepad input events for non existing gamepad (id %i)", m_name.c_str(), *index);
+        return false;
     }
-    return true;
+
+    gamepad::input_event *output;
+    if (!read_buttons() || !read_axis()) {
+        berr("'%s' received invalid gamepad package (id %i)", m_name.c_str(), *index);
+        return false;
+    }
+
+    if (handle_last_event(pad->second->last_axis_event(), true) &&
+        handle_last_event(pad->second->last_button_event(), false)) {
+        return true;
+    }
+
+    berr("Couldn't read gamepad last events.");
+    return false;
 }
 }

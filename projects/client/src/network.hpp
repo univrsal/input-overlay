@@ -23,8 +23,6 @@
 #include <mutex>
 #include <atomic>
 
-#define LISTEN_TIMEOUT 1
-
 namespace network {
 extern tcp_socket sock;
 extern netlib_socket_set set;

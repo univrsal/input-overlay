@@ -78,15 +78,20 @@ void start_thread()
 
 void network_thread_method()
 {
+    int listen_counter = 0;
+
     while (network_loop) {
-        if (!listen()) /* Has a timeout of 25ms*/
-        {
-            DEBUG_LOG("Received quit signal\n");
-            network_loop = false; // The rest will be taken care of in the main thread
-            break;
+        if (++listen_counter >= 10000) {
+            listen_counter = 0;
+            if (!listen()) /* Has a timeout of 1ms*/
+            {
+                DEBUG_LOG("Received quit signal\n");
+                network_loop = false; // The rest will be taken care of in the main thread
+                break;
+            }
         }
 
-        std::lock_guard<std::mutex> lock(buffer_mutex);
+        buffer_mutex.lock();
         /* Reset scroll wheel if no scroll event happened for a bit */
         if (uiohook::last_scroll_time > 0 && util::get_ticks() - uiohook::last_scroll_time >= SCROLL_TIMEOUT) {
             buf.write<uint8_t>(MSG_MOUSE_WHEEL_RESET);
@@ -94,13 +99,15 @@ void network_thread_method()
 
         /* Send any data written to the buffer */
         if (buf.write_pos() > 0) {
-
             if (!netlib_tcp_send(sock, buf.get(), buf.write_pos())) {
                 DEBUG_LOG("netlib_tcp_send: %s\n", netlib_get_error());
                 break;
             }
             buf.reset();
         }
+
+        buffer_mutex.unlock();
+        std::this_thread::sleep_for(std::chrono::microseconds(100));
     }
 
     DEBUG_LOG("Network loop exited\n");
@@ -113,7 +120,7 @@ void network_thread_method()
 int numready = 0;
 bool listen()
 {
-    numready = netlib_check_socket_set(set, LISTEN_TIMEOUT);
+    numready = netlib_check_socket_set(set, 0);
 
     if (numready == -1) {
         DEBUG_LOG("netlib_check_socket_set failed: %s\n", netlib_get_error());
