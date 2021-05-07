@@ -41,21 +41,25 @@ inline int get_direction(std::map<uint16_t, bool> &buttons)
             return element_dpad::TEXTURE_TOP_LEFT;
         if (buttons[gamepad::button::DPAD_RIGHT])
             return element_dpad::TEXTURE_TOP_RIGHT;
+        return element_dpad::TEXTURE_UP;
     } else if (buttons[gamepad::button::DPAD_DOWN]) {
         if (buttons[gamepad::button::DPAD_LEFT])
             return element_dpad::TEXTURE_BOTTOM_LEFT;
         if (buttons[gamepad::button::DPAD_RIGHT])
             return element_dpad::TEXTURE_BOTTOM_RIGHT;
+        return element_dpad::TEXTURE_DOWN;
     } else if (buttons[gamepad::button::DPAD_RIGHT]) {
         if (buttons[gamepad::button::DPAD_UP])
             return element_dpad::TEXTURE_TOP_RIGHT;
         if (buttons[gamepad::button::DPAD_DOWN])
             return element_dpad::TEXTURE_BOTTOM_RIGHT;
+        return element_dpad::TEXTURE_RIGHT;
     } else if (buttons[gamepad::button::DPAD_LEFT]) {
         if (buttons[gamepad::button::DPAD_UP])
             return element_dpad::TEXTURE_TOP_LEFT;
         if (buttons[gamepad::button::DPAD_DOWN])
             return element_dpad::TEXTURE_BOTTOM_LEFT;
+        return element_dpad::TEXTURE_LEFT;
     }
     return -1;
 }
