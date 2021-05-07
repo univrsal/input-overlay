@@ -4,6 +4,11 @@ about: Create a report to help us improve
 
 ---
 
+PLEASE FILL THIS OUT CORRECTLY OR THE ISSUE WILL BE CLOSED
+
+(You can remove this text after you've filled out the form)
+
+
 **Describe the bug**
 A clear and concise description of what the bug is.
 
