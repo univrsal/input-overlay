@@ -186,27 +186,43 @@ void overlay::refresh_data()
     if (io_config::io_window_filters.input_blocked())
         return;
     input_data *source = nullptr;
-    std::lock_guard<std::mutex> lck1(local_data::data_mutex);
-    std::lock_guard<std::mutex> lck2(network::mutex);
+    std::mutex *m = nullptr;
 
     if (uiohook::state || network::network_flag || libgamepad::state) {
         if (network::server_instance && !m_settings->use_local_input()) {
             source = network::server_instance->get_client(m_settings->selected_source)->get_data();
+            m = &network::mutex;
         } else {
             source = &local_data::data;
+            m = &local_data::data_mutex;
         }
     }
 
     if (source) {
-        if (m_settings->gamepad) {
-            libgamepad::hook_instance->get_mutex()->lock();
-            source->last_axis_event = *m_settings->gamepad->last_axis_event();
-            source->last_button_event = *m_settings->gamepad->last_button_event();
-            source->gamepad_axis = m_settings->gamepad->get_axis();
-            source->gamepad_buttons = m_settings->gamepad->get_buttons();
-            libgamepad::hook_instance->get_mutex()->unlock();
+        // copy over data from gamepad into the input data structure
+        auto copy = [](input_data *source, std::shared_ptr<gamepad::device> d) {
+            source->last_axis_event = *d->last_axis_event();
+            source->last_button_event = *d->last_button_event();
+            source->gamepad_axis = d->get_axis();
+            source->gamepad_buttons = d->get_buttons();
+        };
+
+        if (libgamepad::hook_instance && m_settings->use_local_input()) {
+            if (m_settings->gamepad) {
+                libgamepad::hook_instance->get_mutex()->lock();
+                copy(source, m_settings->gamepad);
+                libgamepad::hook_instance->get_mutex()->unlock();
+            }
+            m->lock();
+            m_settings->data.copy(source);
+            m->unlock();
+        } else {
+            m->lock();
+            if (m_settings->gamepad)
+                copy(source, m_settings->gamepad);
+            m_settings->data.copy(source);
+            m->unlock();
         }
-        m_settings->data.copy(source);
     }
 }
 
