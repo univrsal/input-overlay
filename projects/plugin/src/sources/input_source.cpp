@@ -81,19 +81,23 @@ inline void input_source::tick(float seconds)
         m_overlay->refresh_data();
 
     // If we don't have a gamepad check periodically to see if it has been connected
-    if (m_settings.layout_flags & OF_GAMEPAD && !m_settings.gamepad) {
-        m_settings.gamepad_check_timer += seconds;
-        if (m_settings.gamepad_check_timer >= 1) {
-            if (m_settings.use_local_input() && libgamepad::hook_instance) {
-                libgamepad::hook_instance->get_mutex()->lock();
-                m_settings.gamepad = libgamepad::hook_instance->get_device_by_id(m_settings.gamepad_id);
-                libgamepad::hook_instance->get_mutex()->unlock();
-            } else if (network::network_flag) {
-                std::lock_guard<std::mutex> lock(network::mutex);
-                m_settings.gamepad = network::server_instance->get_client_device_by_id(m_settings.selected_source,
-                                                                                       m_settings.gamepad_id);
+    if (m_settings.layout_flags & OF_GAMEPAD) {
+        if (m_settings.gamepad && !m_settings.gamepad->is_valid()) {
+            m_settings.gamepad = nullptr; // don't hold onto invalid references
+        } else {
+            m_settings.gamepad_check_timer += seconds;
+            if (m_settings.gamepad_check_timer >= 1) {
+                if (m_settings.use_local_input() && libgamepad::hook_instance) {
+                    libgamepad::hook_instance->get_mutex()->lock();
+                    m_settings.gamepad = libgamepad::hook_instance->get_device_by_id(m_settings.gamepad_id);
+                    libgamepad::hook_instance->get_mutex()->unlock();
+                } else if (network::network_flag) {
+                    std::lock_guard<std::mutex> lock(network::mutex);
+                    m_settings.gamepad = network::server_instance->get_client_device_by_id(m_settings.selected_source,
+                                                                                           m_settings.gamepad_id);
+                }
+                m_settings.gamepad_check_timer = 0.0f;
             }
-            m_settings.gamepad_check_timer = 0.0f;
         }
     }
 }

@@ -31,6 +31,8 @@ io_client::io_client(const std::string &name, tcp_socket socket) : m_holder()
 io_client::~io_client()
 {
     netlib_tcp_close(m_socket);
+    for (auto &pad : m_gamepads)
+        pad.second->invalidate();
 }
 
 tcp_socket io_client::socket() const
