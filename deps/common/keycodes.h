@@ -37,10 +37,6 @@
 #define VC_MOUSE_BUTTON4    (MOUSE_BUTTON4 | VC_MOUSE_MASK)
 #define VC_MOUSE_BUTTON5    (MOUSE_BUTTON5 | VC_MOUSE_MASK)
 
-/* These are used for Command mode */
-#define CHAR_BACK           0x8
-#define CHAR_ENTER          0xD
-
 /* Gamepad constants */
 #define VC_PAD_MASK         0xEC00u /* 'u' for unsigned to fix clang tidy warning */
 #define VC_STICK_DATA       0xEC30u
