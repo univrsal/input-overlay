@@ -22,8 +22,8 @@ void start_pad_hook()
     flags = io_config::use_js ? gamepad::hook_type::JS : gamepad::hook_type::BY_ID;
     flags |= io_config::use_dinput ? gamepad::hook_type::DIRECT_INPUT : gamepad::hook_type::NATIVE_DEFAULT;
     hook_instance = gamepad::hook::make(flags);
-    hook_instance->set_plug_and_play(true);
-    hook_instance->set_sleep_time(1); // 1ms should be fast enough to prevent events from queueing up
+    hook_instance->set_plug_and_play(true, gamepad::ms(1000));
+    hook_instance->set_sleep_time(gamepad::mcs(1000)); // todo: maybe change to 0.1 ms
 
 #if defined(WIN32)
     binfo("Using '%s' gamepad backend", flags & gamepad::hook_type::DIRECT_INPUT ? "Direct Input" : "XInput");

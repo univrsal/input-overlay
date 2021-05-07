@@ -29,10 +29,10 @@ std::shared_ptr<hook> hook_instance;
 bool start(uint16_t flags)
 {
     /* Make sure that the network is established, otherwise we might send device connections too early */
-    ::util::sleep_ms(500);
+    ::util::sleep_ms(1000);
     hook_instance = hook::make(flags);
-    hook_instance->set_sleep_time(1);
-    hook_instance->set_plug_and_play(true);
+    hook_instance->set_sleep_time(mcs(1000));
+    hook_instance->set_plug_and_play(true, ms(1000));
 
     // try to load bindings, currently the file has to be provided manually
     hook_instance->load_bindings(std::string("./bindings.json"));
@@ -54,7 +54,7 @@ bool start(uint16_t flags)
         network::buf.write<uint16_t>(d->get_id().length());
         network::buf.write(d->get_id().c_str(), d->get_id().length());
 
-        const char *state = "";
+        const char *state;
         switch (m) {
         case network::MSG_GAMEPAD_DISCONNECTED:
             state = "disconnected";
