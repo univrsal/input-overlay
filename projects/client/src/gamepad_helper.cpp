@@ -33,8 +33,8 @@ bool start(uint16_t flags)
     /* Make sure that the network is established, otherwise we might send device connections too early */
     ::util::sleep_ms(1000);
     hook_instance = gamepad::hook::make(flags);
-    hook_instance->set_sleep_time(gamepad::mcs(600));
     hook_instance->set_plug_and_play(true, gamepad::ms(1000));
+    hook_instance->set_sleep_time(gamepad::mcs(600));
 
     // try to load bindings, currently the file has to be provided manually
     hook_instance->load_bindings(std::string("./bindings.json"));

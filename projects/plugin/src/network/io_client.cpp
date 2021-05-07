@@ -87,6 +87,7 @@ bool io_client::read_event(buffer &buf, const message msg)
             binfo("'%s' (id %i) reconnected to '%s'", name.c_str(), *index, m_name.c_str());
             existing_pad->set_index(*index);
             existing_pad->set_id(name);
+            existing_pad->set_valid();
             wss::dispatch_gamepad_event(existing_pad, WSS_PAD_RECONNECTED, m_name);
         } else {
             binfo("'%s' (id %i) connected to '%s'", name.c_str(), *index, m_name.c_str());
@@ -105,6 +106,7 @@ bool io_client::read_event(buffer &buf, const message msg)
             if (pad) {
                 // We just keep devices in the list so we don't have to do anything here
                 binfo("'%s' (id %i) reconnected to '%s'", name.c_str(), *index, m_name.c_str());
+                pad->set_valid();
                 wss::dispatch_gamepad_event(pad, WSS_PAD_CONNECTED, m_name);
             } else {
                 berr("Received reconnect event from '%s' with invalid gamepad name '%s' (id %i)", m_name.c_str(),
