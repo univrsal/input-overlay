@@ -36,7 +36,7 @@ void input_data::copy(const input_data *other)
     last_mouse_pressed = other->last_mouse_pressed;
     last_mouse_dragged = other->last_mouse_dragged;
     last_mouse_movement = other->last_mouse_movement;
-    last_mouse_pressed = other->last_mouse_pressed;
+    last_wheel_event = other->last_wheel_event;
     last_mouse_released = other->last_mouse_released;
     last_axis_event = other->last_axis_event;
     last_button_event = other->last_button_event;
@@ -80,6 +80,7 @@ void input_data::dispatch_uiohook_event(const uiohook_event *event)
         break;
     case EVENT_MOUSE_MOVED:
         last_mouse_movement = event->data.mouse;
+        break;
     default:;
     }
 }

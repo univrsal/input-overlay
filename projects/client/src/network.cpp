@@ -95,12 +95,14 @@ void network_thread_method()
         /* Reset scroll wheel if no scroll event happened for a bit */
         if (uiohook::last_scroll_time > 0 && util::get_ticks() - uiohook::last_scroll_time >= SCROLL_TIMEOUT) {
             buf.write<uint8_t>(MSG_MOUSE_WHEEL_RESET);
+            uiohook::last_scroll_time = 0;
         }
 
         /* Send any data written to the buffer */
         if (buf.write_pos() > 0) {
             if (!netlib_tcp_send(sock, buf.get(), buf.write_pos())) {
                 DEBUG_LOG("netlib_tcp_send: %s\n", netlib_get_error());
+                buffer_mutex.unlock();
                 break;
             }
             buf.reset();

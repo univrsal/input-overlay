@@ -132,6 +132,10 @@ bool io_client::read_event(buffer &buf, const message msg)
             flag = false;
             berr("Couldn't read gamepad device index");
         }
+    } else if (msg == MSG_MOUSE_WHEEL_RESET) {
+        m_holder.m_mutex.lock();
+        m_holder.last_wheel_event = {};
+        m_holder.m_mutex.unlock();
     }
 
     if (!flag)

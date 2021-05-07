@@ -93,18 +93,16 @@ void io_server::update_clients()
             }
 
             auto msg = read_msg_from_buffer(m_buffer);
-            while (msg != MSG_INVALID && m_buffer.read_pos() < read) {
+            while (msg != MSG_INVALID) {
                 switch (msg) {
                 case MSG_UIOHOOK_EVENT:
                 case MSG_GAMEPAD_EVENT:
                 case MSG_GAMEPAD_CONNECTED:
                 case MSG_GAMEPAD_RECONNECTED:
                 case MSG_GAMEPAD_DISCONNECTED:
+                case MSG_MOUSE_WHEEL_RESET:
                     if (!client->read_event(m_buffer, msg))
                         berr("Failed to receive event data from %s.", client->name());
-                    break;
-                case MSG_MOUSE_WHEEL_RESET:
-                    client->get_data()->last_wheel_event = {};
                     break;
                 case MSG_CLIENT_DC:
                     client->mark_invalid();
@@ -114,6 +112,8 @@ void io_server::update_clients()
                 case MSG_INVALID:
                     break;
                 }
+                if (m_buffer.read_pos() < read)
+                    break;
                 msg = read_msg_from_buffer(m_buffer);
             }
         }
