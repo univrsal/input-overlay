@@ -49,12 +49,10 @@ void input_data::dispatch_uiohook_event(const uiohook_event *event)
 
     switch (event->type) {
     case EVENT_KEY_PRESSED:
-        bdebug("Key pressed: 0x%X", event->data.keyboard.keycode);
         last_key_pressed = event->data.keyboard;
         keyboard[event->data.keyboard.keycode] = true;
         break;
     case EVENT_KEY_RELEASED:
-        bdebug("Key released: 0x%X", event->data.keyboard.keycode);
         last_key_released = event->data.keyboard;
         keyboard[event->data.keyboard.keycode] = false;
         break;
@@ -63,7 +61,6 @@ void input_data::dispatch_uiohook_event(const uiohook_event *event)
         break;
     case EVENT_MOUSE_WHEEL:
         last_wheel_event = event->data.wheel;
-        binfo("WEEEE");
         break;
     case EVENT_MOUSE_PRESSED:
         last_mouse_pressed = event->data.mouse;
