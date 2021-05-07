@@ -174,6 +174,15 @@ void overlay::draw(gs_effect_t *effect)
     }
 }
 
+void overlay::tick(float seconds)
+{
+    if (m_is_loaded) {
+        for (auto const &element : m_elements) {
+            element->tick(seconds, m_settings);
+        }
+    }
+}
+
 void overlay::refresh_data()
 {
     /* This copies over necessary input data information

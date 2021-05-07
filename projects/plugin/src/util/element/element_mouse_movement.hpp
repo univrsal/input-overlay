@@ -29,6 +29,8 @@ public:
 
     void draw(gs_effect_t *effect, gs_image_file_t *image, sources::overlay_settings *settings) override;
 
+    void tick(float seconds, sources::overlay_settings *settings) override;
+
 private:
     float get_mouse_angle(sources::overlay_settings *settings);
     void get_mouse_offset(sources::overlay_settings *settings, const vec2 &center, vec2 &out,
@@ -37,5 +39,5 @@ private:
     vec2 m_offset_pos = {};
     uint8_t m_radius = 0;
     int m_last_x{}, m_last_y{};
-    float m_last_angle = 0.0f;
+    float m_angle{}, m_last_angle = 0.0f;
 };

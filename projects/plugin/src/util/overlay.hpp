@@ -39,6 +39,7 @@ public:
     bool load();
     void unload();
     void draw(gs_effect_t *effect);
+    void tick(float seconds);
     void refresh_data();
     bool is_loaded() const { return m_is_loaded; }
     gs_image_file_t *get_texture() const { return m_image; }

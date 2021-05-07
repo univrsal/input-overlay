@@ -45,6 +45,8 @@ public:
 
     uint16_t get_keycode() const;
 
+    virtual void tick(float seconds, sources::overlay_settings *settings) {}
+
 protected:
     void read_mapping(const QJsonObject &obj);
 

@@ -27,18 +27,28 @@ void element_mouse_movement::load(const QJsonObject &obj)
 {
     element_texture::load(obj);
     m_radius = static_cast<uint8_t>(obj[CFG_MOUSE_RADIUS].toInt());
-    m_movement_type = obj[CFG_MOUSE_TYPE].toBool() ? MM_DOT : MM_ARROW;
+    m_movement_type = obj[CFG_MOUSE_TYPE].toInt() == 1 ? MM_ARROW : MM_DOT;
 }
 
 void element_mouse_movement::draw(gs_effect_t *effect, gs_image_file_t *image, sources::overlay_settings *settings)
 {
     /* TODO: this should probably be two separate classes */
     if (m_movement_type == MM_ARROW) {
-        element_texture::draw(effect, image, &m_mapping, &m_pos, get_mouse_angle(settings));
+        element_texture::draw(effect, image, &m_mapping, &m_pos, m_angle);
     } else {
-        get_mouse_offset(settings, m_pos, m_offset_pos, m_radius);
         element_texture::draw(effect, image, &m_mapping, &m_offset_pos);
     }
+}
+
+void element_mouse_movement::tick(float, sources::overlay_settings *settings)
+{
+    if (m_movement_type == MM_ARROW) {
+        m_angle = get_mouse_angle(settings);
+    } else {
+        get_mouse_offset(settings, m_pos, m_offset_pos, m_radius);
+    }
+    m_last_x = settings->data.last_mouse_movement.x;
+    m_last_y = settings->data.last_mouse_movement.y;
 }
 
 float element_mouse_movement::get_mouse_angle(sources::overlay_settings *settings)

@@ -77,8 +77,10 @@ inline void input_source::update(obs_data_t *settings)
 
 inline void input_source::tick(float seconds)
 {
-    if (m_overlay->is_loaded())
+    if (m_overlay->is_loaded()) {
         m_overlay->refresh_data();
+        m_overlay->tick(seconds);
+    }
 
     // If we don't have a gamepad check periodically to see if it has been connected
     if (m_settings.layout_flags & OF_GAMEPAD) {
