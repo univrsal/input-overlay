@@ -91,6 +91,7 @@ bool io_client::read_event(buffer &buf, const message msg)
             auto new_pad = std::make_shared<gamepad::device>();
             new_pad->set_index(*index);
             new_pad->set_id(name);
+            new_pad->set_valid();
             m_gamepads[*index] = new_pad;
             wss::dispatch_gamepad_event(new_pad, WSS_PAD_CONNECTED, m_name);
         }
@@ -118,6 +119,7 @@ bool io_client::read_event(buffer &buf, const message msg)
             auto pad = get_pad(name);
             if (pad) {
                 // We just keep devices in the list so we don't have to do anything here
+                pad->invalidate();
                 binfo("'%s' (id %i) disconnected from '%s'", name.c_str(), *index, m_name.c_str());
                 wss::dispatch_gamepad_event(pad, WSS_PAD_DISCONNECTED, m_name);
             } else {
@@ -175,13 +177,17 @@ bool io_client::dispatch_gamepad_input(buffer &buf)
         auto *time = buf.read<uint64_t>();
 
         if (is_axis && vc && vv && time) {
-            if (*is_axis)
+            if (*is_axis) {
                 output = pad->second->last_axis_event();
-            else
+                pad->second->get_axis()[*vc] = *vv;
+            } else {
                 output = pad->second->last_button_event();
+                pad->second->get_buttons()[*vc] = *vv;
+            }
             output->vc = *vc;
             output->virtual_value = *vv;
             output->time = *time;
+
             wss::dispatch_gamepad_event(output, pad->second, *is_axis, m_name);
         } else {
             berr("Couldn't read gamepad event body.");
