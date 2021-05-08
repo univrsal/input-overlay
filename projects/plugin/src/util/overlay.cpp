@@ -210,7 +210,7 @@ void overlay::refresh_data()
         }
     }
 
-    if (source) {
+    if (m && source) {
         // copy over data from gamepad into the input data structure
         auto copy = [](input_data *source, std::shared_ptr<gamepad::device> d) {
             source->last_axis_event = *d->last_axis_event();
@@ -219,8 +219,8 @@ void overlay::refresh_data()
             source->gamepad_buttons = d->get_buttons();
         };
 
-        if (libgamepad::hook_instance && m_settings->use_local_input()) {
-            if (m_settings->gamepad) {
+        if (m_settings->use_local_input()) {
+            if (libgamepad::hook_instance && m_settings->gamepad) {
                 libgamepad::hook_instance->get_mutex()->lock();
                 copy(source, m_settings->gamepad);
                 libgamepad::hook_instance->get_mutex()->unlock();
