@@ -66,7 +66,7 @@ bool start(const std::string &addr)
     thread_handle = std::thread([] {
         os_set_thread_name("inputovrly-mg");
 
-        for (;;) {
+        while (thread_flag) {
             mg_mgr_poll(&mgr, 5);
             poll_mutex.lock();
             while (!message_queue.empty()) {
@@ -82,9 +82,6 @@ bool start(const std::string &addr)
                 return o->is_closing || o->is_draining;
             });
             web_sockets.erase(it, web_sockets.end());
-
-            if (!thread_flag)
-                break;
         }
     });
     return true;
@@ -96,7 +93,8 @@ void stop()
         return;
     binfo("Stopping web socket server running on %ld", CGET_INT(S_WSS_PORT));
     thread_flag = false;
-    thread_handle.join();
+    if (thread_handle.joinable())
+        thread_handle.join();
     mg_mgr_free(&mgr);
 }
 

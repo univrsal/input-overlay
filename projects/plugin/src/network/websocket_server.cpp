@@ -84,6 +84,7 @@ QString serialize_uiohook(const uiohook_event *e, const std::string &source_name
         obj["type"] = e->data.wheel.type;
         obj["amount"] = e->data.wheel.amount;
         obj["rotation"] = e->data.wheel.rotation;
+        obj["direction"] = e->data.wheel.direction;
         obj["x"] = e->data.wheel.x;
         obj["y"] = e->data.wheel.y;
         break;
