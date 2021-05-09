@@ -112,6 +112,9 @@ class config {
     write_to_json()
     {
         this.data.flags = 0;
+        this.data.overlay_width = 0;
+        this.data.overlay_height = 0;
+        this.data["elements"] = this.elements.map(e => e.data);
         this.elements.forEach(e => {
             switch (e.type()) {
             case element_types.ANALOG_STICK:
@@ -132,8 +135,8 @@ class config {
                 this.data.flags |= overlay_flags.MOUSE;
                 break;
             }
-            this.data.overlay_height = Math.max(this.data.overlay_height, e.x() + e.w());
-            this.data.overlay_width = Math.max(this.data.overlay_width, e.y() + e.h());
+            this.data.overlay_width = Math.max(this.data.overlay_width, e.x() + e.w());
+            this.data.overlay_height = Math.max(this.data.overlay_height, e.y() + e.h());
         });
         return this.data;
     }
