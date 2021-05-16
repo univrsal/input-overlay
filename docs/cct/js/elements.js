@@ -551,6 +551,7 @@ element_map.set(element_types.ANALOG_STICK, (json) => { return new analog_stick(
 element_map.set(element_types.TRIGGER, (json) => { return new trigger(json); });
 element_map.set(element_types.GAMEPAD_ID, (json) => { return new gamepad_id(json); });
 element_map.set(element_types.DPAD_STICK, (json) => { return new dpad(json); });
+element_map.set(element_types.MOUSE_MOVEMENT, (json) => { return new mouse_movement(json); });
 
 function create_element(json)
 {
