@@ -32,7 +32,6 @@
             var ws = new WebSocket("ws://localhost:16899/");
 
             ws.onmessage = on_data;
-            ws.onopen = on_open;
             ws.onmessage = on_data;
             ws.onerror = (e) => console.log('WebSocket error: ' + e);
 
