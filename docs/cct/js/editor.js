@@ -46,7 +46,7 @@ class editor {
         if (hex_numeric) {
             // jquery doesn't forward the location variable
             hex_numeric.addEventListener("keydown", (e) => {
-                if ($("#editor-element-record-code").val() === "on" && current_type === element_types.KEYBOARD_KEY) {
+                if ($("#editor-element-record-code")[0].checked && current_type === element_types.KEYBOARD_KEY) {
                     e.target.value = "0x" + key_to_vc(e).toString(16).toUpperCase();
                     e.preventDefault();
                     return false;
@@ -59,7 +59,7 @@ class editor {
                 }
             });
             hex_numeric.addEventListener("mouseup", (e) => {
-                if ($("#editor-element-record-code").val() === "on" && current_type === element_types.MOUSE_BUTTON) {
+                if ($("#editor-element-record-code")[0].checked && current_type === element_types.MOUSE_BUTTON) {
                     // Scroll wheel pastes text on linux so we delay the action a bit;
                     let val = "0x" + mouse_to_vc(e).toString(16).toUpperCase();
                     setTimeout(() => { e.target.value = val; }, 50);
