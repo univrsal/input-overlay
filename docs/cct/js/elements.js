@@ -352,11 +352,8 @@ class analog_stick extends texture {
         $("#editor-element-analog-stick-radius").val(this.data.stick_radius);
         $("#editor-element-analog-stick-side").val(this.data.side);
     }
-    
-    is_left_stick()
-    {
-        return this.side === 0;
-    }
+
+    is_left_stick() { return this.side === 0; }
 }
 
 class gamepad_id extends texture {

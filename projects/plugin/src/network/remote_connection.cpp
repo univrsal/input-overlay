@@ -25,6 +25,11 @@
 
 #include "src/util/log.h"
 
+#if __linux__
+#include <ifaddrs.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#endif
 namespace network {
 std::atomic<bool> network_flag;
 bool local_input = false; /* True if either of the local hooks is running */
@@ -43,12 +48,28 @@ void start_network(uint16_t port)
     if (network_flag)
         return;
 
-    /* Get ip of first interface */
+        /* Get ip of first interface */
+#if _WIN32
     ip_address addresses[2];
     if (netlib_get_local_addresses(addresses, 2) > 0) {
         snprintf(local_ip, sizeof(local_ip), "%d.%d.%d.%d", (addresses[0].host >> 0) & 0xFF,
                  (addresses[0].host >> 8) & 0xFF, (addresses[0].host >> 16) & 0xFF, (addresses[0].host >> 24) & 0xFF);
     }
+#elif __linux__
+    struct ifaddrs *addrs;
+    getifaddrs(&addrs);
+    struct ifaddrs *tmp = addrs;
+    while (tmp) {
+        if (tmp->ifa_addr && tmp->ifa_addr->sa_family == AF_INET) {
+            struct sockaddr_in *p_addr = (struct sockaddr_in *)tmp->ifa_addr;
+            if (tmp->ifa_name != std::string("lo")) {
+                snprintf(local_ip, sizeof(local_ip), "%s", inet_ntoa(p_addr->sin_addr));
+                break;
+            }
+        }
+        tmp = tmp->ifa_next;
+    }
+#endif
     auto failed = false;
 
     if (netlib_init() == 0) {
