@@ -1,0 +1,207 @@
+{
+    "default_width": 355,
+    "default_height": 285,
+    "space_h": 1,
+    "space_v": 1,
+    "flags": 6,
+    "overlay_width": 356,
+    "overlay_height": 286,
+    "elements": [
+        {
+            "type": 0,
+            "pos": [
+                1,
+                1
+            ],
+            "id": "gamepad",
+            "z_level": "0",
+            "mapping": [
+                0,
+                0,
+                355,
+                285
+            ]
+        },
+        {
+            "type": 2,
+            "pos": [
+                290,
+                97
+            ],
+            "id": "x",
+            "z_level": 1,
+            "mapping": [
+                256,
+                291,
+                38,
+                62
+            ],
+            "code": 1
+        },
+        {
+            "type": 2,
+            "pos": [
+                211,
+                103
+            ],
+            "id": "a",
+            "z_level": 1,
+            "mapping": [
+                96,
+                291,
+                84,
+                84
+            ],
+            "code": 2
+        },
+        {
+            "type": 2,
+            "pos": [
+                193,
+                181
+            ],
+            "id": "b",
+            "z_level": 1,
+            "mapping": [
+                303,
+                291,
+                42,
+                42
+            ],
+            "code": 3
+        },
+        {
+            "type": 2,
+            "pos": [
+                206,
+                69
+            ],
+            "id": "y",
+            "z_level": 1,
+            "mapping": [
+                353,
+                366,
+                62,
+                39
+            ],
+            "code": 4
+        },
+        {
+            "type": 6,
+            "pos": [
+                7,
+                40
+            ],
+            "id": "l-trigger",
+            "z_level": 1,
+            "mapping": [
+                93,
+                476,
+                104,
+                16
+            ],
+            "direction": 3,
+            "trigger_mode": false,
+            "side": 0
+        },
+        {
+            "type": 6,
+            "pos": [
+                209,
+                40
+            ],
+            "id": "r-trigger",
+            "z_level": 1,
+            "mapping": [
+                93,
+                476,
+                104,
+                16
+            ],
+            "direction": 4,
+            "trigger_mode": false,
+            "side": 1
+        },
+        {
+            "type": 2,
+            "pos": [
+                238,
+                3
+            ],
+            "id": "z",
+            "z_level": 1,
+            "mapping": [
+                303,
+                386,
+                43,
+                33
+            ],
+            "code": 8
+        },
+        {
+            "type": 2,
+            "pos": [
+                150,
+                119
+            ],
+            "id": "start",
+            "z_level": 1,
+            "mapping": [
+                354,
+                291,
+                32,
+                32
+            ],
+            "code": 16
+        },
+        {
+            "type": 8,
+            "pos": [
+                67,
+                196
+            ],
+            "id": "d-pad",
+            "z_level": 1,
+            "mapping": [
+                2,
+                554,
+                76,
+                76
+            ]
+        },
+        {
+            "type": 5,
+            "pos": [
+                25,
+                88
+            ],
+            "id": "analog",
+            "z_level": 1,
+            "mapping": [
+                3,
+                291,
+                84,
+                84
+            ],
+            "stick_radius": 20,
+            "side": 0
+        },
+        {
+            "type": 5,
+            "pos": [
+                277,
+                206
+            ],
+            "id": "c-stick",
+            "z_level": 1,
+            "mapping": [
+                188,
+                291,
+                58,
+                58
+            ],
+            "stick_radius": 20,
+            "side": 1
+        }
+    ]
+}
