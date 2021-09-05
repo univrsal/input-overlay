@@ -38,6 +38,13 @@ void element_wheel::load(const QJsonObject &obj)
 
 void element_wheel::draw(gs_effect_t *effect, gs_image_file_t *image, sources::overlay_settings *settings)
 {
+    /* Keep this in order:
+     * - first the default state
+     * - then the pressed state
+     * - and finally on top either up or down
+     * this should make sure that all necessary information is visible
+     */
+    element_texture::draw(effect, image, settings);
     if (settings->data.mouse[MOUSE_BUTTON3])
         element_texture::draw(effect, image, &m_mappings[WHEEL_MAP_MIDDLE]);
     switch (settings->data.last_wheel_event.rotation) {
@@ -49,6 +56,4 @@ void element_wheel::draw(gs_effect_t *effect, gs_image_file_t *image, sources::o
         break;
     default:;
     }
-
-    element_texture::draw(effect, image, settings);
 }
