@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<!-- 
+        This HTML can render presets in a browser source
+        The recommended way is to use the input-overlay source,
+        but if you require additional felxibility (eg. gamepads work better
+        in the browser source) you can use this.
+    -->
+
+<head>
+    <script>
+        /* 
+            PUT YOUR PRESET JSON INSIDE THE "``" Quotes
+        */
+        var preset =
+            `
+            {"default_height":0,"default_width":0,"elements":[{"id":"body","mapping":[1,1,1280,926],"pos":[0,0],"type":0,"z_level":0},{"code":60416,"id":"a","mapping":[838,930,94,94],"pos":[953,311],"type":2,"z_level":1},{"code":60417,"id":"b","mapping":[741,930,94,94],"pos":[1051,213],"type":2,"z_level":1},{"code":60419,"id":"y","mapping":[644,930,94,94],"pos":[953,116],"type":2,"z_level":1},{"code":60418,"id":"x","mapping":[547,930,94,94],"pos":[856,214],"type":2,"z_level":1},{"code":60422,"id":"select","mapping":[389,930,76,63],"pos":[466,185],"type":2,"z_level":1},{"code":60423,"id":"start","mapping":[468,930,76,63],"pos":[737,185],"type":2,"z_level":1},{"code":60420,"id":"ls","mapping":[1,930,148,70],"pos":[170,14],"type":2,"z_level":1},{"code":60421,"id":"rs","mapping":[152,930,148,70],"pos":[962,13],"type":2,"z_level":1},{"code":60435,"id":"dpad_up","mapping":[717,1134,43,42],"pos":[430,376],"type":2,"z_level":1},{"code":60436,"id":"dpad_down","mapping":[717,1134,42,42],"pos":[430,515],"type":2,"z_level":1},{"code":60433,"id":"dpad_left","mapping":[717,1134,42,42],"pos":[360,445],"type":2,"z_level":1},{"code":60434,"id":"dpad_right","mapping":[717,1134,42,42],"pos":[498,444],"type":2,"z_level":1},{"direction":1,"id":"lt","mapping":[303,930,40,44],"pos":[224,0],"side":0,"trigger_mode":false,"type":6,"z_level":1},{"direction":1,"id":"rt","mapping":[346,930,40,44],"pos":[1016,0],"side":1,"trigger_mode":false,"type":6,"z_level":1},{"id":"left_analog_stick","mapping":[938,930,128,128],"pos":[210,164],"side":0,"stick_radius":40,"type":5,"z_level":1},{"id":"right_analog_stick","mapping":[938,930,128,128],"pos":[763,396],"side":1,"stick_radius":40,"type":5,"z_level":1},{"id":"guide","mapping":[1,1134,140,141],"pos":[570,163],"type":7,"z_level":1}],"flags":6,"overlay_height":926,"overlay_width":1280,"space_h":0,"space_v":0}
+            `;
+    </script>
+    <meta charset="utf-8" />
+    <title>input-overlay layout renderer</title>
+    <style>
+        #canvas-container {
+            /* IE, only works on <img> tags */
+            -ms-interpolation-mode: nearest-neighbor;
+            /* Firefox */
+            image-rendering: crisp-edges;
+            /* Chromium + Safari */
+            image-rendering: pixelated;
+        }
+
+        .canvas-container {
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        body,
+        html {
+            height: 100%;
+        }
+    </style>
+    <script src="./js/jquery-3.5.1.min.js"></script>
+    <script src="./js/gamepad.js"></script>
+    <script src="./js/vc.js"></script>
+    <script src="./js/elements.js"></script>
+    <script src="./js/config.js"></script>
+    <script src="./js/draw.js"></script>
+    <script src="./js/main.js"></script>
+</head>
+
+<body style="margin: 0px; overflow: hidden;">
+    <div class="canvas-container" id="canvas-container">
+        <canvas id="canvas"></canvas>
+    </div>
+</body>
+<script>
+    var l = document.getElementById("log");
+    var require_clear = false;
+    var count = 0;
+
+    function on_data(e) {
+        console.log(e.data);
+    }
+
+    function start_websocket() {
+        var ws = new WebSocket("ws://localhost:16899/");
+
+        ws.onmessage = on_data;
+        ws.onmessage = on_data;
+        ws.onerror = (e) => console.log('WebSocket error: ' + e);
+
+        ws.onclose = () => {
+            // connection closed, discard old websocket and create a new one in 5s
+            ws = null;
+            setTimeout(start_websocket, 2000);
+        };
+    }
+
+        //start_websocket();
+</script>
+
+</html>
