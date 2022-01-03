@@ -146,7 +146,7 @@
             "z_level": 1
         },
         {
-            "code": 60429,
+            "code": 60435,
             "id": "dpad_up",
             "mapping": [
                 717,
@@ -162,7 +162,7 @@
             "z_level": 1
         },
         {
-            "code": 60430,
+            "code": 60436,
             "id": "dpad_down",
             "mapping": [
                 717,
@@ -178,7 +178,7 @@
             "z_level": 1
         },
         {
-            "code": 60427,
+            "code": 60433,
             "id": "dpad_left",
             "mapping": [
                 717,
@@ -194,7 +194,7 @@
             "z_level": 1
         },
         {
-            "code": 60428,
+            "code": 60434,
             "id": "dpad_right",
             "mapping": [
                 717,
@@ -295,7 +295,7 @@
             "z_level": 1
         }
     ],
-    "flags": 7,
+    "flags": 6,
     "overlay_height": 926,
     "overlay_width": 1280,
     "space_h": 0,
