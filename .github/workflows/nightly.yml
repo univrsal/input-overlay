@@ -11,6 +11,11 @@ on:
       - '**.html'
       - '**.json'
       - '**.png'
+      - 'docs/**'
+      - 'projects/presets/**'
+      - 'package/**'
+      - 'deps/**'
+      - 'cmake/**'
 
     tags:
       - "v*"
@@ -24,7 +29,11 @@ on:
       - '**.html'
       - '**.json'
       - '**.png'
-
+      - 'docs/**'
+      - 'projects/presets/**'
+      - 'deps/**'
+      - 'cmake/**'     
+      
 jobs:
   linux:
     runs-on: ubuntu-latest
