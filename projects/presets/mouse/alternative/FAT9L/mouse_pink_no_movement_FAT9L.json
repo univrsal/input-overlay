@@ -1,0 +1,137 @@
+{
+    "default_height": 0,
+    "default_width": 0,
+    "elements": [
+        {
+            "type": 1,
+            "pos": [
+                247,
+                210
+            ],
+            "id": "keyboard button6",
+            "z_level": 0,
+            "mapping": [
+                648,
+                212,
+                40,
+                62
+            ],
+            "code": 51
+        },
+        {
+            "type": 1,
+            "pos": [
+                235,
+                273
+            ],
+            "id": "keyboard button7",
+            "z_level": 0,
+            "mapping": [
+                648,
+                212,
+                40,
+                62
+            ],
+            "code": 52
+        },
+        {
+            "id": "body",
+            "mapping": [
+                328,
+                1,
+                283,
+                242
+            ],
+            "pos": [
+                2,
+                179
+            ],
+            "type": 0,
+            "z_level": 1
+        },
+        {
+            "code": 1,
+            "id": "lmb",
+            "mapping": [
+                1,
+                1,
+                139,
+                174
+            ],
+            "pos": [
+                2,
+                0
+            ],
+            "type": 3,
+            "z_level": 1
+        },
+        {
+            "code": 2,
+            "id": "rmb",
+            "mapping": [
+                143,
+                1,
+                139,
+                174
+            ],
+            "pos": [
+                146,
+                0
+            ],
+            "type": 3,
+            "z_level": 1
+        },
+        {
+            "id": "wheel",
+            "mapping": [
+                285,
+                246,
+                48,
+                95
+            ],
+            "pos": [
+                117,
+                79
+            ],
+            "type": 4,
+            "z_level": 1
+        },
+        {
+            "code": 5,
+            "id": "smb1",
+            "mapping": [
+                285,
+                1,
+                40,
+                62
+            ],
+            "pos": [
+                0,
+                210
+            ],
+            "type": 3,
+            "z_level": 1
+        },
+        {
+            "code": 4,
+            "id": "smb2",
+            "mapping": [
+                284,
+                1,
+                41,
+                62
+            ],
+            "pos": [
+                11,
+                273
+            ],
+            "type": 3,
+            "z_level": 1
+        }
+    ],
+    "flags": 8,
+    "overlay_height": 421,
+    "overlay_width": 287,
+    "space_h": 0,
+    "space_v": 0
+}
