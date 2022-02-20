@@ -38,7 +38,7 @@
             ws.onclose = () => {
                 // connection closed, discard old websocket and create a new one in 5s
                 ws = null;
-                setTimeout(startWebsocket, 2000);
+                setTimeout(start_websocket, 2000);
             };
         }
         
