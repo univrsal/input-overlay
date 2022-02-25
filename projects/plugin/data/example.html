@@ -36,9 +36,9 @@
             ws.onerror = (e) => console.log('WebSocket error: ' + e);
 
             ws.onclose = () => {
-                // connection closed, discard old websocket and create a new one in 5s
+                // connection closed, discard old websocket and create a new one in 2 seconds
                 ws = null;
-                setTimeout(startWebsocket, 2000);
+                setTimeout(start_websocket, 2000);
             };
         }
         
