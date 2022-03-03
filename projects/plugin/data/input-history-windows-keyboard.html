@@ -9,10 +9,16 @@
     <title>input-history Windows Keyboard</title>
 
     <style>
+      /* Zero out default values */
+      * {
+        margin: 0;
+        padding: 0;
+      }
+
       body {
         /* You can change these variables */
         font-family: Arial, Helvetica, sans-serif;
-        font-size: 32px;
+        font-size: 64px;
         color: white;
 
         overflow: hidden;
@@ -36,30 +42,30 @@
         margin: auto;
       }
 
-      ul#history {
+      div#history {
         /* Apply padding top to place first keys on the bottom part */
-        padding-top: calc(100vh - 64px);
+        padding-top: 100vh;
 
         list-style-type: none;
       }
 
-      ul#history > li {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-
+      div#history > p {
         /* Spacing between combinations */
         padding-top: 0.5em;
       }
 
       /* Spacing when wrapped */
-      ul#history > li > span {
+      div#history > p > span {
         margin-bottom: 0.25em;
       }
 
-      ul#history > li > .separator {
+      div#history > p > .separator {
         margin-left: 0.25em;
         margin-right: 0.25em;
+      }
+
+      #icons-container {
+        visibility: collapse;
       }
     </style>
   </head>
@@ -132,14 +138,16 @@
     </div>
     <!-- #endregion -->
 
-    <ul id="history"></ul>
+    <div id="history"></div>
   </body>
   <script>
-    /*
-      Keycodes from: https://github.com/kwhat/libuiohook/blob/1.2/include/uiohook.h
-      [0] -> libuiohook key
-      [1] -> optional alias
-    */
+    /**
+     * Keycodes from: https://github.com/kwhat/libuiohook/blob/1.2/include/uiohook.h
+     * [0] -> libuiohook key
+     * [1] -> optional alias
+     *
+     * Comment out keys that you don't want to show
+     */
     var KEYCODES = {
       /* Begin Virtual Key Codes */
       0x0001: ["VC_ESCAPE", "ESC"],
@@ -417,11 +425,11 @@
       .querySelectorAll("#icons-container > svg > path")
       .forEach((p) => p.setAttribute("fill", "currentColor"));
 
-    /*
-      For Keys to replace with Icons
-      Key: libuihook keycode
-      Value: <svg> icon element
-    */
+    /**
+     * For Keys to replace with Icons
+     * Key: libuihook keycode
+     * Value: <svg> icon element
+     */
     var KEYICONS = {
       0x0e5b: document.getElementById("SVG_VC_META"), // VC_META_L Windows or Command Key
       0x0e5c: document.getElementById("SVG_VC_META"), // VC_META_R Windows or Command Key
@@ -442,6 +450,14 @@
 
     /* #endregion */
 
+    /**
+     * This will either return an HTML string (icon)
+     * Or a plain string (libuiohook key name)
+     *
+     * @param {string} keycode - keycode from libuiohook
+     *
+     * @returns {string} Inline innerHTML equivalent of key
+     */
     function getKeyHTML(keycode) {
       var key = KEYCODES[parseInt(keycode)];
 
@@ -460,6 +476,12 @@
     }
 
     // #region DOM Utils
+
+    /**
+     * Gets a {Set} of keycodes, wraps each item in span.key, and joins them by a + (separator)
+     *
+     * @returns {string} innerHTML for the key combination
+     */
     function generateHTMLFromKeys(setOfKeycodes) {
       try {
         return Array.from(setOfKeycodes)
@@ -471,6 +493,11 @@
       }
     }
 
+    /**
+     * Wraps an HTML string of a key with span
+     *
+     * @returns {string} outerHTML of the <span>
+     */
     function wrapKey(html) {
       var el = document.createElement("span");
       el.classList.add("key");
@@ -483,7 +510,7 @@
     var _history = document.getElementById("history");
     var _history_curr_pressed = new Set();
     var _history_key_pressing = false;
-    var _history_max = 50;
+    var _history_max = 10;
 
     function onKeyEvent(data) {
       if (
@@ -514,7 +541,7 @@
 
       if (!_has_children && _history_key_pressing) {
         // If no slot yet, add one
-        _history.insertAdjacentHTML("beforeend", `<li></li>`);
+        _history.insertAdjacentHTML("beforeend", `<p></p>`);
       }
 
       if (_history_key_pressing) {
@@ -525,7 +552,7 @@
       } else {
         if (_history.lastElementChild.innerHTML !== "") {
           // If done pressing key combination, add new slot at end
-          _history.insertAdjacentHTML("beforeend", `<li></li>`);
+          _history.insertAdjacentHTML("beforeend", `<p></p>`);
         }
       }
 
