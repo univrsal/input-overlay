@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html>
   <!-- A usable HTML template for input-history overlay using Browser Source and Websocket -->
-  <!-- ONLY KEYBOARD INPUT -->
+  <!-- ONLY KEYBOARD INPUT AS OF NOW -->
 
   <!-- By: https://github.com/christiankyle-ching/ -->
   <head>
     <meta charset="utf-8" />
-    <title>input-history Windows Keyboard</title>
+    <title>input-history Windows</title>
 
     <style>
       /* Zero out default values */
@@ -16,12 +16,44 @@
       }
 
       body {
-        /* You can change these variables */
         font-family: Arial, Helvetica, sans-serif;
-        font-size: 64px;
+        font-size: 48px;
         color: white;
 
         overflow: hidden;
+      }
+
+      /* #region History List */
+
+      div#history {
+        /* Apply padding top to place first keys on the bottom part */
+        padding-top: 100vh;
+
+        list-style-type: none;
+      }
+
+      /* Animation for hide timeout */
+      p.key-combination.hidden {
+        opacity: 0;
+
+        transition-property: opacity;
+        transition-timing-function: ease-out;
+        transition-duration: 1s;
+      }
+
+      p.key-combination > * {
+        /* For line-height */
+        margin-top: 0.5em;
+
+        vertical-align: middle;
+      }
+
+      p.key-combination > .separator {
+        display: inline-block;
+
+        /* Spacing on sides of separator */
+        margin-left: 0.25em;
+        margin-right: 0.25em;
       }
 
       span.key {
@@ -34,6 +66,14 @@
         white-space: nowrap;
       }
 
+      /* #endregion */
+
+      /* #region Icons */
+
+      #icons-container {
+        visibility: collapse;
+      }
+
       .icon-sm {
         width: 1em;
         height: 1em;
@@ -42,31 +82,7 @@
         margin: auto;
       }
 
-      div#history {
-        /* Apply padding top to place first keys on the bottom part */
-        padding-top: 100vh;
-
-        list-style-type: none;
-      }
-
-      div#history > p {
-        /* Spacing between combinations */
-        padding-top: 0.5em;
-      }
-
-      /* Spacing when wrapped */
-      div#history > p > span {
-        margin-bottom: 0.25em;
-      }
-
-      div#history > p > .separator {
-        margin-left: 0.25em;
-        margin-right: 0.25em;
-      }
-
-      #icons-container {
-        visibility: collapse;
-      }
+      /* #endregion */
     </style>
   </head>
 
@@ -140,6 +156,7 @@
 
     <div id="history"></div>
   </body>
+
   <script>
     /**
      * Keycodes from: https://github.com/kwhat/libuiohook/blob/1.2/include/uiohook.h
@@ -415,7 +432,32 @@
       /* End Virtual Modifier Masks */
     };
 
-    /* #region Keys with Icons */
+    /**
+     * This will either return an HTML string (icon)
+     * Or a plain string (libuiohook key name)
+     *
+     * @param {string} keycode - keycode from libuiohook
+     *
+     * @returns {string} Inline innerHTML equivalent of key
+     */
+    function getKeyHTML(keycode) {
+      var key = KEYCODES[parseInt(keycode)];
+
+      if (!!key) {
+        var icon = KEYICONS[parseInt(keycode)];
+
+        if (!!icon) {
+          return icon.cloneNode(true).outerHTML;
+        } else {
+          // return alias if present
+          return key[1] !== "" ? key[1] : key[0];
+        }
+      } else {
+        return "";
+      }
+    }
+
+    // #region Keys with Icons
 
     /* Init SVG Icons */
     document
@@ -448,45 +490,35 @@
       0x001c: document.getElementById("SVG_VC_ENTER"),
     };
 
-    /* #endregion */
-
-    /**
-     * This will either return an HTML string (icon)
-     * Or a plain string (libuiohook key name)
-     *
-     * @param {string} keycode - keycode from libuiohook
-     *
-     * @returns {string} Inline innerHTML equivalent of key
-     */
-    function getKeyHTML(keycode) {
-      var key = KEYCODES[parseInt(keycode)];
-
-      if (!!key) {
-        var icon = KEYICONS[parseInt(keycode)];
-
-        if (!!icon) {
-          return icon.cloneNode(true).outerHTML;
-        } else {
-          // return alias if present
-          return key[1] !== "" ? key[1] : key[0];
-        }
-      } else {
-        return "";
-      }
-    }
+    // #endregion
 
     // #region DOM Utils
 
     /**
      * Gets a {Set} of keycodes, wraps each item in span.key, and joins them by a + (separator)
      *
-     * @returns {string} innerHTML for the key combination
+     * @returns {HTMLElement} <p> element of key combination
      */
-    function generateHTMLFromKeys(setOfKeycodes) {
+    function getKeyCombinationElement(setOfKeycodes = new Set()) {
       try {
-        return Array.from(setOfKeycodes)
-          .map((keycode) => wrapKey(getKeyHTML(keycode)))
-          .join(`<span class="separator">+</span>`);
+        var innerHTMLofKeys = Array.from(setOfKeycodes)
+          .map((keycode) => getKeyHTML(keycode))
+          // Filter out non-existing keys in KEYCODES
+          .filter((html) => html !== "");
+
+        // Build innerHTMl for the key combination
+        var innerHTMLOfKeyCombination = innerHTMLofKeys
+          .map(
+            (innerHTML) =>
+              createElementWithClass("span", innerHTML, ["key"]).outerHTML
+          )
+          .join(
+            createElementWithClass("span", SEPARATOR, ["separator"]).outerHTML
+          );
+
+        return createElementWithClass("p", innerHTMLOfKeyCombination, [
+          "key-combination",
+        ]);
       } catch (e) {
         console.error(e);
         return "";
@@ -496,21 +528,46 @@
     /**
      * Wraps an HTML string of a key with span
      *
-     * @returns {string} outerHTML of the <span>
+     * @returns {HTMLElement} HTML Element created with classes
      */
-    function wrapKey(html) {
-      var el = document.createElement("span");
-      el.classList.add("key");
-      el.innerHTML = html;
-      return el.outerHTML;
+    function createElementWithClass(element, innerHTML = "", classList = []) {
+      var el = document.createElement(element);
+      el.innerHTML = innerHTML;
+      el.classList.add(...classList);
+      return el;
     }
+
+    // #endregion
+
+    // #region ----- YOU CAN CHANGE THESE VALUES -----
+
+    /**
+     * Max count of history shown. Lower = better performance.
+     * @type {number}
+     */
+    var HISTORY_MAX = 10;
+    /**
+     * Enable / Disable timeout for key combinations
+     * @type {boolean}
+     */
+    var HISTORY_TIMEOUT_ACTIVE = true;
+    /**
+     * Time delay in ms before the key is hidden.
+     * @type {number}
+     */
+    var HISTORY_TIMEOUT = 3500;
+    /**
+     * Separator between keys
+     * @type {string}
+     */
+    var SEPARATOR = "+";
+
     // #endregion
 
     // History
-    var _history = document.getElementById("history");
-    var _history_curr_pressed = new Set();
-    var _history_key_pressing = false;
-    var _history_max = 10;
+    var _historyDiv = document.getElementById("history");
+    var _historyCurrentlyPressed = new Set();
+    var _isHistoryPressing = false;
 
     function onKeyEvent(data) {
       if (
@@ -519,45 +576,63 @@
       )
         return;
 
-      console.log(data);
+      // console.log(data);
 
       // Update Set to current key combination
       if (data.event_type === "key_pressed") {
-        _history_curr_pressed.add(data.keycode);
-        _history_key_pressing = true;
+        _historyCurrentlyPressed.add(data.keycode);
+        _isHistoryPressing = true;
       } else if (data.event_type === "key_released") {
-        _history_curr_pressed.delete(data.keycode);
-        _history_key_pressing = false;
+        _historyCurrentlyPressed.delete(data.keycode);
+        _isHistoryPressing = false;
       }
 
-      console.log(_history_curr_pressed);
+      // console.log(_historyCurrentlyPressed);
 
       updateUI();
     }
 
     function updateUI() {
-      var _has_keys = _history_curr_pressed.size > 0;
-      var _has_children = _history.children.length > 0;
+      var lastChildInnerHTML =
+        _historyDiv.lastElementChild == null
+          ? ""
+          : _historyDiv.lastElementChild.innerHTML;
 
-      if (!_has_children && _history_key_pressing) {
-        // If no slot yet, add one
-        _history.insertAdjacentHTML("beforeend", `<p></p>`);
-      }
+      var isLastChildEmpty = lastChildInnerHTML === "";
 
-      if (_history_key_pressing) {
+      if (_isHistoryPressing) {
         // If starting key combination, set last item text
-        _history.lastElementChild.innerHTML = generateHTMLFromKeys(
-          _history_curr_pressed
-        );
-      } else {
-        if (_history.lastElementChild.innerHTML !== "") {
-          // If done pressing key combination, add new slot at end
-          _history.insertAdjacentHTML("beforeend", `<p></p>`);
+        if (_historyDiv.childElementCount > 0) {
+          _historyDiv.lastElementChild.innerHTML = getKeyCombinationElement(
+            _historyCurrentlyPressed
+          ).innerHTML;
+        }
+        // OR add an element if this is first combination
+        else {
+          _historyDiv.appendChild(
+            getKeyCombinationElement(_historyCurrentlyPressed)
+          );
+        }
+      }
+      // If done pressing key combination,
+      else {
+        if (!isLastChildEmpty) {
+          if (HISTORY_TIMEOUT_ACTIVE) {
+            // Add removing class of last key combination
+            var elementToHide = _historyDiv.lastElementChild;
+            setTimeout(() => {
+              elementToHide.classList.add("hidden");
+            }, HISTORY_TIMEOUT);
+          }
+
+          // Then add a empty slot
+          _historyDiv.appendChild(getKeyCombinationElement());
         }
       }
 
       // Remove first element
-      if (_history.children.length > _history_max) _history.firstChild.remove();
+      if (_historyDiv.children.length > HISTORY_MAX)
+        _historyDiv.firstChild.remove();
 
       // Scroll down
       scrollTo({
