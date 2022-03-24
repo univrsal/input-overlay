@@ -118,11 +118,14 @@ $(function() {
     vc("End", 0x0E4F);
     vc("PageUp", 0x0E49);
     vc("PageDown", 0x0E51);
-    vc("ArrowUp", 0xE048);
-    vc("ArrowLeft", 0xE04B);
+    /* The arrow codes are labeled wrong in uiohook, these are /technically/ for the 
+     * arrows on the numpad when numlock is disabled, but libuiook returns them when 
+     * the normal arrows are pressed. */
+    vc("ArrowUp", 0xEE48);
+    vc("ArrowLeft", 0xEE4B);
     vc("Clear", 0xE04C);
-    vc("ArrowRight", 0xE04D);
-    vc("ArrowDown", 0xE050);
+    vc("ArrowRight", 0xEE4D);
+    vc("ArrowDown", 0xEE50);
 
     vc("NumpadEquals", 0x0E0D);
     vc("NumLock", 0x0045);
