@@ -43,6 +43,28 @@ void event_handler(struct mg_connection *c, int ev, void *ev_data, void *fn_data
     }
 }
 
+void thread_method()
+{
+    os_set_thread_name("inputovrly-mg");
+
+    while (thread_flag) {
+        mg_mgr_poll(&mgr, 5);
+        poll_mutex.lock();
+        while (!message_queue.empty()) {
+            auto &msg = message_queue.back();
+            for (auto socket : web_sockets) {
+                if (!socket->is_draining && !socket->is_closing)
+                    mg_ws_send(socket, msg.c_str(), msg.length(), WEBSOCKET_OP_TEXT);
+            }
+            message_queue.pop_back();
+        }
+        poll_mutex.unlock();
+        const auto it = std::remove_if(web_sockets.begin(), web_sockets.end(),
+                                       [](const struct mg_connection *o) { return o->is_closing || o->is_draining; });
+        web_sockets.erase(it, web_sockets.end());
+    }
+}
+
 bool start(const std::string &addr)
 {
     if (thread_flag)
@@ -62,27 +84,7 @@ bool start(const std::string &addr)
         return false;
     }
 
-    thread_handle = std::thread([] {
-        os_set_thread_name("inputovrly-mg");
-
-        while (thread_flag) {
-            mg_mgr_poll(&mgr, 5);
-            poll_mutex.lock();
-            while (!message_queue.empty()) {
-                auto &msg = message_queue.back();
-                for (auto socket : web_sockets) {
-                    if (!socket->is_draining && !socket->is_closing)
-                        mg_ws_send(socket, msg.c_str(), msg.length(), WEBSOCKET_OP_TEXT);
-                }
-                message_queue.pop_back();
-            }
-            poll_mutex.unlock();
-            const auto it = std::remove_if(web_sockets.begin(), web_sockets.end(), [](const struct mg_connection *o) {
-                return o->is_closing || o->is_draining;
-            });
-            web_sockets.erase(it, web_sockets.end());
-        }
-    });
+    thread_handle = std::thread(thread_method);
     return true;
 }
 
