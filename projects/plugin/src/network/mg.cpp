@@ -40,7 +40,6 @@ void event_handler(struct mg_connection *c, int ev, void *ev_data, void *fn_data
         // Just echo data
         auto *wm = (struct mg_ws_message *)ev_data;
         mg_ws_send(c, wm->data.ptr, wm->data.len, WEBSOCKET_OP_TEXT);
-        mg_iobuf_delete(&c->recv, c->recv.len);
     }
 }
 
@@ -50,7 +49,7 @@ bool start(const std::string &addr)
         return true;
     thread_flag = true;
     mg_log_set_callback(
-        [](const void *buf, int length, void *) {
+        [](const void *buf, size_t length, void *) {
             std::string str(static_cast<const char *>(buf), length);
             if (str != "\n")
                 bdebug("%s", str.c_str());
