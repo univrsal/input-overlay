@@ -44,15 +44,15 @@ config cfg;
 bool parse_arguments(int argc, char **args)
 {
     if (argc < 3) {
-        DEBUG_LOG("io_client usage: [ip] [name] {port} {other options}\n");
-        DEBUG_LOG(" [] => required {} => optional\n");
-        DEBUG_LOG(" [ip]          can be ipv4 or hostname\n");
-        DEBUG_LOG(" [name]        unique name to identify client (max. 64 characters)\n");
-        DEBUG_LOG(" {port}        default is 1608 [1025 - %ui]\n", 0xffff);
-        DEBUG_LOG(" --gamepad=1   enable/disable gamepad monitoring. Off by default\n");
-        DEBUG_LOG(" --mouse=1     enable/disable mouse monitoring.  Off by default\n");
-        DEBUG_LOG(" --keyboard=1  enable/disable keyboard monitoring. On by default\n");
-        DEBUG_LOG(" --dinput      use direct input on windows. XInput is default\n");
+        DEBUG_LOG("io_client usage: [ip] [name] {port} {other options}");
+        DEBUG_LOG(" [] => required {} => optional");
+        DEBUG_LOG(" [ip]          can be ipv4 or hostname");
+        DEBUG_LOG(" [name]        unique name to identify client (max. 64 characters)");
+        DEBUG_LOG(" {port}        default is 1608 [1025 - %ui]", 0xffff);
+        DEBUG_LOG(" --gamepad=1   enable/disable gamepad monitoring. Off by default");
+        DEBUG_LOG(" --mouse=1     enable/disable mouse monitoring.  Off by default");
+        DEBUG_LOG(" --keyboard=1  enable/disable keyboard monitoring. On by default");
+        DEBUG_LOG(" --dinput      use direct input on windows. XInput is default");
         return false;
     }
 
@@ -65,18 +65,18 @@ bool parse_arguments(int argc, char **args)
     strncpy(cfg.username, args[2], s);
     cfg.username[s - 1] = '\0';
 
-    if (argc > 3) {
+    if (argc > 3 && std::string(args[3]).find("--") == std::string::npos) {
         auto newport = uint16_t(strtol(args[3], nullptr, 0));
         if (newport > 1024) /* No system ports pls */
             cfg.port = newport;
         else
-            DEBUG_LOG("%hu is outside the valid port range [1024 - %ui]\n", newport, 0xffff);
+            DEBUG_LOG("%hu is outside the valid port range [1024 - %ui]", newport, 0xffff);
     }
 
     /* Resolve ip */
     if (netlib_resolve_host(&cfg.ip, args[1], cfg.port) == -1) {
-        DEBUG_LOG("netlib_resolve_host failed: %s\n", netlib_get_error());
-        DEBUG_LOG("Make sure obs studio is running with the remote connection enabled and configured\n");
+        DEBUG_LOG("netlib_resolve_host failed: %s", netlib_get_error());
+        DEBUG_LOG("Make sure obs studio is running with the remote connection enabled and configured");
         return false;
     }
 
@@ -92,12 +92,12 @@ bool parse_arguments(int argc, char **args)
             cfg.monitor_keyboard = arg.find('1') != std::string::npos;
     }
 
-    DEBUG_LOG("io_client configuration:\n");
-    DEBUG_LOG(" Host : %s:%s\n", args[1], args[3]);
-    DEBUG_LOG(" Name:     %s\n", args[2]);
-    DEBUG_LOG(" Keyboard: %s\n", cfg.monitor_keyboard ? "Yes" : "No");
-    DEBUG_LOG(" Mouse:    %s\n", cfg.monitor_mouse ? "Yes" : "No");
-    DEBUG_LOG(" Gamepad:  %s\n", cfg.monitor_gamepad ? "Yes" : "No");
+    DEBUG_LOG("io_client configuration:");
+    DEBUG_LOG(" Host : %s:%hu", args[1], cfg.port);
+    DEBUG_LOG(" Name:     %s", args[2]);
+    DEBUG_LOG(" Keyboard: %s", cfg.monitor_keyboard ? "Yes" : "No");
+    DEBUG_LOG(" Mouse:    %s", cfg.monitor_mouse ? "Yes" : "No");
+    DEBUG_LOG(" Gamepad:  %s", cfg.monitor_gamepad ? "Yes" : "No");
 
     return true;
 }
@@ -116,7 +116,7 @@ int send_text(char *buf)
     result = netlib_tcp_send(network::sock, &len, sizeof(len));
     if (result < sizeof(len)) {
         if (netlib_get_error() && strlen(netlib_get_error())) {
-            DEBUG_LOG("netlib_tcp_send failed: %s\n", netlib_get_error());
+            DEBUG_LOG("netlib_tcp_send failed: %s", netlib_get_error());
             return 0;
         }
     }
@@ -126,7 +126,7 @@ int send_text(char *buf)
     result = netlib_tcp_send(network::sock, buf, len);
     if (result < len) {
         if (netlib_get_error() && strlen(netlib_get_error())) {
-            DEBUG_LOG("netlib_tcp_send failed: %s\n", netlib_get_error());
+            DEBUG_LOG("netlib_tcp_send failed: %s", netlib_get_error());
             return 0;
         }
     }
@@ -160,14 +160,14 @@ network::message recv_msg()
 
     if (read_length < sizeof(msg_id)) {
         if (netlib_get_error() && strlen(netlib_get_error()))
-            DEBUG_LOG("netlib_tcp_recv: %s\n", netlib_get_error());
+            DEBUG_LOG("netlib_tcp_recv: %s", netlib_get_error());
         return network::MSG_READ_ERROR;
     }
 
     if (msg_id < network::MSG_LAST)
         return network::message(msg_id);
 
-    DEBUG_LOG("Received message with invalid id (%i).\n", msg_id);
+    DEBUG_LOG("Received message with invalid id (%i).", msg_id);
     return network::MSG_INVALID;
 }
 

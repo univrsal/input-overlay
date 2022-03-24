@@ -34,36 +34,36 @@ std::thread network_thread;
 
 bool start_connection()
 {
-    DEBUG_LOG("Allocating socket...");
+    DEBUG_LOGN("Allocating socket... ");
     set = netlib_alloc_socket_set(1);
 
     if (!set) {
-        DEBUG_LOG("\nnetlib_alloc_socket_set failed: %s\n", netlib_get_error());
+        printf(" netlib_alloc_socket_set failed: %s\n", netlib_get_error());
         return false;
     }
-    printf(" Done.\n");
+    printf("Done.\n");
 
-    DEBUG_LOG("Opening socket... ");
+    DEBUG_LOGN("Opening socket... ");
 
     sock = netlib_tcp_open(&util::cfg.ip);
 
     if (!sock) {
-        DEBUG_LOG("\nnetlib_tcp_open failed: %s\n", netlib_get_error());
+        printf("netlib_tcp_open failed: %s\n", netlib_get_error());
         return false;
     }
 
     printf("Done.\n");
 
     if (netlib_tcp_add_socket(set, sock) == -1) {
-        DEBUG_LOG("netlib_tcp_add_socket failed: %s\n", netlib_get_error());
+        DEBUG_LOG("netlib_tcp_add_socket failed: %s", netlib_get_error());
         return false;
     }
 
-    DEBUG_LOG("Connection successful!\n");
+    DEBUG_LOG("Connection successful!");
 
     /* Send client name */
     if (!util::send_text(util::cfg.username)) {
-        DEBUG_LOG("Failed to send username (%s): %s\n", util::cfg.username, netlib_get_error());
+        DEBUG_LOG("Failed to send username (%s): %s", util::cfg.username, netlib_get_error());
         return false;
     }
     network_loop = true;
@@ -86,7 +86,7 @@ void network_thread_method()
             listen_counter = 0;
             if (!listen()) /* Has a timeout of 1ms*/
             {
-                DEBUG_LOG("Received quit signal\n");
+                DEBUG_LOG("Received quit signal");
                 network_loop = false; // The rest will be taken care of in the main thread
                 break;
             }
@@ -118,7 +118,7 @@ void network_thread_method()
         /* Send any data written to the buffer */
         if (buf.write_pos() > 0) {
             if (!netlib_tcp_send(sock, buf.get(), buf.write_pos())) {
-                DEBUG_LOG("netlib_tcp_send: %s\n", netlib_get_error());
+                DEBUG_LOG("netlib_tcp_send: %s", netlib_get_error());
                 break;
             }
             buf.reset();
@@ -127,7 +127,7 @@ void network_thread_method()
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
 
-    DEBUG_LOG("Network loop exited\n");
+    DEBUG_LOG("Network loop exited");
     if (util::cfg.monitor_keyboard || util::cfg.monitor_mouse) {
         // We have to stop the hook here since the main thread is blocked by uiohook
         uiohook::stop();
@@ -140,7 +140,7 @@ bool listen()
     numready = netlib_check_socket_set(set, 0);
 
     if (numready == -1) {
-        DEBUG_LOG("netlib_check_socket_set failed: %s\n", netlib_get_error());
+        DEBUG_LOG("netlib_check_socket_set failed: %s", netlib_get_error());
         return false;
     }
 
@@ -149,16 +149,16 @@ bool listen()
 
         switch (msg) {
         case MSG_NAME_NOT_UNIQUE:
-            DEBUG_LOG("Nickname is already in use. Disconnecting...\n");
+            DEBUG_LOG("Nickname is already in use. Disconnecting...");
             return false;
         case MSG_NAME_INVALID:
-            DEBUG_LOG("Nickname is not valid. Disconnecting...\n");
+            DEBUG_LOG("Nickname is not valid. Disconnecting...");
             return false;
         case MSG_SERVER_SHUTDOWN:
-            DEBUG_LOG("Server is shutting down.\n");
+            DEBUG_LOG("Server is shutting down.");
             return false;
         case MSG_READ_ERROR:
-            DEBUG_LOG("Couldn't read message.\n");
+            DEBUG_LOG("Couldn't read message.");
             return false;
         case MSG_REFRESH:;    /* fallthrough */
         case MSG_PING_CLIENT: /* NO-OP needed */
@@ -174,7 +174,7 @@ bool listen()
 bool init()
 {
     if (netlib_init() == -1) {
-        DEBUG_LOG("netlib_init failed: %s\n", netlib_get_error());
+        DEBUG_LOG("netlib_init failed: %s", netlib_get_error());
         return false;
     }
     return true;

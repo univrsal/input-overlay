@@ -43,16 +43,16 @@ int main(int argc, char **argv)
     signal(SIGINT, &sig_int__handler);
     signal(SIGBREAK, &sig_break__handler);
 
-    if (!network::init())
-        return util::RET_NETWORK_INIT;
-
-    printf("Network init done.\n");
-
     if (!util::parse_arguments(argc, argv))
         return util::RET_ARGUMENT_PARSING; /* Invalid arguments */
 
+    if (!network::init())
+        return util::RET_NETWORK_INIT;
+
+    DEBUG_LOG("Network init done.");
+
     if (!util::cfg.monitor_keyboard && !util::cfg.monitor_mouse && !util::cfg.monitor_gamepad) {
-        printf("Nothing to monitor!\n");
+        DEBUG_LOG("Nothing to monitor!");
         return util::RET_NO_HOOKS;
     }
 
@@ -64,13 +64,13 @@ int main(int argc, char **argv)
 
     if (util::cfg.monitor_gamepad) {
         if (!libgamepad::start(util::cfg.gamepad_hook_type)) {
-            printf("Gamepad hook initialization failed!\n");
+            DEBUG_LOG("Gamepad hook initialization failed!");
             return util::RET_GAMEPAD_INIT;
         }
     }
 
     if ((util::cfg.monitor_keyboard || util::cfg.monitor_mouse) && !uiohook::start()) {
-        printf("uiohook init failed\n");
+        DEBUG_LOG("uiohook init failed");
         return util::RET_UIOHOOK_INIT;
     }
 

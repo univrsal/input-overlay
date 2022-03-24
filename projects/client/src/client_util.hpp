@@ -25,7 +25,8 @@
 #include <messages.hpp>
 #include <gamepad/hook.hpp>
 
-#define DEBUG_LOG(fmt, ...) printf("[%25.25s:%03d]: " fmt, __FUNCTION__, __LINE__, ##__VA_ARGS__)
+#define DEBUG_LOG(fmt, ...) printf("[%25.25s:%03d]: " fmt "\n", __FUNCTION__, __LINE__, ##__VA_ARGS__)
+#define DEBUG_LOGN(fmt, ...) printf("[%25.25s:%03d]: " fmt, __FUNCTION__, __LINE__, ##__VA_ARGS__)
 
 namespace util {
 typedef struct {

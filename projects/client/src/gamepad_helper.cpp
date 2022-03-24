@@ -83,7 +83,7 @@ bool start(uint16_t flags)
         default:
             state = "connected";
         }
-        DEBUG_LOG("Device '%s' %s\n", d->get_id().c_str(), state);
+        DEBUG_LOG("Device '%s' %s", d->get_id().c_str(), state);
     };
 
     hook_instance->set_axis_event_handler(input_writer);

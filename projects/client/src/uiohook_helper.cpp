@@ -62,11 +62,11 @@ void dispatch_proc(uiohook_event *const event)
     std::lock_guard<std::mutex> lock(buffer_mutex);
     switch (event->type) {
     case EVENT_HOOK_ENABLED:
-        DEBUG_LOG("uiohook started\n");
+        DEBUG_LOG("uiohook started");
         hook_state = true;
         break;
     case EVENT_HOOK_DISABLED:
-        DEBUG_LOG("uiohook exited\n");
+        DEBUG_LOG("uiohook exited");
         break;
     case EVENT_MOUSE_CLICKED:
     case EVENT_MOUSE_PRESSED:
@@ -164,7 +164,7 @@ void stop()
     hook_state = false;
     const auto status = hook_stop();
 
-    DEBUG_LOG("Closing hook\n");
+    DEBUG_LOG("Closing hook");
     switch (status) {
     case UIOHOOK_ERROR_OUT_OF_MEMORY:
         logger_proc(LOG_LEVEL_ERROR, "[uiohook] Failed to allocate memory. (%#X)", status);
