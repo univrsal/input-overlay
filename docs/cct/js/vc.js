@@ -67,6 +67,7 @@ $(function() {
     vc("Digit8", 0x0009);
     vc("Digit9", 0x000A);
     vc("Digit0", 0x000B);
+    vc("Backquote", 0x0029);
     vc("F1", 0x003B);
     vc("F2", 0x003C);
     vc("F3", 0x003D);
