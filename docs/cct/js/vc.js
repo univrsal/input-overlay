@@ -97,8 +97,8 @@ $(function() {
     vc("Backspace", 0x000E);
     vc("Tab", 0x000F);
     vc("CapsLock", 0x003A);
-    vc("BracketRight", 0x001A);
-    vc("BracketLeft", 0x001B);
+    vc("BracketRight", 0x001B);
+    vc("BracketLeft", 0x001A);
     vc("Backslash", 0x002B);
     vc("Semicolon", 0x0027);
     vc("Quote", 0x0028);
