@@ -262,7 +262,8 @@ void io_settings_dialog::CbInputControlStateChanged(int state)
 
 void io_settings_dialog::PingClients()
 {
-    network::server_instance->ping_clients();
+    if (network::server_instance)
+        network::server_instance->ping_clients();
 }
 
 void io_settings_dialog::RefreshWindowList()
