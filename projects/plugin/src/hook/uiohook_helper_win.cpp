@@ -36,7 +36,7 @@ static HANDLE hook_running_mutex;
 static HANDLE hook_control_mutex;
 static HANDLE hook_control_cond;
 
-void dispatch_proc(uiohook_event *const event)
+void dispatch_proc(uiohook_event *const event, void *)
 {
     switch (event->type) {
     case EVENT_HOOK_ENABLED:
@@ -66,21 +66,19 @@ DWORD WINAPI hook_thread_proc(const LPVOID arg)
     return status;
 }
 
-bool logger_proc(const unsigned int level, const char *format, ...)
+extern "C" {
+static void logger_proc(unsigned int level, void *user_data, const char *format, va_list args)
 {
-    va_list args;
-    std::string f;
     switch (level) {
+    case LOG_LEVEL_INFO:
+        blogva(LOG_INFO, "[input-overlay::uiohook]", args);
+        break;
     case LOG_LEVEL_WARN:
     case LOG_LEVEL_ERROR:
-        va_start(args, format);
-        f = std::string(format);
-        f.insert(0, "[input-overlay] ");
-        blog(LOG_WARNING, f.c_str(), args);
-        va_end(args);
+        blogva(LOG_WARNING, "[input-overlay::uiohook]", args);
     default:;
     }
-    return true;
+}
 }
 
 void stop()
@@ -156,10 +154,10 @@ void start()
     hook_control_cond = CreateEvent(nullptr, TRUE, FALSE, TEXT("hook_control_cond"));
 
     /* Set the logger callback for library output. */
-    hook_set_logger_proc(&logger_proc);
+    hook_set_logger_proc(&logger_proc, nullptr);
 
     /* Set the event callback for uiohook events. */
-    hook_set_dispatch_proc(&dispatch_proc);
+    hook_set_dispatch_proc(&dispatch_proc, nullptr);
 
     const auto status = hook_enable();
     switch (status) {
