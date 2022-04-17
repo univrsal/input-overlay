@@ -38,7 +38,7 @@ jobs:
   linux:
     runs-on: ubuntu-latest
     env:
-      obs-studio-version: 27.2.2
+      obs-studio-version: 27.2.4
       maintainer: uni@vrsal.xyz
       project: input-overlay
       project-url: github.com/univrsal/input-overlay
@@ -148,7 +148,7 @@ jobs:
       WINDOWS_DEPS_VERSION: '2019'
       CMAKE_GENERATOR: "Visual Studio 16 2019"
       CMAKE_SYSTEM_VERSION: "10.0"
-      obs-studio-version: 27.2.3
+      obs-studio-version: 27.2.4
       project: input-overlay
     steps:
       - name: 'Add msbuild to PATH'
