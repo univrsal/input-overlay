@@ -37,12 +37,12 @@ void element_analog_stick::draw(gs_effect_t *effect, gs_image_file_t *image, sou
     gs_rect *temp;
 
     if (m_side == element_side::LEFT) {
-        pos.y += (settings->data.gamepad_axis[gamepad::axis::LEFT_STICK_Y]) * m_radius * 2;
-        pos.x += (settings->data.gamepad_axis[gamepad::axis::LEFT_STICK_X]) * m_radius * 2;
+        pos.y += ((settings->data.gamepad_axis[gamepad::axis::LEFT_STICK_Y] * 2) - 1) * m_radius;
+        pos.x += ((settings->data.gamepad_axis[gamepad::axis::LEFT_STICK_X] * 2) - 1) * m_radius;
         temp = settings->data.gamepad_buttons[gamepad::button::L_THUMB] ? &m_pressed : &m_mapping;
     } else {
-        pos.y += (settings->data.gamepad_axis[gamepad::axis::RIGHT_STICK_Y]) * m_radius * 2;
-        pos.x += (settings->data.gamepad_axis[gamepad::axis::RIGHT_STICK_X]) * m_radius * 2;
+        pos.y += ((settings->data.gamepad_axis[gamepad::axis::RIGHT_STICK_Y] * 2) - 1) * m_radius;
+        pos.x += ((settings->data.gamepad_axis[gamepad::axis::RIGHT_STICK_X] * 2) - 1) * m_radius;
         temp = settings->data.gamepad_buttons[gamepad::button::R_THUMB] ? &m_pressed : &m_mapping;
     }
     element_texture::draw(effect, image, temp, &pos);
