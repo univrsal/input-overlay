@@ -102,11 +102,6 @@ target_include_directories(
     ${NETLIB_INCLUDE_DIR}
 )
 
-if (WIN32)
-   configure_file(${CMAKE_SOURCE_DIR}/package/installer.iss.in
-       ${CMAKE_SOURCE_DIR}/package/installer.iss)
-endif()
-
 if (MSVC)
     set(input-overlay_PLATFORM_SOURCES
             src/util/window_helper_win.cpp
