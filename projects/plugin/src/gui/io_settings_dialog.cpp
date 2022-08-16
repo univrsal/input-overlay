@@ -467,8 +467,8 @@ void io_settings_dialog::on_btn_add_bind_clicked()
     auto dev = get_selected_device();
     if (dev) {
         mutex->lock();
-        auto has_custom_binding = libgamepad::hook_instance->get_binding_by_name(dev->get_binding()->get_name()) !=
-                                  nullptr;
+        auto has_custom_binding = dev->get_binding() && libgamepad::hook_instance->get_binding_by_name(
+                                                            dev->get_binding()->get_name()) != nullptr;
         /* If this device has a custom set binding, we load it, otherwise
          * we keep whatever is already set by the user in the UI and set the binding
          * for the device
