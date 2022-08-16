@@ -77,7 +77,10 @@ function set_description(desc_element, text)
 
 function get_property(type)
 {
-    return { label: $('#editor-element-' + type + '-label'), div: $('#editor-element-' + type + '-container') }
+    return
+    {
+        label: $('#editor-element-' + type + '-label'), div: $('#editor-element-' + type + '-container')
+    }
 }
 
 function setup_editor(type)
@@ -150,9 +153,8 @@ function setup_editor(type)
     }
     case 'mouse_movement': {
         show_property(movement_type);
-        set_description(
-            description,
-            `Mouse movement can be visualized in two ways. Either through 'Point' which will rotate an image
+        set_description(description,
+                        `Mouse movement can be visualized in two ways. Either through 'Point' which will rotate an image
         in the direction the mouse is moved, for example an arrow which points up if you move the mouse up. 'Move' move an image in the direction
         the mouse is moved within a certain radius.`);
         break;

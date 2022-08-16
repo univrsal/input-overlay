@@ -175,14 +175,14 @@ $(function() {
     mouse2vc.set(3, 4);
     mouse2vc.set(4, 5);
 
-    gp(0, 0xEC00); // a
-    gp(1, 0xEC01); // b
-    gp(2, 0xEC02); // x
-    gp(3, 0xEC03); // y
-    gp(4, 0xEC04); // left shoulder
-    gp(5, 0xEC05); // right shoulder
-    gp(8, 0xEC06); // back
-    gp(9, 0xEC07); // start
+    gp(0, 0xEC00);  // a
+    gp(1, 0xEC01);  // b
+    gp(2, 0xEC02);  // x
+    gp(3, 0xEC03);  // y
+    gp(4, 0xEC04);  // left shoulder
+    gp(5, 0xEC05);  // right shoulder
+    gp(8, 0xEC06);  // back
+    gp(9, 0xEC07);  // start
     gp(10, 0xEC09); // left thumb stick down
     gp(11, 0xEC0A); // right thumb stick down
     gp(12, 0xEC0D); // up
