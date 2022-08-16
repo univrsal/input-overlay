@@ -175,25 +175,26 @@ $(function() {
     mouse2vc.set(3, 4);
     mouse2vc.set(4, 5);
 
-    gp(0, 0xEC00);
-    gp(1, 0xEC01);
-    gp(2, 0xEC02);
-    gp(3, 0xEC03);
-    gp(4, 0xEC04);
-    gp(5, 0xEC05);
-    gp(8, 0xEC06);
-    gp(9, 0xEC07);
-    gp(10, 0xEC09);
-    gp(11, 0xEC10);
-    gp(12, 0xEC13);
-    gp(13, 0xEC14);
-    gp(14, 0xEC11);
-    gp(15, 0xEC12);
-    gp(16, 0xEC08);
+    gp(0, 0xEC00); // a
+    gp(1, 0xEC01); // b
+    gp(2, 0xEC02); // x
+    gp(3, 0xEC03); // y
+    gp(4, 0xEC04); // left shoulder
+    gp(5, 0xEC05); // right shoulder
+    gp(8, 0xEC06); // back
+    gp(9, 0xEC07); // start
+    gp(10, 0xEC09); // left thumb stick down
+    gp(11, 0xEC0A); // right thumb stick down
+    gp(12, 0xEC0D); // up
+    gp(13, 0xEC0E); // down
+    gp(14, 0xEC0B); // dpad left
+    gp(15, 0xEC0C); // dpad right
+    gp(16, 0xEC08); // guide
 });
 
 function gamepad_to_vc(button)
 {
+    console.log(button);
     if (gamepad2vc.has(button))
         return gamepad2vc.get(button);
     return 0;
