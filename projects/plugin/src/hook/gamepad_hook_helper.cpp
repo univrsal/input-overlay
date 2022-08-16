@@ -28,7 +28,7 @@ void start_pad_hook()
 #if defined(WIN32)
     binfo("Using '%s' gamepad backend", flags & gamepad::hook_type::DIRECT_INPUT ? "Direct Input" : "XInput");
 #else
-    binfo("Using '%s' for gamepad discovery", flags & gamepad::hook_type::JS ? "/dev/js*" : "/dev/input/by-id");
+    binfo("Using '%s' for gamepad discovery", flags & gamepad::hook_type::JS ? "/dev/input/js*" : "/dev/input/by-id");
 #endif
 
     /* Pipe gamepad log to obs log */
