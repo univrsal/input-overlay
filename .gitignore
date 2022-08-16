@@ -9,3 +9,5 @@ build-input-overlay*/
 docs/cct/server.sh
 cmake-*/
 .idea/*
+
+*.generated.h
