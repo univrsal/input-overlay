@@ -3,7 +3,7 @@
 *.autosave
 *.user
 todo
-buil*/
+build-input-overlay*/
 *.iss
 *.vscode/
 docs/cct/server.sh
