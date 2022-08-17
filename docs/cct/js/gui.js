@@ -77,10 +77,7 @@ function set_description(desc_element, text)
 
 function get_property(type)
 {
-    return
-    {
-        label: $('#editor-element-' + type + '-label'), div: $('#editor-element-' + type + '-container')
-    }
+    return {label: $('#editor-element-' + type + '-label'), div: $('#editor-element-' + type + '-container')};
 }
 
 function setup_editor(type)
