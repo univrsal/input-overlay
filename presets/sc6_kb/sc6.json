@@ -1,0 +1,203 @@
+{
+    "default_width": 0,
+    "default_height": 0,
+    "space_h": 0,
+    "space_v": 0,
+    "flags": 0,
+    "overlay_width": 1197,
+    "overlay_height": 298,
+    "elements": [
+        {
+            "type": 1,
+            "pos": [
+                148,
+                0
+            ],
+            "id": "keyboard button0",
+            "z_level": 0,
+            "mapping": [
+                8,
+                4,
+                149,
+                148
+            ],
+            "code": 17
+        },
+        {
+            "type": 1,
+            "pos": [
+                0,
+                149
+            ],
+            "id": "keyboard button1",
+            "z_level": 0,
+            "mapping": [
+                166,
+                4,
+                149,
+                149
+            ],
+            "code": 30
+        },
+        {
+            "type": 1,
+            "pos": [
+                148,
+                149
+            ],
+            "id": "keyboard button2",
+            "z_level": 0,
+            "mapping": [
+                323,
+                4,
+                149,
+                149
+            ],
+            "code": 31
+        },
+        {
+            "type": 1,
+            "pos": [
+                296,
+                149
+            ],
+            "id": "keyboard button3",
+            "z_level": 0,
+            "mapping": [
+                481,
+                4,
+                149,
+                149
+            ],
+            "code": 32
+        },
+        {
+            "type": 1,
+            "pos": [
+                602,
+                0
+            ],
+            "id": "keyboard button4",
+            "z_level": 0,
+            "mapping": [
+                6,
+                323,
+                150,
+                149
+            ],
+            "code": 22
+        },
+        {
+            "type": 1,
+            "pos": [
+                751,
+                0
+            ],
+            "id": "keyboard button5",
+            "z_level": 0,
+            "mapping": [
+                169,
+                323,
+                149,
+                149
+            ],
+            "code": 23
+        },
+        {
+            "type": 1,
+            "pos": [
+                899,
+                0
+            ],
+            "id": "keyboard button6",
+            "z_level": 0,
+            "mapping": [
+                328,
+                323,
+                150,
+                150
+            ],
+            "code": 24
+        },
+        {
+            "type": 1,
+            "pos": [
+                525,
+                149
+            ],
+            "id": "keyboard button7",
+            "z_level": 0,
+            "mapping": [
+                491,
+                323,
+                149,
+                149
+            ],
+            "code": 35
+        },
+        {
+            "type": 1,
+            "pos": [
+                674,
+                149
+            ],
+            "id": "keyboard button8",
+            "z_level": 0,
+            "mapping": [
+                1033,
+                323,
+                148,
+                149
+            ],
+            "code": 36
+        },
+        {
+            "type": 1,
+            "pos": [
+                822,
+                149
+            ],
+            "id": "keyboard button9",
+            "z_level": 0,
+            "mapping": [
+                706,
+                323,
+                148,
+                149
+            ],
+            "code": 37
+        },
+        {
+            "type": 1,
+            "pos": [
+                970,
+                149
+            ],
+            "id": "keyboard button10",
+            "z_level": 0,
+            "mapping": [
+                870,
+                323,
+                149,
+                149
+            ],
+            "code": 38
+        },
+        {
+            "type": 1,
+            "pos": [
+                1048,
+                1
+            ],
+            "id": "keyboard button11",
+            "z_level": 0,
+            "mapping": [
+                870,
+                11,
+                149,
+                148
+            ],
+            "code": 25
+        }
+    ]
+}
