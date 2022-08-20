@@ -56,3 +56,8 @@ QString util_get_data_file(const QString &file_name);
 extern void GetWindowList(std::vector<std::string> &windows);
 
 extern void GetCurrentWindowTitle(std::string &title);
+
+
+#if _WIN32
+extern void os_set_thread_name(const char *);
+#endif

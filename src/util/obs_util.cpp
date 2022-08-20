@@ -97,3 +97,30 @@ bool util_write_json(const QString &path, const QJsonDocument &doc)
     }
     return result;
 }
+
+#if _WIN32
+#include <windows.h>
+const DWORD MS_VC_EXCEPTION = 0x406D1388;
+#pragma pack(push, 8)
+typedef struct tagTHREADNAME_INFO {
+    DWORD dwType;     // Must be 0x1000.
+    LPCSTR szName;    // Pointer to name (in user addr space).
+    DWORD dwThreadID; // Thread ID (-1=caller thread).
+    DWORD dwFlags;    // Reserved for future use, must be zero.
+} THREADNAME_INFO;
+#pragma pack(pop)
+
+inline void os_set_thread_name(const char *name)
+{
+    THREADNAME_INFO info;
+    info.dwType = 0x1000;
+    info.szName = name;
+    info.dwThreadID = GetCurrentThreadId();
+    info.dwFlags = 0;
+
+    __try {
+        RaiseException(0x406D1388, 0, sizeof(info) / sizeof(DWORD), (const ULONG_PTR *)&info);
+    } __except (EXCEPTION_CONTINUE_EXECUTION) {
+    }
+}
+#endif
