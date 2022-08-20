@@ -106,7 +106,15 @@ if (MSVC)
     set(input-overlay_PLATFORM_SOURCES
             src/util/window_helper_win.cpp
             src/hook/uiohook_helper_win.cpp)
-    set(input-overlay_PLATFORM_DEPS wsock32)
+    if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+        set(input-overlay_PLATFORM_DEPS
+            ws2_32
+            iphlpapi)
+    elseif(CMAKE_SIZEOF_VOID_P EQUAL 4)
+        set(input-overlay_PLATFORM_DEPS
+	    wsock32
+            iphlpapi)
+    endif()
 
 elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
     add_definitions(-DLINUX=1)
