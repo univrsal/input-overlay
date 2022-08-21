@@ -1,6 +1,6 @@
 ![logo](https://i.imgur.com/nPgpsRx.png)
 
-![CI](https://github.com/univrsal/input-overlay/workflows/CI/badge.svg)
+[![Plugin Build](https://github.com/univrsal/input-overlay/actions/workflows/main.yml/badge.svg)](https://github.com/univrsal/input-overlay/actions/workflows/main.yml)
 
 Show keyboard, mouse and gamepad input on stream.\
 Available for OBS Studio 19.0.3+ on windows (32bit/64bit) and linux (64bit).
