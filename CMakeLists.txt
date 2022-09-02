@@ -35,11 +35,6 @@ include(cmake/ObsPluginHelpers.cmake)
 if (LOCAL_INSTALLATION)
 
     if (UNIX AND NOT APPLE)
-        target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE "/usr/include/obs")
-        set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
-        find_package(LibObs REQUIRED)
-        target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE obs-frontend-api libobs)
-
         # Installs into home directory
         add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
             # Copy to obs-studio dev environment for immediate testing
