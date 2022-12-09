@@ -1,0 +1,271 @@
+{
+    "default_width": 0,
+    "default_height": 0,
+    "space_h": 0,
+    "space_v": 0,
+    "flags": 4,
+    "overlay_width": 796,
+    "overlay_height": 521,
+    "elements": [
+        {
+            "type": 2,
+            "pos": [
+                463,
+                229
+            ],
+            "id": "A",
+            "z_level": "0",
+            "mapping": [
+                0,
+                0,
+                94,
+                94
+            ],
+            "code": 60417
+        },
+        {
+            "type": 2,
+            "pos": [
+                355,
+                279
+            ],
+            "id": "B",
+            "z_level": "0",
+            "mapping": [
+                97,
+                0,
+                94,
+                94
+            ],
+            "code": 60416
+        },
+        {
+            "type": 2,
+            "pos": [
+                469,
+                101
+            ],
+            "id": "X",
+            "z_level": "0",
+            "mapping": [
+                194,
+                0,
+                94,
+                94
+            ],
+            "code": 60419
+        },
+        {
+            "type": 2,
+            "pos": [
+                366,
+                148
+            ],
+            "id": "Y",
+            "z_level": "0",
+            "mapping": [
+                291,
+                0,
+                94,
+                94
+            ],
+            "code": 60418
+        },
+        {
+            "type": 2,
+            "pos": [
+                702,
+                118
+            ],
+            "id": "L1",
+            "z_level": "0",
+            "mapping": [
+                388,
+                0,
+                94,
+                94
+            ],
+            "code": 60420
+        },
+        {
+            "type": 2,
+            "pos": [
+                584,
+                104
+            ],
+            "id": "R1",
+            "z_level": "0",
+            "mapping": [
+                485,
+                0,
+                94,
+                94
+            ],
+            "code": 60421
+        },
+        {
+            "type": 6,
+            "pos": [
+                701,
+                245
+            ],
+            "id": "L2",
+            "z_level": "0",
+            "mapping": [
+                582,
+                0,
+                94,
+                94
+            ],
+            "direction": 3,
+            "trigger_mode": true,
+            "side": 0
+        },
+        {
+            "type": 6,
+            "pos": [
+                585,
+                229
+            ],
+            "id": "R2",
+            "z_level": "0",
+            "mapping": [
+                1360,
+                0,
+                94,
+                94
+            ],
+            "direction": 4,
+            "trigger_mode": true,
+            "side": 1
+        },
+        {
+            "type": 2,
+            "pos": [
+                148,
+                149
+            ],
+            "id": "DOWN",
+            "z_level": "0",
+            "mapping": [
+                776,
+                0,
+                94,
+                94
+            ],
+            "code": 60430
+        },
+        {
+            "type": 2,
+            "pos": [
+                305,
+                427
+            ],
+            "id": "UP",
+            "z_level": "0",
+            "mapping": [
+                873,
+                0,
+                94,
+                94
+            ],
+            "code": 60429
+        },
+        {
+            "type": 2,
+            "pos": [
+                252,
+                204
+            ],
+            "id": "RIGHT",
+            "z_level": "0",
+            "mapping": [
+                970,
+                0,
+                94,
+                94
+            ],
+            "code": 60428
+        },
+        {
+            "type": 2,
+            "pos": [
+                35,
+                149
+            ],
+            "id": "LEFT",
+            "z_level": "0",
+            "mapping": [
+                1067,
+                0,
+                94,
+                94
+            ],
+            "code": 60427
+        },
+        {
+            "type": 2,
+            "pos": [
+                302,
+                0
+            ],
+            "id": "SELECT",
+            "z_level": "0",
+            "mapping": [
+                1164,
+                0,
+                94,
+                94
+            ],
+            "code": 60422
+        },
+        {
+            "type": 2,
+            "pos": [
+                205,
+                0
+            ],
+            "id": "START",
+            "z_level": "0",
+            "mapping": [
+                1261,
+                0,
+                94,
+                94
+            ],
+            "code": 60423
+        },
+        {
+            "type": 2,
+            "pos": [
+                103,
+                0
+            ],
+            "id": "L3",
+            "z_level": "0",
+            "mapping": [
+                679,
+                0,
+                94,
+                94
+            ],
+            "code": 60425
+        },
+        {
+            "type": 2,
+            "pos": [
+                0,
+                0
+            ],
+            "id": "R3",
+            "z_level": "0",
+            "mapping": [
+                1457,
+                0,
+                94,
+                94
+            ],
+            "code": 60426
+        }
+    ]
+}
