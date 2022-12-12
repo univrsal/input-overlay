@@ -64,7 +64,7 @@ bool overlay::load()
     m_is_loaded = image_loaded && load_cfg();
 
     if (!m_is_loaded) {
-        m_settings->gamepad = 0;
+        //        m_settings->gamepad = 0;
         if (!image_loaded) {
             m_settings->cx = 100; /* Default size */
             m_settings->cy = 100;
@@ -185,6 +185,11 @@ void overlay::tick(float seconds)
 
 void overlay::refresh_data()
 {
+    if (io_config::io_window_filters.input_blocked())
+        return;
+    if (!(uiohook::state || network::network_flag || gamepad_hook::state))
+        return;
+
     /* This copies over necessary input data information
      * to make sure the overlay always has data available to
      * draw the overlay. If the data was directly accessed in the render
@@ -192,50 +197,26 @@ void overlay::refresh_data()
      * while the data is currently inaccessible, because it is being written
      * to by the input thread, resulting in all buttons being unpressed
      */
-    if (io_config::io_window_filters.input_blocked())
-        return;
-    input_data *source = nullptr;
-    std::mutex *m = nullptr;
-    std::shared_ptr<network::io_client> client = nullptr; // Holds the reference until we've copied the data
-    if (uiohook::state || network::network_flag || libgamepad::state) {
-        if (network::server_instance && !m_settings->use_local_input()) {
-            client = network::server_instance->get_client(m_settings->selected_source);
-            if (client && client->valid()) {
-                source = client->get_data();
-                m = &network::mutex;
-            }
-        } else {
-            source = &local_data::data;
-            m = &local_data::data_mutex;
+
+    if (m_settings->use_local_input()) {
+        local_data::data.m_mutex.lock();
+        m_settings->data.copy(&local_data::data);
+        if (uiohook::state)
+            uiohook::check_wheel();
+
+        if (m_settings->gamepad) {
+            m_settings->gamepad->mutex().lock();
+            m_settings->gamepad->copy_data(&m_settings->data);
+            m_settings->gamepad->mutex().unlock();
         }
-    }
-
-    if (m && source) {
-        // copy over data from gamepad into the input data structure
-        auto copy = [](input_data *source, std::shared_ptr<gamepad::device> d) {
-            source->last_axis_event = *d->last_axis_event();
-            source->last_button_event = *d->last_button_event();
-            source->gamepad_axis = d->get_axis();
-            source->gamepad_buttons = d->get_buttons();
-        };
-
-        if (m_settings->use_local_input()) {
-            if (libgamepad::hook_instance && m_settings->gamepad) {
-                libgamepad::hook_instance->get_mutex()->lock();
-                copy(source, m_settings->gamepad);
-                libgamepad::hook_instance->get_mutex()->unlock();
-            }
-            m->lock();
-            m_settings->data.copy(source);
-            if (uiohook::state)
-                uiohook::check_wheel();
-            m->unlock();
-        } else {
-            m->lock();
-            if (m_settings->gamepad)
-                copy(source, m_settings->gamepad);
-            m_settings->data.copy(source);
-            m->unlock();
+        local_data::data.m_mutex.unlock();
+    } else if (network::server_instance) {
+        // Holds the reference until we've copied the data
+        auto client = network::server_instance->get_client(m_settings->selected_source);
+        if (client && client->valid()) {
+            network::mutex.lock();
+            m_settings->data.copy(client->get_data());
+            network::mutex.unlock();
         }
     }
 }

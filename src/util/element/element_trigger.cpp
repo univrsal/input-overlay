@@ -39,14 +39,16 @@ void element_trigger::draw(gs_effect_t *effect, gs_image_file_t *image, sources:
 {
     auto progress = 0.f;
 
-    switch (m_side) {
-    case element_side::LEFT:
-        progress = settings->data.gamepad_axis[gamepad::axis::LEFT_TRIGGER];
-        break;
-    case element_side::RIGHT:
-        progress = settings->data.gamepad_axis[gamepad::axis::RIGHT_TRIGGER];
-        break;
-    default:;
+    if (settings->gamepad) {
+        switch (m_side) {
+        case element_side::LEFT:
+            progress = settings->pad_axis(SDL_CONTROLLER_AXIS_TRIGGERLEFT);
+            break;
+        case element_side::RIGHT:
+            progress = settings->pad_axis(SDL_CONTROLLER_AXIS_TRIGGERRIGHT);
+            break;
+        default:;
+        }
     }
 
     if (m_button_mode) {

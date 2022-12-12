@@ -18,7 +18,6 @@
 
 #pragma once
 #include "keycodes.h"
-#include <gamepad/device.hpp>
 #include <stdint.h>
 #include <string>
 #include <uiohook.h>

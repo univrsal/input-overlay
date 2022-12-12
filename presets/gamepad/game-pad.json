@@ -18,7 +18,7 @@
             "z_level": 0
         },
         {
-            "code": 60416,
+            "code": 0,
             "id": "a",
             "mapping": [
                 838,
@@ -34,7 +34,7 @@
             "z_level": 1
         },
         {
-            "code": 60417,
+            "code": 1,
             "id": "b",
             "mapping": [
                 741,
@@ -50,7 +50,7 @@
             "z_level": 1
         },
         {
-            "code": 60419,
+            "code": 3,
             "id": "y",
             "mapping": [
                 644,
@@ -66,7 +66,7 @@
             "z_level": 1
         },
         {
-            "code": 60418,
+            "code": 2,
             "id": "x",
             "mapping": [
                 547,
@@ -82,7 +82,7 @@
             "z_level": 1
         },
         {
-            "code": 60422,
+            "code": 4,
             "id": "select",
             "mapping": [
                 389,
@@ -98,7 +98,7 @@
             "z_level": 1
         },
         {
-            "code": 60423,
+            "code": 6,
             "id": "start",
             "mapping": [
                 468,
@@ -114,7 +114,7 @@
             "z_level": 1
         },
         {
-            "code": 60420,
+            "code": 9,
             "id": "ls",
             "mapping": [
                 1,
@@ -130,7 +130,7 @@
             "z_level": 1
         },
         {
-            "code": 60421,
+            "code": 10,
             "id": "rs",
             "mapping": [
                 152,
@@ -146,7 +146,7 @@
             "z_level": 1
         },
         {
-            "code": 60429,
+            "code": 11,
             "id": "dpad_up",
             "mapping": [
                 717,
@@ -162,7 +162,7 @@
             "z_level": 1
         },
         {
-            "code": 60430,
+            "code": 12,
             "id": "dpad_down",
             "mapping": [
                 717,
@@ -178,7 +178,7 @@
             "z_level": 1
         },
         {
-            "code": 60427,
+            "code": 13,
             "id": "dpad_left",
             "mapping": [
                 717,
@@ -194,7 +194,7 @@
             "z_level": 1
         },
         {
-            "code": 60428,
+            "code": 14,
             "id": "dpad_right",
             "mapping": [
                 717,

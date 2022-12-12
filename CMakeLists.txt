@@ -10,7 +10,6 @@ option(LOCAL_INSTALLATION "Whether to install the obs plugin in the user config 
 
 string(TIMESTAMP TODAY "%Y.%m.%d %H:%M")
 add_definitions(-DBUILD_TIME="${TODAY}")
-add_definitions(-DTUNA_VERSION="${PROJECT_VERSION}")
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/external")
 
@@ -73,6 +72,19 @@ if (LOCAL_INSTALLATION)
                     "${PROJECT_SOURCE_DIR}/data"
                     "${libobs_DIR}/../rundir/$<CONFIG>/data/obs-plugins/${CMAKE_PROJECT_NAME}")
         )
+
+        get_filename_component(SDL2_BINARYDIR ${SDL2_LIBRARIES} DIRECTORY INTERNAL)
+
+        list(APPEND WIN_DLLS
+            "${SDL2_BINARYDIR}/SDL2.dll"
+        )
+        # Copy dependencies
+        add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            ${WIN_DLLS}
+            $<TARGET_FILE_DIR:${PROJECT_NAME}>)
+
+        install(FILES ${WIN_DLLS} DESTINATION ${PROJECT_NAME})
     endif()
 endif()
 
@@ -82,13 +94,15 @@ target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE OBS::obs-frontend-api)
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE OBS::libobs)
 target_link_libraries(${CMAKE_PROJECT_NAME}
         ${input-overlay_PLATFORM_DEPS} PRIVATE
+        ${SDL2_LIBRARIES}
         uiohook_static
         netlib_static
-        gamepad_static)
+)
 
 target_include_directories(
     ${CMAKE_PROJECT_NAME}
     PRIVATE
+    ${SDL2_INCLUDE_DIRS}
     ${COMMON_HEADERS}
     ${JSON_11_HEADER}
     ${GAMEPAD_INCLUDE_DIR}
@@ -127,6 +141,8 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
         src/sources/input_source.cpp
         src/sources/input_source.hpp
         src/sources/input_source.cpp
+        src/hook/sdl_gamepad.hpp
+        src/hook/sdl_gamepad.cpp
         src/hook/uiohook_helper.hpp
         src/hook/gamepad_hook_helper.hpp
         src/hook/gamepad_hook_helper.cpp

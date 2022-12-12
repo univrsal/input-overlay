@@ -264,12 +264,12 @@ bool io_server::create_sockets()
 
     return true;
 }
-std::shared_ptr<gamepad::device> io_server::get_client_device_by_id(const std::string &client_id,
-                                                                    const std::string &device_id)
-{
-    auto client = get_client(client_id);
-    if (client)
-        return client->get_pad(device_id);
-    return nullptr;
-}
+//std::shared_ptr<gamepad::device> io_server::get_client_device_by_id(const std::string &client_id,
+//                                                                    const std::string &device_id)
+//{
+//    auto client = get_client(client_id);
+//    if (client)
+//        return client->get_pad(device_id);
+//    return nullptr;
+//}
 }

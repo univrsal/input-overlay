@@ -1,102 +1,174 @@
 #include "gamepad_hook_helper.hpp"
-#include <libgamepad.hpp>
-#include "../network/websocket_server.hpp"
-#include "../util/obs_util.hpp"
 #include "../util/log.h"
-#include "../util/config.hpp"
+#include "../util/input_data.hpp"
+#include <thread>
 
-namespace libgamepad {
+namespace gamepad_hook {
 
-std::shared_ptr<gamepad::hook> hook_instance = nullptr;
-bool state;
-uint16_t last_input;
-int last_input_value;
-uint64_t last_input_time;
-uint16_t flags;
-std::mutex last_input_mutex;
+std::atomic<bool> state;
+std::thread sdl_poll_thread;
+SDL_Window *dummy_window{};
+gamepads *local_gamepads{};
 
-void start_pad_hook()
+void start()
 {
     if (state)
         return;
-    flags = io_config::use_js ? gamepad::hook_type::JS : gamepad::hook_type::BY_ID;
-    flags |= io_config::use_dinput ? gamepad::hook_type::DIRECT_INPUT : gamepad::hook_type::NATIVE_DEFAULT;
-    hook_instance = gamepad::hook::make(flags);
-    hook_instance->set_plug_and_play(true, gamepad::ms(1000));
-    hook_instance->set_sleep_time(gamepad::mcs(1000)); // todo: maybe change to 0.1 ms
 
-#if defined(WIN32)
-    binfo("Using '%s' gamepad backend", flags & gamepad::hook_type::DIRECT_INPUT ? "Direct Input" : "XInput");
-#else
-    binfo("Using '%s' for gamepad discovery", flags & gamepad::hook_type::JS ? "/dev/input/js*" : "/dev/input/by-id");
+    SDL_version compile_ver{}, link_ver{};
+
+    SDL_VERSION(&compile_ver);
+    SDL_GetVersion(&link_ver);
+
+    binfo("Initializing SDL2 for gamepad input (compile-time: %i.%i.%i, run-time:  %i.%i.%i)", compile_ver.major,
+          compile_ver.minor, compile_ver.patch, link_ver.major, link_ver.minor, link_ver.patch);
+
+    // TODO: I think there's a flag for switching a and b on switch controllers, we might want that
+    // as an option in the settings dialog
+    SDL_SetHint(SDL_HINT_ACCELEROMETER_AS_JOYSTICK, "0");
+    SDL_SetHint(SDL_HINT_JOYSTICK_HIDAPI_PS4_RUMBLE, "1");
+    SDL_SetHint(SDL_HINT_JOYSTICK_HIDAPI_PS5_RUMBLE, "1");
+    SDL_SetHint(SDL_HINT_JOYSTICK_HIDAPI_STEAM, "1");
+#if SDL_VERSION_ATLEAST(2, 0, 22)
+    SDL_SetHint(SDL_HINT_JOYSTICK_ROG_CHAKRAM, "1");
 #endif
+    SDL_SetHint(SDL_HINT_JOYSTICK_ALLOW_BACKGROUND_EVENTS, "1");
+    SDL_SetHint(SDL_HINT_LINUX_JOYSTICK_DEADZONES, "1");
 
-    /* Pipe gamepad log to obs log */
-    auto log_pipe = [](int level, const char *msg, va_list args, void *) {
-        std::string message = "[input-overlay::libgamepad] ";
-        message += msg;
-        switch (level) {
-        case gamepad::LOG_DEBUG:
-            blogva(LOG_DEBUG, message.c_str(), args);
-            break;
-        case gamepad::LOG_ERROR:
-            blogva(LOG_ERROR, message.c_str(), args);
-            break;
-        case gamepad::LOG_INFO:
-            blogva(LOG_INFO, message.c_str(), args);
-            break;
-        case gamepad::LOG_WARNING:
-            blogva(LOG_WARNING, message.c_str(), args);
-            break;
-        default:;
+    if (SDL_WasInit(0) == (SDL_INIT_VIDEO | SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER) ||
+        SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER) < 0) {
+        berr("Couldn't initialize SDL: %s\n", SDL_GetError());
+        return;
+    }
+
+    // I'm not sure where this file is supposed to be, but the gamepad test had this line so we'll just copy it
+    SDL_GameControllerAddMappingsFromFile("gamecontrollerdb.txt");
+
+#if WIN32
+    dummy_window = SDL_CreateWindow("input-overlay sdl2 window", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 10, 10,
+                                    SDL_WINDOW_HIDDEN);
+    if (!dummy_window) {
+        berr("Couldn't create sdl2 window: %s\n", SDL_GetError());
+        return;
+    }
+#endif
+    state = true;
+    local_gamepads = new gamepads;
+    sdl_poll_thread = std::thread([] {
+        while (state)
+            local_gamepads->event_loop();
+    });
+}
+
+void stop()
+{
+    if (!state)
+        return;
+    state = false;
+    sdl_poll_thread.join();
+    delete local_gamepads;
+    local_gamepads = nullptr;
+    SDL_DestroyWindow(dummy_window);
+    dummy_window = nullptr;
+    SDL_Quit();
+}
+
+gamepads::gamepads()
+{
+    for (int i = 0; i < SDL_NumJoysticks(); ++i) {
+        const char *name;
+        const char *path = "n/a";
+        const char *description;
+        char guid[64];
+
+        SDL_JoystickGetGUIDString(SDL_JoystickGetDeviceGUID(i), guid, sizeof(guid));
+
+        if (SDL_IsGameController(i)) {
+            char fmt[512];
+            name = SDL_GameControllerNameForIndex(i);
+#if SDL_VERSION_ATLEAST(2, 24, 0)
+            path = SDL_GameControllerPathForIndex(i);
+#endif
+            description = controller_description(i);
+            std::snprintf(fmt, 512, "%i %s - %s (%s)", i, name, description, path);
+            add_controller(i, fmt);
+        } else {
+            name = SDL_JoystickNameForIndex(i);
+#if SDL_VERSION_ATLEAST(2, 24, 0)
+            path = SDL_JoystickPathForIndex(i);
+#endif
+            description = "Joystick";
+            // TODO: also register those?
         }
-    };
-    gamepad::set_logger(log_pipe, nullptr);
-
-    hook_instance->set_axis_event_handler([](const std::shared_ptr<gamepad::device> &d) {
-        std::lock_guard<std::mutex> lock(last_input_mutex);
-        last_input = d->last_axis_event()->native_id;
-        last_input_value = d->last_axis_event()->value;
-        last_input_time = d->last_axis_event()->time;
-        wss::dispatch_gamepad_event(d->last_axis_event(), d, true, "local");
-    });
-    hook_instance->set_button_event_handler([](const std::shared_ptr<gamepad::device> &d) {
-        std::lock_guard<std::mutex> lock(last_input_mutex);
-        last_input = d->last_button_event()->native_id;
-        last_input_time = d->last_button_event()->time;
-        wss::dispatch_gamepad_event(d->last_button_event(), d, false, "local");
-    });
-
-    hook_instance->set_connect_event_handler([](const std::shared_ptr<gamepad::device> &d) {
-        binfo("'%s' connected", d->get_name().c_str());
-        wss::dispatch_gamepad_event(d, WSS_PAD_CONNECTED, "local");
-    });
-    hook_instance->set_disconnect_event_handler([](const std::shared_ptr<gamepad::device> &d) {
-        binfo("'%s' disconnected", d->get_name().c_str());
-        wss::dispatch_gamepad_event(d, WSS_PAD_DISCONNECTED, "local");
-    });
-    hook_instance->set_reconnect_event_handler([](const std::shared_ptr<gamepad::device> &d) {
-        binfo("'%s' reconnected", d->get_name().c_str());
-        wss::dispatch_gamepad_event(d, WSS_PAD_RECONNECTED, "local");
-    });
-
-    hook_instance->load_bindings(std::string(qt_to_utf8(util_get_data_file("gamepad_bindings.json"))));
-
-    if (hook_instance->start()) {
-        binfo("gamepad hook started");
-        state = true;
-    } else {
-        bwarn("gamepad hook couldn't be started");
+        binfo("Found %s %d: %s%s%s (guid %s, VID 0x%.4x, PID 0x%.4x, player index = %d)", description, i,
+              name ? name : "Unknown", path ? ", " : "", path ? path : "", guid, SDL_JoystickGetDeviceVendor(i),
+              SDL_JoystickGetDeviceProduct(i), SDL_JoystickGetDevicePlayerIndex(i));
     }
 }
 
-void end_pad_hook()
+void gamepads::event_loop()
 {
-    if (state) {
-        hook_instance->save_bindings(std::string(qt_to_utf8(util_get_data_file("gamepad_bindings.json"))));
-        hook_instance->stop();
+    SDL_Event event;
+
+    /* Update to get the current event state */
+    SDL_PumpEvents();
+
+    const char *name;
+    const char *path = "n/a";
+    const char *description;
+    char guid[64];
+
+    /* Process all currently pending events */
+    while (SDL_PeepEvents(&event, 1, SDL_GETEVENT, SDL_FIRSTEVENT, SDL_LASTEVENT) == 1) {
+        switch (event.type) {
+        case SDL_CONTROLLERDEVICEADDED:
+            SDL_Log("Game controller device %d added.\n", (int)SDL_JoystickGetDeviceInstanceID(event.cdevice.which));
+            SDL_JoystickGetGUIDString(SDL_JoystickGetDeviceGUID(event.cdevice.which), guid, sizeof(guid));
+            char fmt[512];
+            name = SDL_GameControllerNameForIndex(event.cdevice.which);
+#if SDL_VERSION_ATLEAST(2, 24, 0)
+            path = SDL_GameControllerPathForIndex(event.cdevice.which);
+#endif
+            description = controller_description(event.cdevice.which);
+            std::snprintf(fmt, 512, "%i %s - %s (%s)", event.cdevice.which, name, description, path);
+            add_controller(event.cdevice.which, fmt);
+            binfo("Found new %s with id %i", description, event.cdevice.which);
+            break;
+
+        case SDL_CONTROLLERDEVICEREMOVED:
+            binfo("Gamepad with id %i disconnected", event.cdevice.which);
+            remove_controller(event.cdevice.which);
+            break;
+
+        case SDL_CONTROLLERTOUCHPADDOWN:
+        case SDL_CONTROLLERTOUCHPADMOTION:
+        case SDL_CONTROLLERTOUCHPADUP:
+            // TODO: process touchpad events?
+            break;
+        case SDL_CONTROLLERSENSORUPDATE:
+            // TODO: process sensor events?
+            break;
+
+        case SDL_CONTROLLERAXISMOTION: {
+            auto pad = m_pads[event.cdevice.which];
+            std::lock_guard<std::mutex> lock(pad->mutex());
+            pad->axis()[event.caxis.axis] = event.caxis.value / float(INT16_MAX);
+        } break;
+        case SDL_CONTROLLERBUTTONDOWN:
+        case SDL_CONTROLLERBUTTONUP: {
+            auto pad = m_pads[event.cdevice.which];
+            std::lock_guard<std::mutex> lock(pad->mutex());
+            pad->buttons()[event.cbutton.button] = event.cbutton.state;
+        } break;
+#if SDL_VERSION_ATLEAST(2, 24, 0)
+        case SDL_JOYBATTERYUPDATED:
+            // TODO: process battery events?
+            break;
+#endif
+        default:
+            break;
+        }
     }
-    state = false;
 }
 
 }

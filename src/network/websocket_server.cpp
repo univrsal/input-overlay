@@ -101,45 +101,43 @@ void dispatch_uiohook_event(const uiohook_event *e, const std::string &source_na
         mg::queue_message(qt_to_utf8(serialize_uiohook(e, source_name)));
 }
 
-void dispatch_gamepad_event(const gamepad::input_event *e, const std::shared_ptr<gamepad::device> &device, bool is_axis,
-                            const std::string &source_name)
+void dispatch_gamepad_event(const SDL_Event *, SDL_GameController *, bool, const std::string &)
 {
-    std::lock_guard<std::mutex> lock(mg::poll_mutex);
-    if (!mg::can_queue_message())
-        return;
-    QJsonObject obj;
-    obj["event_source"] = source_name.c_str();
-    obj["event_type"] = is_axis ? "gamepad_axis" : "gamepad_button";
-    obj["device_name"] = utf8_to_qt(device->get_id().c_str());
-    obj["device_index"] = device->get_index();
-    obj["time"] = int(e->time);
-    obj["virtual_code"] = e->vc;
-    obj["virtual_value"] = e->virtual_value;
-    obj["native_code"] = e->native_id;
-    obj["native_value"] = e->value;
+    //    std::lock_guard<std::mutex> lock(mg::poll_mutex);
+    //    if (!mg::can_queue_message())
+    //        return;
+    //    QJsonObject obj;
+    //    obj["event_source"] = source_name.c_str();
+    //    obj["event_type"] = is_axis ? "gamepad_axis" : "gamepad_button";
+    //    obj["device_name"] = utf8_to_qt(device->get_id().c_str());
+    //    obj["device_index"] = device->get_index();
+    //    obj["time"] = int(e->time);
+    //    obj["virtual_code"] = e->vc;
+    //    obj["virtual_value"] = e->virtual_value;
+    //    obj["native_code"] = e->native_id;
+    //    obj["native_value"] = e->value;
 
-    QJsonDocument doc(obj);
-    QString str(doc.toJson(QJsonDocument::Compact));
+    //    QJsonDocument doc(obj);
+    //    QString str(doc.toJson(QJsonDocument::Compact));
 
-    mg::queue_message(qt_to_utf8(str));
+    //    mg::queue_message(qt_to_utf8(str));
 }
 
-void dispatch_gamepad_event(const std::shared_ptr<gamepad::device> &device, const char *state,
-                            const std::string &source_name)
+void dispatch_gamepad_event(const SDL_Event *, SDL_GameController *, const char *, const std::string &)
 {
-    std::lock_guard<std::mutex> lock(mg::poll_mutex);
-    if (!mg::can_queue_message())
-        return;
-    QJsonObject obj;
-    obj["event_source"] = source_name.c_str();
-    obj["event_type"] = state;
-    obj["device_name"] = utf8_to_qt(device->get_id().c_str());
-    obj["time"] = int(gamepad::hook::ms_ticks());
+    //    std::lock_guard<std::mutex> lock(mg::poll_mutex);
+    //    if (!mg::can_queue_message())
+    //        return;
+    //    QJsonObject obj;
+    //    obj["event_source"] = source_name.c_str();
+    //    obj["event_type"] = state;
+    //    obj["device_name"] = utf8_to_qt(device->get_id().c_str());
+    //    obj["time"] = int(gamepad::hook::ms_ticks());
 
-    QJsonDocument doc(obj);
-    QString str(doc.toJson(QJsonDocument::Compact));
+    //    QJsonDocument doc(obj);
+    //    QString str(doc.toJson(QJsonDocument::Compact));
 
-    mg::queue_message(qt_to_utf8(str));
+    //    mg::queue_message(qt_to_utf8(str));
 }
 
 }

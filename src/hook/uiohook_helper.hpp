@@ -39,7 +39,7 @@ inline void check_wheel()
 
 inline void process_event(uiohook_event *event)
 {
-    std::lock_guard<std::mutex> lock(local_data::data_mutex);
+    std::lock_guard<std::mutex> lock(local_data::data.m_mutex);
     local_data::data.dispatch_uiohook_event(event);
     if (event->type == EVENT_MOUSE_WHEEL)
         last_scroll_time = os_gettime_ns();

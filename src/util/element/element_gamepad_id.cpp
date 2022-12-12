@@ -17,15 +17,9 @@
  *************************************************************************/
 
 #include "element_gamepad_id.hpp"
-#include "element_button.hpp"
 #include "../../sources/input_source.hpp"
-#include "../../hook/gamepad_hook_helper.hpp"
-#include <libgamepad.hpp>
 
-element_gamepad_id::element_gamepad_id() : element_texture(ET_GAMEPAD_ID), m_mappings{}
-{
-    m_keycode = gamepad::button::GUIDE;
-}
+element_gamepad_id::element_gamepad_id() : element_texture(ET_GAMEPAD_ID), m_mappings{} {}
 
 void element_gamepad_id::load(const QJsonObject &obj)
 {
@@ -39,13 +33,10 @@ void element_gamepad_id::load(const QJsonObject &obj)
 
 void element_gamepad_id::draw(gs_effect_t *effect, gs_image_file_t *image, sources::overlay_settings *settings)
 {
-    if (settings->data.gamepad_buttons[m_keycode])
-        element_texture::draw(effect, image, &m_mappings[ID_PRESSED]);
-
     if (settings->gamepad) {
-        if (settings->gamepad->is_valid()) {
-            int index = settings->gamepad->get_index() < 4 ? settings->gamepad->get_index() : 0;
-            element_texture::draw(effect, image, &m_mappings[index]);
-        }
+        if (settings->is_pad_button_pressed(SDL_CONTROLLER_BUTTON_GUIDE))
+            element_texture::draw(effect, image, &m_mappings[ID_PRESSED]);
+        int index = settings->gamepad->player_index();
+        element_texture::draw(effect, image, &m_mappings[index]);
     }
 }

@@ -62,8 +62,8 @@ public:
 
     std::vector<std::shared_ptr<io_client>> &clients() { return m_clients; }
 
-    std::shared_ptr<gamepad::device> get_client_device_by_id(const std::string &client_id,
-                                                             const std::string &device_id);
+    //    std::shared_ptr<gamepad::device> get_client_device_by_id(const std::string &client_id,
+    //                                                             const std::string &device_id);
 
 private:
     bool unique_name(char *name);

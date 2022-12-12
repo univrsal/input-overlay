@@ -55,15 +55,21 @@ inline void input_source::update(obs_data_t *settings)
 {
     m_settings.selected_source = obs_data_get_string(settings, S_INPUT_SOURCE);
 
-    m_settings.gamepad_id = obs_data_get_string(settings, S_CONTROLLER_ID);
-    if (m_settings.use_local_input() && libgamepad::hook_instance) {
-        libgamepad::hook_instance->get_mutex()->lock();
-        m_settings.gamepad = libgamepad::hook_instance->get_device_by_id(m_settings.gamepad_id);
-        libgamepad::hook_instance->get_mutex()->unlock();
+    auto id = obs_data_get_string(settings, S_CONTROLLER_ID);
+
+    if (strlen(id) > 0) {
+        // TODO: idk someone might have ELEVEN gamepads
+        QString tmp = utf8_to_qt(id)[0];
+        m_settings.gamepad_index = tmp.toInt();
+    }
+
+    if (m_settings.use_local_input() && gamepad_hook::state) {
+        m_settings.gamepad = gamepad_hook::local_gamepads->get_controller(m_settings.gamepad_index);
     } else if (io_config::enable_remote_connections) {
-        std::lock_guard<std::mutex> lock(network::mutex);
-        m_settings.gamepad =
-            network::server_instance->get_client_device_by_id(m_settings.selected_source, m_settings.gamepad_id);
+        // TODO: Remote gamepads
+        //        std::lock_guard<std::mutex> lock(network::mutex);
+        //        m_settings.gamepad =
+        //            network::server_instance->get_client_device_by_id(m_settings.selected_source, m_settings.gamepad_id);
     }
 
     m_settings.mouse_sens = obs_data_get_int(settings, S_MOUSE_SENS);
@@ -82,24 +88,16 @@ inline void input_source::tick(float seconds)
         m_overlay->tick(seconds);
     }
 
-    // If we don't have a gamepad check periodically to see if it has been connected
     if (m_settings.layout_flags & OF_GAMEPAD) {
-        if (m_settings.gamepad && !m_settings.gamepad->is_valid()) {
-            m_settings.gamepad = nullptr; // don't hold onto invalid references
-        } else {
-            m_settings.gamepad_check_timer += seconds;
-            if (m_settings.gamepad_check_timer >= 1) {
-                if (m_settings.use_local_input() && libgamepad::hook_instance) {
-                    libgamepad::hook_instance->get_mutex()->lock();
-                    m_settings.gamepad = libgamepad::hook_instance->get_device_by_id(m_settings.gamepad_id);
-                    libgamepad::hook_instance->get_mutex()->unlock();
-                } else if (network::network_flag) {
-                    std::lock_guard<std::mutex> lock(network::mutex);
-                    m_settings.gamepad = network::server_instance->get_client_device_by_id(m_settings.selected_source,
-                                                                                           m_settings.gamepad_id);
-                }
-                m_settings.gamepad_check_timer = 0.0f;
+        m_settings.gamepad_check_timer += seconds;
+        if (m_settings.gamepad_check_timer >= 1) {
+            if (m_settings.use_local_input() && gamepad_hook::state) {
+                if (!m_settings.gamepad || !m_settings.gamepad->valid())
+                    m_settings.gamepad = gamepad_hook::local_gamepads->get_controller(m_settings.gamepad_index);
+            } else if (network::network_flag) {
+                // TODO: Remote gamepads
             }
+            m_settings.gamepad_check_timer = 0.0f;
         }
     }
 }
@@ -130,19 +128,15 @@ bool reload_pads(obs_properties_t *, obs_property_t *property, void *data)
     auto *src = static_cast<input_source *>(data);
     obs_property_list_clear(property);
 
-    if (src->m_settings.use_local_input() && libgamepad::hook_instance) {
-        libgamepad::hook_instance->get_mutex()->lock();
-        for (const auto &pad : libgamepad::hook_instance->get_devices())
-            obs_property_list_add_string(property, pad->get_id().c_str(), pad->get_id().c_str());
-        libgamepad::hook_instance->get_mutex()->unlock();
-    } else if (io_config::enable_remote_connections) {
-        // Add remote gamepads
-        std::lock_guard<std::mutex> lock(network::mutex);
-        auto client = network::server_instance->get_client(src->m_settings.selected_source);
-        if (client) {
-            for (const auto &pad : client->gamepads())
-                obs_property_list_add_string(property, pad.second->get_id().c_str(), pad.second->get_id().c_str());
+    if (src->m_settings.use_local_input() && gamepad_hook::state) {
+        std::lock_guard<std::mutex> lock(gamepad_hook::local_gamepads->mutex());
+        for (const auto &pad : gamepad_hook::local_gamepads->pads()) {
+            auto controller = pad.second;
+            auto name = controller->identifier();
+            obs_property_list_add_string(property, name.c_str(), name.c_str());
         }
+    } else if (io_config::enable_remote_connections) {
+        // TODO: Add remote gamepads
     }
 
     return true;

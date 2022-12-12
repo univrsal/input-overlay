@@ -18,33 +18,35 @@
 
 #pragma once
 
-#include <map>
+#include <unordered_map>
 #include <mutex>
+#include <array>
+#include <SDL2/SDL.h>
 #include <uiohook.h>
-#include <libgamepad.hpp>
 
 /* Holds all input data for a computer, local or remote */
 struct input_data {
+    using button_map = std::unordered_map<uint16_t, bool>;
+
+    template<class T, std::size_t L> using gamepad_map = std::unordered_map<int, std::array<T, L>>;
+
     std::mutex m_mutex;
 
     /* State of all keyboard keys*/
-    std::map<uint16_t, bool> keyboard{};
+    button_map keyboard{};
 
     /* State of all mouse buttons */
-    std::map<uint16_t, bool> mouse{};
+    button_map mouse{};
 
-    /* Last uiohook events */
-    keyboard_event_data last_key_pressed{}, last_key_released{}, last_key_typed{};
-    mouse_event_data last_mouse_pressed{}, last_mouse_released{}, last_mouse_clicked{}, last_mouse_movement{},
-        last_mouse_dragged{};
+    /* we use this to reset the scroll wheel after a time out */
     mouse_wheel_event_data last_wheel_event{};
-    uiohook_event last_event{};
+
+    /* used for the mouse motion event */
+    mouse_event_data last_mouse_movement{};
 
     /* Gamepad data */
-    std::map<uint16_t, float> gamepad_axis{};
-    std::map<uint16_t, bool> gamepad_buttons{};
-    gamepad::input_event last_axis_event{};
-    gamepad::input_event last_button_event{};
+    gamepad_map<bool, SDL_CONTROLLER_BUTTON_MAX> gamepad_buttons;
+    gamepad_map<float, SDL_CONTROLLER_AXIS_MAX> gamepad_axis;
 
     /* Mutex needs to be locked */
     void copy(const input_data *other);
@@ -53,6 +55,5 @@ struct input_data {
 };
 
 namespace local_data {
-extern std::mutex data_mutex;
 extern input_data data;
 }

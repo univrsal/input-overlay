@@ -30,7 +30,6 @@
 #include "sources/input_source.hpp"
 #include "util/config.hpp"
 #include "util/lang.h"
-#include "util/log.h"
 #include "plugin-macros.generated.h"
 
 #ifdef LINUX
@@ -44,7 +43,7 @@ OBS_MODULE_USE_DEFAULT_LOCALE("input-overlay", "en-US")
 
 bool obs_module_load()
 {
-    binfo("Loading v%s build time %s", PLUGIN_VERSION, BUILD_TIME);
+    blog(LOG_INFO, "Loading v%s build time %s", PLUGIN_VERSION, BUILD_TIME);
     io_config::set_defaults();
     io_config::load();
 
@@ -55,7 +54,7 @@ bool obs_module_load()
         uiohook::start();
 
     if (io_config::enable_gamepad_hook)
-        libgamepad::start_pad_hook();
+        gamepad_hook::start();
 
     if (io_config::enable_websocket_server)
         wss::start();
@@ -89,7 +88,7 @@ void obs_module_unload()
     /* Save config values again */
     io_config::save();
 
-    libgamepad::end_pad_hook();
+    gamepad_hook::stop();
     uiohook::stop();
     network::close_network();
     wss::stop();

@@ -24,6 +24,18 @@ var main_painter = null;
 var editor_painter = null;
 var pad = null;
 
+function convert_old_gamepad_codes()
+{
+    cfg.elements.forEach(e => {
+        if (e.type() === element_types.GAMEPAD_BUTTON) {
+            if (legacy2sdl2.has(e.data.code)) {
+                console.log("Converting legacy gamepad code");
+                e.data.code = legacy2sdl2.get(e.data.code);
+            }
+        }
+    });
+}
+
 $(function() {
     main_painter = new painter("main-canvas", (p, c) => cfg.draw(p, c));
     editor_painter = new painter("editor-canvas", (p, c) => edit.draw(p, c));
@@ -32,6 +44,7 @@ $(function() {
     edit = new editor("#editor-canvas", editor_painter);
 
     cfg.add_load_callback(() => edit.on_config_load());
+    cfg.add_load_callback(convert_old_gamepad_codes);
 
     main_painter.get_context().imageSmoothingEnabled = false;
     editor_painter.get_context().imageSmoothingEnabled = false;

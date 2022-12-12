@@ -34,30 +34,30 @@ void element_dpad::load(const QJsonObject &obj)
     m_keycode = VC_DPAD_DATA;
 }
 
-inline int get_direction(std::map<uint16_t, bool> &buttons)
+inline int get_direction(std::array<bool, SDL_CONTROLLER_BUTTON_MAX> const &buttons)
 {
-    if (buttons[gamepad::button::DPAD_UP]) {
-        if (buttons[gamepad::button::DPAD_LEFT])
+    if (buttons[SDL_CONTROLLER_BUTTON_DPAD_UP]) {
+        if (buttons[SDL_CONTROLLER_BUTTON_DPAD_LEFT])
             return element_dpad::TEXTURE_TOP_LEFT;
-        if (buttons[gamepad::button::DPAD_RIGHT])
+        if (buttons[SDL_CONTROLLER_BUTTON_DPAD_RIGHT])
             return element_dpad::TEXTURE_TOP_RIGHT;
         return element_dpad::TEXTURE_UP;
-    } else if (buttons[gamepad::button::DPAD_DOWN]) {
-        if (buttons[gamepad::button::DPAD_LEFT])
+    } else if (buttons[SDL_CONTROLLER_BUTTON_DPAD_DOWN]) {
+        if (buttons[SDL_CONTROLLER_BUTTON_DPAD_LEFT])
             return element_dpad::TEXTURE_BOTTOM_LEFT;
-        if (buttons[gamepad::button::DPAD_RIGHT])
+        if (buttons[SDL_CONTROLLER_BUTTON_DPAD_RIGHT])
             return element_dpad::TEXTURE_BOTTOM_RIGHT;
         return element_dpad::TEXTURE_DOWN;
-    } else if (buttons[gamepad::button::DPAD_RIGHT]) {
-        if (buttons[gamepad::button::DPAD_UP])
+    } else if (buttons[SDL_CONTROLLER_BUTTON_DPAD_RIGHT]) {
+        if (buttons[SDL_CONTROLLER_BUTTON_DPAD_UP])
             return element_dpad::TEXTURE_TOP_RIGHT;
-        if (buttons[gamepad::button::DPAD_DOWN])
+        if (buttons[SDL_CONTROLLER_BUTTON_DPAD_DOWN])
             return element_dpad::TEXTURE_BOTTOM_RIGHT;
         return element_dpad::TEXTURE_RIGHT;
-    } else if (buttons[gamepad::button::DPAD_LEFT]) {
-        if (buttons[gamepad::button::DPAD_UP])
+    } else if (buttons[SDL_CONTROLLER_BUTTON_DPAD_LEFT]) {
+        if (buttons[SDL_CONTROLLER_BUTTON_DPAD_UP])
             return element_dpad::TEXTURE_TOP_LEFT;
-        if (buttons[gamepad::button::DPAD_DOWN])
+        if (buttons[SDL_CONTROLLER_BUTTON_DPAD_DOWN])
             return element_dpad::TEXTURE_BOTTOM_LEFT;
         return element_dpad::TEXTURE_LEFT;
     }
@@ -66,7 +66,9 @@ inline int get_direction(std::map<uint16_t, bool> &buttons)
 
 void element_dpad::draw(gs_effect_t *effect, gs_image_file_t *image, sources::overlay_settings *settings)
 {
-    const auto dir = get_direction(settings->data.gamepad_buttons);
+    auto dir = 0;
+    if (settings->gamepad)
+        dir = get_direction(settings->get_button_map());
 
     if (dir >= 0) {
         /* Enum starts at one (Center doesn't count)*/

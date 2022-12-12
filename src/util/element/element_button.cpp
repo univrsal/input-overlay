@@ -46,7 +46,7 @@ void element_mouse_button::draw(gs_effect_t *effect, gs_image_file_t *image, sou
 
 void element_gamepad_button::draw(gs_effect_t *effect, gs_image_file_t *image, sources::overlay_settings *settings)
 {
-    if (settings->data.gamepad_buttons[m_keycode])
+    if (settings->is_pad_button_pressed(m_keycode))
         element_texture::draw(effect, image, &m_pressed);
     else
         element_button::draw(effect, image, nullptr);

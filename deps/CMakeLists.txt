@@ -1,6 +1,6 @@
 set(COMMON_HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/common" CACHE STRING "" FORCE)
-set(JSON_11_HEADER "${CMAKE_CURRENT_SOURCE_DIR}/libgamepad/include" CACHE STRING "" FORCE)
-set(JSON_11_SOURCE "${CMAKE_CURRENT_SOURCE_DIR}/libgamepad/src/json11.cpp" CACHE STRING "" FORCE)
+set(JSON_11_HEADER "${CMAKE_CURRENT_SOURCE_DIR}/json11" CACHE STRING "" FORCE)
+set(JSON_11_SOURCE "${CMAKE_CURRENT_SOURCE_DIR}/json11/json11.cpp" CACHE STRING "" FORCE)
 set(MONGOOSE_SOURCE "${CMAKE_CURRENT_SOURCE_DIR}/mongoose/mongoose.c" CACHE STRING "" FORCE)
 
 set(UIOHOOK_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/libuiohook/include" CACHE STRING "" FORCE)
@@ -28,7 +28,19 @@ set(UIOHOOK_ENABLE_STATIC ON CACHE INTERNAL "Internal var")
 set(UIOHOOK_ENABLE_INSTALL OFF CACHE INTERNAL "Internal var")
 
 add_subdirectory(netlib)
-add_subdirectory(libgamepad)
+
+if (MSVC)
+    if(ARCH EQUAL 64)
+        set(SDL2_LIBRARIES "${CMAKE_CURRENT_SOURCE_DIR}/sdl2/bin/x64/SDL2.lib" CACHE STRING "" FORCE)
+    else()
+        set(SDL2_LIBRARIES "${CMAKE_CURRENT_SOURCE_DIR}/sdl2/bin/x86/SDL2.lib" CACHE STRING "" FORCE)
+    endif()
+    set(SDL2_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/sdl2/include" CACHE STRING "" FORCE)
+
+else ()
+    INCLUDE(FindPkgConfig)
+    PKG_SEARCH_MODULE(SDL2 REQUIRED sdl2)
+endif ()
 
 # Create static version of libuiohook here
 if (WIN32 OR WIN64)

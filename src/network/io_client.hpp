@@ -38,8 +38,8 @@ public:
     void mark_invalid();
     bool valid() const;
 
-    std::map<uint8_t, std::shared_ptr<gamepad::device>> &gamepads() { return m_gamepads; }
-    std::shared_ptr<gamepad::device> get_pad(const std::string &id);
+    //    std::map<uint8_t, std::shared_ptr<gamepad::device>> &gamepads() { return m_gamepads; }
+    //    std::shared_ptr<gamepad::device> get_pad(const std::string &id);
 
 private:
     bool dispatch_gamepad_input(buffer &buf);
@@ -50,6 +50,6 @@ private:
     std::string m_name;
 
     /* Manually managed */
-    std::map<uint8_t, std::shared_ptr<gamepad::device>> m_gamepads;
+    //    std::map<uint8_t, std::shared_ptr<gamepad::device>> m_gamepads;
 };
 }
