@@ -28,7 +28,6 @@ set(UIOHOOK_ENABLE_STATIC ON CACHE INTERNAL "Internal var")
 set(UIOHOOK_ENABLE_INSTALL OFF CACHE INTERNAL "Internal var")
 
 add_subdirectory(netlib)
-add_subdirectory(libgamepad)
 
 # Create static version of libuiohook here
 if (WIN32 OR WIN64)
