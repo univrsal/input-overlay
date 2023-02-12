@@ -30,7 +30,7 @@ set(UIOHOOK_ENABLE_INSTALL OFF CACHE INTERNAL "Internal var")
 add_subdirectory(netlib)
 
 if (MSVC)
-    if(ARCH EQUAL 64)
+    if(CMAKE_SIZEOF_VOID_P EQUAL 8)
         set(SDL2_LIBRARIES "${CMAKE_CURRENT_SOURCE_DIR}/sdl2/bin/x64/SDL2.lib" CACHE STRING "" FORCE)
     else()
         set(SDL2_LIBRARIES "${CMAKE_CURRENT_SOURCE_DIR}/sdl2/bin/x86/SDL2.lib" CACHE STRING "" FORCE)

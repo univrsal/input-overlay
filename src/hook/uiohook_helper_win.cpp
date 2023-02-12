@@ -19,6 +19,7 @@
 #include "uiohook_helper.hpp"
 #include <cstdarg>
 #include <obs-module.h>
+#include <Windows.h>
 
 namespace uiohook {
 /*
