@@ -178,6 +178,10 @@ Usage: %B${functrace[1]%:*}%b <option> [<options>]
         "${project_root}/CMakeLists.txt"
       ;;
     linux)
+      # Lord forgive me for this atrocity, but it wouldn't fucking build on ubuntu for some reason
+      sudo sed -i 's/#ifndef _SMMINTRIN_H_INCLUDED/#if 0/g' /usr/lib/gcc/x86_64-linux-gnu/11/include/smmintrin.h
+      sudo sed -i 's/#ifndef _IMMINTRIN_H_INCLUDED/#if 0/g' /usr/lib/gcc/x86_64-linux-gnu/11/include/immintrin.h
+
       sed -i'' \
         "s/project(\(.*\) VERSION \(.*\))/project(${product_name} VERSION ${product_version})/"\
         "${project_root}/CMakeLists.txt"
