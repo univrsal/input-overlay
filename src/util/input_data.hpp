@@ -21,8 +21,10 @@
 #include <unordered_map>
 #include <mutex>
 #include <array>
-#include <SDL2/SDL.h>
 #include <uiohook.h>
+
+#define GAMEPAD_AXIS_MAX 6
+#define GAMEPAD_BUTTON_MAX 21
 
 /* Holds all input data for a computer, local or remote */
 struct input_data {
@@ -45,8 +47,8 @@ struct input_data {
     mouse_event_data last_mouse_movement{};
 
     /* Gamepad data */
-    gamepad_map<bool, SDL_CONTROLLER_BUTTON_MAX> gamepad_buttons;
-    gamepad_map<float, SDL_CONTROLLER_AXIS_MAX> gamepad_axis;
+    gamepad_map<bool, GAMEPAD_BUTTON_MAX> gamepad_buttons;
+    gamepad_map<float, GAMEPAD_AXIS_MAX> gamepad_axis;
 
     /* Mutex needs to be locked */
     void copy(const input_data *other);

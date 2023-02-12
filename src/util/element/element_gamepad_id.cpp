@@ -18,6 +18,7 @@
 
 #include "element_gamepad_id.hpp"
 #include "../../sources/input_source.hpp"
+#include "../../hook/sdl_gamepad.hpp"
 
 element_gamepad_id::element_gamepad_id() : element_texture(ET_GAMEPAD_ID), m_mappings{} {}
 

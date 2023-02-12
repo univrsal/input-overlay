@@ -19,7 +19,6 @@
 #pragma once
 
 #include "../util/overlay.hpp"
-#include "../hook/sdl_gamepad.hpp"
 #include "../util/input_data.hpp"
 #include <obs-module.h>
 #include <string>
@@ -27,6 +26,8 @@
 extern "C" {
 #include <graphics/image-file.h>
 }
+
+class sdl_gamepad;
 
 typedef struct obs_data obs_data_t;
 
