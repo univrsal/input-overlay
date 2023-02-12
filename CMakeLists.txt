@@ -48,7 +48,8 @@ if (LOCAL_INSTALLATION)
                     "${PROJECT_SOURCE_DIR}/data"
                     "$ENV{HOME}/.config/obs-studio/plugins/${CMAKE_PROJECT_NAME}/data"
         )
-    elseif (WIN32)
+    endif()
+    if (WIN32 OR WIN64)
         # Enable Multicore Builds and disable FH4 (to not depend on VCRUNTIME140_1.DLL when building with VS2019)
         if (MSVC)
             add_definitions(/MP /d2FH4-)
@@ -72,20 +73,23 @@ if (LOCAL_INSTALLATION)
                     "${PROJECT_SOURCE_DIR}/data"
                     "${libobs_DIR}/../rundir/$<CONFIG>/data/obs-plugins/${CMAKE_PROJECT_NAME}")
         )
+    endif()
+endif()
 
-        get_filename_component(SDL2_BINARYDIR ${SDL2_LIBRARIES} DIRECTORY INTERNAL)
+if (WIN32 OR WIN64)
 
-        list(APPEND WIN_DLLS
-            "${SDL2_BINARYDIR}/SDL2.dll"
-        )
+        # Enable Multicore Builds and disable FH4 (to not depend on VCRUNTIME140_1.DLL when building with VS2019)
+        if (MSVC)
+            add_definitions(/MP /d2FH4-)
+        endif()
+ 
         # Copy dependencies
         add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            ${WIN_DLLS}
+            ${SDL2_DLLS}
             $<TARGET_FILE_DIR:${PROJECT_NAME}>)
 
-        install(FILES ${WIN_DLLS} DESTINATION ${PROJECT_NAME})
-    endif()
+        install(FILES ${SDL2_DLLS} DESTINATION ${PROJECT_NAME})
 endif()
 
 find_package(libobs REQUIRED)
