@@ -19,6 +19,7 @@
 #pragma once
 #include "../util/input_data.hpp"
 #include "../network/websocket_server.hpp"
+#include "../util/config.hpp"
 #include <mutex>
 #include <netlib.h>
 #include <uiohook.h>
@@ -42,7 +43,8 @@ inline void process_event(uiohook_event *event)
     local_data::data.dispatch_uiohook_event(event);
     if (event->type == EVENT_MOUSE_WHEEL)
         last_scroll_time = os_gettime_ns();
-    wss::dispatch_uiohook_event(event, "local");
+    if (!io_config::io_window_filters.input_blocked())
+        wss::dispatch_uiohook_event(event, "local");
 }
 
 void start();
