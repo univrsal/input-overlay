@@ -60,6 +60,8 @@ io_settings_dialog::io_settings_dialog(QWidget *parent) : QDialog(parent, Qt::Di
     ui->cb_log->setChecked(io_config::log_flag);
     ui->box_port->setValue(io_config::server_port);
 
+    ui->tab_remote->hide(); // TODO: Redo protocol and update client to sdl2
+
     /* Tooltips aren't translated by obs */
     ui->box_refresh_rate->setToolTip(T_REFRESH_RATE_TOOLTIP);
     ui->lbl_refresh_rate->setToolTip(T_REFRESH_RATE_TOOLTIP);
