@@ -89,7 +89,7 @@ if (WIN32 OR WIN64)
             ${SDL2_DLLS}
             $<TARGET_FILE_DIR:${PROJECT_NAME}>)
 
-        install(FILES ${SDL2_DLLS} DESTINATION ${PROJECT_NAME})
+        install(FILES ${SDL2_DLLS} DESTINATION ${OBS_PLUGIN_DESTINATION})
 endif()
 
 find_package(libobs REQUIRED)
