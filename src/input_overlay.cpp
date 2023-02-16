@@ -16,11 +16,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *************************************************************************/
 
+#include <QTimer>
 #include <QAction>
 #include <QMainWindow>
 #include <obs-frontend-api.h>
 #include <obs-module.h>
 #include <util/config-file.h>
+#include <thread>
 
 #include "gui/io_settings_dialog.hpp"
 #include "hook/gamepad_hook_helper.hpp"
@@ -50,36 +52,35 @@ bool obs_module_load()
     if (io_config::enable_overlay_source)
         sources::register_overlay_source();
 
-    if (io_config::enable_uiohook)
-        uiohook::start();
+    std::thread tmp([] {
+        if (io_config::enable_gamepad_hook)
+            gamepad_hook::start();
+        if (io_config::enable_websocket_server)
+            wss::start();
+        if (io_config::enable_remote_connections) {
+            network::local_input = io_config::enable_gamepad_hook || io_config::enable_uiohook;
+            network::start_network(io_config::server_port);
+        }
+        /* Input filtering via focused window title */
+        if (io_config::enable_input_control)
+            io_config::io_window_filters.read_from_config();
 
-    if (io_config::enable_gamepad_hook)
-        gamepad_hook::start();
+        if (io_config::enable_uiohook)
+            uiohook::start();
+    });
+    tmp.detach(); // Don't unnecessarily slow down startup
 
-    if (io_config::enable_websocket_server)
-        wss::start();
+    // UI registration also takes a bit so we delay it, but I guess this is technically cheating
+    QTimer::singleShot(0.5, static_cast<QMainWindow *>(obs_frontend_get_main_window()), [] {
+        const auto menu_action = static_cast<QAction *>(obs_frontend_add_tools_menu_qaction(T_MENU_OPEN_SETTINGS));
+        const auto main_window = static_cast<QMainWindow *>(obs_frontend_get_main_window());
+        obs_frontend_push_ui_translation(obs_module_get_string);
+        settings_dialog = new io_settings_dialog(main_window);
+        obs_frontend_pop_ui_translation();
 
-    if (io_config::enable_remote_connections) {
-        network::local_input = io_config::enable_gamepad_hook || io_config::enable_uiohook;
-        network::start_network(io_config::server_port);
-    }
-
-    /* Input filtering via focused window title */
-    if (io_config::enable_input_control)
-        io_config::io_window_filters.read_from_config();
-
-    /* UI registration from
-     * https://github.com/Palakis/obs-websocket/
-     */
-    const auto menu_action = static_cast<QAction *>(obs_frontend_add_tools_menu_qaction(T_MENU_OPEN_SETTINGS));
-    obs_frontend_push_ui_translation(obs_module_get_string);
-    const auto main_window = static_cast<QMainWindow *>(obs_frontend_get_main_window());
-    settings_dialog = new io_settings_dialog(main_window);
-    obs_frontend_pop_ui_translation();
-
-    const auto menu_cb = [] { settings_dialog->toggleShowHide(); };
-    QAction::connect(menu_action, &QAction::triggered, menu_cb);
-
+        const auto menu_cb = [] { settings_dialog->toggleShowHide(); };
+        QAction::connect(menu_action, &QAction::triggered, menu_cb);
+    });
     return true;
 }
 
