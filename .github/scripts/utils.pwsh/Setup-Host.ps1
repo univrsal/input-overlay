@@ -59,15 +59,7 @@ function Setup-Host {
             }
 
             if ( ! ( Test-Path -Path $_Filename ) ) {
-                $Params = @{
-                    UserAgent = 'NativeHost'
-                    Uri = $_Uri
-                    OutFile = $_Filename
-                    UseBasicParsing = $true
-                    ErrorAction = 'Stop'
-                }
-
-                Invoke-WebRequest @Params
+                curl.exe -Lf ${_Uri} -o ${_Filename}
                 Log-Status "Downloaded ${_Label} for ${script:Target}."
             } else {
                 Log-Status "Found downloaded ${_Label}."
