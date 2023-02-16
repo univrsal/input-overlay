@@ -17,9 +17,9 @@
  *************************************************************************/
 
 #include "element_analog_stick.hpp"
-#include <keycodes.h>
-
 #include "../../sources/input_source.hpp"
+#include <SDL2/SDL.h>
+#include <keycodes.h>
 
 void element_analog_stick::load(const QJsonObject &obj)
 {

@@ -17,9 +17,9 @@
  *************************************************************************/
 
 #include "element_trigger.hpp"
-#include <keycodes.h>
-
 #include "../../sources/input_source.hpp"
+#include <keycodes.h>
+#include <SDL2/SDL.h>
 
 element_trigger::element_trigger() : element_texture(ET_TRIGGER) {}
 

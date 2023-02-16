@@ -22,7 +22,6 @@
 #include <stdint.h>
 #endif
 
-#include "../hook/uiohook_helper.hpp"
 #include "element/element.hpp"
 #include <memory>
 #include <vector>

@@ -19,6 +19,7 @@
 #pragma once
 
 #include <unordered_map>
+#include <atomic>
 #include <mutex>
 #include <array>
 #include <uiohook.h>
@@ -33,6 +34,8 @@ struct input_data {
     template<class T, std::size_t L> using gamepad_map = std::unordered_map<int, std::array<T, L>>;
 
     std::mutex m_mutex;
+
+    std::atomic<uint64_t> last_event = 0;
 
     /* State of all keyboard keys*/
     button_map keyboard{};

@@ -27,13 +27,12 @@
 #include "element/element_mouse_movement.hpp"
 #include "element/element_mouse_wheel.hpp"
 #include "element/element_trigger.hpp"
-#include "../gui/io_settings_dialog.hpp"
 #include "../hook/gamepad_hook_helper.hpp"
+#include "../hook/uiohook_helper.hpp"
 #include "log.h"
 #include "../network/io_server.hpp"
 #include "../network/remote_connection.hpp"
 #include "obs_util.hpp"
-#include "lang.h"
 #include <QFile>
 #include <QJsonArray>
 #include <QJsonDocument>
@@ -199,6 +198,8 @@ void overlay::refresh_data()
      */
 
     if (m_settings->use_local_input()) {
+        if (local_data::data.last_event <= m_settings->data.last_event)
+            return;
         local_data::data.m_mutex.lock();
         m_settings->data.copy(&local_data::data);
         if (uiohook::state)
