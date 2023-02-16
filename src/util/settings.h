@@ -27,7 +27,6 @@
 #define S_GAMEPAD                       "gamepad"
 #define S_OVERLAY                       "overlay"
 #define S_HISTORY                       "history"
-#define S_REMOTE                        "remote"
 #define S_LOGGING                       "logging"
 #define S_PORT                          "server_port"
 #define S_WSS_PORT                      "wss_port"

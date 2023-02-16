@@ -2,22 +2,32 @@
 #include "../util/config.hpp"
 #include "../util/settings.h"
 #include "../util/obs_util.hpp"
+#include "../util/log.h"
 #include "mg.hpp"
 #include <QJsonObject>
 #include <QJsonDocument>
 
 namespace wss {
+
+std::atomic<bool> state = false;
+
 bool start()
 {
     const auto port = CGET_INT(S_WSS_PORT);
     std::string url = "ws://localhost:";
     url = url.append(std::to_string(port));
-    return mg::start(url);
+    auto result = mg::start(url);
+    if (result) {
+        binfo("Starting websocket server on localhost:%li", port);
+        state = true;
+    }
+    return result;
 }
 
 void stop()
 {
     mg::stop();
+    state = false;
 }
 
 QString serialize_uiohook(const uiohook_event *e, const std::string &source_name)

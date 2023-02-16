@@ -1,6 +1,7 @@
 #pragma once
 #include <uiohook.h>
 #include <string>
+#include <atomic>
 #include <SDL2/SDL.h>
 
 #define WSS_PAD_CONNECTED "gamepad_connected"
@@ -8,6 +9,8 @@
 #define WSS_PAD_RECONNECTED "gamepad_reconnected"
 
 namespace wss {
+
+extern std::atomic<bool> state;
 bool start();
 void stop();
 

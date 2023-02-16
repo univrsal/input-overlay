@@ -22,7 +22,7 @@
 #include "../util/obs_util.hpp"
 #include "../util/settings.h"
 #include "../util/config.hpp"
-#include "../network/io_server.hpp"
+#include "../network/websocket_server.hpp"
 #include "../network/remote_connection.hpp"
 #include <QFile>
 #include <obs-frontend-api.h>
@@ -43,7 +43,7 @@ input_source::input_source(obs_source_t *source, obs_data_t *settings) : m_sourc
 
     // Fix sources that used to use a remote connection but can't now because
     // remote connections are disabled
-    if (!io_config::enable_remote_connections) {
+    if (!wss::state) {
         m_settings.selected_source = T_LOCAL_SOURCE;
         obs_data_set_string(settings, S_INPUT_SOURCE, T_LOCAL_SOURCE);
     }
@@ -65,7 +65,7 @@ inline void input_source::update(obs_data_t *settings)
 
     if (m_settings.use_local_input() && gamepad_hook::state) {
         m_settings.gamepad = gamepad_hook::local_gamepads->get_controller(m_settings.gamepad_index);
-    } else if (io_config::enable_remote_connections) {
+    } else if (wss::state) {
         // TODO: Remote gamepads
         //        std::lock_guard<std::mutex> lock(network::mutex);
         //        m_settings.gamepad =
@@ -94,7 +94,7 @@ inline void input_source::tick(float seconds)
             if (m_settings.use_local_input() && gamepad_hook::state) {
                 if (!m_settings.gamepad || !m_settings.gamepad->valid())
                     m_settings.gamepad = gamepad_hook::local_gamepads->get_controller(m_settings.gamepad_index);
-            } else if (network::network_flag) {
+            } else if (wss::state) {
                 // TODO: Remote gamepads
             }
             m_settings.gamepad_check_timer = 0.0f;
@@ -135,7 +135,7 @@ bool reload_pads(obs_properties_t *, obs_property_t *property, void *data)
             auto name = controller->identifier();
             obs_property_list_add_string(property, name.c_str(), name.c_str());
         }
-    } else if (io_config::enable_remote_connections) {
+    } else if (wss::state) {
         // TODO: Add remote gamepads
     }
 
@@ -171,10 +171,9 @@ bool file_changed(void *d, obs_properties_t *props, obs_property_t *, obs_data_t
     return true;
 }
 
-bool reload_connections(obs_properties_t *, obs_property_t *property, void *)
+bool reload_connections(obs_properties_t *, obs_property_t *, void *)
 {
-    std::lock_guard<std::mutex> lock(network::mutex);
-    network::server_instance->get_clients(property, network::local_input);
+    // TODO: list connections
     return true;
 }
 
@@ -199,13 +198,11 @@ obs_properties_t *get_properties_for_overlay(void *data)
     obs_property_set_modified_callback2(texture, file_changed, data);
 
     /* If enabled add dropdown to select input source */
-    if (CGET_BOOL(S_REMOTE)) {
-        auto *list = obs_properties_add_list(props, S_INPUT_SOURCE, T_INPUT_SOURCE, OBS_COMBO_TYPE_EDITABLE,
-                                             OBS_COMBO_FORMAT_STRING);
+    if (wss::state) {
+        //        auto *list = obs_properties_add_list(props, S_INPUT_SOURCE, T_INPUT_SOURCE, OBS_COMBO_TYPE_EDITABLE,
+        //                                             OBS_COMBO_FORMAT_STRING);
         obs_properties_add_button(props, S_RELOAD_CONNECTIONS, T_RELOAD_CONNECTIONS, reload_connections);
-        if (network::network_flag) {
-            network::server_instance->get_clients(list, network::local_input);
-        }
+        // TODO: list connections
     }
     /* Mouse stuff */
     obs_properties_add_int_slider(props, S_MOUSE_SENS, T_MOUSE_SENS, 1, 500, 1);

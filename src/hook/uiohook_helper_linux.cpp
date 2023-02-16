@@ -20,7 +20,6 @@
 #include <cstdarg>
 #include <obs-module.h>
 #include <uiohook.h>
-#include <netlib.h>
 
 namespace uiohook {
 /*

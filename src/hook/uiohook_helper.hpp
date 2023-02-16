@@ -21,7 +21,6 @@
 #include "../network/websocket_server.hpp"
 #include "../util/config.hpp"
 #include <mutex>
-#include <netlib.h>
 #include <uiohook.h>
 #include <util/platform.h>
 #define SCROLL_TIMEOUT 120000000

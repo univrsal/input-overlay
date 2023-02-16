@@ -17,13 +17,11 @@
  *************************************************************************/
 
 #include "io_settings_dialog.hpp"
-#include "../network/io_server.hpp"
 #include "../network/remote_connection.hpp"
 #include "ui_io_settings_dialog.h"
 #include "../util/config.hpp"
 #include "../util/lang.h"
 #include "../util/obs_util.hpp"
-#include "../hook/gamepad_hook_helper.hpp"
 #include <QDesktopServices>
 #include <QTimer>
 #include <QPair>
@@ -41,8 +39,6 @@ io_settings_dialog::io_settings_dialog(QWidget *parent) : QDialog(parent, Qt::Di
     connect(ui->btn_github, &QPushButton::clicked, this, &io_settings_dialog::OpenGitHub);
     connect(ui->btn_forums, &QPushButton::clicked, this, &io_settings_dialog::OpenForums);
     connect(ui->button_box, &QDialogButtonBox::accepted, this, &io_settings_dialog::FormAccepted);
-    connect(ui->cb_enable_remote, &QCheckBox::stateChanged, this, &io_settings_dialog::CbRemoteStateChanged);
-    connect(ui->btn_refresh, &QPushButton::clicked, this, &io_settings_dialog::PingClients);
     connect(ui->cb_enable_control, &QCheckBox::stateChanged, this, &io_settings_dialog::CbInputControlStateChanged);
     connect(ui->btn_refresh_cb, &QPushButton::clicked, this, &io_settings_dialog::RefreshWindowList);
     connect(ui->btn_add, &QPushButton::clicked, this, &io_settings_dialog::AddFilter);
@@ -55,29 +51,18 @@ io_settings_dialog::io_settings_dialog(QWidget *parent) : QDialog(parent, Qt::Di
     ui->cb_gamepad_hook->setChecked(io_config::enable_gamepad_hook);
     ui->cb_enable_overlay->setChecked(io_config::enable_overlay_source);
     ui->cb_enable_control->setChecked(io_config::enable_input_control);
-    ui->cb_enable_remote->setChecked(io_config::enable_remote_connections);
     ui->cb_enable_wss->setChecked(io_config::enable_websocket_server);
     ui->cb_log->setChecked(io_config::log_flag);
-    ui->box_port->setValue(io_config::server_port);
 
     ui->tab_remote->hide(); // TODO: Redo protocol and update client to sdl2
 
-    /* Tooltips aren't translated by obs */
-    ui->box_refresh_rate->setToolTip(T_REFRESH_RATE_TOOLTIP);
-    ui->lbl_refresh_rate->setToolTip(T_REFRESH_RATE_TOOLTIP);
-
-    CbRemoteStateChanged(io_config::enable_remote_connections);
+    CbWssStateChanged(io_config::enable_websocket_server);
     CbInputControlStateChanged(io_config::enable_input_control);
 
-    /* Sets up remote connection status label */
-    auto text = ui->lbl_status->text().toStdString();
-    auto pos = text.find("%s");
-    if (pos != std::string::npos)
-        text.replace(pos, strlen("%s"), network::get_status());
-    pos = text.find("%s");
-    if (pos != std::string::npos)
-        text.replace(pos, strlen("%s"), network::local_ip);
-    ui->lbl_status->setText(text.c_str());
+    /* Display local ip for convenience */
+    auto text = ui->lbl_status->text();
+    text.append(network::get_local_ip());
+    ui->lbl_status->setText(text);
 
     /* Check for new connections every 250ms */
     m_refresh = new QTimer(this);
@@ -136,32 +121,22 @@ void io_settings_dialog::toggleShowHide()
 void io_settings_dialog::RefreshUi()
 {
     /* Populate client list */
-    if (network::network_flag && network::server_instance) {
-        std::lock_guard<std::mutex> lock(network::mutex);
-        if (network::server_instance->clients_changed()) {
-            ui->box_connections->clear();
-            QStringList list;
-            std::vector<const char *> names;
-            /* I'd do it differently, but including Qt headers and obs headers
-         * creates conflicts with LOG_WARNING...
-         */
-            network::server_instance->get_clients(names);
+    if (false) {
+        //        std::lock_guard<std::mutex> lock(network::mutex);
+        //        if (network::server_instance->clients_changed()) {
+        //            ui->box_connections->clear();
+        //            QStringList list;
+        //            std::vector<const char *> names;
+        //            /* I'd do it differently, but including Qt headers and obs headers
+        //         * creates conflicts with LOG_WARNING...
+        //         */
+        //            network::server_instance->get_clients(names);
 
-            for (auto &name : names)
-                list.append(name);
-            ui->box_connections->addItems(list);
-        }
+        //            for (auto &name : names)
+        //                list.append(name);
+        //            ui->box_connections->addItems(list);
+        //        }
     }
-}
-
-void io_settings_dialog::CbRemoteStateChanged(int state)
-{
-    ui->cb_log->setEnabled(state);
-    ui->box_port->setEnabled(state);
-    ui->box_connections->setEnabled(state);
-    ui->btn_refresh->setEnabled(state);
-    ui->box_refresh_rate->setEnabled(state);
-    ui->cb_regex->setEnabled(state);
 }
 
 void io_settings_dialog::CbInputControlStateChanged(int state)
@@ -173,12 +148,6 @@ void io_settings_dialog::CbInputControlStateChanged(int state)
     ui->list_filters->setEnabled(state);
     ui->btn_refresh_cb->setEnabled(state);
     ui->cb_regex->setEnabled(state);
-}
-
-void io_settings_dialog::PingClients()
-{
-    if (network::server_instance)
-        network::server_instance->ping_clients();
 }
 
 void io_settings_dialog::RefreshWindowList()
@@ -218,10 +187,7 @@ void io_settings_dialog::FormAccepted()
     io_config::enable_gamepad_hook = ui->cb_gamepad_hook->isChecked();
     io_config::enable_overlay_source = ui->cb_enable_overlay->isChecked();
 
-    io_config::enable_remote_connections = ui->cb_enable_remote->isChecked();
     io_config::log_flag = ui->cb_log->isChecked();
-    io_config::server_port = ui->box_port->value();
-
     io_config::enable_input_control = ui->cb_enable_control->isChecked();
     io_config::filter_mode = ui->cb_list_mode->currentIndex();
 
@@ -260,7 +226,9 @@ void io_settings_dialog::CbEnableGamepadChanged(int)
     ui->rb_by_id->setEnabled(enabled);
 }
 
-void io_settings_dialog::CbWssStateChanged(int)
+void io_settings_dialog::CbWssStateChanged(int state)
 {
-    ui->sb_wss_port->setEnabled(ui->cb_enable_wss->isChecked());
+    ui->sb_wss_port->setEnabled(state);
+    ui->cb_log->setEnabled(state);
+    ui->box_connections->setEnabled(state);
 }

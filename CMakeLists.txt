@@ -100,7 +100,6 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
         ${input-overlay_PLATFORM_DEPS} PRIVATE
         ${SDL2_LIBRARIES}
         uiohook_static
-        netlib_static
 )
 
 target_include_directories(
@@ -112,7 +111,6 @@ target_include_directories(
     ${GAMEPAD_INCLUDE_DIR}
     ${UIOHOOK_INCLUDE_DIR}
     ${MONGOOSE_INCLUDE_DIR}
-    ${NETLIB_INCLUDE_DIR}
 )
 
 if (MSVC)
@@ -178,10 +176,6 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
         src/util/input_data.cpp
         src/network/remote_connection.cpp
         src/network/remote_connection.hpp
-        src/network/io_server.cpp
-        src/network/io_server.hpp
-        src/network/io_client.cpp
-        src/network/io_client.hpp
         src/network/mg.cpp
         src/network/mg.hpp
         src/util/config.cpp

@@ -47,7 +47,6 @@ extern std::mutex filter_mutex;
 extern bool use_dinput;
 extern bool use_js;
 extern bool enable_input_control;
-extern bool enable_remote_connections;
 extern bool enable_gamepad_hook;
 extern bool enable_uiohook;
 extern bool enable_overlay_source;

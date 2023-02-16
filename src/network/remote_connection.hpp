@@ -18,32 +18,11 @@
 
 #pragma once
 
-#include "messages.hpp"
-#include <atomic>
-#include <buffer.hpp>
-#include <netlib.h>
+#include <QString>
 
-#define TIMEOUT_NS (1000 * 1000 * 1000)
 namespace network {
-class io_server;
-extern std::atomic<bool> network_flag; /* Running state */
 /* Set in obs_module_load */
 extern bool local_input;
-extern char local_ip[16];
 
-const char *get_status();
-
-void start_network(uint16_t port);
-
-void close_network();
-
-void network_handler();
-
-char *read_text(tcp_socket sock, char **buf);
-
-message read_msg_from_buffer(buffer &buf);
-
-int send_message(tcp_socket sock, message msg);
-
-extern io_server *server_instance;
+QString get_local_ip();
 }
