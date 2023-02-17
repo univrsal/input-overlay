@@ -17,9 +17,13 @@
  *************************************************************************/
 
 #include "remote_connection.hpp"
+#include <buffer.hpp>
 #include <obs-module.h>
 #include <util/platform.h>
 #include <thread>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonValue>
 
 #if __linux__
 #include <ifaddrs.h>
@@ -29,6 +33,8 @@
 
 namespace network {
 bool local_input = false; /* True if either of the local hooks is running */
+std::mutex remote_data_map_mutex;
+std::unordered_map<QString, std::shared_ptr<input_data>> remote_data;
 
 QString get_local_ip()
 {
@@ -56,6 +62,30 @@ QString get_local_ip()
     }
 #endif
     return local_ip;
+}
+
+void process_remote_event(unsigned char *bytes, size_t len)
+{
+    std::lock_guard<std::mutex> lock(remote_data_map_mutex);
+    buffer b(bytes, len);
+    auto type = b.read<uint8_t>();
+    QString client_name((QChar *)b.read(64), 64);
+
+    auto const &data = remote_data.find(client_name);
+    std::shared_ptr<input_data> client_data{};
+    if (data == remote_data.end()) {
+        client_data = std::make_shared<input_data>();
+    } else {
+        client_data = data->second;
+    }
+
+    if (type == 0) { // uiohook event
+        uiohook_event *ev{};
+        assert(b.data_left() >= sizeof(uiohook_event));
+        ev = b.read<uiohook_event>();
+        client_data->dispatch_uiohook_event(ev);
+    } else { // sdl controller event
+    }
 }
 
 }

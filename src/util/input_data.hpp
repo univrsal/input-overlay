@@ -27,6 +27,8 @@
 #define GAMEPAD_AXIS_MAX 6
 #define GAMEPAD_BUTTON_MAX 21
 
+class QJsonObject;
+
 /* Holds all input data for a computer, local or remote */
 struct input_data {
     using button_map = std::unordered_map<uint16_t, bool>;

@@ -5,6 +5,7 @@
 #include <mutex>
 #include <thread>
 #include <vector>
+#include "remote_connection.hpp"
 #include "../util/config.hpp"
 #include "../util/log.h"
 #include "../util/settings.h"
@@ -43,6 +44,9 @@ void event_handler(struct mg_connection *c, int ev, void *ev_data, void *)
     } else if (ev == MG_EV_WS_MSG) {
         // Just echo data
         auto *wm = (struct mg_ws_message *)ev_data;
+        if (wm->flags & WEBSOCKET_OP_BINARY) {
+            network::process_remote_event((unsigned char *)wm->data.ptr, wm->data.len);
+        }
         mg_ws_send(c, wm->data.ptr, wm->data.len, WEBSOCKET_OP_TEXT);
     }
 }

@@ -17,6 +17,7 @@
  *************************************************************************/
 
 #include "input_data.hpp"
+#include <QJsonObject>
 
 namespace local_data {
 input_data data;

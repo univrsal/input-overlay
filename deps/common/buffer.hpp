@@ -27,6 +27,12 @@ class buffer {
     size_t m_length = 0, m_write_pos = 0, m_read_pos = 0;
 
 public:
+
+    buffer(byte *data, size_t len)
+        : m_buf(data), m_length(len)
+    {
+    }
+
     buffer(size_t len = 0)
     {
         if (len > 0)
@@ -63,10 +69,20 @@ public:
         m_write_pos += size;
     }
 
+    byte* read(size_t size)
+    {
+        if (size + m_read_pos < m_length) {
+            m_read_pos += size;
+            return m_buf + m_read_pos;
+        }
+        return nullptr;
+    }
+
     void read(void **dest, size_t size)
     {
         if (size + m_read_pos < m_length) {
             *dest = reinterpret_cast<void *>(m_buf + m_read_pos);
+            m_read_pos += size;
         }
     }
 
@@ -94,8 +110,9 @@ public:
 
     const byte &operator[](size_t idx) const { return m_buf[idx]; }
 
-    size_t length() { return m_length; }
-    size_t write_pos() { return m_write_pos; }
-    size_t read_pos() { return m_read_pos; }
+    size_t length() const { return m_length; }
+    size_t write_pos() const { return m_write_pos; }
+    size_t read_pos() const { return m_read_pos; }
+    size_t data_left() const { return m_length - m_read_pos;}
     byte *get() { return m_buf; }
 };

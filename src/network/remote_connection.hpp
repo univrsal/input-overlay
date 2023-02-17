@@ -19,10 +19,18 @@
 #pragma once
 
 #include <QString>
+#include <unordered_map>
+#include <string>
+#include <memory>
+#include <mutex>
+#include "../util/input_data.hpp"
 
 namespace network {
 /* Set in obs_module_load */
 extern bool local_input;
-
+extern std::mutex remote_data_map_mutex;
+extern std::unordered_map<QString, std::shared_ptr<input_data>> remote_data;
 QString get_local_ip();
+
+extern void process_remote_event(unsigned char *bytes, size_t len);
 }
