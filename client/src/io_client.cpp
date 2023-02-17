@@ -49,22 +49,22 @@ int main(int argc, char const **argv)
     if (!network_helper::start())
         return util::RET_NETWORK_INIT;
 
-    DEBUG_LOG("Network init done.");
+    binfo("Network init done.");
 
     if (!util::cfg.monitor_keyboard && !util::cfg.monitor_mouse && !util::cfg.monitor_gamepad) {
-        DEBUG_LOG("Nothing to monitor!");
+        berr("Nothing to monitor!");
         return util::RET_NO_HOOKS;
     }
 
     if (util::cfg.monitor_gamepad) {
         if (!gamepad_helper::start()) {
-            DEBUG_LOG("Gamepad hook initialization failed!");
+            berr("Gamepad hook initialization failed!");
             return util::RET_GAMEPAD_INIT;
         }
     }
 
     if ((util::cfg.monitor_keyboard || util::cfg.monitor_mouse) && !uiohook_helper::start()) {
-        DEBUG_LOG("uiohook init failed");
+        berr("uiohook init failed");
         return util::RET_UIOHOOK_INIT;
     }
 

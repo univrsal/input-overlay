@@ -20,8 +20,10 @@
 
 #include <cstdint>
 
-#define DEBUG_LOG(fmt, ...) printf("[%25.25s:%03d]: " fmt "\n", __FUNCTION__, __LINE__, ##__VA_ARGS__)
-#define DEBUG_LOGN(fmt, ...) printf("[%25.25s:%03d]: " fmt, __FUNCTION__, __LINE__, ##__VA_ARGS__)
+#define blog(level, fmt, ...) printf("%s: " fmt "\n", level, ##__VA_ARGS__)
+#define bdebug(fmt, ...) blog("debug", fmt, ##__VA_ARGS__)
+#define binfo(fmt, ...) blog("info", fmt, ##__VA_ARGS__)
+#define berr(fmt, ...) blog("error", fmt, ##__VA_ARGS__)
 
 namespace util {
 typedef struct {
@@ -29,7 +31,7 @@ typedef struct {
     bool monitor_mouse;
     bool monitor_keyboard;
     char *username;
-    char *websocke_address;
+    char *websocket_address;
 } config;
 
 extern config cfg;

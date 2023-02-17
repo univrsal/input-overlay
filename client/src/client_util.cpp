@@ -50,40 +50,34 @@ config cfg;
 
 bool parse_arguments(int argc, char const **args)
 {
-    if (argc < 3) {
-        DEBUG_LOG("io_client usage: [address] [name] {other options}");
-        DEBUG_LOG(" [] => required {} => optional");
-        DEBUG_LOG(" [address]     websocket address of host");
-        DEBUG_LOG(" [name]        unique name to identify client (max. 64 characters)");
-        DEBUG_LOG(" {port}        default is 1608 [1025 - %ui]", 0xffff);
-        DEBUG_LOG(" --gamepad     enable/disable gamepad monitoring. Off by default");
-        DEBUG_LOG(" --mouse       enable/disable mouse monitoring.  Off by default");
-        DEBUG_LOG(" --keyboard    enable/disable keyboard monitoring. On by default");
-        return false;
-    }
 
     struct argparse_option options[] = {
         OPT_HELP(),
-        OPT_STRING('a', "address", &cfg.websocke_address, "websocket host address", NULL, 0, 0),
-        OPT_STRING('n', "name", &cfg.username, "name of this client", NULL, 0, 0),
-        OPT_BOOLEAN('k', "keyboard", &cfg.monitor_keyboard, "enable keyboard hook (default: on)", NULL, 0, 0),
-        OPT_BOOLEAN('m', "mouse", &cfg.monitor_mouse, "enable mouse hook (default: off)", NULL, 0, 0),
-        OPT_BOOLEAN('g', "gamepad", &cfg.monitor_gamepad, "enable gamepad hook (default: off)", NULL, 0, 0),
+        OPT_STRING('a', "address", &cfg.websocket_address, "websocket host address (required)", NULL, 0, 0),
+        OPT_STRING('n', "name", &cfg.username, "name of this client (required)", NULL, 0, 0),
+        OPT_BOOLEAN('k', "keyboard", &cfg.monitor_keyboard, "enable keyboard hook", NULL, 0, 0),
+        OPT_BOOLEAN('m', "mouse", &cfg.monitor_mouse, "enable mouse hook", NULL, 0, 0),
+        OPT_BOOLEAN('g', "gamepad", &cfg.monitor_gamepad, "enable gamepad hook", NULL, 0, 0),
         OPT_END(),
     };
 
     struct argparse argparse;
     argparse_init(&argparse, options, usages, 0);
-    argparse_describe(&argparse, "\nA brief description of what the program does and how it works.",
-                      "\nAdditional description of the program after the description of the arguments.");
-    argc = argparse_parse(&argparse, argc, args);
+    argparse_describe(&argparse, "\nClient for sending input events to the input-overlay obs plugin via websockets.",
+                      "\nLicensed under the GPL 2.0");
+    argparse_parse(&argparse, argc, args);
 
-    DEBUG_LOG("io_client configuration:");
-    DEBUG_LOG(" Host :    %s", cfg.websocke_address);
-    DEBUG_LOG(" Name:     %s", cfg.username);
-    DEBUG_LOG(" Keyboard: %s", cfg.monitor_keyboard ? "Yes" : "No");
-    DEBUG_LOG(" Mouse:    %s", cfg.monitor_mouse ? "Yes" : "No");
-    DEBUG_LOG(" Gamepad:  %s", cfg.monitor_gamepad ? "Yes" : "No");
+    if (!cfg.websocket_address || strlen(cfg.websocket_address) < 3 || !cfg.username || strlen(cfg.username) < 3) {
+        argparse_usage(&argparse);
+        return false;
+    }
+
+    binfo("io_client configuration:");
+    binfo(" Host :    %s", cfg.websocket_address);
+    binfo(" Name:     %s", cfg.username);
+    binfo(" Keyboard: %s", cfg.monitor_keyboard ? "Yes" : "No");
+    binfo(" Mouse:    %s", cfg.monitor_mouse ? "Yes" : "No");
+    binfo(" Gamepad:  %s", cfg.monitor_gamepad ? "Yes" : "No");
 
     return true;
 }
