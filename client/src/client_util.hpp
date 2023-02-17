@@ -20,6 +20,7 @@
 
 #include <cstdint>
 
+#define blograw(level, fmt, ...) printf("%s: " fmt, level, ##__VA_ARGS__)
 #define blog(level, fmt, ...) printf("%s: " fmt "\n", level, ##__VA_ARGS__)
 #define bdebug(fmt, ...) blog("debug", fmt, ##__VA_ARGS__)
 #define binfo(fmt, ...) blog("info", fmt, ##__VA_ARGS__)
@@ -30,7 +31,7 @@ typedef struct {
     bool monitor_gamepad;
     bool monitor_mouse;
     bool monitor_keyboard;
-    char *username;
+    char username[64];
     char *websocket_address;
 } config;
 

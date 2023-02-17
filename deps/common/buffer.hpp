@@ -115,4 +115,6 @@ public:
     size_t read_pos() const { return m_read_pos; }
     size_t data_left() const { return m_length - m_read_pos;}
     byte *get() { return m_buf; }
+    template<class T>
+    T get() { return reinterpret_cast<T>(m_buf);}
 };

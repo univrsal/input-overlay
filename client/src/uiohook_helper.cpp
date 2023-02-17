@@ -18,6 +18,7 @@
 
 #include "uiohook_helper.hpp"
 #include "client_util.hpp"
+#include "network_helper.hpp"
 #include <cstdarg>
 #include <cstdio>
 #include <util.hpp>
@@ -71,30 +72,50 @@ void dispatch_proc(uiohook_event *const event, void *)
     case EVENT_MOUSE_PRESSED:
     case EVENT_MOUSE_RELEASED:
         if (util::cfg.monitor_mouse) {
-            //            buf.write<uint8_t>(network::MSG_UIOHOOK_EVENT);
-            //            buf.write<uiohook_event>(*event);
+            buffer b;
+            buf.write<uint8_t>(0); // uiohook event
+            buf.write(util::cfg.username, 64);
+            buf.write<uiohook_event>(*event);
+            network_helper::poll_mutex.lock();
+            network_helper::message_queue.emplace_back(b);
+            network_helper::poll_mutex.unlock();
         }
         break;
     case EVENT_MOUSE_WHEEL:
         if (util::cfg.monitor_mouse) {
             last_scroll_time = util::get_ticks();
-            //            buf.write<uint8_t>(network::MSG_UIOHOOK_EVENT);
-            //            buf.write<uiohook_event>(*event);
+            buffer b;
+            buf.write<uint8_t>(0); // uiohook event
+            buf.write(util::cfg.username, 64);
+            buf.write<uiohook_event>(*event);
+            network_helper::poll_mutex.lock();
+            network_helper::message_queue.emplace_back(b);
+            network_helper::poll_mutex.unlock();
         }
         break;
     case EVENT_MOUSE_MOVED:
     case EVENT_MOUSE_DRAGGED:
         if (util::cfg.monitor_mouse) {
-            //            buf.write<uint8_t>(network::MSG_UIOHOOK_EVENT);
-            //            buf.write<uiohook_event>(*event);
+            buffer b;
+            buf.write<uint8_t>(0); // uiohook event
+            buf.write(util::cfg.username, 64);
+            buf.write<uiohook_event>(*event);
+            network_helper::poll_mutex.lock();
+            network_helper::message_queue.emplace_back(b);
+            network_helper::poll_mutex.unlock();
         }
         break;
     case EVENT_KEY_TYPED:
     case EVENT_KEY_PRESSED:
     case EVENT_KEY_RELEASED:
         if (util::cfg.monitor_keyboard) {
-            //            buf.write<uint8_t>(network::MSG_UIOHOOK_EVENT);
-            //            buf.write<uiohook_event>(*event);
+            buffer b;
+            buf.write<uint8_t>(0); // uiohook event
+            buf.write(util::cfg.username, 64);
+            buf.write<uiohook_event>(*event);
+            network_helper::poll_mutex.lock();
+            network_helper::message_queue.emplace_back(b);
+            network_helper::poll_mutex.unlock();
         }
         break;
     default:;
@@ -163,7 +184,6 @@ void stop()
     hook_state = false;
     const auto status = hook_stop();
 
-    binfo("Stopping hook");
     switch (status) {
     case UIOHOOK_ERROR_OUT_OF_MEMORY:
         logger(LOG_LEVEL_ERROR, "[uiohook] Failed to allocate memory. (%#X)", status);
@@ -176,5 +196,6 @@ void stop()
         break;
     default:;
     }
+    binfo("uiohook stopped");
 }
 }

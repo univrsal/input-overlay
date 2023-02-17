@@ -21,10 +21,14 @@
 #include <thread>
 #include <mutex>
 #include <atomic>
+#include <deque>
+#include <buffer.hpp>
 
 namespace network_helper {
-extern std::atomic<bool> status;
+extern std::atomic<bool> status, connected;
 extern std::thread thread;
+extern std::deque<buffer> message_queue;
+extern std::mutex poll_mutex;
 
 bool start();
 void stop();

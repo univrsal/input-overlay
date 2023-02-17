@@ -49,23 +49,36 @@ int main(int argc, char const **argv)
     if (!network_helper::start())
         return util::RET_NETWORK_INIT;
 
+    util::sleep_ms(100); // Wait a bit until we are connected
+
+    if (!network_helper::connected) {
+        berr("Failed to connect to server");
+        network_helper::stop();
+        return util::RET_NETWORK_INIT;
+    }
+
     binfo("Network init done.");
 
     if (!util::cfg.monitor_keyboard && !util::cfg.monitor_mouse && !util::cfg.monitor_gamepad) {
         berr("Nothing to monitor!");
+        util::close_all();
         return util::RET_NO_HOOKS;
     }
 
     if (util::cfg.monitor_gamepad) {
         if (!gamepad_helper::start()) {
             berr("Gamepad hook initialization failed!");
+            util::close_all();
             return util::RET_GAMEPAD_INIT;
         }
     }
 
-    if ((util::cfg.monitor_keyboard || util::cfg.monitor_mouse) && !uiohook_helper::start()) {
-        berr("uiohook init failed");
-        return util::RET_UIOHOOK_INIT;
+    if ((util::cfg.monitor_keyboard || util::cfg.monitor_mouse)) {
+        if (!uiohook_helper::start()) {
+            berr("uiohook init failed");
+            util::close_all();
+            return util::RET_UIOHOOK_INIT;
+        }
     }
 
     if ((!util::cfg.monitor_mouse && !util::cfg.monitor_keyboard)) {

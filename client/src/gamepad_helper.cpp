@@ -28,7 +28,7 @@ buffer buf;
 bool start()
 {
     /* Make sure that the network is established, otherwise we might send device connections too early */
-    ::util::sleep_ms(1000);
+    //::util::sleep_ms(1000);
     return true;
 }
 

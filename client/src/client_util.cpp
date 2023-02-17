@@ -50,11 +50,12 @@ config cfg;
 
 bool parse_arguments(int argc, char const **args)
 {
-
+    char *user_name{};
     struct argparse_option options[] = {
         OPT_HELP(),
-        OPT_STRING('a', "address", &cfg.websocket_address, "websocket host address (required)", NULL, 0, 0),
-        OPT_STRING('n', "name", &cfg.username, "name of this client (required)", NULL, 0, 0),
+        OPT_STRING('a', "address", &cfg.websocket_address,
+                   "websocket host address (e.g. ws://localhost:16899/)(required)", NULL, 0, 0),
+        OPT_STRING('n', "name", &user_name, "name of this client (required)", NULL, 0, 0),
         OPT_BOOLEAN('k', "keyboard", &cfg.monitor_keyboard, "enable keyboard hook", NULL, 0, 0),
         OPT_BOOLEAN('m', "mouse", &cfg.monitor_mouse, "enable mouse hook", NULL, 0, 0),
         OPT_BOOLEAN('g', "gamepad", &cfg.monitor_gamepad, "enable gamepad hook", NULL, 0, 0),
@@ -67,13 +68,15 @@ bool parse_arguments(int argc, char const **args)
                       "\nLicensed under the GPL 2.0");
     argparse_parse(&argparse, argc, args);
 
-    if (!cfg.websocket_address || strlen(cfg.websocket_address) < 3 || !cfg.username || strlen(cfg.username) < 3) {
+    if (!cfg.websocket_address || strlen(cfg.websocket_address) < 3 || !user_name || strlen(user_name) < 3) {
         argparse_usage(&argparse);
         return false;
     }
 
+    memcpy(cfg.username, user_name, std::min(strlen(user_name), 64ul));
+
     binfo("io_client configuration:");
-    binfo(" Host :    %s", cfg.websocket_address);
+    binfo(" Host:     %s", cfg.websocket_address);
     binfo(" Name:     %s", cfg.username);
     binfo(" Keyboard: %s", cfg.monitor_keyboard ? "Yes" : "No");
     binfo(" Mouse:    %s", cfg.monitor_mouse ? "Yes" : "No");
@@ -102,8 +105,8 @@ uint32_t get_ticks()
 
 void close_all()
 {
-    gamepad_helper::stop();
     network_helper::stop();
     uiohook_helper::stop();
+    gamepad_helper::stop();
 }
 }
