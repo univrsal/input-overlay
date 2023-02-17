@@ -17,13 +17,12 @@
  *************************************************************************/
 
 #pragma once
-#include <libgamepad.hpp>
 #include <buffer.hpp>
+#include <mutex>
 
-namespace libgamepad {
-extern std::shared_ptr<gamepad::hook> hook_instance;
+namespace gamepad_helper {
 extern std::mutex buffer_mutex;
 extern buffer buf;
-extern bool start(uint16_t flags);
+extern bool start();
 extern void stop();
 }

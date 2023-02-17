@@ -17,9 +17,10 @@
  *************************************************************************/
 
 #include "client_util.hpp"
-#include "gamepad_helper.hpp"
-#include "network.hpp"
 #include "uiohook_helper.hpp"
+#include "gamepad_helper.hpp"
+#include "network_helper.hpp"
+#include "argparse.h"
 #include <cstdio>
 #include <cstdlib>
 #include <string>
@@ -36,102 +37,55 @@
 #include <uiohook.h>
 #endif
 
+static const char *const usages[] = {
+    "basic [options] [[--] args]",
+    "basic [options]",
+    NULL,
+};
+
 using namespace std::chrono;
 
 namespace util {
 config cfg;
 
-bool parse_arguments(int argc, char **args)
+bool parse_arguments(int argc, char const **args)
 {
     if (argc < 3) {
-        DEBUG_LOG("io_client usage: [ip] [name] {port} {other options}");
+        DEBUG_LOG("io_client usage: [address] [name] {other options}");
         DEBUG_LOG(" [] => required {} => optional");
-        DEBUG_LOG(" [ip]          can be ipv4 or hostname");
+        DEBUG_LOG(" [address]     websocket address of host");
         DEBUG_LOG(" [name]        unique name to identify client (max. 64 characters)");
         DEBUG_LOG(" {port}        default is 1608 [1025 - %ui]", 0xffff);
-        DEBUG_LOG(" --gamepad=1   enable/disable gamepad monitoring. Off by default");
-        DEBUG_LOG(" --mouse=1     enable/disable mouse monitoring.  Off by default");
-        DEBUG_LOG(" --keyboard=1  enable/disable keyboard monitoring. On by default");
-        DEBUG_LOG(" --dinput      use direct input on windows. XInput is default");
+        DEBUG_LOG(" --gamepad     enable/disable gamepad monitoring. Off by default");
+        DEBUG_LOG(" --mouse       enable/disable mouse monitoring.  Off by default");
+        DEBUG_LOG(" --keyboard    enable/disable keyboard monitoring. On by default");
         return false;
     }
 
-    cfg.monitor_gamepad = false;
-    cfg.monitor_keyboard = true;
-    cfg.monitor_mouse = false;
-    cfg.port = 1608;
+    struct argparse_option options[] = {
+        OPT_HELP(),
+        OPT_STRING('a', "address", &cfg.websocke_address, "websocket host address", NULL, 0, 0),
+        OPT_STRING('n', "name", &cfg.username, "name of this client", NULL, 0, 0),
+        OPT_BOOLEAN('k', "keyboard", &cfg.monitor_keyboard, "enable keyboard hook (default: on)", NULL, 0, 0),
+        OPT_BOOLEAN('m', "mouse", &cfg.monitor_mouse, "enable mouse hook (default: off)", NULL, 0, 0),
+        OPT_BOOLEAN('g', "gamepad", &cfg.monitor_gamepad, "enable gamepad hook (default: off)", NULL, 0, 0),
+        OPT_END(),
+    };
 
-    auto const s = sizeof(cfg.username);
-    strncpy(cfg.username, args[2], s);
-    cfg.username[s - 1] = '\0';
-
-    if (argc > 3 && std::string(args[3]).find("--") == std::string::npos) {
-        auto newport = uint16_t(strtol(args[3], nullptr, 0));
-        if (newport > 1024) /* No system ports pls */
-            cfg.port = newport;
-        else
-            DEBUG_LOG("%hu is outside the valid port range [1024 - %ui]", newport, 0xffff);
-    }
-
-    /* Resolve ip */
-    if (netlib_resolve_host(&cfg.ip, args[1], cfg.port) == -1) {
-        DEBUG_LOG("netlib_resolve_host failed: %s", netlib_get_error());
-        DEBUG_LOG("Make sure obs studio is running with the remote connection enabled and configured");
-        return false;
-    }
-
-    /* Parse additional arguments */
-    std::string arg;
-    for (auto i = 4; i < argc; i++) {
-        arg = args[i];
-        if (arg.find("--gamepad") != std::string::npos)
-            cfg.monitor_gamepad = arg.find('1') != std::string::npos;
-        else if (arg.find("--mouse") != std::string::npos)
-            cfg.monitor_mouse = arg.find('1') != std::string::npos;
-        else if (arg.find("--keyboard") != std::string::npos)
-            cfg.monitor_keyboard = arg.find('1') != std::string::npos;
-    }
+    struct argparse argparse;
+    argparse_init(&argparse, options, usages, 0);
+    argparse_describe(&argparse, "\nA brief description of what the program does and how it works.",
+                      "\nAdditional description of the program after the description of the arguments.");
+    argc = argparse_parse(&argparse, argc, args);
 
     DEBUG_LOG("io_client configuration:");
-    DEBUG_LOG(" Host : %s:%hu", args[1], cfg.port);
-    DEBUG_LOG(" Name:     %s", args[2]);
+    DEBUG_LOG(" Host :    %s", cfg.websocke_address);
+    DEBUG_LOG(" Name:     %s", cfg.username);
     DEBUG_LOG(" Keyboard: %s", cfg.monitor_keyboard ? "Yes" : "No");
     DEBUG_LOG(" Mouse:    %s", cfg.monitor_mouse ? "Yes" : "No");
     DEBUG_LOG(" Gamepad:  %s", cfg.monitor_gamepad ? "Yes" : "No");
 
     return true;
-}
-
-/* https://www.libsdl.org/projects/SDL_net/docs/demos/tcputil.h */
-int send_text(char *buf)
-{
-    uint32_t len, result;
-
-    if (!buf || !strlen(buf))
-        return 1;
-
-    len = strlen(buf) + 1;
-    len = netlib_swap_BE32(len);
-
-    result = netlib_tcp_send(network::sock, &len, sizeof(len));
-    if (result < sizeof(len)) {
-        if (netlib_get_error() && strlen(netlib_get_error())) {
-            DEBUG_LOG("netlib_tcp_send failed: %s", netlib_get_error());
-            return 0;
-        }
-    }
-
-    len = netlib_swap_BE32(len);
-
-    result = netlib_tcp_send(network::sock, buf, len);
-    if (result < len) {
-        if (netlib_get_error() && strlen(netlib_get_error())) {
-            DEBUG_LOG("netlib_tcp_send failed: %s", netlib_get_error());
-            return 0;
-        }
-    }
-
-    return result;
 }
 
 void sleep_ms(uint32_t ms)
@@ -152,29 +106,10 @@ uint32_t get_ticks()
 #endif
 }
 
-network::message recv_msg()
-{
-    uint8_t msg_id;
-
-    const uint32_t read_length = netlib_tcp_recv(network::sock, &msg_id, sizeof(msg_id));
-
-    if (read_length < sizeof(msg_id)) {
-        if (netlib_get_error() && strlen(netlib_get_error()))
-            DEBUG_LOG("netlib_tcp_recv: %s", netlib_get_error());
-        return network::MSG_READ_ERROR;
-    }
-
-    if (msg_id < network::MSG_LAST)
-        return network::message(msg_id);
-
-    DEBUG_LOG("Received message with invalid id (%i).", msg_id);
-    return network::MSG_INVALID;
-}
-
 void close_all()
 {
-    libgamepad::stop();
-    network::close();
-    uiohook::stop();
+    gamepad_helper::stop();
+    network_helper::stop();
+    uiohook_helper::stop();
 }
 }

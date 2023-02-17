@@ -49,10 +49,6 @@
  */
 
 #pragma once
-#include "gamepad/config.h"
-#ifndef LGP_HAVE_JSON // Set when using libgamepad in projects that already have json11
-#ifdef LGP_ENABLE_JSON // Set when using libgamepad with json interface
-
 #include <initializer_list>
 #include <map>
 #include <memory>
@@ -246,6 +242,3 @@ protected:
 };
 
 } // namespace json11
-
-#endif // LGP_ENABLE_JSON
-#endif // LGP_HAVAE_JSON

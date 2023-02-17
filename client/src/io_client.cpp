@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *************************************************************************/
 
-#include "network.hpp"
+#include "network_helper.hpp"
 #include "uiohook_helper.hpp"
 #include "gamepad_helper.hpp"
 #include "client_util.hpp"
@@ -38,7 +38,7 @@ void sig_break__handler(int)
     util::close_all();
 }
 
-int main(int argc, char **argv)
+int main(int argc, char const **argv)
 {
     signal(SIGINT, &sig_int__handler);
     signal(SIGBREAK, &sig_break__handler);
@@ -46,7 +46,7 @@ int main(int argc, char **argv)
     if (!util::parse_arguments(argc, argv))
         return util::RET_ARGUMENT_PARSING; /* Invalid arguments */
 
-    if (!network::init())
+    if (!network_helper::start())
         return util::RET_NETWORK_INIT;
 
     DEBUG_LOG("Network init done.");
@@ -56,27 +56,21 @@ int main(int argc, char **argv)
         return util::RET_NO_HOOKS;
     }
 
-    if (!network::start_connection()) /* Starts a separate network thread */
-    {
-        network::close();
-        return util::RET_CONNECTION;
-    }
-
     if (util::cfg.monitor_gamepad) {
-        if (!libgamepad::start(util::cfg.gamepad_hook_type)) {
+        if (!gamepad_helper::start()) {
             DEBUG_LOG("Gamepad hook initialization failed!");
             return util::RET_GAMEPAD_INIT;
         }
     }
 
-    if ((util::cfg.monitor_keyboard || util::cfg.monitor_mouse) && !uiohook::start()) {
+    if ((util::cfg.monitor_keyboard || util::cfg.monitor_mouse) && !uiohook_helper::start()) {
         DEBUG_LOG("uiohook init failed");
         return util::RET_UIOHOOK_INIT;
     }
 
     if ((!util::cfg.monitor_mouse && !util::cfg.monitor_keyboard)) {
         /* If uiohook isn't used, we need to block here until we're told to quit */
-        while (network::network_loop)
+        while (network_helper::status)
             util::sleep_ms(500);
     }
 

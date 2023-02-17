@@ -23,7 +23,7 @@
 #include <buffer.hpp>
 
 #define SCROLL_TIMEOUT 120
-namespace uiohook {
+namespace uiohook_helper {
 extern uint32_t last_scroll_time;
 
 inline uint16_t util_mouse_fix(int m)

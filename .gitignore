@@ -11,3 +11,6 @@ cmake-*/
 .idea/*
 
 *.generated.h
+
+build/
+client/build-*/

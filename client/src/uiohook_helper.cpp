@@ -17,13 +17,12 @@
  *************************************************************************/
 
 #include "uiohook_helper.hpp"
-#include "network.hpp"
 #include "client_util.hpp"
 #include <cstdarg>
 #include <cstdio>
 #include <util.hpp>
 
-namespace uiohook {
+namespace uiohook_helper {
 uint32_t last_scroll_time;
 std::atomic<bool> hook_state;
 std::mutex buffer_mutex;
@@ -72,30 +71,30 @@ void dispatch_proc(uiohook_event *const event, void *)
     case EVENT_MOUSE_PRESSED:
     case EVENT_MOUSE_RELEASED:
         if (util::cfg.monitor_mouse) {
-            buf.write<uint8_t>(network::MSG_UIOHOOK_EVENT);
-            buf.write<uiohook_event>(*event);
+            //            buf.write<uint8_t>(network::MSG_UIOHOOK_EVENT);
+            //            buf.write<uiohook_event>(*event);
         }
         break;
     case EVENT_MOUSE_WHEEL:
         if (util::cfg.monitor_mouse) {
             last_scroll_time = util::get_ticks();
-            buf.write<uint8_t>(network::MSG_UIOHOOK_EVENT);
-            buf.write<uiohook_event>(*event);
+            //            buf.write<uint8_t>(network::MSG_UIOHOOK_EVENT);
+            //            buf.write<uiohook_event>(*event);
         }
         break;
     case EVENT_MOUSE_MOVED:
     case EVENT_MOUSE_DRAGGED:
         if (util::cfg.monitor_mouse) {
-            buf.write<uint8_t>(network::MSG_UIOHOOK_EVENT);
-            buf.write<uiohook_event>(*event);
+            //            buf.write<uint8_t>(network::MSG_UIOHOOK_EVENT);
+            //            buf.write<uiohook_event>(*event);
         }
         break;
     case EVENT_KEY_TYPED:
     case EVENT_KEY_PRESSED:
     case EVENT_KEY_RELEASED:
         if (util::cfg.monitor_keyboard) {
-            buf.write<uint8_t>(network::MSG_UIOHOOK_EVENT);
-            buf.write<uiohook_event>(*event);
+            //            buf.write<uint8_t>(network::MSG_UIOHOOK_EVENT);
+            //            buf.write<uiohook_event>(*event);
         }
         break;
     default:;

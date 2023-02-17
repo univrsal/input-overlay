@@ -16,22 +16,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *************************************************************************/
 
-#define NOMINMAX /* Some windows header defines min/max */
-#include "gamepad_helper.hpp"
-#include "client_util.hpp"
+#pragma once
 
-namespace gamepad_helper {
+#include <thread>
+#include <mutex>
+#include <atomic>
 
-std::mutex buffer_mutex;
-buffer buf;
+namespace network_helper {
+extern std::atomic<bool> status;
+extern std::thread thread;
 
-bool start()
-{
-    /* Make sure that the network is established, otherwise we might send device connections too early */
-    ::util::sleep_ms(1000);
-    return true;
-}
-
-void stop() {}
-
+bool start();
+void stop();
 }

@@ -16,30 +16,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *************************************************************************/
 
-#pragma once
-#include <netlib.h>
-#include <thread>
+#include "network_helper.hpp"
 #include <buffer.hpp>
-#include <mutex>
 #include <atomic>
+#include <thread>
+#include <cstdio>
 
-namespace network {
-extern tcp_socket sock;
-extern netlib_socket_set set;
-extern bool connected;
-extern bool state;
-extern std::atomic<bool> network_loop;
-/* Set to true by other threads */
-/* Set to true to prevent other threads from modifying data, which is about to be sent */
-extern buffer buf;
-extern std::thread network_thread;
+namespace network_helper {
+buffer buf;
+std::atomic<bool> status;
+std::thread network_thread;
 
-bool init();
-bool start_connection();
-void start_thread();
-bool listen();
+bool start()
+{
+    return true;
+}
 
-void network_thread_method();
-
-void close();
+void stop() {}
 }
