@@ -44,6 +44,8 @@ void event_handler(struct mg_connection *c, int ev, void *ev_data, void *)
         // Just echo data
         auto *wm = (struct mg_ws_message *)ev_data;
         mg_ws_send(c, wm->data.ptr, wm->data.len, WEBSOCKET_OP_TEXT);
+    } else if (ev == MG_EV_CLOSE) {
+        web_sockets.erase(std::remove(web_sockets.begin(), web_sockets.end(), c), web_sockets.end());
     }
 }
 
@@ -63,9 +65,6 @@ void thread_method()
             message_queue.pop_back();
         }
         poll_mutex.unlock();
-        const auto it = std::remove_if(web_sockets.begin(), web_sockets.end(),
-                                       [](const struct mg_connection *o) { return o->is_closing || o->is_draining; });
-        web_sockets.erase(it, web_sockets.end());
     }
 }
 
