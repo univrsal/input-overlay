@@ -59,6 +59,7 @@ bool parse_arguments(int argc, char const **args)
         OPT_BOOLEAN('k', "keyboard", &cfg.monitor_keyboard, "enable keyboard hook", NULL, 0, 0),
         OPT_BOOLEAN('m', "mouse", &cfg.monitor_mouse, "enable mouse hook", NULL, 0, 0),
         OPT_BOOLEAN('g', "gamepad", &cfg.monitor_gamepad, "enable gamepad hook", NULL, 0, 0),
+        OPT_BOOLEAN('v', "verbose", &cfg.verbose, "enable verbose logging", NULL, 0, 0),
         OPT_END(),
     };
 

@@ -22,8 +22,6 @@
 /* Settings values*/
 #define S_REGION                        "input-overlay"
 #define S_UIOHOOK                       "iohook"
-#define S_USE_DINPUT                    "use_dinput"
-#define S_USE_JS                        "use_js"
 #define S_GAMEPAD                       "gamepad"
 #define S_OVERLAY                       "overlay"
 #define S_HISTORY                       "history"

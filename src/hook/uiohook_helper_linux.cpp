@@ -50,21 +50,30 @@ void *hook_thread_proc(void *arg)
 }
 
 extern "C" {
-static void logger_proc(unsigned int level, void *, const char *, va_list)
+static bool logger_proc(unsigned int level, const char *format, ...)
 {
-    //    std::string f;
+    const bool status = true;
+    va_list args;
     switch (level) {
+    default:
+    case LOG_LEVEL_DEBUG:
+    case LOG_LEVEL_INFO:
+        va_start(args, format);
+        blogva(LOG_DEBUG, format, args);
+        va_end(args);
+        break;
     case LOG_LEVEL_WARN:
     case LOG_LEVEL_ERROR:
-        //        f = std::string(format);
-        //        f.insert(0, "[input-overlay::uiohook] ");
-        //        blog(LOG_WARNING, f.c_str(), args);
-    default:;
+        va_start(args, format);
+        blogva(LOG_WARNING, format, args);
+        va_end(args);
+        break;
     }
+    return status;
 }
 }
 
-void dispatch_proc(uiohook_event *event, void *)
+void dispatch_proc(uiohook_event *event)
 {
     switch (event->type) {
     case EVENT_HOOK_ENABLED:
@@ -155,10 +164,10 @@ void start()
     pthread_cond_init(&hook_control_cond, nullptr);
 
     /* Set the logger callback for library output. */
-    hook_set_logger_proc(&logger_proc, nullptr);
+    hook_set_logger_proc(&logger_proc);
 
     /* Set the event callback for uiohook events. */
-    hook_set_dispatch_proc(&dispatch_proc, nullptr);
+    hook_set_dispatch_proc(&dispatch_proc);
 
     const auto status = hook_enable();
     switch (status) {

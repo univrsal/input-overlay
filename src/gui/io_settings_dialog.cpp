@@ -22,6 +22,7 @@
 #include "../util/config.hpp"
 #include "../util/lang.h"
 #include "../util/obs_util.hpp"
+#include "../plugin-macros.generated.h"
 #include <QDesktopServices>
 #include <QTimer>
 #include <QPair>
@@ -29,11 +30,22 @@
 #include <string>
 #include <QMessageBox>
 
+#ifndef GIT_COMMIT_HASH
+#define GIT_COMMIT_HASH "unknown"
+#endif
+
 io_settings_dialog *settings_dialog = nullptr;
 
 io_settings_dialog::io_settings_dialog(QWidget *parent) : QDialog(parent, Qt::Dialog), ui(new Ui::io_config_dialog)
 {
     ui->setupUi(this);
+
+    auto about = ui->txt_about->toHtml();
+    about = about.replace("%version%", PLUGIN_VERSION);
+    about = about.replace("%commit%", GIT_COMMIT_HASH);
+    about = about.replace("%branch%", GIT_BRANCH);
+    about = about.replace("%buildtime%", BUILD_TIME);
+    ui->txt_about->setHtml(about);
 
     /* Connect QSlots */
     connect(ui->btn_github, &QPushButton::clicked, this, &io_settings_dialog::OpenGitHub);
@@ -80,31 +92,6 @@ io_settings_dialog::io_settings_dialog(QWidget *parent) : QDialog(parent, Qt::Di
     /* Set red color on label so people don't miss it */
     ui->lbl_local_features->setStyleSheet("QLabel { color: red; "
                                           "font-weight: bold;}");
-
-    ui->rb_js->setEnabled(io_config::enable_gamepad_hook);
-    ui->rb_by_id->setEnabled(io_config::enable_gamepad_hook);
-    ui->rb_xinput->setEnabled(io_config::enable_gamepad_hook);
-    ui->rb_dinput->setEnabled(io_config::enable_gamepad_hook);
-
-#ifdef _WIN32
-    ui->rb_dinput->setChecked(io_config::use_dinput);
-    ui->rb_xinput->setChecked(!ui->rb_dinput->isChecked());
-#endif
-
-    // If we set these on all platforms they'll deselect the other radio buttons
-#ifdef __linux__
-    ui->rb_js->setChecked(io_config::use_js);
-    ui->rb_by_id->setChecked(!ui->rb_js->isChecked());
-#endif
-
-#ifndef _WIN32
-    ui->rb_dinput->setVisible(false);
-    ui->rb_xinput->setVisible(false);
-#endif
-#ifndef __linux__
-    ui->rb_js->setVisible(false);
-    ui->rb_by_id->setVisible(false);
-#endif
 }
 
 void io_settings_dialog::showEvent(QShowEvent *event)
@@ -196,7 +183,6 @@ void io_settings_dialog::FormAccepted()
     io_config::io_window_filters.write_to_config();
 
     io_config::enable_websocket_server = ui->cb_enable_wss->isChecked();
-    io_config::use_dinput = ui->rb_dinput->isChecked();
     io_config::save();
 }
 
@@ -220,10 +206,6 @@ void io_settings_dialog::OpenForums()
 void io_settings_dialog::CbEnableGamepadChanged(int)
 {
     auto enabled = ui->cb_gamepad_hook->isChecked();
-    ui->rb_dinput->setEnabled(enabled);
-    ui->rb_xinput->setEnabled(enabled);
-    ui->rb_js->setEnabled(enabled);
-    ui->rb_by_id->setEnabled(enabled);
 }
 
 void io_settings_dialog::CbWssStateChanged(int state)

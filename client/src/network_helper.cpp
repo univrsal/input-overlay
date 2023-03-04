@@ -29,8 +29,6 @@ namespace network_helper {
 buffer buf;
 std::atomic<bool> status{false}, connected{false};
 std::thread network_thread;
-std::deque<buffer> message_queue;
-std::mutex poll_mutex;
 struct mg_mgr mgr;
 
 static void fn(struct mg_connection *c, int ev, void *ev_data, void *fn_data)
@@ -40,10 +38,10 @@ static void fn(struct mg_connection *c, int ev, void *ev_data, void *fn_data)
     } else if (ev == MG_EV_WS_OPEN) {
         // When websocket handshake is successful, send message
         connected = true;
-        mg_ws_send(c, "hello", 5, WEBSOCKET_OP_TEXT);
+        //        mg_ws_send(c, "hello", 5, WEBSOCKET_OP_TEXT);
     } else if (ev == MG_EV_WS_MSG) {
-        struct mg_ws_message *wm = (struct mg_ws_message *)ev_data;
-        binfo("WSS: [%.*s]\n", (int)wm->data.len, wm->data.ptr);
+        //        struct mg_ws_message *wm = (struct mg_ws_message *)ev_data;
+        //        binfo("WSS: [%.*s]\n", (int)wm->data.len, wm->data.ptr);
     }
 
     if (ev == MG_EV_ERROR || ev == MG_EV_CLOSE) {
@@ -65,19 +63,38 @@ bool start()
     status = true;
     network_thread = std::thread([] {
         struct mg_connection *c;
+        uint64_t last_uiohook_event = 0;
+        buffer buf;
+        input_data network_data;
+        // Roughly guess what the maximum packet size will be
+        // 16bit keycodes *
+        // 16 keyboard keys + 5 mouse buttons + 21 gamepad buttons for four gamepads
+        // 6 gamepad axis, 64byte username and 1 byte packet type
+        buf.resize(sizeof(uint16_t) * (16 + 5 + (21 * 4)) + sizeof(float) * 6 + 65);
         mg_mgr_init(&mgr);
         c = mg_ws_connect(&mgr, util::cfg.websocket_address, fn, nullptr, nullptr);
+
         while (c && status) {
-            mg_mgr_poll(&mgr, 50);
+            mg_mgr_poll(&mgr, 5);
+            bool have_data = false;
             // Send events
-            poll_mutex.lock();
-            while (!message_queue.empty()) {
-                auto &msg = message_queue.back();
-                if (!c->is_draining && !c->is_closing)
-                    mg_ws_send(c, msg.get<const char *>(), msg.length(), WEBSOCKET_OP_BINARY);
-                message_queue.pop_back();
+            if (!c->is_draining && !c->is_closing) {
+                buf.reset();
+                buf.write(util::cfg.username);
+                if (last_uiohook_event < uiohook_helper::data.last_event) {
+                    have_data = true;
+                    buf.write(uint8_t(0)); // uiohook event
+                    last_uiohook_event = uiohook_helper::data.last_event;
+                    uiohook_helper::data.m_mutex.lock();
+                    network_data.copy(&uiohook_helper::data);
+                    uiohook_helper::data.m_mutex.unlock();
+                    network_data.serialize(buf);
+                }
+
+                // TODO: gamepad data
+                if (have_data)
+                    mg_ws_send(c, buf.get<const char *>(), buf.write_pos(), WEBSOCKET_OP_BINARY);
             }
-            poll_mutex.unlock();
         }
     });
     return !!network_thread.native_handle();

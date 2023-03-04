@@ -199,6 +199,16 @@ void overlay::refresh_data()
     if (m_settings->use_local_input()) {
         if (local_data::data.last_event <= m_settings->data.last_event)
             return;
+
+        // Mouse and gamepad events can happen very often, so we shouldn't spend any
+        // time on syncing them if this overlay doesn't even use them
+        if (local_data::data.last_event_type >= EVENT_MOUSE_CLICKED && !(m_settings->layout_flags & OF_MOUSE))
+            return;
+
+        // TODO: same for gamepad
+        //        if (m_settings->data.last_event_type >= EVENT_MOUSE_CLICKED && !(m_settings->layout_flags & OF_MOUSE))
+        //            return;
+
         local_data::data.m_mutex.lock();
         m_settings->data.copy(&local_data::data);
         if (uiohook::state)
@@ -211,13 +221,11 @@ void overlay::refresh_data()
         }
         local_data::data.m_mutex.unlock();
     } else if (wss::state) {
-        // Holds the reference until we've copied the data
-        //        auto client = network::server_instance->get_client(m_settings->selected_source);
-        //        if (client && client->valid()) {
-        //            network::mutex.lock();
-        //            m_settings->data.copy(client->get_data());
-        //            network::mutex.unlock();
-        //        }
+        if (m_settings->remote_input_data) {
+            m_settings->remote_input_data->m_mutex.lock();
+            m_settings->data.copy(m_settings->remote_input_data.get());
+            m_settings->remote_input_data->m_mutex.unlock();
+        }
     }
 }
 

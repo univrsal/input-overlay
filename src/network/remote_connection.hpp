@@ -23,14 +23,18 @@
 #include <string>
 #include <memory>
 #include <mutex>
-#include "../util/input_data.hpp"
+#include <input_data.hpp>
+
+extern "C" {
+#include <mongoose.h>
+}
 
 namespace network {
 /* Set in obs_module_load */
 extern bool local_input;
 extern std::mutex remote_data_map_mutex;
-extern std::unordered_map<QString, std::shared_ptr<input_data>> remote_data;
+extern std::unordered_map<std::string, std::shared_ptr<input_data>> remote_data;
 QString get_local_ip();
 
-extern void process_remote_event(unsigned char *bytes, size_t len);
+extern void process_remote_event(struct mg_connection *ws, unsigned char *bytes, size_t len);
 }

@@ -17,6 +17,8 @@
  *************************************************************************/
 
 #include "remote_connection.hpp"
+#include "../util/obs_util.hpp"
+#include "../util/log.h"
 #include <buffer.hpp>
 #include <obs-module.h>
 #include <util/platform.h>
@@ -34,7 +36,7 @@
 namespace network {
 bool local_input = false; /* True if either of the local hooks is running */
 std::mutex remote_data_map_mutex;
-std::unordered_map<QString, std::shared_ptr<input_data>> remote_data;
+std::unordered_map<std::string, std::shared_ptr<input_data>> remote_data;
 
 QString get_local_ip()
 {
@@ -64,27 +66,42 @@ QString get_local_ip()
     return local_ip;
 }
 
-void process_remote_event(unsigned char *bytes, size_t len)
+void process_remote_event(struct mg_connection *ws, unsigned char *bytes, size_t len)
 {
-    std::lock_guard<std::mutex> lock(remote_data_map_mutex);
     buffer b(bytes, len);
-    auto type = b.read<uint8_t>();
-    QString client_name((QChar *)b.read(64), 64);
+    auto *name = (char *)b.read(64);
+    if (!name)
+        return;
+    std::string client_name = name;
+    input_data *client_data{};
 
-    auto const &data = remote_data.find(client_name);
-    std::shared_ptr<input_data> client_data{};
-    if (data == remote_data.end()) {
-        client_data = std::make_shared<input_data>();
+    // To prevent a map lookup for every event
+    // we save the input_data pointer in fn_data
+    // the shared pointer has a longer lifetime than the websocket connection
+    // so this should be fine, if we clean up remote_data at some point
+    // we'd have to make sure that the websocket doesn't exist anymore
+    if (ws->fn_data) {
+        client_data = static_cast<input_data *>(ws->fn_data);
     } else {
-        client_data = data->second;
+        std::lock_guard<std::mutex> lock(remote_data_map_mutex);
+        auto const &data = remote_data.find(client_name);
+        if (data == remote_data.end()) {
+            auto new_data = std::make_shared<input_data>();
+            remote_data[client_name] = new_data;
+            client_data = new_data.get();
+        } else {
+            client_data = data->second.get();
+        }
+        ws->fn_data = (void *)client_data;
     }
 
-    if (type == 0) { // uiohook event
-        uiohook_event *ev{};
-        assert(b.data_left() >= sizeof(uiohook_event));
-        ev = b.read<uiohook_event>();
-        client_data->dispatch_uiohook_event(ev);
-    } else { // sdl controller event
+    while (b.data_left() > 0) {
+        auto type = b.read<uint8_t>();
+        if (*type == 0) { // uiohook event
+            std::lock_guard<std::mutex> lock(client_data->m_mutex);
+            client_data->deserialize(b);
+        } else { // sdl controller event
+        }
     }
 }
 

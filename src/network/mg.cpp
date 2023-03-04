@@ -42,12 +42,11 @@ void event_handler(struct mg_connection *c, int ev, void *ev_data, void *)
             web_sockets.emplace_back(c);
         }
     } else if (ev == MG_EV_WS_MSG) {
-        // Just echo data
         auto *wm = (struct mg_ws_message *)ev_data;
         if (wm->flags & WEBSOCKET_OP_BINARY) {
-            network::process_remote_event((unsigned char *)wm->data.ptr, wm->data.len);
+            network::process_remote_event(c, (unsigned char *)wm->data.ptr, wm->data.len);
         }
-        mg_ws_send(c, wm->data.ptr, wm->data.len, WEBSOCKET_OP_TEXT);
+        //        mg_ws_send(c, wm->data.ptr, wm->data.len, WEBSOCKET_OP_TEXT);
     }
 }
 
@@ -61,14 +60,19 @@ void thread_method()
         while (!message_queue.empty()) {
             auto &msg = message_queue.back();
             for (auto socket : web_sockets) {
-                if (!socket->is_draining && !socket->is_closing)
+                // Sockets with socket->fn_data set are remote input clients and shouldn't
+                // receive any inputs
+                if (!socket->is_draining && !socket->is_closing && !socket->fn_data)
                     mg_ws_send(socket, msg.c_str(), msg.length(), WEBSOCKET_OP_TEXT);
             }
             message_queue.pop_back();
         }
         poll_mutex.unlock();
-        const auto it = std::remove_if(web_sockets.begin(), web_sockets.end(),
-                                       [](const struct mg_connection *o) { return o->is_closing || o->is_draining; });
+        const auto it = std::remove_if(web_sockets.begin(), web_sockets.end(), [](const struct mg_connection *o) {
+            if (o->is_closing || o->is_draining)
+                binfo("yeeting");
+            return o->is_closing || o->is_draining;
+        });
         web_sockets.erase(it, web_sockets.end());
     }
 }

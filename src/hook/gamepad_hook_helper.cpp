@@ -1,6 +1,6 @@
 #include "gamepad_hook_helper.hpp"
 #include "../util/log.h"
-#include "../util/input_data.hpp"
+#include <input_data.hpp>
 #include <thread>
 
 namespace gamepad_hook {

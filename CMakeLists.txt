@@ -29,6 +29,25 @@ option(LOCAL_INSTALLATION "Whether to install for the current user (default: OFF
 # Import libobs as main plugin dependency
 include(cmake/ObsPluginHelpers.cmake)
 
+# Get the current working branch
+execute_process(
+    COMMAND git rev-parse --abbrev-ref HEAD
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    OUTPUT_VARIABLE GIT_BRANCH
+    OUTPUT_STRIP_TRAILING_WHITESPACE)
+
+# Get the latest commit hash
+execute_process(
+    COMMAND git rev-parse --short HEAD
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    OUTPUT_VARIABLE GIT_COMMIT_HASH
+    OUTPUT_STRIP_TRAILING_WHITESPACE)
+
+target_compile_definitions(${PROJECT_NAME} PRIVATE
+    "-DGIT_BRANCH=\"${GIT_BRANCH}\"")
+target_compile_definitions(${PROJECT_NAME} PRIVATE
+"-DGIT_COMMIT_HASH=\"${GIT_COMMIT_HASH}\"")
+
 # Uncomment these lines if you want to use the OBS Frontend API in your plugin
 
 if (LOCAL_INSTALLATION)
@@ -172,8 +191,6 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
         src/util/element/element_mouse_movement.hpp
         src/util/element/element_dpad.cpp
         src/util/element/element_dpad.hpp
-        src/util/input_data.hpp
-        src/util/input_data.cpp
         src/network/remote_connection.cpp
         src/network/remote_connection.hpp
         src/network/mg.cpp
@@ -188,6 +205,7 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
         src/network/websocket_server.cpp
         src/gui/io_settings_dialog.ui
         ${input-overlay_PLATFORM_SOURCES}
+        ${COMMON_HEADERS}/input_data.cpp
         ${MONGOOSE_SOURCE})
 
 

@@ -19,7 +19,7 @@
 #pragma once
 
 #include "../util/overlay.hpp"
-#include "../util/input_data.hpp"
+#include <input_data.hpp>
 #include <obs-module.h>
 #include <string>
 
@@ -45,12 +45,14 @@ public:
     uint8_t mouse_deadzone = 0;            /* Region in which to ignore mouse movements          */
     uint16_t mouse_sens = 0;               /* mouse_delta / mouse_sens = mouse movement			*/
 
-    std::string selected_source;      /* Name of client or empty for local computer         */
-    uint8_t layout_flags = 0;         /* See overlay_flags in layout_constants.hpp          */
-    float gamepad_check_timer = 0.0f; /* Counter to check if selected game pad is connected */
+    std::string selected_source;           /* Name of client or empty for local computer         */
+    uint8_t layout_flags = 0;              /* See overlay_flags in layout_constants.hpp          */
+    float input_source_check_timer = 0.0f; /* Counter to check if selected game pad is connected */
 
     int gamepad_index;
     std::shared_ptr<sdl_gamepad> gamepad{};
+    std::shared_ptr<input_data> remote_input_data{};
+
     /* clang-format: on */
 
     bool use_local_input();

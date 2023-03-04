@@ -25,11 +25,11 @@ typedef unsigned char byte;
 class buffer {
     byte *m_buf = nullptr;
     size_t m_length = 0, m_write_pos = 0, m_read_pos = 0;
-
+    bool m_owned{true};
 public:
 
     buffer(byte *data, size_t len)
-        : m_buf(data), m_length(len)
+        : m_buf(data), m_length(len), m_owned(false)
     {
     }
 
@@ -41,7 +41,8 @@ public:
 
     ~buffer()
     {
-        free(m_buf);
+        if (m_owned)
+            free(m_buf);
         m_buf = nullptr;
         m_length = 0;
         m_write_pos = 0;
@@ -72,8 +73,9 @@ public:
     byte* read(size_t size)
     {
         if (size + m_read_pos < m_length) {
+            auto* result = m_buf + m_read_pos;
             m_read_pos += size;
-            return m_buf + m_read_pos;
+            return result;
         }
         return nullptr;
     }
@@ -98,7 +100,7 @@ public:
 
     template<class T> T *read()
     {
-        if (sizeof(T) + m_read_pos < m_length) {
+        if (sizeof(T) + m_read_pos <= m_length) {
             auto result = reinterpret_cast<T *>(m_buf + m_read_pos);
             m_read_pos += sizeof(T);
             return result;

@@ -22,6 +22,4 @@
 #define PLUGIN_NAME "@CMAKE_PROJECT_NAME@"
 #define PLUGIN_VERSION "@CMAKE_PROJECT_VERSION@"
 
-#define blog(level, msg, ...) blog(level, "[" PLUGIN_NAME "] " msg, ##__VA_ARGS__)
-
 #endif // PLUGINNAME_H

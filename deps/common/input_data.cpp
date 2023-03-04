@@ -17,7 +17,6 @@
  *************************************************************************/
 
 #include "input_data.hpp"
-#include <QJsonObject>
 
 namespace local_data {
 input_data data;
@@ -29,25 +28,22 @@ void input_data::copy(const input_data *other)
     keyboard = other->keyboard;
     mouse = other->mouse;
     last_wheel_event = other->last_wheel_event;
+    last_event_type.store(other->last_event_type);
 }
 
 void input_data::dispatch_uiohook_event(const uiohook_event *event)
 {
     if (event->type == EVENT_MOUSE_WHEEL) {
-        std::lock_guard<std::mutex> lock(m_mutex);
         last_wheel_event = event->data.wheel;
         last_event = event->time;
     } else if (event->type == EVENT_MOUSE_DRAGGED || event->type == EVENT_MOUSE_MOVED) {
-        std::lock_guard<std::mutex> lock(m_mutex);
         last_mouse_movement = event->data.mouse;
         last_event = event->time;
     } else if (event->type == EVENT_KEY_PRESSED || event->type == EVENT_KEY_RELEASED) {
-        std::lock_guard<std::mutex> lock(m_mutex);
         keyboard[event->data.keyboard.keycode] = event->type == EVENT_KEY_PRESSED;
         last_event = event->time;
     } else if (event->type == EVENT_MOUSE_PRESSED || event->type == EVENT_MOUSE_RELEASED) {
-        std::lock_guard<std::mutex> lock(m_mutex);
-        mouse[event->data.mouse.button] = event->type == EVENT_MOUSE_PRESSED;
         last_event = event->time;
     }
+    last_event_type = event->type;
 }

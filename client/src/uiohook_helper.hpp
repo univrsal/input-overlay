@@ -21,11 +21,10 @@
 #include <atomic>
 #include <mutex>
 #include <buffer.hpp>
+#include <input_data.hpp>
 
 #define SCROLL_TIMEOUT 120
 namespace uiohook_helper {
-extern uint32_t last_scroll_time;
-
 inline uint16_t util_mouse_fix(int m)
 {
 #ifndef _WIN32 /* Linux mixes right mouse and middle mouse or is windows getting it wrong? */
@@ -38,10 +37,10 @@ inline uint16_t util_mouse_fix(int m)
 }
 
 extern std::atomic<bool> hook_state;
-extern std::mutex buffer_mutex;
-extern buffer buf;
+extern input_data data;
 
 void dispatch_proc(uiohook_event *event, void *);
 bool start();
 void stop();
+
 }

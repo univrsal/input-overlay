@@ -26,8 +26,6 @@ namespace io_config {
 config_t *instance = nullptr;
 input_filter io_window_filters; /* Global filters */
 std::mutex filter_mutex;        /* Thread safety for writing/reading filters */
-bool use_dinput = false;
-bool use_js = true;
 bool enable_input_control = false;
 bool enable_websocket_server = false;
 bool enable_gamepad_hook = true;
@@ -53,8 +51,6 @@ void set_defaults()
     CDEF_BOOL(S_ENABLE_WSS, enable_websocket_server);
     CDEF_INT(S_REFRESH, server_refresh_rate);
     CDEF_INT(S_REFRESH, filter_mode);
-    CDEF_BOOL(S_USE_DINPUT, use_dinput);
-    CDEF_BOOL(S_USE_JS, use_dinput);
 }
 
 void load()
@@ -73,8 +69,6 @@ void load()
     wss_port = CGET_INT(S_WSS_PORT);
     log_flag = CGET_BOOL(S_LOGGING);
     server_refresh_rate = CGET_INT(S_REFRESH);
-    use_dinput = CGET_BOOL(S_USE_DINPUT);
-    use_js = CGET_BOOL(S_USE_JS);
 }
 
 void save()
@@ -88,8 +82,6 @@ void save()
     CSET_INT(S_REFRESH, server_refresh_rate);
     CSET_BOOL(S_LOGGING, log_flag);
     CSET_BOOL(S_REGEX, regex);
-    CSET_BOOL(S_USE_DINPUT, use_dinput);
-    CSET_BOOL(S_USE_JS, use_js);
     CSET_INT(S_WSS_PORT, wss_port);
     CSET_BOOL(S_ENABLE_WSS, enable_websocket_server);
 }

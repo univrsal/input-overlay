@@ -31,6 +31,7 @@
 #include "network/websocket_server.hpp"
 #include "sources/input_source.hpp"
 #include "util/config.hpp"
+#include "util/log.h"
 #include "util/lang.h"
 #include "plugin-macros.generated.h"
 
@@ -45,7 +46,7 @@ OBS_MODULE_USE_DEFAULT_LOCALE("input-overlay", "en-US")
 
 bool obs_module_load()
 {
-    blog(LOG_INFO, "Loading v%s build time %s", PLUGIN_VERSION, BUILD_TIME);
+    binfo("Loading v%s-%s (%s) build time %s", PLUGIN_VERSION, GIT_BRANCH, GIT_COMMIT_HASH, BUILD_TIME);
     io_config::set_defaults();
     io_config::load();
 

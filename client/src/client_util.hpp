@@ -28,6 +28,7 @@
 
 namespace util {
 typedef struct {
+    bool verbose;
     bool monitor_gamepad;
     bool monitor_mouse;
     bool monitor_keyboard;

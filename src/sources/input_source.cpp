@@ -67,9 +67,10 @@ inline void input_source::update(obs_data_t *settings)
         m_settings.gamepad = gamepad_hook::local_gamepads->get_controller(m_settings.gamepad_index);
     } else if (wss::state) {
         // TODO: Remote gamepads
-        //        std::lock_guard<std::mutex> lock(network::mutex);
-        //        m_settings.gamepad =
-        //            network::server_instance->get_client_device_by_id(m_settings.selected_source, m_settings.gamepad_id);
+        std::lock_guard<std::mutex> lock(network::remote_data_map_mutex);
+        auto data = network::remote_data.find(m_settings.selected_source);
+        if (data != network::remote_data.end())
+            m_settings.remote_input_data = data->second;
     }
 
     m_settings.mouse_sens = obs_data_get_int(settings, S_MOUSE_SENS);
@@ -88,17 +89,23 @@ inline void input_source::tick(float seconds)
         m_overlay->tick(seconds);
     }
 
-    if (m_settings.layout_flags & OF_GAMEPAD) {
-        m_settings.gamepad_check_timer += seconds;
-        if (m_settings.gamepad_check_timer >= 1) {
-            if (m_settings.use_local_input() && gamepad_hook::state) {
-                if (!m_settings.gamepad || !m_settings.gamepad->valid())
-                    m_settings.gamepad = gamepad_hook::local_gamepads->get_controller(m_settings.gamepad_index);
-            } else if (wss::state) {
-                // TODO: Remote gamepads
-            }
-            m_settings.gamepad_check_timer = 0.0f;
+    m_settings.input_source_check_timer += seconds;
+    if (m_settings.input_source_check_timer >= 1) {
+        if (m_settings.use_local_input() && gamepad_hook::state) {
+            if (!m_settings.gamepad || !m_settings.gamepad->valid())
+                m_settings.gamepad = gamepad_hook::local_gamepads->get_controller(m_settings.gamepad_index);
+        } else if (wss::state) {
+            // TODO: Remote gamepads
         }
+
+        // Check if remote connection is available
+        if (!m_settings.remote_input_data && !m_settings.use_local_input()) {
+            std::lock_guard<std::mutex> lock(network::remote_data_map_mutex);
+            auto data = network::remote_data.find(m_settings.selected_source);
+            if (data != network::remote_data.end())
+                m_settings.remote_input_data = data->second;
+        }
+        m_settings.input_source_check_timer = 0.0f;
     }
 }
 
@@ -171,9 +178,17 @@ bool file_changed(void *d, obs_properties_t *props, obs_property_t *, obs_data_t
     return true;
 }
 
-bool reload_connections(obs_properties_t *, obs_property_t *, void *)
+bool reload_connections(obs_properties_t *, obs_property_t *list, void *)
 {
-    // TODO: list connections
+    obs_property_list_clear(list);
+    if (io_config::enable_gamepad_hook || io_config::enable_uiohook)
+        obs_property_list_add_string(list, T_LOCAL_SOURCE, "");
+
+    network::remote_data_map_mutex.lock();
+    for (const auto &conn : network::remote_data) {
+        obs_property_list_add_string(list, conn.first.c_str(), conn.first.c_str());
+    }
+    network::remote_data_map_mutex.unlock();
     return true;
 }
 
@@ -199,10 +214,17 @@ obs_properties_t *get_properties_for_overlay(void *data)
 
     /* If enabled add dropdown to select input source */
     if (wss::state) {
-        //        auto *list = obs_properties_add_list(props, S_INPUT_SOURCE, T_INPUT_SOURCE, OBS_COMBO_TYPE_EDITABLE,
-        //                                             OBS_COMBO_FORMAT_STRING);
+        auto *list = obs_properties_add_list(props, S_INPUT_SOURCE, T_INPUT_SOURCE, OBS_COMBO_TYPE_EDITABLE,
+                                             OBS_COMBO_FORMAT_STRING);
         obs_properties_add_button(props, S_RELOAD_CONNECTIONS, T_RELOAD_CONNECTIONS, reload_connections);
-        // TODO: list connections
+        if (io_config::enable_gamepad_hook || io_config::enable_uiohook)
+            obs_property_list_add_string(list, T_LOCAL_SOURCE, "");
+
+        network::remote_data_map_mutex.lock();
+        for (const auto &conn : network::remote_data) {
+            obs_property_list_add_string(list, conn.first.c_str(), conn.first.c_str());
+        }
+        network::remote_data_map_mutex.unlock();
     }
     /* Mouse stuff */
     obs_properties_add_int_slider(props, S_MOUSE_SENS, T_MOUSE_SENS, 1, 500, 1);
