@@ -53,9 +53,6 @@ inline void process_event(uiohook_event *event)
     thread_data.dispatch_uiohook_event(event);
     if (is_important || (diff >= refresh_ms && local_data::data.last_event < thread_data.last_event)) {
         std::lock_guard<std::mutex> lock(local_data::data.m_mutex);
-        if (event->type == EVENT_KEY_PRESSED || event->type == EVENT_KEY_RELEASED)
-            binfo("KEY 0x%X %s", event->data.keyboard.keycode,
-                  event->type == EVENT_KEY_PRESSED ? "PRESSED" : "RELEASED");
         local_data::data.copy(&thread_data);
     }
     if (event->type == EVENT_MOUSE_WHEEL)

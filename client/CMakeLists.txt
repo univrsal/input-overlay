@@ -174,7 +174,6 @@ set(io_client_SOURCES
     ../deps/mongoose/mongoose.c
     ../deps/mongoose/mongoose.h
     ../deps/json11/json11.cpp
-    ../deps/common/input_data.cpp
 
     src/argparse.c
     src/argparse.h

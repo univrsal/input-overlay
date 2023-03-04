@@ -24,7 +24,7 @@
 
 namespace uiohook_helper {
 std::atomic<bool> hook_state;
-input_data data;
+event_queue queue;
 
 static bool logger_proc(unsigned int level, const char *format, ...)
 {
@@ -68,29 +68,29 @@ void dispatch_proc(uiohook_event *const event)
     case EVENT_MOUSE_PRESSED:
     case EVENT_MOUSE_RELEASED:
         if (util::cfg.monitor_mouse) {
-            std::lock_guard<std::mutex> lock(data.m_mutex);
-            data.dispatch_uiohook_event(event);
+            std::lock_guard<std::mutex> lock(queue.mutex);
+            queue.events.emplace_back(*event);
         }
         break;
     case EVENT_MOUSE_WHEEL:
         if (util::cfg.monitor_mouse) {
-            std::lock_guard<std::mutex> lock(data.m_mutex);
-            data.dispatch_uiohook_event(event);
+            std::lock_guard<std::mutex> lock(queue.mutex);
+            queue.events.emplace_back(*event);
         }
         break;
     case EVENT_MOUSE_MOVED:
     case EVENT_MOUSE_DRAGGED:
         if (util::cfg.monitor_mouse) {
-            std::lock_guard<std::mutex> lock(data.m_mutex);
-            data.dispatch_uiohook_event(event);
+            std::lock_guard<std::mutex> lock(queue.mutex);
+            queue.events.emplace_back(*event);
         }
         break;
     case EVENT_KEY_TYPED:
     case EVENT_KEY_PRESSED:
     case EVENT_KEY_RELEASED:
         if (util::cfg.monitor_keyboard) {
-            std::lock_guard<std::mutex> lock(data.m_mutex);
-            data.dispatch_uiohook_event(event);
+            std::lock_guard<std::mutex> lock(queue.mutex);
+            queue.events.emplace_back(*event);
         }
         break;
     default:;

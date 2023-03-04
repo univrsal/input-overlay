@@ -17,6 +17,7 @@
  *************************************************************************/
 
 #include "input_data.hpp"
+#include <util/platform.h>
 
 namespace local_data {
 input_data data;
@@ -27,6 +28,8 @@ void input_data::copy(const input_data *other)
     last_event.store(other->last_event);
     keyboard = other->keyboard;
     mouse = other->mouse;
+    last_mouse_movement = other->last_mouse_movement;
+    last_wheel_event_time = other->last_wheel_event_time;
     last_wheel_event = other->last_wheel_event;
     last_event_type.store(other->last_event_type);
 }
@@ -35,6 +38,7 @@ void input_data::dispatch_uiohook_event(const uiohook_event *event)
 {
     if (event->type == EVENT_MOUSE_WHEEL) {
         last_wheel_event = event->data.wheel;
+        last_wheel_event_time = os_gettime_ns();
         last_event = event->time;
     } else if (event->type == EVENT_MOUSE_DRAGGED || event->type == EVENT_MOUSE_MOVED) {
         last_mouse_movement = event->data.mouse;
@@ -44,6 +48,7 @@ void input_data::dispatch_uiohook_event(const uiohook_event *event)
         last_event = event->time;
     } else if (event->type == EVENT_MOUSE_PRESSED || event->type == EVENT_MOUSE_RELEASED) {
         last_event = event->time;
+        mouse[event->data.mouse.button] = event->type == EVENT_MOUSE_PRESSED;
     }
     last_event_type = event->type;
 }

@@ -21,7 +21,7 @@
 #include <atomic>
 #include <mutex>
 #include <buffer.hpp>
-#include <input_data.hpp>
+#include <vector>
 
 #define SCROLL_TIMEOUT 120
 namespace uiohook_helper {
@@ -37,7 +37,13 @@ inline uint16_t util_mouse_fix(int m)
 }
 
 extern std::atomic<bool> hook_state;
-extern input_data data;
+
+struct event_queue {
+    std::vector<uiohook_event> events;
+    std::mutex mutex;
+};
+
+extern event_queue queue;
 
 void dispatch_proc(uiohook_event *event, void *);
 bool start();

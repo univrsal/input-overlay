@@ -65,7 +65,6 @@ bool start()
         struct mg_connection *c;
         uint64_t last_uiohook_event = 0;
         buffer buf;
-        input_data network_data;
         // Roughly guess what the maximum packet size will be
         // 16bit keycodes *
         // 16 keyboard keys + 5 mouse buttons + 21 gamepad buttons for four gamepads
@@ -81,15 +80,14 @@ bool start()
             if (!c->is_draining && !c->is_closing) {
                 buf.reset();
                 buf.write(util::cfg.username);
-                if (last_uiohook_event < uiohook_helper::data.last_event) {
+                uiohook_helper::queue.mutex.lock();
+                for (auto const &event : uiohook_helper::queue.events) {
                     have_data = true;
                     buf.write(uint8_t(0)); // uiohook event
-                    last_uiohook_event = uiohook_helper::data.last_event;
-                    uiohook_helper::data.m_mutex.lock();
-                    network_data.copy(&uiohook_helper::data);
-                    uiohook_helper::data.m_mutex.unlock();
-                    network_data.serialize(buf);
+                    buf.write(event);
                 }
+                uiohook_helper::queue.events.clear();
+                uiohook_helper::queue.mutex.unlock();
 
                 // TODO: gamepad data
                 if (have_data)

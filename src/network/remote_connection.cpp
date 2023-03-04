@@ -17,8 +17,8 @@
  *************************************************************************/
 
 #include "remote_connection.hpp"
-#include "../util/obs_util.hpp"
-#include "../util/log.h"
+#include "websocket_server.hpp"
+#include "../util/config.hpp"
 #include <buffer.hpp>
 #include <obs-module.h>
 #include <util/platform.h>
@@ -94,12 +94,20 @@ void process_remote_event(struct mg_connection *ws, unsigned char *bytes, size_t
         }
         ws->fn_data = (void *)client_data;
     }
+    auto const blocked = io_config::io_window_filters.input_blocked();
 
     while (b.data_left() > 0) {
         auto type = b.read<uint8_t>();
         if (*type == 0) { // uiohook event
+            uiohook_event *ev{};
+            ev = b.read<uiohook_event>();
+            if (!ev)
+                break;
             std::lock_guard<std::mutex> lock(client_data->m_mutex);
-            client_data->deserialize(b);
+            client_data->dispatch_uiohook_event(ev);
+
+            if (!blocked)
+                wss::dispatch_uiohook_event(ev, client_name);
         } else { // sdl controller event
         }
     }

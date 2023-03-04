@@ -48,8 +48,9 @@ struct input_data {
     /* State of all mouse buttons */
     button_map<uint8_t> mouse{};
 
-    /* we use this to reset the scroll wheel after a time out */
     mouse_wheel_event_data last_wheel_event{};
+    /* we use this to reset the scroll wheel after a time out */
+    uint64_t last_wheel_event_time{};
 
     /* used for the mouse motion event */
     mouse_event_data last_mouse_movement{};
