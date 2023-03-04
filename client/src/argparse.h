@@ -18,11 +18,10 @@ extern "C" {
 struct argparse;
 struct argparse_option;
 
-typedef int argparse_callback (struct argparse *self,
-                               const struct argparse_option *option);
+typedef int argparse_callback(struct argparse *self, const struct argparse_option *option);
 
 enum argparse_flag {
-    ARGPARSE_STOP_AT_NON_OPTION  = 1 << 0,
+    ARGPARSE_STOP_AT_NON_OPTION = 1 << 0,
     ARGPARSE_IGNORE_UNKNOWN_ARGS = 1 << 1,
 };
 
@@ -40,7 +39,7 @@ enum argparse_option_type {
 };
 
 enum argparse_option_flags {
-    OPT_NONEG = 1,              /* disable negation */
+    OPT_NONEG = 1, /* disable negation */
 };
 
 /**
@@ -91,38 +90,53 @@ struct argparse {
     const struct argparse_option *options;
     const char *const *usages;
     int flags;
-    const char *description;    // a description after usage
-    const char *epilog;         // a description at the end
+    const char *description; // a description after usage
+    const char *epilog;      // a description at the end
     // internal context
     int argc;
     const char **argv;
     const char **out;
     int cpidx;
-    const char *optvalue;       // current option value
+    const char *optvalue; // current option value
 };
 
 // built-in callbacks
-int argparse_help_cb(struct argparse *self,
-                     const struct argparse_option *option);
-int argparse_help_cb_no_exit(struct argparse *self,
-                             const struct argparse_option *option);
+int argparse_help_cb(struct argparse *self, const struct argparse_option *option);
+int argparse_help_cb_no_exit(struct argparse *self, const struct argparse_option *option);
 
 // built-in option macros
-#define OPT_END()        { ARGPARSE_OPT_END, 0, NULL, NULL, 0, NULL, 0, 0 }
-#define OPT_BOOLEAN(...) { ARGPARSE_OPT_BOOLEAN, __VA_ARGS__ }
-#define OPT_BIT(...)     { ARGPARSE_OPT_BIT, __VA_ARGS__ }
-#define OPT_INTEGER(...) { ARGPARSE_OPT_INTEGER, __VA_ARGS__ }
-#define OPT_FLOAT(...)   { ARGPARSE_OPT_FLOAT, __VA_ARGS__ }
-#define OPT_STRING(...)  { ARGPARSE_OPT_STRING, __VA_ARGS__ }
-#define OPT_GROUP(h)     { ARGPARSE_OPT_GROUP, 0, NULL, NULL, h, NULL, 0, 0 }
-#define OPT_HELP()       OPT_BOOLEAN('h', "help", NULL,                 \
-                                     "show this help message and exit", \
-                                     argparse_help_cb, 0, OPT_NONEG)
+#define OPT_END()                                      \
+    {                                                  \
+        ARGPARSE_OPT_END, 0, NULL, NULL, 0, NULL, 0, 0 \
+    }
+#define OPT_BOOLEAN(...)                  \
+    {                                     \
+        ARGPARSE_OPT_BOOLEAN, __VA_ARGS__ \
+    }
+#define OPT_BIT(...)                  \
+    {                                 \
+        ARGPARSE_OPT_BIT, __VA_ARGS__ \
+    }
+#define OPT_INTEGER(...)                  \
+    {                                     \
+        ARGPARSE_OPT_INTEGER, __VA_ARGS__ \
+    }
+#define OPT_FLOAT(...)                  \
+    {                                   \
+        ARGPARSE_OPT_FLOAT, __VA_ARGS__ \
+    }
+#define OPT_STRING(...)                  \
+    {                                    \
+        ARGPARSE_OPT_STRING, __VA_ARGS__ \
+    }
+#define OPT_GROUP(h)                                     \
+    {                                                    \
+        ARGPARSE_OPT_GROUP, 0, NULL, NULL, h, NULL, 0, 0 \
+    }
+#define OPT_HELP() OPT_BOOLEAN('h', "help", NULL, "show this help message and exit", argparse_help_cb, 0, OPT_NONEG)
 
-int argparse_init(struct argparse *self, struct argparse_option *options,
-                  const char *const *usages, int flags);
-void argparse_describe(struct argparse *self, const char *description,
-                       const char *epilog);
+int argparse_init(struct argparse *self, struct argparse_option *options, const char *const *usages, int flags);
+void argparse_describe(struct argparse *self, const char *description, const char *epilog);
 int argparse_parse(struct argparse *self, int argc, const char **argv);
 void argparse_usage(struct argparse *self);
 
