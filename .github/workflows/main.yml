@@ -117,7 +117,16 @@ jobs:
         with:
           name: ${{ env.PLUGIN_NAME }}-linux-${{ matrix.arch }}-${{ steps.setup.outputs.commitHash }}
           path: ${{ github.workspace }}/plugin/release/${{ env.PLUGIN_NAME }}-*-linux-${{ matrix.arch }}.*
-
+      - name: Upload binary zip
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ env.PLUGIN_NAME }}-linux-${{ matrix.arch }}-${{ steps.setup.outputs.commitHash }}
+          path: ~/.config/obs-studio/plugins/${{ env.PLUGIN_NAME }}
+      - name: Upload preset zip
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ env.PLUGIN_NAME }}-${{ steps.setup.outputs.commitHash }}-presets
+          path: ${{ github.workspace }}/plugin/presets
   windows_build:
     name: 02 - Windows
     runs-on: windows-2022
