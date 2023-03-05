@@ -66,7 +66,6 @@ inline void input_source::update(obs_data_t *settings)
     if (m_settings.use_local_input() && gamepad_hook::state) {
         m_settings.gamepad = gamepad_hook::local_gamepads->get_controller(m_settings.gamepad_index);
     } else if (wss::state) {
-        // TODO: Remote gamepads
         std::lock_guard<std::mutex> lock(network::remote_data_map_mutex);
         auto data = network::remote_data.find(m_settings.selected_source);
         if (data != network::remote_data.end())
@@ -94,9 +93,8 @@ inline void input_source::tick(float seconds)
         if (m_settings.use_local_input() && gamepad_hook::state) {
             if (!m_settings.gamepad || !m_settings.gamepad->valid())
                 m_settings.gamepad = gamepad_hook::local_gamepads->get_controller(m_settings.gamepad_index);
-        } else if (wss::state) {
-            // TODO: Remote gamepads
         }
+        // Remote gamepads directly store their data in the gamepad maps
 
         // Check if remote connection is available
         if (!m_settings.remote_input_data && !m_settings.use_local_input()) {
@@ -142,8 +140,13 @@ bool reload_pads(obs_properties_t *, obs_property_t *property, void *data)
             auto name = controller->identifier();
             obs_property_list_add_string(property, name.c_str(), name.c_str());
         }
-    } else if (wss::state) {
-        // TODO: Add remote gamepads
+    } else if (wss::state && src->m_settings.remote_input_data) {
+        auto data = src->m_settings.remote_input_data;
+        std::lock_guard<std::mutex> lock(data->m_mutex);
+        for (const auto &pad : data->remote_gamepad_names) {
+            std::string id = std::to_string(pad.first) + " - " + pad.second;
+            obs_property_list_add_string(property, id.c_str(), id.c_str());
+        }
     }
 
     return true;

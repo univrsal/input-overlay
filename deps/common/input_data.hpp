@@ -59,8 +59,11 @@ struct input_data {
     gamepad_map<bool, GAMEPAD_BUTTON_MAX> gamepad_buttons;
     gamepad_map<float, GAMEPAD_AXIS_MAX> gamepad_axis;
 
+    /* gamepad names */
+    std::unordered_map<int, std::string> remote_gamepad_names;
+
     /* Mutex needs to be locked */
-    void copy(const input_data *other);
+    void copy(const input_data *other, bool with_gamepad_data=false);
 
     void dispatch_uiohook_event(const uiohook_event *event);
 

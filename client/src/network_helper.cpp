@@ -19,6 +19,7 @@
 #include "network_helper.hpp"
 #include "client_util.hpp"
 #include "uiohook_helper.hpp"
+#include "gamepad_helper.hpp"
 #include <mongoose.h>
 #include <buffer.hpp>
 #include <atomic>
@@ -80,16 +81,35 @@ bool start()
             if (!c->is_draining && !c->is_closing) {
                 buf.reset();
                 buf.write(util::cfg.username);
-                uiohook_helper::queue.mutex.lock();
-                for (auto const &event : uiohook_helper::queue.events) {
-                    have_data = true;
-                    buf.write(uint8_t(0)); // uiohook event
-                    buf.write(event);
-                }
-                uiohook_helper::queue.events.clear();
-                uiohook_helper::queue.mutex.unlock();
 
-                // TODO: gamepad data
+                if (util::cfg.monitor_keyboard || util::cfg.monitor_mouse) {
+                    uiohook_helper::queue.mutex.lock();
+                    for (auto const &event : uiohook_helper::queue.events) {
+                        have_data = true;
+                        buf.write(uint8_t(0)); // uiohook event
+                        buf.write(event);
+                    }
+                    uiohook_helper::queue.events.clear();
+                    uiohook_helper::queue.mutex.unlock();
+                }
+
+                if (util::cfg.monitor_gamepad) {
+                    gamepad_helper::queue.mutex.lock();
+                    for (auto const &event : gamepad_helper::queue.events) {
+                        have_data = true;
+                        buf.write(uint8_t(1)); // sdl event
+                        buf.write(event);
+                        if (event.type == SDL_CONTROLLERDEVICEADDED) {
+                            auto *name = SDL_GameControllerNameForIndex(event.cdevice.which);
+                            buf.write<uint8_t>(strlen(name));
+                            buf.write(name, strlen(name));
+                        }
+                    }
+
+                    gamepad_helper::queue.events.clear();
+                    gamepad_helper::queue.mutex.unlock();
+                }
+
                 if (have_data)
                     mg_ws_send(c, buf.get<const char *>(), buf.write_pos(), WEBSOCKET_OP_BINARY);
             }

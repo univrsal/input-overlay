@@ -19,10 +19,20 @@
 #pragma once
 #include <buffer.hpp>
 #include <mutex>
+#include <atomic>
+#include <thread>
+#include <SDL.h>
+#include <vector>
 
 namespace gamepad_helper {
-extern std::mutex buffer_mutex;
-extern buffer buf;
+struct event_queue {
+    std::vector<SDL_Event> events;
+    std::mutex mutex;
+};
+
+extern event_queue queue;
+extern std::atomic<bool> state;
+extern std::thread sdl_poll_thread;
 extern bool start();
 extern void stop();
 }

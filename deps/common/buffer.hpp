@@ -69,7 +69,7 @@ public:
 
     byte *read(size_t size)
     {
-        if (size + m_read_pos < m_length) {
+        if (size + m_read_pos <= m_length) {
             auto *result = m_buf + m_read_pos;
             m_read_pos += size;
             return result;
@@ -79,7 +79,7 @@ public:
 
     void read(void **dest, size_t size)
     {
-        if (size + m_read_pos < m_length) {
+        if (size + m_read_pos <= m_length) {
             *dest = reinterpret_cast<void *>(m_buf + m_read_pos);
             m_read_pos += size;
         }

@@ -18,12 +18,13 @@
 
 #include "input_data.hpp"
 #include <util/platform.h>
+#include <SDL.h>
 
 namespace local_data {
 input_data data;
 }
 
-void input_data::copy(const input_data *other)
+void input_data::copy(const input_data *other, bool with_gamepad_data)
 {
     last_event.store(other->last_event);
     keyboard = other->keyboard;
@@ -32,6 +33,11 @@ void input_data::copy(const input_data *other)
     last_wheel_event_time = other->last_wheel_event_time;
     last_wheel_event = other->last_wheel_event;
     last_event_type.store(other->last_event_type);
+
+    if (with_gamepad_data) {
+        gamepad_axis = other->gamepad_axis;
+        gamepad_buttons = other->gamepad_buttons;
+    }
 }
 
 void input_data::dispatch_uiohook_event(const uiohook_event *event)

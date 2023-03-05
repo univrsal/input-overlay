@@ -223,7 +223,7 @@ void overlay::refresh_data()
     } else if (wss::state) {
         if (m_settings->remote_input_data) {
             m_settings->remote_input_data->m_mutex.lock();
-            m_settings->data.copy(m_settings->remote_input_data.get());
+            m_settings->data.copy(m_settings->remote_input_data.get(), true);
             m_settings->remote_input_data->m_mutex.unlock();
         }
     }

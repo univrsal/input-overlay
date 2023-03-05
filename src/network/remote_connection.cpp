@@ -18,6 +18,7 @@
 
 #include "remote_connection.hpp"
 #include "websocket_server.hpp"
+#include "../util/log.h"
 #include "../util/config.hpp"
 #include <buffer.hpp>
 #include <obs-module.h>
@@ -108,9 +109,51 @@ void process_remote_event(struct mg_connection *ws, unsigned char *bytes, size_t
 
             if (!blocked)
                 wss::dispatch_uiohook_event(ev, client_name);
-        } else { // sdl controller event
+        } else {
+            SDL_Event *ev{};
+            ev = b.read<SDL_Event>();
+            if (!ev)
+                break;
+            switch (ev->type) {
+            case SDL_CONTROLLERAXISMOTION: {
+                std::lock_guard<std::mutex> lock(client_data->m_mutex);
+                client_data->gamepad_axis[ev->caxis.which][ev->caxis.axis] = ev->caxis.value / float(INT16_MAX);
+            } break;
+            case SDL_CONTROLLERBUTTONDOWN:
+            case SDL_CONTROLLERBUTTONUP: {
+                std::lock_guard<std::mutex> lock(client_data->m_mutex);
+                client_data->gamepad_buttons[ev->cbutton.which][ev->cbutton.button] = ev->cbutton.state;
+            } break;
+            case SDL_CONTROLLERDEVICEADDED: {
+                uint8_t *len = b.read<uint8_t>();
+                if (len) {
+                    char *gamepad_name = (char *)b.read(*len);
+                    if (gamepad_name) {
+                        binfo("Gamepad '%s' connected to '%s'", gamepad_name, client_name.c_str());
+                        std::lock_guard<std::mutex> lock(client_data->m_mutex);
+                        client_data->remote_gamepad_names[ev->cdevice.which] = gamepad_name;
+                    }
+                }
+                break;
+            }
+            case SDL_CONTROLLERDEVICEREMOVED: {
+                {
+                    std::lock_guard<std::mutex> lock(client_data->m_mutex);
+                    auto gamepad_name = client_data->remote_gamepad_names[ev->cdevice.which];
+                    binfo("Gamepad '%s' disconnected from '%s'", gamepad_name.c_str(), client_name.c_str());
+                    client_data->remote_gamepad_names.erase(ev->cdevice.which);
+                    client_data->gamepad_buttons.erase(ev->cdevice.which);
+                    client_data->gamepad_axis.erase(ev->cdevice.which);
+                }
+                break;
+            }
+            }
+
+            if (!blocked) {
+                std::lock_guard<std::mutex> lock(client_data->m_mutex);
+                wss::dispatch_sdl_event(ev, client_name, client_data);
+            }
         }
     }
 }
-
 }
