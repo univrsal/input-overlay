@@ -114,7 +114,6 @@ void dispatch_uiohook_event(const uiohook_event *e, const std::string &source_na
 
 void dispatch_sdl_event(const SDL_Event *e, const std::string &source_name, input_data *data)
 {
-    std::lock_guard<std::mutex> lock(mg::poll_mutex);
     if (!mg::can_queue_message())
         return;
     QJsonObject obj;
@@ -149,6 +148,10 @@ void dispatch_sdl_event(const SDL_Event *e, const std::string &source_name, inpu
     auto n = data->remote_gamepad_names.find(e->cdevice.which);
     if (n != data->remote_gamepad_names.end())
         obj["device_name"] = utf8_to_qt(n->second.c_str());
+    QJsonDocument doc(obj);
+    auto j = QString(doc.toJson(QJsonDocument::Compact));
+    std::lock_guard<std::mutex> lock(mg::poll_mutex);
+    mg::queue_message(qt_to_utf8(j));
 }
 
 }
