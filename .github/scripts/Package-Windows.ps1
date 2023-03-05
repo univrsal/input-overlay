@@ -87,6 +87,13 @@ function Package {
     }
 
     Compress-Archive -Force @CompressArgs
+
+    $OutputName = "${ProductName}-client-${ProductVersion}-windows-${Target}"
+    $CompressArgs = @{
+        Path = (Get-ChildItem -Path "${ProjectRoot}/release_client" -Exclude "${OutputName}*.*")
+        CompressionLevel = 'Optimal'
+        DestinationPath = "${ProjectRoot}/release/${OutputName}.zip"
+    }
 }
 
 Package

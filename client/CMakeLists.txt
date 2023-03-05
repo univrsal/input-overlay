@@ -217,6 +217,8 @@ if (WIN32 OR WIN64)
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
         ${SDL2_DLLS}
         $<TARGET_FILE_DIR:${PROJECT_NAME}>)
+    install(FILES ${SDL2_DLLS} DESTINATION ${PROJECT_NAME})
+
 endif()
 
 install(TARGETS ${PROJECT_NAME} DESTINATION ${PROJECT_NAME})
