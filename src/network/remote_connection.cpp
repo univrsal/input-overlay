@@ -17,44 +17,42 @@
  *************************************************************************/
 
 #include "remote_connection.hpp"
-#include "io_server.hpp"
+#include "websocket_server.hpp"
+#include "../util/log.h"
 #include "../util/config.hpp"
+#include <buffer.hpp>
 #include <obs-module.h>
 #include <util/platform.h>
 #include <thread>
-
-#include "../util/log.h"
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonValue>
 
 #if __linux__
 #include <ifaddrs.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-#endif
+#elif _WIN32
+#include <winsock2.h>
+#include <iphlpapi.h>
+#pragma comment(lib, "iphlpapi.lib")
+#pragma comment(lib, "ws2_32.lib")
 namespace network {
-std::atomic<bool> network_flag;
-bool local_input = false; /* True if either of the local hooks is running */
-char local_ip[16] = "127.0.0.1\0";
-
-io_server *server_instance = nullptr;
-std::thread network_thread;
-
-const char *get_status()
-{
-    return network_flag ? "UP" : "DOWN";
+void iterate_ips(char *buf, DWORD buflen);
 }
+#endif
 
-void start_network(uint16_t port)
+namespace network {
+bool local_input = false; /* True if either of the local hooks is running */
+std::mutex remote_data_map_mutex;
+std::unordered_map<std::string, std::shared_ptr<input_data>> remote_data;
+
+QString get_local_ip()
 {
-    if (network_flag)
-        return;
-
-        /* Get ip of first interface */
+    char local_ip[64] = "127.0.0.1\0";
+    /* Get ip of first interface */
 #if _WIN32
-    ip_address addresses[2];
-    if (netlib_get_local_addresses(addresses, 2) > 0) {
-        snprintf(local_ip, sizeof(local_ip), "%d.%d.%d.%d", (addresses[0].host >> 0) & 0xFF,
-                 (addresses[0].host >> 8) & 0xFF, (addresses[0].host >> 16) & 0xFF, (addresses[0].host >> 24) & 0xFF);
-    }
+    iterate_ips(local_ip, 64);
 #elif __linux__
     struct ifaddrs *addrs;
     getifaddrs(&addrs);
@@ -70,136 +68,144 @@ void start_network(uint16_t port)
         tmp = tmp->ifa_next;
     }
 #endif
-    auto failed = false;
+    return local_ip;
+}
 
-    if (netlib_init() == 0) {
-        server_instance = new io_server(port);
+void process_remote_event(struct mg_connection *ws, unsigned char *bytes, size_t len)
+{
+    buffer b(bytes, len);
+    auto *name = (char *)b.read(64);
+    if (!name)
+        return;
+    std::string client_name = name;
+    input_data *client_data{};
 
-        if (server_instance->init()) {
-            network_flag = true;
-            network_thread = std::thread(network_handler);
-        } else {
-            berr("Server init failed");
-            failed = true;
-        }
+    // To prevent a map lookup for every event
+    // we save the input_data pointer in fn_data
+    // the shared pointer has a longer lifetime than the websocket connection
+    // so this should be fine, if we clean up remote_data at some point
+    // we'd have to make sure that the websocket doesn't exist anymore
+    if (ws->fn_data) {
+        client_data = static_cast<input_data *>(ws->fn_data);
     } else {
-        berr("netlib_init failed: %s", netlib_get_error());
-        failed = true;
-    }
-
-    if (failed) {
-        berr("Remote connection disabled due to errors");
-        close_network();
-    }
-}
-
-void close_network()
-{
-    if (network_flag) {
-        network_flag = false;
-        network_thread.join();
-        delete server_instance;
-        netlib_quit();
-    }
-}
-
-void network_handler()
-{
-    tcp_socket sock;
-
-    while (network_flag) {
-        int numready;
-        server_instance->round_trip();
-        server_instance->listen(numready);
-
-        if (numready == -1) {
-            berr("netlib_check_sockets failed: %s", netlib_get_error());
-            break;
+        std::lock_guard<std::mutex> lock(remote_data_map_mutex);
+        auto const &data = remote_data.find(client_name);
+        if (data == remote_data.end()) {
+            auto new_data = std::make_shared<input_data>();
+            remote_data[client_name] = new_data;
+            client_data = new_data.get();
+        } else {
+            client_data = data->second.get();
         }
+        ws->fn_data = (void *)client_data;
+    }
+    auto const blocked = io_config::io_window_filters.input_blocked();
 
-        if (!numready) {
-            os_sleepto_ns(100000); /* Should be fast enough */
-            continue;
-        }
+    while (b.data_left() > 0) {
+        auto type = b.read<uint8_t>();
+        if (*type == 0) { // uiohook event
+            uiohook_event *ev{};
+            ev = b.read<uiohook_event>();
+            if (!ev)
+                break;
+            std::lock_guard<std::mutex> lock(client_data->m_mutex);
+            client_data->dispatch_uiohook_event(ev);
 
-        if (netlib_socket_ready(server_instance->socket())) {
-            numready--;
-            binfo("Received connection...");
-
-            sock = netlib_tcp_accept(server_instance->socket());
-
-            if (sock) {
-                char *name = nullptr;
-                binfo("Accepted connection...");
-
-                if (read_text(sock, &name)) {
-                    server_instance->add_client(sock, name);
-                } else {
-                    berr("Failed to receive client name.");
-                    netlib_tcp_close(sock);
+            if (!blocked)
+                wss::dispatch_uiohook_event(ev, client_name);
+        } else {
+            SDL_Event *ev{};
+            ev = b.read<SDL_Event>();
+            if (!ev)
+                break;
+            switch (ev->type) {
+            case SDL_CONTROLLERAXISMOTION: {
+                std::lock_guard<std::mutex> lock(client_data->m_mutex);
+                client_data->gamepad_axis[ev->caxis.which][ev->caxis.axis] = ev->caxis.value / float(INT16_MAX);
+            } break;
+            case SDL_CONTROLLERBUTTONDOWN:
+            case SDL_CONTROLLERBUTTONUP: {
+                std::lock_guard<std::mutex> lock(client_data->m_mutex);
+                client_data->gamepad_buttons[ev->cbutton.which][ev->cbutton.button] = ev->cbutton.state;
+            } break;
+            case SDL_CONTROLLERDEVICEADDED: {
+                uint8_t *len = b.read<uint8_t>();
+                if (len) {
+                    char *gamepad_name = (char *)b.read(*len);
+                    if (gamepad_name) {
+                        binfo("Gamepad '%s' connected to '%s'", gamepad_name, client_name.c_str());
+                        std::lock_guard<std::mutex> lock(client_data->m_mutex);
+                        client_data->remote_gamepad_names[ev->cdevice.which] = gamepad_name;
+                    }
                 }
-                free(name);
+                break;
+            }
+            case SDL_CONTROLLERDEVICEREMOVED: {
+                {
+                    std::lock_guard<std::mutex> lock(client_data->m_mutex);
+                    auto gamepad_name = client_data->remote_gamepad_names[ev->cdevice.which];
+                    binfo("Gamepad '%s' disconnected from '%s'", gamepad_name.c_str(), client_name.c_str());
+                    client_data->remote_gamepad_names.erase(ev->cdevice.which);
+                    client_data->gamepad_buttons.erase(ev->cdevice.which);
+                    client_data->gamepad_axis.erase(ev->cdevice.which);
+                }
+                break;
+            }
+            }
+
+            if (!blocked) {
+                std::lock_guard<std::mutex> lock(client_data->m_mutex);
+                wss::dispatch_sdl_event(ev, client_name, client_data);
             }
         }
-
-        if (numready)
-            server_instance->update_clients();
     }
 }
 
-int send_message(tcp_socket sock, message msg)
-{
-    auto msg_id = uint8_t(msg);
-
-    const uint32_t result = netlib_tcp_send(sock, &msg_id, sizeof(msg_id));
-
-    if (result < sizeof(msg_id)) {
-        berr("netlib_tcp_send: %s\n", netlib_get_error());
-        return 0;
+#ifdef _WIN32
+void iterate_ips(char* buf, DWORD buflen) {
+    // Initialize Winsock
+    WSADATA wsaData;
+    int result = WSAStartup(MAKEWORD(2, 2), &wsaData);
+    if (result != 0) {
+        printf("WSAStartup failed: %d\n", result);
+        return;
     }
 
-    return result;
-}
-
-/* https://www.libsdl.org/projects/SDL_net/docs/demos/tcputil.h */
-char *read_text(tcp_socket sock, char **buf)
-{
-    uint32_t len, result;
-
-    if (*buf)
-        free(*buf);
-    *buf = nullptr;
-
-    result = netlib_tcp_recv(sock, &len, sizeof(len));
-    if (result < sizeof(len)) {
-        berr("netlib_tcp_recv: %s\n", netlib_get_error());
-        return nullptr;
+    // Call GetAdaptersAddresses to retrieve the network interface information
+    ULONG family = AF_INET;
+    ULONG flags = GAA_FLAG_INCLUDE_PREFIX | GAA_FLAG_SKIP_ANYCAST | GAA_FLAG_SKIP_MULTICAST | GAA_FLAG_SKIP_DNS_SERVER;
+    PIP_ADAPTER_ADDRESSES addresses = nullptr;
+    ULONG size = 0;
+    result = GetAdaptersAddresses(family, flags, nullptr, addresses, &size);
+    if (result == ERROR_BUFFER_OVERFLOW) {
+        addresses = (PIP_ADAPTER_ADDRESSES)malloc(size);
+        result = GetAdaptersAddresses(family, flags, nullptr, addresses, &size);
+    }
+    if (result != NO_ERROR) {
+        printf("GetAdaptersAddresses failed: %d\n", result);
+        return;
     }
 
-    len = netlib_swap_BE32(len);
-    if (!len)
-        return nullptr;
-
-    *buf = static_cast<char *>(malloc(len));
-    if (!(*buf))
-        return nullptr;
-
-    result = netlib_tcp_recv(sock, *buf, len);
-    if (result < len) {
-        berr("netlib_tcp_recv: %s\n", netlib_get_error());
-        free(*buf);
-        buf = nullptr;
+    // Iterate over the list of IP_ADAPTER_ADDRESSES structures and print the IP addresses
+    for (PIP_ADAPTER_ADDRESSES addr = addresses; addr != nullptr; addr = addr->Next) {
+        for (PIP_ADAPTER_UNICAST_ADDRESS unicast = addr->FirstUnicastAddress; unicast != nullptr;
+             unicast = unicast->Next) {
+            sockaddr *sa = unicast->Address.lpSockaddr;
+           
+           
+            result = WSAAddressToStringA(sa, unicast->Address.iSockaddrLength, nullptr, buf, &buflen);
+            if (result == 0) {
+                goto end; // accept first ip
+            }
+        }
     }
+    end:
 
-    return *buf;
+    // Free the memory allocated by GetAdaptersAddresses
+    free(addresses);
+
+    // Clean up Winsock
+    WSACleanup();
 }
-
-message read_msg_from_buffer(buffer &buf)
-{
-    auto id = buf.read<uint8_t>();
-
-    if (id && *id <= MSG_LAST)
-        return message(*id);
-    return MSG_INVALID;
-}
+#endif
 }

@@ -80,6 +80,7 @@ function Build {
         Log-Debug "Attempting to configure OBS with CMake arguments: $($CmakeArgs | Out-String)"
         Log-Information "Configuring ${ProductName}..."
         Invoke-External cmake -S . -B build_${script:Target} @CmakeArgs
+        Invoke-External cmake -S ./client -B build_client_${script:Target} @CmakeArgs
 
         $CmakeArgs = @(
             '--config', "${Configuration}"
@@ -91,10 +92,11 @@ function Build {
 
         Log-Information "Building ${ProductName}..."
         Invoke-External cmake --build "build_${script:Target}" @CmakeArgs
+        Invoke-External cmake --build "build_client_${script:Target}" @CmakeArgs
     }
     Log-Information "Install ${ProductName}..."
     Invoke-External cmake --install "build_${script:Target}" --prefix "${ProjectRoot}/release" @CmakeArgs
-
+    Invoke-External cmake --install "build_client_${script:Target}" --prefix "${ProjectRoot}/release_client" @CmakeArgs
     Pop-Location -Stack BuildTemp
 }
 

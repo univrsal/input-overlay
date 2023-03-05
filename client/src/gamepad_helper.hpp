@@ -17,13 +17,22 @@
  *************************************************************************/
 
 #pragma once
-#include <libgamepad.hpp>
+#include "SDL.h"
 #include <buffer.hpp>
+#include <mutex>
+#include <atomic>
+#include <thread>
+#include <vector>
 
-namespace libgamepad {
-extern std::shared_ptr<gamepad::hook> hook_instance;
-extern std::mutex buffer_mutex;
-extern buffer buf;
-extern bool start(uint16_t flags);
+namespace gamepad_helper {
+struct event_queue {
+    std::vector<SDL_Event> events;
+    std::mutex mutex;
+};
+
+extern event_queue queue;
+extern std::atomic<bool> state;
+extern std::thread sdl_poll_thread;
+extern bool start();
 extern void stop();
 }

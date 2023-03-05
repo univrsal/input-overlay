@@ -226,25 +226,31 @@ Usage: %B${functrace[1]%:*}%b <option> [<options>]
       linux-*)
         if (( ${+CI} )) {
           cmake_args+=(-DCMAKE_INSTALL_PREFIX=/usr)
+
         }
+        cmake_args+=(-DLOCAL_INSTALLATION=ON)
         num_procs=$(( $(nproc) + 1 ))
         ;;
     }
 
     log_debug "Attempting to configure ${product_name} with CMake arguments: ${cmake_args}"
     cmake -S . -B build_${target##*-} -G ${generator} ${cmake_args}
+    cmake -S ./client -B build_client_${target##*-} -G ${generator} ${cmake_args}
 
     log_info "Building ${product_name}..."
     local -a cmake_args=()
     if (( _loglevel > 1 )) cmake_args+=(--verbose)
     if [[ ${generator} == 'Unix Makefiles' ]] cmake_args+=(--parallel ${num_procs})
     cmake --build build_${target##*-} --config ${BUILD_CONFIG:-RelWithDebInfo} ${cmake_args}
+    cmake --build build_client_${target##*-} --config ${BUILD_CONFIG:-RelWithDebInfo} ${cmake_args}
   }
 
   log_info "Installing ${product_name}..."
   local -a cmake_args=()
   if (( _loglevel > 1 )) cmake_args+=(--verbose)
   cmake --install build_${target##*-} --config ${BUILD_CONFIG:-RelWithDebInfo} --prefix "${project_root}/release" ${cmake_args}
+  cmake --install build_client_${target##*-} --config ${BUILD_CONFIG:-RelWithDebInfo} --prefix "${project_root}/release_client" ${cmake_args}
+  mv "${project_root}/release_client/io_client/io_client" "$HOME/.config/obs-studio/plugins/${product_name}/"
   popd
 }
 

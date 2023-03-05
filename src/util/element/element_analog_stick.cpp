@@ -18,7 +18,7 @@
 
 #include "element_analog_stick.hpp"
 #include "../../sources/input_source.hpp"
-#include <SDL2/SDL.h>
+#include "SDL.h"
 #include <keycodes.h>
 
 void element_analog_stick::load(const QJsonObject &obj)
@@ -36,7 +36,7 @@ void element_analog_stick::draw(gs_effect_t *effect, gs_image_file_t *image, sou
     auto pos = m_pos;
     gs_rect *temp = settings->is_pad_button_pressed(m_keycode) ? &m_pressed : &m_mapping;
 
-    if (settings->gamepad) {
+    if (settings->gamepad || settings->remote_input_data) {
         if (m_side == element_side::LEFT) {
             pos.x += settings->pad_axis(SDL_CONTROLLER_AXIS_LEFTX) * m_radius;
             pos.y += settings->pad_axis(SDL_CONTROLLER_AXIS_LEFTY) * m_radius;

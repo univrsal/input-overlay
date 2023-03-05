@@ -22,12 +22,9 @@
 /* Settings values*/
 #define S_REGION                        "input-overlay"
 #define S_UIOHOOK                       "iohook"
-#define S_USE_DINPUT                    "use_dinput"
-#define S_USE_JS                        "use_js"
 #define S_GAMEPAD                       "gamepad"
 #define S_OVERLAY                       "overlay"
 #define S_HISTORY                       "history"
-#define S_REMOTE                        "remote"
 #define S_LOGGING                       "logging"
 #define S_PORT                          "server_port"
 #define S_WSS_PORT                      "wss_port"

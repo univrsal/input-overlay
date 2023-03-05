@@ -50,13 +50,9 @@ private Q_SLOTS:
 
     void FormAccepted();
 
-    void CbRemoteStateChanged(int state);
-
     void CbInputControlStateChanged(int state);
 
     void CbWssStateChanged(int state);
-
-    void PingClients();
 
     void RefreshWindowList();
 

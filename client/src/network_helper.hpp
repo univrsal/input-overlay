@@ -17,29 +17,19 @@
  *************************************************************************/
 
 #pragma once
-#include <netlib.h>
+
 #include <thread>
-#include <buffer.hpp>
 #include <mutex>
 #include <atomic>
+#include <deque>
+#include <memory>
+#include <buffer.hpp>
 
-namespace network {
-extern tcp_socket sock;
-extern netlib_socket_set set;
-extern bool connected;
-extern bool state;
-extern std::atomic<bool> network_loop;
-/* Set to true by other threads */
-/* Set to true to prevent other threads from modifying data, which is about to be sent */
-extern buffer buf;
-extern std::thread network_thread;
+namespace network_helper {
+extern std::atomic<bool> status, connected;
+extern std::thread thread;
+extern std::mutex poll_mutex;
 
-bool init();
-bool start_connection();
-void start_thread();
-bool listen();
-
-void network_thread_method();
-
-void close();
+bool start();
+void stop();
 }

@@ -18,32 +18,23 @@
 
 #pragma once
 
-#include "messages.hpp"
-#include <atomic>
-#include <buffer.hpp>
-#include <netlib.h>
+#include <QString>
+#include <unordered_map>
+#include <string>
+#include <memory>
+#include <mutex>
+#include <input_data.hpp>
 
-#define TIMEOUT_NS (1000 * 1000 * 1000)
+extern "C" {
+#include <mongoose.h>
+}
+
 namespace network {
-class io_server;
-extern std::atomic<bool> network_flag; /* Running state */
 /* Set in obs_module_load */
 extern bool local_input;
-extern char local_ip[16];
+extern std::mutex remote_data_map_mutex;
+extern std::unordered_map<std::string, std::shared_ptr<input_data>> remote_data;
+QString get_local_ip();
 
-const char *get_status();
-
-void start_network(uint16_t port);
-
-void close_network();
-
-void network_handler();
-
-char *read_text(tcp_socket sock, char **buf);
-
-message read_msg_from_buffer(buffer &buf);
-
-int send_message(tcp_socket sock, message msg);
-
-extern io_server *server_instance;
+extern void process_remote_event(struct mg_connection *ws, unsigned char *bytes, size_t len);
 }

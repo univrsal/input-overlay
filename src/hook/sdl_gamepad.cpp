@@ -1,5 +1,5 @@
 #include "sdl_gamepad.hpp"
-#include "util/input_data.hpp"
+#include <input_data.hpp>
 
 void sdl_gamepad::copy_data(input_data *data)
 {

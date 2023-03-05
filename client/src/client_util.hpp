@@ -17,49 +17,35 @@
  *************************************************************************/
 
 #pragma once
-#ifdef _WIN32
+
 #include <cstdint>
-#endif
 
-#include <netlib.h>
-#include <messages.hpp>
-#include <gamepad/hook.hpp>
-
-#define DEBUG_LOG(fmt, ...) printf("[%25.25s:%03d]: " fmt "\n", __FUNCTION__, __LINE__, ##__VA_ARGS__)
-#define DEBUG_LOGN(fmt, ...) printf("[%25.25s:%03d]: " fmt, __FUNCTION__, __LINE__, ##__VA_ARGS__)
+#define blograw(level, fmt, ...) printf("%s: " fmt, level, ##__VA_ARGS__)
+#define blog(level, fmt, ...) printf("%s: " fmt "\n", level, ##__VA_ARGS__)
+#define bdebug(fmt, ...) blog("debug", fmt, ##__VA_ARGS__)
+#define binfo(fmt, ...) blog("info", fmt, ##__VA_ARGS__)
+#define berr(fmt, ...) blog("error", fmt, ##__VA_ARGS__)
 
 namespace util {
 typedef struct {
+    bool verbose;
     bool monitor_gamepad;
     bool monitor_mouse;
     bool monitor_keyboard;
     char username[64];
-    gamepad::hook_type::type gamepad_hook_type;
-    uint16_t port;
-    ip_address ip;
+    char *websocket_address;
 } config;
 
 extern config cfg;
 
-enum return_codes {
-    RET_NETWORK_INIT,
-    RET_ARGUMENT_PARSING,
-    RET_NO_HOOKS,
-    RET_CONNECTION,
-    RET_GAMEPAD_INIT,
-    RET_UIOHOOK_INIT
-};
+enum return_codes { RET_NETWORK_INIT, RET_ARGUMENT_PARSING, RET_NO_HOOKS, RET_GAMEPAD_INIT, RET_UIOHOOK_INIT };
 
 void sleep_ms(uint32_t ms);
 
 /* Get config values and print help */
 bool parse_arguments(int argc, char **args);
 
-int send_text(char *buf);
-
 uint32_t get_ticks();
-
-network::message recv_msg();
 
 void close_all();
 

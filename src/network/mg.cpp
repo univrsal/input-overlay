@@ -5,6 +5,7 @@
 #include <mutex>
 #include <thread>
 #include <vector>
+#include "remote_connection.hpp"
 #include "../util/config.hpp"
 #include "../util/log.h"
 #include "../util/settings.h"
@@ -41,9 +42,10 @@ void event_handler(struct mg_connection *c, int ev, void *ev_data, void *)
             web_sockets.emplace_back(c);
         }
     } else if (ev == MG_EV_WS_MSG) {
-        // Just echo data
         auto *wm = (struct mg_ws_message *)ev_data;
-        mg_ws_send(c, wm->data.ptr, wm->data.len, WEBSOCKET_OP_TEXT);
+        if (wm->flags & WEBSOCKET_OP_BINARY) {
+            network::process_remote_event(c, (unsigned char *)wm->data.ptr, wm->data.len);
+        }
     } else if (ev == MG_EV_CLOSE) {
         web_sockets.erase(std::remove(web_sockets.begin(), web_sockets.end(), c), web_sockets.end());
     }
@@ -59,7 +61,9 @@ void thread_method()
         while (!message_queue.empty()) {
             auto &msg = message_queue.back();
             for (auto socket : web_sockets) {
-                if (!socket->is_draining && !socket->is_closing)
+                // Sockets with socket->fn_data set are remote input clients and shouldn't
+                // receive any inputs
+                if (!socket->is_draining && !socket->is_closing && !socket->fn_data)
                     mg_ws_send(socket, msg.c_str(), msg.length(), WEBSOCKET_OP_TEXT);
             }
             message_queue.pop_back();

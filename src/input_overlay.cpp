@@ -31,6 +31,7 @@
 #include "network/websocket_server.hpp"
 #include "sources/input_source.hpp"
 #include "util/config.hpp"
+#include "util/log.h"
 #include "util/lang.h"
 #include "plugin-macros.generated.h"
 
@@ -45,7 +46,7 @@ OBS_MODULE_USE_DEFAULT_LOCALE("input-overlay", "en-US")
 
 bool obs_module_load()
 {
-    blog(LOG_INFO, "Loading v%s build time %s", PLUGIN_VERSION, BUILD_TIME);
+    binfo("Loading v%s-%s (%s) build time %s", PLUGIN_VERSION, GIT_BRANCH, GIT_COMMIT_HASH, BUILD_TIME);
     io_config::set_defaults();
     io_config::load();
 
@@ -57,10 +58,7 @@ bool obs_module_load()
             gamepad_hook::start();
         if (io_config::enable_websocket_server)
             wss::start();
-        if (io_config::enable_remote_connections) {
-            network::local_input = io_config::enable_gamepad_hook || io_config::enable_uiohook;
-            network::start_network(io_config::server_port);
-        }
+        network::local_input = io_config::enable_gamepad_hook || io_config::enable_uiohook;
         /* Input filtering via focused window title */
         if (io_config::enable_input_control)
             io_config::io_window_filters.read_from_config();
@@ -91,7 +89,6 @@ void obs_module_unload()
 
     gamepad_hook::stop();
     uiohook::stop();
-    network::close_network();
     wss::stop();
 
 #ifdef LINUX

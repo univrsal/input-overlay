@@ -25,8 +25,11 @@ typedef unsigned char byte;
 class buffer {
     byte *m_buf = nullptr;
     size_t m_length = 0, m_write_pos = 0, m_read_pos = 0;
+    bool m_owned{true};
 
 public:
+    buffer(byte *data, size_t len) : m_buf(data), m_length(len), m_owned(false) {}
+
     buffer(size_t len = 0)
     {
         if (len > 0)
@@ -35,7 +38,8 @@ public:
 
     ~buffer()
     {
-        free(m_buf);
+        if (m_owned)
+            free(m_buf);
         m_buf = nullptr;
         m_length = 0;
         m_write_pos = 0;
@@ -63,10 +67,21 @@ public:
         m_write_pos += size;
     }
 
+    byte *read(size_t size)
+    {
+        if (size + m_read_pos <= m_length) {
+            auto *result = m_buf + m_read_pos;
+            m_read_pos += size;
+            return result;
+        }
+        return nullptr;
+    }
+
     void read(void **dest, size_t size)
     {
-        if (size + m_read_pos < m_length) {
+        if (size + m_read_pos <= m_length) {
             *dest = reinterpret_cast<void *>(m_buf + m_read_pos);
+            m_read_pos += size;
         }
     }
 
@@ -82,7 +97,7 @@ public:
 
     template<class T> T *read()
     {
-        if (sizeof(T) + m_read_pos < m_length) {
+        if (sizeof(T) + m_read_pos <= m_length) {
             auto result = reinterpret_cast<T *>(m_buf + m_read_pos);
             m_read_pos += sizeof(T);
             return result;
@@ -94,8 +109,10 @@ public:
 
     const byte &operator[](size_t idx) const { return m_buf[idx]; }
 
-    size_t length() { return m_length; }
-    size_t write_pos() { return m_write_pos; }
-    size_t read_pos() { return m_read_pos; }
+    size_t length() const { return m_length; }
+    size_t write_pos() const { return m_write_pos; }
+    size_t read_pos() const { return m_read_pos; }
+    size_t data_left() const { return m_length - m_read_pos; }
     byte *get() { return m_buf; }
+    template<class T> T get() { return reinterpret_cast<T>(m_buf); }
 };

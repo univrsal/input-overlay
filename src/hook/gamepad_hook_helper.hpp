@@ -26,7 +26,7 @@
 #include <algorithm>
 #include <array>
 #include <string>
-#include <SDL2/SDL.h>
+#include "SDL.h"
 
 #include "sdl_gamepad.hpp"
 
@@ -97,14 +97,8 @@ class gamepads {
 public:
     gamepads();
 
-    auto &mutex()
-    {
-        return m_mutex;
-    }
-    auto &pads()
-    {
-        return m_pads;
-    }
+    auto &mutex() { return m_mutex; }
+    auto &pads() { return m_pads; }
 
     void add_controller(int index, std::string const &desc)
     {

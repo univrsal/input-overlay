@@ -26,11 +26,8 @@ namespace io_config {
 config_t *instance = nullptr;
 input_filter io_window_filters; /* Global filters */
 std::mutex filter_mutex;        /* Thread safety for writing/reading filters */
-bool use_dinput = false;
-bool use_js = true;
 bool enable_input_control = false;
 bool enable_websocket_server = false;
-bool enable_remote_connections = false;
 bool enable_gamepad_hook = true;
 bool enable_uiohook = true;
 bool enable_overlay_source = true;
@@ -48,15 +45,12 @@ void set_defaults()
     CDEF_BOOL(S_GAMEPAD, enable_gamepad_hook);
     CDEF_BOOL(S_OVERLAY, enable_overlay_source);
 
-    CDEF_BOOL(S_REMOTE, enable_remote_connections);
     CDEF_BOOL(S_LOGGING, log_flag);
     CDEF_INT(S_PORT, server_port);
     CDEF_INT(S_WSS_PORT, wss_port);
     CDEF_BOOL(S_ENABLE_WSS, enable_websocket_server);
     CDEF_INT(S_REFRESH, server_refresh_rate);
     CDEF_INT(S_REFRESH, filter_mode);
-    CDEF_BOOL(S_USE_DINPUT, use_dinput);
-    CDEF_BOOL(S_USE_JS, use_dinput);
 }
 
 void load()
@@ -67,7 +61,6 @@ void load()
 
     enable_uiohook = CGET_BOOL(S_UIOHOOK);
     enable_gamepad_hook = CGET_BOOL(S_GAMEPAD);
-    enable_remote_connections = CGET_BOOL(S_REMOTE);
     enable_websocket_server = CGET_BOOL(S_ENABLE_WSS);
     enable_input_control = CGET_BOOL(S_CONTROL);
     filter_mode = CGET_INT(S_FILTER_MODE);
@@ -76,8 +69,6 @@ void load()
     wss_port = CGET_INT(S_WSS_PORT);
     log_flag = CGET_BOOL(S_LOGGING);
     server_refresh_rate = CGET_INT(S_REFRESH);
-    use_dinput = CGET_BOOL(S_USE_DINPUT);
-    use_js = CGET_BOOL(S_USE_JS);
 }
 
 void save()
@@ -85,15 +76,12 @@ void save()
     /* Window filters are directly saved in formAccept */
     CSET_BOOL(S_UIOHOOK, enable_uiohook);
     CSET_BOOL(S_GAMEPAD, enable_gamepad_hook);
-    CSET_BOOL(S_REMOTE, enable_remote_connections);
     CSET_BOOL(S_CONTROL, enable_input_control);
     CSET_BOOL(S_OVERLAY, enable_overlay_source);
     CSET_INT(S_PORT, server_port);
     CSET_INT(S_REFRESH, server_refresh_rate);
     CSET_BOOL(S_LOGGING, log_flag);
     CSET_BOOL(S_REGEX, regex);
-    CSET_BOOL(S_USE_DINPUT, use_dinput);
-    CSET_BOOL(S_USE_JS, use_js);
     CSET_INT(S_WSS_PORT, wss_port);
     CSET_BOOL(S_ENABLE_WSS, enable_websocket_server);
 }

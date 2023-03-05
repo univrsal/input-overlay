@@ -19,6 +19,7 @@
 #include "element_mouse_wheel.hpp"
 #include "../../sources/input_source.hpp"
 #include <keycodes.h>
+#include <util/platform.h>
 
 element_wheel::element_wheel() : element_texture(ET_WHEEL), m_mappings{}
 {
@@ -47,13 +48,17 @@ void element_wheel::draw(gs_effect_t *effect, gs_image_file_t *image, sources::o
     element_texture::draw(effect, image, settings);
     if (settings->data.mouse[MOUSE_BUTTON3])
         element_texture::draw(effect, image, &m_mappings[WHEEL_MAP_MIDDLE]);
-    switch (settings->data.last_wheel_event.rotation) {
-    case WHEEL_UP:
-        element_texture::draw(effect, image, &m_mappings[WHEEL_MAP_UP]);
-        break;
-    case WHEEL_DOWN:
-        element_texture::draw(effect, image, &m_mappings[WHEEL_MAP_DOWN]);
-        break;
-    default:;
+
+    // If the last scroll event was longer than 150ms ago ignore it
+    if (os_gettime_ns() - settings->data.last_wheel_event_time < 150e6) {
+        switch (settings->data.last_wheel_event.rotation) {
+        case WHEEL_UP:
+            element_texture::draw(effect, image, &m_mappings[WHEEL_MAP_UP]);
+            break;
+        case WHEEL_DOWN:
+            element_texture::draw(effect, image, &m_mappings[WHEEL_MAP_DOWN]);
+            break;
+        default:;
+        }
     }
 }
