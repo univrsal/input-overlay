@@ -15,13 +15,18 @@ endif()
 
 if (MSVC)
     if(CMAKE_SIZEOF_VOID_P EQUAL 8)
-        set(SDL2_LIBRARIES "${CMAKE_CURRENT_SOURCE_DIR}/sdl2/bin/x64/SDL2.lib")
-        set(SDL2_DLLS "${CMAKE_CURRENT_SOURCE_DIR}/sdl2/bin/x64/SDL2.dll")
+        set(SDL2_LIBRARIES "${CMAKE_CURRENT_SOURCE_DIR}/../deps/sdl2/bin/x64/SDL2.lib")
+        set(SDL2_DLLS "${CMAKE_CURRENT_SOURCE_DIR}/../deps/sdl2/bin/x64/SDL2.dll")
+        set(client_PLATFORM_DEPS
+	        wsock32 iphlpapi)
     else()
-        set(SDL2_LIBRARIES "${CMAKE_CURRENT_SOURCE_DIR}/sdl2/bin/x86/SDL2.lib")
-        set(SDL2_DLLS "${CMAKE_CURRENT_SOURCE_DIR}/sdl2/bin/x86/SDL2.dll")
+        set(SDL2_LIBRARIES "${CMAKE_CURRENT_SOURCE_DIR}/../deps/sdl2/bin/x86/SDL2.lib")
+        set(SDL2_DLLS "${CMAKE_CURRENT_SOURCE_DIR}/../deps/sdl2/bin/x86/SDL2.dll")
+        set(client_PLATFORM_DEPSclient_PLATFORM_DEPS
+            ws2_32 iphlpapi)
     endif()
-    set(SDL2_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/sdl2/include")
+    set(SDL2_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/../deps/sdl2/include")
+
 endif ()
 
 if (WIN32 OR WIN64)
@@ -44,7 +49,7 @@ set_target_properties(uiohook_static PROPERTIES
     C_STANDARD 99
     C_STANDARD_REQUIRED ON
     POSITION_INDEPENDENT_CODE 1
-    VERSION "1.3.0"
+    VERSION "1.2.1"
     SOVERSION "1"
 )
 
@@ -187,14 +192,14 @@ set(io_client_SOURCES
     src/uiohook_helper.cpp
     src/uiohook_helper.hpp)
 
-add_executable(client ${io_client_SOURCES})
+add_executable(${PROJECT_NAME} ${io_client_SOURCES})
 
-target_link_libraries(client
+target_link_libraries(${PROJECT_NAME}
     uiohook_static
     ${SDL2_LIBRARIES}
     ${client_PLATFORM_DEPS})
 
-target_include_directories(client PRIVATE
+target_include_directories(${PROJECT_NAME} PRIVATE
     ${SDL2_INCLUDE_DIRS}
     ../deps/libuiohook/include
     ../deps/common
@@ -214,4 +219,4 @@ if (WIN32 OR WIN64)
         $<TARGET_FILE_DIR:${PROJECT_NAME}>)
 endif()
 
-install(TARGETS client DESTINATION client)
+install(TARGETS ${PROJECT_NAME} DESTINATION ${PROJECT_NAME})

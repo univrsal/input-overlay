@@ -27,12 +27,15 @@
 #include <chrono>
 #include <thread>
 
+#include <cmath>
+#include <cstdio>
+
 #ifdef _WIN32
+#define NOMINMAX
 #include <Windows.h>
 #else
 #include <cstring>
-#include <math.h>
-#include <stdio.h>
+
 #include <time.h>
 #include <uiohook.h>
 #endif
@@ -48,7 +51,7 @@ using namespace std::chrono;
 namespace util {
 config cfg;
 
-bool parse_arguments(int argc, char const **args)
+bool parse_arguments(int argc, char **args)
 {
     char *user_name{};
     struct argparse_option options[] = {
@@ -67,14 +70,14 @@ bool parse_arguments(int argc, char const **args)
     argparse_init(&argparse, options, usages, 0);
     argparse_describe(&argparse, "\nClient for sending input events to the input-overlay obs plugin via websockets.",
                       "\nLicensed under the GPL 2.0");
-    argparse_parse(&argparse, argc, args);
+    argparse_parse(&argparse, argc, (const char**) args);
 
     if (!cfg.websocket_address || strlen(cfg.websocket_address) < 3 || !user_name || strlen(user_name) < 3) {
         argparse_usage(&argparse);
         return false;
     }
 
-    memcpy(cfg.username, user_name, std::min(strlen(user_name), 64ul));
+    memcpy(cfg.username, user_name, std::min<size_t>(strlen(user_name), 64ul));
 
     binfo("io_client configuration:");
     binfo(" Host:     %s", cfg.websocket_address);

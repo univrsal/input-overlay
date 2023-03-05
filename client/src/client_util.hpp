@@ -43,7 +43,7 @@ enum return_codes { RET_NETWORK_INIT, RET_ARGUMENT_PARSING, RET_NO_HOOKS, RET_GA
 void sleep_ms(uint32_t ms);
 
 /* Get config values and print help */
-bool parse_arguments(int argc, char const **args);
+bool parse_arguments(int argc, char **args);
 
 uint32_t get_ticks();
 

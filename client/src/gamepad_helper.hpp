@@ -17,11 +17,11 @@
  *************************************************************************/
 
 #pragma once
+#include "SDL.h"
 #include <buffer.hpp>
 #include <mutex>
 #include <atomic>
 #include <thread>
-#include <SDL.h>
 #include <vector>
 
 namespace gamepad_helper {
