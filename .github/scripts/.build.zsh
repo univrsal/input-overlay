@@ -226,8 +226,9 @@ Usage: %B${functrace[1]%:*}%b <option> [<options>]
       linux-*)
         if (( ${+CI} )) {
           cmake_args+=(-DCMAKE_INSTALL_PREFIX=/usr)
-          cmake_args+=(-DLOCAL_INSTALLATION=ON)
+
         }
+        cmake_args+=(-DLOCAL_INSTALLATION=ON)
         num_procs=$(( $(nproc) + 1 ))
         ;;
     }
