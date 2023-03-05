@@ -37,7 +37,7 @@ static HANDLE hook_running_mutex;
 static HANDLE hook_control_mutex;
 static HANDLE hook_control_cond;
 
-void dispatch_proc(uiohook_event *const event, void *)
+void dispatch_proc(uiohook_event *const event)
 {
     switch (event->type) {
     case EVENT_HOOK_ENABLED:
@@ -49,7 +49,8 @@ void dispatch_proc(uiohook_event *const event, void *)
         WaitForSingleObject(hook_control_mutex, INFINITE);
         ReleaseMutex(hook_running_mutex);
         ResetEvent(hook_control_cond);
-    default:; /* Prevent missing case error */
+    default:
+        break; /* Prevent missing case error */
     }
     process_event(event);
 }
@@ -68,17 +69,26 @@ DWORD WINAPI hook_thread_proc(const LPVOID arg)
 }
 
 extern "C" {
-static void logger_proc(unsigned int level, void *user_data, const char *format, va_list args)
+static bool logger_proc(unsigned int level, const char *format, ...)
 {
+    const bool status = true;
+    va_list args;
     switch (level) {
+    default:
+    case LOG_LEVEL_DEBUG:
     case LOG_LEVEL_INFO:
-        blogva(LOG_INFO, "[input-overlay::uiohook]", args);
+        va_start(args, format);
+        blogva(LOG_DEBUG, format, args);
+        va_end(args);
         break;
     case LOG_LEVEL_WARN:
     case LOG_LEVEL_ERROR:
-        blogva(LOG_WARNING, "[input-overlay::uiohook]", args);
-    default:;
+        va_start(args, format);
+        blogva(LOG_WARNING, format, args);
+        va_end(args);
+        break;
     }
+    return status;
 }
 }
 
@@ -155,10 +165,10 @@ void start()
     hook_control_cond = CreateEvent(nullptr, TRUE, FALSE, TEXT("hook_control_cond"));
 
     /* Set the logger callback for library output. */
-    hook_set_logger_proc(&logger_proc, nullptr);
+    hook_set_logger_proc(&logger_proc);
 
     /* Set the event callback for uiohook events. */
-    hook_set_dispatch_proc(&dispatch_proc, nullptr);
+    hook_set_dispatch_proc(&dispatch_proc);
 
     const auto status = hook_enable();
     switch (status) {
