@@ -13,18 +13,22 @@ if ("${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
     PKG_SEARCH_MODULE(SDL2 REQUIRED sdl2)
 endif()
 
-if (MSVC)
+if (WIN32 OR WIN64)
     if(CMAKE_SIZEOF_VOID_P EQUAL 8)
         set(SDL2_LIBRARIES "${CMAKE_CURRENT_SOURCE_DIR}/../deps/sdl2/bin/x64/SDL2.lib")
         set(SDL2_DLLS "${CMAKE_CURRENT_SOURCE_DIR}/../deps/sdl2/bin/x64/SDL2.dll")
         set(client_PLATFORM_DEPS
-	        wsock32 iphlpapi)
-    else()
+	        ws2_32
+            iphlpapi)
+    elseif(CMAKE_SIZEOF_VOID_P EQUAL 4)
         set(SDL2_LIBRARIES "${CMAKE_CURRENT_SOURCE_DIR}/../deps/sdl2/bin/x86/SDL2.lib")
         set(SDL2_DLLS "${CMAKE_CURRENT_SOURCE_DIR}/../deps/sdl2/bin/x86/SDL2.dll")
-        set(client_PLATFORM_DEPSclient_PLATFORM_DEPS
-            ws2_32 iphlpapi)
+        set(client_PLATFORM_DEPS
+            wsock32
+            iphlpapi)
     endif()
+
+
     set(SDL2_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/../deps/sdl2/include")
 
 endif ()
