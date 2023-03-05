@@ -19,7 +19,7 @@
 #include "../../sources/input_source.hpp"
 #include "element_dpad.hpp"
 #include <keycodes.h>
-#include <SDL2/SDL.h>
+#include "SDL.h"
 
 element_dpad::element_dpad() : element_texture(ET_DPAD_STICK) {}
 

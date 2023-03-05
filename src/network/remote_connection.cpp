@@ -32,6 +32,14 @@
 #include <ifaddrs.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#elif _WIN32
+#include <winsock2.h>
+#include <iphlpapi.h>
+#pragma comment(lib, "iphlpapi.lib")
+#pragma comment(lib, "ws2_32.lib")
+namespace network {
+void iterate_ips(char *buf, DWORD buflen);
+}
 #endif
 
 namespace network {
@@ -44,11 +52,7 @@ QString get_local_ip()
     char local_ip[64] = "127.0.0.1\0";
     /* Get ip of first interface */
 #if _WIN32
-    ip_address addresses[2];
-    if (netlib_get_local_addresses(addresses, 2) > 0) {
-        snprintf(local_ip, sizeof(local_ip), "%d.%d.%d.%d", (addresses[0].host >> 0) & 0xFF,
-                 (addresses[0].host >> 8) & 0xFF, (addresses[0].host >> 16) & 0xFF, (addresses[0].host >> 24) & 0xFF);
-    }
+    iterate_ips(local_ip, 64);
 #elif __linux__
     struct ifaddrs *addrs;
     getifaddrs(&addrs);
@@ -156,4 +160,52 @@ void process_remote_event(struct mg_connection *ws, unsigned char *bytes, size_t
         }
     }
 }
+
+#ifdef _WIN32
+void iterate_ips(char* buf, DWORD buflen) {
+    // Initialize Winsock
+    WSADATA wsaData;
+    int result = WSAStartup(MAKEWORD(2, 2), &wsaData);
+    if (result != 0) {
+        printf("WSAStartup failed: %d\n", result);
+        return;
+    }
+
+    // Call GetAdaptersAddresses to retrieve the network interface information
+    ULONG family = AF_INET;
+    ULONG flags = GAA_FLAG_INCLUDE_PREFIX | GAA_FLAG_SKIP_ANYCAST | GAA_FLAG_SKIP_MULTICAST | GAA_FLAG_SKIP_DNS_SERVER;
+    PIP_ADAPTER_ADDRESSES addresses = nullptr;
+    ULONG size = 0;
+    result = GetAdaptersAddresses(family, flags, nullptr, addresses, &size);
+    if (result == ERROR_BUFFER_OVERFLOW) {
+        addresses = (PIP_ADAPTER_ADDRESSES)malloc(size);
+        result = GetAdaptersAddresses(family, flags, nullptr, addresses, &size);
+    }
+    if (result != NO_ERROR) {
+        printf("GetAdaptersAddresses failed: %d\n", result);
+        return;
+    }
+
+    // Iterate over the list of IP_ADAPTER_ADDRESSES structures and print the IP addresses
+    for (PIP_ADAPTER_ADDRESSES addr = addresses; addr != nullptr; addr = addr->Next) {
+        for (PIP_ADAPTER_UNICAST_ADDRESS unicast = addr->FirstUnicastAddress; unicast != nullptr;
+             unicast = unicast->Next) {
+            sockaddr *sa = unicast->Address.lpSockaddr;
+           
+           
+            result = WSAAddressToStringA(sa, unicast->Address.iSockaddrLength, nullptr, buf, &buflen);
+            if (result == 0) {
+                goto end; // accept first ip
+            }
+        }
+    }
+    end:
+
+    // Free the memory allocated by GetAdaptersAddresses
+    free(addresses);
+
+    // Clean up Winsock
+    WSACleanup();
+}
+#endif
 }

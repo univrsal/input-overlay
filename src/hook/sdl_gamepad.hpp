@@ -3,7 +3,7 @@
 #include <array>
 #include <mutex>
 #include <atomic>
-#include <SDL2/SDL.h>
+#include "SDL.h"
 
 struct input_data;
 
