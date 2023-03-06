@@ -74,8 +74,8 @@ jobs:
         id: setup
         run: |
           ## SETUP ENVIRONMENT SCRIPT
-          print "ccacheDate=$(date +"%Y-%m-%d")" >> $GITHUB_OUTPUT
-          print "commitHash=${"$(git rev-parse HEAD)"[0,9]}" >> $GITHUB_OUTPUT
+          echo "ccacheDate=$(date +"%Y-%m-%d")" >> $GITHUB_OUTPUT
+          echo "commitHash=$(git rev-parse HEAD | cut -c1-9)" >> $GITHUB_OUTPUT
 
       - name: Restore Compilation Cache
         id: ccache-cache
@@ -91,11 +91,11 @@ jobs:
         if: ${{ github.event_name == 'pull_request' }}
         run: |
           ## GITHUB LABEL SCRIPT
-          if [[ -n "$(curl -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" -s "${{ github.event.pull_request.url }}" | jq -e '.labels[] | select(.name == "Seeking Testers")')" ]] {
-            print 'found=true' >> $GITHUB_OUTPUT
-          } else {
-            print 'found=false' >> $GITHUB_OUTPUT
-          }
+          if [[ -n "$(curl -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" -s "${{ github.event.pull_request.url }}" | jq -e '.labels[] | select(.name == "Seeking Testers")')" ]]; then
+            echo 'found=true' >> $GITHUB_OUTPUT
+          else
+            echo 'found=false' >> $GITHUB_OUTPUT
+          fi
 
       - name: Build Plugin
         uses: ./plugin/.github/actions/build-plugin
