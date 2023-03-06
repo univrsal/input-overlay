@@ -17,7 +17,8 @@
  *************************************************************************/
 
 #include "element_mouse_wheel.hpp"
-#include "../../sources/input_source.hpp"
+#include "hook/uiohook_helper.hpp"
+#include "sources/input_source.hpp"
 #include <keycodes.h>
 #include <util/platform.h>
 
@@ -46,7 +47,7 @@ void element_wheel::draw(gs_effect_t *effect, gs_image_file_t *image, sources::o
      * this should make sure that all necessary information is visible
      */
     element_texture::draw(effect, image, settings);
-    if (settings->data.mouse[MOUSE_BUTTON3])
+    if (settings->data.mouse[uiohook::mouse_fix(MOUSE_BUTTON3)])
         element_texture::draw(effect, image, &m_mappings[WHEEL_MAP_MIDDLE]);
 
     // If the last scroll event was longer than 150ms ago ignore it

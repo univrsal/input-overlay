@@ -18,12 +18,13 @@
 
 #include "element_button.hpp"
 
-#include "../../sources/input_source.hpp"
+#include "hook/uiohook_helper.hpp"
+#include "sources/input_source.hpp"
 
 void element_button::load(const QJsonObject &obj)
 {
     element_texture::load(obj);
-    m_keycode = static_cast<uint16_t>(obj[CFG_KEY_CODE].toInt());
+    m_keycode = uiohook::mouse_fix(static_cast<uint16_t>(obj[CFG_KEY_CODE].toInt()));
     m_pressed = m_mapping;
     m_pressed.y = m_mapping.y + m_mapping.cy + CFG_INNER_BORDER;
 }
