@@ -34,10 +34,10 @@ void element_gamepad_id::load(const QJsonObject &obj)
 
 void element_gamepad_id::draw(gs_effect_t *effect, gs_image_file_t *image, sources::overlay_settings *settings)
 {
-    if (settings->gamepad) {
+    if (settings->gamepad || settings->remote_input_data) {
         if (settings->is_pad_button_pressed(SDL_CONTROLLER_BUTTON_GUIDE))
             element_texture::draw(effect, image, &m_mappings[ID_PRESSED]);
-        int index = settings->gamepad->player_index();
+        int index = SDL_min(settings->gamepad_index, 2);
         element_texture::draw(effect, image, &m_mappings[index]);
     }
 }

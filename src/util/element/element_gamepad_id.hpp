@@ -31,8 +31,8 @@ public:
     void draw(gs_effect_t *effect, gs_image_file_t *image, sources::overlay_settings *settings) override;
 
 private:
-    /* 0 - 2 Player 2 - 4 (Player 1 is default)
-     * 3     Middle pressed down
+    /* 0 - 2 => Player 2 to 4 (Player 1 is default)
+     * 3     => Middle pressed down
      */
     gs_rect m_mappings[4];
 };
