@@ -55,8 +55,10 @@ void start()
     state = true;
     local_gamepads = new gamepads;
     sdl_poll_thread = std::thread([] {
-        while (state)
+        while (state) {
             local_gamepads->event_loop();
+            SDL_Delay(5); // Wait a bit to not waste performance, 5ms is arbitrary though
+        }
     });
 }
 

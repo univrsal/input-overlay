@@ -75,8 +75,10 @@ bool start()
 #endif
     state = true;
     sdl_poll_thread = std::thread([] {
-        while (state)
+        while (state) {
             event_loop();
+            SDL_Delay(5); // Wait a bit to not waste performance, 5ms is arbitrary though
+        }
     });
     return true;
 }
