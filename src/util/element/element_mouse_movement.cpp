@@ -91,7 +91,6 @@ void element_mouse_movement::get_mouse_offset(sources::overlay_settings *setting
         if (abs(d_y) < settings->mouse_deadzone)
             d_y = 0;
     }
-    binfo("DX: %i, DY: %i", d_x, d_y);
 
     const auto factor_x = UTIL_CLAMP(-1, ((double)d_x / settings->mouse_sens), 1);
     const auto factor_y = UTIL_CLAMP(-1, ((double)d_y / settings->mouse_sens), 1);
