@@ -55,7 +55,6 @@ io_settings_dialog::io_settings_dialog(QWidget *parent) : QDialog(parent, Qt::Di
     connect(ui->btn_refresh_cb, &QPushButton::clicked, this, &io_settings_dialog::RefreshWindowList);
     connect(ui->btn_add, &QPushButton::clicked, this, &io_settings_dialog::AddFilter);
     connect(ui->btn_remove, &QPushButton::clicked, this, &io_settings_dialog::RemoveFilter);
-    connect(ui->cb_gamepad_hook, &QCheckBox::stateChanged, this, &io_settings_dialog::CbEnableGamepadChanged);
     connect(ui->cb_enable_wss, &QCheckBox::stateChanged, this, &io_settings_dialog::CbWssStateChanged);
 
     /* Load values */
@@ -97,33 +96,11 @@ io_settings_dialog::io_settings_dialog(QWidget *parent) : QDialog(parent, Qt::Di
 void io_settings_dialog::showEvent(QShowEvent *event)
 {
     Q_UNUSED(event)
-    RefreshUi();
 }
 
 void io_settings_dialog::toggleShowHide()
 {
     setVisible(!isVisible());
-}
-
-void io_settings_dialog::RefreshUi()
-{
-    /* Populate client list */
-    if (false) {
-        //        std::lock_guard<std::mutex> lock(network::mutex);
-        //        if (network::server_instance->clients_changed()) {
-        //            ui->box_connections->clear();
-        //            QStringList list;
-        //            std::vector<const char *> names;
-        //            /* I'd do it differently, but including Qt headers and obs headers
-        //         * creates conflicts with LOG_WARNING...
-        //         */
-        //            network::server_instance->get_clients(names);
-
-        //            for (auto &name : names)
-        //                list.append(name);
-        //            ui->box_connections->addItems(list);
-        //        }
-    }
 }
 
 void io_settings_dialog::CbInputControlStateChanged(int state)
@@ -203,14 +180,8 @@ void io_settings_dialog::OpenForums()
     QDesktopServices::openUrl(QUrl("https://obsproject.com/forum/resources/input-overlay.552/"));
 }
 
-void io_settings_dialog::CbEnableGamepadChanged(int)
-{
-    auto enabled = ui->cb_gamepad_hook->isChecked();
-}
-
 void io_settings_dialog::CbWssStateChanged(int state)
 {
     ui->sb_wss_port->setEnabled(state);
     ui->cb_log->setEnabled(state);
-    ui->box_connections->setEnabled(state);
 }

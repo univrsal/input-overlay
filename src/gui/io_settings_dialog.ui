@@ -35,7 +35,7 @@
       <enum>QTabWidget::Rounded</enum>
      </property>
      <property name="currentIndex">
-      <number>2</number>
+      <number>0</number>
      </property>
      <property name="elideMode">
       <enum>Qt::ElideRight</enum>
@@ -265,21 +265,17 @@
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="lbl_connections">
-         <property name="text">
-          <string>Dialog.Remote.Connections</string>
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
          </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QListWidget" name="box_connections">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
          </property>
-        </widget>
+        </spacer>
        </item>
       </layout>
      </widget>

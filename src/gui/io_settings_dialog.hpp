@@ -46,8 +46,6 @@ public:
 
 private Q_SLOTS:
 
-    void RefreshUi();
-
     void FormAccepted();
 
     void CbInputControlStateChanged(int state);
@@ -57,8 +55,6 @@ private Q_SLOTS:
     void RefreshWindowList();
 
     void AddFilter();
-
-    void CbEnableGamepadChanged(int state);
 
     void RemoveFilter();
 
