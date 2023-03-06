@@ -96,7 +96,7 @@ function Build {
     }
     Log-Information "Install ${ProductName}..."
     Invoke-External cmake --install "build_${script:Target}" --prefix "${ProjectRoot}/release" @CmakeArgs
-    Invoke-External cmake --install "build_client_${script:Target}" --prefix "${ProjectRoot}/release_client" @CmakeArgs
+    Invoke-External cmake --install "build_client_${script:Target}" --prefix "${ProjectRoot}/release" @CmakeArgs
     Pop-Location -Stack BuildTemp
 }
 
