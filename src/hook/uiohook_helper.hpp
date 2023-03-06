@@ -19,7 +19,6 @@
 #pragma once
 #include "../network/websocket_server.hpp"
 #include "../util/config.hpp"
-#include "../util/log.h"
 #include <input_data.hpp>
 #include <mutex>
 #include <uiohook.h>
@@ -44,7 +43,6 @@ inline void process_event(uiohook_event *event)
     static const uint64_t refresh_ms = 16;
     static uint64_t last_time = 0;
     auto diff = (event->time - last_time);
-    last_time = event->time;
 
     // Mouse move/drag can get very spammy so those events
     // will only be dispatched at 60hz
@@ -52,6 +50,7 @@ inline void process_event(uiohook_event *event)
 
     thread_data.dispatch_uiohook_event(event);
     if (is_important || (diff >= refresh_ms && local_data::data.last_event < thread_data.last_event)) {
+        last_time = event->time;
         std::lock_guard<std::mutex> lock(local_data::data.m_mutex);
         local_data::data.copy(&thread_data);
     }
