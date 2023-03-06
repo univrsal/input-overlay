@@ -14,6 +14,8 @@ std::atomic<bool> state = false;
 
 bool start()
 {
+    if (state)
+        return true;
     const auto port = CGET_INT(S_WSS_PORT);
     std::string url = "ws://localhost:";
     url = url.append(std::to_string(port));
