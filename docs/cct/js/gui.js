@@ -228,7 +228,8 @@ function open_editor(element_type, is_editing)
 
     setup_editor(element_type);
     if (cfg.data.default_width + cfg.data.default_height > 0) {
-        edit.selection_rect = new r4($("#editor-element-u").val(), $("#editor-element-v").val(), cfg.data.default_width, cfg.data.default_height);
+        edit.selection_rect = new r4($("#editor-element-u").val(), $("#editor-element-v").val(), cfg.data.default_width,
+                                     cfg.data.default_height);
         edit.update_selection_values();
     }
     if (d !== null) {

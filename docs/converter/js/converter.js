@@ -36,25 +36,23 @@ $(() => {
         }
     });
 
-    $('#download').on('click', () => 
-    {
-        download_json(cfg_name, converted)
-    });
+    $('#download').on('click', () => {download_json(cfg_name, converted)});
 });
 
-function parse_legacy_config(str) {
+function parse_legacy_config(str)
+{
     str = str.replaceAll('\r', '');
     lines = str.split('\n');
     lines = $(lines).filter((e, i) => i.length > 0 && !i.trim().startsWith('#'));
-    
+
     cfg = {};
     $(lines).each((e, i) => {
-        switch(i[0]) {
-            case '0':
-            case '1':
-            case '2':
-            case '3':
-                i = i.substr(2);
+        switch (i[0]) {
+        case '0':
+        case '1':
+        case '2':
+        case '3':
+            i = i.substr(2);
         }
         splits = i.split('=');
         key = splits[0];
@@ -66,17 +64,19 @@ function parse_legacy_config(str) {
     return cfg;
 }
 
-function convert_legacy_cfg(cfg) {
+function convert_legacy_cfg(cfg)
+{
     if (cfg.layout_type !== '2') {
         alert('Converter only works with keyboard layouts');
         return;
     }
 
-    let csv_to_num = (obj) => {
-        let result = [];
-        obj.split(',').forEach((i, e) => result.push(Number(i)));
-        return result;
-    }
+    let csv_to_num =
+        (obj) => {
+            let result = [];
+            obj.split(',').forEach((i, e) => result.push(Number(i)));
+            return result;
+        }
 
     let kc = Number(cfg.key_count);
     let kw = Number(cfg.key_abs_w);
@@ -110,18 +110,16 @@ function convert_legacy_cfg(cfg) {
         key.id = `key_${i}`;
         key.type = 1;
         key.z_level = 1;
-        key.pos = [ cols[i] * kw + hspace * cols[i], rows[i] * kh + vspace * rows[i] ];
+        key.pos = [cols[i] * kw + hspace * cols[i], rows[i] * kh + vspace * rows[i]];
         key.code = codes[i];
-        key.mapping = [
-            1 + u, v + 1, layout.default_width * w[i], layout.default_height * h[i]
-        ];
+        key.mapping = [1 + u, v + 1, layout.default_width * w[i], layout.default_height * h[i]];
 
         if (key.mapping[0] + key.mapping[2] > max_x)
             max_x = key.mapping[0] + key.mapping[2];
 
         if (key.mapping[1] + key.mapping[3] > max_y)
             max_y = key.mapping[1] + key.mapping[3];
-        
+
         if ((i + 1) % textures_per_row === 0) {
             u = 0;
             texture_row++;

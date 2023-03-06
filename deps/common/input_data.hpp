@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2022 univrsal <uni@vrsal.xyz>.
+ * Copyright 2023 univrsal <uni@vrsal.xyz>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,7 +63,7 @@ struct input_data {
     std::unordered_map<int, std::string> remote_gamepad_names;
 
     /* Mutex needs to be locked */
-    void copy(const input_data *other, bool with_gamepad_data=false);
+    void copy(const input_data *other, bool with_gamepad_data = false);
 
     void dispatch_uiohook_event(const uiohook_event *event);
 

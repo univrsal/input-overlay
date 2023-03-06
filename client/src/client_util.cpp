@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2022 univrsal <uni@vrsal.xyz>.
+ * Copyright 2023 univrsal <uni@vrsal.xyz>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -70,7 +70,7 @@ bool parse_arguments(int argc, char **args)
     argparse_init(&argparse, options, usages, 0);
     argparse_describe(&argparse, "\nClient for sending input events to the input-overlay obs plugin via websockets.",
                       "\nLicensed under the GPL 2.0");
-    argparse_parse(&argparse, argc, (const char**) args);
+    argparse_parse(&argparse, argc, (const char **)args);
 
     if (!cfg.websocket_address || strlen(cfg.websocket_address) < 3 || !user_name || strlen(user_name) < 3) {
         argparse_usage(&argparse);

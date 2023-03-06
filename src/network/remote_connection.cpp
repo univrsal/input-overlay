@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * github.con/univrsal/input-overlay
- * Copyright 2022 univrsal <uni@vrsal.xyz>.
+ * Copyright 2023 univrsal <uni@vrsal.xyz>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -162,7 +162,8 @@ void process_remote_event(struct mg_connection *ws, unsigned char *bytes, size_t
 }
 
 #ifdef _WIN32
-void iterate_ips(char* buf, DWORD buflen) {
+void iterate_ips(char *buf, DWORD buflen)
+{
     // Initialize Winsock
     WSADATA wsaData;
     int result = WSAStartup(MAKEWORD(2, 2), &wsaData);
@@ -191,15 +192,14 @@ void iterate_ips(char* buf, DWORD buflen) {
         for (PIP_ADAPTER_UNICAST_ADDRESS unicast = addr->FirstUnicastAddress; unicast != nullptr;
              unicast = unicast->Next) {
             sockaddr *sa = unicast->Address.lpSockaddr;
-           
-           
+
             result = WSAAddressToStringA(sa, unicast->Address.iSockaddrLength, nullptr, buf, &buflen);
             if (result == 0) {
                 goto end; // accept first ip
             }
         }
     }
-    end:
+end:
 
     // Free the memory allocated by GetAdaptersAddresses
     free(addresses);
