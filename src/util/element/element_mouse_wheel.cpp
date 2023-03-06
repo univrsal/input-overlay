@@ -46,9 +46,10 @@ void element_wheel::draw(gs_effect_t *effect, gs_image_file_t *image, sources::o
      * - and finally on top either up or down
      * this should make sure that all necessary information is visible
      */
-    element_texture::draw(effect, image, settings);
     if (settings->data.mouse[uiohook::mouse_fix(MOUSE_BUTTON3)])
         element_texture::draw(effect, image, &m_mappings[WHEEL_MAP_MIDDLE]);
+    else
+        element_texture::draw(effect, image, settings);
 
     // If the last scroll event was longer than 150ms ago ignore it
     if (os_gettime_ns() - settings->data.last_wheel_event_time < 150e6) {
