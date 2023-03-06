@@ -74,12 +74,12 @@ jobs:
         id: setup
         run: |
           ## SETUP ENVIRONMENT SCRIPT
-          echo "::set-output name=ccacheDate::$(date +"%Y-%m-%d")"
-          echo "::set-output name=commitHash::$(git rev-parse HEAD | cut -c1-9)"
+          print "ccacheDate=$(date +"%Y-%m-%d")" >> $GITHUB_OUTPUT
+          print "commitHash=${"$(git rev-parse HEAD)"[0,9]}" >> $GITHUB_OUTPUT
 
       - name: Restore Compilation Cache
         id: ccache-cache
-        uses: actions/cache@v2.1.7
+        uses: actions/cache@v3
         with:
           path: ${{ github.workspace }}/.ccache
           key: linux-${{ matrix.arch }}-ccache-plugin-${{ steps.setup.outputs.ccacheDate }}
@@ -91,11 +91,11 @@ jobs:
         if: ${{ github.event_name == 'pull_request' }}
         run: |
           ## GITHUB LABEL SCRIPT
-          if [[ -n "$(curl -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" -s "${{ github.event.pull_request.url }}" | jq -e '.labels[] | select(.name == "Seeking Testers")')" ]]; then
-            echo '::set-output name=found::true'
-          else
-            echo '::set-output name=found::false'
-          fi
+          if [[ -n "$(curl -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" -s "${{ github.event.pull_request.url }}" | jq -e '.labels[] | select(.name == "Seeking Testers")')" ]] {
+            print 'found=true' >> $GITHUB_OUTPUT
+          } else {
+            print 'found=false' >> $GITHUB_OUTPUT
+          }
 
       - name: Build Plugin
         uses: ./plugin/.github/actions/build-plugin
@@ -162,7 +162,7 @@ jobs:
         run: |
           ## SETUP ENVIRONMENT SCRIPT
           $CommitHash = (git rev-parse HEAD)[0..8] -join ''
-          Write-Output "::set-output name=commitHash::${CommitHash}"
+          "commitHash=${CommitHash}" >> $env:GITHUB_OUTPUT
 
       - name: Check for GitHub Labels
         id: seekingTesters
@@ -183,8 +183,7 @@ jobs:
             $false
           }
 
-          Write-Output "::set-output name=found::$(([string]${LabelFound}).ToLower())"
-
+          "found=$(([string]${LabelFound}).ToLower())" >> $env:GITHUB_OUTPUT
       - name: Build Plugin
         uses: ./plugin/.github/actions/build-plugin
         with:
@@ -236,7 +235,7 @@ jobs:
         id: metadata
         run: |
           ## METADATA SCRIPT
-          echo "::set-output name=version::${GITHUB_REF/refs\/tags\//}"
+          echo "version=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_OUTPUT
 
       - name: Download build artifacts
         uses: actions/download-artifact@v3
