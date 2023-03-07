@@ -25,7 +25,6 @@ namespace gamepad_helper {
 
 std::atomic<bool> state;
 std::thread sdl_poll_thread;
-SDL_Window *dummy_window{};
 event_queue queue;
 std::unordered_map<int, SDL_GameController *> gamepads;
 
@@ -36,6 +35,22 @@ bool start()
     if (state)
         return true;
 
+    state = true;
+    sdl_poll_thread = std::thread(event_loop);
+    return true;
+}
+
+void stop()
+{
+    if (!state)
+        return;
+    state = false;
+    sdl_poll_thread.join();
+}
+
+void event_loop() {
+    SDL_Window *dummy_window{};
+    SDL_Event event;
     SDL_version compile_ver{}, link_ver{};
 
     SDL_VERSION(&compile_ver);
@@ -59,89 +74,77 @@ bool start()
     if (SDL_WasInit(0) == (SDL_INIT_VIDEO | SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER) ||
         SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER) < 0) {
         berr("Couldn't initialize SDL: %s\n", SDL_GetError());
-        return false;
+        state = false;
+        return;
     }
 
     // I'm not sure where this file is supposed to be, but the gamepad test had this line so we'll just copy it
     SDL_GameControllerAddMappingsFromFile("gamecontrollerdb.txt");
 
 #if WIN32
-    dummy_window = SDL_CreateWindow("input-overlay sdl2 window", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 10, 10,
-                                    SDL_WINDOW_HIDDEN);
+    dummy_window =
+        SDL_CreateWindow("input-overlay sdl2 window", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 100, 100, SDL_WINDOW_HIDDEN);
     if (!dummy_window) {
         berr("Couldn't create sdl2 window: %s\n", SDL_GetError());
-        return false;
+        state = false;
+        return;
     }
 #endif
-    state = true;
-    sdl_poll_thread = std::thread([] {
-        while (state) {
-            event_loop();
-            SDL_Delay(5); // Wait a bit to not waste performance, 5ms is arbitrary though
-        }
-    });
-    return true;
-}
 
-void stop()
-{
-    if (!state)
-        return;
-    state = false;
-    sdl_poll_thread.join();
+    while (state) {
+
+        /* Update to get the current event state */
+        SDL_PumpEvents();
+
+        const char *name;
+
+        /* Process all currently pending events */
+        while (SDL_PeepEvents(&event, 1, SDL_GETEVENT, SDL_FIRSTEVENT, SDL_LASTEVENT) == 1) {
+            switch (event.type) {
+                // TODO: process these events?
+#if SDL_VERSION_ATLEAST(2, 24, 0)
+            case SDL_JOYBATTERYUPDATED:
+#endif
+            case SDL_CONTROLLERTOUCHPADDOWN:
+            case SDL_CONTROLLERTOUCHPADMOTION:
+            case SDL_CONTROLLERTOUCHPADUP:
+            case SDL_CONTROLLERSENSORUPDATE:
+                break;
+            case SDL_CONTROLLERDEVICEADDED:
+                binfo("Found gamepad with id %i", event.cdevice.which);
+                gamepads[event.cdevice.which] = SDL_GameControllerOpen(event.cdevice.which);
+                queue.mutex.lock();
+                queue.events.emplace_back(event);
+                queue.mutex.unlock();
+                break;
+
+            case SDL_CONTROLLERDEVICEREMOVED:
+                binfo("Gamepad with id %i disconnected", event.cdevice.which);
+                SDL_GameControllerClose(gamepads[event.cdevice.which]);
+                gamepads.erase(event.cdevice.which);
+                queue.mutex.lock();
+                queue.events.emplace_back(event);
+                queue.mutex.unlock();
+                break;
+
+            case SDL_CONTROLLERAXISMOTION:
+            case SDL_CONTROLLERBUTTONDOWN:
+            case SDL_CONTROLLERBUTTONUP:
+                queue.mutex.lock();
+                queue.events.emplace_back(event);
+                queue.mutex.unlock();
+                break;
+            case SDL_QUIT:
+                state = false;
+                break;
+            default:
+                break;
+            }
+        }
+        SDL_Delay(5); // Wait a bit to not waste performance, 5ms is arbitrary though
+    }
     SDL_DestroyWindow(dummy_window);
     dummy_window = nullptr;
     SDL_Quit();
-}
-
-void event_loop()
-{
-    SDL_Event event;
-
-    /* Update to get the current event state */
-    SDL_PumpEvents();
-
-    const char *name;
-
-    /* Process all currently pending events */
-    while (SDL_PeepEvents(&event, 1, SDL_GETEVENT, SDL_FIRSTEVENT, SDL_LASTEVENT) == 1) {
-        switch (event.type) {
-            // TODO: process these events?
-#if SDL_VERSION_ATLEAST(2, 24, 0)
-        case SDL_JOYBATTERYUPDATED:
-#endif
-        case SDL_CONTROLLERTOUCHPADDOWN:
-        case SDL_CONTROLLERTOUCHPADMOTION:
-        case SDL_CONTROLLERTOUCHPADUP:
-        case SDL_CONTROLLERSENSORUPDATE:
-            break;
-        case SDL_CONTROLLERDEVICEADDED:
-            binfo("Found gamepad with id %i", event.cdevice.which);
-            gamepads[event.cdevice.which] = SDL_GameControllerOpen(event.cdevice.which);
-            queue.mutex.lock();
-            queue.events.emplace_back(event);
-            queue.mutex.unlock();
-            break;
-
-        case SDL_CONTROLLERDEVICEREMOVED:
-            binfo("Gamepad with id %i disconnected", event.cdevice.which);
-            SDL_GameControllerClose(gamepads[event.cdevice.which]);
-            gamepads.erase(event.cdevice.which);
-            queue.mutex.lock();
-            queue.events.emplace_back(event);
-            queue.mutex.unlock();
-            break;
-
-        case SDL_CONTROLLERAXISMOTION:
-        case SDL_CONTROLLERBUTTONDOWN:
-        case SDL_CONTROLLERBUTTONUP:
-            queue.mutex.lock();
-            queue.events.emplace_back(event);
-            queue.mutex.unlock();
-            break;
-        default:
-            break;
-        }
-    }
 }
 }
