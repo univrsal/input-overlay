@@ -156,6 +156,8 @@ bool start()
 
 void stop()
 {
+    if (!status)
+        return;
     status = false;
     connected = false;
     network_thread.join();
