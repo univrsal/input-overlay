@@ -21,36 +21,16 @@
 #include <SDL.h>
 #include <unordered_map>
 
-namespace gamepad_helper {
+#if defined(_WIN32)
+#define WIN32 1
+#else
+#define WIN32 0
+#endif
 
-std::atomic<bool> state;
-std::thread sdl_poll_thread;
-event_queue queue;
-std::unordered_map<int, SDL_GameController *> gamepads;
+SDL_Window *dummy_window{};
 
-void event_loop();
-
-bool start()
+inline void sdl_init()
 {
-    if (state)
-        return true;
-
-    state = true;
-    sdl_poll_thread = std::thread(event_loop);
-    return true;
-}
-
-void stop()
-{
-    if (!state)
-        return;
-    state = false;
-    sdl_poll_thread.join();
-}
-
-void event_loop() {
-    SDL_Window *dummy_window{};
-    SDL_Event event;
     SDL_version compile_ver{}, link_ver{};
 
     SDL_VERSION(&compile_ver);
@@ -74,22 +54,66 @@ void event_loop() {
     if (SDL_WasInit(0) == (SDL_INIT_VIDEO | SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER) ||
         SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER) < 0) {
         berr("Couldn't initialize SDL: %s\n", SDL_GetError());
-        state = false;
         return;
     }
 
     // I'm not sure where this file is supposed to be, but the gamepad test had this line so we'll just copy it
     SDL_GameControllerAddMappingsFromFile("gamecontrollerdb.txt");
 
-#if WIN32
-    dummy_window =
-        SDL_CreateWindow("input-overlay sdl2 window", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 100, 100, SDL_WINDOW_HIDDEN);
-    if (!dummy_window) {
-        berr("Couldn't create sdl2 window: %s\n", SDL_GetError());
-        state = false;
-        return;
+    if (WIN32) {
+        dummy_window = SDL_CreateWindow("input-overlay sdl2 window", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 10,
+                                        10, SDL_WINDOW_HIDDEN);
+        if (!dummy_window) {
+            berr("Couldn't create sdl2 window: %s\n", SDL_GetError());
+            return;
+        }
     }
-#endif
+}
+
+inline void sdl_deinit()
+{
+    SDL_DestroyWindow(dummy_window);
+    dummy_window = nullptr;
+    SDL_Quit();
+}
+
+namespace gamepad_helper {
+
+std::atomic<bool> state;
+std::thread sdl_poll_thread;
+event_queue queue;
+std::unordered_map<int, SDL_GameController *> gamepads;
+
+void event_loop();
+
+bool start()
+{
+    if (state)
+        return true;
+
+    state = true;
+
+    if (!WIN32)
+        sdl_init();
+    sdl_poll_thread = std::thread(event_loop);
+    return true;
+}
+
+void stop()
+{
+    if (!state)
+        return;
+    state = false;
+    sdl_poll_thread.join();
+    if (!WIN32)
+        sdl_deinit();
+}
+
+void event_loop()
+{
+    if (WIN32)
+        sdl_init();
+    SDL_Event event{};
 
     while (state) {
 
@@ -143,8 +167,7 @@ void event_loop() {
         }
         SDL_Delay(5); // Wait a bit to not waste performance, 5ms is arbitrary though
     }
-    SDL_DestroyWindow(dummy_window);
-    dummy_window = nullptr;
-    SDL_Quit();
+    if (WIN32)
+        sdl_deinit();
 }
 }
