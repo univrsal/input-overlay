@@ -84,12 +84,13 @@ gamepads::gamepads()
 
         if (SDL_IsGameController(i)) {
             char fmt[512];
+            // TODO: I don't think we need more than just the name
             name = SDL_GameControllerNameForIndex(i);
-#if SDL_VERSION_ATLEAST(2, 24, 0)
-            path = SDL_GameControllerPathForIndex(i);
-#endif
+//#if SDL_VERSION_ATLEAST(2, 24, 0)
+//            path = SDL_GameControllerPathForIndex(i);
+//#endif
             description = controller_description(i);
-            std::snprintf(fmt, 512, "%i %s - %s (%s)", i, name, description, path);
+            std::snprintf(fmt, 512, "%i %s - %s", i, name, description);
             add_controller(i, fmt);
         } else {
             name = SDL_JoystickNameForIndex(i);
@@ -99,7 +100,7 @@ gamepads::gamepads()
             description = "Joystick";
             // TODO: also register those?
         }
-        binfo("Found %s %d: %s%s%s (guid %s, VID 0x%.4x, PID 0x%.4x, player index = %d)", description, i,
+        bdebug("Found %s %d: %s%s%s (guid %s, VID 0x%.4x, PID 0x%.4x, player index = %d)", description, i,
               name ? name : "Unknown", path ? ", " : "", path ? path : "", guid, SDL_JoystickGetDeviceVendor(i),
               SDL_JoystickGetDeviceProduct(i), SDL_JoystickGetDevicePlayerIndex(i));
     }

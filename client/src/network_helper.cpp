@@ -135,8 +135,10 @@ bool start()
                         buf.write(event);
                         if (event.type == SDL_CONTROLLERDEVICEADDED) {
                             auto *name = SDL_GameControllerNameForIndex(event.cdevice.which);
-                            buf.write<uint8_t>(strlen(name));
-                            buf.write(name, strlen(name));
+                            std::string full_name =
+                                name + std::string(" - ") + controller_description(event.cdevice.which);
+                            buf.write<uint8_t>(full_name.length());
+                            buf.write(full_name.c_str(), full_name.length());
                         }
                     }
 
