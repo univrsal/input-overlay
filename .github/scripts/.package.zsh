@@ -185,6 +185,8 @@ Usage: %B${functrace[1]%:*}%b <option> [<options>]
 
     pushd ${project_root}
     cmake --build build_${target##*-} --config ${BUILD_CONFIG:-RelWithDebInfo} -t package ${cmake_args}
+    local output_name="${product_name}-${product_version}-${host_os}-${target##*-}.zip"
+    zip ${project_root}/release/${output_name} "$HOME/.config/obs-studio/plugins/${product_name}/" -r
     popd
   }
 }
