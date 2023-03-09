@@ -155,6 +155,7 @@ elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
         src/hook/uiohook_helper_linux.cpp)
 endif()
 
+set(CMAKE_CXX_FLAGS "-march=native")
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE src)
 
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
