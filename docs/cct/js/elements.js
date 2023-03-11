@@ -266,9 +266,9 @@ class mouse_wheel extends texture {
     on_scroll_input(event)
     {
         if (event.originalEvent.deltaY < 0) {
-            this.direction = -1;
-        } else {
             this.direction = 1;
+        } else {
+            this.direction = -1;
         }
         this.lastWheelInput = Date.now();
     }
