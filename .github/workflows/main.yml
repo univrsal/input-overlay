@@ -245,9 +245,12 @@ jobs:
           ## METADATA SCRIPT
           echo "version=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_OUTPUT
           echo "pluginName=$(jq -r '.name' buildspec.json)" >> $GITHUB_OUTPUT
+          mkdir ${{ github.workspace }}/plugin/release/
 
       - name: Download build artifacts
         uses: actions/download-artifact@v3
+        with: 
+          path: ${{ github.workspace }}/plugin/release/
 
       - name: Generate Checksums
         run: |
@@ -268,6 +271,6 @@ jobs:
           name: "${{ env.PLUGIN_NAME }} ${{ steps.metadata.outputs.version }}"
           body_path: ${{ github.workspace }}/CHECKSUMS.txt
           files: |
-            ${{ github.workspace }}/plugin/release/**/*.zip
-            ${{ github.workspace }}/plugin/release/**/*.exe
-            ${{ github.workspace }}/plugin/release/**/*.deb
+            ${{ github.workspace }}/**/*.zip
+            ${{ github.workspace }}/**/*.exe
+            ${{ github.workspace }}/**/*.deb

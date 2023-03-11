@@ -46,6 +46,7 @@ class element_mouse_button : public element_button {
 public:
     element_mouse_button() : element_button(ET_MOUSE_BUTTON) {}
 
+    void load(const QJsonObject &objc) override;
     void draw(gs_effect_t *effect, gs_image_file_t *image, sources::overlay_settings *settings) override;
 };
 
