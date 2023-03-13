@@ -64,7 +64,7 @@ inline void input_source::update(obs_data_t *settings)
     }
 
     if (m_settings.use_local_input() && gamepad_hook::state) {
-        m_settings.gamepad = gamepad_hook::local_gamepads->get_controller(m_settings.gamepad_index);
+        m_settings.gamepad = gamepad_hook::local_gamepads->get_controller_from_index(m_settings.gamepad_index);
     } else if (wss::state) {
         std::lock_guard<std::mutex> lock(network::remote_data_map_mutex);
         auto data = network::remote_data.find(m_settings.selected_source);
@@ -92,7 +92,7 @@ inline void input_source::tick(float seconds)
     if (m_settings.input_source_check_timer >= 1) {
         if (m_settings.use_local_input() && gamepad_hook::state) {
             if (!m_settings.gamepad || !m_settings.gamepad->valid())
-                m_settings.gamepad = gamepad_hook::local_gamepads->get_controller(m_settings.gamepad_index);
+                m_settings.gamepad = gamepad_hook::local_gamepads->get_controller_from_index(m_settings.gamepad_index);
         }
         // Remote gamepads directly store their data in the gamepad maps
 

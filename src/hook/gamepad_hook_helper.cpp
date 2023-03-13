@@ -145,22 +145,14 @@ void gamepads::event_loop()
         SDL_PumpEvents();
 
         const char *name;
-        //        const char *path = "n/a";
         const char *description;
-        //        char guid[64];
 
         /* Process all currently pending events */
         while (SDL_PeepEvents(&event, 1, SDL_GETEVENT, SDL_FIRSTEVENT, SDL_LASTEVENT) == 1) {
             switch (event.type) {
             case SDL_CONTROLLERDEVICEADDED:
-                //SDL_Log("Game controller device %d added.\n",
-                //        (int)SDL_JoystickGetDeviceInstanceID(event.cdevice.which));
-                //SDL_JoystickGetGUIDString(SDL_JoystickGetDeviceGUID(event.cdevice.which), guid, sizeof(guid));
                 char fmt[512];
                 name = SDL_GameControllerNameForIndex(event.cdevice.which);
-                //#if SDL_VERSION_ATLEAST(2, 24, 0)
-                //                path = SDL_GameControllerPathForIndex(event.cdevice.which);
-                //#endif
                 description = controller_description(event.cdevice.which);
                 std::snprintf(fmt, 512, "%i %s - %s", event.cdevice.which, name, description);
                 add_controller(event.cdevice.which, fmt);
@@ -182,13 +174,13 @@ void gamepads::event_loop()
                 break;
 
             case SDL_CONTROLLERAXISMOTION: {
-                auto pad = m_pads[event.cdevice.which];
+                auto pad = get_controller_from_instance_id(event.cdevice.which);
                 std::lock_guard<std::mutex> lock(pad->mutex());
                 pad->axis()[event.caxis.axis] = event.caxis.value / float(INT16_MAX);
             } break;
             case SDL_CONTROLLERBUTTONDOWN:
             case SDL_CONTROLLERBUTTONUP: {
-                auto pad = m_pads[event.cdevice.which];
+                auto pad = get_controller_from_instance_id(event.cdevice.which);
                 std::lock_guard<std::mutex> lock(pad->mutex());
                 pad->buttons()[event.cbutton.button] = event.cbutton.state;
             } break;

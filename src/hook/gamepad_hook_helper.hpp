@@ -26,6 +26,7 @@
 #include <algorithm>
 #include <array>
 #include <string>
+#include "util/log.h"
 #include "SDL.h"
 
 #include "sdl_gamepad.hpp"
@@ -71,6 +72,7 @@ inline const char *controller_description(int index)
 class gamepads {
     std::mutex m_mutex{};
     std::map<int, std::shared_ptr<sdl_gamepad>> m_pads{};
+    std::map<int, int> m_pad_instance_to_index{};
 
     static const char *get_sensor_name(SDL_SensorType sensor)
     {
@@ -103,24 +105,57 @@ public:
     void add_controller(int index, std::string const &desc)
     {
         std::lock_guard<std::mutex> lock(m_mutex);
-        m_pads[index] = std::make_shared<sdl_gamepad>(index, desc);
+        auto pad = std::make_shared<sdl_gamepad>(index, desc);
+        m_pads[index] = pad;
+        auto *js = SDL_GameControllerGetJoystick(*pad);
+        if (js) {
+            auto idx = SDL_JoystickInstanceID(js);
+            if (idx >= 0)
+                m_pad_instance_to_index[idx] = index;
+            else
+                bwarn("Got invalid joystick instance id");
+        } else {
+            bwarn("Got invalid joystick");
+        }
     }
 
     void remove_controller(int index)
     {
+        auto id = instance_id_to_index(index);
+        if (id < 0) {
+            bwarn("Invalid gamepad index on disconnect %i", index);
+            return;
+        }
         std::lock_guard<std::mutex> lock(m_mutex);
-        if (m_pads.find(index) != m_pads.end()) {
-            m_pads[index]->invalidate();
-            m_pads.erase(index);
+        if (m_pads.find(id) != m_pads.end()) {
+            m_pads[id]->invalidate();
+            m_pads.erase(id);
         }
     }
 
-    std::shared_ptr<sdl_gamepad> get_controller(int index)
+    std::shared_ptr<sdl_gamepad> get_controller_from_index(int index)
     {
         std::lock_guard<std::mutex> lock(m_mutex);
         if (m_pads.find(index) != m_pads.end())
             return m_pads[index];
         return nullptr;
+    }
+
+    std::shared_ptr<sdl_gamepad> get_controller_from_instance_id(int id)
+    {
+        std::lock_guard<std::mutex> lock(m_mutex);
+        auto index = instance_id_to_index(id);
+        if (m_pads.find(index) != m_pads.end())
+            return m_pads[index];
+        return nullptr;
+    }
+
+    int instance_id_to_index(int id)
+    {
+        auto idx = m_pad_instance_to_index.find(id);
+        if (idx != m_pad_instance_to_index.end())
+            return idx->second;
+        return -1;
     }
 
     void event_loop();

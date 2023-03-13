@@ -35,7 +35,12 @@ public:
 
     std::string identifier() const { return m_identifier; }
 
-    void invalidate() { m_valid = false; }
+    void invalidate()
+    {
+        m_valid = false;
+        SDL_GameControllerClose(m_controller);
+        m_controller = {};
+    }
 
     bool valid() const { return m_valid; }
     void copy_data(input_data *data);
@@ -44,9 +49,5 @@ public:
     auto &axis() { return m_axis; }
     auto &mutex() { return m_mutex; }
 
-    ~sdl_gamepad()
-    {
-        SDL_GameControllerClose(m_controller);
-        m_controller = {};
-    }
+    ~sdl_gamepad() { invalidate(); }
 };
