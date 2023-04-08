@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
   <!-- A usable HTML template for input-history overlay using Browser Source and Websocket -->
-  <!-- ONLY KEYBOARD INPUT AS OF NOW -->
 
   <!-- By: https://github.com/christiankyle-ching/ -->
   <head>
@@ -432,6 +431,55 @@
       /* End Virtual Modifier Masks */
     };
 
+    // #region Mouse codes
+
+    /**
+     * Encoding helpers to avoid mistakes from typing different values among
+     * different usages of them.
+     */
+    var MOUSEENCODE = {
+      flag: 1 << 16, // Mouse code flag
+      wheel: 1 << 4, // Wheel scroll flag
+      wheel_rot: 1 << 3, // Wheel rotation flag
+      wheel_y: 3, // Vertical wheel direction
+      wheel_x: 4, // Horizontal wheel direction
+      mask: 0xffff, // Bit mask to remove mouse code flag
+      btn_start: 8, // Bit flag of first known button
+      btn_end: 14, // Bit flag of last known button
+    };
+
+    /**
+     * key: encoded mouse code
+     * value: key label
+     *
+     * Comment out keys that you don't want to show
+     */
+    var MOUSECODES = new Map([
+      // The buttons are the bit flags we get from the event
+
+      // Basic buttons
+      [1 << 8, "LMB"], // Lowest is 256. Don't know why
+      [1 << 9, "RMB"],
+      [1 << 10, "MMB"],
+
+      // Extra mouse buttons
+      [1 << 11, "MB1"],
+      [1 << 12, "MB2"],
+      [1 << 13, "MB3"],
+      [1 << 14, "MB4"],
+
+      // Wheel
+      // bits 0,1,2: direction (3 = vertical, 4 = horizontal)
+      // bit 3: rotation (0 = up/right, 1 = down/left)
+      // bit 4: wheel flag (8)
+      [MOUSEENCODE.wheel | MOUSEENCODE.wheel_y, "MW UP"],
+      [MOUSEENCODE.wheel | MOUSEENCODE.wheel_y| MOUSEENCODE.wheel_rot , "MW DOWN"],
+      [MOUSEENCODE.wheel | MOUSEENCODE.wheel_x, "MW RIGHT"],
+      [MOUSEENCODE.wheel | MOUSEENCODE.wheel_x| MOUSEENCODE.wheel_rot , "MW LEFT"],
+    ]);
+
+    // #endregion
+
     /**
      * This will either return an HTML string (icon)
      * Or a plain string (libuiohook key name)
@@ -441,10 +489,22 @@
      * @returns {string} Inline innerHTML equivalent of key
      */
     function getKeyHTML(keycode) {
-      var key = KEYCODES[parseInt(keycode)];
+      var intcode = parseInt(keycode);
+
+      if (intcode & MOUSEENCODE.flag) // Is this a mouse code?
+      {
+        var mouse = MOUSECODES.get(keycode & MOUSEENCODE.mask);
+        if (!!mouse) {
+          return mouse;
+        }
+
+        return "";
+      }
+
+      var key = KEYCODES[intcode];
 
       if (!!key) {
-        var icon = KEYICONS[parseInt(keycode)];
+        var icon = KEYICONS[intcode];
 
         if (!!icon) {
           return icon.cloneNode(true).outerHTML;
@@ -568,13 +628,65 @@
     var _historyDiv = document.getElementById("history");
     var _historyCurrentlyPressed = new Set();
     var _isHistoryPressing = false;
+    var _mouseButtonsMask = 0;
 
     function onKeyEvent(data) {
-      if (
-        data.event_type.startsWith("mouse") ||
-        data.event_type === "key_typed"
-      )
+      if (data.event_type === "key_typed")
         return;
+
+      if (data.event_type.startsWith("mouse")) {
+        // Ignore mouse movement and click events
+        if (
+          data.event_type === "mouse_moved" ||
+          data.event_type === "mouse_clicked" ||
+          data.event_type === "mouse_dragged"
+          )
+          return;
+
+        // Encode mouse data
+        var mouse_code_base = MOUSEENCODE.flag; // Bit flag for mouse codes
+
+        if (data.event_type === "mouse_wheel") {
+          mouse_code_base |= MOUSEENCODE.wheel; // Wheel flag
+          mouse_code_base |= data.direction; // Vertical = 3, horizontal = 4
+          mouse_code_base |= MOUSEENCODE.wheel_rot * (data.rotation > 0); // data.rotation is -1 or 1
+
+          _historyCurrentlyPressed.add(mouse_code_base);
+          _isHistoryPressing = true;
+          updateUI();
+
+          // Wheel events don't have a "pressed" state, so remove them after displaying
+          _historyCurrentlyPressed.delete(mouse_code_base);
+          _isHistoryPressing = false;
+          updateUI();
+        } else if (
+            data.event_type === "mouse_pressed" ||
+            data.event_type === "mouse_released"
+          ) {
+          var diff = _mouseButtonsMask ^ data.mask;
+          _mouseButtonsMask = data.mask;
+
+          // Iterate over the known button flags to update the pressed state
+          // of the ones that just changed (multiple is possible, but rare)
+          for (var bit = MOUSEENCODE.btn_start; bit <= MOUSEENCODE.btn_end; ++bit) {
+            var mask = 1 << bit;
+            if (diff & mask) {
+              var mouse_code = mouse_code_base | mask;
+              _isHistoryPressing = _mouseButtonsMask & mask;
+
+              if (_isHistoryPressing) {
+                _historyCurrentlyPressed.add(mouse_code);
+              } else {
+                _historyCurrentlyPressed.delete(mouse_code);
+              }
+
+              updateUI();
+            }
+          }
+        }
+
+        return;
+      }
 
       // console.log(data);
 
