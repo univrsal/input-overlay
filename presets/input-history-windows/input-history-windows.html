@@ -14,20 +14,24 @@
         padding: 0;
       }
 
+      html {
+        height: 100%;
+        position: relative;
+      }
+
       body {
         font-family: Arial, Helvetica, sans-serif;
         font-size: 48px;
         color: white;
 
+        position: absolute;
+        bottom: 0;
         overflow: hidden;
       }
 
       /* #region History List */
 
       div#history {
-        /* Apply padding top to place first keys on the bottom part */
-        padding-top: 100vh;
-
         list-style-type: none;
       }
 
@@ -43,8 +47,6 @@
       p.key-combination > * {
         /* For line-height */
         margin-top: 0.5em;
-
-        vertical-align: middle;
       }
 
       p.key-combination > .separator {
@@ -70,7 +72,7 @@
       /* #region Icons */
 
       #icons-container {
-        visibility: collapse;
+        display: none;
       }
 
       .icon-sm {
@@ -621,13 +623,19 @@
      * @type {string}
      */
     var SEPARATOR = "+";
+    /**
+     * When true, only display initial press of a key. I.e., held keys won't
+     * be added to history as multiple presses.
+     * @type {boolean}
+     */
+    var ONLY_INITIAL_PRESS = false;
 
     // #endregion
 
     // History
     var _historyDiv = document.getElementById("history");
     var _historyCurrentlyPressed = new Set();
-    var _isHistoryPressing = false;
+    var _addNewCombination = true;
     var _mouseButtonsMask = 0;
 
     function onKeyEvent(data) {
@@ -651,14 +659,9 @@
           mouse_code_base |= data.direction; // Vertical = 3, horizontal = 4
           mouse_code_base |= MOUSEENCODE.wheel_rot * (data.rotation > 0); // data.rotation is -1 or 1
 
-          _historyCurrentlyPressed.add(mouse_code_base);
-          _isHistoryPressing = true;
-          updateUI();
-
+          updateUI(mouse_code_base, true);
           // Wheel events don't have a "pressed" state, so remove them after displaying
-          _historyCurrentlyPressed.delete(mouse_code_base);
-          _isHistoryPressing = false;
-          updateUI();
+          updateUI(mouse_code_base, false);
         } else if (
             data.event_type === "mouse_pressed" ||
             data.event_type === "mouse_released"
@@ -672,15 +675,7 @@
             var mask = 1 << bit;
             if (diff & mask) {
               var mouse_code = mouse_code_base | mask;
-              _isHistoryPressing = _mouseButtonsMask & mask;
-
-              if (_isHistoryPressing) {
-                _historyCurrentlyPressed.add(mouse_code);
-              } else {
-                _historyCurrentlyPressed.delete(mouse_code);
-              }
-
-              updateUI();
+              updateUI(mouse_code, _mouseButtonsMask & mask);
             }
           }
         }
@@ -688,57 +683,44 @@
         return;
       }
 
-      // console.log(data);
-
-      // Update Set to current key combination
-      if (data.event_type === "key_pressed") {
-        _historyCurrentlyPressed.add(data.keycode);
-        _isHistoryPressing = true;
-      } else if (data.event_type === "key_released") {
-        _historyCurrentlyPressed.delete(data.keycode);
-        _isHistoryPressing = false;
-      }
-
-      // console.log(_historyCurrentlyPressed);
-
-      updateUI();
+      // Keyboard event                              
+      updateUI(data.keycode, data.event_type === "key_pressed");
     }
 
-    function updateUI() {
-      var lastChildInnerHTML =
-        _historyDiv.lastElementChild == null
-          ? ""
-          : _historyDiv.lastElementChild.innerHTML;
-
-      var isLastChildEmpty = lastChildInnerHTML === "";
-
-      if (_isHistoryPressing) {
-        // If starting key combination, set last item text
-        if (_historyDiv.childElementCount > 0) {
-          _historyDiv.lastElementChild.innerHTML = getKeyCombinationElement(
-            _historyCurrentlyPressed
-          ).innerHTML;
+    function updateUI(keycode, isPressing) {
+      if (isPressing) {
+        // Is this an already pressed key?
+        if (_historyCurrentlyPressed.has(keycode)) {
+          if (ONLY_INITIAL_PRESS) {
+            // Ignore already pressed key addition
+            return;
+          }
+          // Mark creation of new element for combination
+          _addNewCombination = true;
         }
-        // OR add an element if this is first combination
+
+        _historyCurrentlyPressed.add(keycode);
+        var combinationElement = getKeyCombinationElement(_historyCurrentlyPressed);
+
+        // If it's a new group of keys, add as new element
+        if (_addNewCombination) {
+          // Fade out elements that were kept because a key was still pressed
+          startRemovingLast(); 
+          _historyDiv.appendChild(combinationElement);
+          _addNewCombination = false;
+        }
+        // If starting key combination, set last item text
         else {
-          _historyDiv.appendChild(
-            getKeyCombinationElement(_historyCurrentlyPressed)
-          );
+          _historyDiv.lastElementChild.innerHTML = combinationElement.innerHTML;
         }
       }
-      // If done pressing key combination,
+      // If done pressing key combination
       else {
-        if (!isLastChildEmpty) {
-          if (HISTORY_TIMEOUT_ACTIVE) {
-            // Add removing class of last key combination
-            var elementToHide = _historyDiv.lastElementChild;
-            setTimeout(() => {
-              elementToHide.classList.add("hidden");
-            }, HISTORY_TIMEOUT);
-          }
-
-          // Then add a empty slot
-          _historyDiv.appendChild(getKeyCombinationElement());
+        _historyCurrentlyPressed.delete(keycode);
+        _addNewCombination = true; // Next new key has its own group
+        // Fade element out if no more held keys left
+        if (_historyCurrentlyPressed.size == 0) {
+          startRemovingLast();
         }
       }
 
@@ -750,6 +732,18 @@
       scrollTo({
         top: document.body.scrollHeight,
       });
+    }
+
+    function startRemovingLast() {
+      if (HISTORY_TIMEOUT_ACTIVE) {
+        // Add removing class of last key combination
+        var elementToHide = _historyDiv.lastElementChild;
+        if (!elementToHide)
+          return;
+        setTimeout(() => {
+          elementToHide.classList.add("hidden");
+        }, HISTORY_TIMEOUT);
+      }
     }
 
     function on_data(e) {

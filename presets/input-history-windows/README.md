@@ -136,3 +136,9 @@ Change the character used in between keys.
 ```js
 var SEPARATOR = "+"; // Change this value in HTML <script>
 ```
+
+### Display only initial key press
+To not display a key repeatedly while it's held:
+```js
+var ONLY_INITIAL_PRESS = true; // Default is false
+```
