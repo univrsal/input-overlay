@@ -44,9 +44,12 @@
         transition-duration: 1s;
       }
 
-      p.key-combination > * {
+      p.key-combination {
         /* For line-height */
         margin-top: 0.5em;
+
+      p.key-combination > * {
+        vertical-align: middle;
       }
 
       p.key-combination > .separator {
@@ -83,6 +86,16 @@
         margin: auto;
       }
 
+      span.key div {
+        display: inline-flex;
+        white-space: nowrap;
+      }
+
+      * + .icon-sm, .icon-sm + * {
+        /* Space before icons or elements following icons */
+        margin-left: 0.3em;
+      }
+
       /* #endregion */
     </style>
   </head>
@@ -92,6 +105,59 @@
     <div id="icons-container">
       <!-- Get Icons from FontAwesome -->
       <!-- Copy SVG Code -->
+
+      <!-- #region Svg sources used multiple times. Automatically hidden -->
+      <!-- Arrow Left -->
+      <svg xmlns="http://www.w3.org/2000/svg">
+        <symbol
+          id="icon-arrow"
+          viewBox="0 0 512 512"
+        >
+          <!--! Font Awesome Pro 6.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. -->
+          <path
+            d="M512 256C512 273.7 497.7 288 480 288H160.1l0 72c0 9.547-5.66 18.19-14.42 22c-8.754 3.812-18.95 2.077-25.94-4.407l-112.1-104c-10.24-9.5-10.24-25.69 0-35.19l112.1-104c6.992-6.484 17.18-8.218 25.94-4.406C154.4 133.8 160.1 142.5 160.1 151.1L160.1 224H480C497.7 224 512 238.3 512 256z"
+          />
+        </symbol>
+      </svg>
+
+      <!-- Right-down turn arrow -->
+      <svg xmlns="http://www.w3.org/2000/svg">
+        <symbol
+          id="icon-right-down-turn"
+          viewBox="0 0 320 512"
+        >
+          <!-- Font Awesome Pro 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) -->
+          <path
+            d="M313.553 392.331L209.587 504.334c-9.485 10.214-25.676 10.229-35.174 0L70.438 392.331C56.232 377.031 67.062 352 88.025 352H152V80H68.024a11.996 11.996 0 0 1-8.485-3.515l-56-56C-4.021 12.926 1.333 0 12.024 0H208c13.255 0 24 10.745 24 24v328h63.966c20.878 0 31.851 24.969 17.587 40.331z"
+          />
+        </symbol>
+      </svg>
+
+      <!-- Mouse -->
+      <svg xmlns="http://www.w3.org/2000/svg">
+        <symbol
+          id="icon-mouse"
+          viewBox="0 0 384 512"
+        >
+          <!-- Font Awesome Pro 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) -->
+          <path
+            d="M0 352a160 160 0 0 0 160 160h64a160 160 0 0 0 160-160V224H0zM176 0h-16A160 160 0 0 0 0 160v32h176zm48 0h-16v192h176v-32A160 160 0 0 0 224 0z"
+          />
+      </svg>
+
+      <!-- Mouse wheel left -->
+      <svg xmlns="http://www.w3.org/2000/svg">
+        <symbol
+          id="icon-wheel-left"
+          viewBox="0 0 512 512"
+        >
+          <!-- Font Awesome Pro 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) -->
+          <path
+            d="M256 504C119 504 8 393 8 256S119 8 256 8s248 111 248 248-111 248-248 248zM142.1 273l135.5 135.5c9.4 9.4 24.6 9.4 33.9 0l17-17c9.4-9.4 9.4-24.6 0-33.9L226.9 256l101.6-101.6c9.4-9.4 9.4-24.6 0-33.9l-17-17c-9.4-9.4-24.6-9.4-33.9 0L142.1 239c-9.4 9.4-9.4 24.6 0 34z"
+          />
+        </symbol>
+      </svg>
+      <!-- #endregion -->
 
       <!-- Windows Key - VC_META_L / VC_META_R -->
       <svg
@@ -106,52 +172,139 @@
       </svg>
 
       <!-- Arrow Left -->
-      <svg
-        id="SVG_VC_LEFT"
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 512 512"
-      >
-        <!--! Font Awesome Pro 6.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. -->
-        <path
-          d="M512 256C512 273.7 497.7 288 480 288H160.1l0 72c0 9.547-5.66 18.19-14.42 22c-8.754 3.812-18.95 2.077-25.94-4.407l-112.1-104c-10.24-9.5-10.24-25.69 0-35.19l112.1-104c6.992-6.484 17.18-8.218 25.94-4.406C154.4 133.8 160.1 142.5 160.1 151.1L160.1 224H480C497.7 224 512 238.3 512 256z"
-        />
+      <svg id="SVG_VC_LEFT">
+        <use href="#icon-arrow"></use>
       </svg>
 
       <!-- Arrow Right -->
       <svg
         id="SVG_VC_RIGHT"
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 512 512"
+        style="transform: rotate(180deg);"
       >
-        <!--! Font Awesome Pro 6.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. -->
-        <path
-          d="M504.3 273.6l-112.1 104c-6.992 6.484-17.18 8.218-25.94 4.406c-8.758-3.812-14.42-12.45-14.42-21.1L351.9 288H32C14.33 288 .0002 273.7 .0002 255.1S14.33 224 32 224h319.9l0-72c0-9.547 5.66-18.19 14.42-22c8.754-3.809 18.95-2.075 25.94 4.41l112.1 104C514.6 247.9 514.6 264.1 504.3 273.6z"
-        />
+        <use href="#icon-arrow"></use>
       </svg>
 
       <!-- Arrow Up -->
       <svg
         id="SVG_VC_UP"
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 320 512"
+        style="transform: rotate(90deg);"
       >
-        <!--! Font Awesome Pro 6.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. -->
-        <path
-          d="M285.1 145.7c-3.81 8.758-12.45 14.42-21.1 14.42L192 160.1V480c0 17.69-14.33 32-32 32s-32-14.31-32-32V160.1L55.1 160.1c-9.547 0-18.19-5.658-22-14.42c-3.811-8.758-2.076-18.95 4.408-25.94l104-112.1c9.498-10.24 25.69-10.24 35.19 0l104 112.1C288.1 126.7 289.8 136.9 285.1 145.7z"
-        />
+        <use href="#icon-arrow"></use>
       </svg>
 
       <!-- Arrow Down -->
       <svg
         id="SVG_VC_DOWN"
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 320 512"
+        style="transform: rotate(270deg);"
       >
-        <!--! Font Awesome Pro 6.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. -->
+        <use href="#icon-arrow"></use>
+      </svg>
+
+      <!-- Enter -->
+      <svg
+        id="SVG_VC_ENTER"
+        style="transform: rotate(90deg);"
+      >
+        <use href="#icon-right-down-turn"></use>
+      </svg>
+
+      <!-- Num Enter -->
+      <div id="SVG_VC_KP_ENTER">
+        <span>NUM</span>
+        <svg style="transform: rotate(90deg);">
+          <use href="#icon-right-down-turn"></use>
+        </svg>
+      </div>
+
+      <!-- Backspace -->
+      <svg
+        id="SVG_VC_BACKSPACE"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 576 512"
+      >
+        <!--! Font Awesome Pro 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
         <path
-          d="M281.6 392.3l-104 112.1c-9.498 10.24-25.69 10.24-35.19 0l-104-112.1c-6.484-6.992-8.219-17.18-4.404-25.94c3.811-8.758 12.45-14.42 21.1-14.42H128V32c0-17.69 14.33-32 32-32S192 14.31 192 32v319.9h72c9.547 0 18.19 5.66 22 14.42C289.8 375.1 288.1 385.3 281.6 392.3z"
+          d="M576 128c0-35.3-28.7-64-64-64H205.3c-17 0-33.3 6.7-45.3 18.7L9.4 233.4c-6 6-9.4 14.1-9.4 22.6s3.4 16.6 9.4 22.6L160 429.3c12 12 28.3 18.7 45.3 18.7H512c35.3 0 64-28.7 64-64V128zM271 175c9.4-9.4 24.6-9.4 33.9 0l47 47 47-47c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9l-47 47 47 47c9.4 9.4 9.4 24.6 0 33.9s-24.6 9.4-33.9 0l-47-47-47 47c-9.4 9.4-24.6 9.4-33.9 0s-9.4-24.6 0-33.9l47-47-47-47c-9.4-9.4-9.4-24.6 0-33.9z"
         />
       </svg>
+
+      <!-- Mouse Left Click -->
+      <div id="SVG_MOUSE_LEFT">
+        <svg>
+          <use href="#icon-mouse"></use>
+        </svg>
+        <span>L</span>
+      </div>
+
+      <!-- Mouse Middle Click -->
+      <div id="SVG_MOUSE_MIDDLE">
+        <svg>
+          <use href="#icon-mouse"></use>
+        </svg>
+        <span>M</span>
+      </div>
+
+      <!-- Mouse Right Click -->
+      <div id="SVG_MOUSE_RIGHT">
+        <svg>
+          <use href="#icon-mouse"></use>
+        </svg>
+        <span>R</span>
+      </div>
+
+      <!-- Mouse Extra Button 1 -->
+      <div id="SVG_MOUSE_EXTRA1">
+        <svg>
+          <use href="#icon-mouse"></use>
+        </svg>
+        <span>1</span>
+      </div>
+
+      <!-- Mouse Extra Button 2 -->
+      <div id="SVG_MOUSE_EXTRA2">
+        <svg>
+          <use href="#icon-mouse"></use>
+        </svg>
+        <span>2</span>
+      </div>
+
+      <!-- Mouse Wheel Up -->
+      <div id="SVG_MOUSE_WHEELUP">
+        <svg>
+          <use href="#icon-mouse"></use>
+        </svg>
+        <svg style="transform: rotate(90deg);">
+          <use href="#icon-wheel-left"></use>
+        </svg>
+      </div>
+
+      <!-- Mouse Wheel Down -->
+      <div id="SVG_MOUSE_WHEELDOWN">
+        <svg>
+          <use href="#icon-mouse"></use>
+        </svg>
+        <svg style="transform: rotate(270deg);">
+          <use href="#icon-wheel-left"></use>
+        </svg>
+      </div>
+
+      <!-- Mouse Wheel Right -->
+      <div id="SVG_MOUSE_WHEELRIGHT">
+        <svg>
+          <use href="#icon-mouse"></use>
+        </svg>
+        <svg style="transform: rotate(180deg);">
+          <use href="#icon-wheel-left"></use>
+        </svg>
+      </div>
+
+      <!-- Mouse Wheel Left -->
+      <div id="SVG_MOUSE_WHEELLEFT">
+        <svg>
+          <use href="#icon-mouse"></use>
+        </svg>
+        <svg><use href="#icon-wheel-left"></use></svg>
+      </div>
     </div>
     <!-- #endregion -->
 
@@ -433,6 +586,44 @@
       /* End Virtual Modifier Masks */
     };
 
+    // #region Keys with Icons
+
+    /* Init SVG Icons */
+    document
+      .querySelectorAll("#icons-container svg")
+      .forEach((i) => i.classList.add("icon-sm"));
+    document
+      .querySelectorAll("#icons-container svg path")
+      .forEach((p) => p.setAttribute("fill", "currentColor"));
+
+    /**
+     * For Keys to replace with Icons
+     * Key: libuihook keycode
+     * Value: <svg> icon element
+     */
+    var KEYICONS = {
+      0x0e5b: document.getElementById("SVG_VC_META"), // VC_META_L Windows or Command Key
+      0x0e5c: document.getElementById("SVG_VC_META"), // VC_META_R Windows or Command Key
+
+      // Arrow Keys
+      0x0e48: document.getElementById("SVG_VC_UP"), // ARROW UP
+      0x0e4b: document.getElementById("SVG_VC_LEFT"), // ARROW LEFT
+      0x0e4d: document.getElementById("SVG_VC_RIGHT"), // ARROW RIGHT
+      0x0e50: document.getElementById("SVG_VC_DOWN"), // ARROW DOWN
+      /* https://github.com/univrsal/input-overlay/issues/174 */
+      0xee48: document.getElementById("SVG_VC_UP"), // ARROW UP
+      0xee4b: document.getElementById("SVG_VC_LEFT"), // ARROW LEFT
+      0xee4d: document.getElementById("SVG_VC_RIGHT"), // ARROW RIGHT
+      0xee50: document.getElementById("SVG_VC_DOWN"), // ARROW DOWN
+
+      0x001c: document.getElementById("SVG_VC_ENTER"),
+      0x0e1c: document.getElementById("SVG_VC_KP_ENTER"),
+
+      0x000e: document.getElementById("SVG_VC_BACKSPACE"),
+    };
+
+    // #endregion
+
     // #region Mouse codes
 
     /**
@@ -460,24 +651,34 @@
       // The buttons are the bit flags we get from the event
 
       // Basic buttons
-      [1 << 8, "LMB"], // Lowest is 256. Don't know why
-      [1 << 9, "RMB"],
-      [1 << 10, "MMB"],
+      [1 << 8, document.getElementById("SVG_MOUSE_LEFT").outerHTML], // Lowest is 256. Don't know why
+      [1 << 9, document.getElementById("SVG_MOUSE_RIGHT").outerHTML],
+      [1 << 10, document.getElementById("SVG_MOUSE_MIDDLE").outerHTML],
 
       // Extra mouse buttons
-      [1 << 11, "MB1"],
-      [1 << 12, "MB2"],
-      [1 << 13, "MB3"],
-      [1 << 14, "MB4"],
+      [1 << 11, document.getElementById("SVG_MOUSE_EXTRA1").outerHTML],
+      [1 << 12, document.getElementById("SVG_MOUSE_EXTRA2").outerHTML],
 
       // Wheel
       // bits 0,1,2: direction (3 = vertical, 4 = horizontal)
       // bit 3: rotation (0 = up/right, 1 = down/left)
       // bit 4: wheel flag (8)
-      [MOUSEENCODE.wheel | MOUSEENCODE.wheel_y, "MW UP"],
-      [MOUSEENCODE.wheel | MOUSEENCODE.wheel_y| MOUSEENCODE.wheel_rot , "MW DOWN"],
-      [MOUSEENCODE.wheel | MOUSEENCODE.wheel_x, "MW RIGHT"],
-      [MOUSEENCODE.wheel | MOUSEENCODE.wheel_x| MOUSEENCODE.wheel_rot , "MW LEFT"],
+      [
+        MOUSEENCODE.wheel | MOUSEENCODE.wheel_y,
+        document.getElementById("SVG_MOUSE_WHEELUP").outerHTML
+      ],
+      [
+        MOUSEENCODE.wheel | MOUSEENCODE.wheel_y| MOUSEENCODE.wheel_rot,
+        document.getElementById("SVG_MOUSE_WHEELDOWN").outerHTML
+      ],
+      [
+        MOUSEENCODE.wheel | MOUSEENCODE.wheel_x,
+        document.getElementById("SVG_MOUSE_WHEELRIGHT").outerHTML
+      ],
+      [
+        MOUSEENCODE.wheel | MOUSEENCODE.wheel_x| MOUSEENCODE.wheel_rot,
+        document.getElementById("SVG_MOUSE_WHEELLEFT").outerHTML
+      ],
     ]);
 
     // #endregion
@@ -518,41 +719,6 @@
         return "";
       }
     }
-
-    // #region Keys with Icons
-
-    /* Init SVG Icons */
-    document
-      .querySelectorAll("#icons-container > svg")
-      .forEach((i) => i.classList.add("icon-sm"));
-    document
-      .querySelectorAll("#icons-container > svg > path")
-      .forEach((p) => p.setAttribute("fill", "currentColor"));
-
-    /**
-     * For Keys to replace with Icons
-     * Key: libuihook keycode
-     * Value: <svg> icon element
-     */
-    var KEYICONS = {
-      0x0e5b: document.getElementById("SVG_VC_META"), // VC_META_L Windows or Command Key
-      0x0e5c: document.getElementById("SVG_VC_META"), // VC_META_R Windows or Command Key
-
-      // Arrow Keys
-      0x0e48: document.getElementById("SVG_VC_UP"), // ARROW UP
-      0x0e4b: document.getElementById("SVG_VC_LEFT"), // ARROW LEFT
-      0x0e4d: document.getElementById("SVG_VC_RIGHT"), // ARROW RIGHT
-      0x0e50: document.getElementById("SVG_VC_DOWN"), // ARROW DOWN
-      /* https://github.com/univrsal/input-overlay/issues/174 */
-      0xee48: document.getElementById("SVG_VC_UP"), // ARROW UP
-      0xee4b: document.getElementById("SVG_VC_LEFT"), // ARROW LEFT
-      0xee4d: document.getElementById("SVG_VC_RIGHT"), // ARROW RIGHT
-      0xee50: document.getElementById("SVG_VC_DOWN"), // ARROW DOWN
-
-      0x001c: document.getElementById("SVG_VC_ENTER"),
-    };
-
-    // #endregion
 
     // #region DOM Utils
 
