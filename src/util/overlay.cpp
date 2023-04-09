@@ -36,9 +36,6 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <layout_constants.h>
-extern "C" {
-#include <graphics/image-file.h>
-}
 
 namespace sources {
 class overlay_settings;
@@ -57,7 +54,9 @@ overlay::overlay(sources::overlay_settings *settings)
 
 bool overlay::load()
 {
-    unload();
+    // Unload attempts to access uninitialized member from struct gs_image_file4 when unload is called
+    if(m_image)
+        unload();
     const auto image_loaded = load_texture();
     m_is_loaded = image_loaded && load_cfg();
 
@@ -131,21 +130,24 @@ bool overlay::load_texture()
     auto flag = true;
 
     if (m_image == nullptr) {
-        m_image = new gs_image_file_t();
+        m_image = new gs_image_file4_t();
     }
 
-    gs_image_file_init(m_image, m_settings->image_file.c_str());
+    gs_image_file4_init(m_image, m_settings->image_file.c_str(),
+                    m_settings->linear_alpha
+                        ? GS_IMAGE_ALPHA_PREMULTIPLY_SRGB
+                        : GS_IMAGE_ALPHA_PREMULTIPLY);
 
     obs_enter_graphics();
-    gs_image_file_init_texture(m_image);
+    gs_image_file4_init_texture(m_image);
     obs_leave_graphics();
 
-    if (!m_image->loaded) {
+    if (!get_texture()->loaded) {
         bwarn("Error: failed to load texture %s", m_settings->image_file.c_str());
         flag = false;
     } else {
-        m_settings->cx = m_image->cx;
-        m_settings->cy = m_image->cy;
+        m_settings->cx = get_texture()->cx;
+        m_settings->cy = get_texture()->cy;
     }
 
     return flag;
@@ -154,7 +156,7 @@ bool overlay::load_texture()
 void overlay::unload_texture() const
 {
     obs_enter_graphics();
-    gs_image_file_free(m_image);
+    gs_image_file4_free(m_image);
     obs_leave_graphics();
 }
 
@@ -167,7 +169,7 @@ void overlay::draw(gs_effect_t *effect)
 {
     if (m_is_loaded) {
         for (auto const &element : m_elements) {
-            element->draw(effect, m_image, m_settings);
+            element->draw(effect, get_texture(), m_settings);
         }
     }
 }

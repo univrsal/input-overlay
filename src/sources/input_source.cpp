@@ -39,6 +39,7 @@ input_source::input_source(obs_source_t *source, obs_data_t *settings) : m_sourc
     obs_source_update(m_source, settings);
     m_settings.image_file = obs_data_get_string(settings, S_OVERLAY_FILE);
     m_settings.layout_file = obs_data_get_string(settings, S_LAYOUT_FILE);
+    m_settings.linear_alpha = obs_data_get_bool(settings, "linear_alpha");
     m_overlay->load();
 
     // Fix sources that used to use a remote connection but can't now because
