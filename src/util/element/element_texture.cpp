@@ -51,11 +51,17 @@ void element_texture::draw(gs_effect_t *effect, gs_image_file_t *image, const gs
 
 void element_texture::draw(gs_effect_t *effect, gs_image_file_t *image, const gs_rect *rect, const vec2 *pos)
 {
+    gs_blend_state_push();
+    gs_enable_blending(true);
+    gs_blend_function(GS_BLEND_SRCALPHA, GS_BLEND_INVSRCALPHA);
+
     gs_matrix_push();
     gs_effect_set_texture(gs_effect_get_param_by_name(effect, "image"), image->texture);
     gs_matrix_translate3f(pos->x, pos->y, 1.f);
     gs_draw_sprite_subregion(image->texture, 0, rect->x, rect->y, rect->cx, rect->cy);
     gs_matrix_pop();
+
+    gs_blend_state_pop();
 }
 
 void element_texture::draw(gs_effect *effect, gs_image_file_t *image, const gs_rect *rect, const vec2 *pos,
