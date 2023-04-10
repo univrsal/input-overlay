@@ -155,9 +155,11 @@ bool overlay::load_texture()
 
 void overlay::unload_texture() const
 {
+    if(m_is_loaded) {
     obs_enter_graphics();
     gs_image_file4_free(m_image);
     obs_leave_graphics();
+    }
 }
 
 void overlay::unload_elements()
