@@ -53,7 +53,7 @@ void element_texture::draw(gs_effect_t *effect, gs_image_file_t *image, const gs
 {
     gs_blend_state_push();
     gs_enable_blending(true);
-    gs_blend_function(GS_BLEND_SRCALPHA, GS_BLEND_INVSRCALPHA);
+    gs_blend_function(GS_BLEND_ONE, GS_BLEND_INVSRCALPHA);
 
     gs_matrix_push();
     gs_effect_set_texture(gs_effect_get_param_by_name(effect, "image"), image->texture);
