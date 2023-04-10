@@ -41,6 +41,7 @@ public:
     explicit overlay(sources::overlay_settings *settings);
     bool load();
     void unload();
+    bool load_texture();
     void draw(gs_effect_t *effect);
     void tick(float seconds);
     void refresh_data();
@@ -49,7 +50,6 @@ public:
 
 private:
     bool load_cfg();
-    bool load_texture();
     void unload_texture() const;
     void unload_elements();
     void load_element(const QJsonObject &obj, bool debug);

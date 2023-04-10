@@ -39,7 +39,7 @@ input_source::input_source(obs_source_t *source, obs_data_t *settings) : m_sourc
     obs_source_update(m_source, settings);
     m_settings.image_file = obs_data_get_string(settings, S_OVERLAY_FILE);
     m_settings.layout_file = obs_data_get_string(settings, S_LAYOUT_FILE);
-    m_settings.linear_alpha = obs_data_get_bool(settings, "linear_alpha");
+    m_settings.linear_alpha = obs_data_get_bool(settings, S_LINEAR_ALPHA);
     m_overlay->load();
 
     // Fix sources that used to use a remote connection but can't now because
@@ -153,6 +153,20 @@ bool reload_pads(obs_properties_t *, obs_property_t *property, void *data)
     return true;
 }
 
+bool linear_alpha_changed(void *d, obs_properties_t *props, obs_property_t *, obs_data_t *data)
+{
+    auto *src = static_cast<input_source *>(d);
+    //Update settings value for Linear Alpha
+    src->m_settings.linear_alpha = obs_data_get_bool(data, S_LINEAR_ALPHA);
+
+    //Only reload texture if file and config have been previously loaded
+    if (src->m_overlay->is_loaded()) {
+        src->m_overlay->load_texture();
+    }
+
+    return true;
+}
+
 bool file_changed(void *d, obs_properties_t *props, obs_property_t *, obs_data_t *data)
 {
     auto *src = static_cast<input_source *>(d);
@@ -212,9 +226,12 @@ obs_properties_t *get_properties_for_overlay(void *data)
                                             qt_to_utf8(filter_img), qt_to_utf8(img_path));
     auto *cfg = obs_properties_add_path(props, S_LAYOUT_FILE, T_LAYOUT_FILE, OBS_PATH_FILE, qt_to_utf8(filter_text),
                                         qt_to_utf8(layout_path));
+    auto *prop_alpha = obs_properties_add_bool(props, S_LINEAR_ALPHA,
+                                            T_LINEAR_ALPHA);
 
     obs_property_set_modified_callback2(cfg, file_changed, data);
     obs_property_set_modified_callback2(texture, file_changed, data);
+    obs_property_set_modified_callback2(prop_alpha, linear_alpha_changed, data);
 
     /* If enabled add dropdown to select input source */
     if (wss::state) {
