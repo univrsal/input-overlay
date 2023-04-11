@@ -145,7 +145,9 @@ bool overlay::load_texture()
     if (!get_texture()->loaded) {
         bwarn("Error: failed to load texture %s", m_settings->image_file.c_str());
         flag = false;
-    } else {
+    /*If image is loaded, but m_is_loaded is false, then config file is not loaded
+    Conversely, if m_is_loaded returns true then linear_alpha_changed called load_texture()*/
+    } else if (!m_is_loaded){
         m_settings->cx = get_texture()->cx;
         m_settings->cy = get_texture()->cy;
     }
