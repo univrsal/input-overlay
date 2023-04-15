@@ -45,10 +45,12 @@
       }
 
       p.key-combination {
-        /* For line-height */
+        /* Vertical distance between combinations */
         margin-top: 0.5em;
+      }
 
       p.key-combination > * {
+        /* Centralize keys and elements in them */
         vertical-align: middle;
       }
 
@@ -63,6 +65,9 @@
       span.key {
         display: inline-flex;
         border-radius: 0.25em;
+        /* Override text height, otherwise it uses more vertical space and
+           keys with text in them are higher than ones with just icons. */
+        line-height: 1em;
 
         padding: 0.25em;
 
