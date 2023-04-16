@@ -50,7 +50,7 @@ public:
 
 private:
     bool load_cfg();
-    void unload_texture() const;
+    void unload_texture();
     void unload_elements();
     void load_element(const QJsonObject &obj, bool debug);
 
