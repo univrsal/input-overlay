@@ -55,7 +55,7 @@ overlay::overlay(sources::overlay_settings *settings)
 bool overlay::load()
 {
     // Unload attempts to access uninitialized member from struct gs_image_file4 when unload is called
-    if(m_image)
+    if (m_image)
         unload();
     const auto image_loaded = load_texture();
     m_is_loaded = image_loaded && load_cfg();
@@ -128,15 +128,13 @@ bool overlay::load_texture()
         return false;
 
     auto flag = true;
-
+    unload_texture();
     if (m_image == nullptr) {
         m_image = new gs_image_file4_t();
     }
 
     gs_image_file4_init(m_image, m_settings->image_file.c_str(),
-                    m_settings->linear_alpha
-                        ? GS_IMAGE_ALPHA_PREMULTIPLY_SRGB
-                        : GS_IMAGE_ALPHA_PREMULTIPLY);
+                        m_settings->linear_alpha ? GS_IMAGE_ALPHA_PREMULTIPLY_SRGB : GS_IMAGE_ALPHA_PREMULTIPLY);
 
     obs_enter_graphics();
     gs_image_file4_init_texture(m_image);
@@ -145,9 +143,9 @@ bool overlay::load_texture()
     if (!get_texture()->loaded) {
         bwarn("Error: failed to load texture %s", m_settings->image_file.c_str());
         flag = false;
-    /*If image is loaded, but m_is_loaded is false, then config file is not loaded
+        /*If image is loaded, but m_is_loaded is false, then config file is not loaded
     Conversely, if m_is_loaded returns true then linear_alpha_changed called load_texture()*/
-    } else if (!m_is_loaded){
+    } else if (!m_is_loaded) {
         m_settings->cx = get_texture()->cx;
         m_settings->cy = get_texture()->cy;
     }
@@ -155,12 +153,14 @@ bool overlay::load_texture()
     return flag;
 }
 
-void overlay::unload_texture() const
+void overlay::unload_texture()
 {
-    if(m_is_loaded) {
-    obs_enter_graphics();
-    gs_image_file4_free(m_image);
-    obs_leave_graphics();
+    if (m_image) {
+        obs_enter_graphics();
+        gs_image_file4_free(m_image);
+        obs_leave_graphics();
+        delete m_image;
+        m_image = nullptr;
     }
 }
 
