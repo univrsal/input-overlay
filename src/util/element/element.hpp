@@ -24,6 +24,7 @@
 #include <layout_constants.h>
 
 typedef struct gs_image_file gs_image_file_t;
+typedef struct gs_image_file4 gs_image_file4_t;
 
 namespace sources {
 class overlay_settings;

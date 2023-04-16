@@ -33,6 +33,7 @@
 #define S_CONTROL                       "control"
 #define S_REGEX                         "regex"
 #define S_FILTER_MODE                   "filter_mode"
+#define S_LINEAR_ALPHA                  "linear_alpha"
 
 /* Misc values */
 #define S_INPUT_SOURCE                  "io.input_source"
