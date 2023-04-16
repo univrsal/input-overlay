@@ -138,27 +138,26 @@
         </symbol>
       </svg>
 
-      <!-- Mouse -->
+      <!-- Mouse left button, mirrored and used as right button as well -->
       <svg xmlns="http://www.w3.org/2000/svg">
         <symbol
-          id="icon-mouse"
+          id="icon-mouse-button-left"
           viewBox="0 0 384 512"
         >
-          <!-- Font Awesome Pro 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) -->
           <path
-            d="M0 352a160 160 0 0 0 160 160h64a160 160 0 0 0 160-160V224H0zM176 0h-16A160 160 0 0 0 0 160v32h176zm48 0h-16v192h176v-32A160 160 0 0 0 224 0z"
+            d="M327.8 56.2C297.5 25.9 257 5.7 212 1V121c-6.3-1.9-13-3-20-3s-13.7 1-20 3V1C75.4 11 0 92.7 0 192v128 c0 106 86 192 192 192s192-86 192-192V192C384 139 362.5 91 327.8 56.2z M20 192c0-21.4 4-42.4 11.5-61.9s18.7-37.8 33.1-53.6 c23.5-25.9 54-43.8 87.4-51.8v106.1c-17.6 12.5-29.1 33.1-29.1 56.3V236H64C39.7 236 20 216.3 20 192z"
           />
+        </symbol>
       </svg>
 
-      <!-- Mouse wheel left -->
+      <!-- Mouse wheel left, mirrored and used as wheel right as well -->
       <svg xmlns="http://www.w3.org/2000/svg">
         <symbol
-          id="icon-wheel-left"
-          viewBox="0 0 512 512"
+          id="icon-mouse-wheel-left"
+          viewBox="0 0 384 512"
         >
-          <!-- Font Awesome Pro 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) -->
           <path
-            d="M256 504C119 504 8 393 8 256S119 8 256 8s248 111 248 248-111 248-248 248zM142.1 273l135.5 135.5c9.4 9.4 24.6 9.4 33.9 0l17-17c9.4-9.4 9.4-24.6 0-33.9L226.9 256l101.6-101.6c9.4-9.4 9.4-24.6 0-33.9l-17-17c-9.4-9.4-24.6-9.4-33.9 0L142.1 239c-9.4 9.4-9.4 24.6 0 34z"
+            d="M327.8 56.2C297.5 25.9 257 5.7 212 1V121c-6.3-1.9-13-3-20-3s-13.7 1-20 3V1C75.4 11 0 92.7 0 192v128 c0 106 86 192 192 192s192-86 192-192V192C384 139 362.5 91 327.8 56.2z M122.9 267l-88.9-51.4l88.9-51.3V267z M241.1 244.2 c0 27.1-22 49.1-49.1 49.1s-49.1-22-49.1-49.1v-57.1c0-27.1 22-49.1 49.1-49.1c13.6 0 25.8 5.5 34.7 14.4 c8.9 8.9 14.4 21.2 14.4 34.7V244.2z"
           />
         </symbol>
       </svg>
@@ -234,82 +233,85 @@
       </svg>
 
       <!-- Mouse Left Click -->
-      <div id="SVG_MOUSE_LEFT">
-        <svg>
-          <use href="#icon-mouse"></use>
-        </svg>
-        <span>L</span>
-      </div>
+      <svg id="SVG_MOUSE_LEFT">
+        <use href="#icon-mouse-button-left"></use>
+      </svg>
 
       <!-- Mouse Middle Click -->
-      <div id="SVG_MOUSE_MIDDLE">
-        <svg>
-          <use href="#icon-mouse"></use>
-        </svg>
-        <span>M</span>
-      </div>
+      <svg
+        id="SVG_MOUSE_MIDDLE"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 384 512"
+      >
+        <path
+          d="M327.8 56.2C297.5 25.9 257 5.7 212 1v119.9c-6.4-1.9-13.1-2.9-20-2.9c-7 0-13.7 1-20 3V1C75.4 11 0 92.7 0 192v128 c0 106 86 192 192 192s192-86 192-192V192C384 139 362.5 91 327.8 56.2z M192 138c7.1 0 13.9 1.5 20 4.2 c5.5 2.5 10.5 5.9 14.7 10.1c8.9 8.9 14.4 21.2 14.4 34.7v57.1c0 27.1-22 49.1-49.1 49.1s-49.1-22-49.1-49.1v-57.1 c0-20 12-37.2 29.1-44.9C178.1 139.5 184.9 138 192 138z"
+        />
+      </svg>
 
-      <!-- Mouse Right Click -->
-      <div id="SVG_MOUSE_RIGHT">
-        <svg>
-          <use href="#icon-mouse"></use>
-        </svg>
-        <span>R</span>
-      </div>
+      <!-- Mouse Right Click (mirrored left click icon) -->
+      <svg
+        id="SVG_MOUSE_RIGHT"
+        style="transform: scale(-1.0, 1.0);"
+      >
+        <use href="#icon-mouse-button-left"></use>
+      </svg>
 
       <!-- Mouse Extra Button 1 -->
-      <div id="SVG_MOUSE_EXTRA1">
-        <svg>
-          <use href="#icon-mouse"></use>
-        </svg>
-        <span>1</span>
-      </div>
+      <svg
+        id="SVG_MOUSE_EXTRA1"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 384 512"
+      >
+        <path
+          d="M327.8 56.2C297.5 25.9 257 5.7 212 1V121c-6.3-1.9-13-3-20-3s-13.7 1-20 3V1C75.4 11 0 92.7 0 192v128 c0 106 86 192 192 192s192-86 192-192V192C384 139 362.5 91 327.8 56.2z M89 380.8c-40.7 0-73.7-33-73.7-73.7v-50.5H89V380.8z"
+        />
+      </svg>
 
       <!-- Mouse Extra Button 2 -->
-      <div id="SVG_MOUSE_EXTRA2">
-        <svg>
-          <use href="#icon-mouse"></use>
-        </svg>
-        <span>2</span>
-      </div>
+      <svg
+        id="SVG_MOUSE_EXTRA2"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 384 512"
+      >
+        <path
+          d="M327.8 56.2C297.5 25.9 257 5.7 212 1V121c-6.3-1.9-13-3-20-3s-13.7 1-20 3V1C75.4 11 0 92.7 0 192v128 c0 106 86 192 192 192s192-86 192-192V192C384 139 362.5 91 327.8 56.2z M89 256.5H15.3V206c0-40.7 33-73.7 73.7-73.7V256.5z"
+        />
+      </svg>
 
       <!-- Mouse Wheel Up -->
-      <div id="SVG_MOUSE_WHEELUP">
-        <svg>
-          <use href="#icon-mouse"></use>
-        </svg>
-        <svg style="transform: rotate(90deg);">
-          <use href="#icon-wheel-left"></use>
-        </svg>
-      </div>
+      <svg
+        id="SVG_MOUSE_WHEELUP"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 384 512"
+      >
+        <path
+          d="M327.8 56.2C297.5 25.9 257 5.7 212 1v20.1c-6.6-0.8-13.3-1.1-20-1.1c-6.8 0-13.4 0.4-20 1.2V1 C75.4 11 0 92.7 0 192v128c0 106 86 192 192 192s192-86 192-192V192C384 139 362.5 91 327.8 56.2z M241.1 244.2 c0 27.1-22 49.1-49.1 49.1s-49.1-22-49.1-49.1v-57.1c0-27.1 22-49.1 49.1-49.1c13.6 0 25.8 5.5 34.7 14.4 c8.9 8.9 14.4 21.2 14.4 34.7V244.2z M140.7 118L192 29.1l51.3 88.9H140.7z"
+        />
+      </svg>
 
       <!-- Mouse Wheel Down -->
-      <div id="SVG_MOUSE_WHEELDOWN">
-        <svg>
-          <use href="#icon-mouse"></use>
-        </svg>
-        <svg style="transform: rotate(270deg);">
-          <use href="#icon-wheel-left"></use>
-        </svg>
-      </div>
+      <svg
+        id="SVG_MOUSE_WHEELDOWN"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 384 512"
+      >
+        <path
+          d="M327.8 56.2C297.5 25.9 257 5.7 212 1V121c-6.3-1.9-13-3-20-3s-13.7 1-20 3V1C75.4 11 0 92.7 0 192v128 c0 106 86 192 192 192s192-86 192-192V192C384 139 362.5 91 327.8 56.2z M142.9 187.1c0-27.1 22-49.1 49.1-49.1 c13.6 0 25.8 5.5 34.7 14.4c8.9 8.9 14.4 21.2 14.4 34.7v57.1c0 27.1-22 49.1-49.1 49.1s-49.1-22-49.1-49.1V187.1z M192 402.3 l-51.3-88.9h102.7L192 402.3z"
+        />
+      </svg>
 
-      <!-- Mouse Wheel Right -->
-      <div id="SVG_MOUSE_WHEELRIGHT">
-        <svg>
-          <use href="#icon-mouse"></use>
-        </svg>
-        <svg style="transform: rotate(180deg);">
-          <use href="#icon-wheel-left"></use>
-        </svg>
-      </div>
+      <!-- Mouse Wheel Right (mirrored wheel left) -->
+      <svg
+        id="SVG_MOUSE_WHEELRIGHT"
+        style="transform: scale(-1.0, 1.0);"
+      >
+        <use href="#icon-mouse-wheel-left"></use>
+      </svg>
 
       <!-- Mouse Wheel Left -->
-      <div id="SVG_MOUSE_WHEELLEFT">
-        <svg>
-          <use href="#icon-mouse"></use>
-        </svg>
-        <svg><use href="#icon-wheel-left"></use></svg>
-      </div>
+      <svg id="SVG_MOUSE_WHEELLEFT">
+        <use href="#icon-mouse-wheel-left"></use>
+      </svg>
     </div>
     <!-- #endregion -->
 
