@@ -24,9 +24,12 @@
         font-size: 48px;
         color: white;
 
+        overflow: hidden;
+      }
+
+      body.bottom-align {
         position: absolute;
         bottom: 0;
-        overflow: hidden;
       }
 
       /* #region History List */
@@ -44,7 +47,7 @@
         transition-duration: 1s;
       }
 
-      p.key-combination {
+      * + p.key-combination {
         /* Vertical distance between combinations */
         margin-top: 0.5em;
       }
@@ -792,6 +795,11 @@
      */
     var HISTORY_TIMEOUT = 3500;
     /**
+     * Align history to top of source when true and add newer keys to top.
+     * @type {boolean}
+     */
+    var HISTORY_TOP_ALIGN = false;
+    /**
      * Separator between keys
      * @type {string}
      */
@@ -804,6 +812,12 @@
     var ONLY_INITIAL_PRESS = false;
 
     // #endregion
+
+    // Vertical align setup
+    if (!HISTORY_TOP_ALIGN)
+    {
+      document.body.classList.add(["bottom-align"]);
+    }
 
     // History
     var _historyDiv = document.getElementById("history");
@@ -861,6 +875,10 @@
     }
 
     function updateUI(keycode, isPressing) {
+      var latestChild = HISTORY_TOP_ALIGN
+        ? _historyDiv.firstElementChild
+        : _historyDiv.lastElementChild;
+
       if (isPressing) {
         // Is this an already pressed key?
         if (_historyCurrentlyPressed.has(keycode)) {
@@ -878,13 +896,31 @@
         // If it's a new group of keys, add as new element
         if (_addNewCombination) {
           // Fade out elements that were kept because a key was still pressed
-          startRemovingLast(); 
-          _historyDiv.appendChild(combinationElement);
+          startRemovingLast(latestChild); 
+
+          if (HISTORY_TOP_ALIGN) {
+            _historyDiv.insertBefore(combinationElement, _historyDiv.firstChild);
+          } else {
+            _historyDiv.appendChild(combinationElement);
+
+            // Scroll down
+            scrollTo({
+              top: document.body.scrollHeight,
+            });
+          }
           _addNewCombination = false;
+
+          // Remove oldest element
+          if (_historyDiv.children.length > HISTORY_MAX) {
+            if (HISTORY_TOP_ALIGN)
+              _historyDiv.lastElementChild.remove();
+            else
+              _historyDiv.firstElementChild.remove();
+          }
         }
         // If starting key combination, set last item text
         else {
-          _historyDiv.lastElementChild.innerHTML = combinationElement.innerHTML;
+          latestChild.innerHTML = combinationElement.innerHTML;
         }
       }
       // If done pressing key combination
@@ -893,24 +929,14 @@
         _addNewCombination = true; // Next new key has its own group
         // Fade element out if no more held keys left
         if (_historyCurrentlyPressed.size == 0) {
-          startRemovingLast();
+          startRemovingLast(latestChild);
         }
       }
-
-      // Remove first element
-      if (_historyDiv.children.length > HISTORY_MAX)
-        _historyDiv.firstChild.remove();
-
-      // Scroll down
-      scrollTo({
-        top: document.body.scrollHeight,
-      });
     }
 
-    function startRemovingLast() {
+    function startRemovingLast(elementToHide) {
       if (HISTORY_TIMEOUT_ACTIVE) {
         // Add removing class of last key combination
-        var elementToHide = _historyDiv.lastElementChild;
         if (!elementToHide)
           return;
         setTimeout(() => {
