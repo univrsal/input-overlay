@@ -37,7 +37,7 @@ static HANDLE hook_running_mutex;
 static HANDLE hook_control_mutex;
 static HANDLE hook_control_cond;
 
-void dispatch_proc(uiohook_event *const event)
+void dispatch_proc(uiohook_event *const event, void *)
 {
     switch (event->type) {
     case EVENT_HOOK_ENABLED:
@@ -69,26 +69,19 @@ DWORD WINAPI hook_thread_proc(const LPVOID arg)
 }
 
 extern "C" {
-static bool logger_proc(unsigned int level, const char *format, ...)
+static void logger_proc(unsigned int level, void *, const char *format, va_list args)
 {
-    const bool status = true;
-    va_list args;
     switch (level) {
     default:
     case LOG_LEVEL_DEBUG:
     case LOG_LEVEL_INFO:
-        va_start(args, format);
         blogva(LOG_DEBUG, format, args);
-        va_end(args);
         break;
     case LOG_LEVEL_WARN:
     case LOG_LEVEL_ERROR:
-        va_start(args, format);
         blogva(LOG_WARNING, format, args);
-        va_end(args);
         break;
     }
-    return status;
 }
 }
 
@@ -165,10 +158,10 @@ void start()
     hook_control_cond = CreateEvent(nullptr, TRUE, FALSE, TEXT("hook_control_cond"));
 
     /* Set the logger callback for library output. */
-    hook_set_logger_proc(&logger_proc);
+    hook_set_logger_proc(&logger_proc, nullptr);
 
     /* Set the event callback for uiohook events. */
-    hook_set_dispatch_proc(&dispatch_proc);
+    hook_set_dispatch_proc(&dispatch_proc, nullptr);
 
     const auto status = hook_enable();
     switch (status) {

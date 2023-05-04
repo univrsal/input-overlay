@@ -62,12 +62,7 @@ inline void process_event(uiohook_event *event)
 
 inline uint16_t mouse_fix(int m)
 {
-#ifndef _WIN32 /* Linux mixes right mouse and middle mouse or is windows getting it wrong? */
-    if (m == 3)
-        m = 2;
-    else if (m == 2)
-        m = 3;
-#endif
+    /* Forked uihook should no require this anymore, todo: remove the function*/
     return m;
 }
 
