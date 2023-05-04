@@ -49,6 +49,10 @@ add_library(uiohook_static STATIC
     "${CMAKE_CURRENT_SOURCE_DIR}/../deps/libuiohook/src/${UIOHOOK_SOURCE_DIR}/system_properties.c"
 )
 
+if (WIN32 OR WIN64)
+    target_sources(uiohook_static PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../deps/libuiohook/src/${UIOHOOK_SOURCE_DIR}/monitor_helper.c")
+endif()
+
 set_target_properties(uiohook_static PROPERTIES
     C_STANDARD 99
     C_STANDARD_REQUIRED ON
