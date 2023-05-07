@@ -38,9 +38,9 @@ public:
     std::string image_file;
     std::string layout_file;
 
-    input_data data{};                     /* Copy of input data used for visualization          */
-    uint32_t cx = 0, cy = 0;               /* Source width/height                                */
-    bool use_center = false;               /* true if monitor center is used for mouse movement	*/
+    input_data data{};       /* Copy of input data used for visualization          */
+    uint32_t cx = 0, cy = 0; /* Source width/height                                */
+    bool use_center = false; /* true if monitor center is used for mouse movement	*/
     bool linear_alpha;
     uint32_t monitor_w = 0, monitor_h = 0; /* Monitor size used for mouse movement               */
     uint8_t mouse_deadzone = 0;            /* Region in which to ignore mouse movements          */

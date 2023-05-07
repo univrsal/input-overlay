@@ -67,7 +67,6 @@ struct input_data {
     void copy(const input_data *other, bool with_gamepad_data = false);
 
     void dispatch_uiohook_event(const uiohook_event *event);
-
 };
 
 namespace local_data {

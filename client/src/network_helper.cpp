@@ -51,7 +51,6 @@ static void fn(struct mg_connection *c, int ev, void *ev_data, void *fn_data)
     }
 }
 
-
 inline const char *controller_description(int index)
 {
 

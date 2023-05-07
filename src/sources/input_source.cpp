@@ -226,8 +226,7 @@ obs_properties_t *get_properties_for_overlay(void *data)
                                             qt_to_utf8(filter_img), qt_to_utf8(img_path));
     auto *cfg = obs_properties_add_path(props, S_LAYOUT_FILE, T_LAYOUT_FILE, OBS_PATH_FILE, qt_to_utf8(filter_text),
                                         qt_to_utf8(layout_path));
-    auto *prop_alpha = obs_properties_add_bool(props, S_LINEAR_ALPHA,
-                                            T_LINEAR_ALPHA);
+    auto *prop_alpha = obs_properties_add_bool(props, S_LINEAR_ALPHA, T_LINEAR_ALPHA);
 
     obs_property_set_modified_callback2(cfg, file_changed, data);
     obs_property_set_modified_callback2(texture, file_changed, data);
