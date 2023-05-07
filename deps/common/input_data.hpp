@@ -22,6 +22,7 @@
 #include <atomic>
 #include <mutex>
 #include <array>
+#include <string>
 #include <uiohook.h>
 #include <buffer.hpp>
 #include <keycodes.h>
