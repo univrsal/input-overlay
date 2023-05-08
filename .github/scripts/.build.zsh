@@ -247,8 +247,8 @@ Usage: %B${functrace[1]%:*}%b <option> [<options>]
   if (( _loglevel > 1 )) cmake_args+=(--verbose)
   cmake --install build_${target##*-} --config ${BUILD_CONFIG:-RelWithDebInfo} --prefix "${project_root}/release" ${cmake_args}
   cmake --install build_client_${target##*-} --config ${BUILD_CONFIG:-RelWithDebInfo} --prefix "${project_root}/release_client" ${cmake_args}
-  mv "${project_root}/release_client/io_client" "$HOME/.config/obs-studio/plugins/${product_name}/"
- 
+  mv "${project_root}/release_client/io_client/io_client" "$HOME/.config/obs-studio/plugins/${product_name}/"
+   
   local output_name="${product_name}-${product_version}-${host_os}-${target##*-}.zip"
   pushd "$HOME/.config/obs-studio/plugins/"
   zip -r ${project_root}/release/${output_name} "./${product_name}/"
