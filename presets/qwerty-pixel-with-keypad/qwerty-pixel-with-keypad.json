@@ -269,7 +269,7 @@
                 1031,
                 92
             ],
-            "id": "numpad_slash",
+            "id": "keypad_slash",
             "z_level": "0",
             "mapping": [
                 1080,
@@ -285,7 +285,7 @@
                 1079,
                 92
             ],
-            "id": "numpad_asterisk",
+            "id": "keypad_asterisk",
             "z_level": "0",
             "mapping": [
                 1136,
@@ -301,7 +301,7 @@
                 1127,
                 92
             ],
-            "id": "numpad_minus",
+            "id": "keypad_minus",
             "z_level": "0",
             "mapping": [
                 1192,
@@ -317,7 +317,7 @@
                 1127,
                 140
             ],
-            "id": "numpad_plus",
+            "id": "keypad_plus",
             "z_level": "0",
             "mapping": [
                 1192,
@@ -333,7 +333,7 @@
                 1079,
                 140
             ],
-            "id": "numpad_9",
+            "id": "keypad_9",
             "z_level": "0",
             "mapping": [
                 1136,
@@ -349,7 +349,7 @@
                 1031,
                 140
             ],
-            "id": "numpad_8",
+            "id": "keypad_8",
             "z_level": "0",
             "mapping": [
                 1080,
@@ -365,7 +365,7 @@
                 983,
                 140
             ],
-            "id": "numpad_7",
+            "id": "keypad_7",
             "z_level": "0",
             "mapping": [
                 1024,
@@ -394,8 +394,8 @@
         {
             "type": 1,
             "pos": [
-                842,
-                93
+                840,
+                92
             ],
             "id": "home",
             "z_level": "0",
@@ -669,7 +669,7 @@
                 80,
                 140
             ],
-            "id": "q",
+            "id": "q_button",
             "z_level": "0",
             "mapping": [
                 96,
@@ -685,7 +685,7 @@
                 129,
                 140
             ],
-            "id": "w",
+            "id": "w_button",
             "z_level": "0",
             "mapping": [
                 152,
@@ -701,7 +701,7 @@
                 176,
                 140
             ],
-            "id": "e",
+            "id": "e_button",
             "z_level": "0",
             "mapping": [
                 208,
@@ -717,7 +717,7 @@
                 224,
                 140
             ],
-            "id": "r",
+            "id": "r_button",
             "z_level": "0",
             "mapping": [
                 264,
@@ -733,7 +733,7 @@
                 272,
                 140
             ],
-            "id": "t",
+            "id": "t_button",
             "z_level": "0",
             "mapping": [
                 320,
@@ -749,7 +749,7 @@
                 320,
                 140
             ],
-            "id": "y",
+            "id": "y_button",
             "z_level": "0",
             "mapping": [
                 376,
@@ -765,7 +765,7 @@
                 368,
                 140
             ],
-            "id": "u",
+            "id": "u_button",
             "z_level": "0",
             "mapping": [
                 432,
@@ -781,7 +781,7 @@
                 416,
                 140
             ],
-            "id": "i",
+            "id": "i_button",
             "z_level": "0",
             "mapping": [
                 488,
@@ -797,7 +797,7 @@
                 464,
                 140
             ],
-            "id": "o",
+            "id": "o_button",
             "z_level": "0",
             "mapping": [
                 544,
@@ -813,7 +813,7 @@
                 512,
                 140
             ],
-            "id": "p",
+            "id": "p_button",
             "z_level": "0",
             "mapping": [
                 600,
@@ -874,7 +874,7 @@
         {
             "type": 1,
             "pos": [
-                791,
+                792,
                 140
             ],
             "id": "delete",
@@ -925,7 +925,7 @@
                 983,
                 188
             ],
-            "id": "numpad_4",
+            "id": "keypad_4",
             "z_level": "0",
             "mapping": [
                 1024,
@@ -941,7 +941,7 @@
                 1031,
                 188
             ],
-            "id": "numpad_5",
+            "id": "keypad_5",
             "z_level": "0",
             "mapping": [
                 1080,
@@ -957,7 +957,7 @@
                 1079,
                 188
             ],
-            "id": "numpad_6",
+            "id": "keypad_6",
             "z_level": "0",
             "mapping": [
                 1136,
@@ -973,7 +973,7 @@
                 1127,
                 236
             ],
-            "id": "numpad_enter",
+            "id": "keypad_enter",
             "z_level": "0",
             "mapping": [
                 1192,
@@ -989,7 +989,7 @@
                 1079,
                 236
             ],
-            "id": "numpad_3",
+            "id": "keypad_3",
             "z_level": "0",
             "mapping": [
                 1136,
@@ -1005,7 +1005,7 @@
                 1031,
                 236
             ],
-            "id": "numpad_2",
+            "id": "keypad_2",
             "z_level": "0",
             "mapping": [
                 1080,
@@ -1021,7 +1021,7 @@
                 984,
                 236
             ],
-            "id": "numpad_1",
+            "id": "keypad_1",
             "z_level": "0",
             "mapping": [
                 1024,
@@ -1037,7 +1037,7 @@
                 1079,
                 284
             ],
-            "id": "numpad_period",
+            "id": "keypad_period",
             "z_level": "0",
             "mapping": [
                 1136,
@@ -1053,7 +1053,7 @@
                 983,
                 284
             ],
-            "id": "numpad_0",
+            "id": "keypad_0",
             "z_level": "0",
             "mapping": [
                 1032,
@@ -1083,7 +1083,7 @@
             "type": 1,
             "pos": [
                 840,
-                283
+                284
             ],
             "id": "down_arrow",
             "z_level": "0",
@@ -1213,7 +1213,7 @@
                 485,
                 188
             ],
-            "id": "l",
+            "id": "l_button",
             "z_level": "0",
             "mapping": [
                 544,
@@ -1229,7 +1229,7 @@
                 437,
                 188
             ],
-            "id": "k",
+            "id": "k_button",
             "z_level": "0",
             "mapping": [
                 488,
@@ -1245,7 +1245,7 @@
                 389,
                 188
             ],
-            "id": "j",
+            "id": "j_button",
             "z_level": "0",
             "mapping": [
                 432,
@@ -1261,7 +1261,7 @@
                 341,
                 188
             ],
-            "id": "h",
+            "id": "h_button",
             "z_level": "0",
             "mapping": [
                 376,
@@ -1277,7 +1277,7 @@
                 293,
                 188
             ],
-            "id": "g",
+            "id": "g_button",
             "z_level": "0",
             "mapping": [
                 320,
@@ -1293,7 +1293,7 @@
                 245,
                 188
             ],
-            "id": "f",
+            "id": "f_button",
             "z_level": "0",
             "mapping": [
                 264,
@@ -1309,7 +1309,7 @@
                 197,
                 188
             ],
-            "id": "d",
+            "id": "d_button",
             "z_level": "0",
             "mapping": [
                 208,
@@ -1325,7 +1325,7 @@
                 149,
                 188
             ],
-            "id": "s",
+            "id": "s_button",
             "z_level": "0",
             "mapping": [
                 152,
@@ -1341,7 +1341,7 @@
                 101,
                 188
             ],
-            "id": "a",
+            "id": "a_button",
             "z_level": "0",
             "mapping": [
                 96,
@@ -1389,7 +1389,7 @@
                 168,
                 236
             ],
-            "id": "z",
+            "id": "z_button",
             "z_level": "0",
             "mapping": [
                 152,
@@ -1405,7 +1405,7 @@
                 216,
                 236
             ],
-            "id": "x",
+            "id": "x_button",
             "z_level": "0",
             "mapping": [
                 208,
@@ -1421,7 +1421,7 @@
                 264,
                 236
             ],
-            "id": "c",
+            "id": "c_button",
             "z_level": "0",
             "mapping": [
                 264,
@@ -1437,7 +1437,7 @@
                 312,
                 236
             ],
-            "id": "v",
+            "id": "v_button",
             "z_level": "0",
             "mapping": [
                 320,
@@ -1453,7 +1453,7 @@
                 360,
                 236
             ],
-            "id": "b",
+            "id": "b_button",
             "z_level": "0",
             "mapping": [
                 376,
@@ -1469,7 +1469,7 @@
                 408,
                 236
             ],
-            "id": "n",
+            "id": "n_button",
             "z_level": "0",
             "mapping": [
                 432,
@@ -1485,7 +1485,7 @@
                 456,
                 236
             ],
-            "id": "m",
+            "id": "m_button",
             "z_level": "0",
             "mapping": [
                 488,
