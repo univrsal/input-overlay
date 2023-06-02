@@ -1,0 +1,1675 @@
+{
+    "default_width": 44,
+    "default_height": 44,
+    "space_h": 0,
+    "space_v": 0,
+    "flags": 0,
+    "overlay_width": 1171,
+    "overlay_height": 328,
+    "elements": [
+        {
+            "type": 1,
+            "pos": [
+                96,
+                0
+            ],
+            "id": "f1",
+            "z_level": "0",
+            "mapping": [
+                116,
+                12,
+                44,
+                44
+            ],
+            "code": 59
+        },
+        {
+            "type": 1,
+            "pos": [
+                144,
+                0
+            ],
+            "id": "f2",
+            "z_level": "0",
+            "mapping": [
+                172,
+                12,
+                44,
+                44
+            ],
+            "code": 60
+        },
+        {
+            "type": 1,
+            "pos": [
+                192,
+                0
+            ],
+            "id": "f3",
+            "z_level": "0",
+            "mapping": [
+                228,
+                12,
+                44,
+                44
+            ],
+            "code": 61
+        },
+        {
+            "type": 1,
+            "pos": [
+                240,
+                0
+            ],
+            "id": "f4",
+            "z_level": "0",
+            "mapping": [
+                284,
+                12,
+                44,
+                44
+            ],
+            "code": 62
+        },
+        {
+            "type": 1,
+            "pos": [
+                308,
+                0
+            ],
+            "id": "f5",
+            "z_level": "0",
+            "mapping": [
+                340,
+                12,
+                44,
+                44
+            ],
+            "code": 63
+        },
+        {
+            "type": 1,
+            "pos": [
+                356,
+                0
+            ],
+            "id": "f6",
+            "z_level": "0",
+            "mapping": [
+                396,
+                12,
+                44,
+                44
+            ],
+            "code": 64
+        },
+        {
+            "type": 1,
+            "pos": [
+                404,
+                1
+            ],
+            "id": "f7",
+            "z_level": "0",
+            "mapping": [
+                452,
+                12,
+                44,
+                44
+            ],
+            "code": 65
+        },
+        {
+            "type": 1,
+            "pos": [
+                452,
+                0
+            ],
+            "id": "f8",
+            "z_level": "0",
+            "mapping": [
+                508,
+                12,
+                44,
+                44
+            ],
+            "code": 66
+        },
+        {
+            "type": 1,
+            "pos": [
+                529,
+                0
+            ],
+            "id": "f9",
+            "z_level": "0",
+            "mapping": [
+                564,
+                12,
+                44,
+                44
+            ],
+            "code": 67
+        },
+        {
+            "type": 1,
+            "pos": [
+                577,
+                0
+            ],
+            "id": "f10",
+            "z_level": "0",
+            "mapping": [
+                620,
+                12,
+                44,
+                44
+            ],
+            "code": 68
+        },
+        {
+            "type": 1,
+            "pos": [
+                625,
+                0
+            ],
+            "id": "f11",
+            "z_level": "0",
+            "mapping": [
+                676,
+                12,
+                44,
+                44
+            ],
+            "code": 87
+        },
+        {
+            "type": 1,
+            "pos": [
+                673,
+                0
+            ],
+            "id": "f12",
+            "z_level": "0",
+            "mapping": [
+                732,
+                12,
+                44,
+                44
+            ],
+            "code": 88
+        },
+        {
+            "type": 1,
+            "pos": [
+                792,
+                0
+            ],
+            "id": "prnt",
+            "z_level": "0",
+            "mapping": [
+                856,
+                12,
+                44,
+                44
+            ],
+            "code": 0
+        },
+        {
+            "type": 1,
+            "pos": [
+                840,
+                0
+            ],
+            "id": "scroll_lock",
+            "z_level": "0",
+            "mapping": [
+                912,
+                12,
+                44,
+                44
+            ],
+            "code": 0
+        },
+        {
+            "type": 1,
+            "pos": [
+                888,
+                0
+            ],
+            "id": "pause_break",
+            "z_level": "0",
+            "mapping": [
+                968,
+                12,
+                44,
+                44
+            ],
+            "code": 3653
+        },
+        {
+            "type": 1,
+            "pos": [
+                983,
+                92
+            ],
+            "id": "numlock",
+            "z_level": "0",
+            "mapping": [
+                1024,
+                12,
+                44,
+                44
+            ],
+            "code": 69
+        },
+        {
+            "type": 1,
+            "pos": [
+                1031,
+                92
+            ],
+            "id": "keypad_slash",
+            "z_level": "0",
+            "mapping": [
+                1080,
+                12,
+                44,
+                44
+            ],
+            "code": 0
+        },
+        {
+            "type": 1,
+            "pos": [
+                1079,
+                92
+            ],
+            "id": "keypad_asterisk",
+            "z_level": "0",
+            "mapping": [
+                1136,
+                12,
+                44,
+                44
+            ],
+            "code": 55
+        },
+        {
+            "type": 1,
+            "pos": [
+                1127,
+                92
+            ],
+            "id": "keypad_minus",
+            "z_level": "0",
+            "mapping": [
+                1192,
+                12,
+                44,
+                44
+            ],
+            "code": 74
+        },
+        {
+            "type": 1,
+            "pos": [
+                1127,
+                140
+            ],
+            "id": "keypad_plus",
+            "z_level": "0",
+            "mapping": [
+                1192,
+                124,
+                44,
+                92
+            ],
+            "code": 78
+        },
+        {
+            "type": 1,
+            "pos": [
+                1079,
+                140
+            ],
+            "id": "keypad_9",
+            "z_level": "0",
+            "mapping": [
+                1136,
+                124,
+                44,
+                44
+            ],
+            "code": 73
+        },
+        {
+            "type": 1,
+            "pos": [
+                1031,
+                140
+            ],
+            "id": "keypad_8",
+            "z_level": "0",
+            "mapping": [
+                1080,
+                124,
+                44,
+                44
+            ],
+            "code": 72
+        },
+        {
+            "type": 1,
+            "pos": [
+                983,
+                140
+            ],
+            "id": "keypad_7",
+            "z_level": "0",
+            "mapping": [
+                1024,
+                124,
+                44,
+                44
+            ],
+            "code": 71
+        },
+        {
+            "type": 1,
+            "pos": [
+                888,
+                92
+            ],
+            "id": "page_up",
+            "z_level": "0",
+            "mapping": [
+                968,
+                124,
+                44,
+                44
+            ],
+            "code": 3657
+        },
+        {
+            "type": 1,
+            "pos": [
+                840,
+                92
+            ],
+            "id": "home",
+            "z_level": "0",
+            "mapping": [
+                912,
+                124,
+                44,
+                44
+            ],
+            "code": 3655
+        },
+        {
+            "type": 1,
+            "pos": [
+                792,
+                92
+            ],
+            "id": "insert",
+            "z_level": "0",
+            "mapping": [
+                856,
+                124,
+                44,
+                44
+            ],
+            "code": 3666
+        },
+        {
+            "type": 1,
+            "pos": [
+                625,
+                92
+            ],
+            "id": "backspace",
+            "z_level": "0",
+            "mapping": [
+                732,
+                124,
+                112,
+                44
+            ],
+            "code": 14
+        },
+        {
+            "type": 1,
+            "pos": [
+                577,
+                92
+            ],
+            "id": "plus_equals",
+            "z_level": "0",
+            "mapping": [
+                676,
+                124,
+                44,
+                44
+            ],
+            "code": 13
+        },
+        {
+            "type": 1,
+            "pos": [
+                529,
+                92
+            ],
+            "id": "minus_underscore",
+            "z_level": "0",
+            "mapping": [
+                620,
+                124,
+                44,
+                44
+            ],
+            "code": 12
+        },
+        {
+            "type": 1,
+            "pos": [
+                481,
+                92
+            ],
+            "id": "zero",
+            "z_level": "0",
+            "mapping": [
+                564,
+                124,
+                44,
+                44
+            ],
+            "code": 11
+        },
+        {
+            "type": 1,
+            "pos": [
+                433,
+                92
+            ],
+            "id": "nine",
+            "z_level": "0",
+            "mapping": [
+                508,
+                124,
+                44,
+                44
+            ],
+            "code": 10
+        },
+        {
+            "type": 1,
+            "pos": [
+                385,
+                92
+            ],
+            "id": "eight",
+            "z_level": "0",
+            "mapping": [
+                452,
+                124,
+                44,
+                44
+            ],
+            "code": 9
+        },
+        {
+            "type": 1,
+            "pos": [
+                336,
+                92
+            ],
+            "id": "seven",
+            "z_level": "0",
+            "mapping": [
+                396,
+                124,
+                44,
+                44
+            ],
+            "code": 8
+        },
+        {
+            "type": 1,
+            "pos": [
+                288,
+                92
+            ],
+            "id": "six",
+            "z_level": "0",
+            "mapping": [
+                340,
+                124,
+                44,
+                44
+            ],
+            "code": 7
+        },
+        {
+            "type": 1,
+            "pos": [
+                240,
+                92
+            ],
+            "id": "five",
+            "z_level": "0",
+            "mapping": [
+                284,
+                124,
+                44,
+                44
+            ],
+            "code": 6
+        },
+        {
+            "type": 1,
+            "pos": [
+                192,
+                92
+            ],
+            "id": "four",
+            "z_level": "0",
+            "mapping": [
+                228,
+                124,
+                44,
+                44
+            ],
+            "code": 5
+        },
+        {
+            "type": 1,
+            "pos": [
+                144,
+                92
+            ],
+            "id": "three",
+            "z_level": "0",
+            "mapping": [
+                172,
+                124,
+                44,
+                44
+            ],
+            "code": 4
+        },
+        {
+            "type": 1,
+            "pos": [
+                96,
+                92
+            ],
+            "id": "two",
+            "z_level": "0",
+            "mapping": [
+                116,
+                124,
+                44,
+                44
+            ],
+            "code": 3
+        },
+        {
+            "type": 1,
+            "pos": [
+                48,
+                92
+            ],
+            "id": "one",
+            "z_level": "0",
+            "mapping": [
+                60,
+                124,
+                44,
+                44
+            ],
+            "code": 2
+        },
+        {
+            "type": 1,
+            "pos": [
+                0,
+                92
+            ],
+            "id": "tilda",
+            "z_level": "0",
+            "mapping": [
+                8,
+                124,
+                44,
+                44
+            ],
+            "code": 41
+        },
+        {
+            "type": 1,
+            "pos": [
+                0,
+                140
+            ],
+            "id": "tab",
+            "z_level": "0",
+            "mapping": [
+                8,
+                236,
+                76,
+                44
+            ],
+            "code": 15
+        },
+        {
+            "type": 1,
+            "pos": [
+                80,
+                140
+            ],
+            "id": "q_button",
+            "z_level": "0",
+            "mapping": [
+                96,
+                236,
+                44,
+                44
+            ],
+            "code": 16
+        },
+        {
+            "type": 1,
+            "pos": [
+                129,
+                140
+            ],
+            "id": "w_button",
+            "z_level": "0",
+            "mapping": [
+                152,
+                236,
+                44,
+                44
+            ],
+            "code": 17
+        },
+        {
+            "type": 1,
+            "pos": [
+                176,
+                140
+            ],
+            "id": "e_button",
+            "z_level": "0",
+            "mapping": [
+                208,
+                236,
+                44,
+                44
+            ],
+            "code": 18
+        },
+        {
+            "type": 1,
+            "pos": [
+                224,
+                140
+            ],
+            "id": "r_button",
+            "z_level": "0",
+            "mapping": [
+                264,
+                236,
+                44,
+                44
+            ],
+            "code": 19
+        },
+        {
+            "type": 1,
+            "pos": [
+                272,
+                140
+            ],
+            "id": "t_button",
+            "z_level": "0",
+            "mapping": [
+                320,
+                236,
+                44,
+                44
+            ],
+            "code": 20
+        },
+        {
+            "type": 1,
+            "pos": [
+                320,
+                140
+            ],
+            "id": "y_button",
+            "z_level": "0",
+            "mapping": [
+                376,
+                236,
+                44,
+                44
+            ],
+            "code": 21
+        },
+        {
+            "type": 1,
+            "pos": [
+                368,
+                140
+            ],
+            "id": "u_button",
+            "z_level": "0",
+            "mapping": [
+                432,
+                236,
+                44,
+                44
+            ],
+            "code": 22
+        },
+        {
+            "type": 1,
+            "pos": [
+                416,
+                140
+            ],
+            "id": "i_button",
+            "z_level": "0",
+            "mapping": [
+                488,
+                236,
+                44,
+                44
+            ],
+            "code": 23
+        },
+        {
+            "type": 1,
+            "pos": [
+                464,
+                140
+            ],
+            "id": "o_button",
+            "z_level": "0",
+            "mapping": [
+                544,
+                236,
+                44,
+                44
+            ],
+            "code": 24
+        },
+        {
+            "type": 1,
+            "pos": [
+                512,
+                140
+            ],
+            "id": "p_button",
+            "z_level": "0",
+            "mapping": [
+                600,
+                236,
+                44,
+                44
+            ],
+            "code": 25
+        },
+        {
+            "type": 1,
+            "pos": [
+                560,
+                140
+            ],
+            "id": "left_bracket",
+            "z_level": "0",
+            "mapping": [
+                656,
+                236,
+                44,
+                44
+            ],
+            "code": 26
+        },
+        {
+            "type": 1,
+            "pos": [
+                608,
+                140
+            ],
+            "id": "right_bracket",
+            "z_level": "0",
+            "mapping": [
+                712,
+                236,
+                44,
+                44
+            ],
+            "code": 27
+        },
+        {
+            "type": 1,
+            "pos": [
+                656,
+                140
+            ],
+            "id": "backslash_pipe",
+            "z_level": "0",
+            "mapping": [
+                768,
+                236,
+                76,
+                44
+            ],
+            "code": 43
+        },
+        {
+            "type": 1,
+            "pos": [
+                792,
+                140
+            ],
+            "id": "delete",
+            "z_level": "0",
+            "mapping": [
+                856,
+                236,
+                44,
+                44
+            ],
+            "code": 3667
+        },
+        {
+            "type": 1,
+            "pos": [
+                840,
+                140
+            ],
+            "id": "end",
+            "z_level": "0",
+            "mapping": [
+                912,
+                236,
+                44,
+                44
+            ],
+            "code": 3663
+        },
+        {
+            "type": 1,
+            "pos": [
+                888,
+                140
+            ],
+            "id": "page_down",
+            "z_level": "0",
+            "mapping": [
+                968,
+                236,
+                44,
+                44
+            ],
+            "code": 3665
+        },
+        {
+            "type": 1,
+            "pos": [
+                983,
+                188
+            ],
+            "id": "keypad_4",
+            "z_level": "0",
+            "mapping": [
+                1024,
+                236,
+                44,
+                44
+            ],
+            "code": 75
+        },
+        {
+            "type": 1,
+            "pos": [
+                1031,
+                188
+            ],
+            "id": "keypad_5",
+            "z_level": "0",
+            "mapping": [
+                1080,
+                236,
+                44,
+                44
+            ],
+            "code": 76
+        },
+        {
+            "type": 1,
+            "pos": [
+                1079,
+                188
+            ],
+            "id": "keypad_6",
+            "z_level": "0",
+            "mapping": [
+                1136,
+                236,
+                44,
+                44
+            ],
+            "code": 77
+        },
+        {
+            "type": 1,
+            "pos": [
+                1127,
+                236
+            ],
+            "id": "keypad_enter",
+            "z_level": "0",
+            "mapping": [
+                1192,
+                332,
+                44,
+                92
+            ],
+            "code": 3612
+        },
+        {
+            "type": 1,
+            "pos": [
+                1079,
+                236
+            ],
+            "id": "keypad_3",
+            "z_level": "0",
+            "mapping": [
+                1136,
+                348,
+                44,
+                44
+            ],
+            "code": 81
+        },
+        {
+            "type": 1,
+            "pos": [
+                1031,
+                236
+            ],
+            "id": "keypad_2",
+            "z_level": "0",
+            "mapping": [
+                1080,
+                348,
+                44,
+                44
+            ],
+            "code": 80
+        },
+        {
+            "type": 1,
+            "pos": [
+                984,
+                236
+            ],
+            "id": "keypad_1",
+            "z_level": "0",
+            "mapping": [
+                1024,
+                348,
+                44,
+                44
+            ],
+            "code": 79
+        },
+        {
+            "type": 1,
+            "pos": [
+                1079,
+                284
+            ],
+            "id": "keypad_period",
+            "z_level": "0",
+            "mapping": [
+                1136,
+                460,
+                44,
+                44
+            ],
+            "code": 83
+        },
+        {
+            "type": 1,
+            "pos": [
+                983,
+                284
+            ],
+            "id": "keypad_0",
+            "z_level": "0",
+            "mapping": [
+                1032,
+                460,
+                92,
+                44
+            ],
+            "code": 82
+        },
+        {
+            "type": 1,
+            "pos": [
+                888,
+                284
+            ],
+            "id": "right_arrow",
+            "z_level": "0",
+            "mapping": [
+                968,
+                460,
+                44,
+                44
+            ],
+            "code": 57421
+        },
+        {
+            "type": 1,
+            "pos": [
+                840,
+                284
+            ],
+            "id": "down_arrow",
+            "z_level": "0",
+            "mapping": [
+                912,
+                460,
+                44,
+                44
+            ],
+            "code": 57424
+        },
+        {
+            "type": 1,
+            "pos": [
+                792,
+                284
+            ],
+            "id": "left_arrow",
+            "z_level": "0",
+            "mapping": [
+                856,
+                460,
+                44,
+                44
+            ],
+            "code": 57419
+        },
+        {
+            "type": 1,
+            "pos": [
+                840,
+                236
+            ],
+            "id": "up_arrow",
+            "z_level": "0",
+            "mapping": [
+                912,
+                348,
+                44,
+                44
+            ],
+            "code": 57416
+        },
+        {
+            "type": 1,
+            "pos": [
+                629,
+                188
+            ],
+            "id": "enter",
+            "z_level": "0",
+            "mapping": [
+                712,
+                348,
+                132,
+                44
+            ],
+            "code": 28
+        },
+        {
+            "type": 1,
+            "pos": [
+                648,
+                236
+            ],
+            "id": "right_shift",
+            "z_level": "0",
+            "mapping": [
+                712,
+                460,
+                132,
+                44
+            ],
+            "code": 54
+        },
+        {
+            "type": 1,
+            "pos": [
+                600,
+                236
+            ],
+            "id": "question_mark_slash",
+            "z_level": "0",
+            "mapping": [
+                656,
+                460,
+                44,
+                44
+            ],
+            "code": 53
+        },
+        {
+            "type": 1,
+            "pos": [
+                581,
+                188
+            ],
+            "id": "quote",
+            "z_level": "0",
+            "mapping": [
+                656,
+                348,
+                44,
+                44
+            ],
+            "code": 40
+        },
+        {
+            "type": 1,
+            "pos": [
+                533,
+                188
+            ],
+            "id": "colon_semicolon",
+            "z_level": "0",
+            "mapping": [
+                600,
+                348,
+                44,
+                44
+            ],
+            "code": 39
+        },
+        {
+            "type": 1,
+            "pos": [
+                485,
+                188
+            ],
+            "id": "l_button",
+            "z_level": "0",
+            "mapping": [
+                544,
+                348,
+                44,
+                44
+            ],
+            "code": 38
+        },
+        {
+            "type": 1,
+            "pos": [
+                437,
+                188
+            ],
+            "id": "k_button",
+            "z_level": "0",
+            "mapping": [
+                488,
+                348,
+                44,
+                44
+            ],
+            "code": 37
+        },
+        {
+            "type": 1,
+            "pos": [
+                389,
+                188
+            ],
+            "id": "j_button",
+            "z_level": "0",
+            "mapping": [
+                432,
+                348,
+                44,
+                44
+            ],
+            "code": 36
+        },
+        {
+            "type": 1,
+            "pos": [
+                341,
+                188
+            ],
+            "id": "h_button",
+            "z_level": "0",
+            "mapping": [
+                376,
+                348,
+                44,
+                44
+            ],
+            "code": 35
+        },
+        {
+            "type": 1,
+            "pos": [
+                293,
+                188
+            ],
+            "id": "g_button",
+            "z_level": "0",
+            "mapping": [
+                320,
+                348,
+                44,
+                44
+            ],
+            "code": 34
+        },
+        {
+            "type": 1,
+            "pos": [
+                245,
+                188
+            ],
+            "id": "f_button",
+            "z_level": "0",
+            "mapping": [
+                264,
+                348,
+                44,
+                44
+            ],
+            "code": 33
+        },
+        {
+            "type": 1,
+            "pos": [
+                197,
+                188
+            ],
+            "id": "d_button",
+            "z_level": "0",
+            "mapping": [
+                208,
+                348,
+                44,
+                44
+            ],
+            "code": 32
+        },
+        {
+            "type": 1,
+            "pos": [
+                149,
+                188
+            ],
+            "id": "s_button",
+            "z_level": "0",
+            "mapping": [
+                152,
+                348,
+                44,
+                44
+            ],
+            "code": 31
+        },
+        {
+            "type": 1,
+            "pos": [
+                101,
+                188
+            ],
+            "id": "a_button",
+            "z_level": "0",
+            "mapping": [
+                96,
+                348,
+                44,
+                44
+            ],
+            "code": 30
+        },
+        {
+            "type": 1,
+            "pos": [
+                21,
+                188
+            ],
+            "id": "capslock",
+            "z_level": "0",
+            "mapping": [
+                8,
+                348,
+                76,
+                44
+            ],
+            "code": 58
+        },
+        {
+            "type": 1,
+            "pos": [
+                32,
+                236
+            ],
+            "id": "left_shift",
+            "z_level": "0",
+            "mapping": [
+                8,
+                460,
+                132,
+                44
+            ],
+            "code": 42
+        },
+        {
+            "type": 1,
+            "pos": [
+                168,
+                236
+            ],
+            "id": "z_button",
+            "z_level": "0",
+            "mapping": [
+                152,
+                460,
+                44,
+                44
+            ],
+            "code": 44
+        },
+        {
+            "type": 1,
+            "pos": [
+                216,
+                236
+            ],
+            "id": "x_button",
+            "z_level": "0",
+            "mapping": [
+                208,
+                460,
+                44,
+                44
+            ],
+            "code": 45
+        },
+        {
+            "type": 1,
+            "pos": [
+                264,
+                236
+            ],
+            "id": "c_button",
+            "z_level": "0",
+            "mapping": [
+                264,
+                460,
+                44,
+                44
+            ],
+            "code": 46
+        },
+        {
+            "type": 1,
+            "pos": [
+                312,
+                236
+            ],
+            "id": "v_button",
+            "z_level": "0",
+            "mapping": [
+                320,
+                460,
+                44,
+                44
+            ],
+            "code": 47
+        },
+        {
+            "type": 1,
+            "pos": [
+                360,
+                236
+            ],
+            "id": "b_button",
+            "z_level": "0",
+            "mapping": [
+                376,
+                460,
+                44,
+                44
+            ],
+            "code": 48
+        },
+        {
+            "type": 1,
+            "pos": [
+                408,
+                236
+            ],
+            "id": "n_button",
+            "z_level": "0",
+            "mapping": [
+                432,
+                460,
+                44,
+                44
+            ],
+            "code": 49
+        },
+        {
+            "type": 1,
+            "pos": [
+                456,
+                236
+            ],
+            "id": "m_button",
+            "z_level": "0",
+            "mapping": [
+                488,
+                460,
+                44,
+                44
+            ],
+            "code": 50
+        },
+        {
+            "type": 1,
+            "pos": [
+                504,
+                236
+            ],
+            "id": "less_than_comma",
+            "z_level": "0",
+            "mapping": [
+                544,
+                460,
+                44,
+                44
+            ],
+            "code": 51
+        },
+        {
+            "type": 1,
+            "pos": [
+                552,
+                236
+            ],
+            "id": "greater_than_period",
+            "z_level": "0",
+            "mapping": [
+                600,
+                460,
+                44,
+                44
+            ],
+            "code": 52
+        },
+        {
+            "type": 1,
+            "pos": [
+                0,
+                284
+            ],
+            "id": "left_control",
+            "z_level": "0",
+            "mapping": [
+                8,
+                572,
+                44,
+                44
+            ],
+            "code": 29
+        },
+        {
+            "type": 1,
+            "pos": [
+                48,
+                284
+            ],
+            "id": "windows_key",
+            "z_level": "0",
+            "mapping": [
+                64,
+                572,
+                44,
+                44
+            ],
+            "code": 0
+        },
+        {
+            "type": 1,
+            "pos": [
+                96,
+                284
+            ],
+            "id": "left_alt",
+            "z_level": "0",
+            "mapping": [
+                120,
+                572,
+                44,
+                44
+            ],
+            "code": 56
+        },
+        {
+            "type": 1,
+            "pos": [
+                144,
+                284
+            ],
+            "id": "space",
+            "z_level": "0",
+            "mapping": [
+                176,
+                572,
+                444,
+                44
+            ],
+            "code": 57
+        },
+        {
+            "type": 1,
+            "pos": [
+                592,
+                284
+            ],
+            "id": "right_alt",
+            "z_level": "0",
+            "mapping": [
+                632,
+                572,
+                44,
+                44
+            ],
+            "code": 3640
+        },
+        {
+            "type": 1,
+            "pos": [
+                640,
+                284
+            ],
+            "id": "function",
+            "z_level": "0",
+            "mapping": [
+                688,
+                572,
+                44,
+                44
+            ],
+            "code": 0
+        },
+        {
+            "type": 1,
+            "pos": [
+                688,
+                284
+            ],
+            "id": "menu_key",
+            "z_level": "0",
+            "mapping": [
+                744,
+                572,
+                44,
+                44
+            ],
+            "code": 3677
+        },
+        {
+            "type": 1,
+            "pos": [
+                736,
+                284
+            ],
+            "id": "right_control",
+            "z_level": "0",
+            "mapping": [
+                800,
+                572,
+                44,
+                44
+            ],
+            "code": 3613
+        },
+        {
+            "type": 1,
+            "pos": [
+                0,
+                0
+            ],
+            "id": "esc",
+            "z_level": "0",
+            "mapping": [
+                8,
+                12,
+                44,
+                44
+            ],
+            "code": 1
+        }
+    ]
+}
