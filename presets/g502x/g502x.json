@@ -1,0 +1,137 @@
+{
+    "default_width": 0,
+    "default_height": 0,
+    "space_h": 0,
+    "space_v": 0,
+    "flags": 8,
+    "overlay_width": 617,
+    "overlay_height": 1038,
+    "elements": [
+        {
+            "type": 0,
+            "pos": [
+                0,
+                0
+            ],
+            "id": "Mouse",
+            "z_level": 0,
+            "mapping": [
+                0,
+                0,
+                617,
+                1038
+            ]
+        },
+        {
+            "type": 3,
+            "pos": [
+                114,
+                22
+            ],
+            "id": "LMB",
+            "z_level": 0,
+            "mapping": [
+                723,
+                15,
+                183,
+                551
+            ],
+            "code": 1
+        },
+        {
+            "type": 3,
+            "pos": [
+                401,
+                2
+            ],
+            "id": "RMB",
+            "z_level": 0,
+            "mapping": [
+                1000,
+                93,
+                178,
+                470
+            ],
+            "code": 2
+        },
+        {
+            "type": 4,
+            "pos": [
+                319,
+                171
+            ],
+            "id": "WHEEL",
+            "z_level": 0,
+            "mapping": [
+                1342,
+                393,
+                65,
+                177
+            ]
+        },
+        {
+            "type": 3,
+            "pos": [
+                90,
+                579
+            ],
+            "id": "BTMB",
+            "z_level": 0,
+            "mapping": [
+                1215,
+                403,
+                68,
+                164
+            ],
+            "code": 4
+        },
+        {
+            "type": 3,
+            "pos": [
+                64,
+                437
+            ],
+            "id": "FTMB",
+            "z_level": 0,
+            "mapping": [
+                1302,
+                443,
+                32,
+                123
+            ],
+            "code": 5
+        },
+        {
+            "type": 1,
+            "pos": [
+                268,
+                246
+            ],
+            "id": "LMMB",
+            "z_level": 0,
+            "mapping": [
+                1640,
+                539,
+                15,
+                27
+            ],
+            "code": 81
+        },
+        {
+            "type": 1,
+            "pos": [
+                421,
+                244
+            ],
+            "id": "RMMB",
+            "z_level": 0,
+            "mapping": [
+                1659,
+                538,
+                15,
+                28
+            ],
+            "code": 75
+        }
+    ]
+}
