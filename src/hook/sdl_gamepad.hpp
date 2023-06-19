@@ -43,7 +43,7 @@ public:
     }
 
     bool valid() const { return m_valid; }
-    void copy_data(input_data *data);
+    void copy_data(input_data *data, int index);
 
     auto &buttons() { return m_buttons; }
     auto &axis() { return m_axis; }
