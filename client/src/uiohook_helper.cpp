@@ -26,7 +26,7 @@ namespace uiohook_helper {
 std::atomic<bool> hook_state;
 event_queue queue;
 
-static void print_proc(unsigned int level, void*, const char *format, va_list args)
+static void print_proc(unsigned int level, void *, const char *format, va_list args)
 {
     switch (level) {
     default:
@@ -45,7 +45,7 @@ static void print_proc(unsigned int level, void*, const char *format, va_list ar
     }
 }
 
-void dispatch_proc(uiohook_event *const event, void*)
+void dispatch_proc(uiohook_event *const event, void *)
 {
     switch (event->type) {
     case EVENT_HOOK_ENABLED:
@@ -109,7 +109,7 @@ bool start()
         hook_state = true;
         return true;
     case UIOHOOK_ERROR_OUT_OF_MEMORY:
-        
+
         print(LOG_LEVEL_ERROR, nullptr, "[uiohook] Failed to allocate memory. (%#X)", status);
         return false;
     case UIOHOOK_ERROR_X_OPEN_DISPLAY:
