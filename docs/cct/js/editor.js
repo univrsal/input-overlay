@@ -19,8 +19,7 @@
 var leniency = 10;
 
 class editor {
-    constructor(canvas_id, painter)
-    {
+    constructor(canvas_id, painter) {
         this.canvas_id = canvas_id;
         this.painter = painter;
         this.move_flags = 0x0;
@@ -52,7 +51,8 @@ class editor {
                     return false;
                 }
                 let text = e.target.value + e.key;
-                if (!/^0x[0-9a-fA-F]+$/g.test(text)) {
+                // Only allow hex numbers and 0x prefix and arrow keys
+                if (e.key.length > 1 && !/^Arrow/.test(e.key) && !/^0x[0-9a-fA-F]+$/g.test(text)) {
                     e.target.value = "0x0";
                     e.preventDefault();
                     return false;
@@ -70,8 +70,7 @@ class editor {
         pad.on("button", (pad, index, btn) => this.on_gamepad_button(pad, index, btn));
     }
 
-    on_gamepad_button(_pad, index, btn)
-    {
+    on_gamepad_button(_pad, index, btn) {
         if ($("#editor-element-record-code").val() === "on" && btn.value > 0 &&
             current_type === element_types.GAMEPAD_BUTTON) {
             let vc = "0x" + gamepad_to_vc(index).toString(16).toUpperCase();
@@ -80,8 +79,7 @@ class editor {
         }
     }
 
-    on_config_load()
-    {
+    on_config_load() {
         if (cfg.data.default_height !== undefined && cfg.data.default_width !== undefined) {
             this.selection_rect = new r4(1, 1, cfg.data.default_width, cfg.data.default_height);
         } else {
@@ -92,18 +90,16 @@ class editor {
 
     on_button(event, down) { this.shift_pressed = event.shiftKey; }
 
-    set_cursor(c) { $(this.canvas_id).css({cursor: c}); }
+    set_cursor(c) { $(this.canvas_id).css({ cursor: c }); }
 
-    update_selection_from_text()
-    {
+    update_selection_from_text() {
         this.selection_rect.x = parseInt($("#editor-element-u").val());
         this.selection_rect.y = parseInt($("#editor-element-v").val());
         this.selection_rect.w = parseInt($("#editor-element-w").val());
         this.selection_rect.h = parseInt($("#editor-element-h").val());
     }
 
-    move(event, cs)
-    {
+    move(event, cs) {
         let tv = cs.translate_point_to_cs(event.offsetX, event.offsetY);
         this.mouse_pos.x = event.offsetX;
         this.mouse_pos.y = event.offsetY;
@@ -214,16 +210,14 @@ class editor {
 
     mouseup(_event, _cs) { this.selecting = false; }
 
-    update_selection_values()
-    {
+    update_selection_values() {
         $("#editor-element-u").val(this.selection_rect.x);
         $("#editor-element-v").val(this.selection_rect.y);
         $("#editor-element-w").val(this.selection_rect.w);
         $("#editor-element-h").val(this.selection_rect.h);
     }
 
-    mousedown(event, cs)
-    {
+    mousedown(event, cs) {
         if (event.button == 0 && this.mouse_over) {
             let tv = cs.translate_point_to_cs(event.offsetX, event.offsetY);
             this.drag_offset.x = tv.x - this.selection_rect.x;
@@ -233,8 +227,7 @@ class editor {
         }
     }
 
-    draw(painter)
-    {
+    draw(painter) {
         if (atlas === null)
             // Don't draw if image hasn't loaded yet
             return;
@@ -245,7 +238,7 @@ class editor {
         ctx.rect(cs.origin.x, cs.origin.y, cs.dimensions.w, cs.dimensions.h);
         ctx.clip();
         painter.image_crop(atlas, cs.origin.x - cs.offset.x, cs.origin.y - cs.offset.y, atlas.width * cs.scale,
-                           atlas.height * cs.scale, 0, 0, atlas.width, atlas.height);
+            atlas.height * cs.scale, 0, 0, atlas.width, atlas.height);
 
         // Draw selection
         let r = cs.translate_rect_to_screen(this.selection_rect);
@@ -255,9 +248,9 @@ class editor {
             if (this.move_flags === 0) {
                 // draw help lines at mouse pos
                 painter.dashed_line(this.mouse_pos.x - 0.5, cs.origin.y, this.mouse_pos.x - 0.5,
-                                    cs.origin.y + cs.dimensions.h, 1);
+                    cs.origin.y + cs.dimensions.h, 1);
                 painter.dashed_line(cs.origin.x, this.mouse_pos.y - 0.5, cs.origin.x + cs.dimensions.w,
-                                    this.mouse_pos.y - 0.5, 1);
+                    this.mouse_pos.y - 0.5, 1);
             } else {
                 // draw help lines around selection
                 painter.dashed_line(r.x - 0.5, cs.origin.y, r.x - 0.5, cs.origin.y + cs.dimensions.h, 1);
