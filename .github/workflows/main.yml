@@ -6,6 +6,7 @@ on:
       - '**.md'
     branches:
       - master
+      - dev
     tags:
       - '*'
   pull_request:
