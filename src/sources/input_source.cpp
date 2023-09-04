@@ -153,7 +153,7 @@ bool reload_pads(obs_properties_t *, obs_property_t *property, void *data)
     return true;
 }
 
-bool linear_alpha_changed(void *d, obs_properties_t *props, obs_property_t *, obs_data_t *data)
+bool linear_alpha_changed(void *d, obs_properties_t *, obs_property_t *, obs_data_t *data)
 {
     auto *src = static_cast<input_source *>(d);
     //Update settings value for Linear Alpha
