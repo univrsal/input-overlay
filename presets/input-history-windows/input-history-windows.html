@@ -450,14 +450,19 @@
       //  Cursor Key Zone Begin
       0x0e48: ["VC_UP", "ARROW UP"],
       0x0e4b: ["VC_LEFT", "ARROW LEFT"],
-      0x0e4c: ["VC_CLEAR", ""],
+      // 0x0e4c: ["VC_CLEAR", ""],
       0x0e4d: ["VC_RIGHT", "ARROW RIGHT"],
       0x0e50: ["VC_DOWN", "ARROW DOWN"],
-
+      /* libuihook values */
+      0xe048: ["VC_UP", "ARROW UP"],
+      0xe04b: ["VC_LEFT", "ARROW LEFT"],
+      // 0xe04c: ["VC_CLEAR", ""],
+      0xe04d: ["VC_RIGHT", "ARROW RIGHT"],
+      0xe050: ["VC_DOWN", "ARROW DOWN"],
       /* https://github.com/univrsal/input-overlay/issues/174 */
       0xee48: ["VC_UP", "ARROW UP"], // 0x0e48
       0xee4b: ["VC_LEFT", "ARROW LEFT"], // 0x0e4b
-      0xee4c: ["VC_CLEAR", ""], // 0x0e4c
+      // 0xee4c: ["VC_CLEAR", ""], // 0x0e4c
       0xee4d: ["VC_RIGHT", "ARROW RIGHT"], // 0x0e4d
       0xee50: ["VC_DOWN", "ARROW DOWN"], // 0x0e50
       //  Cursor Key Zone End
@@ -620,6 +625,11 @@
       0x0e4b: document.getElementById("SVG_VC_LEFT"), // ARROW LEFT
       0x0e4d: document.getElementById("SVG_VC_RIGHT"), // ARROW RIGHT
       0x0e50: document.getElementById("SVG_VC_DOWN"), // ARROW DOWN
+      /* libuihook values */
+      0xe048: document.getElementById("SVG_VC_UP"), // ARROW UP
+      0xe04b: document.getElementById("SVG_VC_LEFT"), // ARROW LEFT
+      0xe04d: document.getElementById("SVG_VC_RIGHT"), // ARROW RIGHT
+      0xe050: document.getElementById("SVG_VC_DOWN"), // ARROW DOWN
       /* https://github.com/univrsal/input-overlay/issues/174 */
       0xee48: document.getElementById("SVG_VC_UP"), // ARROW UP
       0xee4b: document.getElementById("SVG_VC_LEFT"), // ARROW LEFT
@@ -683,11 +693,11 @@
       ],
       [
         MOUSEENCODE.wheel | MOUSEENCODE.wheel_x,
-        document.getElementById("SVG_MOUSE_WHEELRIGHT").outerHTML
+        document.getElementById("SVG_MOUSE_WHEELLEFT").outerHTML
       ],
       [
         MOUSEENCODE.wheel | MOUSEENCODE.wheel_x| MOUSEENCODE.wheel_rot,
-        document.getElementById("SVG_MOUSE_WHEELLEFT").outerHTML
+        document.getElementById("SVG_MOUSE_WHEELRIGHT").outerHTML
       ],
     ]);
 
@@ -870,8 +880,10 @@
         return;
       }
 
-      // Keyboard event                              
-      updateUI(data.keycode, data.event_type === "key_pressed");
+      // Keyboard event
+      if (!!KEYCODES[data.keycode]) { // Prevents white space from unassigned keycodes
+        updateUI(data.keycode, data.event_type === "key_pressed");
+      }
     }
 
     function updateUI(keycode, isPressing) {
