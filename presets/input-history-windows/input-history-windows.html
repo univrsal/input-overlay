@@ -65,6 +65,10 @@
         margin-right: 0.25em;
       }
 
+      span.key, span.repeat {
+        background-color: rgba(0, 0, 0, 0.75);
+      }
+
       span.key {
         display: inline-flex;
         border-radius: 0.25em;
@@ -73,9 +77,16 @@
         line-height: 1em;
 
         padding: 0.25em;
-
-        background-color: rgba(0, 0, 0, 0.75);
         white-space: nowrap;
+      }
+
+      span.repeat {
+        display: inline-flex;
+        margin-left: 0.1em;
+        border-radius: 1em;
+        padding: 0.3em 0.6em;
+
+        font-size: 0.7em;
       }
 
       /* #endregion */
@@ -712,9 +723,7 @@
      * @returns {string} Inline innerHTML equivalent of key
      */
     function getKeyHTML(keycode) {
-      var intcode = parseInt(keycode);
-
-      if (intcode & MOUSEENCODE.flag) // Is this a mouse code?
+      if (keycode & MOUSEENCODE.flag) // Is this a mouse code?
       {
         var mouse = MOUSECODES.get(keycode & MOUSEENCODE.mask);
         if (!!mouse) {
@@ -724,10 +733,10 @@
         return "";
       }
 
-      var key = KEYCODES[intcode];
+      var key = KEYCODES[keycode];
 
       if (!!key) {
-        var icon = KEYICONS[intcode];
+        var icon = KEYICONS[keycode];
 
         if (!!icon) {
           return icon.cloneNode(true).outerHTML;
@@ -743,18 +752,20 @@
     // #region DOM Utils
 
     /**
-     * Gets a {Set} of keycodes, wraps each item in span.key, and joins them by a + (separator)
+     * Gets a {Set} of keycodes, wraps each item in span.key, joins them by
+     * a + (separator), and adds a repeat counter.
      *
      * @returns {HTMLElement} <p> element of key combination
      */
-    function getKeyCombinationElement(setOfKeycodes = new Set()) {
+    function getKeyCombinationElement() {
       try {
-        var innerHTMLofKeys = Array.from(setOfKeycodes)
+        var innerHTMLofKeys = Array.from(_historyCurrentlyPressed)
+          // Convert each keycode into its HTML representation
           .map((keycode) => getKeyHTML(keycode))
           // Filter out non-existing keys in KEYCODES
           .filter((html) => html !== "");
 
-        // Build innerHTMl for the key combination
+        // Build innerHTML for the key combination
         var innerHTMLOfKeyCombination = innerHTMLofKeys
           .map(
             (innerHTML) =>
@@ -763,6 +774,12 @@
           .join(
             createElementWithClass("span", SEPARATOR, ["separator"]).outerHTML
           );
+
+        // Display repetition counter if 2 or higher
+        if (_repeatCount > 1) {
+          innerHTMLOfKeyCombination +=
+            createElementWithClass("span", _repeatCount, ["repeat"]).outerHTML;
+        }
 
         return createElementWithClass("p", innerHTMLOfKeyCombination, [
           "key-combination",
@@ -820,6 +837,12 @@
      * @type {boolean}
      */
     var ONLY_INITIAL_PRESS = false;
+    /**
+     * Only count inputs as repeated if the interval between presses in ms
+     * is less than this value
+     * @type {number}
+     */
+    var REPEAT_TIMEOUT = 1500;
 
     // #endregion
 
@@ -832,13 +855,18 @@
     // History
     var _historyDiv = document.getElementById("history");
     var _historyCurrentlyPressed = new Set();
-    var _addNewCombination = true;
+    var _historyLastPressed = new Set();
+    var _hideLastTimeoutID = undefined;
+    var _hideLastTimeoutElement = null;
+    var _repeatCount = 1;
+    var _repeatTimeoutID = undefined;
     var _mouseButtonsMask = 0;
 
     function onKeyEvent(data) {
       if (data.event_type === "key_typed")
         return;
 
+      // Interpret mouse events
       if (data.event_type.startsWith("mouse")) {
         // Ignore mouse movement and click events
         if (
@@ -857,7 +885,7 @@
           mouse_code_base |= MOUSEENCODE.wheel_rot * (data.rotation > 0); // data.rotation is -1 or 1
 
           updateUI(mouse_code_base, true);
-          // Wheel events don't have a "pressed" state, so remove them after displaying
+          // Wheel events don't have a "pressed" state, so "release" them after displaying
           updateUI(mouse_code_base, false);
         } else if (
             data.event_type === "mouse_pressed" ||
@@ -886,29 +914,54 @@
       }
     }
 
-    function updateUI(keycode, isPressing) {
-      var latestChild = HISTORY_TOP_ALIGN
+    function getLatestChild() {
+      return HISTORY_TOP_ALIGN
         ? _historyDiv.firstElementChild
         : _historyDiv.lastElementChild;
+    }
+
+    function updateUI(keycode, isPressing) {
+      var latestChild = getLatestChild();
 
       if (isPressing) {
         // Is this an already pressed key?
-        if (_historyCurrentlyPressed.has(keycode)) {
-          if (ONLY_INITIAL_PRESS) {
-            // Ignore already pressed key addition
-            return;
-          }
-          // Mark creation of new element for combination
-          _addNewCombination = true;
+        if (_historyCurrentlyPressed.has(keycode)
+            // Are we ignoring key repetition?
+            && ONLY_INITIAL_PRESS) {
+          return;
         }
 
-        _historyCurrentlyPressed.add(keycode);
-        var combinationElement = getKeyCombinationElement(_historyCurrentlyPressed);
+        resetRepeatTimeout();
+
+        // Update pressed keys state while comparing with previously pressed ones
+        // to detect repetition and combinations
+
+        var wasEmpty = _historyCurrentlyPressed.size == 0;
+        var wasSameKeys = compareSets(_historyCurrentlyPressed, _historyLastPressed);
+        _historyCurrentlyPressed.add(keycode); // Register new pressed key
+        var isRepeated = compareSets(_historyCurrentlyPressed, _historyLastPressed);
+
+        // Are we adding to previously pressed keys?
+        // _repeatCount is used to add a new grouping of keys if the previously pressed
+        // ones had been released and pressed more than once, so we don't replace the
+        // repeat counter with the new combination. This allows things like double shift
+        // then shift+a to be displayed separately
+        var isCombination = !wasEmpty && wasSameKeys && !isRepeated && _repeatCount == 1;
+
+        if (isRepeated) {
+          ++_repeatCount;
+        } else {
+          // Store current combination so we can detect future repeated presses
+          _historyLastPressed = new Set(_historyCurrentlyPressed);
+          _repeatCount = 1; // Reset repetitions counter
+        }
+
+        var combinationElement = getKeyCombinationElement();
 
         // If it's a new group of keys, add as new element
-        if (_addNewCombination) {
+        if (!isCombination && !isRepeated) {
           // Fade out elements that were kept because a key was still pressed
-          startRemovingLast(latestChild); 
+          startRemovingLast();
 
           if (HISTORY_TOP_ALIGN) {
             _historyDiv.insertBefore(combinationElement, _historyDiv.firstChild);
@@ -920,7 +973,6 @@
               top: document.body.scrollHeight,
             });
           }
-          _addNewCombination = false;
 
           // Remove oldest element
           if (_historyDiv.children.length > HISTORY_MAX) {
@@ -930,31 +982,66 @@
               _historyDiv.firstElementChild.remove();
           }
         }
-        // If starting key combination, set last item text
+        // Starting key combination or repeating previous ones: set last item text
         else {
           latestChild.innerHTML = combinationElement.innerHTML;
+          cancelRemoveLast(); // Unhide or cancel hiding of last element
         }
       }
-      // If done pressing key combination
+      // If releasing a key
       else {
+        // Update current keys state
         _historyCurrentlyPressed.delete(keycode);
-        _addNewCombination = true; // Next new key has its own group
+
         // Fade element out if no more held keys left
         if (_historyCurrentlyPressed.size == 0) {
-          startRemovingLast(latestChild);
+          startRemovingLast();
         }
       }
     }
 
-    function startRemovingLast(elementToHide) {
+    function startRemovingLast() {
       if (HISTORY_TIMEOUT_ACTIVE) {
         // Add removing class of last key combination
-        if (!elementToHide)
-          return;
-        setTimeout(() => {
+        var elementToHide = getLatestChild();
+        if (!elementToHide || elementToHide.classList.contains("hidden"))
+          return; // History is empty or element is already hidden
+
+        // Store info for if we need to cancel hiding later
+        _hideLastTimeoutElement = elementToHide;
+        _hideLastTimeoutID = setTimeout(() => {
           elementToHide.classList.add("hidden");
         }, HISTORY_TIMEOUT);
       }
+    }
+
+    function cancelRemoveLast() {
+      if (HISTORY_TIMEOUT_ACTIVE) {
+        var elementToUnhide = getLatestChild();
+        if (!elementToUnhide ||
+            _hideLastTimeoutElement != elementToUnhide)
+          return; // History is empty or last element is not setup to hide
+
+        // Unhide if already hidden
+        elementToUnhide.classList.remove("hidden");
+        // Cancel hide timeout
+        clearTimeout(_hideLastTimeoutID);
+      }
+    }
+
+    function resetRepeatTimeout() {
+      if (_repeatTimeoutID !== undefined) {
+        clearTimeout(_repeatTimeoutID);
+      }
+      _repeatTimeoutID = setTimeout(() => {
+        _repeatTimeoutID = undefined;
+        _historyLastPressed.clear();
+      }, REPEAT_TIMEOUT);
+    }
+
+    function compareSets(a, b) { 
+      return a.size === b.size &&
+      [...a].every((elem) => b.has(elem));
     }
 
     function on_data(e) {
@@ -976,7 +1063,7 @@
       };
 
       ws.onclose = () => {
-        // connection closed, discard old websocket and create a new one in 5s
+        // connection closed, discard old websocket and create a new one in 2s
         ws = null;
         setTimeout(start_websocket, 2000);
       };
