@@ -891,6 +891,9 @@
             data.event_type === "mouse_pressed" ||
             data.event_type === "mouse_released"
           ) {
+          if (data.button === 4 && data.event_type === "mouse_pressed")
+            data.mask = (data.mask ^ 4096) | 2048;
+
           var diff = _mouseButtonsMask ^ data.mask;
           _mouseButtonsMask = data.mask;
 
