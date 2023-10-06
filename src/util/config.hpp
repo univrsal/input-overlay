@@ -56,6 +56,7 @@ extern bool log_flag;
 extern uint16_t server_refresh_rate;
 extern uint16_t server_port;
 extern uint16_t wss_port;
+extern std::string wss_bind_address;
 
 extern void set_defaults();
 

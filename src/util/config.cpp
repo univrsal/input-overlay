@@ -37,6 +37,7 @@ int filter_mode = 0;
 uint16_t server_refresh_rate = 250;
 uint16_t server_port = 1608;
 uint16_t wss_port = 16899;
+std::string wss_bind_address;
 
 void set_defaults()
 {
@@ -45,6 +46,7 @@ void set_defaults()
     CDEF_BOOL(S_GAMEPAD, enable_gamepad_hook);
     CDEF_BOOL(S_OVERLAY, enable_overlay_source);
 
+    CDEF_STR(S_WSS_ADDRESS, "0.0.0.0");
     CDEF_BOOL(S_LOGGING, log_flag);
     CDEF_INT(S_PORT, server_port);
     CDEF_INT(S_WSS_PORT, wss_port);
@@ -69,6 +71,7 @@ void load()
     wss_port = CGET_INT(S_WSS_PORT);
     log_flag = CGET_BOOL(S_LOGGING);
     server_refresh_rate = CGET_INT(S_REFRESH);
+    wss_bind_address = CGET_STR(S_WSS_ADDRESS);
 }
 
 void save()
@@ -84,6 +87,7 @@ void save()
     CSET_BOOL(S_REGEX, regex);
     CSET_INT(S_WSS_PORT, wss_port);
     CSET_BOOL(S_ENABLE_WSS, enable_websocket_server);
+    CSET_STR(S_WSS_ADDRESS, wss_bind_address.c_str());
 }
 
 }

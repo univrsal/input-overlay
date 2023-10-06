@@ -17,7 +17,7 @@ bool start()
     if (state)
         return true;
     const auto port = CGET_INT(S_WSS_PORT);
-    std::string url = "ws://0.0.0.0:";
+    std::string url = "ws://" + io_config::wss_bind_address + ":";
     url = url.append(std::to_string(port));
     auto result = mg::start(url);
     if (result) {

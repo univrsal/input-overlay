@@ -89,6 +89,8 @@ bool start(const std::string &addr)
     if (!nc) {
         berr("Failed to start mongoose listener");
         return false;
+    } else {
+        binfo("Websocket server listening on %s", addr.c_str());
     }
 
     thread_handle = std::thread(thread_method);
