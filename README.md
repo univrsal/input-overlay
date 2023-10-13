@@ -1,4 +1,4 @@
-# minimal edit to have 60fps recording jittery mouse fixed
+# minimal edit to have 60fps recording jittery mouse fixed download via github actions page
 
 ![logo](https://i.imgur.com/nPgpsRx.png)
 
