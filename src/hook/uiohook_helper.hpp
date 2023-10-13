@@ -40,7 +40,7 @@ inline void check_wheel()
 inline void process_event(uiohook_event *event)
 {
     static input_data thread_data;
-    static const uint64_t refresh_ms = 16;
+    static const uint64_t refresh_ms = 1/60;
     static uint64_t last_time = 0;
     auto diff = (event->time - last_time);
 
