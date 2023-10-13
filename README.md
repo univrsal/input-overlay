@@ -1,3 +1,5 @@
+# minimal edit to have 60fps recording jittery mouse fixed
+
 ![logo](https://i.imgur.com/nPgpsRx.png)
 
 [![Plugin Build](https://github.com/univrsal/input-overlay/actions/workflows/main.yml/badge.svg)](https://github.com/univrsal/input-overlay/actions/workflows/main.yml)
