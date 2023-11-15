@@ -55,8 +55,6 @@ function type_from_string(type) {
             return element_types.ANALOG_STICK;
         case "trigger":
             return element_types.TRIGGER;
-        case "mouse_movement":
-            return element_types.MOUSE_MOVEMENT;
         case "mouse_wheel":
             return element_types.WHEEL;
         case "player_id":
