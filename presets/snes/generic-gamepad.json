@@ -1,0 +1,218 @@
+{
+    "default_width": 0,
+    "default_height": 0,
+    "space_h": 0,
+    "space_v": 0,
+    "flags": 4,
+    "overlay_width": 1215,
+    "overlay_height": 552,
+    "elements": [
+        {
+            "type": 0,
+            "pos": [
+                0,
+                0
+            ],
+            "id": "texture0",
+            "z_level": "0",
+            "mapping": [
+                0,
+                0,
+                1215,
+                552
+            ]
+        },
+        {
+            "type": 2,
+            "pos": [
+                905,
+                147
+            ],
+            "id": "face button - top",
+            "z_level": 0,
+            "mapping": [
+                305,
+                565,
+                88,
+                88
+            ],
+            "code": 3
+        },
+        {
+            "type": 2,
+            "pos": [
+                795,
+                236
+            ],
+            "id": "face button - left",
+            "z_level": 0,
+            "mapping": [
+                214,
+                565,
+                88,
+                88
+            ],
+            "code": 2
+        },
+        {
+            "type": 2,
+            "pos": [
+                909,
+                327
+            ],
+            "id": "face button - bottom",
+            "z_level": 0,
+            "mapping": [
+                396,
+                565,
+                88,
+                88
+            ],
+            "code": 0
+        },
+        {
+            "type": 2,
+            "pos": [
+                1020,
+                238
+            ],
+            "id": "gamepad button4",
+            "z_level": "0",
+            "mapping": [
+                487,
+                565,
+                88,
+                88
+            ],
+            "code": 1
+        },
+        {
+            "type": 2,
+            "pos": [
+                224,
+                178
+            ],
+            "id": "dpad - up",
+            "z_level": 0,
+            "mapping": [
+                0,
+                565,
+                66,
+                66
+            ],
+            "code": 11
+        },
+        {
+            "type": 2,
+            "pos": [
+                153,
+                249
+            ],
+            "id": "dpad - left",
+            "z_level": 0,
+            "mapping": [
+                0,
+                565,
+                66,
+                66
+            ],
+            "code": 13
+        },
+        {
+            "type": 2,
+            "pos": [
+                224,
+                321
+            ],
+            "id": "dpad - down",
+            "z_level": 0,
+            "mapping": [
+                0,
+                565,
+                66,
+                66
+            ],
+            "code": 12
+        },
+        {
+            "type": 2,
+            "pos": [
+                294,
+                249
+            ],
+            "id": "dpad - right",
+            "z_level": 0,
+            "mapping": [
+                0,
+                565,
+                66,
+                66
+            ],
+            "code": 14
+        },
+        {
+            "type": 2,
+            "pos": [
+                132,
+                0
+            ],
+            "id": "lb",
+            "z_level": 0,
+            "mapping": [
+                605,
+                565,
+                270,
+                52
+            ],
+            "code": 9
+        },
+        {
+            "type": 2,
+            "pos": [
+                814,
+                0
+            ],
+            "id": "rb",
+            "z_level": 0,
+            "mapping": [
+                878,
+                565,
+                270,
+                52
+            ],
+            "code": 10
+        },
+        {
+            "type": 2,
+            "pos": [
+                457,
+                278
+            ],
+            "id": "back (select)",
+            "z_level": 0,
+            "mapping": [
+                605,
+                675,
+                97,
+                87
+            ],
+            "code": 4
+        },
+        {
+            "type": 2,
+            "pos": [
+                585,
+                278
+            ],
+            "id": "start",
+            "z_level": 0,
+            "mapping": [
+                705,
+                675,
+                97,
+                87
+            ],
+            "code": 6
+        }
+    ]
+}
