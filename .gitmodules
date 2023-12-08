@@ -1,3 +1,3 @@
 [submodule "deps/libuiohook"]
 	path = deps/libuiohook
-	url = https://github.com/kwhat/libuiohook
+	url = https://github.com/univrsal/libuiohook
