@@ -5,7 +5,9 @@
 
 #if defined(_WIN32)
 #define WIN32 1
+#define INIT_FLAGS_FOR_SDL (SDL_INIT_VIDEO | SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER)
 #else
+#define INIT_FLAGS_FOR_SDL (SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER)
 #define WIN32 0
 #endif
 
@@ -38,8 +40,9 @@ inline void sdl_init()
     SDL_SetHint(SDL_HINT_JOYSTICK_ALLOW_BACKGROUND_EVENTS, "1");
     SDL_SetHint(SDL_HINT_LINUX_JOYSTICK_DEADZONES, "1");
 
-    if (SDL_WasInit(0) == (SDL_INIT_VIDEO | SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER) ||
-        SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER) < 0) {
+
+    if (SDL_WasInit(0) == INIT_FLAGS_FOR_SDL ||
+        SDL_Init(INIT_FLAGS_FOR_SDL) < 0) {
         berr("Couldn't initialize SDL: %s\n", SDL_GetError());
         return;
     }
