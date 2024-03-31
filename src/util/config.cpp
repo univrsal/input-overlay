@@ -57,10 +57,6 @@ void set_defaults()
 
 void load()
 {
-    /* Assure that ~/.config folder exists */
-    if (!QDir::home().exists(".config") && !QDir::home().mkdir(".config"))
-        berr("Couldn't create ~/.config, configuration files won't be saved");
-
     enable_uiohook = CGET_BOOL(S_UIOHOOK);
     enable_gamepad_hook = CGET_BOOL(S_GAMEPAD);
     enable_websocket_server = CGET_BOOL(S_ENABLE_WSS);

@@ -21,7 +21,7 @@
 #include "lang.h"
 #include <QDir>
 
-QString util_get_data_file(const QString &file_name)
+QString util_get_data_file_legacy(const QString &file_name)
 {
     QDir home = QDir::homePath();
 #if UNIX

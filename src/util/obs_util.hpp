@@ -45,8 +45,9 @@ bool util_write_json(const QString &path, const QJsonDocument &doc);
 
 /* Get file path to /home/user/.config/
  * or C:\Users\user\*
+ * This is deprecated and only used to load old files
  */
-QString util_get_data_file(const QString &file_name);
+QString util_get_data_file_legacy(const QString &file_name);
 
 /* Source:
  * github.com/obsproject/obs-studio/blob/master/UI/frontend-plugins/frontend-tools/auto-scene-switcher-win.cpp
