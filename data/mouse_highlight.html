@@ -24,13 +24,21 @@
 
     <script>
         var dot = document.getElementById('dot');
+        var zero = 0;
         function on_data(e) {
             let json = JSON.parse(e.data);
             let t = json.event_type;
+        
             if (t === 'mouse_moved') {
-                // I needed a  little offset to center the circle
-                dot.style.left = (json.x - 30) + "px";
-                dot.style.top = (json.y - 50) + "px";
+                if (json.x == 0 && json.y == 0) {
+                    zero++;
+                }
+                else if (zero > 1) {
+                    // I needed a  little offset to center the circle
+                    zero = 0;
+                    dot.style.left = (json.x - 30) + "px";
+                    dot.style.top = (json.y - 50) + "px";
+                }
             }
         }
 
