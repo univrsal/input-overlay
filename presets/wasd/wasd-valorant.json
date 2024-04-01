@@ -1,0 +1,219 @@
+{
+    "default_height": 128,
+    "default_width": 157,
+    "elements": [
+        {
+            "code": 16,
+            "id": "q",
+            "mapping": [
+                1,
+                1,
+                157,
+                128
+            ],
+            "pos": [
+                137,
+                0
+            ],
+            "type": 1,
+            "z_level": 1
+        },
+        {
+            "code": 17,
+            "id": "w",
+            "mapping": [
+                161,
+                1,
+                157,
+                128
+            ],
+            "pos": [
+                274,
+                0
+            ],
+            "type": 1,
+            "z_level": 1
+        },
+        {
+            "code": 18,
+            "id": "e",
+            "mapping": [
+                321,
+                1,
+                157,
+                128
+            ],
+            "pos": [
+                411,
+                0
+            ],
+            "type": 1,
+            "z_level": 1
+        },
+        {
+            "code": 42,
+            "id": "shift",
+            "mapping": [
+                481,
+                1,
+                157,
+                128
+            ],
+            "pos": [
+                0,
+                133
+            ],
+            "type": 1,
+            "z_level": 1
+        },
+        {
+            "code": 30,
+            "id": "a",
+            "mapping": [
+                641,
+                1,
+                157,
+                128
+            ],
+            "pos": [
+                137,
+                133
+            ],
+            "type": 1,
+            "z_level": 1
+        },
+        {
+            "code": 31,
+            "id": "s",
+            "mapping": [
+                801,
+                1,
+                157,
+                128
+            ],
+            "pos": [
+                274,
+                133
+            ],
+            "type": 1,
+            "z_level": 1
+        },
+        {
+            "code": 32,
+            "id": "d",
+            "mapping": [
+                961,
+                1,
+                157,
+                128
+            ],
+            "pos": [
+                411,
+                133
+            ],
+            "type": 1,
+            "z_level": 1
+        },
+        {
+            "code": 29,
+            "id": "ctrl",
+            "mapping": [
+                1121,
+                1,
+                157,
+                128
+            ],
+            "pos": [
+                0,
+                266
+            ],
+            "type": 1,
+            "z_level": 1
+        },
+        {
+            "code": 57,
+            "id": "space",
+            "mapping": [
+                1301,
+                1,
+                421,
+                128
+            ],
+            "pos": [
+                137,
+                266
+            ],
+            "type": 1,
+            "z_level": 1
+        },
+        {
+            "code": 33,
+            "id": "d0",
+            "mapping": [
+                322,
+                263,
+                157,
+                128
+            ],
+            "pos": [
+                548,
+                133
+            ],
+            "type": 1,
+            "z_level": 1
+        },
+        {
+            "code": 46,
+            "id": "d1",
+            "mapping": [
+                801,
+                263,
+                157,
+                128
+            ],
+            "pos": [
+                538,
+                266
+            ],
+            "type": 1,
+            "z_level": 1
+        },
+        {
+            "code": 5,
+            "id": "e0",
+            "mapping": [
+                641,
+                525,
+                157,
+                128
+            ],
+            "pos": [
+                548,
+                0
+            ],
+            "type": 1,
+            "z_level": 1
+        },
+        {
+            "code": 15,
+            "id": "shift0",
+            "mapping": [
+                0,
+                263,
+                157,
+                128
+            ],
+            "pos": [
+                0,
+                0
+            ],
+            "type": 1,
+            "z_level": 1
+        }
+    ],
+    "flags": 0,
+    "overlay_height": 394,
+    "overlay_width": 705,
+    "space_h": -20,
+    "space_v": 5
+}
