@@ -1,0 +1,137 @@
+{
+    "default_height": 0,
+    "default_width": 0,
+    "elements": [
+        {
+            "id": "body",
+            "mapping": [
+                328,
+                1,
+                283,
+                242
+            ],
+            "pos": [
+                1,
+                179
+            ],
+            "type": 0,
+            "z_level": 0
+        },
+        {
+            "id": "area",
+            "mapping": [
+                614,
+                244,
+                100,
+                100
+            ],
+            "pos": [
+                91,
+                245
+            ],
+            "type": 0,
+            "z_level": 0
+        },
+        {
+            "code": 1,
+            "id": "lmb",
+            "mapping": [
+                1,
+                1,
+                139,
+                174
+            ],
+            "pos": [
+                0,
+                0
+            ],
+            "type": 3,
+            "z_level": 1
+        },
+        {
+            "code": 2,
+            "id": "rmb",
+            "mapping": [
+                143,
+                1,
+                139,
+                174
+            ],
+            "pos": [
+                146,
+                0
+            ],
+            "type": 3,
+            "z_level": 1
+        },
+        {
+            "id": "wheel",
+            "mapping": [
+                285,
+                246,
+                48,
+                95
+            ],
+            "pos": [
+                117,
+                79
+            ],
+            "type": 4,
+            "z_level": 1
+        },
+        {
+            "code": 5,
+            "id": "smb1",
+            "mapping": [
+                285,
+                1,
+                40,
+                62
+            ],
+            "pos": [
+                0,
+                210
+            ],
+            "type": 3,
+            "z_level": 1
+        },
+        {
+            "code": 4,
+            "id": "smb2",
+            "mapping": [
+                284,
+                1,
+                41,
+                62
+            ],
+            "pos": [
+                11,
+                273
+            ],
+            "type": 3,
+            "z_level": 1
+        },
+        {
+            "id": "dot",
+            "mapping": [
+                614,
+                207,
+                20,
+                20
+            ],
+            "mouse_radius": 50,
+            "mouse_type": 0,
+            "pos": [
+                132,
+                284
+            ],
+            "type": 9,
+            "z_level": 1
+        }
+    ],
+    "flags": 8,
+    "overlay_height": 421,
+    "overlay_width": 285,
+    "space_h": 0,
+    "space_v": 0
+}
