@@ -1,4 +1,4 @@
-![logo](https://i.imgur.com/nPgpsRx.png)
+![logo](./docs/io.png)
 
 [![Plugin Build](https://github.com/univrsal/input-overlay/actions/workflows/main.yml/badge.svg)](https://github.com/univrsal/input-overlay/actions/workflows/main.yml)
 
