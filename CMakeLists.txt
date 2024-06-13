@@ -100,6 +100,26 @@ elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
         src/hook/uiohook_helper_linux.cpp)
 endif()
 
+if (LOCAL_INSTALLATION)
+
+    if (UNIX AND NOT APPLE)
+        # Installs into home directory
+        add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
+            # Copy to obs-studio dev environment for immediate testing
+            COMMAND "${CMAKE_COMMAND}" -E make_directory
+                    "$ENV{HOME}/.config/obs-studio/plugins/${CMAKE_PROJECT_NAME}/bin/64bit"
+            COMMAND "${CMAKE_COMMAND}" -E make_directory
+                    "$ENV{HOME}/.config/obs-studio/plugins/${CMAKE_PROJECT_NAME}/data"
+            COMMAND "${CMAKE_COMMAND}" -E copy
+                    "$<TARGET_FILE:${CMAKE_PROJECT_NAME}>"
+                    "$ENV{HOME}/.config/obs-studio/plugins/${CMAKE_PROJECT_NAME}/bin/64bit"
+            COMMAND "${CMAKE_COMMAND}" -E copy_directory
+                    "${PROJECT_SOURCE_DIR}/data"
+                    "$ENV{HOME}/.config/obs-studio/plugins/${CMAKE_PROJECT_NAME}/data"
+        )
+    endif()
+endif()
+
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
         ${input-overlay_PLATFORM_DEPS}
         ${SDL2_LIBRARIES}
