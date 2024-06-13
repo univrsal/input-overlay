@@ -288,7 +288,7 @@ ${_usage_host:-}"
   log_group "Installing ${product_name}..."
   if (( _loglevel > 1 )) cmake_install_args+=(--verbose)
   cmake ${cmake_install_args}
-  cmake --install build_client_${target##*-} --config ${BUILD_CONFIG:-RelWithDebInfo} --prefix "${project_root}/release_client" ${cmake_args}
+  cmake --install build_client_${target##*-} --config ${BUILD_CONFIG:-RelWithDebInfo} --prefix "${project_root}/release_client"
   mv "${project_root}/release_client/io_client/io_client" "$HOME/.config/obs-studio/plugins/${product_name}/"
   local output_name="${product_name}-${product_version}-${host_os}-${target##*-}.zip"
   pushd "$HOME/.config/obs-studio/plugins/"
