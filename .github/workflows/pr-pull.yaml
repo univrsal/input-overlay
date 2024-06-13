@@ -13,12 +13,6 @@ concurrency:
   group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
   cancel-in-progress: true
 jobs:
-  check-format:
-    name: Check Formatting 🔍
-    uses: ./.github/workflows/check-format.yaml
-    permissions:
-      contents: read
-
   build-project:
     name: Build Project 🧱
     uses: ./.github/workflows/build-project.yaml

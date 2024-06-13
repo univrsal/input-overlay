@@ -14,13 +14,6 @@ concurrency:
   group: '${{ github.workflow }} @ ${{ github.ref }}'
   cancel-in-progress: ${{ github.ref_type == 'tag' }}
 jobs:
-  check-format:
-    name: Check Formatting 🔍
-    if: github.ref_name == 'master'
-    uses: ./.github/workflows/check-format.yaml
-    permissions:
-      contents: read
-
   build-project:
     name: Build Project 🧱
     uses: ./.github/workflows/build-project.yaml
