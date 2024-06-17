@@ -32,8 +32,11 @@ if (WIN32 OR WIN64)
             COMMAND ${CMAKE_COMMAND} -E copy_if_different
             ${SDL2_DLLS}
             $<TARGET_FILE_DIR:${PROJECT_NAME}>)
-
-        install(FILES ${SDL2_DLLS} DESTINATION ${OBS_PLUGIN_DESTINATION})
+        
+        install(FILES ${SDL2_DLLS} DESTINATION
+            CONFIGURATIONS RelWithDebInfo Debug Release
+            DESTINATION obs-plugins/64bit
+        )
 endif()
 
 string(TIMESTAMP TODAY "%Y.%m.%d %H:%M")

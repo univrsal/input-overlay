@@ -185,3 +185,9 @@ jobs:
         with:
           name: ${{ steps.setup.outputs.pluginName }}-${{ steps.setup.outputs.pluginVersion }}-windows-x64-${{ needs.check-event.outputs.commitHash }}
           path: ${{ github.workspace }}/release/${{ steps.setup.outputs.pluginName }}-${{ steps.setup.outputs.pluginVersion }}-windows-x64*.*
+
+      - name: Upload Presets 📡
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.setup.outputs.pluginName }}-${{ steps.setup.outputs.pluginVersion }}-presets-${{ needs.check-event.outputs.commitHash }}
+          path: ${{ github.workspace }}/release/${{ steps.setup.outputs.pluginName }}-${{ steps.setup.outputs.pluginVersion }}-presets*.*

@@ -25,6 +25,17 @@ if ( $PSVersionTable.PSVersion -lt '7.0.0' ) {
     exit 2
 }
 
+function BuildClient {
+    Log-Group "Configuring ${ProductName}-client..."
+    Invoke-External cmake -S "${ProjectRoot}/client" -B "${ProjectRoot}/client_build" -A $Target -DCMAKE_BUILD_TYPE=$Configuration
+
+    Log-Group "Building ${ProductName}-client..."
+    Invoke-External cmake --build "${ProjectRoot}/client_build" --config $Configuration --parallel
+
+    Log-Group "Installing ${ProductName}-client..."
+    Invoke-External cmake --install "${ProjectRoot}/client_build" --config $Configuration --prefix "${ProjectRoot}/release/${Configuration}"
+}
+
 function Build {
     trap {
         Pop-Location -Stack BuildTemp -ErrorAction 'SilentlyContinue'
@@ -94,6 +105,8 @@ function Build {
 
         Log-Group "Building ${ProductName}..."
         Invoke-External cmake @CmakeBuildArgs
+
+        BuildClient
     }
     Log-Group "Install ${ProductName}..."
     Invoke-External cmake @CmakeInstallArgs
