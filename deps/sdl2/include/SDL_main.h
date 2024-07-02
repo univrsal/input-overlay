@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2022 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -262,6 +262,13 @@ extern DECLSPEC int SDLCALL SDL_UIKitRunApp(int argc, char *argv[], SDL_main_fun
  * \since This function is available since SDL 2.24.0.
  */
 extern DECLSPEC int SDLCALL SDL_GDKRunApp(SDL_main_func mainFunction, void *reserved);
+
+/**
+ * Callback from the application to let the suspend continue.
+ *
+ * \since This function is available since SDL 2.28.0.
+ */
+extern DECLSPEC void SDLCALL SDL_GDKSuspendComplete(void);
 
 #endif /* __GDK__ */
 

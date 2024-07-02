@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2022 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -169,13 +169,13 @@ typedef void (SDLCALL * SDL_AudioCallback) (void *userdata, Uint8 * stream,
  *  The calculated values in this structure are calculated by SDL_OpenAudio().
  *
  *  For multi-channel audio, the default SDL channel mapping is:
- *  2:  FL FR                       (stereo)
- *  3:  FL FR LFE                   (2.1 surround)
- *  4:  FL FR BL BR                 (quad)
- *  5:  FL FR LFE BL BR             (4.1 surround)
- *  6:  FL FR FC LFE SL SR          (5.1 surround - last two can also be BL BR)
- *  7:  FL FR FC LFE BC SL SR       (6.1 surround)
- *  8:  FL FR FC LFE BL BR SL SR    (7.1 surround)
+ *  2:  FL  FR                          (stereo)
+ *  3:  FL  FR LFE                      (2.1 surround)
+ *  4:  FL  FR  BL  BR                  (quad)
+ *  5:  FL  FR LFE  BL  BR              (4.1 surround)
+ *  6:  FL  FR  FC LFE  SL  SR          (5.1 surround - last two can also be BL BR)
+ *  7:  FL  FR  FC LFE  BC  SL  SR      (6.1 surround)
+ *  8:  FL  FR  FC LFE  BL  BR  SL  SR  (7.1 surround)
  */
 typedef struct SDL_AudioSpec
 {

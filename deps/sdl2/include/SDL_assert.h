@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2022 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -55,6 +55,8 @@ assert can have unique static variables associated with it.
     #define SDL_TriggerBreakpoint() __builtin_debugtrap()
 #elif ( (!defined(__NACL__)) && ((defined(__GNUC__) || defined(__clang__)) && (defined(__i386__) || defined(__x86_64__))) )
     #define SDL_TriggerBreakpoint() __asm__ __volatile__ ( "int $3\n\t" )
+#elif (defined(__GNUC__) || defined(__clang__)) && defined(__riscv)
+    #define SDL_TriggerBreakpoint() __asm__ __volatile__ ( "ebreak\n\t" )
 #elif ( defined(__APPLE__) && (defined(__arm64__) || defined(__aarch64__)) )  /* this might work on other ARM targets, but this is a known quantity... */
     #define SDL_TriggerBreakpoint() __asm__ __volatile__ ( "brk #22\n\t" )
 #elif defined(__APPLE__) && defined(__arm__)
@@ -125,12 +127,10 @@ typedef struct SDL_AssertData
     const struct SDL_AssertData *next;
 } SDL_AssertData;
 
-#if (SDL_ASSERT_LEVEL > 0)
-
 /* Never call this directly. Use the SDL_assert* macros. */
 extern DECLSPEC SDL_AssertState SDLCALL SDL_ReportAssertion(SDL_AssertData *,
-                                                             const char *,
-                                                             const char *, int)
+                                                            const char *,
+                                                            const char *, int)
 #if defined(__clang__)
 #if __has_feature(attribute_analyzer_noreturn)
 /* this tells Clang's static analysis that we're a custom assert function,
@@ -151,9 +151,7 @@ extern DECLSPEC SDL_AssertState SDLCALL SDL_ReportAssertion(SDL_AssertData *,
 #define SDL_enabled_assert(condition) \
     do { \
         while ( !(condition) ) { \
-            static struct SDL_AssertData sdl_assert_data = { \
-                0, 0, #condition, 0, 0, 0, 0 \
-            }; \
+            static struct SDL_AssertData sdl_assert_data = { 0, 0, #condition, 0, 0, 0, 0 }; \
             const SDL_AssertState sdl_assert_state = SDL_ReportAssertion(&sdl_assert_data, SDL_FUNCTION, SDL_FILE, SDL_LINE); \
             if (sdl_assert_state == SDL_ASSERTION_RETRY) { \
                 continue; /* go again. */ \
@@ -163,8 +161,6 @@ extern DECLSPEC SDL_AssertState SDLCALL SDL_ReportAssertion(SDL_AssertData *,
             break; /* not retrying. */ \
         } \
     } while (SDL_NULL_WHILE_LOOP_CONDITION)
-
-#endif  /* enabled assertions support code */
 
 /* Enable various levels of assertions. */
 #if SDL_ASSERT_LEVEL == 0   /* assertions disabled */

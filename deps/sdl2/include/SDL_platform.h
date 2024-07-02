@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2022 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -73,7 +73,13 @@
 #if defined(__APPLE__)
 /* lets us know what version of Mac OS X we're compiling on */
 #include <AvailabilityMacros.h>
+#ifndef __has_extension /* Older compilers don't support this */
+#define __has_extension(x) 0
 #include <TargetConditionals.h>
+#undef __has_extension
+#else
+#include <TargetConditionals.h>
+#endif
 
 /* Fix building with older SDKs that don't define these
    See this for more information:
@@ -166,6 +172,12 @@
 #define WINAPI_FAMILY_WINRT 0
 #endif /* HAVE_WINAPIFAMILY_H */
 
+#if (HAVE_WINAPIFAMILY_H) && defined(WINAPI_FAMILY_PHONE_APP)
+#define SDL_WINAPI_FAMILY_PHONE (WINAPI_FAMILY == WINAPI_FAMILY_PHONE_APP)
+#else
+#define SDL_WINAPI_FAMILY_PHONE 0
+#endif
+
 #if WINAPI_FAMILY_WINRT
 #undef __WINRT__
 #define __WINRT__ 1
@@ -193,8 +205,10 @@
 #undef __GDK__
 #define __GDK__ 1
 #endif
-#if defined(__PSP__)
+#if defined(__PSP__) || defined(__psp__)
+#ifdef __PSP__
 #undef __PSP__
+#endif
 #define __PSP__ 1
 #endif
 #if defined(PS2)

@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2022 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -73,7 +73,8 @@ typedef enum
     SDL_CONTROLLER_TYPE_NVIDIA_SHIELD,
     SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_JOYCON_LEFT,
     SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_JOYCON_RIGHT,
-    SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_JOYCON_PAIR
+    SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_JOYCON_PAIR,
+    SDL_CONTROLLER_TYPE_MAX
 } SDL_GameControllerType;
 
 typedef enum
@@ -524,6 +525,20 @@ extern DECLSPEC Uint16 SDLCALL SDL_GameControllerGetFirmwareVersion(SDL_GameCont
 extern DECLSPEC const char * SDLCALL SDL_GameControllerGetSerial(SDL_GameController *gamecontroller);
 
 /**
+ * Get the Steam Input handle of an opened controller, if available.
+ *
+ * Returns an InputHandle_t for the controller that can be used with Steam Input API:
+ * https://partner.steamgames.com/doc/api/ISteamInput
+ *
+ * \param gamecontroller the game controller object to query.
+ * \returns the gamepad handle, or 0 if unavailable.
+ *
+ * \since This function is available since SDL 2.30.0.
+ */
+extern DECLSPEC Uint64 SDLCALL SDL_GameControllerGetSteamHandle(SDL_GameController *gamecontroller);
+
+
+/**
  * Check if a controller has been opened and is currently connected.
  *
  * \param gamecontroller a game controller identifier previously returned by
@@ -598,7 +613,9 @@ extern DECLSPEC void SDLCALL SDL_GameControllerUpdate(void);
  *  and are centered within ~8000 of zero, though advanced UI will allow users to set
  *  or autodetect the dead zone, which varies between controllers.
  *
- *  Trigger axis values range from 0 to SDL_JOYSTICK_AXIS_MAX.
+ *  Trigger axis values range from 0 (released) to SDL_JOYSTICK_AXIS_MAX
+ *  (fully pressed) when reported by SDL_GameControllerGetAxis(). Note that this is not the
+ *  same range that will be reported by the lower-level SDL_GetJoystickAxis().
  */
 typedef enum
 {
@@ -687,8 +704,13 @@ SDL_GameControllerHasAxis(SDL_GameController *gamecontroller, SDL_GameController
  *
  * The axis indices start at index 0.
  *
- * The state is a value ranging from -32768 to 32767. Triggers, however, range
- * from 0 to 32767 (they never return a negative value).
+ * For thumbsticks, the state is a value ranging from -32768 (up/left)
+ * to 32767 (down/right).
+ *
+ * Triggers range from 0 when released to 32767 when fully pressed, and
+ * never return a negative value. Note that this differs from the value
+ * reported by the lower-level SDL_GetJoystickAxis(), which normally uses
+ * the full range.
  *
  * \param gamecontroller a game controller
  * \param axis an axis index (one of the SDL_GameControllerAxis values)
@@ -724,10 +746,10 @@ typedef enum
     SDL_CONTROLLER_BUTTON_DPAD_LEFT,
     SDL_CONTROLLER_BUTTON_DPAD_RIGHT,
     SDL_CONTROLLER_BUTTON_MISC1,    /* Xbox Series X share button, PS5 microphone button, Nintendo Switch Pro capture button, Amazon Luna microphone button */
-    SDL_CONTROLLER_BUTTON_PADDLE1,  /* Xbox Elite paddle P1 */
-    SDL_CONTROLLER_BUTTON_PADDLE2,  /* Xbox Elite paddle P3 */
-    SDL_CONTROLLER_BUTTON_PADDLE3,  /* Xbox Elite paddle P2 */
-    SDL_CONTROLLER_BUTTON_PADDLE4,  /* Xbox Elite paddle P4 */
+    SDL_CONTROLLER_BUTTON_PADDLE1,  /* Xbox Elite paddle P1 (upper left, facing the back) */
+    SDL_CONTROLLER_BUTTON_PADDLE2,  /* Xbox Elite paddle P3 (upper right, facing the back) */
+    SDL_CONTROLLER_BUTTON_PADDLE3,  /* Xbox Elite paddle P2 (lower left, facing the back) */
+    SDL_CONTROLLER_BUTTON_PADDLE4,  /* Xbox Elite paddle P4 (lower right, facing the back) */
     SDL_CONTROLLER_BUTTON_TOUCHPAD, /* PS4/PS5 touchpad button */
     SDL_CONTROLLER_BUTTON_MAX
 } SDL_GameControllerButton;
