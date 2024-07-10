@@ -1,5 +1,7 @@
 #include "gamepad_hook_helper.hpp"
 #include "../util/log.h"
+#include "../util/config.hpp"
+#include "../network/websocket_server.hpp"
 #include <input_data.hpp>
 #include <thread>
 
@@ -40,9 +42,7 @@ inline void sdl_init()
     SDL_SetHint(SDL_HINT_JOYSTICK_ALLOW_BACKGROUND_EVENTS, "1");
     SDL_SetHint(SDL_HINT_LINUX_JOYSTICK_DEADZONES, "1");
 
-
-    if (SDL_WasInit(0) == INIT_FLAGS_FOR_SDL ||
-        SDL_Init(INIT_FLAGS_FOR_SDL) < 0) {
+    if (SDL_WasInit(0) == INIT_FLAGS_FOR_SDL || SDL_Init(INIT_FLAGS_FOR_SDL) < 0) {
         berr("Couldn't initialize SDL: %s\n", SDL_GetError());
         return;
     }
@@ -152,6 +152,8 @@ void gamepads::event_loop()
 
         /* Process all currently pending events */
         while (SDL_PeepEvents(&event, 1, SDL_GETEVENT, SDL_FIRSTEVENT, SDL_LASTEVENT) == 1) {
+            if (!io_config::io_window_filters.input_blocked())
+                wss::dispatch_sdl_event(&event, "local", &local_data::data);
             switch (event.type) {
             case SDL_CONTROLLERDEVICEADDED:
                 char fmt[512];
