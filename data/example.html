@@ -19,10 +19,10 @@
         function on_data(e) {
             console.log(e.data);
             l.insertAdjacentHTML("beforeend", `<li>${e.data}</li>`);
-            // Only keep last 50 entries
+            // Only keep last 10 entries
             if (!require_clear) {
                 count++;
-                if (count > 50) require_clear = true;
+                if (count > 10) require_clear = true;
             } else {
                 l.children[0].remove();
             }
@@ -31,7 +31,6 @@
         function start_websocket() {
             var ws = new WebSocket("ws://localhost:16899/");
 
-            ws.onmessage = on_data;
             ws.onmessage = on_data;
             ws.onerror = (e) => console.log('WebSocket error: ' + e);
 
