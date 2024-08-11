@@ -80,13 +80,17 @@ void start()
     */
 
     state = true;
-    local_gamepads = new gamepads;
-    if (!WIN32)
+    if (!WIN32) {
         sdl_init();
+        local_gamepads = new gamepads;
+    }
 
     sdl_poll_thread = std::thread([] {
-        if (WIN32)
+        if (WIN32) {
             sdl_init();
+            local_gamepads = new gamepads;
+        }
+
         local_gamepads->event_loop();
         if (WIN32)
             sdl_deinit();
