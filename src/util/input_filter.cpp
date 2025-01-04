@@ -32,8 +32,8 @@ void input_filter::read_from_config()
     m_regex = CGET_BOOL(S_REGEX);
     m_whitelist = CGET_INT(S_FILTER_MODE) == 0;
     QJsonDocument j;
-    
-    char* path = obs_module_config_path("filters.json");
+
+    char *path = obs_module_config_path("filters.json");
 
     if (!util_open_json(utf8_to_qt(path), j)) {
         berr("Couldn't load filters.json from plugin config, trying legacy location");
@@ -65,7 +65,7 @@ void input_filter::write_to_config()
     for (const auto &filter : m_filters)
         arr.append(filter);
     j.setArray(arr);
-    char* path = obs_module_config_path("filters.json");
+    char *path = obs_module_config_path("filters.json");
     util_write_json(utf8_to_qt(path), j);
     io_config::filter_mutex.unlock();
     bfree(path);

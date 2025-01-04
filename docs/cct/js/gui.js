@@ -20,7 +20,8 @@ var current_type = -1;
 var is_editing_element = false;
 var selected_element = null;
 
-function apply_settings() {
+function apply_settings()
+{
     if (cfg !== null && cfg.selected_elements.length > 0) {
 
         if (!cfg.is_name_unique($("#selected-element-id").val(), cfg.selected_elements[0])) {
@@ -32,7 +33,7 @@ function apply_settings() {
             // We only apply these settings if a single element is selected
             let pos = new vec2($("#selected-element-x").val(), $("#selected-element-y").val());
             let dim = new r4($("#selected-element-u").val(), $("#selected-element-v").val(),
-                $("#selected-element-w").val(), $("#selected-element-h").val());
+                             $("#selected-element-w").val(), $("#selected-element-h").val());
 
             dim.validate();
             pos.validate();
@@ -48,33 +49,39 @@ function apply_settings() {
     }
 }
 
-function new_type_dropdown() {
+function new_type_dropdown()
+{
     document.getElementById("type-dropdown").classList.toggle("show");
 }
 
-function show_property(prop) {
-    prop.label.css({ "display": "flex" });
+function show_property(prop)
+{
+    prop.label.css({"display": "flex"});
     if (prop.div)
-        prop.div.css({ "display": "flex" });
+        prop.div.css({"display": "flex"});
 }
 
-function hide_property(prop) {
+function hide_property(prop)
+{
     if (prop.div)
-        prop.label.css({ "display": "none" });
+        prop.label.css({"display": "none"});
     if (prop.div)
-        prop.div.css({ "display": "none" });
+        prop.div.css({"display": "none"});
 }
 
-function set_description(desc_element, text) {
+function set_description(desc_element, text)
+{
     desc_element.label[0].innerHTML = '<p>' + text + '</p>';
     show_property(desc_element)
 }
 
-function get_property(type) {
-    return { label: $('#editor-element-' + type + '-label'), div: $('#editor-element-' + type + '-container') };
+function get_property(type)
+{
+    return {label: $('#editor-element-' + type + '-label'), div: $('#editor-element-' + type + '-container')};
 }
 
-function setup_editor(type) {
+function setup_editor(type)
+{
     let analog_stick_side = get_property('analog-stick-side');
     let analog_stick_radius = get_property('analog-stick-radius');
     let keycode = get_property('keycode');
@@ -96,38 +103,38 @@ function setup_editor(type) {
     hide_property(record);
 
     switch (type) {
-        case 'gamepad_button':
-        case 'mouse_button':
-        case 'keyboard_button': {
-            show_property(keycode);
-            show_property(record);
-            break;
-        }
-        case 'analog_stick': {
-            show_property(analog_stick_radius);
-            show_property(analog_stick_side);
-            break;
-        }
-        case 'trigger': {
-            show_property(trigger_dir);
-            show_property(analog_stick_side);
-            show_property(button);
-            set_description(description, `The trigger can either be a button, meaning that it'll
+    case 'gamepad_button':
+    case 'mouse_button':
+    case 'keyboard_button': {
+        show_property(keycode);
+        show_property(record);
+        break;
+    }
+    case 'analog_stick': {
+        show_property(analog_stick_radius);
+        show_property(analog_stick_side);
+        break;
+    }
+    case 'trigger': {
+        show_property(trigger_dir);
+        show_property(analog_stick_side);
+        show_property(button);
+        set_description(description, `The trigger can either be a button, meaning that it'll
                 only be either on or off, or it can display the position it is in by filling up
                 in a direction.`);
-            break;
-        }
-        case 'mouse_wheel': {
-            set_description(description, `The mouse wheel expects the following three textures 
+        break;
+    }
+    case 'mouse_wheel': {
+        set_description(description, `The mouse wheel expects the following three textures 
                 to be next to eachother in the atlas:<br>
                 &nbsp;- neutral<br>
                 &nbsp;- clicked<br>
                 &nbsp;- scrolling up<br>
                 &nbsp;- scrolling down<br>You only have to select the first one.`);
-            break;
-        }
-        case 'dpad': {
-            set_description(description, `The dpad stick expects the following textures
+        break;
+    }
+    case 'dpad': {
+        set_description(description, `The dpad stick expects the following textures
         to be next to eachother in the atlas:<br>
         &nbsp;- neutral<br>
         &nbsp;- moved to the left<br>
@@ -139,18 +146,18 @@ function setup_editor(type) {
         &nbsp;- moved to bottom left<br>
         &nbsp;- moved to bottom right<br>
         You only have to select the first one.`);
-            break;
-        }
-        case 'mouse_movement': {
-            show_property(movement_type);
-            set_description(description,
-                `Mouse movement can be visualized in two ways. Either through 'Point' which will rotate an image
+        break;
+    }
+    case 'mouse_movement': {
+        show_property(movement_type);
+        set_description(description,
+                        `Mouse movement can be visualized in two ways. Either through 'Point' which will rotate an image
         in the direction the mouse is moved, for example an arrow which points up if you move the mouse up. 'Move' move an image in the direction
         the mouse is moved within a certain radius.`);
-            break;
-        }
-        case 'player_id': {
-            set_description(description, `Displays the controller id from one to four. Usually in the order they
+        break;
+    }
+    case 'player_id': {
+        set_description(description, `Displays the controller id from one to four. Usually in the order they
             were connected in. The following textures have to be next to eachother in the atlas:<br>
             &nbsp;- Player 1<br>
             &nbsp;- Player 2<br>
@@ -158,12 +165,13 @@ function setup_editor(type) {
             &nbsp;- Player 4<br>
             &nbsp;- <a href="https://i.imgur.com/LdH3nnz.png" target="_tab">Guide</a> pressed<br>
             You only have to select the first one.<br>`);
-            break;
-        }
+        break;
+    }
     }
 }
 
-function setup() {
+function setup()
+{
     if (!atlas) {
         alert("Please load a texture first");
         return;
@@ -192,7 +200,8 @@ function setup() {
     cfg.enabled = true;
 }
 
-function open_editor(element_type, is_editing) {
+function open_editor(element_type, is_editing)
+{
     let d = $("#edit-element-dialog")[0];
     let c = $('#main-canvas-container')[0];
     let e = $('#element-dialog')[0];
@@ -220,7 +229,7 @@ function open_editor(element_type, is_editing) {
     setup_editor(element_type);
     if (cfg.data.default_width + cfg.data.default_height > 0) {
         edit.selection_rect = new r4($("#editor-element-u").val(), $("#editor-element-v").val(), cfg.data.default_width,
-            cfg.data.default_height);
+                                     cfg.data.default_height);
         edit.update_selection_values();
     }
     if (d !== null) {
@@ -237,7 +246,8 @@ function open_editor(element_type, is_editing) {
     editor_painter.resize_canvas();
 }
 
-function close_editor(handler) {
+function close_editor(handler)
+{
     main_painter.enabled = true;
     cfg.enabled = true;
 
@@ -257,7 +267,8 @@ function close_editor(handler) {
     }
 }
 
-function apply_editor() {
+function apply_editor()
+{
     if (!cfg.is_name_unique($("#editor-element-id").val(), selected_element)) {
         alert("Element id isn't unique");
         return;
@@ -267,7 +278,7 @@ function apply_editor() {
         selected_element.read_data_from_gui();
     } else {
         // basic json
-        let json = { type: current_type, pos: [0, 0] };
+        let json = {type: current_type, pos: [0, 0]};
 
         let new_element = create_element(json);
         new_element.read_data_from_gui();
@@ -276,11 +287,12 @@ function apply_editor() {
     close_editor();
 }
 
-function download_config() {
+function download_config()
+{
     download_json(cfg_name, cfg.write_to_json());
 }
 
-$(function () {
+$(function() {
     $(".coord").on("keydown", e => {
         if (!e)
             var e = window.event;
@@ -321,8 +333,8 @@ $(function () {
         let e = numerics[i];
         $(e).on('keydown', e => {
             // only allow numbers
-            if (!((e.keyCode >= 48 && e.keyCode <= 57) || (e.keyCode >= 96 && e.keyCode <= 105) ||
-                e.keyCode === 8 || e.keyCode === 46 || e.keyCode === 37 || e.keyCode === 39)) {
+            if (!((e.keyCode >= 48 && e.keyCode <= 57) || (e.keyCode >= 96 && e.keyCode <= 105) || e.keyCode === 8 ||
+                  e.keyCode === 46 || e.keyCode === 37 || e.keyCode === 39)) {
                 e.preventDefault();
             }
         });
