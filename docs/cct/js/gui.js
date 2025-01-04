@@ -165,6 +165,7 @@ function setup_editor(type) {
     }
     case 'mouse_movement': {
       show_property(movement_type);
+      show_property(analog_stick_radius);
       set_description(
         description,
         `Mouse movement can be visualized in two ways. Either through 'Point' which will rotate an image

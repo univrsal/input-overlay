@@ -645,11 +645,15 @@ class mouse_movement extends texture {
   read_data_from_gui() {
     super.read_data_from_gui();
     this.data.mouse_type = parseInt($('#editor-element-movement-type').val());
+    this.data.mouse_radius = parseInt(
+      $('#editor-element-analog-stick-radius').val()
+    );
   }
 
   write_data_to_gui() {
     super.write_data_to_gui();
     $('#editor-element-movement-type').val(this.data.mouse_type);
+    $('#editor-element-analog-stick-radius').val(this.data.mouse_radius);
   }
 }
 element_map.set(element_types.KEYBOARD_KEY, (json) => {
