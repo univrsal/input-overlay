@@ -34,7 +34,7 @@ In the example above:
   - `font-weight: bold;` - Sets text to bold.
   - `font-style: italic;` - Sets text to italic.
   - `background-color: rgba(0, 0, 0, 0);` - Represents red, green, blue, and alpha. Makes the browser's background transparent (which is what you mostly want in the scene).
-- The `.key { ... }` CSS selector: means that all the styles indicated inside the braces are applied to **all elements that has `class="key" in HTML` (the rounded rectangle container for keys)**.
+- The `span.key, span.repeat { ... }` CSS selector: means that all the styles indicated inside the braces are applied to **all elements that has `class="key" or class="repeat" in HTML` (the rounded rectangle container for keys and round repetition counter)**.
   - Note the `!important` after the value of `background-color`. This is sometimes required to override the styles applied within the HTML, and to use this value instead.
 
 ### Hide Specific Keys
@@ -128,8 +128,14 @@ p.key-combination > * {
 ```
 In the example above, `0.5em` is `48px(body:font-size) * 0.5`. Think of it like percentage of the font-size.
 
-### Customize the background of keys
-As stated in the [Basic Styling](#basic-styling), use the `.key` selector to select and style the container of the keys.
+### Customize the background of keys and repeat counters
+As stated in the [Basic Styling](#basic-styling), use the `span.key, span.repeat` selector to select and style the container of the keys and repetition counters.
+
+### Align to the top
+If set to true, keys are top-aligned to the browser source and new keys are added at the top, instead of the bottom.
+```js
+var HISTORY_TOP_ALIGN = true;
+```
 
 ### Change separator character
 Change the character used in between keys.
@@ -141,4 +147,10 @@ var SEPARATOR = "+"; // Change this value in HTML <script>
 To not display a key repeatedly while it's held:
 ```js
 var ONLY_INITIAL_PRESS = true; // Default is false
+```
+
+### Repetition counter interval
+To distinguish between quick consecutive repeated inputs and slow ones, there's a repeat timeout, after which the next repeated input is displayed as a new input and the repetition count is reset. Duration is set in milliseconds (e.g., 1500 = 1.5 seconds).
+```js
+var REPEAT_TIMEOUT = 1500;
 ```

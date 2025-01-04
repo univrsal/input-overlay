@@ -1,0 +1,105 @@
+{
+    "default_width": 800,
+    "default_height": 377,
+    "space_h": 0,
+    "space_v": 0,
+    "flags": 4,
+    "overlay_width": 800,
+    "overlay_height": 377,
+    "elements": [
+        {
+            "type": 0,
+            "pos": [
+                0,
+                0
+            ],
+            "id": "Controller",
+            "z_level": "0",
+            "mapping": [
+                1,
+                1,
+                800,
+                377
+            ]
+        },
+        {
+            "type": 2,
+            "pos": [
+                276,
+                240
+            ],
+            "id": "select",
+            "z_level": 0,
+            "mapping": [
+                343,
+                380,
+                73,
+                28
+            ],
+            "code": 4
+        },
+        {
+            "type": 2,
+            "pos": [
+                388,
+                240
+            ],
+            "id": "start",
+            "z_level": 0,
+            "mapping": [
+                419,
+                381,
+                72,
+                27
+            ],
+            "code": 6
+        },
+        {
+            "type": 2,
+            "pos": [
+                542,
+                214
+            ],
+            "id": "B",
+            "z_level": 0,
+            "mapping": [
+                169,
+                381,
+                84,
+                84
+            ],
+            "code": 0
+        },
+        {
+            "type": 2,
+            "pos": [
+                644,
+                214
+            ],
+            "id": "A",
+            "z_level": 0,
+            "mapping": [
+                256,
+                381,
+                84,
+                84
+            ],
+            "code": 1
+        },
+        {
+            "type": 8,
+            "pos": [
+                51,
+                127
+            ],
+            "id": "D-Pad",
+            "z_level": "0",
+            "mapping": [
+                1,
+                555,
+                155,
+                161
+            ]
+        }
+    ]
+}

@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2022 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -52,7 +52,7 @@
 
 /* This is a set of defines to configure the SDL features */
 
-#if !defined(_STDINT_H_) && (!defined(HAVE_STDINT_H) || !_HAVE_STDINT_H)
+#if !defined(HAVE_STDINT_H) && !defined(_STDINT_H_)
 /* Most everything except Visual Studio 2008 and earlier has stdint.h now */
 #if defined(_MSC_VER) && (_MSC_VER < 1600)
 typedef signed __int8 int8_t;
@@ -99,8 +99,10 @@ typedef unsigned int uintptr_t;
 #define HAVE_D3D11_H 1
 #define HAVE_ROAPI_H 1
 #endif
-#if defined(WDK_NTDDI_VERSION) && WDK_NTDDI_VERSION > 0x0A000008 /* 10.0.19041.0 */
+#if defined(__has_include)
+#if __has_include(<d3d12.h>) && __has_include(<d3d12sdklayers.h>)
 #define HAVE_D3D12_H 1
+#endif
 #endif
 #if defined(_WIN32_MAXVER) && _WIN32_MAXVER >= 0x0603  /* Windows 8.1 SDK */
 #define HAVE_SHELLSCALINGAPI_H 1

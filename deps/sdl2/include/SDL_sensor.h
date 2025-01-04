@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2022 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -84,7 +84,7 @@ typedef enum
  * The accelerometer returns the current acceleration in SI meters per
  * second squared. This measurement includes the force of gravity, so
  * a device at rest will have an value of SDL_STANDARD_GRAVITY away
- * from the center of the earth.
+ * from the center of the earth, which is a positive Y value.
  *
  * values[0]: Acceleration on the x axis
  * values[1]: Acceleration on the y axis

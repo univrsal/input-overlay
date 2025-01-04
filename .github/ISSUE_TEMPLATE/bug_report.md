@@ -23,7 +23,7 @@ If applicable, add screenshots to help explain your problem.
 
 **Additional information:**
 - Plugin version
-- Full OBS Studio log (https://cdn.discordapp.com/attachments/376042662580715521/768461567347261470/unknown.png)
+- Full OBS Studio log (https://up.vrsal.cc/selif/p1dppvig.png)
 
 **Additional context**
 Add any other context about the problem here.

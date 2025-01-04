@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2022 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -29,12 +29,6 @@
 #define SDL_stdinc_h_
 
 #include "SDL_config.h"
-
-#ifdef __APPLE__
-#ifndef _DARWIN_C_SOURCE
-#define _DARWIN_C_SOURCE 1 /* for memset_pattern4() */
-#endif
-#endif
 
 #ifdef HAVE_SYS_TYPES_H
 #include <sys/types.h>
@@ -85,7 +79,9 @@
    Visual Studio.  See http://msdn.microsoft.com/en-us/library/4hwaceh6.aspx
    for more information.
 */
-#  define _USE_MATH_DEFINES
+#  ifndef _USE_MATH_DEFINES
+#    define _USE_MATH_DEFINES
+#  endif
 # endif
 # include <math.h>
 #endif
@@ -111,7 +107,7 @@
 # elif defined(__MRC__)
 void *alloca(unsigned);
 # else
-char *alloca();
+void *alloca(size_t);
 # endif
 #endif
 
@@ -257,44 +253,44 @@ typedef uint64_t Uint64;
  * <stdint.h> should define these but this is not true all platforms.
  * (for example win32) */
 #ifndef SDL_PRIs64
-#ifdef PRIs64
-#define SDL_PRIs64 PRIs64
-#elif defined(__WIN32__) || defined(__GDK__)
+#if defined(__WIN32__) || defined(__GDK__)
 #define SDL_PRIs64 "I64d"
-#elif defined(__LINUX__) && defined(__LP64__)
+#elif defined(PRIs64)
+#define SDL_PRIs64 PRIs64
+#elif defined(__LP64__) && !defined(__APPLE__)
 #define SDL_PRIs64 "ld"
 #else
 #define SDL_PRIs64 "lld"
 #endif
 #endif
 #ifndef SDL_PRIu64
-#ifdef PRIu64
-#define SDL_PRIu64 PRIu64
-#elif defined(__WIN32__) || defined(__GDK__)
+#if defined(__WIN32__) || defined(__GDK__)
 #define SDL_PRIu64 "I64u"
-#elif defined(__LINUX__) && defined(__LP64__)
+#elif defined(PRIu64)
+#define SDL_PRIu64 PRIu64
+#elif defined(__LP64__) && !defined(__APPLE__)
 #define SDL_PRIu64 "lu"
 #else
 #define SDL_PRIu64 "llu"
 #endif
 #endif
 #ifndef SDL_PRIx64
-#ifdef PRIx64
-#define SDL_PRIx64 PRIx64
-#elif defined(__WIN32__) || defined(__GDK__)
+#if defined(__WIN32__) || defined(__GDK__)
 #define SDL_PRIx64 "I64x"
-#elif defined(__LINUX__) && defined(__LP64__)
+#elif defined(PRIx64)
+#define SDL_PRIx64 PRIx64
+#elif defined(__LP64__) && !defined(__APPLE__)
 #define SDL_PRIx64 "lx"
 #else
 #define SDL_PRIx64 "llx"
 #endif
 #endif
 #ifndef SDL_PRIX64
-#ifdef PRIX64
-#define SDL_PRIX64 PRIX64
-#elif defined(__WIN32__) || defined(__GDK__)
+#if defined(__WIN32__) || defined(__GDK__)
 #define SDL_PRIX64 "I64X"
-#elif defined(__LINUX__) && defined(__LP64__)
+#elif defined(PRIX64)
+#define SDL_PRIX64 PRIX64
+#elif defined(__LP64__) && !defined(__APPLE__)
 #define SDL_PRIX64 "lX"
 #else
 #define SDL_PRIX64 "llX"
@@ -340,7 +336,9 @@ typedef uint64_t Uint64;
 #define SDL_PRINTF_FORMAT_STRING
 #define SDL_SCANF_FORMAT_STRING
 #define SDL_PRINTF_VARARG_FUNC( fmtargnumber )
+#define SDL_PRINTF_VARARG_FUNCV( fmtargnumber )
 #define SDL_SCANF_VARARG_FUNC( fmtargnumber )
+#define SDL_SCANF_VARARG_FUNCV( fmtargnumber )
 #else
 #if defined(_MSC_VER) && (_MSC_VER >= 1600) /* VS 2010 and above */
 #include <sal.h>
@@ -366,10 +364,14 @@ typedef uint64_t Uint64;
 #endif
 #if defined(__GNUC__)
 #define SDL_PRINTF_VARARG_FUNC( fmtargnumber ) __attribute__ (( format( __printf__, fmtargnumber, fmtargnumber+1 )))
+#define SDL_PRINTF_VARARG_FUNCV( fmtargnumber ) __attribute__(( format( __printf__, fmtargnumber, 0 )))
 #define SDL_SCANF_VARARG_FUNC( fmtargnumber ) __attribute__ (( format( __scanf__, fmtargnumber, fmtargnumber+1 )))
+#define SDL_SCANF_VARARG_FUNCV( fmtargnumber ) __attribute__(( format( __scanf__, fmtargnumber, 0 )))
 #else
 #define SDL_PRINTF_VARARG_FUNC( fmtargnumber )
+#define SDL_PRINTF_VARARG_FUNCV( fmtargnumber )
 #define SDL_SCANF_VARARG_FUNC( fmtargnumber )
+#define SDL_SCANF_VARARG_FUNCV( fmtargnumber )
 #endif
 #endif /* SDL_DISABLE_ANALYZE_MACROS */
 
@@ -528,9 +530,7 @@ extern DECLSPEC void *SDLCALL SDL_memset(SDL_OUT_BYTECAP(len) void *dst, int c, 
 /* Note that memset() is a byte assignment and this is a 32-bit assignment, so they're not directly equivalent. */
 SDL_FORCE_INLINE void SDL_memset4(void *dst, Uint32 val, size_t dwords)
 {
-#ifdef __APPLE__
-    memset_pattern4(dst, &val, dwords * 4);
-#elif defined(__GNUC__) && defined(__i386__)
+#if defined(__GNUC__) && defined(__i386__)
     int u0, u1, u2;
     __asm__ __volatile__ (
         "cld \n\t"
@@ -609,11 +609,11 @@ extern DECLSPEC int SDLCALL SDL_strcasecmp(const char *str1, const char *str2);
 extern DECLSPEC int SDLCALL SDL_strncasecmp(const char *str1, const char *str2, size_t len);
 
 extern DECLSPEC int SDLCALL SDL_sscanf(const char *text, SDL_SCANF_FORMAT_STRING const char *fmt, ...) SDL_SCANF_VARARG_FUNC(2);
-extern DECLSPEC int SDLCALL SDL_vsscanf(const char *text, const char *fmt, va_list ap);
+extern DECLSPEC int SDLCALL SDL_vsscanf(const char *text, SDL_SCANF_FORMAT_STRING const char *fmt, va_list ap) SDL_SCANF_VARARG_FUNCV(2);
 extern DECLSPEC int SDLCALL SDL_snprintf(SDL_OUT_Z_CAP(maxlen) char *text, size_t maxlen, SDL_PRINTF_FORMAT_STRING const char *fmt, ... ) SDL_PRINTF_VARARG_FUNC(3);
-extern DECLSPEC int SDLCALL SDL_vsnprintf(SDL_OUT_Z_CAP(maxlen) char *text, size_t maxlen, const char *fmt, va_list ap);
+extern DECLSPEC int SDLCALL SDL_vsnprintf(SDL_OUT_Z_CAP(maxlen) char *text, size_t maxlen, SDL_PRINTF_FORMAT_STRING const char *fmt, va_list ap) SDL_PRINTF_VARARG_FUNCV(3);
 extern DECLSPEC int SDLCALL SDL_asprintf(char **strp, SDL_PRINTF_FORMAT_STRING const char *fmt, ...) SDL_PRINTF_VARARG_FUNC(2);
-extern DECLSPEC int SDLCALL SDL_vasprintf(char **strp, const char *fmt, va_list ap);
+extern DECLSPEC int SDLCALL SDL_vasprintf(char **strp, SDL_PRINTF_FORMAT_STRING const char *fmt, va_list ap) SDL_PRINTF_VARARG_FUNCV(2);
 
 #ifndef HAVE_M_PI
 #ifndef M_PI
@@ -694,8 +694,8 @@ extern DECLSPEC size_t SDLCALL SDL_iconv(SDL_iconv_t cd, const char **inbuf,
                                          size_t * outbytesleft);
 
 /**
- * This function converts a string between encodings in one pass, returning a
- * string that must be freed with SDL_free() or NULL on error.
+ * This function converts a buffer or string between encodings in one pass,
+ * returning a string that must be freed with SDL_free() or NULL on error.
  *
  * \since This function is available since SDL 2.0.0.
  */
@@ -704,8 +704,8 @@ extern DECLSPEC char *SDLCALL SDL_iconv_string(const char *tocode,
                                                const char *inbuf,
                                                size_t inbytesleft);
 #define SDL_iconv_utf8_locale(S)    SDL_iconv_string("", "UTF-8", S, SDL_strlen(S)+1)
-#define SDL_iconv_utf8_ucs2(S)      (Uint16 *)SDL_iconv_string("UCS-2-INTERNAL", "UTF-8", S, SDL_strlen(S)+1)
-#define SDL_iconv_utf8_ucs4(S)      (Uint32 *)SDL_iconv_string("UCS-4-INTERNAL", "UTF-8", S, SDL_strlen(S)+1)
+#define SDL_iconv_utf8_ucs2(S)      (Uint16 *)SDL_iconv_string("UCS-2", "UTF-8", S, SDL_strlen(S)+1)
+#define SDL_iconv_utf8_ucs4(S)      (Uint32 *)SDL_iconv_string("UCS-4", "UTF-8", S, SDL_strlen(S)+1)
 #define SDL_iconv_wchar_utf8(S)     SDL_iconv_string("UTF-8", "WCHAR_T", (char *)S, (SDL_wcslen(S)+1)*sizeof(wchar_t))
 
 /* force builds using Clang's static analysis tools to use literal C runtime
@@ -721,6 +721,20 @@ size_t strlcpy(char* dst, const char* src, size_t size);
 #ifndef HAVE_STRLCAT
 size_t strlcat(char* dst, const char* src, size_t size);
 #endif
+
+#ifndef HAVE_WCSLCPY
+size_t wcslcpy(wchar_t *dst, const wchar_t *src, size_t size);
+#endif
+
+#ifndef HAVE_WCSLCAT
+size_t wcslcat(wchar_t *dst, const wchar_t *src, size_t size);
+#endif
+
+/* Starting LLVM 16, the analyser errors out if these functions do not have
+   their prototype defined (clang-diagnostic-implicit-function-declaration) */
+#include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
 
 #define SDL_malloc malloc
 #define SDL_calloc calloc

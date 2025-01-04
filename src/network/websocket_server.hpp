@@ -8,7 +8,7 @@
 #define WSS_PAD_DISCONNECTED "gamepad_disconnected"
 #define WSS_PAD_RECONNECTED "gamepad_reconnected"
 
-class input_data;
+struct input_data;
 namespace wss {
 
 extern std::atomic<bool> state;

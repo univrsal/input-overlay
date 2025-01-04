@@ -17,7 +17,7 @@ bool start()
     if (state)
         return true;
     const auto port = CGET_INT(S_WSS_PORT);
-    std::string url = "ws://0.0.0.0:";
+    std::string url = "ws://" + io_config::wss_bind_address + ":";
     url = url.append(std::to_string(port));
     auto result = mg::start(url);
     if (result) {
@@ -119,22 +119,31 @@ void dispatch_sdl_event(const SDL_Event *e, const std::string &source_name, inpu
 {
     if (!mg::can_queue_message())
         return;
+    static thread_local std::unordered_map<std::string, double[GAMEPAD_AXIS_MAX]> last_axis;
     QJsonObject obj;
     obj["event_source"] = source_name.c_str();
     obj["device_index"] = e->cdevice.which;
     obj["time"] = int(e->cdevice.timestamp);
-
+    double axis{};
     switch (e->type) {
     case SDL_CONTROLLERDEVICEADDED:
+        obj["event_type"] = "controller_device_added";
+        obj["device_name"] = utf8_to_qt(SDL_GameControllerNameForIndex(e->cdevice.which));
         break;
 
     case SDL_CONTROLLERDEVICEREMOVED:
+        obj["event_type"] = "controller_device_removed";
+        // we don't have the name anymore
         break;
-
     case SDL_CONTROLLERAXISMOTION:
+        // ignore small axis values
+        axis = double(e->caxis.value / double(INT16_MAX));
+        if (std::abs(axis - last_axis[source_name][e->caxis.axis]) < 0.003)
+            return;
+        last_axis[source_name][e->caxis.axis] = axis;
         obj["event_type"] = "controller_axis_motion";
         obj["virtual_code"] = e->caxis.axis;
-        obj["virtual_value"] = e->caxis.value / float(INT16_MAX);
+        obj["virtual_value"] = axis;
         break;
     case SDL_CONTROLLERBUTTONDOWN:
         obj["event_type"] = "controller_button_down";
@@ -146,6 +155,8 @@ void dispatch_sdl_event(const SDL_Event *e, const std::string &source_name, inpu
         obj["virtual_code"] = e->cbutton.button;
         obj["virtual_value"] = e->cbutton.state;
         break;
+    default:
+        return; /* ignore other events */
     }
 
     auto n = data->remote_gamepad_names.find(e->cdevice.which);

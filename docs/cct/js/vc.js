@@ -111,7 +111,7 @@ $(function() {
     vc("Slash", 0x0035);
     vc("Space", 0x0039);
     vc("PrintScreen", 0x0E37);
-    vc("ScrolLock", 0x0046);
+    vc("ScrollLock", 0x0046);
     vc("Pause", 0x0E45);
     vc("IntlBackslash", 0x0E46);
     vc("Insert", 0x0E52);
@@ -129,7 +129,7 @@ $(function() {
 
     vc("NumpadEquals", 0x0E0D);
     vc("NumLock", 0x0045);
-    vc("NumpadSubtract", 0x0E35);
+    vc("NumpadDivide", 0x0E35);
     vc("NumpadMultiply", 0x0037);
     vc("NumpadSubtract", 0x004A);
     vc("NumpadAdd", 0x004E);

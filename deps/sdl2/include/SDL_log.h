@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2022 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -59,7 +59,7 @@ extern "C" {
  *  By default the application category is enabled at the INFO level,
  *  the assert category is enabled at the WARN level, test is enabled
  *  at the VERBOSE level and all other categories are enabled at the
- *  CRITICAL level.
+ *  ERROR level.
  */
 typedef enum
 {
@@ -352,7 +352,7 @@ extern DECLSPEC void SDLCALL SDL_LogMessage(int category,
  */
 extern DECLSPEC void SDLCALL SDL_LogMessageV(int category,
                                              SDL_LogPriority priority,
-                                             const char *fmt, va_list ap);
+                                             SDL_PRINTF_FORMAT_STRING const char *fmt, va_list ap) SDL_PRINTF_VARARG_FUNCV(3);
 
 /**
  * The prototype for the log output callback function.

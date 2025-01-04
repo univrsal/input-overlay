@@ -25,7 +25,7 @@ void element_analog_stick::load(const QJsonObject &obj)
 {
     element_texture::load(obj);
     m_side = static_cast<element_side>(obj[CFG_SIDE].toInt());
-    m_radius = static_cast<uint8_t>(obj[CFG_STICK_RADIUS].toInt());
+    m_radius = static_cast<int32_t>(obj[CFG_STICK_RADIUS].toInt());
     m_keycode = (m_side == element_side::LEFT) ? SDL_CONTROLLER_BUTTON_LEFTSTICK : SDL_CONTROLLER_BUTTON_RIGHTSTICK;
     m_pressed = m_mapping;
     m_pressed.y = m_mapping.y + m_mapping.cy + CFG_INNER_BORDER;

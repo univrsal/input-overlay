@@ -43,5 +43,5 @@ private:
 
     gs_rect m_pressed{};
     element_side m_side;
-    uint8_t m_radius = 0;
+    int32_t m_radius = 0;
 };

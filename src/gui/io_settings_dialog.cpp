@@ -64,6 +64,7 @@ io_settings_dialog::io_settings_dialog(QWidget *parent) : QDialog(parent, Qt::Di
     ui->cb_enable_control->setChecked(io_config::enable_input_control);
     ui->cb_enable_wss->setChecked(io_config::enable_websocket_server);
     ui->cb_log->setChecked(io_config::log_flag);
+    ui->txt_bind_address->setText(utf8_to_qt(io_config::wss_bind_address.c_str()));
 
     ui->tab_remote->hide(); // TODO: Redo protocol and update client to sdl2
 
@@ -160,6 +161,7 @@ void io_settings_dialog::FormAccepted()
     io_config::io_window_filters.write_to_config();
 
     io_config::enable_websocket_server = ui->cb_enable_wss->isChecked();
+    io_config::wss_bind_address = qt_to_utf8(ui->txt_bind_address->text());
     io_config::save();
 }
 
@@ -184,4 +186,5 @@ void io_settings_dialog::CbWssStateChanged(int state)
 {
     ui->sb_wss_port->setEnabled(state);
     ui->cb_log->setEnabled(state);
+    ui->txt_bind_address->setEnabled(state);
 }
