@@ -14,3 +14,4 @@ cmake-*/
 
 build/
 client/build-*/
+cmake/.CMakeBuildNumber
