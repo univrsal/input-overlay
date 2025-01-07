@@ -1,0 +1,159 @@
+{
+  "default_height": 0,
+  "default_width": 0,
+  "elements": [
+    {
+      "id": "body",
+      "mapping": [1, 1, 1280, 1008],
+      "pos": [0, 0],
+      "type": 0,
+      "z_level": 0
+    },
+    {
+      "code": 0,
+      "id": "a",
+      "mapping": [1330, 1012, 88, 88],
+      "pos": [914, 420],
+      "type": 2,
+      "z_level": 1
+    },
+    {
+      "code": 1,
+      "id": "b",
+      "mapping": [1239, 1012, 88, 88],
+      "pos": [1002, 332],
+      "type": 2,
+      "z_level": 1
+    },
+    {
+      "code": 3,
+      "id": "y",
+      "mapping": [1148, 1012, 88, 88],
+      "pos": [914, 244],
+      "type": 2,
+      "z_level": 1
+    },
+    {
+      "code": 2,
+      "id": "x",
+      "mapping": [1057, 1012, 88, 88],
+      "pos": [826, 332],
+      "type": 2,
+      "z_level": 1
+    },
+    {
+      "code": 4,
+      "id": "select",
+      "mapping": [939, 1012, 56, 56],
+      "pos": [507, 348],
+      "type": 2,
+      "z_level": 1
+    },
+    {
+      "code": 6,
+      "id": "start",
+      "mapping": [998, 1012, 56, 56],
+      "pos": [691, 348],
+      "type": 2,
+      "z_level": 1
+    },
+    {
+      "code": 9,
+      "id": "ls",
+      "mapping": [1, 1012, 273, 105],
+      "pos": [188, 134],
+      "type": 2,
+      "z_level": 1
+    },
+    {
+      "code": 10,
+      "id": "rs",
+      "mapping": [277, 1012, 273, 105],
+      "pos": [793, 134],
+      "type": 2,
+      "z_level": 1
+    },
+    {
+      "code": 11,
+      "id": "dpad_up",
+      "mapping": [517, 1414, 64, 64],
+      "pos": [431, 483],
+      "type": 2,
+      "z_level": 1
+    },
+    {
+      "code": 12,
+      "id": "dpad_down",
+      "mapping": [517, 1414, 64, 64],
+      "pos": [431, 621],
+      "type": 2,
+      "z_level": 1
+    },
+    {
+      "code": 13,
+      "id": "dpad_left",
+      "mapping": [517, 1414, 64, 64],
+      "pos": [362, 552],
+      "type": 2,
+      "z_level": 1
+    },
+    {
+      "code": 14,
+      "id": "dpad_right",
+      "mapping": [517, 1414, 64, 64],
+      "pos": [500, 552],
+      "type": 2,
+      "z_level": 1
+    },
+    {
+      "direction": 1,
+      "id": "lt",
+      "mapping": [553, 1012, 190, 198],
+      "pos": [210, 1],
+      "side": 0,
+      "trigger_mode": false,
+      "type": 6,
+      "z_level": 1
+    },
+    {
+      "direction": 1,
+      "id": "rt",
+      "mapping": [746, 1012, 190, 198],
+      "pos": [854, 1],
+      "side": 1,
+      "trigger_mode": false,
+      "type": 6,
+      "z_level": 1
+    },
+    {
+      "id": "left_analog_stick",
+      "mapping": [1421, 1012, 154, 154],
+      "pos": [228, 299],
+      "side": 0,
+      "stick_radius": 40,
+      "type": 5,
+      "z_level": 1
+    },
+    {
+      "id": "right_analog_stick",
+      "mapping": [1421, 1012, 154, 154],
+      "pos": [742, 507],
+      "side": 1,
+      "stick_radius": 40,
+      "type": 5,
+      "z_level": 1
+    },
+    {
+      "id": "guide",
+      "mapping": [1, 1414, 100, 100],
+      "pos": [577, 197],
+      "type": 7,
+      "z_level": 1
+    }
+  ],
+  "flags": 6,
+  "overlay_height": 1008,
+  "overlay_width": 1252,
+  "space_h": 0,
+  "space_v": 0
+}
