@@ -17,6 +17,8 @@
 */
 var converted = {};
 var cfg_name = "";
+var converted2 = {};
+var cfg_name2 = "";
 
 $(() => {
     new drop_area("config-drop-area", "text/ini").handlers.push((files) => {
@@ -36,8 +38,37 @@ $(() => {
         }
     });
 
-    $('#download').on('click', () => {download_json(cfg_name, converted)});
+    new drop_area("config-drop-area2", "application/json").handlers.push((files) => {
+        if (files && files.length > 0) {
+            let reader = new FileReader();
+            reader.readAsDataURL(files[0]);
+            reader.onloadend = function() {
+                cfg_name2 = files[0].name + '.json';
+                let split = reader.result.split(',');
+                if (split.length < 1)
+                    return;
+                let b64 = split[1];
+                let str = atob(b64);
+
+                converted2 = convert_to_507(str);
+            };
+        }
+    });
+    $('#download2').on('click', () => {download_json(cfg_name2, converted2)});
 });
+
+function convert_to_507(str)
+{
+    let cfg = JSON.parse(str);
+
+    cfg.elements.forEach((e, _) => {
+        if (vcto507.has(e.code)) {
+            e.code = vcto507.get(e.code);
+        }
+    });
+
+    return cfg;
+}
 
 function parse_legacy_config(str)
 {

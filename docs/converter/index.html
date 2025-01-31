@@ -27,6 +27,7 @@
     <script src="../cct/js/jquery-3.5.1.min.js"></script>
     <script src="../cct/js/file.js"></script>
     <script src="../cct/js/dl.js"></script>
+    <script src="../cct/js/vc.js"></script>
 
     <script src='./js/converter.js'></script>
     <!-- 
@@ -38,6 +39,7 @@
 </head>
 <body>
 
+    <h2>Convert ini to json</h2>
     <div>
         <label for="config-drop-area">Legacy ini file</label>
 
@@ -45,6 +47,16 @@
     </div>
     <br>
     <button id="download">Download converted json</button> 
+    
+    <h2>Convert pre 5.0.7 JSON to 5.0.7+ JSON</h2>
+    <p>Between 5.0.6 and 5.0.7 the keycodes have changed. Old preset JSON files with the old keycodes can be converted to the new keycodes here.</p>
+    <div>
+        <label for="config-drop-area2">5.0.6 JSON or older</label>
+
+        <div id="config-drop-area2"> </div>
+    </div>
+    <br>
+    <button id="download2">Download JSON for input overlay 5.0.7 or newer</button> 
     
 </body>
 </html>
