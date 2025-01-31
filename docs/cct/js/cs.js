@@ -29,12 +29,12 @@ class cs {
     this.canvas_id = canvas_id;
 
     $(canvas_id).on('wheel', (e) => this.scroll(e));
-    $(canvas_id).on('click', (e) => this.click(e));
+    $(canvas_id).on('mousedown', (e) => this.click(e));
     $(canvas_id).on('mousemove', (e) => this.move(e));
     $(canvas_id).on('mouseup', (e) => this.mouseup());
     $(canvas_id).on('mouseleave', () => this.mouseup());
     $(canvas_id).on('contextmenu', (e) => {
-      this.click(e);
+      //this.click(e);
       e.preventDefault();
       return false;
     });
