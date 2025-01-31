@@ -126,7 +126,7 @@ endif()
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
         ${input-overlay_PLATFORM_DEPS}
         ${SDL2_LIBRARIES}
-        uiohook_static
+        uiohook
 )
 
 target_include_directories(

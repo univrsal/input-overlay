@@ -52,7 +52,9 @@ void element_wheel::draw(gs_effect_t *effect, gs_image_file_t *image, sources::o
         element_texture::draw(effect, image, settings);
 
     // If the last scroll event was longer than 150ms ago ignore it
-    if (os_gettime_ns() - settings->data.last_wheel_event_time < 150e6) {
+    auto const time_ms = os_gettime_ns() / 1e6;
+    auto const last_ms = settings->data.last_wheel_event_time / 1e6;
+    if (time_ms > last_ms && time_ms - last_ms < 150) {
         switch (settings->data.last_wheel_event.rotation) {
         case WHEEL_UP:
             element_texture::draw(effect, image, &m_mappings[WHEEL_MAP_UP]);

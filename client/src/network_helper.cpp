@@ -25,6 +25,7 @@
 #include <atomic>
 #include <thread>
 #include <cstdio>
+#include <string>
 
 namespace network_helper {
 buffer buf;

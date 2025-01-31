@@ -63,7 +63,9 @@ QString serialize_uiohook(const uiohook_event *e, const std::string &source_name
 
     switch (e->type) {
     case EVENT_KEY_TYPED:
-        obj["char"] = QString(e->data.keyboard.keychar);
+        // convert wchar_t to QString
+        obj["char"] = QString::fromWCharArray(&e->data.keyboard.keychar, 1);
+
         /* fallthrough */
     case EVENT_KEY_PRESSED:
     case EVENT_KEY_RELEASED:
@@ -93,9 +95,8 @@ QString serialize_uiohook(const uiohook_event *e, const std::string &source_name
         obj["event_type"] = QString(ev_to_str(e->type));
         obj["time"] = int(e->time);
         obj["mask"] = e->mask;
-        obj["clicks"] = e->data.wheel.clicks;
         obj["type"] = e->data.wheel.type;
-        obj["amount"] = e->data.wheel.amount;
+        obj["delta"] = e->data.wheel.delta;
         obj["rotation"] = e->data.wheel.rotation;
         obj["direction"] = e->data.wheel.direction;
         obj["x"] = e->data.wheel.x;
