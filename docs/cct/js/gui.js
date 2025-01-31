@@ -47,7 +47,6 @@ function apply_settings()
             cfg.selected_elements.forEach(element => { element.set_layer($("#selected-element-layer").val()); });
         }
     }
-  }
 }
 
 function new_type_dropdown()
