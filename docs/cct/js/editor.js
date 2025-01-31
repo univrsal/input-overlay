@@ -102,7 +102,6 @@ class editor {
         this.selection_rect.w = parseInt($("#editor-element-w").val());
         this.selection_rect.h = parseInt($("#editor-element-h").val());
     }
-  }
 
     move(event, cs)
     {
@@ -233,9 +232,9 @@ class editor {
             this.drag_start = tv;
             this.selecting = true;
         }
+    
+        this.move_flags = flags;
     }
-    this.move_flags = flags;
-  }
 
     draw(painter)
     {
@@ -272,6 +271,4 @@ class editor {
         }
         ctx.restore();
     }
-    ctx.restore();
-  }
 }
