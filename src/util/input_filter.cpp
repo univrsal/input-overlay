@@ -27,7 +27,8 @@
 
 void input_filter::read_from_config()
 {
-    io_config::filter_mutex.lock();
+    std::lock_guard lock(io_config::filter_mutex);
+   
     m_filters.clear();
     m_regex = CGET_BOOL(S_REGEX);
     m_whitelist = CGET_INT(S_FILTER_MODE) == 0;
@@ -52,12 +53,12 @@ void input_filter::read_from_config()
             }
         }
     }
-    io_config::filter_mutex.unlock();
+  
 }
 
 void input_filter::write_to_config()
 {
-    io_config::filter_mutex.lock();
+    std::lock_guard lock(io_config::filter_mutex);
 
     QJsonDocument j;
     QJsonArray arr;
@@ -67,7 +68,7 @@ void input_filter::write_to_config()
     j.setArray(arr);
     char *path = obs_module_config_path("filters.json");
     util_write_json(utf8_to_qt(path), j);
-    io_config::filter_mutex.unlock();
+
     bfree(path);
 }
 
@@ -99,7 +100,7 @@ bool input_filter::input_blocked()
     if (!io_config::enable_input_control)
         return false;
 
-    io_config::filter_mutex.lock();
+    std::lock_guard lock(io_config::filter_mutex);
     std::string current_window;
     auto flag = m_whitelist;
     GetCurrentWindowTitle(current_window);
@@ -119,7 +120,7 @@ bool input_filter::input_blocked()
             }
         }
     }
-    io_config::filter_mutex.unlock();
+
     return flag;
 }
 
