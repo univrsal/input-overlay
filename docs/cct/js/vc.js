@@ -17,6 +17,7 @@
  *************************************************************************/
 
 var key2vc = new Map();
+var key2vcnew = new Map(); // use this once 5.0.7 is released
 var mouse2vc = new Map();
 var gamepad2vc = new Map();
 var vc2gamepad = new Map();
@@ -25,7 +26,11 @@ var legacy2sdl2 = new Map();
 var vcto507 = new Map();
 
 $(function () {
-  let vc = (id, vc) => key2vc.set(id, vcto507.get(vc));
+  
+  let vc = (id, vc) => {
+    key2vc.set(id, vc);
+    key2vcnew.set(id, vcto507.get(vc));
+  };
   let vc2 = (vcold, vcnew) => vcto507.set(vcnew, vcold);
 
   let gp = (id, vc) => {
