@@ -64,7 +64,7 @@ inline void input_source::update(obs_data_t *settings)
         m_settings.gamepad_index = tmp.toInt();
     }
 
-    if (m_settings.use_local_input() && gamepad_hook::state) {
+    if (m_settings.use_local_input() && gamepad_hook::state && gamepad_hook::local_gamepads) {
         m_settings.gamepad = gamepad_hook::local_gamepads->get_controller_from_index(m_settings.gamepad_index);
     } else if (wss::state) {
         std::lock_guard<std::mutex> lock(network::remote_data_map_mutex);
