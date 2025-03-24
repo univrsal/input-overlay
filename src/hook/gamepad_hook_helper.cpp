@@ -79,7 +79,6 @@ void start()
         differnt thread.
     */
 
-    state = true;
     if (!WIN32) {
         sdl_init();
         local_gamepads = new gamepads;
@@ -141,6 +140,11 @@ gamepads::gamepads()
                name ? name : "Unknown", path ? ", " : "", path ? path : "", guid, SDL_JoystickGetDeviceVendor(i),
                SDL_JoystickGetDeviceProduct(i), SDL_JoystickGetDevicePlayerIndex(i));
     }
+
+    // Confirm object has been created
+    // at end of constructor, instead
+    // of during other startup/init tasks
+    state = true;
 }
 
 void gamepads::event_loop()
