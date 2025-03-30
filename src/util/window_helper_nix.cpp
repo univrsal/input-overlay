@@ -95,20 +95,20 @@ static std::vector<Window> getTopLevelWindows()
     Atom actualType;
     int format;
     unsigned long num, bytes;
-    Window *data = 0;
+    Window *data = nullptr;
 
     for (int i = 0; i < ScreenCount(disp()); ++i) {
         Window rootWin = RootWindow(disp(), i);
 
         int status = XGetWindowProperty(disp(), rootWin, netClList, 0L, ~0L, false, AnyPropertyType, &actualType,
-                                        &format, &num, &bytes, (uint8_t **)&data);
+                                        &format, &num, &bytes, reinterpret_cast<uint8_t **>(&data));
 
         if (status != Success) {
             continue;
         }
 
-        for (unsigned long i = 0; i < num; ++i)
-            res.emplace_back(data[i]);
+        for (unsigned long j = 0; j < num; ++j)
+            res.emplace_back(data[j]);
 
         XFree(data);
     }

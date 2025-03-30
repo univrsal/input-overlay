@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
- * git.vrsal.xyz/alex/input-overlay
- * Copyright 2023 univrsal <uni@vrsal.xyz>.
+ * git.vrsal.cc/alex/input-overlay
+ * Copyright 2025 univrsal <uni@vrsal.xyz>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,6 +48,6 @@ void element::read_mapping(const QJsonObject &obj)
 void element::read_pos(const QJsonObject &obj)
 {
     const auto p = obj[CFG_POS].toArray();
-    m_pos.x = p[0].toInt();
-    m_pos.y = p[1].toInt();
+    m_pos.x = static_cast<float>(p[0].toDouble());
+    m_pos.y = static_cast<float>(p[1].toDouble());
 }

@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
- * git.vrsal.xyz/alex/input-overlay
- * Copyright 2023 univrsal <uni@vrsal.xyz>.
+ * git.vrsal.cc/alex/input-overlay
+ * Copyright 2025 univrsal <uni@vrsal.xyz>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,14 +57,14 @@ float element_mouse_movement::get_mouse_angle(sources::overlay_settings *setting
     auto d_x = 0, d_y = 0;
 
     if (settings->use_center) {
-        d_x = settings->data.last_mouse_movement.x - settings->monitor_h;
-        d_y = settings->data.last_mouse_movement.y - settings->monitor_w;
+        d_x = static_cast<int>(settings->data.last_mouse_movement.x - settings->monitor_h);
+        d_y = static_cast<int>(settings->data.last_mouse_movement.y - settings->monitor_w);
     } else {
         d_x = settings->data.last_mouse_movement.x - m_last_x;
         d_y = settings->data.last_mouse_movement.y - m_last_y;
     }
 
-    const float new_angle = (0.5 * M_PI) + (atan2f(d_y, d_x));
+    const float new_angle = static_cast<float>(0.5 * M_PI) + atan2f(static_cast<float>(d_y), static_cast<float>(d_x));
     if (abs(d_x) < settings->mouse_deadzone || abs(d_y) < settings->mouse_deadzone) {
         /* Draw old angle (new movement was to minor) */
         return m_last_angle;
@@ -80,8 +80,8 @@ void element_mouse_movement::get_mouse_offset(sources::overlay_settings *setting
     auto d_x = 0, d_y = 0;
 
     if (settings->use_center) {
-        d_x = settings->data.last_mouse_movement.x - settings->monitor_h;
-        d_y = settings->data.last_mouse_movement.y - settings->monitor_w;
+        d_x = static_cast<int>(settings->data.last_mouse_movement.x - settings->monitor_h);
+        d_y = static_cast<int>(settings->data.last_mouse_movement.y - settings->monitor_w);
     } else {
         d_x = settings->data.last_mouse_movement.x - m_last_x;
         d_y = settings->data.last_mouse_movement.y - m_last_y;
@@ -94,9 +94,9 @@ void element_mouse_movement::get_mouse_offset(sources::overlay_settings *setting
 
     assert(settings->mouse_sens > 0);
 
-    const auto factor_x = UTIL_CLAMP(-1, ((double)d_x / settings->mouse_sens), 1);
-    const auto factor_y = UTIL_CLAMP(-1, ((double)d_y / settings->mouse_sens), 1);
+    const float factor_x = UTIL_CLAMP(-1.f, ((float)d_x / settings->mouse_sens), 1);
+    const float factor_y = UTIL_CLAMP(-1.f, ((float)d_y / settings->mouse_sens), 1);
 
-    out.x = center.x + radius * factor_x;
-    out.y = center.y + radius * factor_y;
+    out.x = center.x + static_cast<float>(radius) * factor_x;
+    out.y = center.y + static_cast<float>(radius) * factor_y;
 }

@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
- * git.vrsal.xyz/alex/input-overlay
- * Copyright 2023 Alex <uni@vrsal.xyz>.
+ * git.vrsal.cc/alex/input-overlay
+ * Copyright 2025 Alex <uni@vrsal.xyz>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,7 +62,7 @@ public:
     void write(const void *data, size_t size)
     {
         if (m_write_pos + size >= m_length)
-            resize(m_write_pos + size * 1.5);
+            resize(m_write_pos + size * 2);
         memcpy(m_buf + m_write_pos, data, size);
         m_write_pos += size;
     }

@@ -1,3 +1,21 @@
+/*************************************************************************
+ * This file is part of input-overlay
+ * git.vrsal.cc/alex/input-overlay
+ * Copyright 2025 univrsal <uni@vrsal.xyz>.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, version 2 of the License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *************************************************************************/
+
 #include "websocket_server.hpp"
 #include "../util/config.hpp"
 #include "../util/settings.h"
@@ -36,8 +54,8 @@ void stop()
 QString serialize_uiohook(const uiohook_event *e, const std::string &source_name)
 {
     QJsonObject obj;
-    auto ev_to_str = [](int e) {
-        switch (e) {
+    auto ev_to_str = [](int ev_type) {
+        switch (ev_type) {
         case EVENT_KEY_TYPED:
             return "key_typed";
         case EVENT_KEY_PRESSED:

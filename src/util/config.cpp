@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
- * git.vrsal.xyz/alex/input-overlay
- * Copyright 2023 univrsal <uni@vrsal.xyz>.
+ * git.vrsal.cc/alex/input-overlay
+ * Copyright 2025 univrsal <uni@vrsal.xyz>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,12 +61,12 @@ void load()
     enable_gamepad_hook = CGET_BOOL(S_GAMEPAD);
     enable_websocket_server = CGET_BOOL(S_ENABLE_WSS);
     enable_input_control = CGET_BOOL(S_CONTROL);
-    filter_mode = CGET_INT(S_FILTER_MODE);
+    filter_mode = static_cast<int>(CGET_INT(S_FILTER_MODE));
 
-    server_port = CGET_INT(S_PORT);
-    wss_port = CGET_INT(S_WSS_PORT);
+    server_port = static_cast<uint16_t>(CGET_INT(S_PORT));
+    wss_port = static_cast<uint16_t>(CGET_INT(S_WSS_PORT));
     log_flag = CGET_BOOL(S_LOGGING);
-    server_refresh_rate = CGET_INT(S_REFRESH);
+    server_refresh_rate = static_cast<uint16_t>(CGET_INT(S_REFRESH));
     wss_bind_address = CGET_STR(S_WSS_ADDRESS);
 }
 

@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
- * git.vrsal.xyz/alex/input-overlay
- * Copyright 2023 univrsal <uni@vrsal.xyz>.
+ * git.vrsal.cc/alex/input-overlay
+ * Copyright 2025 univrsal <uni@vrsal.xyz>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,12 +20,11 @@
 #include "../network/remote_connection.hpp"
 #include "ui_io_settings_dialog.h"
 #include "../util/config.hpp"
-#include "../util/lang.h"
 #include "../util/obs_util.hpp"
 #include "../plugin-macros.generated.h"
 #include <QDesktopServices>
 #include <QTimer>
-#include <QPair>
+#include <QPushButton>
 #include <obs-module.h>
 #include <string>
 #include <QMessageBox>
@@ -51,11 +50,11 @@ io_settings_dialog::io_settings_dialog(QWidget *parent) : QDialog(parent, Qt::Di
     connect(ui->btn_github, &QPushButton::clicked, this, &io_settings_dialog::OpenGitHub);
     connect(ui->btn_forums, &QPushButton::clicked, this, &io_settings_dialog::OpenForums);
     connect(ui->button_box, &QDialogButtonBox::accepted, this, &io_settings_dialog::FormAccepted);
-    connect(ui->cb_enable_control, &QCheckBox::stateChanged, this, &io_settings_dialog::CbInputControlStateChanged);
+    connect(ui->cb_enable_control, &QCheckBox::checkStateChanged, this, &io_settings_dialog::CbInputControlStateChanged);
     connect(ui->btn_refresh_cb, &QPushButton::clicked, this, &io_settings_dialog::RefreshWindowList);
     connect(ui->btn_add, &QPushButton::clicked, this, &io_settings_dialog::AddFilter);
     connect(ui->btn_remove, &QPushButton::clicked, this, &io_settings_dialog::RemoveFilter);
-    connect(ui->cb_enable_wss, &QCheckBox::stateChanged, this, &io_settings_dialog::CbWssStateChanged);
+    connect(ui->cb_enable_wss, &QCheckBox::checkStateChanged, this, &io_settings_dialog::CbWssStateChanged);
 
     /* Load values */
     ui->cb_iohook->setChecked(io_config::enable_uiohook);

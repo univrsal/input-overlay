@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
- * git.vrsal.xyz/alex/input-overlay
- * Copyright 2023 univrsal <uni@vrsal.xyz>.
+ * git.vrsal.cc/alex/input-overlay
+ * Copyright 2025 univrsal <uni@vrsal.xyz>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,11 +38,11 @@ void element_analog_stick::draw(gs_effect_t *effect, gs_image_file_t *image, sou
 
     if (settings->gamepad || settings->remote_input_data) {
         if (m_side == element_side::LEFT) {
-            pos.x += settings->pad_axis(SDL_CONTROLLER_AXIS_LEFTX) * m_radius;
-            pos.y += settings->pad_axis(SDL_CONTROLLER_AXIS_LEFTY) * m_radius;
+            pos.x += settings->pad_axis(SDL_CONTROLLER_AXIS_LEFTX) * static_cast<float>(m_radius);
+            pos.y += settings->pad_axis(SDL_CONTROLLER_AXIS_LEFTY) * static_cast<float>(m_radius);
         } else {
-            pos.x += settings->pad_axis(SDL_CONTROLLER_AXIS_RIGHTX) * m_radius;
-            pos.y += settings->pad_axis(SDL_CONTROLLER_AXIS_RIGHTY) * m_radius;
+            pos.x += settings->pad_axis(SDL_CONTROLLER_AXIS_RIGHTX) * static_cast<float>(m_radius);
+            pos.y += settings->pad_axis(SDL_CONTROLLER_AXIS_RIGHTY) * static_cast<float>(m_radius);
         }
     }
     element_texture::draw(effect, image, temp, &pos);

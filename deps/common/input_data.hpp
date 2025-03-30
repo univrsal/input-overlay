@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
- * git.vrsal.xyz/alex/input-overlay
- * Copyright 2023 Alex <uni@vrsal.xyz>.
+ * git.vrsal.cc/alex/input-overlay
+ * Copyright 2025 Alex <uni@vrsal.xyz>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +47,7 @@ struct input_data {
     button_map<uint16_t> keyboard{};
 
     /* State of all mouse buttons */
-    button_map<uint8_t> mouse{};
+    button_map<uint16_t> mouse{};
 
     mouse_wheel_event_data last_wheel_event{};
     /* we use this to reset the scroll wheel after a time out */

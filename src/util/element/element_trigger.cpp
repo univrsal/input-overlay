@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
- * git.vrsal.xyz/alex/input-overlay
- * Copyright 2023 univrsal <uni@vrsal.xyz>.
+ * git.vrsal.cc/alex/input-overlay
+ * Copyright 2025 univrsal <uni@vrsal.xyz>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 #include <keycodes.h>
 #include "SDL.h"
 
-element_trigger::element_trigger() : element_texture(ET_TRIGGER) {}
+element_trigger::element_trigger() : element_texture(ET_TRIGGER), m_pressed{}, m_side(element_side::INVALID), m_direction() {}
 
 void element_trigger::load(const QJsonObject &obj)
 {
@@ -69,20 +69,20 @@ void element_trigger::calculate_mapping(gs_rect *pressed, vec2 *pos, const float
 {
     switch (m_direction) {
     case DIR_UP:
-        pressed->cy = static_cast<int>(m_mapping.cy * progress);
+        pressed->cy = static_cast<int>(static_cast<float>(m_mapping.cy) * progress);
         pressed->y = m_pressed.y + (m_mapping.cy - pressed->cy);
-        pos->y += m_mapping.cy - pressed->cy;
+        pos->y += static_cast<float>(m_mapping.cy - pressed->cy);
         break;
     case DIR_DOWN:
-        pressed->cy = static_cast<int>(m_mapping.cy * progress);
+        pressed->cy = static_cast<int>(static_cast<float>(m_mapping.cy) * progress);
         break;
     case DIR_LEFT:
-        pressed->cx = static_cast<int>(m_mapping.cx * progress);
+        pressed->cx = static_cast<int>(static_cast<float>(m_mapping.cx) * progress);
         pressed->x = m_mapping.x + (m_mapping.cx - pressed->cx);
-        pos->x += (m_mapping.cx - pressed->cx);
+        pos->x += static_cast<float>(m_mapping.cx - pressed->cx);
         break;
     case DIR_RIGHT:
-        pressed->cx = static_cast<int>(m_mapping.cx * progress);
+        pressed->cx = static_cast<int>(static_cast<float>(m_mapping.cx) * progress);
         break;
     case DIR_MAX:
     case DIR_NONE:;

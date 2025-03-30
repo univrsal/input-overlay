@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
- * git.vrsal.xyz/alex/input-overlay
- * Copyright 2023 univrsal <uni@vrsal.xyz>.
+ * git.vrsal.cc/alex/input-overlay
+ * Copyright 2025 univrsal <uni@vrsal.xyz>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,15 +71,17 @@ void element_texture::draw(gs_effect *effect, gs_image_file_t *image, const gs_r
 
     gs_matrix_push();
     {
+        auto cx = static_cast<float>(rect->cx);
+        auto cy = static_cast<float>(rect->cy);
         /* Put into position */
-        gs_matrix_translate3f(pos->x, pos->y + rect->cy, 1.f);
+        gs_matrix_translate3f(pos->x, pos->y + cy, 1.f);
 
         /* Offset to rotation center (I think :P, rotations are tricky) */
-        gs_matrix_translate3f(-(rect->cx / 2.f), -(rect->cy / 2.f), 1.f);
+        gs_matrix_translate3f(-(cx / 2.f), -(cy / 2.f), 1.f);
         gs_matrix_rotaa4f(0.f, 0.f, 1.f, angle);
 
         /* Offset back */
-        gs_matrix_translate3f(-(rect->cx / 2.f), -(rect->cy / 2.f), 1.f);
+        gs_matrix_translate3f(-(cx / 2.f), -(cy / 2.f), 1.f);
 
         gs_draw_sprite_subregion(image->texture, 0, rect->x, rect->y, rect->cx, rect->cy);
     }

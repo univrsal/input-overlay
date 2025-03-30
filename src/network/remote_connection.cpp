@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
- * git.vrsal.xyz/alex/input-overlay
- * Copyright 2023 univrsal <uni@vrsal.xyz>.
+ * git.vrsal.cc/alex/input-overlay
+ * Copyright 2025 univrsal <uni@vrsal.xyz>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -121,7 +121,7 @@ void process_remote_event(struct mg_connection *ws, unsigned char *bytes, size_t
             switch (ev->type) {
             case SDL_CONTROLLERAXISMOTION: {
                 std::lock_guard<std::mutex> lock(client_data->m_mutex);
-                client_data->gamepad_axis[ev->caxis.which][ev->caxis.axis] = ev->caxis.value / float(INT16_MAX);
+                client_data->gamepad_axis[ev->caxis.which][ev->caxis.axis] = static_cast<float>(ev->caxis.value) / INT16_MAX;
             } break;
             case SDL_CONTROLLERBUTTONDOWN:
             case SDL_CONTROLLERBUTTONUP: {
@@ -129,9 +129,9 @@ void process_remote_event(struct mg_connection *ws, unsigned char *bytes, size_t
                 client_data->gamepad_buttons[ev->cbutton.which][ev->cbutton.button] = ev->cbutton.state;
             } break;
             case SDL_CONTROLLERDEVICEADDED: {
-                uint8_t *len = b.read<uint8_t>();
+                uint8_t *len2 = b.read<uint8_t>();
                 if (len) {
-                    char *gamepad_name = (char *)b.read(*len);
+                    char *gamepad_name = (char *)b.read(*len2);
                     if (gamepad_name) {
                         binfo("Gamepad '%s' connected to '%s'", gamepad_name, client_name.c_str());
                         std::lock_guard<std::mutex> lock(client_data->m_mutex);

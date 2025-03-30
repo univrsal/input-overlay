@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
- * git.vrsal.xyz/alex/input-overlay
- * Copyright 2023 univrsal <uni@vrsal.xyz>.
+ * git.vrsal.cc/alex/input-overlay
+ * Copyright 2025 univrsal <uni@vrsal.xyz>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,14 +46,14 @@ void element_wheel::draw(gs_effect_t *effect, gs_image_file_t *image, sources::o
      * - and finally on top either up or down
      * this should make sure that all necessary information is visible
      */
-    if (settings->data.mouse[uiohook::mouse_fix(MOUSE_BUTTON3)])
+    if (settings->data.mouse[MOUSE_BUTTON3])
         element_texture::draw(effect, image, &m_mappings[WHEEL_MAP_MIDDLE]);
     else
         element_texture::draw(effect, image, settings);
 
     // If the last scroll event was longer than 150ms ago ignore it
-    auto const time_ms = os_gettime_ns() / 1e6;
-    auto const last_ms = settings->data.last_wheel_event_time / 1e6;
+    auto const time_ms = os_gettime_ns() / static_cast<uint64_t>(1e6);
+    auto const last_ms = settings->data.last_wheel_event_time / static_cast<uint64_t>(1e6);
     if (time_ms > last_ms && time_ms - last_ms < 150) {
         switch (settings->data.last_wheel_event.rotation) {
         case WHEEL_UP:

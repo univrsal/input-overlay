@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
- * git.vrsal.xyz/alex/input-overlay
- * Copyright 2023 univrsal <uni@vrsal.xyz>.
+ * git.vrsal.cc/alex/input-overlay
+ * Copyright 2025 univrsal <uni@vrsal.xyz>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +40,6 @@ void element_keyboard_key::draw(gs_effect_t *effect, gs_image_file_t *image, sou
 void element_mouse_button::load(const QJsonObject &obj)
 {
     element_button::load(obj);
-    m_keycode = uiohook::mouse_fix(m_keycode);
 }
 
 void element_mouse_button::draw(gs_effect_t *effect, gs_image_file_t *image, sources::overlay_settings *settings)

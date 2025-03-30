@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
- * git.vrsal.xyz/alex/input-overlay
- * Copyright 2023 univrsal <uni@vrsal.xyz>.
+ * git.vrsal.cc/alex/input-overlay
+ * Copyright 2025 univrsal <uni@vrsal.xyz>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -73,12 +73,12 @@ inline void input_source::update(obs_data_t *settings)
             m_settings.remote_input_data = data->second;
     }
 
-    m_settings.mouse_sens = std::max<uint16_t>(obs_data_get_int(settings, S_MOUSE_SENS), 1);
+    m_settings.mouse_sens = std::max<uint16_t>(static_cast<uint16_t>(obs_data_get_int(settings, S_MOUSE_SENS)), 1);
 
     if ((m_settings.use_center = obs_data_get_bool(settings, S_MONITOR_USE_CENTER))) {
-        m_settings.monitor_h = obs_data_get_int(settings, S_MONITOR_H_CENTER);
-        m_settings.monitor_w = obs_data_get_int(settings, S_MONITOR_V_CENTER);
-        m_settings.mouse_deadzone = obs_data_get_int(settings, S_MOUSE_DEAD_ZONE);
+        m_settings.monitor_h = static_cast<uint32_t>(obs_data_get_int(settings, S_MONITOR_H_CENTER));
+        m_settings.monitor_w = static_cast<uint32_t>(obs_data_get_int(settings, S_MONITOR_V_CENTER));
+        m_settings.mouse_deadzone = static_cast<uint8_t>(obs_data_get_int(settings, S_MOUSE_DEAD_ZONE));
     }
 }
 
@@ -142,9 +142,9 @@ bool reload_pads(obs_properties_t *, obs_property_t *property, void *data)
             obs_property_list_add_string(property, name.c_str(), name.c_str());
         }
     } else if (wss::state && src->m_settings.remote_input_data) {
-        auto data = src->m_settings.remote_input_data;
-        std::lock_guard<std::mutex> lock(data->m_mutex);
-        for (const auto &pad : data->remote_gamepad_names) {
+        auto input_data = src->m_settings.remote_input_data;
+        std::lock_guard<std::mutex> lock(input_data->m_mutex);
+        for (const auto &pad : input_data->remote_gamepad_names) {
             std::string id = std::to_string(pad.first) + " - " + pad.second;
             obs_property_list_add_string(property, id.c_str(), id.c_str());
         }
