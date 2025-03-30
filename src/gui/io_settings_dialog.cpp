@@ -50,11 +50,17 @@ io_settings_dialog::io_settings_dialog(QWidget *parent) : QDialog(parent, Qt::Di
     connect(ui->btn_github, &QPushButton::clicked, this, &io_settings_dialog::OpenGitHub);
     connect(ui->btn_forums, &QPushButton::clicked, this, &io_settings_dialog::OpenForums);
     connect(ui->button_box, &QDialogButtonBox::accepted, this, &io_settings_dialog::FormAccepted);
-    connect(ui->cb_enable_control, &QCheckBox::checkStateChanged, this, &io_settings_dialog::CbInputControlStateChanged);
     connect(ui->btn_refresh_cb, &QPushButton::clicked, this, &io_settings_dialog::RefreshWindowList);
     connect(ui->btn_add, &QPushButton::clicked, this, &io_settings_dialog::AddFilter);
     connect(ui->btn_remove, &QPushButton::clicked, this, &io_settings_dialog::RemoveFilter);
+
+#if QT_DEPRECATED_SINCE(6, 9)
+    connect(ui->cb_enable_control, &QCheckBox::checkStateChanged, this, &io_settings_dialog::CbInputControlStateChanged);
     connect(ui->cb_enable_wss, &QCheckBox::checkStateChanged, this, &io_settings_dialog::CbWssStateChanged);
+#else
+    connect(ui->cb_enable_control, &QCheckBox::stateChanged, this, &io_settings_dialog::CbInputControlStateChanged);
+    connect(ui->cb_enable_wss, &QCheckBox::stateChanged, this, &io_settings_dialog::CbWssStateChanged);
+#endif
 
     /* Load values */
     ui->cb_iohook->setChecked(io_config::enable_uiohook);
