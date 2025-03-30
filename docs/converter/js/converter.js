@@ -51,6 +51,7 @@ $(() => {
                 let str = atob(b64);
 
                 converted2 = convert_to_507(str);
+                converted2.version = 507;
             };
         }
     });

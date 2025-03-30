@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
- * git.vrsal.xyz/alex/input-overlay
- * Copyright 2023 univrsal <uni@vrsal.xyz>.
+ * git.vrsal.cc/alex/input-overlay
+ * Copyright 2025 univrsal <uni@vrsal.xyz>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,6 +45,10 @@ public:
     element_type get_type() const;
 
     uint16_t get_keycode() const;
+    void set_keycode(uint16_t keycode)
+    {
+        m_keycode = keycode;
+    }
 
     virtual void tick(float, sources::overlay_settings *) {}
 

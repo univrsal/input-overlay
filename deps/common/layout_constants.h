@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
- * git.vrsal.xyz/alex/input-overlay
- * Copyright 2023 Alex <uni@vrsal.xyz>.
+ * git.vrsal.cc/alex/input-overlay
+ * Copyright 2025 Alex <uni@vrsal.xyz>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +29,8 @@
 #define CFG_V_SPACE "space_v"
 
 #define CFG_FLAGS "flags"
+#define CFG_VERSION "version"
+#define CFG_CURRENT_VERSION 507
 
 #define CFG_TOTAL_WIDTH "overlay_width"
 #define CFG_TOTAL_HEIGHT "overlay_height"

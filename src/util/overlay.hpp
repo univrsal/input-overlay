@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
- * git.vrsal.xyz/alex/input-overlay
- * Copyright 2023 univrsal <uni@vrsal.xyz>.
+ * git.vrsal.cc/alex/input-overlay
+ * Copyright 2025 univrsal <uni@vrsal.xyz>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,8 +29,6 @@ extern "C" {
 #include <graphics/image-file.h>
 }
 
-class ccl_config;
-
 typedef struct gs_image_file gs_image_file_t;
 typedef struct gs_image_file4 gs_image_file4_t;
 
@@ -52,7 +50,7 @@ private:
     bool load_cfg();
     void unload_texture();
     void unload_elements();
-    void load_element(const QJsonObject &obj, bool debug);
+    void load_element(const QJsonObject &obj, bool debug, bool needs_conversion = false);
 
     static const char *element_type_to_string(element_type t);
 
