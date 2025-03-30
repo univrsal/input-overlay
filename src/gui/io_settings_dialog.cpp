@@ -54,7 +54,7 @@ io_settings_dialog::io_settings_dialog(QWidget *parent) : QDialog(parent, Qt::Di
     connect(ui->btn_add, &QPushButton::clicked, this, &io_settings_dialog::AddFilter);
     connect(ui->btn_remove, &QPushButton::clicked, this, &io_settings_dialog::RemoveFilter);
 
-#if QT_DEPRECATED_SINCE(6, 9)
+#if QT_VERSION >= QT_VERSION_CHECK(6, 9, 0)
     connect(ui->cb_enable_control, &QCheckBox::checkStateChanged, this, &io_settings_dialog::CbInputControlStateChanged);
     connect(ui->cb_enable_wss, &QCheckBox::checkStateChanged, this, &io_settings_dialog::CbWssStateChanged);
 #else
