@@ -1,0 +1,321 @@
+{
+    "default_width": 0,
+    "default_height": 0,
+    "space_h": 0,
+    "space_v": 0,
+    "flags": 6,
+    "overlay_width": 2048,
+    "overlay_height": 875,
+    "elements": [
+        {
+            "type": 0,
+            "pos": [
+                0,
+                0
+            ],
+            "id": "Body",
+            "z_level": 0,
+            "mapping": [
+                0,
+                0,
+                2048,
+                875
+            ]
+        },
+        {
+            "type": 2,
+            "pos": [
+                538,
+                610
+            ],
+            "id": "DPad_Left",
+            "z_level": 0,
+            "mapping": [
+                1589,
+                1345,
+                240,
+                120
+            ],
+            "code": 13
+        },
+        {
+            "type": 2,
+            "pos": [
+                658,
+                610
+            ],
+            "id": "DPad_Right",
+            "z_level": 0,
+            "mapping": [
+                1589,
+                1345,
+                240,
+                120
+            ],
+            "code": 14
+        },
+        {
+            "type": 2,
+            "pos": [
+                658,
+                490
+            ],
+            "id": "DPad_Up",
+            "z_level": 0,
+            "mapping": [
+                1853,
+                1348,
+                120,
+                240
+            ],
+            "code": 11
+        },
+        {
+            "type": 2,
+            "pos": [
+                658,
+                610
+            ],
+            "id": "Dpad_Down",
+            "z_level": 0,
+            "mapping": [
+                1853,
+                1348,
+                120,
+                240
+            ],
+            "code": 12
+        },
+        {
+            "type": 2,
+            "pos": [
+                5,
+                490
+            ],
+            "id": "Stick_L3",
+            "z_level": 1,
+            "mapping": [
+                1140,
+                1296,
+                360,
+                360
+            ],
+            "code": 7
+        },
+        {
+            "type": 2,
+            "pos": [
+                1140,
+                490
+            ],
+            "id": "Stick_R3",
+            "z_level": 1,
+            "mapping": [
+                1140,
+                1296,
+                360,
+                360
+            ],
+            "code": 8
+        },
+        {
+            "type": 5,
+            "pos": [
+                95,
+                580
+            ],
+            "id": "Left Analog",
+            "z_level": "1",
+            "mapping": [
+                1124,
+                908,
+                180,
+                180
+            ],
+            "stick_radius": 100,
+            "side": 0
+        },
+        {
+            "type": 5,
+            "pos": [
+                1230,
+                580
+            ],
+            "id": "Right Stick",
+            "z_level": "1",
+            "mapping": [
+                1124,
+                908,
+                180,
+                180
+            ],
+            "stick_radius": 100,
+            "side": 1
+        },
+        {
+            "type": 2,
+            "pos": [
+                1545,
+                584
+            ],
+            "id": "GPad X",
+            "z_level": 1,
+            "mapping": [
+                1335,
+                918,
+                170,
+                170
+            ],
+            "code": 2
+        },
+        {
+            "type": 2,
+            "pos": [
+                1700,
+                470
+            ],
+            "id": "GPad Y",
+            "z_level": 1,
+            "mapping": [
+                1508,
+                918,
+                170,
+                170
+            ],
+            "code": 3
+        },
+        {
+            "type": 2,
+            "pos": [
+                1700,
+                700
+            ],
+            "id": "GPad_A",
+            "z_level": 1,
+            "mapping": [
+                1683,
+                918,
+                170,
+                170
+            ],
+            "code": 0
+        },
+        {
+            "type": 2,
+            "pos": [
+                1858,
+                584
+            ],
+            "id": "GPad_B",
+            "z_level": 1,
+            "mapping": [
+                1858,
+                918,
+                170,
+                170
+            ],
+            "code": 1
+        },
+        {
+            "type": 6,
+            "pos": [
+                61,
+                22
+            ],
+            "id": "Trig_L",
+            "z_level": 1,
+            "mapping": [
+                61,
+                888,
+                826,
+                230
+            ],
+            "direction": 4,
+            "trigger_mode": false,
+            "side": 0
+        },
+        {
+            "type": 6,
+            "pos": [
+                1157,
+                22
+            ],
+            "id": "Trig_R",
+            "z_level": 1,
+            "mapping": [
+                62,
+                1361,
+                827,
+                230
+            ],
+            "direction": 3,
+            "trigger_mode": false,
+            "side": 1
+        },
+        {
+            "type": 2,
+            "pos": [
+                9,
+                307
+            ],
+            "id": "Shoul_LB",
+            "z_level": 1,
+            "mapping": [
+                10,
+                1849,
+                710,
+                114
+            ],
+            "code": 9
+        },
+        {
+            "type": 2,
+            "pos": [
+                765,
+                307
+            ],
+            "id": "GPad_Select",
+            "z_level": 1,
+            "mapping": [
+                765,
+                1849,
+                215,
+                114
+            ],
+            "code": 4
+        },
+        {
+            "type": 2,
+            "pos": [
+                1064,
+                307
+            ],
+            "id": "GPad_Start",
+            "z_level": 1,
+            "mapping": [
+                10,
+                2092,
+                215,
+                114
+            ],
+            "code": 6
+        },
+        {
+            "type": 2,
+            "pos": [
+                1325,
+                307
+            ],
+            "id": "Shoul_R",
+            "z_level": 1,
+            "mapping": [
+                271,
+                2092,
+                709,
+                114
+            ],
+            "code": 10
+        }
+    ],
+    "version": 507
+}
