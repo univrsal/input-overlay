@@ -192,14 +192,14 @@ function gamepad_to_vc(button)
 {
     if (gamepad2vc.has(button))
         return gamepad2vc.get(button);
-    return 0;
+    return button;
 }
 
 function gamepad_from_vc(vc)
 {
     if (vc2gamepad.has(vc))
         return vc2gamepad.get(vc);
-    return 0;
+    return vc;
 }
 
 function mouse_to_vc(e)
