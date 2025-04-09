@@ -171,21 +171,21 @@ $(function() {
     mouse2vc.set(3, 4);
     mouse2vc.set(4, 5);
 
-    gp(0, 0xEC00);
-    gp(1, 0xEC01);
-    gp(2, 0xEC02);
-    gp(3, 0xEC03);
-    gp(4, 0xEC04);
-    gp(5, 0xEC05);
-    gp(8, 0xEC06);
-    gp(9, 0xEC07);
-    gp(10, 0xEC09);
-    gp(11, 0xEC10);
-    gp(12, 0xEC13);
-    gp(13, 0xEC14);
-    gp(14, 0xEC11);
-    gp(15, 0xEC12);
-    gp(16, 0xEC08);
+    gp(0, 0); // a
+    gp(1, 1); // b
+    gp(2, 2); // x
+    gp(3, 3); // y
+    gp(4, 9); // left shoulder
+    gp(5, 10); // right shoulder
+    gp(8, 4); // back
+    gp(9, 6); // start
+    gp(10, 7); // left thumb stick down
+    gp(11, 8); // right thumb stick down
+    gp(12, 11); // up
+    gp(13, 12); // down
+    gp(14, 13); // dpad left
+    gp(15, 14); // dpad right
+    gp(16, 5); // guide
 });
 
 function gamepad_to_vc(button)
