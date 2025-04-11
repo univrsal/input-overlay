@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *************************************************************************/
 
-const CURRENT_VERSION = 507;
+const CURRENT_VERSION = 506;
 
 
 function convert_to_507(cfg)
@@ -112,10 +112,10 @@ class config {
   }
 
   load_from_json(json) {
-    if (json.version === undefined || json.version < 507) {
-      alert("This config file was made for Input Overlay 5.0.6 or older. Since 5.0.7 the key codes have changed. The keycodes will now be converted to the new format. Please check each key to see if the conversion was successful.");
+    /*if (json.version === undefined || json.version < 507) {
+      alert("This config file was made for Input Overlay 5.0.6 or older. Since 5.1.0 the key codes have changed. The keycodes will now be converted to the new format. Please check each key to see if the conversion was successful.");
      json = convert_to_507(json);
-    }
+    }*/
     this.data = json;
     this.data['elements'].forEach((data) => {
       let new_element = create_element(data);
