@@ -891,8 +891,37 @@
             data.event_type === "mouse_pressed" ||
             data.event_type === "mouse_released"
           ) {
-          if (data.button === 4 && data.event_type === "mouse_pressed")
-            data.mask = (data.mask ^ 4096) | 2048;
+            <!--
+              This codeblock handles mouse button events by tracking button state changes through bitwise operations.
+              
+              It's superior to the simple condition check approach because:
+              
+              1. It processes ALL mouse button events systematically, not just a specific button (button 4)
+              2. It properly maintains state with a mask (_mouseButtonsMask) that tracks all buttons simultaneously
+              3. It detects CHANGES in button state by comparing the previous mask with the new one (using XOR)
+              4. It isolates each changed button with bit-by-bit checks, allowing individual handling
+              5. It correctly updates the UI for each button state change
+              
+              This approach solves issues by:
+              - Avoiding hard-coded button numbers and masks, making the code more maintainable
+              - Properly tracking state changes for all buttons, preventing missed events
+              - Using standard bitwise operations rather than manual mask manipulation
+              - Supporting both press AND release events in one consistent approach
+              - Following a cleaner separation between detection and action (updateUI call)
+            -->
+            // New datamask for mouse buttons
+            if (data.event_type === "mouse_pressed" || data.event_type === "mouse_released") {
+                var diff = _mouseButtonsMask ^ data.mask;
+                _mouseButtonsMask = data.mask;
+
+                for (var bit = MOUSEENCODE.btn_start; bit <= MOUSEENCODE.btn_end; ++bit) {
+                    var mask = 1 << bit;
+                    if (diff & mask) {
+                        var mouse_code = mouse_code_base | mask;
+                        updateUI(mouse_code, _mouseButtonsMask & mask);
+                    }
+                }
+            }
 
           var diff = _mouseButtonsMask ^ data.mask;
           _mouseButtonsMask = data.mask;
