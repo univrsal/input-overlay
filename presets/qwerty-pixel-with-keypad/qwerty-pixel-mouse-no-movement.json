@@ -1,0 +1,90 @@
+{
+    "default_width": 44,
+    "default_height": 44,
+    "space_h": 0,
+    "space_v": 0,
+    "flags": 8,
+    "overlay_width": 124,
+    "overlay_height": 128,
+    "elements": [
+        {
+            "type": 3,
+            "pos": [
+                24,
+                0
+            ],
+            "id": "mouse button104",
+            "z_level": 0,
+            "mapping": [
+                920,
+                576,
+                48,
+                96
+            ],
+            "code": 1
+        },
+        {
+            "type": 3,
+            "pos": [
+                76,
+                0
+            ],
+            "id": "mouse button1",
+            "z_level": 0,
+            "mapping": [
+                971,
+                576,
+                48,
+                96
+            ],
+            "code": 2
+        },
+        {
+            "type": 3,
+            "pos": [
+                0,
+                64
+            ],
+            "id": "mouse button2",
+            "z_level": 0,
+            "mapping": [
+                888,
+                600,
+                21,
+                32
+            ],
+            "code": 3
+        },
+        {
+            "type": 3,
+            "pos": [
+                0,
+                100
+            ],
+            "id": "mouse button3",
+            "z_level": 0,
+            "mapping": [
+                856,
+                604,
+                20,
+                28
+            ],
+            "code": 4
+        },
+        {
+            "type": 4,
+            "pos": [
+                68,
+                0
+            ],
+            "id": "mouse wheel4",
+            "z_level": 0,
+            "mapping": [
+                1023,
+                576,
+                12,
+                44
+            ]
+        }
+    ]
+}
