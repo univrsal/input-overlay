@@ -13,7 +13,7 @@
                 24,
                 0
             ],
-            "id": "mouse button104",
+            "id": "mouse button1",
             "z_level": 0,
             "mapping": [
                 920,
@@ -29,7 +29,7 @@
                 76,
                 0
             ],
-            "id": "mouse button1",
+            "id": "mouse button2",
             "z_level": 0,
             "mapping": [
                 971,
@@ -45,7 +45,7 @@
                 0,
                 64
             ],
-            "id": "mouse button2",
+            "id": "mouse button5",
             "z_level": 0,
             "mapping": [
                 888,
@@ -53,7 +53,7 @@
                 21,
                 32
             ],
-            "code": 3
+            "code": 5
         },
         {
             "type": 3,
@@ -61,7 +61,7 @@
                 0,
                 100
             ],
-            "id": "mouse button3",
+            "id": "mouse button4",
             "z_level": 0,
             "mapping": [
                 856,
@@ -77,7 +77,7 @@
                 68,
                 0
             ],
-            "id": "mouse wheel4",
+            "id": "mouse wheel1",
             "z_level": 0,
             "mapping": [
                 1023,
