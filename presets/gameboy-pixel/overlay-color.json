@@ -13,7 +13,7 @@
                 0,
                 0
             ],
-            "id": "nes",
+            "id": "gameboy-color",
             "z_level": 0,
             "mapping": [
                 0,
@@ -43,7 +43,7 @@
                 8,
                 12
             ],
-            "id": "a",
+            "id": "b",
             "z_level": 0,
             "mapping": [
                 13,
@@ -59,7 +59,7 @@
                 10,
                 11
             ],
-            "id": "b",
+            "id": "a",
             "z_level": 0,
             "mapping": [
                 13,
