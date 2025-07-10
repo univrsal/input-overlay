@@ -1,0 +1,106 @@
+{
+    "default_width": 0,
+    "default_height": 0,
+    "space_h": 0,
+    "space_v": 0,
+    "flags": 4,
+    "overlay_width": 12,
+    "overlay_height": 19,
+    "elements": [
+        {
+            "type": 0,
+            "pos": [
+                0,
+                0
+            ],
+            "id": "nes",
+            "z_level": 0,
+            "mapping": [
+                0,
+                0,
+                12,
+                19
+            ]
+        },
+        {
+            "type": 8,
+            "pos": [
+                1,
+                11
+            ],
+            "id": "dpad",
+            "z_level": 0,
+            "mapping": [
+                13,
+                7,
+                3,
+                3
+            ]
+        },
+        {
+            "type": 2,
+            "pos": [
+                8,
+                12
+            ],
+            "id": "a",
+            "z_level": 0,
+            "mapping": [
+                13,
+                1,
+                1,
+                1
+            ],
+            "code": 0
+        },
+        {
+            "type": 2,
+            "pos": [
+                10,
+                11
+            ],
+            "id": "b",
+            "z_level": 0,
+            "mapping": [
+                13,
+                1,
+                1,
+                1
+            ],
+            "code": 1
+        },
+        {
+            "type": 2,
+            "pos": [
+                4,
+                14
+            ],
+            "id": "select",
+            "z_level": 0,
+            "mapping": [
+                12,
+                0,
+                2,
+                2
+            ],
+            "code": 4
+        },
+        {
+            "type": 2,
+            "pos": [
+                6,
+                15
+            ],
+            "id": "start",
+            "z_level": 0,
+            "mapping": [
+                12,
+                0,
+                2,
+                2
+            ],
+            "code": 6
+        }
+
+    ]
+}
