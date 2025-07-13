@@ -1,0 +1,491 @@
+{
+    "default_width": 44,
+    "default_height": 44,
+    "space_h": 0,
+    "space_v": 0,
+    "flags": 0,
+    "overlay_width": 379,
+    "overlay_height": 328,
+    "elements": [
+        {
+            "type": 1,
+            "pos": [
+                0,
+                0
+            ],
+            "id": "prnt",
+            "z_level": "0",
+            "mapping": [
+                856,
+                12,
+                44,
+                44
+            ],
+            "code": 0
+        },
+        {
+            "type": 1,
+            "pos": [
+                48,
+                0
+            ],
+            "id": "scroll_lock",
+            "z_level": "0",
+            "mapping": [
+                912,
+                12,
+                44,
+                44
+            ],
+            "code": 0
+        },
+        {
+            "type": 1,
+            "pos": [
+                96,
+                0
+            ],
+            "id": "pause_break",
+            "z_level": "0",
+            "mapping": [
+                968,
+                12,
+                44,
+                44
+            ],
+            "code": 3653
+        },
+        {
+            "type": 1,
+            "pos": [
+                191,
+                92
+            ],
+            "id": "numlock",
+            "z_level": "0",
+            "mapping": [
+                1024,
+                12,
+                44,
+                44
+            ],
+            "code": 69
+        },
+        {
+            "type": 1,
+            "pos": [
+                239,
+                92
+            ],
+            "id": "keypad_slash",
+            "z_level": "0",
+            "mapping": [
+                1080,
+                12,
+                44,
+                44
+            ],
+            "code": 0
+        },
+        {
+            "type": 1,
+            "pos": [
+                287,
+                92
+            ],
+            "id": "keypad_asterisk",
+            "z_level": "0",
+            "mapping": [
+                1136,
+                12,
+                44,
+                44
+            ],
+            "code": 55
+        },
+        {
+            "type": 1,
+            "pos": [
+                335,
+                92
+            ],
+            "id": "keypad_minus",
+            "z_level": "0",
+            "mapping": [
+                1192,
+                12,
+                44,
+                44
+            ],
+            "code": 74
+        },
+        {
+            "type": 1,
+            "pos": [
+                335,
+                140
+            ],
+            "id": "keypad_plus",
+            "z_level": "0",
+            "mapping": [
+                1192,
+                124,
+                44,
+                92
+            ],
+            "code": 78
+        },
+        {
+            "type": 1,
+            "pos": [
+                287,
+                140
+            ],
+            "id": "keypad_9",
+            "z_level": "0",
+            "mapping": [
+                1136,
+                124,
+                44,
+                44
+            ],
+            "code": 73
+        },
+        {
+            "type": 1,
+            "pos": [
+                239,
+                140
+            ],
+            "id": "keypad_8",
+            "z_level": "0",
+            "mapping": [
+                1080,
+                124,
+                44,
+                44
+            ],
+            "code": 72
+        },
+        {
+            "type": 1,
+            "pos": [
+                191,
+                140
+            ],
+            "id": "keypad_7",
+            "z_level": "0",
+            "mapping": [
+                1024,
+                124,
+                44,
+                44
+            ],
+            "code": 71
+        },
+        {
+            "type": 1,
+            "pos": [
+                96,
+                92
+            ],
+            "id": "page_up",
+            "z_level": "0",
+            "mapping": [
+                968,
+                124,
+                44,
+                44
+            ],
+            "code": 3657
+        },
+        {
+            "type": 1,
+            "pos": [
+                48,
+                92
+            ],
+            "id": "home",
+            "z_level": "0",
+            "mapping": [
+                912,
+                124,
+                44,
+                44
+            ],
+            "code": 3655
+        },
+        {
+            "type": 1,
+            "pos": [
+                0,
+                92
+            ],
+            "id": "insert",
+            "z_level": "0",
+            "mapping": [
+                856,
+                124,
+                44,
+                44
+            ],
+            "code": 3666
+        },
+        {
+            "type": 1,
+            "pos": [
+                0,
+                140
+            ],
+            "id": "delete",
+            "z_level": "0",
+            "mapping": [
+                856,
+                236,
+                44,
+                44
+            ],
+            "code": 3667
+        },
+        {
+            "type": 1,
+            "pos": [
+                48,
+                140
+            ],
+            "id": "end",
+            "z_level": "0",
+            "mapping": [
+                912,
+                236,
+                44,
+                44
+            ],
+            "code": 3663
+        },
+        {
+            "type": 1,
+            "pos": [
+                96,
+                140
+            ],
+            "id": "page_down",
+            "z_level": "0",
+            "mapping": [
+                968,
+                236,
+                44,
+                44
+            ],
+            "code": 3665
+        },
+        {
+            "type": 1,
+            "pos": [
+                191,
+                188
+            ],
+            "id": "keypad_4",
+            "z_level": "0",
+            "mapping": [
+                1024,
+                236,
+                44,
+                44
+            ],
+            "code": 75
+        },
+        {
+            "type": 1,
+            "pos": [
+                239,
+                188
+            ],
+            "id": "keypad_5",
+            "z_level": "0",
+            "mapping": [
+                1080,
+                236,
+                44,
+                44
+            ],
+            "code": 76
+        },
+        {
+            "type": 1,
+            "pos": [
+                287,
+                188
+            ],
+            "id": "keypad_6",
+            "z_level": "0",
+            "mapping": [
+                1136,
+                236,
+                44,
+                44
+            ],
+            "code": 77
+        },
+        {
+            "type": 1,
+            "pos": [
+                335,
+                236
+            ],
+            "id": "keypad_enter",
+            "z_level": "0",
+            "mapping": [
+                1192,
+                332,
+                44,
+                92
+            ],
+            "code": 3612
+        },
+        {
+            "type": 1,
+            "pos": [
+                287,
+                236
+            ],
+            "id": "keypad_3",
+            "z_level": "0",
+            "mapping": [
+                1136,
+                348,
+                44,
+                44
+            ],
+            "code": 81
+        },
+        {
+            "type": 1,
+            "pos": [
+                239,
+                236
+            ],
+            "id": "keypad_2",
+            "z_level": "0",
+            "mapping": [
+                1080,
+                348,
+                44,
+                44
+            ],
+            "code": 80
+        },
+        {
+            "type": 1,
+            "pos": [
+                192,
+                236
+            ],
+            "id": "keypad_1",
+            "z_level": "0",
+            "mapping": [
+                1024,
+                348,
+                44,
+                44
+            ],
+            "code": 79
+        },
+        {
+            "type": 1,
+            "pos": [
+                287,
+                284
+            ],
+            "id": "keypad_period",
+            "z_level": "0",
+            "mapping": [
+                1136,
+                460,
+                44,
+                44
+            ],
+            "code": 83
+        },
+        {
+            "type": 1,
+            "pos": [
+                191,
+                284
+            ],
+            "id": "keypad_0",
+            "z_level": "0",
+            "mapping": [
+                1032,
+                460,
+                92,
+                44
+            ],
+            "code": 82
+        },
+        {
+            "type": 1,
+            "pos": [
+                96,
+                284
+            ],
+            "id": "right_arrow",
+            "z_level": "0",
+            "mapping": [
+                968,
+                460,
+                44,
+                44
+            ],
+            "code": 57421
+        },
+        {
+            "type": 1,
+            "pos": [
+                48,
+                284
+            ],
+            "id": "down_arrow",
+            "z_level": "0",
+            "mapping": [
+                912,
+                460,
+                44,
+                44
+            ],
+            "code": 57424
+        },
+        {
+            "type": 1,
+            "pos": [
+                0,
+                284
+            ],
+            "id": "left_arrow",
+            "z_level": "0",
+            "mapping": [
+                856,
+                460,
+                44,
+                44
+            ],
+            "code": 57419
+        },
+        {
+            "type": 1,
+            "pos": [
+                48,
+                236
+            ],
+            "id": "up_arrow",
+            "z_level": "0",
+            "mapping": [
+                912,
+                348,
+                44,
+                44
+            ],
+            "code": 57416
+        }
+    ]
+}
