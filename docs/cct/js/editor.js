@@ -152,7 +152,7 @@ class editor {
         }
 
         let flags = 0b0000; // left, right, up, down
-        let l = leniency / (cs.scale / 2);
+        let l = leniency / (cs.scale / 0.8);
         let cursor_box = this.selection_rect.grow(l);
         this.mouse_over = cs.is_mouse_over2(event);
 
