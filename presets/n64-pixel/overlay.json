@@ -1,0 +1,172 @@
+{
+    "default_width": 0,
+    "default_height": 0,
+    "space_h": 0,
+    "space_v": 0,
+    "flags": 4,
+    "overlay_width": 15,
+    "overlay_height": 15,
+    "elements": [
+        {
+            "type": 0,
+            "pos": [
+                0,
+                0
+            ],
+            "id": "n64",
+            "z_level": 0,
+            "mapping": [
+                0,
+                0,
+                15,
+                15
+            ]
+        },
+        {
+            "type": 8,
+            "pos": [
+                1,
+                3
+            ],
+            "id": "dpad",
+            "z_level": 0,
+            "mapping": [
+                17,
+                5,
+                3,
+                3
+            ]
+        },
+        {
+            "type": 5,
+            "pos": [
+                7,
+                8
+            ],
+            "id": "analog",
+            "z_level": 0,
+            "mapping": [
+                7,
+                8,
+                1,
+                1
+            ],
+            "stick_radius": 1,
+            "side": 0
+        },
+        {
+            "type": 5,
+            "pos": [
+                12,
+                4
+            ],
+            "id": "action",
+            "z_level": 0,
+            "mapping": [
+                12,
+                4,
+                1,
+                1
+            ],
+            "stick_radius": 1,
+            "side": 1
+        },
+        {
+            "type": 2,
+            "pos": [
+                11,
+                6
+            ],
+            "id": "a",
+            "z_level": 0,
+            "mapping": [
+                15,
+                0,
+                1,
+                1
+            ],
+            "code": 0
+        },
+        {
+            "type": 2,
+            "pos": [
+                10,
+                5
+            ],
+            "id": "b",
+            "z_level": 0,
+            "mapping": [
+                15,
+                0,
+                1,
+                1
+            ],
+            "code": 1
+        },
+        {
+            "type": 2,
+            "pos": [
+                10,
+                5
+            ],
+            "id": "y",
+            "z_level": 0,
+            "mapping": [
+                15,
+                0,
+                1,
+                1
+            ],
+            "code": 2
+        },
+        {
+            "type": 2,
+            "pos": [
+                2,
+                1
+            ],
+            "id": "l",
+            "z_level": 0,
+            "mapping": [
+                15,
+                0,
+                3,
+                1
+            ],
+            "code": 9
+        },
+        {
+            "type": 2,
+            "pos": [
+                10,
+                1
+            ],
+            "id": "r",
+            "z_level": 0,
+            "mapping": [
+                15,
+                0,
+                3,
+                1
+            ],
+            "code": 10
+        },
+        {
+            "type": 2,
+            "pos": [
+                7,
+                5
+            ],
+            "id": "start",
+            "z_level": 0,
+            "mapping": [
+                16,
+                0,
+                1,
+                1
+            ],
+            "code": 6
+        }
+
+    ]
+}
