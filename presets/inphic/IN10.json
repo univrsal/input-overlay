@@ -1,0 +1,105 @@
+{
+    "default_width": 0,
+    "default_height": 0,
+    "space_h": 0,
+    "space_v": 0,
+    "flags": 8,
+    "overlay_width": 478,
+    "overlay_height": 787,
+    "elements": [
+        {
+            "type": 0,
+            "pos": [
+                0,
+                0
+            ],
+            "id": "鼠标背景",
+            "z_level": 0,
+            "mapping": [
+                0,
+                0,
+                393,
+                779
+            ]
+        },
+        {
+            "type": 3,
+            "pos": [
+                16,
+                2
+            ],
+            "id": "鼠标左键",
+            "z_level": 0,
+            "mapping": [
+                393,
+                0,
+                140,
+                361
+            ],
+            "code": 1
+        },
+        {
+            "type": 3,
+            "pos": [
+                240,
+                2
+            ],
+            "id": "鼠标右键",
+            "z_level": 0,
+            "mapping": [
+                536,
+                0,
+                141,
+                361
+            ],
+            "code": 2
+        },
+        {
+            "type": 4,
+            "pos": [
+                172,
+                80
+            ],
+            "id": "鼠标滚轮",
+            "z_level": 0,
+            "mapping": [
+                393,
+                728,
+                53,
+                134
+            ]
+        },
+        {
+            "type": 3,
+            "pos": [
+                5,
+                381
+            ],
+            "id": "鼠标侧键后退",
+            "z_level": 0,
+            "mapping": [
+                677,
+                210,
+                18,
+                108
+            ],
+            "code": 4
+        },
+        {
+            "type": 3,
+            "pos": [
+                0,
+                264
+            ],
+            "id": "鼠标侧键前进",
+            "z_level": 0,
+            "mapping": [
+                677,
+                0,
+                14,
+                102
+            ],
+            "code": 5
+        }
+    ]
+}
