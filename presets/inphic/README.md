@@ -8,7 +8,7 @@ Currently, only the IN9 and IN10 models I personally purchased and use have been
 ## 项目编辑<br>Project Editing
 图片使用 **Adobe Fireworks CS6**(2012) 开发，工程文件格式为 `*.fw.png`，因此你可以用 Fireworks 编辑这些文件。本软件已经停产，但是因为非常好用，我从 **Macromedia Flash/Dreamweaver/Fireworks MX**(2002) 时代开始一直在使用它。
 
-The images were created using **Adobe Fireworks CS6**, with project files in the `*.fw.png` format. You can therefore edit these files using Fireworks. Although this software is discontinued, it remains my preferred tool since the **Macromedia Flash/Dreamweaver/Fireworks MX**(2002) era due to its excellent functionality.
+The images were created using **Adobe Fireworks CS6**(2012), with project files in the `*.fw.png` format. You can therefore edit these files using Fireworks. Although this software is discontinued, it remains my preferred tool since the **Macromedia Flash/Dreamweaver/Fireworks MX**(2002) era due to its excellent functionality.
 
 ## 图片版权<br>Image Copyright
 图片来自[英菲克(inphic)官网](http://www.inphic.cn)，与官方的[📧魏女士](mailto:weixiaofeng@exmail.inphic.cn)取得了联系，被告知此种发布不会有版权问题。
@@ -22,7 +22,7 @@ The images were created using **Adobe Fireworks CS6**, with project files in the
 >&emsp;你提供的建议我们收到了，后续会考虑协调资源再实现。  
 >&emsp;再次感谢你的使用和支持。欢迎保持沟通~
 
-The images are sourced from the [inphic official website](http://www.inphic.cn). I contacted Ms. Wei from the official team [📧Ms. Wei](mailto:weixiaofeng@exmail.inphic.cn), who confirmed that publishing these presets will not cause any copyright issues.  
+The images are sourced from the [inphic official website](http://www.inphic.cn). I contacted [📧Ms. Wei](mailto:weixiaofeng@exmail.inphic.cn) from the official team, who confirmed that publishing these presets will not cause any copyright issues.  
 
 * Note: The original emails were in Chinese; the English versions provided here are AI-translated.
 
