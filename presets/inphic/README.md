@@ -1,14 +1,20 @@
 # 英菲克(inphic)产品预设<br>Inphic Product Presets
 爱好者自发行为，非商业作品。  
-目前仅制作了我自己购买使用的 IN9、IN10。其中 IN9 系列里，Pro 是原始工程，其他三个都是直接替换图片。
+目前仅制作了我自己购买使用的 IN9、IN10、PW1。  
 
 A fan-made project, non-commercial in nature.  
-Currently, only the IN9 and IN10 models I personally purchased and use have been created. Within the IN9 series, the "Pro" version is the original project file, while the other three are simply image replacements.
+Currently, only the IN9, IN10, and PW1 that I personally purchased and use have been created.  
 
 ## 项目编辑<br>Project Editing
 图片使用 **Adobe Fireworks CS6**(2012) 开发，工程文件格式为 `*.fw.png`，因此你可以用 Fireworks 编辑这些文件。本软件已经停产，但是因为非常好用，我从 **Macromedia Flash/Dreamweaver/Fireworks MX**(2002) 时代开始一直在使用它。
 
+其中 IN9、IN10 为纯手工制作，PW1开始使用我写的脚本自动生成。  
+该脚本已开源，请访问仓库使用： [Mapaler/OBS-input-overlay-preset-autogeneration](https://github.com/Mapaler/OBS-input-overlay-preset-autogeneration)
+
 The images were created using **Adobe Fireworks CS6**(2012), with project files in the `*.fw.png` format. You can therefore edit these files using Fireworks. Although this software is discontinued, it remains my preferred tool since the **Macromedia Flash/Dreamweaver/Fireworks MX**(2002) era due to its excellent functionality.
+
+The IN9 and IN10 were made entirely by hand, while the PW1 presets were automatically generated using a script I wrote.  
+The script is open source, please visit the repository to use: [Mapaler/OBS-input-overlay-preset-autogeneration](https://github.com/Mapaler/OBS-input-overlay-preset-autogeneration)
 
 ## 图片版权<br>Image Copyright
 图片来自[英菲克(inphic)官网](http://www.inphic.cn)，与官方的[📧魏女士](mailto:weixiaofeng@exmail.inphic.cn)取得了联系，被告知此种发布不会有版权问题。
