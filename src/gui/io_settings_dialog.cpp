@@ -69,6 +69,9 @@ io_settings_dialog::io_settings_dialog(QWidget *parent) : QDialog(parent, Qt::Di
     ui->cb_enable_overlay->setChecked(io_config::enable_overlay_source);
     ui->cb_enable_control->setChecked(io_config::enable_input_control);
     ui->cb_enable_wss->setChecked(io_config::enable_websocket_server);
+    ui->cb_list_mode->setCurrentIndex(io_config::filter_mode);
+    ui->cb_regex->setChecked(io_config::regex);
+    ui->cb_ds_enhanced->setChecked(io_config::ds_enhanced_mode);
     ui->cb_log->setChecked(io_config::log_flag);
     ui->txt_bind_address->setText(utf8_to_qt(io_config::wss_bind_address.c_str()));
 

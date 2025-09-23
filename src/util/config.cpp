@@ -42,7 +42,7 @@ std::string wss_bind_address;
 
 void set_defaults()
 {
-    instance = obs_frontend_get_profile_config();
+    instance = obs_frontend_get_global_config();
     CDEF_BOOL(S_UIOHOOK, enable_uiohook);
     CDEF_BOOL(S_GAMEPAD, enable_gamepad_hook);
     CDEF_BOOL(S_OVERLAY, enable_overlay_source);
@@ -91,6 +91,7 @@ void save()
     CSET_BOOL(S_ENABLE_WSS, enable_websocket_server);
     CSET_STR(S_WSS_ADDRESS, wss_bind_address.c_str());
     CSET_INT(S_FILTER_MODE, filter_mode);
+    CSET_BOOL(S_DS_ENHANCED_MODE, ds_enhanced_mode);
 }
 
 }

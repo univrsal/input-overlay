@@ -42,9 +42,7 @@ inline void sdl_init()
     // as an option in the settings dialog
     SDL_SetHint(SDL_HINT_JOYSTICK_ENHANCED_REPORTS, io_config::ds_enhanced_mode ? "1" : "0");
     SDL_SetHint(SDL_HINT_JOYSTICK_HIDAPI_STEAM, "1");
-#if SDL_VERSION_ATLEAST(2, 0, 22)
     SDL_SetHint(SDL_HINT_JOYSTICK_ROG_CHAKRAM, "1");
-#endif
     SDL_SetHint(SDL_HINT_JOYSTICK_ALLOW_BACKGROUND_EVENTS, "1");
     SDL_SetHint(SDL_HINT_JOYSTICK_LINUX_DEADZONES, "1");
 
