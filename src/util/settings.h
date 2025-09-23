@@ -31,6 +31,7 @@
 #define S_WSS_ADDRESS                   "wss_address"
 #define S_ENABLE_WSS                    "enable_wss"
 #define S_REFRESH                       "server_refresh_rate"
+#define S_DS_ENHANCED_MODE				"ds_enhanced_mode"
 #define S_CONTROL                       "control"
 #define S_REGEX                         "regex"
 #define S_FILTER_MODE                   "filter_mode"

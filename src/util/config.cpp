@@ -33,6 +33,7 @@ bool enable_uiohook = true;
 bool enable_overlay_source = true;
 bool regex = false;
 bool log_flag = false;
+bool ds_enhanced_mode = false;
 int filter_mode = 0;
 uint16_t server_refresh_rate = 250;
 uint16_t server_port = 1608;
@@ -53,6 +54,9 @@ void set_defaults()
     CDEF_BOOL(S_ENABLE_WSS, enable_websocket_server);
     CDEF_INT(S_REFRESH, server_refresh_rate);
     CDEF_INT(S_REFRESH, filter_mode);
+    CDEF_BOOL(S_DS_ENHANCED_MODE, ds_enhanced_mode);
+    CDEF_BOOL(S_CONTROL, enable_input_control);
+    CDEF_BOOL(S_REGEX, regex);
 }
 
 void load()
@@ -68,6 +72,8 @@ void load()
     log_flag = CGET_BOOL(S_LOGGING);
     server_refresh_rate = static_cast<uint16_t>(CGET_INT(S_REFRESH));
     wss_bind_address = CGET_STR(S_WSS_ADDRESS);
+    regex = CGET_BOOL(S_REGEX);
+    ds_enhanced_mode = CGET_BOOL(S_DS_ENHANCED_MODE);
 }
 
 void save()
@@ -84,6 +90,7 @@ void save()
     CSET_INT(S_WSS_PORT, wss_port);
     CSET_BOOL(S_ENABLE_WSS, enable_websocket_server);
     CSET_STR(S_WSS_ADDRESS, wss_bind_address.c_str());
+    CSET_INT(S_FILTER_MODE, filter_mode);
 }
 
 }

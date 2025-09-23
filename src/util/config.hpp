@@ -51,6 +51,7 @@ extern bool enable_overlay_source;
 extern bool enable_websocket_server;
 extern bool regex;
 extern int filter_mode;
+extern bool ds_enhanced_mode;	
 /* Netowork config */
 extern bool log_flag;
 extern uint16_t server_refresh_rate;
