@@ -201,7 +201,5 @@ void io_settings_dialog::CbWssStateChanged(int state)
 
 void io_settings_dialog::CbDSEnhancedModeChanged(int state)
 {
-    Q_UNUSED(state)
-    QMessageBox::information(this, "Restart Required", "You need to restart OBS for this setting to take effect.");
     
 }
