@@ -41,7 +41,7 @@ std::string wss_bind_address;
 
 void set_defaults()
 {
-    instance = obs_frontend_get_global_config();
+    instance = obs_frontend_get_profile_config();
     CDEF_BOOL(S_UIOHOOK, enable_uiohook);
     CDEF_BOOL(S_GAMEPAD, enable_gamepad_hook);
     CDEF_BOOL(S_OVERLAY, enable_overlay_source);
