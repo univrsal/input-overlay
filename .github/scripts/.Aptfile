@@ -12,4 +12,4 @@ package 'libx11-xcb-dev'
 package 'libxkbcommon-dev'
 package 'libxkbcommon-x11-dev'
 package 'libxkbfile-dev'
-package 'libsdl3-dev'
+
