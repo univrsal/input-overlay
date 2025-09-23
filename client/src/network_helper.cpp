@@ -51,40 +51,36 @@ static void fn(struct mg_connection *c, int ev, void *ev_data, void *fn_data)
         uiohook_helper::stop();
     }
 }
-
 inline const char *controller_description(int index)
 {
 
-    switch (SDL_GameControllerTypeForIndex(index)) {
-    case SDL_CONTROLLER_TYPE_AMAZON_LUNA:
-        return "Amazon Luna Controller";
-    case SDL_CONTROLLER_TYPE_GOOGLE_STADIA:
-        return "Google Stadia Controller";
+    switch (SDL_GetGamepadTypeForID(index)) {
+
 #if SDL_VERSION_ATLEAST(2, 24, 0)
-    case SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_JOYCON_LEFT:
-    case SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_JOYCON_RIGHT:
-    case SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_JOYCON_PAIR:
+    case SDL_GAMEPAD_TYPE_NINTENDO_SWITCH_JOYCON_LEFT:
+    case SDL_GAMEPAD_TYPE_NINTENDO_SWITCH_JOYCON_RIGHT:
+    case SDL_GAMEPAD_TYPE_NINTENDO_SWITCH_JOYCON_PAIR:
         return "Nintendo Switch Joy-Con";
 #endif
-    case SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_PRO:
+    case SDL_GAMEPAD_TYPE_NINTENDO_SWITCH_PRO:
         return "Nintendo Switch Pro Controller";
-    case SDL_CONTROLLER_TYPE_PS3:
+    case SDL_GAMEPAD_TYPE_PS3:
         return "PS3 Controller";
-    case SDL_CONTROLLER_TYPE_PS4:
+    case SDL_GAMEPAD_TYPE_PS4:
         return "PS4 Controller";
-    case SDL_CONTROLLER_TYPE_PS5:
+    case SDL_GAMEPAD_TYPE_PS5:
         return "PS5 Controller";
-    case SDL_CONTROLLER_TYPE_XBOX360:
+    case SDL_GAMEPAD_TYPE_XBOX360:
         return "XBox 360 Controller";
-    case SDL_CONTROLLER_TYPE_XBOXONE:
+    case SDL_GAMEPAD_TYPE_XBOXONE:
         return "XBox One Controller";
-    case SDL_CONTROLLER_TYPE_VIRTUAL:
+    case SDL_GAMEPAD_TYPE_UNKNOWN:
+    case SDL_GAMEPAD_TYPE_STANDARD:
         return "Virtual Game Controller";
     default:
         return "Game Controller";
     }
 }
-
 bool start()
 {
     mg_log_set_callback(
@@ -133,10 +129,10 @@ bool start()
                         have_data = true;
                         buf.write(uint8_t(1)); // sdl event
                         buf.write(event);
-                        if (event.type == SDL_CONTROLLERDEVICEADDED) {
-                            auto *name = SDL_GameControllerNameForIndex(event.cdevice.which);
+                        if (event.type == SDL_EVENT_GAMEPAD_ADDED) {
+                            auto *name = SDL_GetGamepadNameForID(event.gdevice.which);
                             std::string full_name =
-                                name + std::string(" - ") + controller_description(event.cdevice.which);
+                                name + std::string(" - ") + controller_description(event.gdevice.which);
                             buf.write<uint8_t>(full_name.length());
                             buf.write(full_name.c_str(), full_name.length());
                         }

@@ -17,7 +17,7 @@
  *************************************************************************/
 
 #pragma once
-#include "SDL.h"
+#include <SDL3/SDL.h>
 #include <buffer.hpp>
 #include <mutex>
 #include <atomic>

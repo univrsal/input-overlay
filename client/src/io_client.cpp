@@ -16,7 +16,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *************************************************************************/
 
-#define SDL_MAIN_HANDLED
 
 #include "network_helper.hpp"
 #include "uiohook_helper.hpp"
@@ -42,7 +41,6 @@ void sig_break__handler(int)
 
 int main(int argc, char *argv[])
 {
-    SDL_SetMainReady();
     signal(SIGINT, &sig_int__handler);
     signal(SIGBREAK, &sig_break__handler);
 

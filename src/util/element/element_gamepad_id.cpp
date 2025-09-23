@@ -37,7 +37,10 @@ void element_gamepad_id::draw(gs_effect_t *effect, gs_image_file_t *image, sourc
     if (settings->gamepad || settings->remote_input_data) {
         if (settings->is_pad_button_pressed(SDL_GAMEPAD_BUTTON_GUIDE))
             element_texture::draw(effect, image, &m_mappings[ID_PRESSED]);
-        int index = SDL_min(settings->gamepad->player_index(), 2);
+        int index = 0;
+        if (settings->gamepad) {
+            index = SDL_min(settings->gamepad->player_index(), 2);
+        }
         element_texture::draw(effect, image, &m_mappings[index]);
     }
 }
