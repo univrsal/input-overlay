@@ -363,7 +363,7 @@ void overlay::refresh_data()
 
         if (m_settings->gamepad) {
             m_settings->gamepad->mutex().lock();
-            m_settings->gamepad->copy_data(&m_settings->data, m_settings->gamepad_index);
+            m_settings->gamepad->copy_data(&m_settings->data, m_settings->gamepad_name);
             m_settings->gamepad->mutex().unlock();
         }
         local_data::data.m_mutex.unlock();

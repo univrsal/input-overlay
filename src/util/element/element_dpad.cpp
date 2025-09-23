@@ -19,7 +19,7 @@
 #include "../../sources/input_source.hpp"
 #include "element_dpad.hpp"
 #include <keycodes.h>
-#include "SDL.h"
+#include <SDL3/SDL.h>
 
 element_dpad::element_dpad() : element_texture(ET_DPAD_STICK) {}
 
@@ -35,30 +35,30 @@ void element_dpad::load(const QJsonObject &obj)
     m_keycode = VC_DPAD_DATA;
 }
 
-inline int get_direction(std::array<bool, SDL_CONTROLLER_BUTTON_MAX> const &buttons)
+inline int get_direction(std::array<bool, SDL_GAMEPAD_BUTTON_COUNT> const &buttons)
 {
-    if (buttons[SDL_CONTROLLER_BUTTON_DPAD_UP]) {
-        if (buttons[SDL_CONTROLLER_BUTTON_DPAD_LEFT])
+    if (buttons[SDL_GAMEPAD_BUTTON_DPAD_UP]) {
+        if (buttons[SDL_GAMEPAD_BUTTON_DPAD_LEFT])
             return element_dpad::TEXTURE_TOP_LEFT;
-        if (buttons[SDL_CONTROLLER_BUTTON_DPAD_RIGHT])
+        if (buttons[SDL_GAMEPAD_BUTTON_DPAD_RIGHT])
             return element_dpad::TEXTURE_TOP_RIGHT;
         return element_dpad::TEXTURE_UP;
-    } else if (buttons[SDL_CONTROLLER_BUTTON_DPAD_DOWN]) {
-        if (buttons[SDL_CONTROLLER_BUTTON_DPAD_LEFT])
+    } else if (buttons[SDL_GAMEPAD_BUTTON_DPAD_DOWN]) {
+        if (buttons[SDL_GAMEPAD_BUTTON_DPAD_LEFT])
             return element_dpad::TEXTURE_BOTTOM_LEFT;
-        if (buttons[SDL_CONTROLLER_BUTTON_DPAD_RIGHT])
+        if (buttons[SDL_GAMEPAD_BUTTON_DPAD_RIGHT])
             return element_dpad::TEXTURE_BOTTOM_RIGHT;
         return element_dpad::TEXTURE_DOWN;
-    } else if (buttons[SDL_CONTROLLER_BUTTON_DPAD_RIGHT]) {
-        if (buttons[SDL_CONTROLLER_BUTTON_DPAD_UP])
+    } else if (buttons[SDL_GAMEPAD_BUTTON_DPAD_RIGHT]) {
+        if (buttons[SDL_GAMEPAD_BUTTON_DPAD_UP])
             return element_dpad::TEXTURE_TOP_RIGHT;
-        if (buttons[SDL_CONTROLLER_BUTTON_DPAD_DOWN])
+        if (buttons[SDL_GAMEPAD_BUTTON_DPAD_DOWN])
             return element_dpad::TEXTURE_BOTTOM_RIGHT;
         return element_dpad::TEXTURE_RIGHT;
-    } else if (buttons[SDL_CONTROLLER_BUTTON_DPAD_LEFT]) {
-        if (buttons[SDL_CONTROLLER_BUTTON_DPAD_UP])
+    } else if (buttons[SDL_GAMEPAD_BUTTON_DPAD_LEFT]) {
+        if (buttons[SDL_GAMEPAD_BUTTON_DPAD_UP])
             return element_dpad::TEXTURE_TOP_LEFT;
-        if (buttons[SDL_CONTROLLER_BUTTON_DPAD_DOWN])
+        if (buttons[SDL_GAMEPAD_BUTTON_DPAD_DOWN])
             return element_dpad::TEXTURE_BOTTOM_LEFT;
         return element_dpad::TEXTURE_LEFT;
     }

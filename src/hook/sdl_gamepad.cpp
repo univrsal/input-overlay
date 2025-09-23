@@ -1,15 +1,14 @@
 #include "sdl_gamepad.hpp"
 #include <input_data.hpp>
 
-void sdl_gamepad::copy_data(input_data *data, int index)
+void sdl_gamepad::copy_data(input_data *data, std::string name)
 {
-    for (int i = 0; i < SDL_CONTROLLER_BUTTON_MAX; ++i) {
-        data->gamepad_buttons[index][i] = SDL_GameControllerGetButton(m_controller, (SDL_GameControllerButton)i) ==
-                                          SDL_PRESSED;
+    for (int i = 0; i < SDL_GAMEPAD_BUTTON_COUNT; ++i) {
+        data->gamepad_buttons[name][i] = SDL_GetGamepadButton(m_controller, (SDL_GamepadButton)i);
     }
 
-    for (int i = 0; i < SDL_CONTROLLER_AXIS_MAX; ++i) {
-        data->gamepad_axis[index][i] =
-            SDL_GameControllerGetAxis(m_controller, (SDL_GameControllerAxis)(i)) / float(INT16_MAX);
+    for (int i = 0; i < SDL_GAMEPAD_AXIS_COUNT; ++i) {
+        data->gamepad_axis[name][i] =
+            SDL_GetGamepadAxis(m_controller, (SDL_GamepadAxis)(i)) / float(INT16_MAX);
     }
 }

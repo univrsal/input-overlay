@@ -84,9 +84,6 @@ bool obs_module_load()
 
 void obs_module_unload()
 {
-    /* Save config values again */
-    io_config::save();
-
     gamepad_hook::stop();
     uiohook::stop();
     wss::stop();

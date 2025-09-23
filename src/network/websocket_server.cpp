@@ -137,47 +137,47 @@ void dispatch_sdl_event(const SDL_Event *e, const std::string &source_name, inpu
 {
     if (!mg::can_queue_message())
         return;
-    static thread_local std::unordered_map<std::string, double[GAMEPAD_AXIS_MAX]> last_axis;
+    static thread_local std::unordered_map<std::string, double[SDL_GAMEPAD_AXIS_COUNT]> last_axis;
     QJsonObject obj;
     obj["event_source"] = source_name.c_str();
-    obj["device_index"] = e->cdevice.which;
-    obj["time"] = int(e->cdevice.timestamp);
+    obj["device_index"] = (int)e->gdevice.which;
+    obj["time"] = int(e->gdevice.timestamp);
     double axis{};
     switch (e->type) {
-    case SDL_CONTROLLERDEVICEADDED:
+    case SDL_EVENT_GAMEPAD_ADDED:
         obj["event_type"] = "controller_device_added";
-        obj["device_name"] = utf8_to_qt(SDL_GameControllerNameForIndex(e->cdevice.which));
+        obj["device_name"] = utf8_to_qt(SDL_GetGamepadNameForID(e->gdevice.which));
         break;
 
-    case SDL_CONTROLLERDEVICEREMOVED:
+    case SDL_EVENT_GAMEPAD_REMOVED:
         obj["event_type"] = "controller_device_removed";
         // we don't have the name anymore
         break;
-    case SDL_CONTROLLERAXISMOTION:
+    case SDL_EVENT_GAMEPAD_AXIS_MOTION:
         // ignore small axis values
-        axis = double(e->caxis.value / double(INT16_MAX));
-        if (std::abs(axis - last_axis[source_name][e->caxis.axis]) < 0.003)
+        axis = double(e->gaxis.value / double(INT16_MAX));
+        if (std::abs(axis - last_axis[source_name][e->gaxis.axis]) < 0.003)
             return;
-        last_axis[source_name][e->caxis.axis] = axis;
+        last_axis[source_name][e->gaxis.axis] = axis;
         obj["event_type"] = "controller_axis_motion";
-        obj["virtual_code"] = e->caxis.axis;
+        obj["virtual_code"] = e->gaxis.axis;
         obj["virtual_value"] = axis;
         break;
-    case SDL_CONTROLLERBUTTONDOWN:
+    case SDL_EVENT_GAMEPAD_BUTTON_DOWN:
         obj["event_type"] = "controller_button_down";
-        obj["virtual_code"] = e->cbutton.button;
-        obj["virtual_value"] = e->cbutton.state;
+        obj["virtual_code"] = e->gbutton.button;
+        obj["virtual_value"] = e->gbutton.down;
         break;
-    case SDL_CONTROLLERBUTTONUP:
+    case SDL_EVENT_GAMEPAD_BUTTON_UP:
         obj["event_type"] = "controller_button_up";
-        obj["virtual_code"] = e->cbutton.button;
-        obj["virtual_value"] = e->cbutton.state;
+        obj["virtual_code"] = e->gbutton.button;
+        obj["virtual_value"] = e->gbutton.down;
         break;
     default:
         return; /* ignore other events */
     }
 
-    auto n = data->remote_gamepad_names.find(e->cdevice.which);
+    auto n = data->remote_gamepad_names.find(e->gdevice.which);
     if (n != data->remote_gamepad_names.end())
         obj["device_name"] = utf8_to_qt(n->second.c_str());
     QJsonDocument doc(obj);

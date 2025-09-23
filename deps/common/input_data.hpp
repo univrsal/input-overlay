@@ -26,9 +26,7 @@
 #include <uiohook.h>
 #include <buffer.hpp>
 #include <keycodes.h>
-
-#define GAMEPAD_AXIS_MAX 6
-#define GAMEPAD_BUTTON_MAX 21
+#include <SDL3/SDL.h>
 
 class QJsonObject;
 
@@ -36,7 +34,7 @@ class QJsonObject;
 struct input_data {
     template<class T> using button_map = std::unordered_map<T, bool>;
 
-    template<class T, std::size_t L> using gamepad_map = std::unordered_map<int, std::array<T, L>>;
+    template<class T, std::size_t L> using gamepad_map = std::unordered_map<std::string, std::array<T, L>>;
 
     std::mutex m_mutex;
 
@@ -57,8 +55,8 @@ struct input_data {
     mouse_event_data last_mouse_movement{};
 
     /* Gamepad data */
-    gamepad_map<bool, GAMEPAD_BUTTON_MAX> gamepad_buttons;
-    gamepad_map<float, GAMEPAD_AXIS_MAX> gamepad_axis;
+    gamepad_map<bool, SDL_GAMEPAD_BUTTON_COUNT> gamepad_buttons;
+    gamepad_map<float, SDL_GAMEPAD_AXIS_COUNT> gamepad_axis;
 
     /* gamepad names */
     std::unordered_map<int, std::string> remote_gamepad_names;

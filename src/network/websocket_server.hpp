@@ -20,7 +20,7 @@
 #include <uiohook.h>
 #include <string>
 #include <atomic>
-#include "SDL.h"
+#include <SDL3/SDL.h>
 
 #define WSS_PAD_CONNECTED "gamepad_connected"
 #define WSS_PAD_DISCONNECTED "gamepad_disconnected"

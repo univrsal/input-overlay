@@ -7,9 +7,9 @@
 
 #if defined(_WIN32)
 #define WIN32 1
-#define INIT_FLAGS_FOR_SDL (SDL_INIT_VIDEO | SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER)
+#define INIT_FLAGS_FOR_SDL (SDL_INIT_VIDEO | SDL_INIT_JOYSTICK | SDL_INIT_GAMEPAD)
 #else
-#define INIT_FLAGS_FOR_SDL (SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER)
+#define INIT_FLAGS_FOR_SDL SDL_INIT_GAMEPAD
 #define WIN32 0
 #endif
 
@@ -22,37 +22,42 @@ gamepads *local_gamepads{};
 
 inline void sdl_init()
 {
-    SDL_version compile_ver{}, link_ver{};
 
-    SDL_VERSION(&compile_ver);
-    SDL_GetVersion(&link_ver);
+    auto link_ver = SDL_GetVersion();
 
-    binfo("Initializing SDL2 for gamepad input (compile-time: %i.%i.%i, run-time:  %i.%i.%i)", compile_ver.major,
-          compile_ver.minor, compile_ver.patch, link_ver.major, link_ver.minor, link_ver.patch);
+    auto link_ver_major = SDL_VERSIONNUM_MAJOR(link_ver);
+    auto link_ver_minor = SDL_VERSIONNUM_MINOR(link_ver);
+    auto link_ver_patch = SDL_VERSIONNUM_MICRO(link_ver);
+
+    auto compile_ver = SDL_VERSION;
+    auto compile_ver_major = SDL_VERSIONNUM_MAJOR(compile_ver);
+    auto compile_ver_minor = SDL_VERSIONNUM_MINOR(compile_ver);
+    auto compile_ver_patch = SDL_VERSIONNUM_MICRO(compile_ver);
+
+
+    binfo("Initializing SDL2 for gamepad input (compile-time: %i.%i.%i, run-time:  %i.%i.%i)", compile_ver_major,
+          compile_ver_minor, compile_ver_patch, link_ver_major, link_ver_minor, link_ver_patch);
 
     // TODO: I think there's a flag for switching a and b on switch controllers, we might want that
     // as an option in the settings dialog
-    SDL_SetHint(SDL_HINT_ACCELEROMETER_AS_JOYSTICK, "0");
-    SDL_SetHint(SDL_HINT_JOYSTICK_HIDAPI_PS4_RUMBLE, "1");
-    SDL_SetHint(SDL_HINT_JOYSTICK_HIDAPI_PS5_RUMBLE, "1");
+    SDL_SetHint(SDL_HINT_JOYSTICK_ENHANCED_REPORTS, io_config::ds_enhanced_mode ? "1" : "0");
     SDL_SetHint(SDL_HINT_JOYSTICK_HIDAPI_STEAM, "1");
 #if SDL_VERSION_ATLEAST(2, 0, 22)
     SDL_SetHint(SDL_HINT_JOYSTICK_ROG_CHAKRAM, "1");
 #endif
     SDL_SetHint(SDL_HINT_JOYSTICK_ALLOW_BACKGROUND_EVENTS, "1");
-    SDL_SetHint(SDL_HINT_LINUX_JOYSTICK_DEADZONES, "1");
+    SDL_SetHint(SDL_HINT_JOYSTICK_LINUX_DEADZONES, "1");
 
-    if (SDL_WasInit(0) == INIT_FLAGS_FOR_SDL || SDL_Init(INIT_FLAGS_FOR_SDL) < 0) {
+    if (SDL_WasInit(0) == INIT_FLAGS_FOR_SDL || !SDL_Init(INIT_FLAGS_FOR_SDL)) {
         berr("Couldn't initialize SDL: %s\n", SDL_GetError());
         return;
     }
 
     // I'm not sure where this file is supposed to be, but the gamepad test had this line so we'll just copy it
-    SDL_GameControllerAddMappingsFromFile("gamecontrollerdb.txt");
+    SDL_AddGamepadMappingsFromFile("gamecontrollerdb.txt");
 
     if (WIN32) {
-        dummy_window = SDL_CreateWindow("input-overlay sdl2 window", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 10,
-                                        10, SDL_WINDOW_HIDDEN);
+        dummy_window = SDL_CreateWindow("input-overlay sdl2 window", 10, 10, SDL_WINDOW_HIDDEN);
         if (!dummy_window) {
             berr("Couldn't create sdl2 window: %s\n", SDL_GetError());
             return;
@@ -110,35 +115,42 @@ void stop()
 
 gamepads::gamepads()
 {
-    for (int i = 0; i < SDL_NumJoysticks(); ++i) {
+    SDL_JoystickID *ids{};
+    int count{};
+
+    ids = SDL_GetJoysticks(&count);
+    
+    if (count <= 0) {
+        binfo("No joysticks/gamepads found");
+        state = true;
+        return;
+    }
+
+    for (int i = 0; i < count; ++i) {
+        auto id = ids[i];
         const char *name;
         const char *path = "n/a";
         const char *description;
+        auto sdl_guid = SDL_GetJoystickGUIDForID(id);
         char guid[64];
 
-        SDL_JoystickGetGUIDString(SDL_JoystickGetDeviceGUID(i), guid, sizeof(guid));
+        SDL_GUIDToString(sdl_guid, guid, sizeof(guid));
 
-        if (SDL_IsGameController(i)) {
+        if (SDL_IsGamepad(i)) {
             char fmt[512];
-            // TODO: I don't think we need more than just the name
-            name = SDL_GameControllerNameForIndex(i);
-            //#if SDL_VERSION_ATLEAST(2, 24, 0)
-            //            path = SDL_GameControllerPathForIndex(i);
-            //#endif
+            name = SDL_GetGamepadNameForID(id);
             description = controller_description(i);
-            std::snprintf(fmt, 512, "%i %s - %s", i, name, description);
+            std::snprintf(fmt, 512, "%s - %s", name, description);
             add_controller(i, fmt);
         } else {
-            name = SDL_JoystickNameForIndex(i);
-#if SDL_VERSION_ATLEAST(2, 24, 0)
-            path = SDL_JoystickPathForIndex(i);
-#endif
+            name = SDL_GetJoystickNameForID(id);
+            path = SDL_GetJoystickPathForID(id);
             description = "Joystick";
             // TODO: also register those?
         }
         bdebug("Found %s %d: %s%s%s (guid %s, VID 0x%.4x, PID 0x%.4x, player index = %d)", description, i,
-               name ? name : "Unknown", path ? ", " : "", path ? path : "", guid, SDL_JoystickGetDeviceVendor(i),
-               SDL_JoystickGetDeviceProduct(i), SDL_JoystickGetDevicePlayerIndex(i));
+               name ? name : "Unknown", path ? ", " : "", path ? path : "", guid, SDL_GetJoystickVendorForID(id),
+               SDL_GetJoystickProductForID(id), SDL_GetJoystickPlayerIndexForID(id));
     }
 
     // Confirm object has been created
@@ -159,49 +171,48 @@ void gamepads::event_loop()
         const char *description;
 
         /* Process all currently pending events */
-        while (SDL_PeepEvents(&event, 1, SDL_GETEVENT, SDL_FIRSTEVENT, SDL_LASTEVENT) == 1) {
+        while (SDL_PeepEvents(&event, 1, SDL_GETEVENT, SDL_EVENT_FIRST, SDL_EVENT_LAST) == 1) {
             if (!io_config::io_window_filters.input_blocked())
                 wss::dispatch_sdl_event(&event, "local", &local_data::data);
             switch (event.type) {
-            case SDL_CONTROLLERDEVICEADDED:
+            case SDL_EVENT_GAMEPAD_ADDED:
                 char fmt[512];
-                name = SDL_GameControllerNameForIndex(event.cdevice.which);
-                description = controller_description(event.cdevice.which);
-                std::snprintf(fmt, 512, "%i %s - %s", event.cdevice.which, name, description);
-                add_controller(event.cdevice.which, fmt);
-                binfo("Found new %s with id %i", description, event.cdevice.which);
+                name = SDL_GetGamepadNameForID(event.gdevice.which);
+                description = controller_description(event.gdevice.which);
+                std::snprintf(fmt, 512, "%s - %s", name, description);
+                add_controller(event.gdevice.which, fmt);
+                binfo("Found new %s with id %i", description, event.gdevice.which);
                 break;
 
-            case SDL_CONTROLLERDEVICEREMOVED:
-                binfo("Gamepad with id %i disconnected", event.cdevice.which);
-                remove_controller(event.cdevice.which);
+            case SDL_EVENT_GAMEPAD_REMOVED:
+                binfo("Gamepad with id %i disconnected", event.gdevice.which);
+                remove_controller(event.gdevice.which);
                 break;
 
-            case SDL_CONTROLLERTOUCHPADDOWN:
-            case SDL_CONTROLLERTOUCHPADMOTION:
-            case SDL_CONTROLLERTOUCHPADUP:
+            case SDL_EVENT_GAMEPAD_TOUCHPAD_UP:
+            case SDL_EVENT_GAMEPAD_TOUCHPAD_MOTION:
+            case SDL_EVENT_GAMEPAD_TOUCHPAD_DOWN:
                 // TODO: process touchpad events?
                 break;
-            case SDL_CONTROLLERSENSORUPDATE:
+            case SDL_EVENT_GAMEPAD_SENSOR_UPDATE:
                 // TODO: process sensor events?
                 break;
 
-            case SDL_CONTROLLERAXISMOTION: {
-                auto pad = get_controller_from_instance_id(event.cdevice.which);
+            case SDL_EVENT_GAMEPAD_AXIS_MOTION: {
+                auto pad = get_controller_from_instance_id(event.gdevice.which);
                 std::lock_guard<std::mutex> lock(pad->mutex());
-                pad->axis()[event.caxis.axis] = event.caxis.value / float(INT16_MAX);
+                pad->axis()[event.gaxis.axis] = event.gaxis.value / float(INT16_MAX);
             } break;
-            case SDL_CONTROLLERBUTTONDOWN:
-            case SDL_CONTROLLERBUTTONUP: {
-                auto pad = get_controller_from_instance_id(event.cdevice.which);
+            case SDL_EVENT_GAMEPAD_BUTTON_DOWN:
+            case SDL_EVENT_GAMEPAD_BUTTON_UP: {
+                auto pad = get_controller_from_instance_id(event.gdevice.which);
                 std::lock_guard<std::mutex> lock(pad->mutex());
-                pad->buttons()[event.cbutton.button] = event.cbutton.state;
+                pad->buttons()[event.gbutton.button] = event.gbutton.down;
             } break;
-#if SDL_VERSION_ATLEAST(2, 24, 0)
-            case SDL_JOYBATTERYUPDATED:
+
+            case SDL_EVENT_JOYSTICK_BATTERY_UPDATED:
                 // TODO: process battery events?
                 break;
-#endif
             default:
                 break;
             }

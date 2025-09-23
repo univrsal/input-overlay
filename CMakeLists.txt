@@ -30,10 +30,10 @@ if (WIN32 OR WIN64)
         # Copy dependencies
         add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            ${SDL2_DLLS}
+            ${SDL3_DLLS}
             $<TARGET_FILE_DIR:${PROJECT_NAME}>)
         
-        install(FILES ${SDL2_DLLS} DESTINATION
+        install(FILES ${SDL3_DLLS} DESTINATION
             CONFIGURATIONS RelWithDebInfo Debug Release
             DESTINATION obs-plugins/64bit
         )
@@ -125,14 +125,14 @@ endif()
 
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
         ${input-overlay_PLATFORM_DEPS}
-        ${SDL2_LIBRARIES}
+        ${SDL3_LIBRARIES}
         uiohook
 )
 
 target_include_directories(
     ${CMAKE_PROJECT_NAME}
     PRIVATE
-    ${SDL2_INCLUDE_DIRS}
+    ${SDL3_INCLUDE_DIRS}
     ${COMMON_HEADERS}
     ${JSON_11_HEADER}
     ${UIOHOOK_INCLUDE_DIR}

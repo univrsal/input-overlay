@@ -60,6 +60,7 @@ io_settings_dialog::io_settings_dialog(QWidget *parent) : QDialog(parent, Qt::Di
 #else
     connect(ui->cb_enable_control, &QCheckBox::stateChanged, this, &io_settings_dialog::CbInputControlStateChanged);
     connect(ui->cb_enable_wss, &QCheckBox::stateChanged, this, &io_settings_dialog::CbWssStateChanged);
+    connect(ui->cb_ds_enhanced, &QCheckBox::stateChanged, this, &io_settings_dialog::CbDSEnhancedModeChanged);
 #endif
 
     /* Load values */
@@ -167,6 +168,7 @@ void io_settings_dialog::FormAccepted()
 
     io_config::enable_websocket_server = ui->cb_enable_wss->isChecked();
     io_config::wss_bind_address = qt_to_utf8(ui->txt_bind_address->text());
+    io_config::ds_enhanced_mode = ui->cb_ds_enhanced->isChecked();
     io_config::save();
 }
 
@@ -192,4 +194,11 @@ void io_settings_dialog::CbWssStateChanged(int state)
     ui->sb_wss_port->setEnabled(state);
     ui->cb_log->setEnabled(state);
     ui->txt_bind_address->setEnabled(state);
+}
+
+void io_settings_dialog::CbDSEnhancedModeChanged(int state)
+{
+    Q_UNUSED(state)
+    QMessageBox::information(this, "Restart Required", "You need to restart OBS for this setting to take effect.");
+    
 }

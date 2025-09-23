@@ -50,7 +50,7 @@ public:
     uint8_t layout_flags = 0;              /* See overlay_flags in layout_constants.hpp          */
     float input_source_check_timer = 0.0f; /* Counter to check if selected game pad is connected */
 
-    int gamepad_index;
+    std::string gamepad_name;
     std::shared_ptr<sdl_gamepad> gamepad{};
     std::shared_ptr<input_data> remote_input_data{};
 
@@ -61,17 +61,17 @@ public:
     inline bool is_pad_button_pressed(int code)
     {
         // TODO: We might need to check if the map actually contains data at the index
-        return data.gamepad_buttons[gamepad_index][code];
+        return data.gamepad_buttons[gamepad_name][code];
     }
 
     inline float pad_axis(int code)
     {
         // TODO: We might need to check if the map actually contains data at the index
-        return data.gamepad_axis[gamepad_index][code];
+        return data.gamepad_axis[gamepad_name][code];
     }
 
     // TODO: We might need to check if the map actually contains data at the index
-    inline auto &get_button_map() { return data.gamepad_buttons[gamepad_index]; }
+    inline auto &get_button_map() { return data.gamepad_buttons[gamepad_name]; }
 };
 
 class input_source {

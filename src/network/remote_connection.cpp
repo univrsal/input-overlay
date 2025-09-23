@@ -119,35 +119,37 @@ void process_remote_event(struct mg_connection *ws, unsigned char *bytes, size_t
             if (!ev)
                 break;
             switch (ev->type) {
-            case SDL_CONTROLLERAXISMOTION: {
+            case SDL_EVENT_GAMEPAD_AXIS_MOTION: {
                 std::lock_guard<std::mutex> lock(client_data->m_mutex);
-                client_data->gamepad_axis[ev->caxis.which][ev->caxis.axis] = static_cast<float>(ev->caxis.value) / INT16_MAX;
+                auto name = client_data->remote_gamepad_names[ev->gdevice.which];
+                client_data->gamepad_axis[name][ev->gaxis.axis] = static_cast<float>(ev->gaxis.value) / INT16_MAX;
             } break;
-            case SDL_CONTROLLERBUTTONDOWN:
-            case SDL_CONTROLLERBUTTONUP: {
+            case SDL_EVENT_GAMEPAD_BUTTON_DOWN:
+            case SDL_EVENT_GAMEPAD_BUTTON_UP: {
                 std::lock_guard<std::mutex> lock(client_data->m_mutex);
-                client_data->gamepad_buttons[ev->cbutton.which][ev->cbutton.button] = ev->cbutton.state;
+                auto name = client_data->remote_gamepad_names[ev->gdevice.which];
+                client_data->gamepad_buttons[name][ev->gbutton.button] = ev->gbutton.down;
             } break;
-            case SDL_CONTROLLERDEVICEADDED: {
+            case SDL_EVENT_GAMEPAD_ADDED: {
                 uint8_t *len2 = b.read<uint8_t>();
                 if (len) {
                     char *gamepad_name = (char *)b.read(*len2);
                     if (gamepad_name) {
                         binfo("Gamepad '%s' connected to '%s'", gamepad_name, client_name.c_str());
                         std::lock_guard<std::mutex> lock(client_data->m_mutex);
-                        client_data->remote_gamepad_names[ev->cdevice.which] = gamepad_name;
+                        client_data->remote_gamepad_names[ev->gdevice.which] = gamepad_name;
                     }
                 }
                 break;
             }
-            case SDL_CONTROLLERDEVICEREMOVED: {
+            case SDL_EVENT_GAMEPAD_REMOVED: {
                 {
                     std::lock_guard<std::mutex> lock(client_data->m_mutex);
-                    auto gamepad_name = client_data->remote_gamepad_names[ev->cdevice.which];
+                    auto gamepad_name = client_data->remote_gamepad_names[ev->gdevice.which];
                     binfo("Gamepad '%s' disconnected from '%s'", gamepad_name.c_str(), client_name.c_str());
-                    client_data->remote_gamepad_names.erase(ev->cdevice.which);
-                    client_data->gamepad_buttons.erase(ev->cdevice.which);
-                    client_data->gamepad_axis.erase(ev->cdevice.which);
+                    client_data->remote_gamepad_names.erase(ev->gdevice.which);
+                    client_data->gamepad_buttons.erase(gamepad_name);
+                    client_data->gamepad_axis.erase(gamepad_name);
                 }
                 break;
             }

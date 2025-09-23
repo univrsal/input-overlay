@@ -18,8 +18,9 @@
 
 #include "element_trigger.hpp"
 #include "../../sources/input_source.hpp"
+
 #include <keycodes.h>
-#include "SDL.h"
+#include <SDL3/SDL.h>
 
 element_trigger::element_trigger() : element_texture(ET_TRIGGER), m_pressed{}, m_side(element_side::INVALID), m_direction() {}
 
@@ -42,10 +43,10 @@ void element_trigger::draw(gs_effect_t *effect, gs_image_file_t *image, sources:
     if (settings->gamepad || settings->remote_input_data) {
         switch (m_side) {
         case element_side::LEFT:
-            progress = settings->pad_axis(SDL_CONTROLLER_AXIS_TRIGGERLEFT);
+            progress = settings->pad_axis(SDL_GAMEPAD_AXIS_LEFT_TRIGGER);
             break;
         case element_side::RIGHT:
-            progress = settings->pad_axis(SDL_CONTROLLER_AXIS_TRIGGERRIGHT);
+            progress = settings->pad_axis(SDL_GAMEPAD_AXIS_RIGHT_TRIGGER);
             break;
         default:;
         }

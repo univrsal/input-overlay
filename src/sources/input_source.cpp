@@ -56,16 +56,12 @@ inline void input_source::update(obs_data_t *settings)
 {
     m_settings.selected_source = obs_data_get_string(settings, S_INPUT_SOURCE);
 
-    auto id = obs_data_get_string(settings, S_CONTROLLER_ID);
-
-    if (strlen(id) > 0) {
-        // TODO: idk someone might have ELEVEN gamepads
-        QString tmp = utf8_to_qt(id)[0];
-        m_settings.gamepad_index = tmp.toInt();
-    }
+    
+    m_settings.gamepad_name = obs_data_get_string(settings, S_CONTROLLER_ID);
+    
 
     if (m_settings.use_local_input() && gamepad_hook::state && gamepad_hook::local_gamepads) {
-        m_settings.gamepad = gamepad_hook::local_gamepads->get_controller_from_index(m_settings.gamepad_index);
+        m_settings.gamepad = gamepad_hook::local_gamepads->get_controller_from_name(m_settings.gamepad_name);
     } else if (wss::state) {
         std::lock_guard<std::mutex> lock(network::remote_data_map_mutex);
         auto data = network::remote_data.find(m_settings.selected_source);
@@ -93,7 +89,7 @@ inline void input_source::tick(float seconds)
     if (m_settings.input_source_check_timer >= 1) {
         if (m_settings.use_local_input() && gamepad_hook::state) {
             if (!m_settings.gamepad || !m_settings.gamepad->valid())
-                m_settings.gamepad = gamepad_hook::local_gamepads->get_controller_from_index(m_settings.gamepad_index);
+                m_settings.gamepad = gamepad_hook::local_gamepads->get_controller_from_name(m_settings.gamepad_name);
         }
         // Remote gamepads directly store their data in the gamepad maps
 
@@ -145,8 +141,7 @@ bool reload_pads(obs_properties_t *, obs_property_t *property, void *data)
         auto input_data = src->m_settings.remote_input_data;
         std::lock_guard<std::mutex> lock(input_data->m_mutex);
         for (const auto &pad : input_data->remote_gamepad_names) {
-            std::string id = std::to_string(pad.first) + " - " + pad.second;
-            obs_property_list_add_string(property, id.c_str(), id.c_str());
+            obs_property_list_add_string(property, pad.second.c_str(), pad.second.c_str());
         }
     }
 

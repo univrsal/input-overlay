@@ -26,8 +26,9 @@
 #include <algorithm>
 #include <array>
 #include <string>
+#include <SDL3/SDL.h>
 #include "util/log.h"
-#include "SDL.h"
+
 
 #include "sdl_gamepad.hpp"
 
@@ -39,30 +40,28 @@ extern std::atomic<bool> state;
 inline const char *controller_description(int index)
 {
 
-    switch (SDL_GameControllerTypeForIndex(index)) {
-    case SDL_CONTROLLER_TYPE_AMAZON_LUNA:
-        return "Amazon Luna Controller";
-    case SDL_CONTROLLER_TYPE_GOOGLE_STADIA:
-        return "Google Stadia Controller";
+    switch (SDL_GetGamepadTypeForID(index)) {
+
 #if SDL_VERSION_ATLEAST(2, 24, 0)
-    case SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_JOYCON_LEFT:
-    case SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_JOYCON_RIGHT:
-    case SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_JOYCON_PAIR:
+    case SDL_GAMEPAD_TYPE_NINTENDO_SWITCH_JOYCON_LEFT:
+    case SDL_GAMEPAD_TYPE_NINTENDO_SWITCH_JOYCON_RIGHT:
+    case SDL_GAMEPAD_TYPE_NINTENDO_SWITCH_JOYCON_PAIR:
         return "Nintendo Switch Joy-Con";
 #endif
-    case SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_PRO:
+    case SDL_GAMEPAD_TYPE_NINTENDO_SWITCH_PRO:
         return "Nintendo Switch Pro Controller";
-    case SDL_CONTROLLER_TYPE_PS3:
+    case SDL_GAMEPAD_TYPE_PS3:
         return "PS3 Controller";
-    case SDL_CONTROLLER_TYPE_PS4:
+    case SDL_GAMEPAD_TYPE_PS4:
         return "PS4 Controller";
-    case SDL_CONTROLLER_TYPE_PS5:
+    case SDL_GAMEPAD_TYPE_PS5:
         return "PS5 Controller";
-    case SDL_CONTROLLER_TYPE_XBOX360:
+    case SDL_GAMEPAD_TYPE_XBOX360:
         return "XBox 360 Controller";
-    case SDL_CONTROLLER_TYPE_XBOXONE:
+    case SDL_GAMEPAD_TYPE_XBOXONE:
         return "XBox One Controller";
-    case SDL_CONTROLLER_TYPE_VIRTUAL:
+    case SDL_GAMEPAD_TYPE_UNKNOWN:
+    case SDL_GAMEPAD_TYPE_STANDARD:
         return "Virtual Game Controller";
     default:
         return "Game Controller";
@@ -107,9 +106,9 @@ public:
         std::lock_guard<std::mutex> lock(m_mutex);
         auto pad = std::make_shared<sdl_gamepad>(index, desc);
         m_pads[index] = pad;
-        auto *js = SDL_GameControllerGetJoystick(*pad);
+        auto *js = SDL_GetGamepadJoystick(*pad);
         if (js) {
-            auto idx = SDL_JoystickInstanceID(js);
+            auto idx = SDL_GetJoystickID(js);
             if (idx >= 0)
                 m_pad_instance_to_index[idx] = index;
             else
@@ -121,23 +120,20 @@ public:
 
     void remove_controller(int index)
     {
-        auto id = instance_id_to_index(index);
-        if (id < 0) {
-            bwarn("Invalid gamepad index on disconnect %i", index);
-            return;
-        }
         std::lock_guard<std::mutex> lock(m_mutex);
-        if (m_pads.find(id) != m_pads.end()) {
-            m_pads[id]->invalidate();
-            m_pads.erase(id);
+        if (m_pads.find(index) != m_pads.end()) {
+            m_pads[index]->invalidate();
+            m_pads.erase(index);
         }
     }
 
-    std::shared_ptr<sdl_gamepad> get_controller_from_index(int index)
+    std::shared_ptr<sdl_gamepad> get_controller_from_name(std::string name)
     {
         std::lock_guard<std::mutex> lock(m_mutex);
-        if (m_pads.find(index) != m_pads.end())
-            return m_pads[index];
+        for (const auto &pad : m_pads) {
+            if (pad.second->identifier() == name)
+                return pad.second;
+        }
         return nullptr;
     }
 

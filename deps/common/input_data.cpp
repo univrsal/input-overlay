@@ -18,7 +18,7 @@
 
 #include "input_data.hpp"
 #include <util/platform.h>
-#include <SDL.h>
+#include <SDL3/SDL.h>
 
 namespace local_data {
 input_data data;

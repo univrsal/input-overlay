@@ -52,6 +52,8 @@ private Q_SLOTS:
 
     void CbWssStateChanged(int state);
 
+    void CbDSEnhancedModeChanged(int state);
+
     void RefreshWindowList();
 
     void AddFilter();
