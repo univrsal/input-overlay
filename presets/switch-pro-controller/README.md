@@ -2,7 +2,13 @@
 
 ## Mapping Switch Pro Controller inputs
 
-To use this preset, you must map your Nintendo Switch Pro controller inputs to those of an Xbox 360 controller.
+### Option 1: Using the Switch Pro Controller directly
+
+The switch-pro-controller-sdl preset does not require any additional software.
+
+### Option 2: Using the Switch Pro Controller with an Xinput wrapper
+
+To use the switch-pro-controller-xinput preset, you must map your Nintendo Switch Pro controller inputs to those of an Xbox 360 controller.
 The preset expects following mapping from the Pro controller to corresponding Xbox 360 buttons:
 
 * Home → Guide
@@ -22,6 +28,8 @@ DPad, left and right sticks should be mapped one-to-one directly.
 To enable this mapping, first install [ViGEmBus Driver](https://vigem.org/projects/ViGEm/How-to-Install/) which allows both following solutions to emulate an Xbox 360 controller.
 
 If you plan on using your Pro controller to play PC games, you may connect your controller to your PC using bluetooth connexion and use [X360ce](https://www.x360ce.com/) to map the buttons accordingly.
+
+#### Input Display while playing on a Nintendo Switch
 
 If you want to play games on your Nintendo Switch and show your inputs in a stream, a solution is to acquire a [Titan Two](https://www.consoletuner.com/products/titan-two/) device.
 This piece of hardware will receive inputs from your controller and dispatch them with hardly no latency between your computer and your console through following connexions:
