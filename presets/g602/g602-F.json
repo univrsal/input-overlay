@@ -1,0 +1,58 @@
+{
+    "default_width": 0,
+    "default_height": 0,
+    "space_h": 0,
+    "space_v": 0,
+    "flags": 8,
+    "overlay_width": 462,
+    "overlay_height": 402,
+    "elements": [
+        {
+            "type": 0,
+            "pos": [
+                0,
+                0
+            ],
+            "id": "mouse",
+            "z_level": 0,
+            "mapping": [
+                0,
+                0,
+                462,
+                402
+            ]
+        },
+        {
+            "type": 3,
+            "pos": [
+                7,
+                40
+            ],
+            "id": "lmb",
+            "z_level": 1,
+            "mapping": [
+                517,
+                45,
+                171,
+                126
+            ],
+            "code": 1
+        },
+        {
+            "type": 3,
+            "pos": [
+                63,
+                1
+            ],
+            "id": "rmb",
+            "z_level": 1,
+            "mapping": [
+                742,
+                48,
+                255,
+                58
+            ],
+            "code": 2
+        }
+    ]
+}

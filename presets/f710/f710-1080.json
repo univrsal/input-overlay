@@ -1,0 +1,288 @@
+{
+    "default_width": 0,
+    "default_height": 0,
+    "space_h": 0,
+    "space_v": 0,
+    "flags": 6,
+    "overlay_width": 1162,
+    "overlay_height": 615,
+    "elements": [
+        {
+            "type": 0,
+            "pos": [
+                0,
+                3
+            ],
+            "id": "gamepade",
+            "z_level": 0,
+            "mapping": [
+                40,
+                22,
+                1162,
+                612
+            ]
+        },
+        {
+            "type": 6,
+            "pos": [
+                173,
+                6
+            ],
+            "id": "trigger11",
+            "z_level": 0,
+            "mapping": [
+                1288,
+                780,
+                114,
+                47
+            ],
+            "direction": 1,
+            "trigger_mode": false,
+            "side": 0
+        },
+        {
+            "type": 6,
+            "pos": [
+                870,
+                0
+            ],
+            "id": "trigger12",
+            "z_level": 0,
+            "mapping": [
+                1564,
+                780,
+                114,
+                48
+            ],
+            "direction": 1,
+            "trigger_mode": false,
+            "side": 1
+        },
+        {
+            "type": 2,
+            "pos": [
+                685,
+                225
+            ],
+            "id": "gamepad button13",
+            "z_level": 0,
+            "mapping": [
+                1104,
+                691,
+                63,
+                45
+            ],
+            "code": 6
+        },
+        {
+            "type": 2,
+            "pos": [
+                411,
+                227
+            ],
+            "id": "gamepad button14",
+            "z_level": 0,
+            "mapping": [
+                1012,
+                690,
+                60,
+                46
+            ],
+            "code": 4
+        },
+        {
+            "type": 2,
+            "pos": [
+                895,
+                375
+            ],
+            "id": "a-butt",
+            "z_level": "1",
+            "mapping": [
+                1471,
+                368,
+                86,
+                92
+            ],
+            "code": 0
+        },
+        {
+            "type": 2,
+            "pos": [
+                1001,
+                290
+            ],
+            "id": "gamepad button2",
+            "z_level": "1",
+            "mapping": [
+                1472,
+                193,
+                94,
+                83
+            ],
+            "code": 1
+        },
+        {
+            "type": 2,
+            "pos": [
+                925,
+                205
+            ],
+            "id": "gamepad button3",
+            "z_level": "1",
+            "mapping": [
+                1289,
+                192,
+                92,
+                84
+            ],
+            "code": 3
+        },
+        {
+            "type": 2,
+            "pos": [
+                813,
+                294
+            ],
+            "id": "gamepad button4",
+            "z_level": 1,
+            "mapping": [
+                1288,
+                377,
+                85,
+                83
+            ],
+            "code": 2
+        },
+        {
+            "type": 2,
+            "pos": [
+                150,
+                243
+            ],
+            "id": "gamepad button5",
+            "z_level": 1,
+            "mapping": [
+                91,
+                721,
+                85,
+                107
+            ],
+            "code": 11
+        },
+        {
+            "type": 2,
+            "pos": [
+                180,
+                354
+            ],
+            "id": "gamepad button6",
+            "z_level": 1,
+            "mapping": [
+                184,
+                736,
+                72,
+                94
+            ],
+            "code": 12
+        },
+        {
+            "type": 2,
+            "pos": [
+                90,
+                320
+            ],
+            "id": "gamepad button7",
+            "z_level": 1,
+            "mapping": [
+                276,
+                768,
+                116,
+                60
+            ],
+            "code": 13
+        },
+        {
+            "type": 2,
+            "pos": [
+                204,
+                318
+            ],
+            "id": "gamepad button8",
+            "z_level": 1,
+            "mapping": [
+                460,
+                770,
+                111,
+                58
+            ],
+            "code": 14
+        },
+        {
+            "type": 5,
+            "pos": [
+                330,
+                460
+            ],
+            "id": "analog stick9",
+            "z_level": 1,
+            "mapping": [
+                644,
+                705,
+                147,
+                124
+            ],
+            "stick_radius": 45,
+            "side": 0
+        },
+        {
+            "type": 5,
+            "pos": [
+                687,
+                456
+            ],
+            "id": "analog stick10",
+            "z_level": 1,
+            "mapping": [
+                828,
+                703,
+                147,
+                125
+            ],
+            "stick_radius": 45,
+            "side": 1
+        },
+        {
+            "type": 2,
+            "pos": [
+                81,
+                26
+            ],
+            "id": "gamepad button15",
+            "z_level": 0,
+            "mapping": [
+                1288,
+                599,
+                169,
+                46
+            ],
+            "code": 9
+        },
+        {
+            "type": 2,
+            "pos": [
+                903,
+                18
+            ],
+            "id": "gamepad button16",
+            "z_level": 0,
+            "mapping": [
+                1564,
+                601,
+                170,
+                43
+            ],
+            "code": 10
+        }
+    ]
+}
