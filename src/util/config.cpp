@@ -53,7 +53,7 @@ void set_defaults()
     CDEF_INT(S_WSS_PORT, wss_port);
     CDEF_BOOL(S_ENABLE_WSS, enable_websocket_server);
     CDEF_INT(S_REFRESH, server_refresh_rate);
-    CDEF_INT(S_REFRESH, filter_mode);
+    CDEF_INT(S_FILTER_MODE, filter_mode);
     CDEF_BOOL(S_DS_ENHANCED_MODE, ds_enhanced_mode);
     CDEF_BOOL(S_CONTROL, enable_input_control);
     CDEF_BOOL(S_REGEX, regex);
