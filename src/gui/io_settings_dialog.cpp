@@ -164,6 +164,7 @@ void io_settings_dialog::FormAccepted()
     io_config::log_flag = ui->cb_log->isChecked();
     io_config::enable_input_control = ui->cb_enable_control->isChecked();
     io_config::filter_mode = ui->cb_list_mode->currentIndex();
+    io_config::regex = ui->cb_regex->isChecked();
 
     io_config::io_window_filters.set_regex(ui->cb_regex->isChecked());
     io_config::io_window_filters.set_whitelist(ui->cb_list_mode->currentIndex() == 0);
