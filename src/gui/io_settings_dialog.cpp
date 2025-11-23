@@ -64,6 +64,7 @@ io_settings_dialog::io_settings_dialog(QWidget *parent) : QDialog(parent, Qt::Di
 #endif
 
     /* Load values */
+    ui->sb_wss_port->setValue(io_config::wss_port);
     ui->cb_iohook->setChecked(io_config::enable_uiohook);
     ui->cb_gamepad_hook->setChecked(io_config::enable_gamepad_hook);
     ui->cb_enable_overlay->setChecked(io_config::enable_overlay_source);
@@ -172,6 +173,7 @@ void io_settings_dialog::FormAccepted()
 
     io_config::enable_websocket_server = ui->cb_enable_wss->isChecked();
     io_config::wss_bind_address = qt_to_utf8(ui->txt_bind_address->text());
+    io_config::wss_port = static_cast<uint16_t>(ui->sb_wss_port->value());
     io_config::ds_enhanced_mode = ui->cb_ds_enhanced->isChecked();
     io_config::save();
 }
