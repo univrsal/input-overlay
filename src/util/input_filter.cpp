@@ -37,6 +37,7 @@ void input_filter::read_from_config()
     char *path = obs_module_config_path("filters.json");
 
     if (!util_open_json(utf8_to_qt(path), j)) {
+        write_to_config(); // Create default file if it doesn't exist
         berr("Couldn't load filters.json from plugin config, trying legacy location");
         if (!util_open_json(util_get_data_file_legacy("filters.json"), j)) {
             berr("Couldn't load filters.json from legacy location");
