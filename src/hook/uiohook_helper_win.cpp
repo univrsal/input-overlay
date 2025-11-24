@@ -153,7 +153,6 @@ int hook_enable()
 
 void start()
 {
-    return;
     hook_running_mutex = CreateMutex(nullptr, FALSE, TEXT("hook_running_mutex"));
     hook_control_mutex = CreateMutex(nullptr, FALSE, TEXT("hook_control_mutex"));
     hook_control_cond = CreateEvent(nullptr, TRUE, FALSE, TEXT("hook_control_cond"));
