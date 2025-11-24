@@ -59,13 +59,12 @@ void input_filter::read_from_config()
 
 void input_filter::write_to_config()
 {
-    std::lock_guard lock(io_config::filter_mutex);
 
     QJsonDocument j;
     QJsonArray arr;
 
     for (const auto &filter : m_filters)
-        arr.append(filter);
+        arr.append(filter);\
     j.setArray(arr);
     char *path = obs_module_config_path("filters.json");
     util_write_json(utf8_to_qt(path), j);

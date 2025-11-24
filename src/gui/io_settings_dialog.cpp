@@ -169,7 +169,9 @@ void io_settings_dialog::FormAccepted()
 
     io_config::io_window_filters.set_regex(ui->cb_regex->isChecked());
     io_config::io_window_filters.set_whitelist(ui->cb_list_mode->currentIndex() == 0);
+    io_config::filter_mutex.lock();
     io_config::io_window_filters.write_to_config();
+    io_config::filter_mutex.unlock();
 
     io_config::enable_websocket_server = ui->cb_enable_wss->isChecked();
     io_config::wss_bind_address = qt_to_utf8(ui->txt_bind_address->text());
