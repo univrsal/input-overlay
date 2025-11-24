@@ -39,6 +39,10 @@ uint16_t server_refresh_rate = 250;
 uint16_t server_port = 1608;
 uint16_t wss_port = 16899;
 std::string wss_bind_address;
+std::atomic<uint16_t> last_keycode;
+std::atomic<uint16_t> last_mouse_button;
+std::atomic<uint16_t> last_sdl_gamepad_button;
+std::atomic<uint16_t> last_sdl_gamepad_axis;
 
 void set_defaults()
 {

@@ -19,15 +19,19 @@
 #pragma once
 #include "../network/websocket_server.hpp"
 #include "../util/config.hpp"
+
 #include <input_data.hpp>
 #include <mutex>
 #include <uiohook.h>
 #include <util/platform.h>
+
+
 #define SCROLL_TIMEOUT 120000000
 
 namespace uiohook {
 extern uint64_t last_scroll_time;
 extern bool state;
+
 
 inline void check_wheel()
 {
@@ -43,6 +47,12 @@ inline void process_event(uiohook_event *event)
     static const uint64_t refresh_ms = 16;
     static uint64_t last_time = 0;
     auto diff = (event->time - last_time);
+
+    if (event->type == EVENT_KEY_PRESSED) {
+        io_config::last_keycode = event->data.keyboard.keycode;
+    } else if (event->type == EVENT_MOUSE_PRESSED) {
+        io_config::last_mouse_button = event->data.mouse.button;
+    }
 
     // Mouse move/drag can get very spammy so those events
     // will only be dispatched at 60hz

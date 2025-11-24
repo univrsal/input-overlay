@@ -64,6 +64,8 @@ private Q_SLOTS:
 
     static void OpenForums();
 
+    void RefreshUi();
+
 private:
     Ui::io_config_dialog *ui;
     QTimer *m_refresh = nullptr;

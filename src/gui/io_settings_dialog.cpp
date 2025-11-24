@@ -104,6 +104,14 @@ io_settings_dialog::io_settings_dialog(QWidget *parent) : QDialog(parent, Qt::Di
                                           "font-weight: bold;}");
 }
 
+void io_settings_dialog::RefreshUi()
+{
+    ui->txt_lastkbcode->setText(QString::number(io_config::last_keycode.load(), 16));
+    ui->txt_lastmousecode->setText(QString::number(io_config::last_mouse_button.load(), 16));
+    ui->txt_lastsdlbutton->setText(QString::number(io_config::last_sdl_gamepad_button.load()));
+    ui->txt_lastsdlaxis->setText(QString::number(io_config::last_sdl_gamepad_axis.load()));
+}
+
 void io_settings_dialog::showEvent(QShowEvent *event)
 {
     Q_UNUSED(event)

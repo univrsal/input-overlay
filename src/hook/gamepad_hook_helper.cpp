@@ -197,12 +197,14 @@ void gamepads::event_loop()
                 break;
 
             case SDL_EVENT_GAMEPAD_AXIS_MOTION: {
+                io_config::last_sdl_gamepad_axis = event.gaxis.axis;
                 auto pad = get_controller_from_instance_id(event.gdevice.which);
                 std::lock_guard<std::mutex> lock(pad->mutex());
                 pad->axis()[event.gaxis.axis] = event.gaxis.value / float(INT16_MAX);
             } break;
             case SDL_EVENT_GAMEPAD_BUTTON_DOWN:
             case SDL_EVENT_GAMEPAD_BUTTON_UP: {
+                io_config::last_sdl_gamepad_button = event.gbutton.button;
                 auto pad = get_controller_from_instance_id(event.gdevice.which);
                 std::lock_guard<std::mutex> lock(pad->mutex());
                 pad->buttons()[event.gbutton.button] = event.gbutton.down;

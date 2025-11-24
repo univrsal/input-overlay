@@ -21,6 +21,7 @@
 #include "input_filter.hpp"
 #include <mutex>
 #include <util/config-file.h>
+#include <atomic>
 
 #define CDEF_STR(id, value) config_set_default_string(io_config::instance, S_REGION, id, value)
 #define CDEF_INT(id, value) config_set_default_int(io_config::instance, S_REGION, id, value)
@@ -39,6 +40,10 @@
 
 namespace io_config {
 extern config_t *instance;
+extern std::atomic<uint16_t> last_keycode;
+extern std::atomic<uint16_t> last_mouse_button;
+extern std::atomic<uint16_t> last_sdl_gamepad_button;
+extern std::atomic<uint16_t> last_sdl_gamepad_axis;
 
 extern input_filter io_window_filters;
 extern std::mutex filter_mutex;
