@@ -83,6 +83,15 @@ bool util_write_json(const QString &path, const QJsonDocument &doc)
 {
     QFile file(path);
 
+    // make sure the directory exists
+    QDir dir = QFileInfo(file).absoluteDir();
+    if (!dir.exists()) {
+        if (!dir.mkpath(".")) {
+            berr("couldn't create directory %s", qt_to_utf8(dir.absolutePath()));
+            return false;
+        }
+    }
+
     if (!file.open(QIODevice::WriteOnly)) {
         berr("couldn't open %s", qt_to_utf8(path));
         return false;
