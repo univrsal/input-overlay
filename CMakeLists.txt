@@ -15,11 +15,6 @@ include(helpers)
 add_library(${CMAKE_PROJECT_NAME} MODULE)
 add_subdirectory(deps)
 
-# SDL2 headers clash with obs simd stuff for some reason
-if (NOT DISABLE_NATIVE_ARCH)
-    set(CMAKE_CXX_FLAGS "-march=native")
-endif()
-
 if (WIN32 OR WIN64)
 
         # Enable Multicore Builds and disable FH4 (to not depend on VCRUNTIME140_1.DLL when building with VS2019)
