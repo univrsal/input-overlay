@@ -7,6 +7,7 @@ project(${_name} VERSION ${_version})
 
 option(ENABLE_FRONTEND_API "Use obs-frontend-api for UI functionality" ON)
 option(ENABLE_QT "Use Qt functionality" ON)
+option(INCLUDE_SIMDE "Include simde" OFF)
 
 include(compilerconfig)
 include(defaults)
@@ -14,6 +15,17 @@ include(helpers)
 
 add_library(${CMAKE_PROJECT_NAME} MODULE)
 add_subdirectory(deps)
+
+if (INCLUDE_SIMDE)
+include(FetchContent)
+FetchContent_Declare(
+  simde
+  GIT_REPOSITORY https://github.com/simd-everywhere/simde.git
+  GIT_TAG        v0.8.2
+)
+FetchContent_MakeAvailable(simde)
+include_directories(${simde_SOURCE_DIR})
+endif()
 
 if (WIN32 OR WIN64)
 

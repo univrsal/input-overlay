@@ -243,6 +243,7 @@ ${_usage_host:-}"
           -DQT_VERSION=${QT_VERSION:-6}
           -DCMAKE_BUILD_TYPE=${config}
           -DCMAKE_INSTALL_PREFIX=/usr
+	  -DINCLUDE_SIMDE=ON
         )
 
         local cmake_version
