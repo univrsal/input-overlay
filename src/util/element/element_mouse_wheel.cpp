@@ -55,14 +55,10 @@ void element_wheel::draw(gs_effect_t *effect, gs_image_file_t *image, sources::o
     auto const time_ms = os_gettime_ns() / static_cast<uint64_t>(1e6);
     auto const last_ms = settings->data.last_wheel_event_time / static_cast<uint64_t>(1e6);
     if (time_ms > last_ms && time_ms - last_ms < 150) {
-        switch (settings->data.last_wheel_event.rotation) {
-        case WHEEL_UP:
+        if (settings->data.last_wheel_event.rotation > 0) {
             element_texture::draw(effect, image, &m_mappings[WHEEL_MAP_UP]);
-            break;
-        case WHEEL_DOWN:
+        } else if (settings->data.last_wheel_event.rotation < 0) {
             element_texture::draw(effect, image, &m_mappings[WHEEL_MAP_DOWN]);
-            break;
-        default:;
         }
     }
 }
