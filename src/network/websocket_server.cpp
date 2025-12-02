@@ -78,6 +78,8 @@ QString serialize_uiohook(const uiohook_event *e, const std::string &source_name
             return "";
         }
     };
+    
+    obj["time"] = double(e->time);
 
     switch (e->type) {
     case EVENT_KEY_TYPED:
@@ -89,7 +91,6 @@ QString serialize_uiohook(const uiohook_event *e, const std::string &source_name
     case EVENT_KEY_RELEASED:
         obj["event_source"] = utf8_to_qt(source_name.c_str());
         obj["event_type"] = QString(ev_to_str(e->type));
-        obj["time"] = int(e->time);
         obj["mask"] = e->mask;
         obj["keycode"] = e->data.keyboard.keycode;
         obj["rawcode"] = e->data.keyboard.rawcode;
@@ -101,7 +102,6 @@ QString serialize_uiohook(const uiohook_event *e, const std::string &source_name
     case EVENT_MOUSE_DRAGGED:
         obj["event_source"] = utf8_to_qt(source_name.c_str());
         obj["event_type"] = QString(ev_to_str(e->type));
-        obj["time"] = int(e->time);
         obj["mask"] = e->mask;
         obj["button"] = e->data.mouse.button;
         obj["clicks"] = e->data.mouse.clicks;
@@ -111,7 +111,6 @@ QString serialize_uiohook(const uiohook_event *e, const std::string &source_name
     case EVENT_MOUSE_WHEEL:
         obj["event_source"] = utf8_to_qt(source_name.c_str());
         obj["event_type"] = QString(ev_to_str(e->type));
-        obj["time"] = int(e->time);
         obj["mask"] = e->mask;
         obj["type"] = e->data.wheel.type;
         obj["delta"] = e->data.wheel.delta;
@@ -141,7 +140,7 @@ void dispatch_sdl_event(const SDL_Event *e, const std::string &source_name, inpu
     QJsonObject obj;
     obj["event_source"] = source_name.c_str();
     obj["device_index"] = (int)e->gdevice.which;
-    obj["time"] = int(e->gdevice.timestamp);
+    obj["time"] = double(e->gdevice.timestamp);
     double axis{};
     switch (e->type) {
     case SDL_EVENT_GAMEPAD_ADDED:
