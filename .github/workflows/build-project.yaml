@@ -89,7 +89,6 @@ jobs:
         run: |
           : Set Up Environment 🔧
           if [[ "${RUNNER_DEBUG}" ]]; then set -x; fi
-          sh ${{ github.workspace }}/deps/build_sdl3.sh
 
           read -r product_name product_version <<< \
             "$(jq -r '. | {name, version} | join(" ")' buildspec.json)"

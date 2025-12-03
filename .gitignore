@@ -18,3 +18,4 @@ client_build/
 build/
 client/build-*/
 cmake/.CMakeBuildNumber
+/build_x86_64/
