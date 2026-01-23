@@ -323,22 +323,22 @@ $(function () {
   mouse2vc.set(3, 4);
   mouse2vc.set(4, 5);
 
-  // browser <-> SDL2 mappings
+  // browser <-> SDL3 mappings
   gp(0, 0); // a
   gp(1, 1); // b
   gp(2, 2); // x
   gp(3, 3); // y
   gp(4, 9); // left shoulder
   gp(5, 10); // right shoulder
-  gp(8, 4); // back
-  gp(9, 6); // start
-  gp(10, 7); // left thumb stick down
-  gp(11, 8); // right thumb stick down
+  gp(6, 4); // back
+  gp(7, 6); // start
+  gp(8, 5); // guide
+  gp(9, 7); // left thumb stick down
+  gp(10, 8); // right thumb stick down
   gp(12, 11); // up
   gp(13, 12); // down
   gp(14, 13); // dpad left
   gp(15, 14); // dpad right
-  gp(16, 5); // guide
 
   lgp2sdl(0xec00, 0);
   lgp2sdl(0xec01, 1);
