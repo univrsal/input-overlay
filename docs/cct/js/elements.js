@@ -356,12 +356,12 @@ class analog_stick extends texture {
         // left
         xPos = pad.lastInput.axes[0] * this.data.stick_radius;
         yPos = pad.lastInput.axes[1] * this.data.stick_radius;
-        pressed = pad.lastInput.buttons[10].pressed;
+        pressed = pad.lastInput.buttons[9].pressed;
       } else {
         // right
-        xPos = pad.lastInput.axes[2] * this.data.stick_radius;
-        yPos = pad.lastInput.axes[3] * this.data.stick_radius;
-        pressed = pad.lastInput.buttons[11].pressed;
+        xPos = pad.lastInput.axes[3] * this.data.stick_radius;
+        yPos = pad.lastInput.axes[4] * this.data.stick_radius;
+        pressed = pad.lastInput.buttons[10].pressed;
       }
 
       if (pressed) {
@@ -475,14 +475,21 @@ class trigger extends texture {
     let pressed = false;
 
     if (pad.lastInput) {
+      // The triggers are not mapped to the buttons array, they are mapped to
+      // the axes array. LT -> index 2, RT -> index 5. 
       if (this.data.side === 0) {
         // left
-        progress = pad.lastInput.buttons[6].value;
-        pressed = pad.lastInput.buttons[6].pressed;
+        // progress = pad.lastInput.buttons[6].value;
+        // pressed = pad.lastInput.buttons[6].pressed;
+        progress = (pad.lastInput.axes[2] + 1) / 2; // the trigger starts from -1 and goes to 1.
+        pressed = pad.lastInput.axes[2] === 1;
+        
       } else {
         // right
-        progress = pad.lastInput.buttons[7].value;
-        pressed = pad.lastInput.buttons[7].pressed;
+        // progress = pad.lastInput.buttons[7].value;
+        // pressed = pad.lastInput.buttons[7].pressed;
+        progress = (pad.lastInput.axes[5] + 1) / 2;
+        pressed = pad.lastInput.axes[5] === 1;
       }
 
       if (this.data.trigger_mode) {
@@ -599,10 +606,20 @@ class dpad extends texture {
     this.offset = 0;
   }
   on_gamepad_input(pad) {
-    let up = pad.buttons[12].pressed;
-    let down = pad.buttons[13].pressed;
-    let left = pad.buttons[14].pressed;
-    let right = pad.buttons[15].pressed;
+    // let up = pad.buttons[12].pressed;
+    // let down = pad.buttons[13].pressed;
+    // let left = pad.buttons[14].pressed;
+    // let right = pad.buttons[15].pressed;
+
+    // the dpad is currently mapped to pad.axes not pad.buttons
+    // forgive me, this is all I can think of atm. 
+    let horizontal = pad.axes[6];
+    let vertical = pad.axes[7];
+
+    let up = vertical < 0;
+    let down = vertical > 0;
+    let left = horizontal < 0; 
+    let right = horizontal > 0; 
 
     if (left) {
       if (up) this.offset = 5;
@@ -640,6 +657,7 @@ class dpad extends texture {
     );
   }
 }
+
 class mouse_movement extends texture {
   // TODO: Actually visualize this in the editor
   read_data_from_gui() {
