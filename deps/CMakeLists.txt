@@ -25,3 +25,6 @@ else ()
 endif ()
 
 add_subdirectory(libuiohook)
+if(APPLE)
+  target_compile_options(uiohook PRIVATE -Wno-error=return-type)
+endif()
