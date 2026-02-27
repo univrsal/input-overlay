@@ -212,4 +212,11 @@ function(_check_dependencies)
   # cmake-format: on
 
   _setup_obs_studio()
+
+  if(OS_WINDOWS)
+    list(APPEND CMAKE_PREFIX_PATH "${dependencies_dir}/cmake")
+    # cmake-format: off
+    set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} CACHE PATH "CMake prefix search path" FORCE)
+    # cmake-format: on
+  endif()
 endfunction()
