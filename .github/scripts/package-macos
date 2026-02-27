@@ -130,7 +130,7 @@ package() {
     }
 
     if (( codesign && notarize )) {
-      if ! [[ ${CODESIGN_IDENT} != '-' && ${CODESIGN_TEAM} && {CODESIGN_IDENT_USER} && ${CODESIGN_IDENT_PASS} ]] {
+      if ! [[ ${CODESIGN_IDENT} != '-' && ${CODESIGN_TEAM} && ${CODESIGN_IDENT_USER} && ${CODESIGN_IDENT_PASS} ]] {
         log_error "Notarization requires Apple ID and application password."
         return 2
       }

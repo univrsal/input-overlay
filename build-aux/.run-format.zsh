@@ -17,7 +17,7 @@ setopt FUNCTION_ARGZERO
 # setopt XTRACE
 
 autoload -Uz is-at-least && if ! is-at-least 5.8; then
-  print -u2 -PR "%F{1}${funcstack[1]##*/}:%f Running on Zsh version %B${ZSH_VERSION}%b, but Zsh %B5.2%b is the minimum supported version. Upgrade zsh to fix this issue."
+  print -u2 -PR "%F{1}${funcstack[1]##*/}:%f Running on Zsh version %B${ZSH_VERSION}%b, but Zsh %B5.8%b is the minimum supported version. Upgrade zsh to fix this issue."
   exit 1
 fi
 
