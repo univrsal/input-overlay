@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.16...3.26)
+cmake_minimum_required(VERSION 3.25...3.30)
 
 set(CMAKE_COMPILE_WARNING_AS_ERROR OFF)
 include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/common/bootstrap.cmake" NO_POLICY_SCOPE)

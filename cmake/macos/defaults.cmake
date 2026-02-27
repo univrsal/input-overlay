@@ -16,25 +16,15 @@ if(NOT CODESIGN_TEAM)
   endif()
 endif()
 
-if(XCODE)
-  include(xcode)
-endif()
+include(xcode)
 
 include(buildspec)
-
-# Set default deployment target to 11.0 if not set and enable selection in GUI up to 13.0
-if(NOT CMAKE_OSX_DEPLOYMENT_TARGET)
-  set(CMAKE_OSX_DEPLOYMENT_TARGET
-      11.0
-      CACHE STRING "Minimum macOS version to target for deployment (at runtime). Newer APIs will be weak-linked." FORCE)
-endif()
-set_property(CACHE CMAKE_OSX_DEPLOYMENT_TARGET PROPERTY STRINGS 13.0 12.0 11.0)
 
 # Use Applications directory as default install destination
 if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
   set(CMAKE_INSTALL_PREFIX
       "$ENV{HOME}/Library/Application Support/obs-studio/plugins"
-      CACHE STRING "Directory to install OBS after building" FORCE)
+      CACHE STRING "Default plugin installation directory" FORCE)
 endif()
 
 # Enable find_package targets to become globally available targets

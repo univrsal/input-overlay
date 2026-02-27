@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.16...3.26)
+cmake_minimum_required(VERSION 3.25...3.30)
 
 include_guard(GLOBAL)
 
@@ -26,6 +26,11 @@ endif()
 if(POLICY CMP0090)
   cmake_policy(SET CMP0090 NEW)
 endif()
+
+# Map fallback configurations for optimized build configurations
+set(CMAKE_MAP_IMPORTED_CONFIG_RELWITHDEBINFO RelWithDebInfo Release MinSizeRel None "")
+set(CMAKE_MAP_IMPORTED_CONFIG_MINSIZEREL MinSizeRel Release RelWithDebInfo None "")
+set(CMAKE_MAP_IMPORTED_CONFIG_RELEASE Release RelWithDebInfo MinSizeRel None "")
 
 # Prohibit in-source builds
 if("${CMAKE_CURRENT_BINARY_DIR}" STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
