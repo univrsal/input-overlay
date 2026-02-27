@@ -197,7 +197,8 @@ class cs {
   }
 
   click(event) {
-    if (event.button === 2 && this.is_mouse_over(event)) {
+    if (event.button === 1 && this.is_mouse_over(event)) {
+      event.preventDefault();
       this.drag_start = new vec2(event.clientX, event.clientY);
       this.orig_offset = this.offset;
       this.dragging = true;
