@@ -21,7 +21,22 @@ if (WIN32 OR WIN64)
 
 else ()
     INCLUDE(FindPkgConfig)
-    PKG_SEARCH_MODULE(SDL3 REQUIRED sdl3)
+    PKG_SEARCH_MODULE(SDL3 sdl3)
+    if(NOT SDL3_FOUND)
+        include(FetchContent)
+        FetchContent_Declare(
+            SDL3
+            GIT_REPOSITORY https://github.com/libsdl-org/SDL.git
+            GIT_TAG release-3.2.22
+            GIT_SHALLOW TRUE
+        )
+        set(SDL_SHARED ON CACHE BOOL "" FORCE)
+        set(SDL_STATIC OFF CACHE BOOL "" FORCE)
+        set(SDL_TEST_LIBRARY OFF CACHE BOOL "" FORCE)
+        FetchContent_MakeAvailable(SDL3)
+        set(SDL3_LIBRARIES SDL3::SDL3 CACHE STRING "" FORCE)
+        set(SDL3_INCLUDE_DIRS "" CACHE STRING "" FORCE)
+    endif()
 endif ()
 
 add_subdirectory(libuiohook)
