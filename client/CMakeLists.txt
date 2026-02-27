@@ -30,7 +30,11 @@ if (WIN32 OR WIN64)
     set(SDL3_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/../deps/sdl3/include")
 
 else ()
-    find_package(SDL3 QUIET)
+    # On macOS, always build from source to support universal binaries (arm64+x86_64).
+    # Homebrew SDL3 is typically single-architecture only.
+    if(NOT APPLE)
+        find_package(SDL3 QUIET)
+    endif()
     if(NOT SDL3_FOUND)
         include(FetchContent)
         FetchContent_Declare(
