@@ -13,6 +13,11 @@ include(compilerconfig)
 include(defaults)
 include(helpers)
 
+# Disable all -Werror flags set by the OBS build template
+if(NOT MSVC)
+  add_compile_options(-Wno-error)
+endif()
+
 add_library(${CMAKE_PROJECT_NAME} MODULE)
 add_subdirectory(deps)
 
