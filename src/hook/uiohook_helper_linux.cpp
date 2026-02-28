@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
- * git.vrsal.xyz/alex/input-overlay
- * Copyright 2023 univrsal <uni@vrsal.xyz>.
+ * git.vrsal.cc/alex/input-overlay
+ * Copyright 2023-2026 univrsal <uni@vrsal.cc>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,8 +19,10 @@
 #include "uiohook_helper.hpp"
 #include <cstdarg>
 #include <obs-module.h>
-#include <obs/obs-nix-platform.h>
 #include <uiohook.h>
+#if defined(__linux__)
+#include <obs/obs-nix-platform.h>
+#endif
 
 namespace uiohook {
 /*
@@ -155,13 +157,14 @@ void stop()
 
 void start()
 {
+#if defined(__linux__)
     // Check if we're running on wayland
     if (obs_get_nix_platform() != OBS_NIX_PLATFORM_X11_EGL) {
         blog(LOG_WARNING,
              "[input-overlay] Wayland is not supported by libuiohook. Keyboard an mouse hook will not work.\n");
         return;
     }
-
+#endif
     pthread_mutex_init(&hook_running_mutex, nullptr);
     pthread_mutex_init(&hook_control_mutex, nullptr);
     pthread_cond_init(&hook_control_cond, nullptr);
