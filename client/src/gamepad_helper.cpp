@@ -18,6 +18,7 @@
 
 #include "gamepad_helper.hpp"
 #include "client_util.hpp"
+#include <cstdio>
 #include <SDL3/SDL.h>
 #include <unordered_map>
 
