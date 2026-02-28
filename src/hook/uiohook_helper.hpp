@@ -25,13 +25,11 @@
 #include <uiohook.h>
 #include <util/platform.h>
 
-
 #define SCROLL_TIMEOUT 120000000
 
 namespace uiohook {
 extern uint64_t last_scroll_time;
 extern bool state;
-
 
 inline void check_wheel()
 {

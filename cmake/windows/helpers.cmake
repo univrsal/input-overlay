@@ -26,16 +26,14 @@ function(set_target_properties_plugin target)
 
   set_target_properties(${target} PROPERTIES VERSION 0 SOVERSION ${PLUGIN_VERSION})
 
-  install(
-    TARGETS ${target}
-    RUNTIME DESTINATION bin/64bit
-    LIBRARY DESTINATION obs-plugins/64bit)
+  install(TARGETS ${target} RUNTIME DESTINATION bin/64bit LIBRARY DESTINATION obs-plugins/64bit)
 
   install(
     FILES "$<TARGET_PDB_FILE:${target}>"
     CONFIGURATIONS RelWithDebInfo Debug Release
     DESTINATION obs-plugins/64bit
-    OPTIONAL)
+    OPTIONAL
+  )
 
   if(OBS_BUILD_DIR)
     add_custom_command(
@@ -46,7 +44,8 @@ function(set_target_properties_plugin target)
         "${CMAKE_COMMAND}" -E copy_if_different "$<TARGET_FILE:${target}>"
         "$<$<CONFIG:Debug,RelWithDebInfo,Release>:$<TARGET_PDB_FILE:${target}>>" "${OBS_BUILD_DIR}/obs-plugins/64bit"
       COMMENT "Copy ${target} to obs-studio directory ${OBS_BUILD_DIR}"
-      VERBATIM)
+      VERBATIM
+    )
   endif()
 
   if(TARGET plugin-support)
@@ -58,10 +57,7 @@ function(set_target_properties_plugin target)
   get_target_property(target_sources ${target} SOURCES)
   set(target_ui_files ${target_sources})
   list(FILTER target_ui_files INCLUDE REGEX ".+\\.(ui|qrc)")
-  source_group(
-    TREE "${CMAKE_CURRENT_SOURCE_DIR}"
-    PREFIX "UI Files"
-    FILES ${target_ui_files})
+  source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" PREFIX "UI Files" FILES ${target_ui_files})
 
   set(valid_uuid FALSE)
   check_uuid(${_windowsAppUUID} valid_uuid)
@@ -71,8 +67,10 @@ function(set_target_properties_plugin target)
     set(UUID_APP ${_windowsAppUUID})
   endif()
 
-  configure_file(cmake/windows/resources/installer-Windows.iss.in
-                 "${CMAKE_CURRENT_BINARY_DIR}/installer-Windows.generated.iss")
+  configure_file(
+    cmake/windows/resources/installer-Windows.iss.in
+    "${CMAKE_CURRENT_BINARY_DIR}/installer-Windows.generated.iss"
+  )
 
   configure_file(cmake/windows/resources/resource.rc.in "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_PROJECT_NAME}.rc")
   target_sources(${CMAKE_PROJECT_NAME} PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_PROJECT_NAME}.rc")
@@ -84,27 +82,30 @@ function(target_install_resources target)
   if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/data")
     file(GLOB_RECURSE data_files "${CMAKE_CURRENT_SOURCE_DIR}/data/*")
     foreach(data_file IN LISTS data_files)
-      cmake_path(RELATIVE_PATH data_file BASE_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/data/" OUTPUT_VARIABLE
-                 relative_path)
+      cmake_path(
+        RELATIVE_PATH
+        data_file
+        BASE_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/data/"
+        OUTPUT_VARIABLE relative_path
+      )
       cmake_path(GET relative_path PARENT_PATH relative_path)
       target_sources(${target} PRIVATE "${data_file}")
       source_group("Resources/${relative_path}" FILES "${data_file}")
     endforeach()
 
-    install(
-      DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/data/"
-      DESTINATION data/obs-plugins/${target}
-      USE_SOURCE_PERMISSIONS)
+    install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/data/" DESTINATION data/obs-plugins/${target} USE_SOURCE_PERMISSIONS)
 
     if(OBS_BUILD_DIR)
       add_custom_command(
         TARGET ${target}
         POST_BUILD
         COMMAND "${CMAKE_COMMAND}" -E make_directory "${OBS_BUILD_DIR}/data/obs-plugins/${target}"
-        COMMAND "${CMAKE_COMMAND}" -E copy_directory "${CMAKE_CURRENT_SOURCE_DIR}/data"
-                "${OBS_BUILD_DIR}/data/obs-plugins/${target}"
+        COMMAND
+          "${CMAKE_COMMAND}" -E copy_directory "${CMAKE_CURRENT_SOURCE_DIR}/data"
+          "${OBS_BUILD_DIR}/data/obs-plugins/${target}"
         COMMENT "Copy ${target} resources to data directory"
-        VERBATIM)
+        VERBATIM
+      )
     endif()
   endif()
 endfunction()
@@ -113,10 +114,7 @@ endfunction()
 function(target_add_resource target resource)
   message(DEBUG "Add resource '${resource}' to target ${target} at destination '${target_destination}'...")
 
-  install(
-    FILES "${resource}"
-    DESTINATION data/obs-plugins/${target}
-    COMPONENT Runtime)
+  install(FILES "${resource}" DESTINATION data/obs-plugins/${target} COMPONENT Runtime)
 
   if(OBS_BUILD_DIR)
     add_custom_command(
@@ -125,7 +123,8 @@ function(target_add_resource target resource)
       COMMAND "${CMAKE_COMMAND}" -E make_directory "${OBS_BUILD_DIR}/data/obs-plugins/${target}"
       COMMAND "${CMAKE_COMMAND}" -E copy "${resource}" "${OBS_BUILD_DIR}/data/obs-plugins/${target}"
       COMMENT "Copy ${target} resource ${resource} to library directory"
-      VERBATIM)
+      VERBATIM
+    )
   endif()
   source_group("Resources" FILES "${resource}")
 endfunction()

@@ -78,7 +78,7 @@ QString serialize_uiohook(const uiohook_event *e, const std::string &source_name
             return "";
         }
     };
-    
+
     obj["time"] = double(e->time);
 
     switch (e->type) {

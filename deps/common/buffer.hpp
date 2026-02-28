@@ -17,7 +17,7 @@
  *************************************************************************/
 
 #pragma once
-#include <malloc.h>
+#include <cstdlib>
 #include <cassert>
 #include <cstring>
 

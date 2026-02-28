@@ -9,9 +9,7 @@ set(CMAKE_FIND_ROOT_PATH /usr/aarch64-linux-gnu)
 
 set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
 
-set(PKG_CONFIG_EXECUTABLE
-    /usr/bin/aarch64-linux-gnu-pkg-config
-    CACHE FILEPATH "pkg-config executable")
+set(PKG_CONFIG_EXECUTABLE /usr/bin/aarch64-linux-gnu-pkg-config CACHE FILEPATH "pkg-config executable")
 
 set(CPACK_READELF_EXECUTABLE /usr/bin/aarch64-linux-gnu-readelf)
 set(CPACK_OBJCOPY_EXECUTABLE /usr/bin/aarch64-linux-gnu-objcopy)

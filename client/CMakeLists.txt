@@ -9,8 +9,6 @@ if ("${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
     add_definitions(-DLINUX=1)
     set(client_PLATFORM_DEPS
             pthread)
-    INCLUDE(FindPkgConfig)
-    PKG_SEARCH_MODULE(SDL2 REQUIRED sdl3)
 endif()
 
 if (WIN32 OR WIN64)
@@ -31,6 +29,27 @@ if (WIN32 OR WIN64)
 
     set(SDL3_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/../deps/sdl3/include")
 
+else ()
+    # On macOS, always build from source to support universal binaries (arm64+x86_64).
+    # Homebrew SDL3 is typically single-architecture only.
+    if(NOT APPLE)
+        find_package(SDL3 QUIET)
+    endif()
+    if(NOT SDL3_FOUND)
+        include(FetchContent)
+        FetchContent_Declare(
+            SDL3
+            GIT_REPOSITORY https://github.com/libsdl-org/SDL.git
+            GIT_TAG release-3.2.22
+            GIT_SHALLOW TRUE
+        )
+        set(SDL_SHARED ON CACHE BOOL "" FORCE)
+        set(SDL_STATIC OFF CACHE BOOL "" FORCE)
+        set(SDL_TEST_LIBRARY OFF CACHE BOOL "" FORCE)
+        FetchContent_MakeAvailable(SDL3)
+    endif()
+    set(SDL3_LIBRARIES SDL3::SDL3)
+    set(SDL3_INCLUDE_DIRS "")
 endif ()
 
 set(io_client_SOURCES

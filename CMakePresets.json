@@ -2,7 +2,7 @@
   "version": 3,
   "cmakeMinimumRequired": {
     "major": 3,
-    "minor": 22,
+    "minor": 25,
     "patch": 0
   },
   "configurePresets": [
@@ -71,9 +71,9 @@
       }
     },
     {
-      "name": "linux-x86_64",
-      "displayName": "Linux x86_64",
-      "description": "Build for Linux x86_64",
+      "name": "ubuntu-x86_64",
+      "displayName": "Ubuntu x86_64",
+      "description": "Build for Ubuntu x86_64",
       "inherits": ["template"],
       "binaryDir": "${sourceDir}/build_x86_64",
       "condition": {
@@ -88,19 +88,19 @@
       }
     },
     {
-      "name": "linux-ci-x86_64",
-      "inherits": ["linux-x86_64"],
+      "name": "ubuntu-ci-x86_64",
+      "inherits": ["ubuntu-x86_64"],
       "displayName": "Linux x86_64 CI build",
-      "description": "Build for Linux x86_64 on CI",
+      "description": "Build for Ubuntu x86_64 on CI",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "RelWithDebInfo",
         "CMAKE_COMPILE_WARNING_AS_ERROR": false
       }
     },
     {
-      "name": "linux-aarch64",
-      "displayName": "Linux aarch64",
-      "description": "Build for Linux aarch64",
+      "name": "ubuntu-aarch64",
+      "displayName": "Ubuntu aarch64",
+      "description": "Build for Ubuntu aarch64",
       "inherits": ["template"],
       "binaryDir": "${sourceDir}/build_aarch64",
       "condition": {
@@ -115,10 +115,10 @@
       }
     },
     {
-      "name": "linux-ci-aarch64",
-      "inherits": ["linux-aarch64"],
+      "name": "ubuntu-ci-aarch64",
+      "inherits": ["ubuntu-aarch64"],
       "displayName": "Linux aarch64 CI build",
-      "description": "Build for Linux aarch64 on CI",
+      "description": "Build for Ubuntu aarch64 on CI",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "RelWithDebInfo",
         "CMAKE_COMPILE_WARNING_AS_ERROR": false
@@ -155,31 +155,31 @@
       "configuration": "RelWithDebInfo"
     },
     {
-      "name": "linux-x86_64",
-      "configurePreset": "linux-x86_64",
-      "displayName": "Linux x86_64",
-      "description": "Linux build for x86_64",
+      "name": "ubuntu-x86_64",
+      "configurePreset": "ubuntu-x86_64",
+      "displayName": "Ubuntu x86_64",
+      "description": "Ubuntu build for x86_64",
       "configuration": "RelWithDebInfo"
     },
     {
-      "name": "linux-ci-x86_64",
-      "configurePreset": "linux-ci-x86_64",
-      "displayName": "Linux x86_64 CI",
-      "description": "Linux CI build for x86_64",
+      "name": "ubuntu-ci-x86_64",
+      "configurePreset": "ubuntu-ci-x86_64",
+      "displayName": "Ubuntu x86_64 CI",
+      "description": "Ubuntu CI build for x86_64",
       "configuration": "RelWithDebInfo"
     },
     {
-      "name": "linux-aarch64",
-      "configurePreset": "linux-aarch64",
-      "displayName": "Linux aarch64",
-      "description": "Linux build for aarch64",
+      "name": "ubuntu-aarch64",
+      "configurePreset": "ubuntu-aarch64",
+      "displayName": "Ubuntu aarch64",
+      "description": "Ubuntu build for aarch64",
       "configuration": "RelWithDebInfo"
     },
     {
-      "name": "linux-ci-aarch64",
-      "configurePreset": "linux-ci-aarch64",
-      "displayName": "Linux aarch64 CI",
-      "description": "Linux CI build for aarch64",
+      "name": "ubuntu-ci-aarch64",
+      "configurePreset": "ubuntu-ci-aarch64",
+      "displayName": "Ubuntu aarch64 CI",
+      "description": "Ubuntu CI build for aarch64",
       "configuration": "RelWithDebInfo"
     }
   ]

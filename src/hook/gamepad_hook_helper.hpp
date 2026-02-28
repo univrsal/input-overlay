@@ -29,7 +29,6 @@
 #include <SDL3/SDL.h>
 #include "util/log.h"
 
-
 #include "sdl_gamepad.hpp"
 
 struct input_data;

@@ -56,9 +56,7 @@ inline void input_source::update(obs_data_t *settings)
 {
     m_settings.selected_source = obs_data_get_string(settings, S_INPUT_SOURCE);
 
-    
     m_settings.gamepad_name = obs_data_get_string(settings, S_CONTROLLER_ID);
-    
 
     if (m_settings.use_local_input() && gamepad_hook::state && gamepad_hook::local_gamepads) {
         m_settings.gamepad = gamepad_hook::local_gamepads->get_controller_from_name(m_settings.gamepad_name);

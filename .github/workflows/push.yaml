@@ -1,4 +1,4 @@
-name: Push to master
+name: Push
 run-name: ${{ github.ref_name }} push run 🚀
 on:
   push:
@@ -10,9 +10,6 @@ on:
       - '*'
 permissions:
   contents: write
-concurrency:
-  group: '${{ github.workflow }} @ ${{ github.ref }}'
-  cancel-in-progress: ${{ github.ref_type == 'tag' }}
 jobs:
   build-project:
     name: Build Project 🧱
@@ -24,7 +21,7 @@ jobs:
   create-release:
     name: Create Release 🛫
     if: github.ref_type == 'tag'
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     needs: build-project
     defaults:
       run:
@@ -69,9 +66,9 @@ jobs:
 
           variants=(
             'windows-x64;zip|exe'
-            'macos-universal;tar.xz|pkg'
-            'ubuntu-22.04-x86_64;tar.xz|deb|ddeb'
+            'ubuntu-24.04-x86_64;tar.xz|deb|ddeb'
             'sources;tar.xz'
+            'presets;zip'
           )
 
           for variant_data in "${variants[@]}"; do

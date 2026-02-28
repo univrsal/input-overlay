@@ -34,7 +34,6 @@ inline void sdl_init()
     auto compile_ver_minor = SDL_VERSIONNUM_MINOR(compile_ver);
     auto compile_ver_patch = SDL_VERSIONNUM_MICRO(compile_ver);
 
-
     binfo("Initializing SDL2 for gamepad input (compile-time: %i.%i.%i, run-time:  %i.%i.%i)", compile_ver_major,
           compile_ver_minor, compile_ver_patch, link_ver_major, link_ver_minor, link_ver_patch);
 
@@ -117,7 +116,7 @@ gamepads::gamepads()
     int count{};
 
     ids = SDL_GetJoysticks(&count);
-    
+
     if (count <= 0) {
         binfo("No joysticks/gamepads found");
         state = true;

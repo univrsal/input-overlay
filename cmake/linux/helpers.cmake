@@ -20,14 +20,14 @@ function(set_target_properties_plugin target)
 
   set_target_properties(
     ${target}
-    PROPERTIES VERSION 0
-               SOVERSION ${PLUGIN_VERSION}
-               PREFIX "")
+    PROPERTIES VERSION 0 SOVERSION ${PLUGIN_VERSION} PREFIX ""
+  )
 
   install(
     TARGETS ${target}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/obs-plugins)
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/obs-plugins
+  )
 
   if(TARGET plugin-support)
     target_link_libraries(${target} PRIVATE plugin-support)
@@ -38,10 +38,7 @@ function(set_target_properties_plugin target)
   get_target_property(target_sources ${target} SOURCES)
   set(target_ui_files ${target_sources})
   list(FILTER target_ui_files INCLUDE REGEX ".+\\.(ui|qrc)")
-  source_group(
-    TREE "${CMAKE_CURRENT_SOURCE_DIR}"
-    PREFIX "UI Files"
-    FILES ${target_ui_files})
+  source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" PREFIX "UI Files" FILES ${target_ui_files})
 endfunction()
 
 # Helper function to add resources into bundle
@@ -50,8 +47,12 @@ function(target_install_resources target)
   if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/data")
     file(GLOB_RECURSE data_files "${CMAKE_CURRENT_SOURCE_DIR}/data/*")
     foreach(data_file IN LISTS data_files)
-      cmake_path(RELATIVE_PATH data_file BASE_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/data/" OUTPUT_VARIABLE
-                 relative_path)
+      cmake_path(
+        RELATIVE_PATH
+        data_file
+        BASE_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/data/"
+        OUTPUT_VARIABLE relative_path
+      )
       cmake_path(GET relative_path PARENT_PATH relative_path)
       target_sources(${target} PRIVATE "${data_file}")
       source_group("Resources/${relative_path}" FILES "${data_file}")
@@ -60,7 +61,8 @@ function(target_install_resources target)
     install(
       DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/data/"
       DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/obs/obs-plugins/${target}
-      USE_SOURCE_PERMISSIONS)
+      USE_SOURCE_PERMISSIONS
+    )
   endif()
 endfunction()
 
