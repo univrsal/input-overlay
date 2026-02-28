@@ -18,20 +18,32 @@ else()
   mark_as_advanced(ENABLE_COMPILER_TRACE)
 
   # clang options for ObjC
-  set(_obs_clang_objc_options
-      # cmake-format: sortable
-      -Werror=block-capture-autoreleasing -Wno-selector -Wno-strict-selector-match -Wnon-virtual-dtor -Wprotocol
-      -Wundeclared-selector)
+  set(
+    _obs_clang_objc_options
+    # cmake-format: sortable
+    -Werror=block-capture-autoreleasing
+    -Wno-selector
+    -Wno-strict-selector-match
+    -Wnon-virtual-dtor
+    -Wprotocol
+    -Wundeclared-selector
+  )
 
   # clang options for ObjC++
-  set(_obs_clang_objcxx_options
-      # cmake-format: sortable
-      ${_obs_clang_objc_options} -Warc-repeated-use-of-weak -Wno-arc-maybe-repeated-use-of-weak)
+  set(
+    _obs_clang_objcxx_options
+    # cmake-format: sortable
+    ${_obs_clang_objc_options}
+    -Warc-repeated-use-of-weak
+    -Wno-arc-maybe-repeated-use-of-weak
+  )
 
   add_compile_options(
-    "$<$<COMPILE_LANGUAGE:C>:${_obs_clang_c_options}>" "$<$<COMPILE_LANGUAGE:CXX>:${_obs_clang_cxx_options}>"
+    "$<$<COMPILE_LANGUAGE:C>:${_obs_clang_c_options}>"
+    "$<$<COMPILE_LANGUAGE:CXX>:${_obs_clang_cxx_options}>"
     "$<$<COMPILE_LANGUAGE:OBJC>:${_obs_clang_objc_options}>"
-    "$<$<COMPILE_LANGUAGE:OBJCXX>:${_obs_clang_objcxx_options}>")
+    "$<$<COMPILE_LANGUAGE:OBJCXX>:${_obs_clang_objcxx_options}>"
+  )
 
   # Enable stripping of dead symbols when not building for Debug configuration
   set(_release_configs RelWithDebInfo Release MinSizeRel)
@@ -48,9 +60,7 @@ else()
   if(ENABLE_COMPILER_TRACE AND CMAKE_GENERATOR STREQUAL "Ninja")
     add_compile_options($<$<COMPILE_LANGUAGE:C>:-ftime-trace> $<$<COMPILE_LANGUAGE:CXX>:-ftime-trace>)
   else()
-    set(ENABLE_COMPILER_TRACE
-        OFF
-        CACHE STRING "Enable clang time-trace (requires Ninja)" FORCE)
+    set(ENABLE_COMPILER_TRACE OFF CACHE STRING "Enable clang time-trace (requires Ninja)" FORCE)
   endif()
 endif()
 
