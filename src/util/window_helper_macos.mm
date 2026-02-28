@@ -9,6 +9,7 @@
 #include "window_helper.hpp"
 #import <Cocoa/Cocoa.h>
 #import <CoreGraphics/CGWindow.h>
+#import <AppKit/AppKit.h>
 #include <util/platform.h>
 
 #define WINDOW_NAME ((NSString *)kCGWindowName)
@@ -71,14 +72,22 @@ void GetWindowList(vector<string> &windows)
     }
 }
 
-void GetWindowAndExeList(vector<pair<string, string>> &list)
+void GetCurrentWindowTitle(string &title)
 {
+    title.resize(0);
+
     @autoreleasepool {
-        for (NSDictionary *d in enumerate_windows()) {
-            bool ok = false;
-            auto pair = create_pair(d[OWNER_NAME], d[WINDOW_NAME], ok);
-            if (ok)
-                list.emplace_back(pair);
+        NSWorkspace *ws = [NSWorkspace sharedWorkspace];
+        NSRunningApplication *app = [ws frontmostApplication];
+        if (app) {
+            NSString *name = app.localizedName;
+            if (!name)
+                return;
+
+            const char *str = name.UTF8String;
+            if (str && *str)
+                title = str;
         }
     }
 }
+
