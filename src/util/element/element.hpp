@@ -45,10 +45,7 @@ public:
     element_type get_type() const;
 
     uint16_t get_keycode() const;
-    void set_keycode(uint16_t keycode)
-    {
-        m_keycode = keycode;
-    }
+    void set_keycode(uint16_t keycode) { m_keycode = keycode; }
 
     virtual void tick(float, sources::overlay_settings *) {}
 

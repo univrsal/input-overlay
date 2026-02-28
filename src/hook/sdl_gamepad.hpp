@@ -32,7 +32,7 @@ public:
 
     operator SDL_Gamepad *() const { return m_controller; }
 
-    SDL_JoystickID index() const { return m_jid; }               // SDL index
+    SDL_JoystickID index() const { return m_jid; }      // SDL index
     int player_index() const { return m_player_index; } // player 1 through 4
 
     std::string identifier() const { return m_identifier; }
@@ -43,8 +43,6 @@ public:
         SDL_CloseGamepad(m_controller);
         m_controller = {};
     }
-
-
 
     bool valid() const { return m_valid; }
     void copy_data(input_data *data, std::string name);

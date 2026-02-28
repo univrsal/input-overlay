@@ -22,7 +22,10 @@
 #include <keycodes.h>
 #include <SDL3/SDL.h>
 
-element_trigger::element_trigger() : element_texture(ET_TRIGGER), m_pressed{}, m_side(element_side::INVALID), m_direction() {}
+element_trigger::element_trigger()
+    : element_texture(ET_TRIGGER), m_pressed{}, m_side(element_side::INVALID), m_direction()
+{
+}
 
 void element_trigger::load(const QJsonObject &obj)
 {

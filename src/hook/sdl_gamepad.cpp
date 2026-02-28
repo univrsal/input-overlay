@@ -8,7 +8,6 @@ void sdl_gamepad::copy_data(input_data *data, std::string name)
     }
 
     for (int i = 0; i < SDL_GAMEPAD_AXIS_COUNT; ++i) {
-        data->gamepad_axis[name][i] =
-            SDL_GetGamepadAxis(m_controller, (SDL_GamepadAxis)(i)) / float(INT16_MAX);
+        data->gamepad_axis[name][i] = SDL_GetGamepadAxis(m_controller, (SDL_GamepadAxis)(i)) / float(INT16_MAX);
     }
 }

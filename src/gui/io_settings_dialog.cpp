@@ -55,7 +55,8 @@ io_settings_dialog::io_settings_dialog(QWidget *parent) : QDialog(parent, Qt::Di
     connect(ui->btn_remove, &QPushButton::clicked, this, &io_settings_dialog::RemoveFilter);
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 9, 0)
-    connect(ui->cb_enable_control, &QCheckBox::checkStateChanged, this, &io_settings_dialog::CbInputControlStateChanged);
+    connect(ui->cb_enable_control, &QCheckBox::checkStateChanged, this,
+            &io_settings_dialog::CbInputControlStateChanged);
     connect(ui->cb_enable_wss, &QCheckBox::checkStateChanged, this, &io_settings_dialog::CbWssStateChanged);
 #else
     connect(ui->cb_enable_control, &QCheckBox::stateChanged, this, &io_settings_dialog::CbInputControlStateChanged);
@@ -212,7 +213,4 @@ void io_settings_dialog::CbWssStateChanged(int state)
     ui->txt_bind_address->setEnabled(state);
 }
 
-void io_settings_dialog::CbDSEnhancedModeChanged(int state)
-{
-    
-}
+void io_settings_dialog::CbDSEnhancedModeChanged(int state) {}

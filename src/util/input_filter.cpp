@@ -28,7 +28,7 @@
 void input_filter::read_from_config()
 {
     std::lock_guard lock(io_config::filter_mutex);
-   
+
     m_filters.clear();
     m_regex = CGET_BOOL(S_REGEX);
     m_whitelist = CGET_INT(S_FILTER_MODE) == 0;
@@ -54,7 +54,6 @@ void input_filter::read_from_config()
             }
         }
     }
-  
 }
 
 void input_filter::write_to_config()
@@ -64,7 +63,7 @@ void input_filter::write_to_config()
     QJsonArray arr;
 
     for (const auto &filter : m_filters)
-        arr.append(filter);\
+        arr.append(filter);
     j.setArray(arr);
     char *path = obs_module_config_path("filters.json");
     util_write_json(utf8_to_qt(path), j);

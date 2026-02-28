@@ -246,7 +246,8 @@ bool overlay::load_cfg()
     if (err.error == QJsonParseError::NoError) {
         bool needs_conversion = false;
         if (!cfg_obj[CFG_VERSION].isDouble() || cfg_obj[CFG_VERSION].toDouble() <= CFG_CURRENT_VERSION) {
-            bwarn("Loaded config file was created with an older version of input-overlay, trying to convert the key codes to the new format");
+            bwarn(
+                "Loaded config file was created with an older version of input-overlay, trying to convert the key codes to the new format");
             needs_conversion = true;
         }
         m_settings->cx = static_cast<uint32_t>(cfg_obj[CFG_TOTAL_WIDTH].toInt());
