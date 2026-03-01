@@ -50,7 +50,7 @@ jobs:
               fi
               ;;
             workflow_dispatch)
-              config_data=('codesign:true' 'notarize:false' 'package:false' 'config:RelWithDebInfo')
+              config_data=('codesign:true' 'notarize:false' 'package:true' 'config:RelWithDebInfo')
               ;;
             schedule)
               config_data=('codesign:true' 'notarize:false' 'package:true' 'config:RelWithDebInfo')
