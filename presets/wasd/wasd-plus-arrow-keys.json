@@ -1,0 +1,171 @@
+{
+    "default_width": 0,
+    "default_height": 0,
+    "space_h": 0,
+    "space_v": 0,
+    "flags": 0,
+    "overlay_width": 783,
+    "overlay_height": 390,
+    "elements": [
+        {
+            "type": 1,
+            "pos": [
+                167,
+                0
+            ],
+            "id": "A",
+            "z_level": 0,
+            "mapping": [
+                641,
+                1,
+                157,
+                128
+            ],
+            "code": 30
+        },
+        {
+            "type": 1,
+            "pos": [
+                300,
+                0
+            ],
+            "id": "S",
+            "z_level": 0,
+            "mapping": [
+                801,
+                1,
+                157,
+                128
+            ],
+            "code": 31
+        },
+        {
+            "type": 1,
+            "pos": [
+                0,
+                131
+            ],
+            "id": "Shift",
+            "z_level": 0,
+            "mapping": [
+                481,
+                2,
+                157,
+                128
+            ],
+            "code": 42
+        },
+        {
+            "type": 1,
+            "pos": [
+                133,
+                131
+            ],
+            "id": "Z",
+            "z_level": 0,
+            "mapping": [
+                481,
+                264,
+                157,
+                128
+            ],
+            "code": 44
+        },
+        {
+            "type": 1,
+            "pos": [
+                266,
+                131
+            ],
+            "id": "X",
+            "z_level": 0,
+            "mapping": [
+                641,
+                263,
+                157,
+                128
+            ],
+            "code": 45
+        },
+        {
+            "type": 1,
+            "pos": [
+                108,
+                262
+            ],
+            "id": "Space Bar",
+            "z_level": "0",
+            "mapping": [
+                1134,
+                527,
+                275,
+                128
+            ],
+            "code": 57
+        },
+        {
+            "type": 1,
+            "pos": [
+                359,
+                262
+            ],
+            "id": "Left",
+            "z_level": "0",
+            "mapping": [
+                961,
+                787,
+                157,
+                128
+            ],
+            "code": 57419
+        },
+        {
+            "type": 1,
+            "pos": [
+                524,
+                131
+            ],
+            "id": "Up",
+            "z_level": "0",
+            "mapping": [
+                1120,
+                787,
+                157,
+                128
+            ],
+            "code": 57416
+        },
+        {
+            "type": 1,
+            "pos": [
+                492,
+                262
+            ],
+            "id": "Down",
+            "z_level": "0",
+            "mapping": [
+                1281,
+                787,
+                157,
+                128
+            ],
+            "code": 57424
+        },
+        {
+            "type": 1,
+            "pos": [
+                626,
+                262
+            ],
+            "id": "Right",
+            "z_level": "0",
+            "mapping": [
+                1442,
+                787,
+                157,
+                128
+            ],
+            "code": 57421
+        }
+    ]
+}
