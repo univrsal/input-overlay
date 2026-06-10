@@ -64,8 +64,14 @@ public:
     /// Reset a relative axis value to zero (useful for one-shot events like
     /// scroll).
     void set_rel_state(uint16_t rel_code, int32_t value);
+
+    /// Return and reset a relative axis value while the caller already holds
+    /// mutex_.
+    int32_t take_rel_state_locked(uint16_t rel_code);
+
     mutable std::mutex mutex_;
     std::unordered_map<uint16_t, bool> key_state{};
+    std::unordered_map<uint16_t, bool> mouse_state{};
 
 private:
     void reader_thread(const std::string &path);
