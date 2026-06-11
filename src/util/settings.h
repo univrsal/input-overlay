@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
- * git.vrsal.xyz/alex/input-overlay
- * Copyright 2023 univrsal <uni@vrsal.xyz>.
+ * git.vrsal.cc/alex/input-overlay
+ * Copyright 2026 univrsal <uni@vrsal.cc>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,6 +53,8 @@
 #define S_MONITOR_H_CENTER              "io.monitor_h_center"
 #define S_MONITOR_V_CENTER              "io.monitor_v_center"
 #define S_RELOAD_PAD_DEVICES            "io.reload_pads"
+#define S_USE_EVDEV                     "io.use_evdev"
+#define S_EVDEV_PATH                    "io.evdev_path"
 
 /* History source */
 #define S_HISTORY_SIZE                  "io.history_size"

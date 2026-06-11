@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * git.vrsal.cc/alex/input-overlay
- * Copyright 2025 univrsal <uni@vrsal.xyz>.
+ * Copyright 2026 univrsal <uni@vrsal.cc>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,6 +74,21 @@ inline void input_source::update(obs_data_t *settings)
         m_settings.monitor_w = static_cast<uint32_t>(obs_data_get_int(settings, S_MONITOR_V_CENTER));
         m_settings.mouse_deadzone = static_cast<uint8_t>(obs_data_get_int(settings, S_MOUSE_DEAD_ZONE));
     }
+#if __linux__
+    m_settings.use_evdev = obs_data_get_bool(settings, S_USE_EVDEV);
+    std::string evdev_path = obs_data_get_string(settings, S_EVDEV_PATH);
+
+    if (m_settings.use_evdev && !evdev_path.empty()) {
+        if (evdev_path != m_settings.evdev_path || !m_settings.evdev_reader.is_running()) {
+            binfo("Starting evdev reader for device %s", evdev_path.c_str());
+            m_settings.evdev_path = evdev_path;
+            m_settings.evdev_reader.start(evdev_path);
+        }
+    } else {
+        m_settings.evdev_path = evdev_path;
+        m_settings.evdev_reader.stop();
+    }
+#endif
 }
 
 inline void input_source::tick(float seconds)
@@ -213,12 +228,20 @@ obs_properties_t *get_properties_for_overlay(void *data)
 
     const auto filter_img = util_file_filter(T_FILTER_IMAGE_FILES, "*.jpg *.png *.bmp");
     const auto filter_text = util_file_filter(T_FILTER_TEXT_FILES, "*.json");
+    const auto filter_all = util_file_filter(T_FILTER_ALL_FILES, "*");
 
     /* Config and texture file path */
     auto *texture = obs_properties_add_path(props, S_OVERLAY_FILE, T_TEXTURE_FILE, OBS_PATH_FILE,
                                             qt_to_utf8(filter_img), qt_to_utf8(img_path));
     auto *cfg = obs_properties_add_path(props, S_LAYOUT_FILE, T_LAYOUT_FILE, OBS_PATH_FILE, qt_to_utf8(filter_text),
                                         qt_to_utf8(layout_path));
+
+#if __linux__
+    obs_properties_add_bool(props, S_USE_EVDEV, T_USE_EVDEV);
+    obs_properties_add_path(props, S_EVDEV_PATH, T_EVDEV_PATH, OBS_PATH_FILE, qt_to_utf8(filter_all),
+                                "/dev/input/event0");
+#endif
+
     auto *prop_alpha = obs_properties_add_bool(props, S_LINEAR_ALPHA, T_LINEAR_ALPHA);
 
     obs_property_set_modified_callback2(cfg, file_changed, data);

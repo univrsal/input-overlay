@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
- * git.vrsal.xyz/alex/input-overlay
- * Copyright 2023 univrsal <uni@vrsal.xyz>.
+ * git.vrsal.cc/alex/input-overlay
+ * Copyright 2026 univrsal <uni@vrsal.cc>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,10 @@
 #include <input_data.hpp>
 #include <obs-module.h>
 #include <string>
+
+#if __linux__
+#include "hook/evdev/evdev_reader.hpp"
+#endif
 
 extern "C" {
 #include <graphics/image-file.h>
@@ -49,6 +53,12 @@ public:
     std::string selected_source;           /* Name of client or empty for local computer         */
     uint8_t layout_flags = 0;              /* See overlay_flags in layout_constants.hpp          */
     float input_source_check_timer = 0.0f; /* Counter to check if selected game pad is connected */
+
+#if __linux__
+    bool use_evdev{};
+    std::string evdev_path {"/dev/input/event0" };
+    EvdevReader evdev_reader{};
+#endif
 
     std::string gamepad_name;
     std::shared_ptr<sdl_gamepad> gamepad{};
