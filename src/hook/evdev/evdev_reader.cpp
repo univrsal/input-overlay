@@ -109,6 +109,15 @@ void EvdevReader::set_rel_state(uint16_t rel_code, int32_t value)
     rel_state_[rel_code] = value;
 }
 
+int32_t EvdevReader::take_rel_state_locked(uint16_t rel_code)
+{
+    if (rel_code > EVDEV_REL_MAX)
+        return 0;
+    const auto value = rel_state_[rel_code];
+    rel_state_[rel_code] = 0;
+    return value;
+}
+
 void EvdevReader::reader_thread(const std::string &path)
 {
     int fd = open(path.c_str(), O_RDONLY | O_NONBLOCK);
@@ -156,11 +165,18 @@ void EvdevReader::reader_thread(const std::string &path)
                 switch (ev.type) {
                 case EV_KEY:
                     if (ev.code <= EVDEV_KEY_MAX) {
+                        auto mouse_button = evdev_mouse_to_uiohook(ev.code);
                         if (ev.value == 1) { // pressed
-                            key_state[uihook_code] = true;
+                            if (mouse_button != 0)
+                                mouse_state[mouse_button] = true;
+                            else
+                                key_state[uihook_code] = true;
                             bdebug("Key pressed: evdev code %u, uiohook code %u", ev.code, uihook_code);
                         } else if (ev.value == 0) { // released
-                            key_state[uihook_code] = false;
+                            if (mouse_button != 0)
+                                mouse_state[mouse_button] = false;
+                            else
+                                key_state[uihook_code] = false;
                             bdebug("Key released: evdev code %u, uiohook code %u", ev.code, uihook_code);
                         }
                         // value == 2 is repeat — we keep the key as pressed.
@@ -169,7 +185,7 @@ void EvdevReader::reader_thread(const std::string &path)
 
                 case EV_REL:
                     if (ev.code <= EVDEV_REL_MAX) {
-                        rel_state_[ev.code] = ev.value;
+                        rel_state_[ev.code] += ev.value;
                     }
                     break;
 
