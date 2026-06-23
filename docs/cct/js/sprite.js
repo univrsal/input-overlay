@@ -924,22 +924,33 @@ class sprite_creator_ui {
     atlas = new Image();
     atlas.src = url;
     atlas.onload = () => {
-      if (cfg) {
-        const mappings = this.atlas.export_mappings();
-        console.log('Sprite atlas loaded into CCT. Cell mappings:', mappings);
-        /* store mappings for later reference */
-        window._sprite_mappings = mappings;
-      }
+      const mappings = this.atlas.export_mappings();
+      window._sprite_mappings = mappings;
+      console.log('Sprite atlas loaded into CCT. Cell mappings:', mappings);
+
+      if (typeof apply_sprite_defaults_to_setup === 'function')
+        apply_sprite_defaults_to_setup();
+
+      let applied = 0;
+      if (typeof apply_sprite_mappings === 'function' && cfg && cfg.elements.length)
+        applied = apply_sprite_mappings(mappings);
+
       this.hide();
-      alert(
+
+      let msg =
         'Texture atlas loaded into the config editor (' +
-          this.atlas.atlas_w +
-          '×' +
-          this.atlas.atlas_h +
-          ' px, ' +
-          this.atlas.cells.length +
-          ' sprites). You can now map elements to regions in the texture.'
-      );
+        this.atlas.atlas_w +
+        '×' +
+        this.atlas.atlas_h +
+        ' px, ' +
+        this.atlas.cells.length +
+        ' sprites).';
+      if (applied > 0)
+        msg += ' Updated UV mappings on ' + applied + ' existing element(s).';
+      else
+        msg +=
+          ' Drop or create elements and set their U/V/W/H from the atlas preview, or import the mapping JSON.';
+      alert(msg);
     };
   }
 
