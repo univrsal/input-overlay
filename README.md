@@ -13,5 +13,5 @@ input-overlay depends on [libuiohook](https://github.com/kwhat/libuiohook) by [k
 
 ## More Information:
 - [OBS resource page](https://obsproject.com/forum/resources/input-overlay.552/)
-- [Config creation tool](https://univrsal.github.io/input-overlay/cct/)
+- [Config creation tool](https://univrsal.github.io/input-overlay/cct/) (includes built-in **sprite creator** for texture atlases)
 - [Convert old *.ini presets to JSON (WIP)](https://univrsal.github.io/input-overlay/converter/)
