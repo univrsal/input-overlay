@@ -42,10 +42,13 @@
     <script src="./js/gui.js"></script>
     <script src="./js/select.js"></script>
     <script src="./js/file.js"></script>
+    <script src="./js/sprite.js"></script>
+    <script src="./js/sprite_templates.js"></script>
 
     <link rel="stylesheet" href="./css/dialog.css">
     <link rel="stylesheet" href="./css/select.css">
     <link rel="stylesheet" href="./css/file.css">
+    <link rel="stylesheet" href="./css/sprite.css">
     <style>
         #editor-canvas,
         #main-canvas {
@@ -130,6 +133,8 @@
 
             <div class="grid-full-width"><input type="button" class="full-width" id="export" onclick="download_config()" value="Export to JSON">
             </div>
+            <div class="grid-full-width"><input type="button" class="full-width sprite-open-btn" id="open-sprite-creator" onclick="open_sprite_creator()" value="Create sprites…">
+            </div>
         </div>
     </div>
 
@@ -182,6 +187,9 @@
 
             <div style="margin-right: 5px">
                 <input type="button" class="full-width" id="start-button" onclick="setup()" value="Start">
+            </div>
+            <div style="margin-right: 5px">
+                <input type="button" class="full-width sprite-open-btn" id="setup-open-sprite-creator" onclick="open_sprite_creator()" value="Or create sprites first…">
             </div>
         </div>
     </div>
@@ -319,6 +327,134 @@
 
             <div class="canvas-container" id="editor-canvas-container">
                 <canvas id="editor-canvas"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sprite / texture atlas creator -->
+    <div id="sprite-creator-dialog" role="dialog" aria-label="Sprite creator">
+        <div class="sprite-creator-panel">
+            <div class="sprite-creator-header">
+                <div>
+                    <h2>Sprite creator</h2>
+                    <p class="sprite-subtitle">Paint key/button sprites and pack them into a texture atlas for input-overlay</p>
+                </div>
+                <div class="sprite-header-actions">
+                    <button type="button" class="sprite-btn success" id="sprite-use-in-cct">Use in config editor</button>
+                    <button type="button" class="sprite-btn" id="sprite-close" onclick="close_sprite_creator()">Close</button>
+                </div>
+            </div>
+
+            <div class="sprite-creator-body">
+                <!-- Left sidebar: tools + cell list -->
+                <div class="sprite-sidebar">
+                    <div class="sprite-sidebar-section">
+                        <h3>Tools</h3>
+                        <div class="sprite-tool-row">
+                            <button type="button" class="sprite-tool-btn active" data-sprite-tool="pencil" title="Pencil">Pencil</button>
+                            <button type="button" class="sprite-tool-btn" data-sprite-tool="eraser" title="Eraser">Eraser</button>
+                            <button type="button" class="sprite-tool-btn" data-sprite-tool="fill" title="Flood fill">Fill</button>
+                            <button type="button" class="sprite-tool-btn" data-sprite-tool="rect" title="Filled rectangle">Rect</button>
+                            <button type="button" class="sprite-tool-btn" data-sprite-tool="circle" title="Filled circle">Circle</button>
+                            <button type="button" class="sprite-tool-btn" data-sprite-tool="eyedropper" title="Pick color">Pick</button>
+                        </div>
+                    </div>
+
+                    <div class="sprite-sidebar-section">
+                        <h3>Brush</h3>
+                        <div class="sprite-field">
+                            <label for="sprite-color">Color</label>
+                            <input type="color" id="sprite-color" value="#ffffff">
+                        </div>
+                        <div class="sprite-field">
+                            <label for="sprite-brush-size">Size <span id="sprite-brush-size-label">1px</span></label>
+                            <input type="range" id="sprite-brush-size" min="1" max="16" value="1">
+                        </div>
+                        <div class="sprite-field">
+                            <label for="sprite-zoom">Zoom <span id="sprite-zoom-label">4x</span></label>
+                            <input type="range" id="sprite-zoom" min="1" max="16" value="4">
+                        </div>
+                    </div>
+
+                    <div class="sprite-sidebar-section">
+                        <h3>New sprite</h3>
+                        <div class="sprite-field">
+                            <label for="sprite-cell-id">ID</label>
+                            <input type="text" id="sprite-cell-id" placeholder="e.g. key_w" value="">
+                        </div>
+                        <div class="sprite-field">
+                            <label for="sprite-cell-label">Label (preview text)</label>
+                            <input type="text" id="sprite-cell-label" placeholder="e.g. W" value="">
+                        </div>
+                        <div class="sprite-field">
+                            <label for="sprite-cell-w">Width (px)</label>
+                            <input type="number" id="sprite-cell-w" min="1" max="512" value="64">
+                        </div>
+                        <div class="sprite-field">
+                            <label for="sprite-cell-h">Height (px)</label>
+                            <input type="number" id="sprite-cell-h" min="1" max="512" value="64">
+                        </div>
+                        <button type="button" class="sprite-btn primary" id="sprite-add-cell">Add sprite</button>
+                        <div class="sprite-btn-row">
+                            <button type="button" class="sprite-btn" id="sprite-apply-cell-size">Resize</button>
+                            <button type="button" class="sprite-btn" id="sprite-clear-cell">Clear</button>
+                        </div>
+                        <button type="button" class="sprite-btn danger" id="sprite-delete-cell">Delete selected</button>
+                    </div>
+
+                    <div class="sprite-sidebar-section" style="flex:1; display:flex; flex-direction:column; min-height:0; border-bottom:none;">
+                        <h3>Sprites in atlas</h3>
+                        <div id="sprite-cell-list"></div>
+                    </div>
+                </div>
+
+                <!-- Center: paint canvas -->
+                <div class="sprite-paint-area">
+                    <div class="sprite-paint-toolbar">
+                        <span>Paint selected sprite (pixel art, nearest-neighbor)</span>
+                        <span>·</span>
+                        <span>Atlas uses 3&nbsp;px spacing between sprites (required by input-overlay)</span>
+                    </div>
+                    <div class="sprite-paint-viewport">
+                        <canvas id="sprite-paint-canvas" width="256" height="256"></canvas>
+                    </div>
+                </div>
+
+                <!-- Right: atlas preview + export + templates -->
+                <div class="sprite-atlas-panel">
+                    <div class="sprite-sidebar-section">
+                        <h3>Atlas background</h3>
+                        <div class="sprite-field">
+                            <label for="sprite-atlas-bg">Color</label>
+                            <input type="color" id="sprite-atlas-bg" value="#000000">
+                        </div>
+                        <div class="sprite-field-inline">
+                            <input type="checkbox" id="sprite-atlas-transparent" checked>
+                            <label for="sprite-atlas-transparent">Transparent background</label>
+                        </div>
+                        <p class="sprite-hint">Transparent backgrounds work best for overlays. Selected sprite is highlighted in yellow on the preview.</p>
+                    </div>
+
+                    <div class="sprite-atlas-preview-wrap">
+                        <canvas id="sprite-atlas-preview" width="256" height="256"></canvas>
+                    </div>
+                    <div id="sprite-atlas-info">0 sprite(s) · atlas 256×256 px · 3px border</div>
+
+                    <div class="sprite-templates-section">
+                        <h3>Quick templates</h3>
+                        <button type="button" class="sprite-btn" id="sprite-template-keyboard">WASD keyboard set</button>
+                        <button type="button" class="sprite-btn" id="sprite-template-gamepad">Gamepad face buttons</button>
+                        <button type="button" class="sprite-btn" id="sprite-template-mouse">Mouse buttons</button>
+                        <p class="sprite-hint">Templates replace the current atlas with starter sprites you can customize.</p>
+                    </div>
+
+                    <div class="sprite-export-section">
+                        <h3>Export</h3>
+                        <button type="button" class="sprite-btn primary" id="sprite-export-png">Download PNG texture</button>
+                        <button type="button" class="sprite-btn" id="sprite-export-json">Download mapping JSON</button>
+                        <p class="sprite-hint">PNG is the texture file for OBS. JSON is a starter config with UV mappings; refine it in the element editor.</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
