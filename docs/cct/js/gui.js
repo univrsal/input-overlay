@@ -292,6 +292,39 @@ function download_config()
     download_json(cfg_name, cfg.write_to_json());
 }
 
+/**
+ * Apply UV mappings produced by the sprite creator onto existing elements
+ * that share the same id. Useful after "Use in config editor".
+ */
+function apply_sprite_mappings(mappings)
+{
+    if (!mappings || !cfg) return 0;
+    let applied = 0;
+    mappings.forEach((m) => {
+        const el = cfg.elements.find((e) => e.id() === m.id);
+        if (el) {
+            el.set_dim(new vec2(el.x(), el.y()), new r4(m.u, m.v, m.w, m.h));
+            applied++;
+        }
+    });
+    return applied;
+}
+
+/**
+ * Seed the default width/height fields from the first sprite in the atlas
+ * so setup() starts with sensible grid values.
+ */
+function apply_sprite_defaults_to_setup()
+{
+    if (!sprite_creator || !sprite_creator.atlas || sprite_creator.atlas.cells.length === 0)
+        return;
+    const first = sprite_creator.atlas.cells[0];
+    const dw = document.getElementById('default-width');
+    const dh = document.getElementById('default-height');
+    if (dw && (!dw.value || dw.value === '0')) dw.value = first.w;
+    if (dh && (!dh.value || dh.value === '0')) dh.value = first.h;
+}
+
 $(function() {
     $(".coord").on("keydown", e => {
         if (!e)

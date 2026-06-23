@@ -96,4 +96,10 @@ $(function () {
     main_painter.enabled = false;
     cfg.enabled = false;
   }, 200);
+
+  /* Lazy-init sprite creator once the DOM is fully ready */
+  if (typeof sprite_creator_ui !== 'undefined') {
+    sprite_creator = new sprite_creator_ui();
+    sprite_creator.init();
+  }
 });
