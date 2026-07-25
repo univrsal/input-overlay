@@ -364,7 +364,6 @@ class trigger extends texture {
         let pressed = false;
 
         if (pad.lastInput) {
-            console.log(`LAST_INPUT: ${pad.lastInput}`);
             if (this.data.side === 0) {
                 // left
                 progress = pad.lastInput.buttons[6].value;
