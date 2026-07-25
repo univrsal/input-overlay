@@ -216,10 +216,9 @@ class mouse_button extends button {
 
 class gamepad_button extends button {
     on_gamepad_input(pad) {
-        let btn = gamepad_from_vc(this.data.code);
+        let btns = gamepad_from_vc_list(this.data.code);
 
-        if (btn < pad.buttons.length)
-            this.pressed = pad.buttons[btn].pressed;
+        this.pressed = has_pressed(pad, btns);
     }
 }
 
@@ -365,6 +364,7 @@ class trigger extends texture {
         let pressed = false;
 
         if (pad.lastInput) {
+            console.log(`LAST_INPUT: ${pad.lastInput}`);
             if (this.data.side === 0) {
                 // left
                 progress = pad.lastInput.buttons[6].value;
@@ -515,4 +515,32 @@ function create_element(json) {
     if (element_map.has(json.type))
         return element_map.get(json.type)(json);
     return null;
+}
+
+function has_pressed(pad, btn_list) {
+    const list = [];
+    if (!Array.isArray(btn_list)) {
+        list.push(btn_list);
+    } else {
+        list.push(...btn_list);
+    }
+
+    for (const btn of list) {
+        if (btn === "left") {
+            if (pad.buttons[6].pressed) {
+                return true;
+            }
+        }
+        else if (btn === "right") {
+            if (pad.buttons[7].pressed) {
+                return true;
+            }
+        }
+        else if (btn < (pad.buttons.length)) {
+            if (pad.buttons[btn].pressed) {
+                return true;
+            }
+        }
+    }
+    return false;
 }
