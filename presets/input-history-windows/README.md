@@ -1,7 +1,7 @@
 # input-history-windows-keyboard
 By: [@christiankyle-ching](https://github.com/christiankyle-ching), [@Feddas](https://github.com/Feddas)
 
-Displays input-history via a browser source in OBS. **Currently only shows keyboard events.**
+Displays input-history using an OBS browser source.
 
 ## How to Enable?
 
