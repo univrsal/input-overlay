@@ -184,5 +184,16 @@ target_sources(
     ${MONGOOSE_SOURCE}
 )
 
+if (UNIX AND NOT APPLE)
+  target_sources(
+    ${CMAKE_PROJECT_NAME}
+    PRIVATE
+    src/hook/evdev/evdev_keycode_map.cpp
+    src/hook/evdev/evdev_keycode_map.hpp
+    src/hook/evdev/evdev_reader.cpp
+    src/hook/evdev/evdev_reader.hpp
+  )
+endif()
+
 set_target_properties_plugin(${CMAKE_PROJECT_NAME} PROPERTIES OUTPUT_NAME ${_name})
 configure_file(src/plugin-macros.h.in ${CMAKE_SOURCE_DIR}/src/plugin-macros.generated.h)

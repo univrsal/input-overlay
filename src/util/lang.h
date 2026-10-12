@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
- * git.vrsal.xyz/alex/input-overlay
- * Copyright 2023 univrsal <uni@vrsal.xyz>.
+ * git.vrsal.cc/alex/input-overlay
+ * Copyright 2026 univrsal <uni@vrsal.cc>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,6 +43,8 @@
 #define T_MONITOR_USE_CENTER            T_("Mouse.UseCenter")
 #define T_MONITOR_H_CENTER              T_("Monitor.CenterX")
 #define T_MONITOR_V_CENTER              T_("Monitor.CenterY")
+#define T_USE_EVDEV                     T_("InputSource.UseEvdev")
+#define T_EVDEV_PATH                    T_("InputSource.EvdevPath")
 
 /* Lang Input History */
 #define T_HISTORY_USE_FALLBACK_NAMES    T_("History.UseFallbackNames")

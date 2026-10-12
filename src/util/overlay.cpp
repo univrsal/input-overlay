@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * git.vrsal.cc/alex/input-overlay
- * Copyright 2025 univrsal <uni@vrsal.xyz>.
+ * Copyright 2026 univrsal <uni@vrsal.cc>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +32,9 @@
 #include "log.h"
 #include "../network/remote_connection.hpp"
 #include "obs_util.hpp"
+#include <linux/input.h>
+#include <algorithm>
+#include <limits>
 #include <QFile>
 #include <QJsonArray>
 #include <QJsonDocument>
@@ -39,6 +42,14 @@
 
 namespace sources {
 class overlay_settings;
+}
+
+static int16_t add_clamped_mouse_delta(int16_t current, int32_t delta)
+{
+    const auto next = static_cast<int32_t>(current) + delta;
+    return static_cast<int16_t>(
+        std::clamp(next, static_cast<int32_t>(std::numeric_limits<int16_t>::min()),
+                   static_cast<int32_t>(std::numeric_limits<int16_t>::max())));
 }
 
 static const std::unordered_map<uint16_t, uint16_t> keyCodeMap = {
@@ -344,7 +355,27 @@ void overlay::refresh_data()
 {
     if (io_config::io_window_filters.input_blocked())
         return;
-    if (!(uiohook::state || wss::state || gamepad_hook::state))
+#if __linux__
+    bool evdev_active = m_settings->use_evdev && m_settings->evdev_reader.is_running();
+    if (evdev_active) {
+        std::lock_guard<std::mutex> evdev_lock(m_settings->evdev_reader.mutex_);
+        local_data::data.m_mutex.lock();
+        if (!m_settings->evdev_reader.key_state.empty())
+            local_data::data.keyboard = m_settings->evdev_reader.key_state;
+        for (const auto &[button, pressed] : m_settings->evdev_reader.mouse_state)
+            local_data::data.mouse[button] = pressed;
+        local_data::data.last_mouse_movement.x = add_clamped_mouse_delta(
+            local_data::data.last_mouse_movement.x,
+            m_settings->evdev_reader.take_rel_state_locked(static_cast<uint16_t>(REL_X)));
+        local_data::data.last_mouse_movement.y = add_clamped_mouse_delta(
+            local_data::data.last_mouse_movement.y,
+            m_settings->evdev_reader.take_rel_state_locked(static_cast<uint16_t>(REL_Y)));
+        local_data::data.m_mutex.unlock();
+    }
+#else
+    constexpr bool evdev_active = false;
+#endif
+    if (!evdev_active && !(uiohook::state || wss::state || gamepad_hook::state))
         return;
 
     /* This copies over necessary input data information
