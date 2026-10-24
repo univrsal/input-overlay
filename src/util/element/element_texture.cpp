@@ -38,18 +38,18 @@ void element_texture::load(const QJsonObject &obj)
     read_mapping(obj);
 }
 
-void element_texture::draw(gs_effect_t *effect, gs_image_file_t *image, sources::overlay_settings *settings)
+void element_texture::draw(gs_effect_t *effect, gs_image_file_ex_t *image, sources::overlay_settings *settings)
 {
     UNUSED_PARAMETER(settings);
     draw(effect, image, &m_mapping, &m_pos);
 }
 
-void element_texture::draw(gs_effect_t *effect, gs_image_file_t *image, const gs_rect *rect) const
+void element_texture::draw(gs_effect_t *effect, gs_image_file_ex_t *image, const gs_rect *rect) const
 {
     draw(effect, image, rect ? rect : &m_mapping, &m_pos);
 }
 
-void element_texture::draw(gs_effect_t *effect, gs_image_file_t *image, const gs_rect *rect, const vec2 *pos)
+void element_texture::draw(gs_effect_t *effect, gs_image_file_ex_t *image, const gs_rect *rect, const vec2 *pos)
 {
     gs_blend_state_push();
     gs_enable_blending(true);
@@ -64,7 +64,7 @@ void element_texture::draw(gs_effect_t *effect, gs_image_file_t *image, const gs
     gs_blend_state_pop();
 }
 
-void element_texture::draw(gs_effect *effect, gs_image_file_t *image, const gs_rect *rect, const vec2 *pos,
+void element_texture::draw(gs_effect *effect, gs_image_file_ex_t *image, const gs_rect *rect, const vec2 *pos,
                            const float angle)
 {
     gs_effect_set_texture(gs_effect_get_param_by_name(effect, "image"), image->texture);

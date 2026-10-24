@@ -201,7 +201,7 @@ overlay::overlay(sources::overlay_settings *settings)
 
 bool overlay::load()
 {
-    // Unload attempts to access uninitialized member from struct gs_image_file4 when unload is called
+    // Unload attempts to access uninitialized member from struct gs_image_file_ex when unload is called
     if (m_image)
         unload();
     const auto image_loaded = load_texture();
@@ -283,14 +283,14 @@ bool overlay::load_texture()
     auto flag = true;
     unload_texture();
     if (m_image == nullptr) {
-        m_image = new gs_image_file4_t();
+        m_image = new gs_image_file_ex_t();
     }
 
-    gs_image_file4_init(m_image, m_settings->image_file.c_str(),
-                        m_settings->linear_alpha ? GS_IMAGE_ALPHA_PREMULTIPLY_SRGB : GS_IMAGE_ALPHA_PREMULTIPLY);
+    gs_image_file_ex_init(m_image, m_settings->image_file.c_str(),
+                          m_settings->linear_alpha ? GS_IMAGE_ALPHA_PREMULTIPLY_SRGB : GS_IMAGE_ALPHA_PREMULTIPLY);
 
     obs_enter_graphics();
-    gs_image_file4_init_texture(m_image);
+    gs_image_file_ex_init_texture(m_image);
     obs_leave_graphics();
 
     if (!get_texture()->loaded) {
@@ -310,7 +310,7 @@ void overlay::unload_texture()
 {
     if (m_image) {
         obs_enter_graphics();
-        gs_image_file4_free(m_image);
+        gs_image_file_ex_free(m_image);
         obs_leave_graphics();
         delete m_image;
         m_image = nullptr;

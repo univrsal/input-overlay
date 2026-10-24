@@ -27,7 +27,7 @@ public:
 
     void load(const QJsonObject &obj) override;
 
-    void draw(gs_effect_t *effect, gs_image_file_t *image, sources::overlay_settings *settings) override;
+    void draw(gs_effect_t *effect, gs_image_file_ex_t *image, sources::overlay_settings *settings) override;
 
     void tick(float seconds, sources::overlay_settings *settings) override;
 
