@@ -147,7 +147,7 @@ static const std::unordered_map<uint16_t, uint16_t> keyCodeMap = {
     {0x0E0D, VC_KP_EQUALS},
     {0x004E, VC_KP_ADD},
     {0x0E1C, VC_KP_ENTER},
-    {0x0053, VC_KP_SEPARATOR},
+    {0x0053, VC_KP_DECIMAL},
     {0x004F, VC_KP_1},
     {0x0050, VC_KP_2},
     {0x0051, VC_KP_3},
