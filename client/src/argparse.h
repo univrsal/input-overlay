@@ -105,34 +105,13 @@ int argparse_help_cb(struct argparse *self, const struct argparse_option *option
 int argparse_help_cb_no_exit(struct argparse *self, const struct argparse_option *option);
 
 // built-in option macros
-#define OPT_END()                                      \
-    {                                                  \
-        ARGPARSE_OPT_END, 0, NULL, NULL, 0, NULL, 0, 0 \
-    }
-#define OPT_BOOLEAN(...)                  \
-    {                                     \
-        ARGPARSE_OPT_BOOLEAN, __VA_ARGS__ \
-    }
-#define OPT_BIT(...)                  \
-    {                                 \
-        ARGPARSE_OPT_BIT, __VA_ARGS__ \
-    }
-#define OPT_INTEGER(...)                  \
-    {                                     \
-        ARGPARSE_OPT_INTEGER, __VA_ARGS__ \
-    }
-#define OPT_FLOAT(...)                  \
-    {                                   \
-        ARGPARSE_OPT_FLOAT, __VA_ARGS__ \
-    }
-#define OPT_STRING(...)                  \
-    {                                    \
-        ARGPARSE_OPT_STRING, __VA_ARGS__ \
-    }
-#define OPT_GROUP(h)                                     \
-    {                                                    \
-        ARGPARSE_OPT_GROUP, 0, NULL, NULL, h, NULL, 0, 0 \
-    }
+#define OPT_END() {ARGPARSE_OPT_END, 0, NULL, NULL, 0, NULL, 0, 0}
+#define OPT_BOOLEAN(...) {ARGPARSE_OPT_BOOLEAN, __VA_ARGS__}
+#define OPT_BIT(...) {ARGPARSE_OPT_BIT, __VA_ARGS__}
+#define OPT_INTEGER(...) {ARGPARSE_OPT_INTEGER, __VA_ARGS__}
+#define OPT_FLOAT(...) {ARGPARSE_OPT_FLOAT, __VA_ARGS__}
+#define OPT_STRING(...) {ARGPARSE_OPT_STRING, __VA_ARGS__}
+#define OPT_GROUP(h) {ARGPARSE_OPT_GROUP, 0, NULL, NULL, h, NULL, 0, 0}
 #define OPT_HELP() OPT_BOOLEAN('h', "help", NULL, "show this help message and exit", argparse_help_cb, 0, OPT_NONEG)
 
 int argparse_init(struct argparse *self, struct argparse_option *options, const char *const *usages, int flags);
