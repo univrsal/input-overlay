@@ -26,18 +26,6 @@ if ( $PSVersionTable.PSVersion -lt '7.2.0' ) {
     exit 2
 }
 
-function PackageClientAndPresets {
-    $PresetsName = "${ProductName}-${ProductVersion}-presets"
-
-    $CompressPresetsArgs = @{
-        Path = (Get-ChildItem -Path "${ProjectRoot}/presets/")
-        CompressionLevel = 'Optimal'
-        DestinationPath = "${ProjectRoot}/release/${PresetsName}.zip"
-        Verbose = ($Env:CI -ne $null)
-    }
-    Compress-Archive -Force @CompressPresetsArgs
-}
-
 function Package {
     trap {
         Write-Error $_
@@ -71,8 +59,6 @@ function Package {
     Remove-Item @RemoveArgs
 
     Log-Group "Archiving ${ProductName}..."
-
-    PackageClientAndPresets
 
     $CompressArgs = @{
         Path = (Get-ChildItem -Path "${ProjectRoot}/release/${Configuration}" -Exclude "${OutputName}*.*", "lib", "include")
