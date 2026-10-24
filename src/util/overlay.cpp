@@ -170,7 +170,7 @@ static const std::unordered_map<uint16_t, uint16_t> keyCodeMap = {
     {0x0E5D, VC_CONTEXT_MENU},
     {0xE05E, VC_POWER},
     {0xE05F, VC_SLEEP},
-    {0xE063, VC_WAKE},
+    {0xE063, VC_UNDEFINED}, /* libuiohook has no wake key anymore */
     {0xE022, VC_MEDIA_PLAY},
     {0xE024, VC_MEDIA_STOP},
     {0xE010, VC_MEDIA_PREVIOUS},
@@ -191,9 +191,15 @@ static const std::unordered_map<uint16_t, uint16_t> keyCodeMap = {
     {0xE066, VC_BROWSER_FAVORITES},
     {0x0070, VC_KATAKANA},
     {0x0073, VC_UNDERSCORE},
-    {0x0079, VC_KANJI},
+    {0x0079, VC_CONVERT}, /* Henkan, libuiohook maps it to VC_CONVERT now */
     {0x007B, VC_HIRAGANA},
     {0x007D, VC_YEN},
+    {0x0077, VC_UNDEFINED}, /* Furigana, libuiohook has no equivalent */
+    {0x007E, VC_KP_SEPARATOR},
+    {0x0029, VC_BACK_QUOTE},
+    {0x0E37, VC_PRINT_SCREEN},
+    {0x0E46, VC_SECTION}, /* the ISO </> key */
+    {0xE04C, VC_KP_CLEAR},
     {0x0000, VC_UNDEFINED},
     {0xFFFF, CHAR_UNDEFINED},
 };
