@@ -25,6 +25,8 @@
 #include <poll.h>
 #include <sys/eventfd.h>
 #include <unistd.h>
+#include <algorithm>
+#include <util/platform.h>
 #include "util/log.h"
 
 EvdevReader::EvdevReader() = default;
@@ -124,7 +126,7 @@ void EvdevReader::reader_thread(const std::string &path)
     pfds[1].fd = stop_fd_;
     pfds[1].events = POLLIN;
 
-    struct input_event ev {};
+    struct input_event ev{};
 
     while (running_) {
         int ret = poll(pfds, 2, -1);
@@ -152,10 +154,13 @@ void EvdevReader::reader_thread(const std::string &path)
                 std::lock_guard lock(mutex_);
                 auto uihook_code = evdev_to_uiohook(ev.code);
                 bdebug("Read evdev event: type %u, code %u, value %d, uihook: 0x%X", ev.type, ev.code, ev.value,
-                      uihook_code);
+                       uihook_code);
                 switch (ev.type) {
                 case EV_KEY:
-                    if (ev.code <= EVDEV_KEY_MAX) {
+                    if (auto button = evdev_mouse_to_uiohook(ev.code)) {
+                        mouse_state[button] = ev.value != 0;
+                        bdebug("Mouse button %u: %s", button, ev.value != 0 ? "pressed" : "released");
+                    } else if (ev.code <= EVDEV_KEY_MAX) {
                         if (ev.value == 1) { // pressed
                             key_state[uihook_code] = true;
                             bdebug("Key pressed: evdev code %u, uiohook code %u", ev.code, uihook_code);
@@ -170,6 +175,18 @@ void EvdevReader::reader_thread(const std::string &path)
                 case EV_REL:
                     if (ev.code <= EVDEV_REL_MAX) {
                         rel_state_[ev.code] = ev.value;
+                    }
+                    // Mirror libuiohook's X11 wheel events: unit scroll with a delta of 100 and three lines per
+                    // notch, positive rotation is up/right. The high resolution axes report the same scroll again.
+                    if ((ev.code == REL_WHEEL || ev.code == REL_HWHEEL) && ev.value != 0) {
+                        last_wheel_event = {};
+                        last_wheel_event.type = WHEEL_UNIT_SCROLL;
+                        last_wheel_event.delta = 100;
+                        last_wheel_event.rotation = static_cast<int16_t>(
+                            std::clamp(ev.value * 3 * last_wheel_event.delta, INT16_MIN, INT16_MAX));
+                        last_wheel_event.direction = ev.code == REL_WHEEL ? WHEEL_VERTICAL_DIRECTION
+                                                                          : WHEEL_HORIZONTAL_DIRECTION;
+                        last_wheel_event_time = os_gettime_ns();
                     }
                     break;
 

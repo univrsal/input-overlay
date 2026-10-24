@@ -26,6 +26,7 @@
 #include <mutex>
 #include <string>
 #include <thread>
+#include <uiohook.h>
 
 /// Maximum evdev key code value we track (matches KEY_MAX in the Linux kernel).
 constexpr size_t EVDEV_KEY_MAX = 0x2FF;
@@ -66,6 +67,11 @@ public:
     void set_rel_state(uint16_t rel_code, int32_t value);
     mutable std::mutex mutex_;
     std::unordered_map<uint16_t, bool> key_state{};
+    /// Mouse button state keyed by uiohook button (MOUSE_BUTTON1-5)
+    std::unordered_map<uint16_t, bool> mouse_state{};
+    /// Last scroll event in the same format libuiohook reports it
+    mouse_wheel_event_data last_wheel_event{};
+    uint64_t last_wheel_event_time{};
 
 private:
     void reader_thread(const std::string &path);

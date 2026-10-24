@@ -350,6 +350,9 @@ void overlay::refresh_data()
         std::lock_guard<std::mutex> evdev_lock(m_settings->evdev_reader.mutex_);
         local_data::data.m_mutex.lock();
         local_data::data.keyboard = m_settings->evdev_reader.key_state;
+        local_data::data.mouse = m_settings->evdev_reader.mouse_state;
+        local_data::data.last_wheel_event = m_settings->evdev_reader.last_wheel_event;
+        local_data::data.last_wheel_event_time = m_settings->evdev_reader.last_wheel_event_time;
         local_data::data.m_mutex.unlock();
     }
 #else
