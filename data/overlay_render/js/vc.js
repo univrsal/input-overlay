@@ -197,9 +197,23 @@ function gamepad_to_vc(button)
 
 function gamepad_from_vc(vc)
 {
-    if (vc2gamepad.has(vc))
+    if (vc2gamepad.has(vc)) {
         return vc2gamepad.get(vc);
+    }
     return vc;
+}
+
+function gamepad_from_vc_list(vc_list)
+{
+    let ret = [];
+    if (Array.isArray(vc_list)) {
+        for(const vc of vc_list) {
+            ret.push(gamepad_from_vc(vc));
+        }
+    } else {
+        ret.push(gamepad_from_vc(vc_list));
+    }
+    return ret;
 }
 
 function mouse_to_vc(e)
