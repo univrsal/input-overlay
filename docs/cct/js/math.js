@@ -16,192 +16,171 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *************************************************************************/
 
-function parseIntSafe(val, fallback = 0) {
-  let parsed = parseInt(val);
-  return isNaN(parsed) ? fallback : parsed;
+function parseIntSafe(val, fallback = 0)
+{
+    let parsed = parseInt(val);
+    return isNaN(parsed) ? fallback : parsed;
 }
 
 class vec2 {
-  constructor(x = 0, y = 0) {
-    this.x = x;
-    this.y = y;
-  }
+    constructor(x = 0, y = 0)
+    {
+        this.x = x;
+        this.y = y;
+    }
 
-  addv(other) {
-    return new vec2(this.x + other.x, this.y + other.y);
-  }
+    addv(other) { return new vec2(this.x + other.x, this.y + other.y); }
 
-  add(x, y) {
-    return new vec2(this.x + x, this.y + y);
-  }
+    add(x, y) { return new vec2(this.x + x, this.y + y); }
 
-  subv(other) {
-    return new vec2(this.x - other.x, this.y - other.y);
-  }
+    subv(other) { return new vec2(this.x - other.x, this.y - other.y); }
 
-  sub(x, y) {
-    return new vec2(this.x - x, this.y - y);
-  }
+    sub(x, y) { return new vec2(this.x - x, this.y - y); }
 
-  lt(x, y) {
-    return this.x < x && this.y < y;
-  }
-  ltv(v) {
-    return this.x < v.x && this.y < v.y;
-  }
+    lt(x, y) { return this.x < x && this.y < y; }
+    ltv(v) { return this.x < v.x && this.y < v.y; }
 
-  scale(s) {
-    return new vec2(this.x * s, this.y * s);
-  }
+    scale(s) { return new vec2(this.x * s, this.y * s); }
 
-  limit(min_x = 0, min_y = 0, max_x = 3000, max_y = 3000) {
-    this.x = Math.min(Math.max(this.x, min_x), max_x);
-    this.y = Math.min(Math.max(this.y, min_y), max_y);
-  }
+    limit(min_x = 0, min_y = 0, max_x = 3000, max_y = 3000)
+    {
+        this.x = Math.min(Math.max(this.x, min_x), max_x);
+        this.y = Math.min(Math.max(this.y, min_y), max_y);
+    }
 
-  validate() {
-    this.x = parseIntSafe(this.x);
-    this.y = parseIntSafe(this.y);
-  }
+    validate()
+    {
+        this.x = parseIntSafe(this.x);
+        this.y = parseIntSafe(this.y);
+    }
 }
 
 class r4 {
-  constructor(x = 0, y = 0, w = 0, h = 0) {
-    this.x = x;
-    this.y = y;
-    this.w = w;
-    this.h = h;
-  }
-
-  from_points(a, b) {
-    this.x = Math.min(a.x, b.x);
-    this.y = Math.min(a.y, b.y);
-    this.w = Math.max(a.x, b.x) - this.x;
-    this.h = Math.max(a.y, b.y) - this.y;
-  }
-
-  validate() {
-    this.x = parseIntSafe(this.x);
-    this.y = parseIntSafe(this.y);
-    this.w = parseIntSafe(this.w);
-    this.h = parseIntSafe(this.h);
-  }
-
-  reset() {
-    this.x = 0;
-    this.y = 0;
-    this.w = 0;
-    this.h = 0;
-  }
-
-  copy() {
-    return new r4(this.x, this.y, this.w, this.h);
-  }
-
-  get_left() {
-    return this.w < 0 ? this.x + this.w : this.x;
-  }
-
-  get_right() {
-    return this.w >= 0 ? this.x + this.w : this.x;
-  }
-
-  get_top() {
-    return this.h < 0 ? this.y + this.h : this.y;
-  }
-
-  get_bottom() {
-    return this.h >= 0 ? this.y + this.h : this.y;
-  }
-
-  is_coord_inside(x, y) {
-    return (
-      x >= this.get_left() &&
-      x <= this.get_right() &&
-      y >= this.get_top() &&
-      y <= this.get_bottom()
-    );
-  }
-
-  is_point_inside(v) {
-    return (
-      v.x >= this.get_left() &&
-      v.x <= this.get_right() &&
-      v.y >= this.get_top() &&
-      v.y <= this.get_bottom()
-    );
-  }
-
-  /* true when this is inside other */
-  is_inside(other) {
-    return (
-      other.get_left() <= this.get_left() &&
-      other.get_right() >= this.get_right() &&
-      other.get_top() <= this.get_top() &&
-      other.get_bottom() >= this.get_bottom()
-    );
-  }
-
-  union(other) {
-    if (this.is_empty() && other.is_empty()) return;
-
-    if (this.is_empty()) {
-      this.x = other.x;
-      this.y = other.y;
-      this.w = other.w;
-      this.h = other.h;
+    constructor(x = 0, y = 0, w = 0, h = 0)
+    {
+        this.x = x;
+        this.y = y;
+        this.w = w;
+        this.h = h;
     }
 
-    if (other.is_empty()) return;
+    from_points(a, b)
+    {
+        this.x = Math.min(a.x, b.x);
+        this.y = Math.min(a.y, b.y);
+        this.w = Math.max(a.x, b.x) - this.x;
+        this.h = Math.max(a.y, b.y) - this.y;
+    }
 
-    let tmin, tmax, omin, omax;
+    validate()
+    {
+        this.x = parseIntSafe(this.x);
+        this.y = parseIntSafe(this.y);
+        this.w = parseIntSafe(this.w);
+        this.h = parseIntSafe(this.h);
+    }
 
-    /* Horizontal union */
-    tmin = this.get_left();
-    tmax = this.get_right();
-    omin = other.get_left();
-    omax = other.get_right();
+    reset()
+    {
+        this.x = 0;
+        this.y = 0;
+        this.w = 0;
+        this.h = 0;
+    }
 
-    if (omin < tmin) tmin = omin;
+    copy() { return new r4(this.x, this.y, this.w, this.h); }
 
-    this.x = tmin;
-    if (omax > tmax) tmax = omax;
-    this.w = tmax - tmin;
+    get_left() { return this.w < 0 ? this.x + this.w : this.x; }
 
-    /* Vertical union */
-    tmin = this.get_top();
-    tmax = this.get_bottom();
-    omin = other.get_top();
-    omax = other.get_bottom();
+    get_right() { return this.w >= 0 ? this.x + this.w : this.x; }
 
-    if (omin < tmin) tmin = omin;
-    this.y = tmin;
-    if (omax > tmax) tmax = omax;
-    this.h = tmax - tmin;
-  }
+    get_top() { return this.h < 0 ? this.y + this.h : this.y; }
 
-  grow(i) {
-    return new r4(this.x - i, this.y - i, this.w + i * 2, this.h + i * 2);
-  }
+    get_bottom() { return this.h >= 0 ? this.y + this.h : this.y; }
 
-  max(x = 0, y = 0) {
-    this.x = Math.max(this.x, x);
-    this.y = Math.max(this.y, y);
-  }
+    is_coord_inside(x, y)
+    {
+        return (x >= this.get_left() && x <= this.get_right() && y >= this.get_top() && y <= this.get_bottom());
+    }
 
-  maxw(w = 0, h = 0) {
-    this.w = Math.max(this.w, w);
-    this.h = Math.max(this.h, h);
-  }
+    is_point_inside(v)
+    {
+        return (v.x >= this.get_left() && v.x <= this.get_right() && v.y >= this.get_top() && v.y <= this.get_bottom());
+    }
 
-  is_empty() {
-    return this.w === 0 && this.h === 0;
-  }
+    /* true when this is inside other */
+    is_inside(other)
+    {
+        return (other.get_left() <= this.get_left() && other.get_right() >= this.get_right() &&
+                other.get_top() <= this.get_top() && other.get_bottom() >= this.get_bottom());
+    }
+
+    union(other)
+    {
+        if (this.is_empty() && other.is_empty())
+            return;
+
+        if (this.is_empty()) {
+            this.x = other.x;
+            this.y = other.y;
+            this.w = other.w;
+            this.h = other.h;
+        }
+
+        if (other.is_empty())
+            return;
+
+        let tmin, tmax, omin, omax;
+
+        /* Horizontal union */
+        tmin = this.get_left();
+        tmax = this.get_right();
+        omin = other.get_left();
+        omax = other.get_right();
+
+        if (omin < tmin)
+            tmin = omin;
+
+        this.x = tmin;
+        if (omax > tmax)
+            tmax = omax;
+        this.w = tmax - tmin;
+
+        /* Vertical union */
+        tmin = this.get_top();
+        tmax = this.get_bottom();
+        omin = other.get_top();
+        omax = other.get_bottom();
+
+        if (omin < tmin)
+            tmin = omin;
+        this.y = tmin;
+        if (omax > tmax)
+            tmax = omax;
+        this.h = tmax - tmin;
+    }
+
+    grow(i) { return new r4(this.x - i, this.y - i, this.w + i * 2, this.h + i * 2); }
+
+    max(x = 0, y = 0)
+    {
+        this.x = Math.max(this.x, x);
+        this.y = Math.max(this.y, y);
+    }
+
+    maxw(w = 0, h = 0)
+    {
+        this.w = Math.max(this.w, w);
+        this.h = Math.max(this.h, h);
+    }
+
+    is_empty() { return this.w === 0 && this.h === 0; }
 }
 
 class r2 {
-  constructor(w = 0, h = 0) {
-    this.w = w;
-    this.h = h;
-  }
+    constructor(w = 0, h = 0)
+    {
+        this.w = w;
+        this.h = h;
+    }
 }

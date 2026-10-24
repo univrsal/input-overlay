@@ -232,7 +232,7 @@ class editor {
             this.drag_start = tv;
             this.selecting = true;
         }
-    
+
         this.move_flags = flags;
     }
 

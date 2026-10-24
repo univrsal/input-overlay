@@ -36,7 +36,6 @@
 #define WIN32 0
 #endif
 
-
 SDL_Window *dummy_window{};
 
 inline void sdl_init()

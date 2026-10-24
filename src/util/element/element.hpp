@@ -18,13 +18,18 @@
 
 #pragma once
 
+#include <obs-config.h>
 #include <graphics/graphics.h>
 #include <graphics/vec2.h>
 #include <QJsonObject>
 #include <layout_constants.h>
 
-typedef struct gs_image_file gs_image_file_t;
-typedef struct gs_image_file4 gs_image_file4_t;
+/* OBS 33 replaced gs_image_file with gs_image_file_ex, both have the texture, cx, cy and loaded fields we use */
+#if LIBOBS_API_MAJOR_VER >= 33
+typedef struct gs_image_file_ex overlay_image_t;
+#else
+typedef struct gs_image_file overlay_image_t;
+#endif
 
 namespace sources {
 class overlay_settings;
@@ -40,7 +45,7 @@ public:
 
     virtual void load(const QJsonObject &obj) = 0;
 
-    virtual void draw(gs_effect_t *effect, gs_image_file_t *m_image, sources::overlay_settings *settings) = 0;
+    virtual void draw(gs_effect_t *effect, overlay_image_t *m_image, sources::overlay_settings *settings) = 0;
 
     element_type get_type() const;
 

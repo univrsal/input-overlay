@@ -110,4 +110,8 @@ runs:
           Configuration = '${{ inputs.config }}'
         }
 
+        if ( '${{ inputs.package }}' -eq 'true' ) {
+          $PackageArgs += @{BuildInstaller = $true}
+        }
+
         .github/scripts/Package-Windows.ps1 @PackageArgs

@@ -3,7 +3,8 @@ param(
     [ValidateSet('x64')]
     [string] $Target = 'x64',
     [ValidateSet('Debug', 'RelWithDebInfo', 'Release', 'MinSizeRel')]
-    [string] $Configuration = 'RelWithDebInfo'
+    [string] $Configuration = 'RelWithDebInfo',
+    [switch] $BuildInstaller
 )
 
 $ErrorActionPreference = 'Stop'
@@ -24,18 +25,6 @@ if ( ! ( [System.Environment]::Is64BitOperatingSystem ) ) {
 if ( $PSVersionTable.PSVersion -lt '7.2.0' ) {
     Write-Warning 'The packaging script requires PowerShell Core 7. Install or upgrade your PowerShell version: https://aka.ms/pscore6'
     exit 2
-}
-
-function PackageClientAndPresets {
-    $PresetsName = "${ProductName}-${ProductVersion}-presets"
-
-    $CompressPresetsArgs = @{
-        Path = (Get-ChildItem -Path "${ProjectRoot}/presets/")
-        CompressionLevel = 'Optimal'
-        DestinationPath = "${ProjectRoot}/release/${PresetsName}.zip"
-        Verbose = ($Env:CI -ne $null)
-    }
-    Compress-Archive -Force @CompressPresetsArgs
 }
 
 function Package {
@@ -72,8 +61,6 @@ function Package {
 
     Log-Group "Archiving ${ProductName}..."
 
-    PackageClientAndPresets
-
     $CompressArgs = @{
         Path = (Get-ChildItem -Path "${ProjectRoot}/release/${Configuration}" -Exclude "${OutputName}*.*", "lib", "include")
         CompressionLevel = 'Optimal'
@@ -81,6 +68,23 @@ function Package {
         Verbose = ($Env:CI -ne $null)
     }
     Compress-Archive -Force @CompressArgs
+
+    if ( $BuildInstaller ) {
+        Log-Group "Packaging ${ProductName}..."
+
+        $IsccFile = "${ProjectRoot}/build_${Target}/installer-Windows.generated.iss"
+
+        if ( ! ( Test-Path -Path $IsccFile ) ) {
+            throw 'InnoSetup install script not found. Run the build script or the CMake build and install procedures first.'
+        }
+
+        Remove-Item -Path "${ProjectRoot}/release/Package" -Recurse -Force -ErrorAction SilentlyContinue
+        Copy-Item -Path "${ProjectRoot}/release/${Configuration}/${ProductName}" -Destination "${ProjectRoot}/release/Package" -Recurse
+        $Iscc = (Get-Command iscc -ErrorAction SilentlyContinue)?.Source ?? "${env:ProgramFiles(x86)}/Inno Setup 6/ISCC.exe"
+        Invoke-External $Iscc ${IsccFile} /O"${ProjectRoot}/release" /F"${OutputName}-Installer"
+        Remove-Item -Path "${ProjectRoot}/release/Package" -Recurse
+    }
+
     Log-Group
 }
 

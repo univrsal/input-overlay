@@ -29,8 +29,11 @@ extern "C" {
 #include <graphics/image-file.h>
 }
 
-typedef struct gs_image_file gs_image_file_t;
-typedef struct gs_image_file4 gs_image_file4_t;
+#if LIBOBS_API_MAJOR_VER >= 33
+typedef gs_image_file_ex_t overlay_image_file_t;
+#else
+typedef gs_image_file4_t overlay_image_file_t;
+#endif
 
 class overlay {
 public:
@@ -44,7 +47,14 @@ public:
     void tick(float seconds);
     void refresh_data();
     bool is_loaded() const { return m_is_loaded; }
-    gs_image_file_t *get_texture() const { return &(m_image->image3.image2.image); }
+    overlay_image_t *get_texture() const
+    {
+#if LIBOBS_API_MAJOR_VER >= 33
+        return m_image;
+#else
+        return m_image ? &m_image->image3.image2.image : nullptr;
+#endif
+    }
 
 private:
     bool load_cfg();
@@ -54,7 +64,7 @@ private:
 
     static const char *element_type_to_string(element_type t);
 
-    gs_image_file4_t *m_image = nullptr;
+    overlay_image_file_t *m_image = nullptr;
     sources::overlay_settings *m_settings = nullptr;
     bool m_is_loaded = false;
     std::vector<std::unique_ptr<element>> m_elements;

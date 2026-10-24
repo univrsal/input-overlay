@@ -14,15 +14,25 @@ AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
-DefaultDirName={code:GetDirName}
+DefaultDirName={commonappdata}\obs-studio\plugins\{#MyAppName}
+; Older versions were installed into the OBS install directory, don't reuse that directory on updates
+UsePreviousAppDir=no
 DefaultGroupName={#MyAppName}
-OutputBaseFilename={#MyAppName}-{#MyAppVersion}-Windows-Installer
+OutputBaseFilename={#MyAppName}-{#MyAppVersion}-windows-x64-Installer
 Compression=lzma
 SolidCompression=yes
 DirExistsWarning=no
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
+
+[InstallDelete]
+; Remove files of older versions from the legacy plugin locations, OBS Studio 34 won't load plugins from there
+Type: files; Name: "{code:GetObsDir}\obs-plugins\64bit\{#MyAppName}.dll"
+Type: files; Name: "{code:GetObsDir}\obs-plugins\64bit\{#MyAppName}.pdb"
+Type: filesandordirs; Name: "{code:GetObsDir}\data\obs-plugins\{#MyAppName}"
+Type: filesandordirs; Name: "{code:GetObsDir}\io_client"
+Type: filesandordirs; Name: "{app}\bin"
 
 [Files]
 Source: "..\release\Package\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
@@ -50,13 +60,13 @@ end;
 
 // credit where it's due :
 // following function come from https://github.com/Xaymar/obs-studio_amf-encoder-plugin/blob/master/%23Resources/Installer.in.iss#L45
-function GetDirName(Value: string): string;
+function GetObsDir(Value: string): string;
 var
   InstallPath: string;
 begin
   // initialize default path, which will be returned when the following registry
   // key queries fail due to missing keys or for some different reason
-  Result := '{autopf}\obs-studio';
+  Result := ExpandConstant('{autopf}\obs-studio');
   // query the first registry value; if this succeeds, return the obtained value
   if RegQueryStringValue(HKLM32, 'SOFTWARE\OBS Studio', '', InstallPath) then
     Result := InstallPath

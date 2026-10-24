@@ -16,7 +16,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *************************************************************************/
 
-
 #include "network_helper.hpp"
 #include "uiohook_helper.hpp"
 #include "gamepad_helper.hpp"

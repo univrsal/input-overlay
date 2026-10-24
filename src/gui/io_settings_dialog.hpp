@@ -67,6 +67,8 @@ private Q_SLOTS:
     void RefreshUi();
 
 private:
+    void LoadValues();
+
     Ui::io_config_dialog *ui;
     QTimer *m_refresh = nullptr;
 };

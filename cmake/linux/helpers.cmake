@@ -4,6 +4,13 @@ include_guard(GLOBAL)
 
 include(helpers_common)
 
+# OBS Studio 33 loads third-party plugins from obs-modules/plugins, older versions only from obs-plugins
+if(libobs_VERSION VERSION_GREATER_EQUAL 33)
+  set(_plugin_install_dir obs-modules/plugins)
+else()
+  set(_plugin_install_dir obs-plugins)
+endif()
+
 # set_target_properties_plugin: Set target properties for use in obs-studio
 function(set_target_properties_plugin target)
   set(options "")
@@ -26,7 +33,7 @@ function(set_target_properties_plugin target)
   install(
     TARGETS ${target}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/obs-plugins
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/${_plugin_install_dir}
   )
 
   if(TARGET plugin-support)
@@ -60,7 +67,7 @@ function(target_install_resources target)
 
     install(
       DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/data/"
-      DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/obs/obs-plugins/${target}
+      DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/obs/${_plugin_install_dir}/${target}
       USE_SOURCE_PERMISSIONS
     )
   endif()
@@ -70,7 +77,7 @@ endfunction()
 function(target_add_resource target resource)
   message(DEBUG "Add resource '${resource}' to target ${target} at destination '${target_destination}'...")
 
-  install(FILES "${resource}" DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/obs/obs-plugins/${target})
+  install(FILES "${resource}" DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/obs/${_plugin_install_dir}/${target})
 
   source_group("Resources" FILES "${resource}")
 endfunction()

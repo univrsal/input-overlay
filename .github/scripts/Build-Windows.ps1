@@ -34,7 +34,7 @@ function BuildClient {
     Invoke-External cmake --build "${ProjectRoot}/client_build" --config $Configuration --parallel
 
     Log-Group "Installing ${ProductName}-client..."
-    Invoke-External cmake --install "${ProjectRoot}/client_build" --config $Configuration --prefix "${ProjectRoot}/release/${Configuration}"
+    Invoke-External cmake --install "${ProjectRoot}/client_build" --config $Configuration --prefix "${ProjectRoot}/release/${Configuration}/${ProductName}"
 }
 
 function Build {

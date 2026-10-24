@@ -27,12 +27,23 @@ jobs:
       run:
         shell: bash
     steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: buildspec.json
+          sparse-checkout-cone-mode: false
+
       - name: Check Release Tag ☑️
         id: check
         run: |
           : Check Release Tag ☑️
           if [[ "${RUNNER_DEBUG}" ]]; then set -x; fi
           shopt -s extglob
+
+          buildspec_version="$(jq -r '.version' buildspec.json)"
+          if [[ "${GITHUB_REF_NAME%%-*}" != "${buildspec_version}" ]]; then
+            echo "::error::Tag ${GITHUB_REF_NAME} does not match version ${buildspec_version} in buildspec.json"
+            exit 1
+          fi
 
           case "${GITHUB_REF_NAME}" in
             +([0-9]).+([0-9]).+([0-9]) )
@@ -66,9 +77,8 @@ jobs:
 
           variants=(
             'windows-x64;zip|exe'
-            'ubuntu-24.04-x86_64;tar.xz|deb|ddeb'
+            'ubuntu-24.04-x86_64;tar.xz|zip|deb|ddeb'
             'sources;tar.xz'
-            'presets;zip'
           )
 
           for variant_data in "${variants[@]}"; do
@@ -79,6 +89,13 @@ jobs:
             for candidate in "${candidates[@]}"; do
               mv "${candidate}" "${root_dir}"
             done
+          done
+
+          for presets_dir in *-presets-${commit_hash}/; do
+            presets_name="${presets_dir%-${commit_hash}/}"
+            pushd "${presets_dir}"
+            zip -r -q "${root_dir}/${presets_name}.zip" .
+            popd
           done
 
       - name: Generate Checksums 🪪
