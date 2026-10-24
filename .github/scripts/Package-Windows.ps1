@@ -3,7 +3,8 @@ param(
     [ValidateSet('x64')]
     [string] $Target = 'x64',
     [ValidateSet('Debug', 'RelWithDebInfo', 'Release', 'MinSizeRel')]
-    [string] $Configuration = 'RelWithDebInfo'
+    [string] $Configuration = 'RelWithDebInfo',
+    [switch] $BuildInstaller
 )
 
 $ErrorActionPreference = 'Stop'
@@ -67,6 +68,23 @@ function Package {
         Verbose = ($Env:CI -ne $null)
     }
     Compress-Archive -Force @CompressArgs
+
+    if ( $BuildInstaller ) {
+        Log-Group "Packaging ${ProductName}..."
+
+        $IsccFile = "${ProjectRoot}/build_${Target}/installer-Windows.generated.iss"
+
+        if ( ! ( Test-Path -Path $IsccFile ) ) {
+            throw 'InnoSetup install script not found. Run the build script or the CMake build and install procedures first.'
+        }
+
+        Remove-Item -Path "${ProjectRoot}/release/Package" -Recurse -Force -ErrorAction SilentlyContinue
+        Copy-Item -Path "${ProjectRoot}/release/${Configuration}/${ProductName}" -Destination "${ProjectRoot}/release/Package" -Recurse
+        $Iscc = (Get-Command iscc -ErrorAction SilentlyContinue)?.Source ?? "${env:ProgramFiles(x86)}/Inno Setup 6/ISCC.exe"
+        Invoke-External $Iscc ${IsccFile} /O"${ProjectRoot}/release" /F"${OutputName}-Installer"
+        Remove-Item -Path "${ProjectRoot}/release/Package" -Recurse
+    }
+
     Log-Group
 }
 

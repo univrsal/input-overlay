@@ -41,7 +41,7 @@ if(WIN32 OR WIN64)
     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${SDL3_DLLS} $<TARGET_FILE_DIR:${PROJECT_NAME}>
   )
 
-  install(FILES ${SDL3_DLLS} DESTINATION CONFIGURATIONS RelWithDebInfo Debug Release DESTINATION obs-plugins/64bit)
+  install(FILES ${SDL3_DLLS} CONFIGURATIONS RelWithDebInfo Debug Release DESTINATION ${CMAKE_PROJECT_NAME})
 endif()
 
 string(TIMESTAMP TODAY "%Y.%m.%d %H:%M")
@@ -103,20 +103,30 @@ endif()
 
 if(LOCAL_INSTALLATION)
   if(UNIX AND NOT APPLE)
-    # Installs into home directory
+    # Installs into home directory, OBS Studio 33 moved user plugins from
+    # $XDG_CONFIG_HOME/obs-studio/plugins/<plugin>/bin/64bit to $XDG_DATA_HOME/obs-studio/plugins/<plugin>
+    if(libobs_VERSION VERSION_GREATER_EQUAL 33)
+      if(DEFINED ENV{XDG_DATA_HOME})
+        set(_local_plugin_dir "$ENV{XDG_DATA_HOME}/obs-studio/plugins/${CMAKE_PROJECT_NAME}")
+      else()
+        set(_local_plugin_dir "$ENV{HOME}/.local/share/obs-studio/plugins/${CMAKE_PROJECT_NAME}")
+      endif()
+      set(_local_binary_dir "${_local_plugin_dir}")
+    else()
+      set(_local_plugin_dir "$ENV{HOME}/.config/obs-studio/plugins/${CMAKE_PROJECT_NAME}")
+      set(_local_binary_dir "${_local_plugin_dir}/bin/64bit")
+    endif()
+    # Read by the CI build script to package the local installation
+    set(LOCAL_PLUGIN_DIR "${_local_plugin_dir}" CACHE INTERNAL "")
+
     add_custom_command(
       TARGET ${CMAKE_PROJECT_NAME}
       POST_BUILD
       # Copy to obs-studio dev environment for immediate testing
-      COMMAND
-        "${CMAKE_COMMAND}" -E make_directory "$ENV{HOME}/.config/obs-studio/plugins/${CMAKE_PROJECT_NAME}/bin/64bit"
-      COMMAND "${CMAKE_COMMAND}" -E make_directory "$ENV{HOME}/.config/obs-studio/plugins/${CMAKE_PROJECT_NAME}/data"
-      COMMAND
-        "${CMAKE_COMMAND}" -E copy "$<TARGET_FILE:${CMAKE_PROJECT_NAME}>"
-        "$ENV{HOME}/.config/obs-studio/plugins/${CMAKE_PROJECT_NAME}/bin/64bit"
-      COMMAND
-        "${CMAKE_COMMAND}" -E copy_directory "${PROJECT_SOURCE_DIR}/data"
-        "$ENV{HOME}/.config/obs-studio/plugins/${CMAKE_PROJECT_NAME}/data"
+      COMMAND "${CMAKE_COMMAND}" -E make_directory "${_local_binary_dir}"
+      COMMAND "${CMAKE_COMMAND}" -E make_directory "${_local_plugin_dir}/data"
+      COMMAND "${CMAKE_COMMAND}" -E copy "$<TARGET_FILE:${CMAKE_PROJECT_NAME}>" "${_local_binary_dir}"
+      COMMAND "${CMAKE_COMMAND}" -E copy_directory "${PROJECT_SOURCE_DIR}/data" "${_local_plugin_dir}/data"
     )
   endif()
 endif()

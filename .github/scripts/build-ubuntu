@@ -231,9 +231,15 @@ ${_usage_host:-}"
   if (( _loglevel > 1 )) cmake_install_args+=(--verbose)
   cmake ${cmake_install_args}
   cmake --install build_client_${target##*-} --config ${BUILD_CONFIG:-RelWithDebInfo} --prefix "${project_root}/release_client"
-  mv "${project_root}/release_client/io_client/io_client" "$HOME/.config/obs-studio/plugins/${product_name}/"
+  local plugin_dir
+  plugin_dir="$(sed -n 's/^LOCAL_PLUGIN_DIR:INTERNAL=//p' build_${target##*-}/CMakeCache.txt)"
+  if [[ -z ${plugin_dir} ]] {
+    log_error "LOCAL_PLUGIN_DIR not found in CMake cache"
+    return 2
+  }
+  mv "${project_root}/release_client/io_client/io_client" "${plugin_dir}/"
   local output_name="${product_name}-${product_version}-${target##*-}-linux-gnu.zip"
-  pushd "$HOME/.config/obs-studio/plugins/"
+  pushd "${plugin_dir:h}"
   zip -r ${project_root}/release/${output_name} "./${product_name}/"
   popd
   popd
