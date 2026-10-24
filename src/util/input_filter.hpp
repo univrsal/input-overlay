@@ -24,6 +24,7 @@ class input_filter {
     QStringList m_filters;
     bool m_regex = false;
     bool m_whitelist = false;
+    int m_last_blocked = -1; /* Last logged blocking state, -1 = not logged yet */
 
 public:
     ~input_filter();
@@ -31,6 +32,9 @@ public:
     void read_from_config();
 
     void write_to_config();
+
+    /* Writes the current filter setup to the log, filter_mutex has to be locked */
+    void log_config();
 
     void set_filters(const QStringList &filters);
 

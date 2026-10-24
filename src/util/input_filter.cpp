@@ -42,6 +42,7 @@ void input_filter::read_from_config()
         if (!util_open_json(util_get_data_file_legacy("filters.json"), j)) {
             berr("Couldn't load filters.json from legacy location");
             bfree(path);
+            log_config();
             return;
         }
     }
@@ -54,6 +55,26 @@ void input_filter::read_from_config()
             }
         }
     }
+    log_config();
+}
+
+void input_filter::log_config()
+{
+    m_last_blocked = -1; /* Log the blocking state again on the next check */
+
+    if (!io_config::enable_input_control) {
+        binfo("Input filtering is disabled, input will never be blocked");
+        return;
+    }
+
+    binfo("Input filtering is enabled: mode: %s, regex: %s, %lli filter(s)",
+          m_whitelist ? "whitelist (input only allowed for listed windows)"
+                      : "blacklist (input blocked for listed windows)",
+          m_regex ? "on" : "off", static_cast<long long>(m_filters.size()));
+
+    if (m_whitelist && m_filters.empty())
+        bwarn("Input filtering is in whitelist mode with no filters, ALL input will be blocked! "
+              "Add windows to the list or disable input filtering in the input-overlay settings.");
 }
 
 void input_filter::write_to_config()
@@ -111,6 +132,14 @@ bool input_filter::input_blocked()
                 break;
             }
         }
+    }
+
+    if (m_last_blocked != static_cast<int>(flag)) {
+        m_last_blocked = flag;
+        if (flag)
+            binfo("Input is now blocked by input filtering (%s mode)", m_whitelist ? "whitelist" : "blacklist");
+        else
+            binfo("Input is no longer blocked by input filtering");
     }
 
     return flag;

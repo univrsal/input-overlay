@@ -179,6 +179,7 @@ void io_settings_dialog::FormAccepted()
     io_config::io_window_filters.set_whitelist(ui->cb_list_mode->currentIndex() == 0);
     io_config::filter_mutex.lock();
     io_config::io_window_filters.write_to_config();
+    io_config::io_window_filters.log_config();
     io_config::filter_mutex.unlock();
 
     io_config::enable_websocket_server = ui->cb_enable_wss->isChecked();
