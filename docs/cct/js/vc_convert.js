@@ -104,7 +104,7 @@ var legacy2vc = new Map([
     [0x0050, 0x72],
     [0x0051, 0x73],
     [0x0052, 0x7A],
-    [0x0053, 0x83],
+    [0x0053, 0x82],
     [0x0057, 0x0C],
     [0x0058, 0x0D],
     [0x005B, 0x0E],
@@ -172,6 +172,29 @@ var legacy2vc = new Map([
     [0xEE00, 0x7B],
     [0xFFFF, 0xFFFF]
 ]);
+
+/* Layout version written by Input Overlay 5.0.6 and older, which use the key codes of the original libuiohook */
+const LEGACY_LAYOUT_VERSION = 506;
+
+// First match wins for key codes that multiple legacy codes were merged into
+var vc2legacy = new Map();
+legacy2vc.forEach((vc, legacy) => {
+    if (!vc2legacy.has(vc))
+        vc2legacy.set(vc, legacy);
+});
+
+/* Returns a copy of the layout with the key codes of keyboard elements converted to the ones of the original
+ * libuiohook, for Input Overlay 5.0.6 and older */
+function to_legacy_layout(json)
+{
+    let legacy = JSON.parse(JSON.stringify(json));
+    legacy.elements.forEach(e => {
+        if (e.type === 1 && vc2legacy.has(e.code))
+            e.code = vc2legacy.get(e.code);
+    });
+    legacy.version = LEGACY_LAYOUT_VERSION;
+    return legacy;
+}
 
 /* Converts the key codes of keyboard elements in layouts older than KEYCODE_LAYOUT_VERSION, returns whether the
  * layout was converted */

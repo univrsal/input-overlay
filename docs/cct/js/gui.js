@@ -289,7 +289,10 @@ function apply_editor()
 
 function download_config()
 {
-    download_json(cfg_name, cfg.write_to_json());
+    let json = cfg.write_to_json();
+    if ($('#export-legacy-codes').is(':checked'))
+        json = to_legacy_layout(json);
+    download_json(cfg_name, json);
 }
 
 $(function() {

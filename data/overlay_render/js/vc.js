@@ -68,6 +68,7 @@ $(function() {
     vc("Digit8", 0x0009);
     vc("Digit9", 0x000A);
     vc("Digit0", 0x000B);
+    vc("Backquote", 0x0029);
     vc("F1", 0x003B);
     vc("F2", 0x003C);
     vc("F3", 0x003D);
@@ -98,8 +99,8 @@ $(function() {
     vc("Backspace", 0x000E);
     vc("Tab", 0x000F);
     vc("CapsLock", 0x003A);
-    vc("BracketRight", 0x001A);
-    vc("BracketLeft", 0x001B);
+    vc("BracketRight", 0x001B);
+    vc("BracketLeft", 0x001A);
     vc("Backslash", 0x002B);
     vc("Semicolon", 0x0027);
     vc("Quote", 0x0028);
@@ -109,7 +110,7 @@ $(function() {
     vc("Slash", 0x0035);
     vc("Space", 0x0039);
     vc("PrintScreen", 0x0E37);
-    vc("ScrolLock", 0x0046);
+    vc("ScrollLock", 0x0046);
     vc("Pause", 0x0E45);
     vc("IntlBackslash", 0x0E46);
     vc("Insert", 0x0E52);
@@ -126,7 +127,7 @@ $(function() {
 
     vc("NumpadEquals", 0x0E0D);
     vc("NumLock", 0x0045);
-    vc("NumpadSubtract", 0x0E35);
+    vc("NumpadDivide", 0x0E35);
     vc("NumpadMultiply", 0x0037);
     vc("NumpadSubtract", 0x004A);
     vc("NumpadAdd", 0x004E);
@@ -143,18 +144,6 @@ $(function() {
     vc("Numpad8", 0x0048);
     vc("Numpad9", 0x0049);
     vc("Numpad0", 0x0052);
-
-    vc("NumpadEnd", 0xEE4F);
-    vc("NumpadArrowDown", 0xEE50);
-    vc("NumpadPageDown", 0xEE51);
-    vc("NumpadArrowLeft", 0xEE4B);
-    vc("NumpadClear", 0xEE4C);
-    vc("NumpadArrowRight", 0xEE4D);
-    vc("NumpadHome", 0xEE47);
-    vc("NumpadArrowUp", 0xEE48);
-    vc("NumpadPageUp", 0xEE49);
-    vc("NumpadInsert", 0xEE52);
-    vc("NumpadDelete", 0xEE53);
 
     vc("ShiftLeft", 0x002A);
     vc("ShiftRight", 0x0036);
@@ -214,18 +203,9 @@ function mouse_to_vc(e)
 
 function key_to_vc(e)
 {
+    // The current key codes have no separate codes for numpad keys with numlock off, so always use the
+    // physical key
     let key = e.code;
-
-    if (key.indexOf("Numpad") >= 0 && /^[0-9]$/g.test(key.slice(-1))) {
-        // Numpad has special handling
-        // all keys Numpad1 through Numpad9 should use the key
-        // so that we can tell numpad buttons with numlock on apart from
-        // numpad buttons with numpad off
-        key = key.slice(0, -1) + e.key;
-    }
-
-    if (key === "NumpadDecimal" && e.keyCode === 46)
-        key = "NumpadDelete";
 
     if (key2vc.has(key))
         return key2vc.get(key);

@@ -151,18 +151,6 @@ $(function() {
     vc('Numpad9', 0x0049);
     vc('Numpad0', 0x0052);
 
-    vc('NumpadEnd', 0xee4f);
-    vc('NumpadArrowDown', 0xee50);
-    vc('NumpadPageDown', 0xee51);
-    vc('NumpadArrowLeft', 0xee4b);
-    vc('NumpadClear', 0xee4c);
-    vc('NumpadArrowRight', 0xee4d);
-    vc('NumpadHome', 0xee47);
-    vc('NumpadArrowUp', 0xee48);
-    vc('NumpadPageUp', 0xee49);
-    vc('NumpadInsert', 0xee52);
-    vc('NumpadDelete', 0xee53);
-
     vc('ShiftLeft', 0x002a);
     vc('ShiftRight', 0x0036);
     vc('ControlLeft', 0x001d);
@@ -238,18 +226,9 @@ function mouse_to_vc(e)
 
 function key_to_vc(e)
 {
+    // The current key codes have no separate codes for numpad keys with numlock off, so always use the
+    // physical key
     let key = e.code;
-
-    if (key.indexOf('Numpad') >= 0 && /^[0-9]$/g.test(key.slice(-1))) {
-        // Numpad has special handling
-        // all keys Numpad1 through Numpad9 should use the key
-        // so that we can tell numpad buttons with numlock on apart from
-        // numpad buttons with numpad off
-        key = key.slice(0, -1) + e.key;
-    }
-
-    if (key === 'NumpadDecimal' && e.keyCode === 46)
-        key = 'NumpadDelete';
 
     if (key2vc.has(key))
         return key2vc.get(key);
