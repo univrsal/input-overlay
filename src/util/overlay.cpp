@@ -1,7 +1,7 @@
 /*************************************************************************
  * This file is part of input-overlay
  * git.vrsal.cc/alex/input-overlay
- * Copyright 2025 univrsal <uni@vrsal.xyz>.
+ * Copyright 2026 univrsal <uni@vrsal.cc>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -354,7 +354,21 @@ void overlay::refresh_data()
 {
     if (io_config::io_window_filters.input_blocked())
         return;
-    if (!(uiohook::state || wss::state || gamepad_hook::state))
+#if __linux__
+    bool evdev_active = m_settings->use_evdev && m_settings->evdev_reader.is_running();
+    if (evdev_active) {
+        std::lock_guard<std::mutex> evdev_lock(m_settings->evdev_reader.mutex_);
+        local_data::data.m_mutex.lock();
+        local_data::data.keyboard = m_settings->evdev_reader.key_state;
+        local_data::data.mouse = m_settings->evdev_reader.mouse_state;
+        local_data::data.last_wheel_event = m_settings->evdev_reader.last_wheel_event;
+        local_data::data.last_wheel_event_time = m_settings->evdev_reader.last_wheel_event_time;
+        local_data::data.m_mutex.unlock();
+    }
+#else
+    constexpr bool evdev_active = false;
+#endif
+    if (!evdev_active && !(uiohook::state || wss::state || gamepad_hook::state))
         return;
 
     /* This copies over necessary input data information
