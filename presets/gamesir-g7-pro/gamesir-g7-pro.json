@@ -300,5 +300,6 @@
     "overlay_height": 960,
     "overlay_width": 1280,
     "space_h": 0,
-    "space_v": 0
+    "space_v": 0,
+    "version": 508
 }

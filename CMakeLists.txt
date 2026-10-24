@@ -38,10 +38,34 @@ if(WIN32 OR WIN64)
   add_custom_command(
     TARGET ${PROJECT_NAME}
     POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${SDL3_DLLS} $<TARGET_FILE_DIR:${PROJECT_NAME}>
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${SDL3_DLLS} $<TARGET_FILE:uiohook> $<TARGET_FILE_DIR:${PROJECT_NAME}>
   )
 
   install(FILES ${SDL3_DLLS} CONFIGURATIONS RelWithDebInfo Debug Release DESTINATION ${CMAKE_PROJECT_NAME})
+endif()
+
+# libuiohook is a shared library that has to be shipped with the plugin. On Linux its loader picks one of the
+# back-ends at runtime and loads it from the directory the loader is in.
+if(WIN32)
+  set(_uiohook_libraries "$<TARGET_FILE:uiohook>")
+  install(FILES ${_uiohook_libraries} DESTINATION ${CMAKE_PROJECT_NAME})
+elseif(UNIX AND NOT APPLE)
+  add_dependencies(${CMAKE_PROJECT_NAME} uiohook-x11 uiohook-wayland uiohook-xrecord)
+  set(
+    _uiohook_libraries
+    "$<TARGET_FILE:uiohook>"
+    "$<TARGET_FILE:uiohook-x11>"
+    "$<TARGET_FILE:uiohook-wayland>"
+    "$<TARGET_FILE:uiohook-xrecord>"
+  )
+  # Private directory, so they neither clash with a system libuiohook nor get loaded as OBS modules
+  install(FILES ${_uiohook_libraries} DESTINATION ${CMAKE_INSTALL_LIBDIR}/${CMAKE_PROJECT_NAME})
+  set(_uiohook_rpath ${CMAKE_PROJECT_NAME})
+  cmake_path(RELATIVE_PATH _uiohook_rpath BASE_DIRECTORY "${_plugin_install_dir}")
+  set_target_properties(
+    ${CMAKE_PROJECT_NAME}
+    PROPERTIES BUILD_RPATH "$ORIGIN" INSTALL_RPATH "$ORIGIN/${_uiohook_rpath}"
+  )
 endif()
 
 string(TIMESTAMP TODAY "%Y.%m.%d %H:%M")
@@ -125,7 +149,7 @@ if(LOCAL_INSTALLATION)
       # Copy to obs-studio dev environment for immediate testing
       COMMAND "${CMAKE_COMMAND}" -E make_directory "${_local_binary_dir}"
       COMMAND "${CMAKE_COMMAND}" -E make_directory "${_local_plugin_dir}/data"
-      COMMAND "${CMAKE_COMMAND}" -E copy "$<TARGET_FILE:${CMAKE_PROJECT_NAME}>" "${_local_binary_dir}"
+      COMMAND "${CMAKE_COMMAND}" -E copy "$<TARGET_FILE:${CMAKE_PROJECT_NAME}>" ${_uiohook_libraries} "${_local_binary_dir}"
       COMMAND "${CMAKE_COMMAND}" -E copy_directory "${PROJECT_SOURCE_DIR}/data" "${_local_plugin_dir}/data"
     )
   endif()

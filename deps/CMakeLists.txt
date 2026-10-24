@@ -42,7 +42,7 @@ else ()
     set(SDL3_INCLUDE_DIRS "" CACHE STRING "" FORCE)
 endif ()
 
-add_subdirectory(libuiohook)
+add_subdirectory(libuiohook EXCLUDE_FROM_ALL)
 if(APPLE)
   target_compile_options(uiohook PRIVATE -Wno-error=return-type)
 endif()

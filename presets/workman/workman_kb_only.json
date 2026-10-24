@@ -8,7 +8,7 @@
   "space_v": 0,
   "elements": [
     {
-      "code": 41,
+      "code": 32,
       "id": "key_0_",
       "mapping": [
         5,
@@ -24,7 +24,7 @@
       "z_level": 1
     },
     {
-      "code": 2,
+      "code": 33,
       "id": "key_1_1",
       "mapping": [
         405,
@@ -40,7 +40,7 @@
       "z_level": 1
     },
     {
-      "code": 3,
+      "code": 34,
       "id": "key_2_2",
       "mapping": [
         805,
@@ -56,7 +56,7 @@
       "z_level": 1
     },
     {
-      "code": 4,
+      "code": 35,
       "id": "key_3_3",
       "mapping": [
         1205,
@@ -72,7 +72,7 @@
       "z_level": 1
     },
     {
-      "code": 5,
+      "code": 36,
       "id": "key_4_4",
       "mapping": [
         1605,
@@ -88,7 +88,7 @@
       "z_level": 1
     },
     {
-      "code": 6,
+      "code": 37,
       "id": "key_5_5",
       "mapping": [
         2005,
@@ -104,7 +104,7 @@
       "z_level": 1
     },
     {
-      "code": 15,
+      "code": 46,
       "id": "key_6_TAB",
       "mapping": [
         2405,
@@ -120,7 +120,7 @@
       "z_level": 1
     },
     {
-      "code": 16,
+      "code": 64,
       "id": "key_7_Q",
       "mapping": [
         2805,
@@ -136,7 +136,7 @@
       "z_level": 1
     },
     {
-      "code": 32,
+      "code": 51,
       "id": "key_8_D",
       "mapping": [
         5,
@@ -152,7 +152,7 @@
       "z_level": 1
     },
     {
-      "code": 19,
+      "code": 65,
       "id": "key_9_R",
       "mapping": [
         405,
@@ -168,7 +168,7 @@
       "z_level": 1
     },
     {
-      "code": 17,
+      "code": 70,
       "id": "key_10_W",
       "mapping": [
         805,
@@ -184,7 +184,7 @@
       "z_level": 1
     },
     {
-      "code": 48,
+      "code": 49,
       "id": "key_11_B",
       "mapping": [
         1205,
@@ -200,7 +200,7 @@
       "z_level": 1
     },
     {
-      "code": 36,
+      "code": 57,
       "id": "key_12_J",
       "mapping": [
         1605,
@@ -216,7 +216,7 @@
       "z_level": 1
     },
     {
-      "code": 14,
+      "code": 45,
       "id": "key_13_BKSP",
       "mapping": [
         2005,
@@ -232,7 +232,7 @@
       "z_level": 1
     },
     {
-      "code": 30,
+      "code": 48,
       "id": "key_14_A",
       "mapping": [
         2405,
@@ -248,7 +248,7 @@
       "z_level": 1
     },
     {
-      "code": 31,
+      "code": 66,
       "id": "key_15_S",
       "mapping": [
         2805,
@@ -264,7 +264,7 @@
       "z_level": 1
     },
     {
-      "code": 35,
+      "code": 55,
       "id": "key_16_H",
       "mapping": [
         5,
@@ -280,7 +280,7 @@
       "z_level": 1
     },
     {
-      "code": 20,
+      "code": 67,
       "id": "key_17_T",
       "mapping": [
         405,
@@ -296,7 +296,7 @@
       "z_level": 1
     },
     {
-      "code": 34,
+      "code": 54,
       "id": "key_18_G",
       "mapping": [
         805,
@@ -312,7 +312,7 @@
       "z_level": 1
     },
     {
-      "code": 21,
+      "code": 72,
       "id": "key_19_Y",
       "mapping": [
         1205,
@@ -328,7 +328,7 @@
       "z_level": 1
     },
     {
-      "code": 42,
+      "code": 144,
       "id": "key_20_SHIFT",
       "mapping": [
         1605,
@@ -344,7 +344,7 @@
       "z_level": 1
     },
     {
-      "code": 53,
+      "code": 82,
       "id": "key_21_",
       "mapping": [
         2005,
@@ -360,7 +360,7 @@
       "z_level": 1
     },
     {
-      "code": 44,
+      "code": 73,
       "id": "key_22_Z",
       "mapping": [
         2405,
@@ -376,7 +376,7 @@
       "z_level": 1
     },
     {
-      "code": 45,
+      "code": 71,
       "id": "key_23_X",
       "mapping": [
         2805,
@@ -392,7 +392,7 @@
       "z_level": 1
     },
     {
-      "code": 50,
+      "code": 60,
       "id": "key_24_M",
       "mapping": [
         5,
@@ -408,7 +408,7 @@
       "z_level": 1
     },
     {
-      "code": 46,
+      "code": 50,
       "id": "key_25_C",
       "mapping": [
         405,
@@ -424,7 +424,7 @@
       "z_level": 1
     },
     {
-      "code": 47,
+      "code": 69,
       "id": "key_26_V",
       "mapping": [
         805,
@@ -440,7 +440,7 @@
       "z_level": 1
     },
     {
-      "code": 29,
+      "code": 146,
       "id": "key_27_CTRL",
       "mapping": [
         1205,
@@ -456,7 +456,7 @@
       "z_level": 1
     },
     {
-      "code": 56,
+      "code": 148,
       "id": "key_28_ALT",
       "mapping": [
         1605,
@@ -472,7 +472,7 @@
       "z_level": 1
     },
     {
-      "code": 57,
+      "code": 83,
       "id": "key_29_SPACE",
       "mapping": [
         2005,
@@ -487,5 +487,6 @@
       "type": 1,
       "z_level": 1
     }
-  ]
+  ],
+  "version": 508
 }
