@@ -59,9 +59,9 @@ bool obs_module_load()
         if (io_config::enable_websocket_server)
             wss::start();
         network::local_input = io_config::enable_gamepad_hook || io_config::enable_uiohook;
-        /* Input filtering via focused window title */
-        if (io_config::enable_input_control)
-            io_config::io_window_filters.read_from_config();
+        /* Input filtering via focused window title, always loaded so the settings dialog
+         * doesn't overwrite them with an empty list if input control is enabled later */
+        io_config::io_window_filters.read_from_config();
 
         if (io_config::enable_uiohook)
             uiohook::start();

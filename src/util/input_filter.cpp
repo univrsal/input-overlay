@@ -71,17 +71,10 @@ void input_filter::write_to_config()
     bfree(path);
 }
 
-void input_filter::add_filter(const char *filter)
+void input_filter::set_filters(const QStringList &filters)
 {
-    io_config::filter_mutex.lock();
-    m_filters.append(filter);
-    io_config::filter_mutex.unlock();
-}
-
-void input_filter::remove_filter(const int index)
-{
-    if (index >= 0 && index < m_filters.size())
-        m_filters.removeAt(index);
+    std::lock_guard lock(io_config::filter_mutex);
+    m_filters = filters;
 }
 
 void input_filter::set_regex(bool enabled)
@@ -123,8 +116,9 @@ bool input_filter::input_blocked()
     return flag;
 }
 
-QStringList &input_filter::filters()
+QStringList input_filter::filters()
 {
+    std::lock_guard lock(io_config::filter_mutex);
     return m_filters;
 }
 

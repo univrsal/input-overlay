@@ -46,7 +46,7 @@ std::atomic<uint16_t> last_sdl_gamepad_axis;
 
 void set_defaults()
 {
-    instance = obs_frontend_get_global_config();
+    instance = obs_frontend_get_app_config();
     CDEF_BOOL(S_UIOHOOK, enable_uiohook);
     CDEF_BOOL(S_GAMEPAD, enable_gamepad_hook);
     CDEF_BOOL(S_OVERLAY, enable_overlay_source);
@@ -96,6 +96,8 @@ void save()
     CSET_STR(S_WSS_ADDRESS, wss_bind_address.c_str());
     CSET_INT(S_FILTER_MODE, filter_mode);
     CSET_BOOL(S_DS_ENHANCED_MODE, ds_enhanced_mode);
+    /* OBS only writes its config on a clean exit, so save right away */
+    config_save_safe(instance, "tmp", nullptr);
 }
 
 }

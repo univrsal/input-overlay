@@ -32,9 +32,7 @@ public:
 
     void write_to_config();
 
-    void add_filter(const char *filter);
-
-    void remove_filter(int index);
+    void set_filters(const QStringList &filters);
 
     void set_regex(bool enabled);
 
@@ -42,5 +40,5 @@ public:
 
     bool input_blocked();
 
-    QStringList &filters();
+    QStringList filters();
 };

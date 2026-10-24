@@ -64,23 +64,7 @@ io_settings_dialog::io_settings_dialog(QWidget *parent) : QDialog(parent, Qt::Di
     connect(ui->cb_ds_enhanced, &QCheckBox::stateChanged, this, &io_settings_dialog::CbDSEnhancedModeChanged);
 #endif
 
-    /* Load values */
-    ui->sb_wss_port->setValue(io_config::wss_port);
-    ui->cb_iohook->setChecked(io_config::enable_uiohook);
-    ui->cb_gamepad_hook->setChecked(io_config::enable_gamepad_hook);
-    ui->cb_enable_overlay->setChecked(io_config::enable_overlay_source);
-    ui->cb_enable_control->setChecked(io_config::enable_input_control);
-    ui->cb_enable_wss->setChecked(io_config::enable_websocket_server);
-    ui->cb_list_mode->setCurrentIndex(io_config::filter_mode);
-    ui->cb_regex->setChecked(io_config::regex);
-    ui->cb_ds_enhanced->setChecked(io_config::ds_enhanced_mode);
-    ui->cb_log->setChecked(io_config::log_flag);
-    ui->txt_bind_address->setText(utf8_to_qt(io_config::wss_bind_address.c_str()));
-
     ui->tab_remote->hide(); // TODO: Redo protocol and update client to sdl2
-
-    CbWssStateChanged(io_config::enable_websocket_server);
-    CbInputControlStateChanged(io_config::enable_input_control);
 
     /* Display local ip for convenience */
     auto text = ui->lbl_status->text();
@@ -91,14 +75,6 @@ io_settings_dialog::io_settings_dialog(QWidget *parent) : QDialog(parent, Qt::Di
     m_refresh = new QTimer(this);
     connect(m_refresh, SIGNAL(timeout()), SLOT(RefreshUi()));
     m_refresh->start(250);
-
-    /* Add current open windows to filter list */
-    if (io_config::enable_input_control)
-        RefreshWindowList();
-
-    for (const auto &filter : io_config::io_window_filters.filters()) {
-        ui->list_filters->addItem(filter);
-    }
 
     /* Set red color on label so people don't miss it */
     ui->lbl_local_features->setStyleSheet("QLabel { color: red; "
@@ -115,7 +91,34 @@ void io_settings_dialog::RefreshUi()
 
 void io_settings_dialog::showEvent(QShowEvent *event)
 {
-    Q_UNUSED(event)
+    /* Reload the saved values every time, so changes that weren't accepted are discarded */
+    LoadValues();
+    QDialog::showEvent(event);
+}
+
+void io_settings_dialog::LoadValues()
+{
+    ui->sb_wss_port->setValue(io_config::wss_port);
+    ui->cb_iohook->setChecked(io_config::enable_uiohook);
+    ui->cb_gamepad_hook->setChecked(io_config::enable_gamepad_hook);
+    ui->cb_enable_overlay->setChecked(io_config::enable_overlay_source);
+    ui->cb_enable_control->setChecked(io_config::enable_input_control);
+    ui->cb_enable_wss->setChecked(io_config::enable_websocket_server);
+    ui->cb_list_mode->setCurrentIndex(io_config::filter_mode);
+    ui->cb_regex->setChecked(io_config::regex);
+    ui->cb_ds_enhanced->setChecked(io_config::ds_enhanced_mode);
+    ui->cb_log->setChecked(io_config::log_flag);
+    ui->txt_bind_address->setText(utf8_to_qt(io_config::wss_bind_address.c_str()));
+
+    CbWssStateChanged(io_config::enable_websocket_server);
+    CbInputControlStateChanged(io_config::enable_input_control);
+
+    /* Add current open windows to filter list */
+    if (io_config::enable_input_control)
+        RefreshWindowList();
+
+    ui->list_filters->clear();
+    ui->list_filters->addItems(io_config::io_window_filters.filters());
 }
 
 void io_settings_dialog::toggleShowHide()
@@ -146,23 +149,15 @@ void io_settings_dialog::RefreshWindowList()
 
 void io_settings_dialog::AddFilter()
 {
-    for (int i = 0; i < ui->list_filters->count(); i++)
-        if (ui->list_filters->itemAt(0, i)->text() == ui->cb_text->currentText())
-            return; /* Filter already exists */
+    if (!ui->list_filters->findItems(ui->cb_text->currentText(), Qt::MatchExactly).empty())
+        return; /* Filter already exists */
 
     ui->list_filters->addItem(ui->cb_text->currentText());
-    io_config::io_window_filters.add_filter(ui->cb_text->currentText().toStdString().c_str());
 }
 
 void io_settings_dialog::RemoveFilter()
 {
-    if (!ui->list_filters->selectedItems().empty()) {
-        auto selected_count = ui->list_filters->selectedItems().size();
-        for (int i = 0; i < selected_count; i++)
-            io_config::io_window_filters.remove_filter(i);
-
-        qDeleteAll(ui->list_filters->selectedItems());
-    }
+    qDeleteAll(ui->list_filters->selectedItems());
 }
 
 void io_settings_dialog::FormAccepted()
@@ -176,6 +171,10 @@ void io_settings_dialog::FormAccepted()
     io_config::filter_mode = ui->cb_list_mode->currentIndex();
     io_config::regex = ui->cb_regex->isChecked();
 
+    QStringList filters;
+    for (int i = 0; i < ui->list_filters->count(); i++)
+        filters.append(ui->list_filters->item(i)->text());
+    io_config::io_window_filters.set_filters(filters);
     io_config::io_window_filters.set_regex(ui->cb_regex->isChecked());
     io_config::io_window_filters.set_whitelist(ui->cb_list_mode->currentIndex() == 0);
     io_config::filter_mutex.lock();
