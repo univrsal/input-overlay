@@ -38,7 +38,7 @@ void element_wheel::load(const QJsonObject &obj)
     }
 }
 
-void element_wheel::draw(gs_effect_t *effect, gs_image_file_t *image, sources::overlay_settings *settings)
+void element_wheel::draw(gs_effect_t *effect, gs_image_file_ex_t *image, sources::overlay_settings *settings)
 {
     /* Keep this in order:
      * - first the default state

@@ -31,7 +31,7 @@ void element_mouse_movement::load(const QJsonObject &obj)
     m_movement_type = obj[CFG_MOUSE_TYPE].toInt() == 1 ? MM_ARROW : MM_DOT;
 }
 
-void element_mouse_movement::draw(gs_effect_t *effect, gs_image_file_t *image, sources::overlay_settings *)
+void element_mouse_movement::draw(gs_effect_t *effect, gs_image_file_ex_t *image, sources::overlay_settings *)
 {
     /* TODO: this should probably be two separate classes */
     if (m_movement_type == MM_ARROW) {

@@ -31,7 +31,7 @@ void element_analog_stick::load(const QJsonObject &obj)
     m_pressed.y = m_mapping.y + m_mapping.cy + CFG_INNER_BORDER;
 }
 
-void element_analog_stick::draw(gs_effect_t *effect, gs_image_file_t *image, sources::overlay_settings *settings)
+void element_analog_stick::draw(gs_effect_t *effect, gs_image_file_ex_t *image, sources::overlay_settings *settings)
 {
     auto pos = m_pos;
     gs_rect *temp = settings->is_pad_button_pressed(m_keycode) ? &m_pressed : &m_mapping;

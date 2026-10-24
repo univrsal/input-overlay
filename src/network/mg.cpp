@@ -21,7 +21,7 @@ extern "C" {
 }
 
 namespace mg {
-struct mg_mgr mgr {};
+struct mg_mgr mgr{};
 std::vector<struct mg_connection *> web_sockets;
 std::deque<std::string> message_queue;
 std::mutex poll_mutex;

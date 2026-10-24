@@ -26,7 +26,7 @@ public:
 
     void load(const QJsonObject &obj) override;
 
-    void draw(gs_effect_t *effect, gs_image_file_t *image, sources::overlay_settings *settings) override;
+    void draw(gs_effect_t *effect, gs_image_file_ex_t *image, sources::overlay_settings *settings) override;
 
 private:
     void calculate_mapping(gs_rect *pressed, vec2 *pos, float progress) const;

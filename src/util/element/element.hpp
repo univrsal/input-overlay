@@ -23,8 +23,7 @@
 #include <QJsonObject>
 #include <layout_constants.h>
 
-typedef struct gs_image_file gs_image_file_t;
-typedef struct gs_image_file4 gs_image_file4_t;
+typedef struct gs_image_file_ex gs_image_file_ex_t;
 
 namespace sources {
 class overlay_settings;
@@ -40,7 +39,7 @@ public:
 
     virtual void load(const QJsonObject &obj) = 0;
 
-    virtual void draw(gs_effect_t *effect, gs_image_file_t *m_image, sources::overlay_settings *settings) = 0;
+    virtual void draw(gs_effect_t *effect, gs_image_file_ex_t *m_image, sources::overlay_settings *settings) = 0;
 
     element_type get_type() const;
 

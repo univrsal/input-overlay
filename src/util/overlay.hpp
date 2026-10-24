@@ -29,9 +29,6 @@ extern "C" {
 #include <graphics/image-file.h>
 }
 
-typedef struct gs_image_file gs_image_file_t;
-typedef struct gs_image_file4 gs_image_file4_t;
-
 class overlay {
 public:
     overlay() = default;
@@ -44,7 +41,7 @@ public:
     void tick(float seconds);
     void refresh_data();
     bool is_loaded() const { return m_is_loaded; }
-    gs_image_file_t *get_texture() const { return &(m_image->image3.image2.image); }
+    gs_image_file_ex_t *get_texture() const { return m_image; }
 
 private:
     bool load_cfg();
@@ -54,7 +51,7 @@ private:
 
     static const char *element_type_to_string(element_type t);
 
-    gs_image_file4_t *m_image = nullptr;
+    gs_image_file_ex_t *m_image = nullptr;
     sources::overlay_settings *m_settings = nullptr;
     bool m_is_loaded = false;
     std::vector<std::unique_ptr<element>> m_elements;

@@ -39,7 +39,7 @@ void element_trigger::load(const QJsonObject &obj)
         m_direction = static_cast<direction>(obj[CFG_DIRECTION].toInt());
 }
 
-void element_trigger::draw(gs_effect_t *effect, gs_image_file_t *image, sources::overlay_settings *settings)
+void element_trigger::draw(gs_effect_t *effect, gs_image_file_ex_t *image, sources::overlay_settings *settings)
 {
     auto progress = 0.f;
 

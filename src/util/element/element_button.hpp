@@ -26,7 +26,7 @@ public:
     explicit element_button(element_type t) : element_texture(t), m_pressed() {}
 
     void load(const QJsonObject &objc) override;
-    void draw(gs_effect_t *effect, gs_image_file_t *image, sources::overlay_settings *settings) override
+    void draw(gs_effect_t *effect, gs_image_file_ex_t *image, sources::overlay_settings *settings) override
     {
         element_texture::draw(effect, image, settings);
     }
@@ -39,7 +39,7 @@ class element_keyboard_key : public element_button {
 public:
     element_keyboard_key() : element_button(ET_KEYBOARD_KEY) {}
 
-    void draw(gs_effect_t *effect, gs_image_file_t *image, sources::overlay_settings *settings) override;
+    void draw(gs_effect_t *effect, gs_image_file_ex_t *image, sources::overlay_settings *settings) override;
 };
 
 class element_mouse_button : public element_button {
@@ -47,12 +47,12 @@ public:
     element_mouse_button() : element_button(ET_MOUSE_BUTTON) {}
 
     void load(const QJsonObject &objc) override;
-    void draw(gs_effect_t *effect, gs_image_file_t *image, sources::overlay_settings *settings) override;
+    void draw(gs_effect_t *effect, gs_image_file_ex_t *image, sources::overlay_settings *settings) override;
 };
 
 class element_gamepad_button : public element_button {
 public:
     element_gamepad_button() : element_button(ET_GAMEPAD_BUTTON) {}
 
-    void draw(gs_effect_t *effect, gs_image_file_t *image, sources::overlay_settings *settings) override;
+    void draw(gs_effect_t *effect, gs_image_file_ex_t *image, sources::overlay_settings *settings) override;
 };

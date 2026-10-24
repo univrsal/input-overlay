@@ -32,7 +32,7 @@ void element_gamepad_id::load(const QJsonObject &obj)
     }
 }
 
-void element_gamepad_id::draw(gs_effect_t *effect, gs_image_file_t *image, sources::overlay_settings *settings)
+void element_gamepad_id::draw(gs_effect_t *effect, gs_image_file_ex_t *image, sources::overlay_settings *settings)
 {
     if (settings->gamepad || settings->remote_input_data) {
         if (settings->is_pad_button_pressed(SDL_GAMEPAD_BUTTON_GUIDE))
