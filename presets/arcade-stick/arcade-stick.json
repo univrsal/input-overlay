@@ -22,5 +22,6 @@
     "overlay_height": 256,
     "overlay_width": 256,
     "space_h": 0,
-    "space_v": 0
+    "space_v": 0,
+    "version": 508
 }

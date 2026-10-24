@@ -203,5 +203,6 @@
             "stick_radius": 20,
             "side": 1
         }
-    ]
+    ],
+    "version": 508
 }

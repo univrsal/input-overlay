@@ -3,7 +3,7 @@
     "default_width": 157,
     "elements": [
         {
-            "code": 16,
+            "code": 64,
             "id": "q",
             "mapping": [
                 1,
@@ -19,7 +19,7 @@
             "z_level": 1
         },
         {
-            "code": 17,
+            "code": 70,
             "id": "w",
             "mapping": [
                 161,
@@ -35,7 +35,7 @@
             "z_level": 1
         },
         {
-            "code": 18,
+            "code": 52,
             "id": "e",
             "mapping": [
                 321,
@@ -51,7 +51,7 @@
             "z_level": 1
         },
         {
-            "code": 42,
+            "code": 144,
             "id": "shift",
             "mapping": [
                 481,
@@ -67,7 +67,7 @@
             "z_level": 1
         },
         {
-            "code": 30,
+            "code": 48,
             "id": "a",
             "mapping": [
                 641,
@@ -83,7 +83,7 @@
             "z_level": 1
         },
         {
-            "code": 31,
+            "code": 66,
             "id": "s",
             "mapping": [
                 801,
@@ -99,7 +99,7 @@
             "z_level": 1
         },
         {
-            "code": 32,
+            "code": 51,
             "id": "d",
             "mapping": [
                 961,
@@ -115,7 +115,7 @@
             "z_level": 1
         },
         {
-            "code": 29,
+            "code": 146,
             "id": "ctrl",
             "mapping": [
                 1121,
@@ -131,7 +131,7 @@
             "z_level": 1
         },
         {
-            "code": 57,
+            "code": 83,
             "id": "space",
             "mapping": [
                 1300,
@@ -147,7 +147,7 @@
             "z_level": 1
         },
         {
-            "code": 15,
+            "code": 46,
             "id": "tab",
             "mapping": [
                 1,
@@ -163,7 +163,7 @@
             "z_level": 1
         },
         {
-            "code": 19,
+            "code": 65,
             "id": "r",
             "mapping": [
                 161,
@@ -179,7 +179,7 @@
             "z_level": 1
         },
         {
-            "code": 33,
+            "code": 53,
             "id": "f",
             "mapping": [
                 321,
@@ -195,7 +195,7 @@
             "z_level": 1
         },
         {
-            "code": 44,
+            "code": 73,
             "id": "z",
             "mapping": [
                 481,
@@ -211,7 +211,7 @@
             "z_level": 1
         },
         {
-            "code": 45,
+            "code": 71,
             "id": "x",
             "mapping": [
                 641,
@@ -227,7 +227,7 @@
             "z_level": 1
         },
         {
-            "code": 46,
+            "code": 50,
             "id": "c",
             "mapping": [
                 801,
@@ -243,7 +243,7 @@
             "z_level": 1
         },
         {
-            "code": 47,
+            "code": 69,
             "id": "v",
             "mapping": [
                 961,
@@ -259,7 +259,7 @@
             "z_level": 1
         },
         {
-            "code": 20,
+            "code": 67,
             "id": "t",
             "mapping": [
                 1121,
@@ -275,7 +275,7 @@
             "z_level": 1
         },
         {
-            "code": 34,
+            "code": 54,
             "id": "g",
             "mapping": [
                 1281,
@@ -291,7 +291,7 @@
             "z_level": 1
         },
         {
-            "code": 48,
+            "code": 49,
             "id": "b",
             "mapping": [
                 1,
@@ -307,7 +307,7 @@
             "z_level": 1
         },
         {
-            "code": 2,
+            "code": 33,
             "id": "1",
             "mapping": [
                 161,
@@ -323,7 +323,7 @@
             "z_level": 1
         },
         {
-            "code": 3,
+            "code": 34,
             "id": "2",
             "mapping": [
                 321,
@@ -339,7 +339,7 @@
             "z_level": 1
         },
         {
-            "code": 4,
+            "code": 35,
             "id": "3",
             "mapping": [
                 481,
@@ -355,7 +355,7 @@
             "z_level": 1
         },
         {
-            "code": 5,
+            "code": 36,
             "id": "4",
             "mapping": [
                 641,
@@ -371,7 +371,7 @@
             "z_level": 1
         },
         {
-            "code": 6,
+            "code": 37,
             "id": "5",
             "mapping": [
                 801,
@@ -387,7 +387,7 @@
             "z_level": 1
         },
         {
-            "code": 56,
+            "code": 148,
             "id": "alt",
             "mapping": [
                 961,
@@ -407,5 +407,6 @@
     "overlay_height": 666,
     "overlay_width": 865,
     "space_h": -20,
-    "space_v": 5
+    "space_v": 5,
+    "version": 508
 }
