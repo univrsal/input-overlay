@@ -65,6 +65,7 @@ class config {
 
     load_from_json(json)
     {
+        convert_legacy_layout(json);
         this.data = json;
         this.data["elements"].forEach(data => {
             let new_element = create_element(data);
