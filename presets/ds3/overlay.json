@@ -251,5 +251,6 @@
             "trigger_mode": false,
             "side": 1
         }
-    ]
+    ],
+    "version": 508
 }

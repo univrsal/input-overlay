@@ -22,7 +22,8 @@ var gamepad2vc = new Map();
 var vc2gamepad = new Map();
 
 $(function() {
-    let vc = (id, vc) => key2vc.set(id, vc);
+    // The codes below are the ones of the original libuiohook, layouts use the ones of the current libuiohook
+    let vc = (id, vc) => key2vc.set(id, legacy2vc.has(vc) ? legacy2vc.get(vc) : 0);
     let gp = (id, vc) => {
         gamepad2vc.set(id, vc);
         vc2gamepad.set(vc, id);

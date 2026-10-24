@@ -16,18 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *************************************************************************/
 
-const CURRENT_VERSION = 506;
-
-function convert_to_507(cfg)
-{
-    cfg.elements.forEach((e, _) => {
-        if (vcto507.has(e.code)) {
-            e.code = vcto507.get(e.code);
-        }
-    });
-
-    return cfg;
-}
+const CURRENT_VERSION = KEYCODE_LAYOUT_VERSION;
 
 class config {
     constructor(canvas_id, painter)
@@ -109,10 +98,8 @@ class config {
 
     load_from_json(json)
     {
-        /*if (json.version === undefined || json.version < 507) {
-      alert("This config file was made for Input Overlay 5.0.6 or older. Since 5.1.0 the key codes have changed. The keycodes will now be converted to the new format. Please check each key to see if the conversion was successful.");
-     json = convert_to_507(json);
-    }*/
+        if (convert_legacy_layout(json))
+            alert("This config file uses the key codes of an older version of Input Overlay, they have been converted to the new key codes. Please check each key to see if the conversion was successful.");
         this.data = json;
         this.data['elements'].forEach((data) => {
             let new_element = create_element(data);
@@ -131,7 +118,7 @@ class config {
         this.data.overlay_width = 0;
         this.data.overlay_height = 0;
         this.data['elements'] = this.elements.map((e) => e.data);
-        this.version = CURRENT_VERSION;
+        this.data.version = CURRENT_VERSION;
         this.elements.forEach((e) => {
             switch (e.type()) {
             case element_types.ANALOG_STICK:

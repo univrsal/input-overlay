@@ -14,7 +14,7 @@
       "z_level": 0,
       "mapping": [0, 0, 150, 150],
       "mapping_press": [0, 150, 150, 150],
-      "code": 44
+      "code": 73
     },
     {
       "type": 1,
@@ -23,7 +23,7 @@
       "z_level": 0,
       "mapping": [150, 0, 150, 150],
       "mapping_press": [150, 150, 150, 150],
-      "code": 16
+      "code": 64
     },
     {
       "type": 1,
@@ -32,7 +32,7 @@
       "z_level": 0,
       "mapping": [300, 0, 150, 150],
       "mapping_press": [300, 150, 150, 150],
-      "code": 31
+      "code": 66
     },
     {
       "type": 1,
@@ -41,7 +41,7 @@
       "z_level": 0,
       "mapping": [450, 0, 150, 150],
       "mapping_press": [450, 150, 150, 150],
-      "code": 32
+      "code": 51
     },
     {
       "type": 1,
@@ -50,7 +50,7 @@
       "z_level": 0,
       "mapping": [600, 0, 150, 150],
       "mapping_press": [600, 150, 150, 150],
-      "code": 67
+      "code": 10
     },
     {
       "type": 1,
@@ -68,7 +68,8 @@
       "z_level": 0,
       "mapping": [0, 300, 521, 150],
       "mapping_press": [0, 450, 521, 150],
-      "code": 57
+      "code": 83
     }
-  ]
+  ],
+  "version": 508
 }

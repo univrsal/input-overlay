@@ -3,7 +3,7 @@
     "default_width": 157,
     "elements": [
         {
-            "code": 20,
+            "code": 67,
             "id": "t",
             "mapping": [
                 1,
@@ -19,7 +19,7 @@
             "z_level": 1
         },
         {
-            "code": 21,
+            "code": 72,
             "id": "y",
             "mapping": [
                 161,
@@ -35,7 +35,7 @@
             "z_level": 1
         },
         {
-            "code": 22,
+            "code": 68,
             "id": "u",
             "mapping": [
                 321,
@@ -51,7 +51,7 @@
             "z_level": 1
         },
         {
-            "code": 33,
+            "code": 53,
             "id": "f",
             "mapping": [
                 481,
@@ -67,7 +67,7 @@
             "z_level": 1
         },
         {
-            "code": 34,
+            "code": 54,
             "id": "g",
             "mapping": [
                 641,
@@ -83,7 +83,7 @@
             "z_level": 1
         },
         {
-            "code": 35,
+            "code": 55,
             "id": "h",
             "mapping": [
                 801,
@@ -99,7 +99,7 @@
             "z_level": 1
         },
         {
-            "code": 36,
+            "code": 57,
             "id": "j",
             "mapping": [
                 961,
@@ -115,7 +115,7 @@
             "z_level": 1
         },
         {
-            "code": 46,
+            "code": 50,
             "id": "c",
             "mapping": [
                 1121,
@@ -131,7 +131,7 @@
             "z_level": 1
         },
         {
-            "code": 57,
+            "code": 83,
             "id": "space",
             "mapping": [
                 1301,
@@ -151,5 +151,6 @@
     "overlay_height": 394,
     "overlay_width": 568,
     "space_h": -20,
-    "space_v": 5
+    "space_v": 5,
+    "version": 508
 }

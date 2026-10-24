@@ -30,7 +30,8 @@
 
 #define CFG_FLAGS "flags"
 #define CFG_VERSION "version"
-#define CFG_CURRENT_VERSION 507
+/* Layouts before version 508 use the key codes of the original libuiohook and are converted when loaded */
+#define CFG_CURRENT_VERSION 508
 
 #define CFG_TOTAL_WIDTH "overlay_width"
 #define CFG_TOTAL_HEIGHT "overlay_height"

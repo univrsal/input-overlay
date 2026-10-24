@@ -50,26 +50,13 @@ $(() => {
                 let b64 = split[1];
                 let str = atob(b64);
 
-                converted2 = convert_to_507(str);
-                converted2.version = 507;
+                converted2 = JSON.parse(str);
+                convert_legacy_layout(converted2);
             };
         }
     });
     $('#download2').on('click', () => {download_json(cfg_name2, converted2)});
 });
-
-function convert_to_507(str)
-{
-    let cfg = JSON.parse(str);
-
-    cfg.elements.forEach((e, _) => {
-        if (vcto507.has(e.code)) {
-            e.code = vcto507.get(e.code);
-        }
-    });
-
-    return cfg;
-}
 
 function parse_legacy_config(str)
 {
