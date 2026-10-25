@@ -43,6 +43,15 @@ else ()
 endif ()
 
 add_subdirectory(libuiohook EXCLUDE_FROM_ALL)
+# The OBS build template sets hidden symbol visibility, but libuiohook has no export macros on Linux/macOS and
+# relies on default visibility (hook_run etc. would be hidden and the plugin fails to load).
+if(UNIX)
+  foreach(_uiohook_target uiohook uiohook-x11 uiohook-wayland uiohook-xrecord)
+    if(TARGET ${_uiohook_target})
+      set_target_properties(${_uiohook_target} PROPERTIES C_VISIBILITY_PRESET default VISIBILITY_INLINES_HIDDEN OFF)
+    endif()
+  endforeach()
+endif()
 if(APPLE)
   target_compile_options(uiohook PRIVATE -Wno-error=return-type)
 endif()
