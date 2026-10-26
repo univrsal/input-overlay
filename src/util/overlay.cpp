@@ -34,9 +34,43 @@
 #define overlay_image_file_init_texture gs_image_file_ex_init_texture
 #define overlay_image_file_free gs_image_file_ex_free
 #else
-#define overlay_image_file_init gs_image_file4_init
-#define overlay_image_file_init_texture gs_image_file4_init_texture
-#define overlay_image_file_free gs_image_file4_free
+/* Built against OBS < 33 headers (e.g. the Ubuntu PPA), but the plugin may run on OBS 33+ where the gs_image_file
+ * functions were replaced by gs_image_file_ex. Both structs start with the same fields (texture, cx, cy, loaded...)
+ * and the old one is larger, so we allocate the old one and look up the functions at runtime. Nothing may reference
+ * the removed symbols directly (this includes the inline gs_image_file4_* helpers), or the plugin fails to load. */
+#include <dlfcn.h>
+
+namespace {
+struct image_file_api {
+    void (*init)(void *, const char *, gs_image_alpha_mode) = nullptr;
+    void (*init_texture)(void *) = nullptr;
+    void (*free)(void *) = nullptr;
+
+    template<typename T> static T lookup(const char *name) { return reinterpret_cast<T>(dlsym(RTLD_DEFAULT, name)); }
+
+    image_file_api()
+    {
+        if ((init = lookup<decltype(init)>("gs_image_file_ex_init"))) {
+            init_texture = lookup<decltype(init_texture)>("gs_image_file_ex_init_texture");
+            free = lookup<decltype(free)>("gs_image_file_ex_free");
+        } else {
+            init = lookup<decltype(init)>("gs_image_file4_init");
+            init_texture = lookup<decltype(init_texture)>("gs_image_file_init_texture");
+            free = lookup<decltype(free)>("gs_image_file_free");
+        }
+    }
+};
+
+const image_file_api &image_api()
+{
+    static const image_file_api api;
+    return api;
+}
+} // namespace
+
+#define overlay_image_file_init(img, file, mode) image_api().init(img, file, mode)
+#define overlay_image_file_init_texture(img) image_api().init_texture(img)
+#define overlay_image_file_free(img) image_api().free(img)
 #endif
 #include "../hook/uiohook_helper.hpp"
 #include "log.h"
