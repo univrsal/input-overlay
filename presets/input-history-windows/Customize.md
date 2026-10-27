@@ -32,8 +32,8 @@ var KEYCODES = {
       0x0001: ["VC_ESCAPE", "ESC"],
 
       // Begin Function Keys
-      // 0x003b: ["VC_F1", "F1"], This key will be hidden
-      0x003c: ["VC_F2", "F2"],
+      // 0x0002: ["VC_F1", "F1"], This key will be hidden
+      0x0003: ["VC_F2", "F2"],
 
       ...
 }
@@ -63,8 +63,8 @@ Where `<KEYNAME>` can be found in `var KEYCODES = {...};`.
 var KEYCODES = {
     ...
     // the KEYNAME is the first one, "VC_META"
-    // "WIN" is an optional alias that will show if there are no icons set for 0x0e5b
-    0x0e5b: ["VC_META_L", "WIN"],
+    // "WIN" is an optional alias that will show if there are no icons set for 0x0096
+    0x0096: ["VC_META_L", "WIN"],
 }
 ```
 3. Add it to the list of `var KEYICONS;`
@@ -73,7 +73,7 @@ var KEYCODES = {
 var KEYICONS = {
     ...
     // replace "SVG_VC_META" is the id you assigned the <svg> in step 2
-    0x0e5b: document.getElementById("SVG_VC_META"),
+    0x0096: document.getElementById("SVG_VC_META"),
 }
 ```
 
