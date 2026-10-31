@@ -44,20 +44,6 @@ Name: "{group}\{cm:ProgramOnTheWeb,{#MyAppName}}"; Filename: "{#MyAppURL}"
 Name: "{group}\{cm:UninstallProgram,{#MyAppName}}"; Filename: "{uninstallexe}"
 
 [Code]
-procedure InitializeWizard();
-var
-  GPLText: AnsiString;
-  Page: TOutputMsgMemoWizardPage;
-begin
-  ExtractTemporaryFile('LICENSE');
-  LoadStringFromFile(ExpandConstant('{tmp}\LICENSE'), GPLText);
-  Page := CreateOutputMsgMemoPage(wpWelcome,
-    'License Information', 'Please review the license terms before installing {#MyAppName}',
-    'Press Page Down to see the rest of the agreement. Once you are aware of your rights, click Next to continue.',
-    String(GPLText)
-  );
-end;
-
 // credit where it's due :
 // following function come from https://github.com/Xaymar/obs-studio_amf-encoder-plugin/blob/master/%23Resources/Installer.in.iss#L45
 function GetObsDir(Value: string): string;
@@ -72,3 +58,46 @@ begin
     Result := InstallPath
 end;
 
+var
+  RemovalPage: TOutputMsgMemoWizardPage;
+
+procedure InitializeWizard();
+var
+  GPLText: AnsiString;
+  Page: TOutputMsgMemoWizardPage;
+begin
+  ExtractTemporaryFile('LICENSE');
+  LoadStringFromFile(ExpandConstant('{tmp}\LICENSE'), GPLText);
+  Page := CreateOutputMsgMemoPage(wpWelcome,
+    'License Information', 'Please review the license terms before installing {#MyAppName}',
+    'Press Page Down to see the rest of the agreement. Once you are aware of your rights, click Next to continue.',
+    String(GPLText)
+  );
+
+  // Users have stored their own files (e.g. presets) in these folders before, so warn about the removal.
+  // The paths depend on the selected install directory, the text is filled in by CurPageChanged.
+  RemovalPage := CreateOutputMsgMemoPage(wpSelectDir,
+    'Warning: Old Data Will Be Removed', 'Please read this before installing {#MyAppName}',
+    'The installer deletes the following folders from previous installations. ' +
+    'ALL files inside them are removed, including files you added yourself (e.g. presets). ' +
+    'Back up anything you want to keep before clicking Next.',
+    ''
+  );
+end;
+
+procedure CurPageChanged(CurPageID: Integer);
+var
+  ObsDir: string;
+begin
+  if CurPageID = RemovalPage.ID then
+  begin
+    ObsDir := GetObsDir('');
+    RemovalPage.RichEditViewer.Text :=
+      AddBackslash(WizardDirValue) + 'bin' + #13#10 +
+      ObsDir + '\data\obs-plugins\{#MyAppName}' + #13#10 +
+      ObsDir + '\io_client' + #13#10 + #13#10 +
+      'The following legacy plugin files are also removed:' + #13#10 +
+      ObsDir + '\obs-plugins\64bit\{#MyAppName}.dll' + #13#10 +
+      ObsDir + '\obs-plugins\64bit\{#MyAppName}.pdb';
+  end;
+end;
